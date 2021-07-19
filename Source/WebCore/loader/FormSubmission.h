@@ -32,6 +32,7 @@
 
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -44,14 +45,14 @@ class HTMLFormControlElement;
 
 class FormSubmission : public RefCounted<FormSubmission>, public CanMakeWeakPtr<FormSubmission> {
 public:
-    enum class Method : bool { Get, Post };
+    enum class Method : uint8_t { Get, Post, Dialog };
 
     class Attributes {
     public:
         Method method() const { return m_method; }
         static Method parseMethodType(const String&);
         void updateMethodType(const String&);
-        static ASCIILiteral methodString(Method method) { return method == Method::Post ? "post"_s : "get"_s; }
+        static ASCIILiteral methodString(Method);
 
         const String& action() const { return m_action; }
         void parseAction(const String&);
@@ -87,12 +88,14 @@ public:
     const String& contentType() const { return m_contentType; }
     FormState& state() const { return *m_formState; }
     Ref<FormState> takeState() { return m_formState.releaseNonNull(); }
-    FormData& data() const { return m_formData; }
+    FormData& data() const { return *m_formData; }
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }
     Event* event() const { return m_event.get(); }
     const String& referrer() const { return m_referrer; }
     const String& origin() const { return m_origin; }
+
+    const String& returnValue() const { return m_returnValue; }
 
     void clearTarget() { m_target = { }; }
     void setReferrer(const String& referrer) { m_referrer = referrer; }
@@ -102,6 +105,10 @@ public:
     bool wasCancelled() const { return m_wasCancelled; }
 
 private:
+    // dialog form submissions
+    FormSubmission(Method, const String& returnValue, const URL& action, const String& target, const String& contentType, LockHistory, Event*);
+
+    // get/post form submissions
     FormSubmission(Method, const URL& action, const String& target, const String& contentType, Ref<FormState>&&, Ref<FormData>&&, const String& boundary, LockHistory, Event*);
 
     // FIXME: Hold an instance of Attributes instead of individual members.
@@ -111,12 +118,14 @@ private:
     String m_target;
     String m_contentType;
     RefPtr<FormState> m_formState;
-    Ref<FormData> m_formData;
+    RefPtr<FormData> m_formData;
     String m_boundary;
     LockHistory m_lockHistory;
     RefPtr<Event> m_event;
     String m_referrer;
     String m_origin;
+
+    String m_returnValue; // for form[method=dialog]
 };
 
 } // namespace WebCore

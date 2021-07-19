@@ -59,6 +59,7 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 using namespace Inspector;
@@ -390,69 +391,30 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
 
 #if ENABLE(WEB_CRYPTO)
 
-class CryptoBufferContainer : public ThreadSafeRefCounted<CryptoBufferContainer> {
-public:
-    static Ref<CryptoBufferContainer> create() { return adoptRef(*new CryptoBufferContainer); }
-    Vector<uint8_t>& buffer() { return m_buffer; }
-
-private:
-    Vector<uint8_t> m_buffer;
-};
-
-class CryptoBooleanContainer : public ThreadSafeRefCounted<CryptoBooleanContainer> {
-public:
-    static Ref<CryptoBooleanContainer> create() { return adoptRef(*new CryptoBooleanContainer); }
-    bool boolean() const { return m_boolean; }
-    void setBoolean(bool boolean) { m_boolean = boolean; }
-
-private:
-    std::atomic<bool> m_boolean { false };
-};
-
 bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
-    Ref<WorkerGlobalScope> protectedThis(*this);
-    auto resultContainer = CryptoBooleanContainer::create();
-    auto doneContainer = CryptoBooleanContainer::create();
-    auto wrappedKeyContainer = CryptoBufferContainer::create();
-    thread().workerLoaderProxy().postTaskToLoader([resultContainer, key, wrappedKeyContainer, doneContainer, workerMessagingProxy = makeRef(downcast<WorkerMessagingProxy>(thread().workerLoaderProxy()))](ScriptExecutionContext& context) {
-        resultContainer->setBoolean(context.wrapCryptoKey(key, wrappedKeyContainer->buffer()));
-        doneContainer->setBoolean(true);
-        workerMessagingProxy->postTaskForModeToWorkerOrWorkletGlobalScope([](ScriptExecutionContext& context) {
-            ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        }, WorkerRunLoop::defaultMode());
+    Ref protectedThis { *this };
+    bool success = false;
+    BinarySemaphore semaphore;
+    thread().workerLoaderProxy().postTaskToLoader([&semaphore, &success, &key, &wrappedKey](auto& context) {
+        success = context.wrapCryptoKey(key, wrappedKey);
+        semaphore.signal();
     });
-
-    auto waitResult = MessageQueueMessageReceived;
-    while (!doneContainer->boolean() && waitResult != MessageQueueTerminated)
-        waitResult = thread().runLoop().runInMode(this, WorkerRunLoop::defaultMode());
-
-    if (doneContainer->boolean())
-        wrappedKey.swap(wrappedKeyContainer->buffer());
-    return resultContainer->boolean();
+    semaphore.wait();
+    return success;
 }
 
 bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
 {
-    Ref<WorkerGlobalScope> protectedThis(*this);
-    auto resultContainer = CryptoBooleanContainer::create();
-    auto doneContainer = CryptoBooleanContainer::create();
-    auto keyContainer = CryptoBufferContainer::create();
-    thread().workerLoaderProxy().postTaskToLoader([resultContainer, wrappedKey, keyContainer, doneContainer, workerMessagingProxy = makeRef(downcast<WorkerMessagingProxy>(thread().workerLoaderProxy()))](ScriptExecutionContext& context) {
-        resultContainer->setBoolean(context.unwrapCryptoKey(wrappedKey, keyContainer->buffer()));
-        doneContainer->setBoolean(true);
-        workerMessagingProxy->postTaskForModeToWorkerOrWorkletGlobalScope([](ScriptExecutionContext& context) {
-            ASSERT_UNUSED(context, context.isWorkerGlobalScope());
-        }, WorkerRunLoop::defaultMode());
+    Ref protectedThis { *this };
+    bool success = false;
+    BinarySemaphore semaphore;
+    thread().workerLoaderProxy().postTaskToLoader([&semaphore, &success, &key, &wrappedKey](auto& context) {
+        success = context.unwrapCryptoKey(wrappedKey, key);
+        semaphore.signal();
     });
-
-    auto waitResult = MessageQueueMessageReceived;
-    while (!doneContainer->boolean() && waitResult != MessageQueueTerminated)
-        waitResult = thread().runLoop().runInMode(this, WorkerRunLoop::defaultMode());
-
-    if (doneContainer->boolean())
-        key.swap(keyContainer->buffer());
-    return resultContainer->boolean();
+    semaphore.wait();
+    return success;
 }
 
 #endif // ENABLE(WEB_CRYPTO)

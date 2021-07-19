@@ -1092,7 +1092,6 @@ css3/color-filters/color-filter-caret-color.html [ Skip ]
 css3/color-filters/color-filter-ignore-semantic.html [ Skip ]
 
 # WebCryptoAPI features that enabled only for iOS 11/High Sierra+
-imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
@@ -2288,6 +2287,7 @@ fast/dom/Window/child-window-focus.html
 # iOS does not allow you to scroll by dragging the scrollbar thumb.
 webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
 webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Failure ]
+webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure ]
 
 # DumpRenderTree doesn't support logging calls to runOpenPanel and iOS's WebKitTestRunner doesn't support eventSender.mouseDown.
 fast/forms/file/open-file-panel.html [ Skip ]
@@ -2311,9 +2311,6 @@ webkit.org/b/159214 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ Pass Timeout ]
 
 webkit.org/b/156561 perf/rel-list-remove.html [ Pass Timeout Failure ]
-
-webkit.org/b/163332 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Pass Failure ]
-webkit.org/b/163332 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Pass Failure ]
 
 webkit.org/b/172403 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Pass Timeout ]
 
@@ -3247,6 +3244,7 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-021.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-022.tentative.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-004.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-005.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-012.html [ Skip ]
@@ -3302,7 +3300,6 @@ fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
 
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Failure ]
 
 # <rdar://problem/57029120> Reenable crypto/workers/subtle/rsa-postMessage-worker.html and crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html for iOS
 crypto/workers/subtle/rsa-postMessage-worker.html [ Skip ]
@@ -3336,8 +3333,8 @@ webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigati
 media/media-continues-playing-after-replace-source.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Skip ]
-imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html [ Skip ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
+webkit.org/b/227501 [ Debug ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
 
 # This test fails in iOS due to subpixel differences for the marker position
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
@@ -3388,3 +3385,6 @@ fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 # Skip WebXR tests on iOS
 imported/w3c/web-platform-tests/webxr [ Skip ]
 http/wpt/webxr [ Skip ]
+
+# WebM is not supported on iOS
+http/tests/media/video-webm-stall.html [ Skip ]

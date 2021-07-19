@@ -32,6 +32,7 @@ function ready()
 }
 
 shouldBecomeEqual("ready()", "true", () => {
+    document.body.appendChild(mediaControls.element);
     debug("");
     while (droppableControls.length) {
         for (let i = droppableControls.length - 1; i >= 0; --i) {
@@ -43,6 +44,7 @@ shouldBecomeEqual("ready()", "true", () => {
 
         mediaControls.width--;
     }
+    mediaControls.element.remove();
     debug("");
     finishJSTest();
 });

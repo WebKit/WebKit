@@ -9,14 +9,15 @@ const mediaControls = new MacOSInlineMediaControls;
 
 shouldBeEqualToString("mediaControls.element.localName", "div");
 shouldBeEqualToString("mediaControls.element.className", "media-controls mac inline");
-shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS");
+shouldBeType("mediaControls.layoutTraits", "MacOSLayoutTraits");
+shouldBeFalse("mediaControls.layoutTraits.isFullscreen");
 
 debug("");
 debug("Controls bar");
 shouldBe("mediaControls.controlsBar.children.length", "4");
-shouldBeTrue("mediaControls.controlsBar.children[1] instanceof ButtonsContainer");
-shouldBeTrue("mediaControls.controlsBar.children[2] instanceof ButtonsContainer");
-shouldBeTrue("mediaControls.controlsBar.children[3] instanceof LayoutNode");
+shouldBeType("mediaControls.controlsBar.children[1]", "ButtonsContainer");
+shouldBeType("mediaControls.controlsBar.children[2]", "ButtonsContainer");
+shouldBeType("mediaControls.controlsBar.children[3]", "LayoutNode");
 
 debug("");
 debug("Left container");
@@ -45,10 +46,10 @@ mediaControls.bottomControlsBar.element.id = "groupping-label";
 document.body.appendChild(mediaControls.bottomControlsBar.element);
 
 mediaControls.shouldUseAudioLayout = false;
-shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXDescription: Video Controls");
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description", "AXDescription: Video Controls");
 
 mediaControls.shouldUseAudioLayout = true;
-shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXDescription: Audio Controls");
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description", "AXDescription: Audio Controls");
 
 debug("");
 

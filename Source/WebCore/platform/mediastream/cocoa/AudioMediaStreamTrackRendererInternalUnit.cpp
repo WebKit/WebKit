@@ -117,6 +117,7 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::setAudioOutputDevice(const 
 
 void LocalAudioMediaStreamTrackRendererInternalUnit::start()
 {
+    RELEASE_LOG_INFO(WebRTC, "LocalAudioMediaStreamTrackRendererInternalUnit::start");
     if (m_isStarted)
         return;
 
@@ -136,6 +137,7 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::start()
 
 void LocalAudioMediaStreamTrackRendererInternalUnit::stop()
 {
+    RELEASE_LOG_INFO(WebRTC, "LocalAudioMediaStreamTrackRendererInternalUnit::stop");
     if (!m_remoteIOUnit)
         return;
 

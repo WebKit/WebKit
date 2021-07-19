@@ -1,0 +1,8 @@
+2d.fillStyle.CSSRGB
+CSSRGB works as color input
+Actual output:
+Expected output:
+
+
+FAIL CSSRGB works as color input Can't find variable: CSSRGB
+

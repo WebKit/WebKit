@@ -58,6 +58,18 @@ RemotePlayback::~RemotePlayback()
 {
 }
 
+void* RemotePlayback::opaqueRootConcurrently() const
+{
+    if (auto* element = m_mediaElement.get())
+        return element->opaqueRoot();
+    return nullptr;
+}
+
+Node* RemotePlayback::ownerNode() const
+{
+    return m_mediaElement.get();
+}
+
 void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&& callback, Ref<DeferredPromise>&& promise)
 {
     // 6.2.1.3 Getting the remote playback devices availability information

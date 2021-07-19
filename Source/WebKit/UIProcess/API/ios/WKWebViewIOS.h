@@ -24,10 +24,15 @@
  */
 
 #import "WKWebViewInternal.h"
+#import "_WKTapHandlingResult.h"
 
 @class UIScrollEvent;
 
 #if PLATFORM(IOS_FAMILY)
+
+namespace WebKit {
+enum class TapHandlingResult : uint8_t;
+}
 
 @interface WKWebView (WKViewInternalIOS)
 
@@ -148,5 +153,7 @@
 @property (nonatomic, readonly) int32_t _deviceOrientation;
 
 @end
+
+_WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -96,7 +96,7 @@
 #endif
 }
 
-- (void)_didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point
+- (void)_didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result
 {
     // For subclasses to override.
 }
@@ -339,6 +339,11 @@
 - (CGRect)_tapHighlightViewRect
 {
     return [_contentView tapHighlightViewRect];
+}
+
+- (UIGestureRecognizer *)_imageAnalysisGestureRecognizer
+{
+    return [_contentView imageAnalysisGestureRecognizer];
 }
 
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location

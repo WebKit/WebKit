@@ -1874,9 +1874,9 @@ private:
     WeakPtr<Element> m_mainArticleElement;
     WeakHashSet<Element> m_articleElements;
 
-    HashSet<VisibilityChangeClient*> m_visibilityStateCallbackClients;
+    WeakHashSet<VisibilityChangeClient> m_visibilityStateCallbackClients;
 
-    std::unique_ptr<HashMap<String, Element*, ASCIICaseInsensitiveHash>> m_accessKeyCache;
+    std::unique_ptr<HashMap<String, WeakPtr<Element>, ASCIICaseInsensitiveHash>> m_accessKeyCache;
 
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 

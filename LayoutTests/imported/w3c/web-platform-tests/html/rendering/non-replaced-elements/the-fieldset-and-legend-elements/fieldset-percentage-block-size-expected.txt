@@ -8,6 +8,7 @@ rendered legend
 second legend
 div
 
+
 PASS rendered legend (writing-mode: horizontal-tb)
 PASS second legend (writing-mode: horizontal-tb)
 PASS div (writing-mode: horizontal-tb)
@@ -17,4 +18,5 @@ PASS div (writing-mode: vertical-lr)
 PASS rendered legend (writing-mode: vertical-rl)
 PASS second legend (writing-mode: vertical-rl)
 PASS div (writing-mode: vertical-rl)
+PASS Fieldset with a percentage height should not increase the height on every reflow.
 

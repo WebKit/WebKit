@@ -8,6 +8,9 @@ PASS Partial interface mixin GlobalEventHandlers: member names are unique
 PASS Partial interface Navigator: original interface defined
 PASS Partial interface Navigator: member names are unique
 PASS Partial interface UIEvent: member names are unique
+PASS Partial interface MouseEvent: member names are unique
+PASS Partial interface UIEvent[2]: member names are unique
+PASS Partial dictionary UIEventInit: member names are unique
 PASS Partial interface Document: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Partial interface Document[2]: member names are unique

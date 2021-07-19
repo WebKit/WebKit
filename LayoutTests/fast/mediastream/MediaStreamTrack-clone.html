@@ -21,7 +21,9 @@
                 videoTrack.onmute = function () {};
                 videoTrack.onunmute = function () {};
                 videoTrack.onended = function () {};
-                videoTrack.onoverconstrained = function () {};
+                shouldBe('videoTrack.onoverconstrained', 'undefined');
+                shouldBe('videoTrack.onoverconstrained', 'undefined');
+                shouldBe('MediaStreamTrack.prototype.onoverconstrained', 'undefined');
 
                 debug("");
                 evalAndLog("videoTrack2 = videoTrack.clone()");
@@ -36,7 +38,6 @@
                 shouldNotBe('videoTrack.onmute', 'videoTrack2.onmute');
                 shouldNotBe('videoTrack.onunmute', 'videoTrack2.onunmute');
                 shouldNotBe('videoTrack.onended', 'videoTrack2.onended');
-                shouldNotBe('videoTrack.onoverconstrained', 'videoTrack2.onoverconstrained');
 
                 videoTrack.stop();
                 shouldNotBe('videoTrack.readyState', 'videoTrack2.readyState');

@@ -40,6 +40,8 @@
 #include "GraphicsContextGLCV.h"
 #endif
 
+#include <memory>
+
 namespace WebCore {
 
 void GraphicsContextGLOpenGL::resetBuffersToAutoClear()
@@ -232,7 +234,22 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixel
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
         return std::nullopt;
-    return readRenderingResultsForPainting();
+    auto results = readRenderingResultsForPainting();
+    if (results && !results->size().isEmpty()) {
+        ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
+        // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
+        const auto size = results->size();
+        const size_t rowStride = size.width() * 4;
+        uint8_t* top = results->data().data();
+        uint8_t* bottom = top + (size.height() - 1) * rowStride;
+        std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
+        for (; top < bottom; top += rowStride, bottom -= rowStride) {
+            memcpy(temp.get(), bottom, rowStride);
+            memcpy(bottom, top, rowStride);
+            memcpy(top, temp.get(), rowStride);
+        }
+    }
+    return results;
 }
 
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()

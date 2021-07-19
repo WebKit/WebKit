@@ -1,0 +1,4 @@
+
+PASS Same-site window should be able to set `SameSite=Lax` or `SameSite=Strict` cookies.
+FAIL Cross-site window shouldn't be able to set `SameSite=Lax` or `SameSite=Strict` cookies. assert_equals: `samesite_strict=0.8996410966959045` in `document.cookie` expected false but got true
+

@@ -130,31 +130,12 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestTypedefsPrototype, JSTestTypedefsPrototype::Base);
 
 using JSTestTypedefsDOMConstructor = JSDOMConstructor<JSTestTypedefs>;
-
-/* Hash table */
-
-static const struct CompactHashIndex JSTestTypedefsTableIndex[2] = {
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestTypedefsTableValues[] =
-{
-    { 0, 0, NoIntrinsic, { 0, 0 } }
-};
-
-static const HashTable JSTestTypedefsTable = { 0, 1, false, JSTestTypedefs::info(), JSTestTypedefsTableValues, JSTestTypedefsTableIndex };
-/* Hash table for constructor */
-
-static const HashTableValue JSTestTypedefsConstructorTableValues[] =
-{
-    { "TestSubObj", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor_TestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-};
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
@@ -184,6 +165,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor:
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestTypedefsDOMConstructorConstruct, JSTestTypedefsDOMConstructor::construct);
 
+template<> const unsigned JSTestTypedefsDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestTypedefsDOMConstructor::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsDOMConstructor) };
 
 template<> JSValue JSTestTypedefsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -197,20 +179,90 @@ template<> void JSTestTypedefsDOMConstructor::initializeProperties(VM& vm, JSDOM
     putDirect(vm, vm.propertyNames->prototype, JSTestTypedefs::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestTypedefs"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(3), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    reifyStaticProperties(vm, JSTestTypedefs::info(), JSTestTypedefsConstructorTableValues, *this);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestTypedefsPrototypeTableIndex[67] = {
+    { 2, 64 },
+    { 19, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 9, 65 },
+    { -1, -1 },
+    { -1, -1 },
+    { 5, -1 },
+    { -1, -1 },
+    { 11, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 18, -1 },
+    { -1, -1 },
+    { 12, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, 66 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 15, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 6, -1 },
+    { 8, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 14, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 20, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { 16, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { 7, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 10, -1 },
+    { 13, -1 },
+    { 17, -1 },
+};
+
 
 static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "unsignedLongLongAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_unsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_unsignedLongLongAttr) } },
-    { "serializedScriptValue", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_serializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_serializedScriptValue) } },
-    { "attributeWithClamp", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_attributeWithClamp), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_attributeWithClamp) } },
-    { "attributeWithClampInTypedef", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_attributeWithClampInTypedef), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_attributeWithClampInTypedef) } },
-    { "bufferSourceAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_bufferSourceAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_bufferSourceAttr) } },
-    { "domTimeStampAttr", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_domTimeStampAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_domTimeStampAttr) } },
+    { "unsignedLongLongAttr", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_unsignedLongLongAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_unsignedLongLongAttr) } },
+    { "serializedScriptValue", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_serializedScriptValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_serializedScriptValue) } },
+    { "attributeWithClamp", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_attributeWithClamp), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_attributeWithClamp) } },
+    { "attributeWithClampInTypedef", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_attributeWithClampInTypedef), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_attributeWithClampInTypedef) } },
+    { "bufferSourceAttr", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_bufferSourceAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_bufferSourceAttr) } },
+    { "domTimeStampAttr", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefs_domTimeStampAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestTypedefs_domTimeStampAttr) } },
     { "func", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_func), (intptr_t) (0) } },
     { "setShadow", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_setShadow), (intptr_t) (3) } },
     { "methodWithSequenceArg", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_methodWithSequenceArg), (intptr_t) (1) } },
@@ -227,7 +279,8 @@ static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
     { "callWithSequenceThatRequiresInclude", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestTypedefsPrototypeFunction_callWithSequenceThatRequiresInclude), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
+static const HashTable JSTestTypedefsPrototypeTable = { 21, 63, true, JSTestTypedefs::info(), JSTestTypedefsPrototypeTableValues, JSTestTypedefsPrototypeTableIndex };
+const ClassInfo JSTestTypedefsPrototype::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefsPrototype) };
 
 void JSTestTypedefsPrototype::finishCreation(VM& vm)
 {
@@ -236,7 +289,7 @@ void JSTestTypedefsPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefs) };
+const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTypedefs) };
 
 JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTypedefs>&& impl)
     : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTFMove(impl))

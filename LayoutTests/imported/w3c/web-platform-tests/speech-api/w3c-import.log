@@ -16,10 +16,12 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechRecognition-basics.https.html
-/LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-ownership.html
+/LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html
-/LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesisErrorEvent-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesisEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/SpeechSynthesisUtterance-basics.https.html
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/speech-api/idlharness.window.js

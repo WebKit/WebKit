@@ -194,3 +194,12 @@ function createFulfilledPromise(value)
     @fulfillPromise(promise, value);
     return promise;
 }
+
+function toDictionary(value, defaultValue, errorMessage)
+{
+    if (value === @undefined || value === null)
+        return defaultValue;
+    if (!@isObject(value))
+        @throwTypeError(errorMessage);
+    return value;
+}

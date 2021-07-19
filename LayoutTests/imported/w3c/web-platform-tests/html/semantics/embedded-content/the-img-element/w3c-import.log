@@ -43,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-large-scale-change-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-large-scale-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-eager.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-available.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-base-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-below-viewport-dynamic.html
@@ -67,8 +68,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-subpixel-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-subpixel-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-srcdoc-relative-uri-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-srcdoc-relative-uri-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image.png
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-created-in-active-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-picture-ancestor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-with-containment-and-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-with-containment-and-size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img.complete.html
@@ -86,6 +90,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/picture-loading-lazy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/remove-element-and-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/svg-img-with-external-stylesheet-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/svg-img-with-external-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-media.html

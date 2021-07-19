@@ -176,7 +176,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 + (NSArray<WKProcessPool *> *)_allProcessPoolsForTesting
 {
     return createNSArray(WebKit::WebProcessPool::allProcessPools(), [] (auto& pool) {
-        return wrapper(*pool);
+        return wrapper(pool.get());
     }).autorelease();
 }
 

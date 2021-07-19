@@ -25,11 +25,14 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <Metal/MTLTexture_Private.h>
 #import <Metal/MetalPrivate.h>
 
 #else
 
 #import <Foundation/NSObject.h>
+
+typedef struct __IOSurface *IOSurfaceRef;
 
 @protocol MTLDeviceSPI <MTLDevice>
 - (NSString*)vendorName;
@@ -39,6 +42,10 @@
 
 @interface _MTLDevice : NSObject
 - (void)_purgeDevice;
+@end
+
+@interface MTLSharedTextureHandle(Private)
+- (instancetype)initWithIOSurface:(IOSurfaceRef)ioSurface label:(NSString*)label;
 @end
 
 #endif

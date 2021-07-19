@@ -158,3 +158,24 @@
 .computed-style-properties.details-section > .content > .group {
     display: block;
 }
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property .go-to-arrow {
+    vertical-align: bottom;
+    width: var(--disclosure-button-size);
+    height: var(--disclosure-button-size);
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property .go-to-arrow {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .contextual-documentation-button {
+    vertical-align: bottom;
+    width: var(--disclosure-button-size);
+    height: var(--disclosure-button-size);
+    margin-left: 1px;
+}
+
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .contextual-documentation-button {
+    display: none;
+}

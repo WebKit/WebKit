@@ -270,6 +270,31 @@ nothing to commit, working tree clean
                     ])
                 )
             ), mocks.Subprocess.Route(
+                self.executable, 'log', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join([
+                        'commit {hash}\n'
+                        'Author: {author} <{email}>\n'
+                        'Date:   {date}\n'
+                        '\n{log}\n'.format(
+                            hash=commit.hash,
+                            author=commit.author.name,
+                            email=commit.author.email,
+                            date=datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            log='\n'.join([
+                                ('    ' + line) if line else '' for line in commit.message.splitlines()
+                            ] + ([
+                                '    git-svn-id: https://svn.{}/repository/{}/trunk@{} 268f45cc-cd09-0410-ab3c-d52691b4dbfc'.format(
+                                    self.remote.split('@')[-1].split(':')[0],
+                                    os.path.basename(path),
+                                   commit.revision,
+                            )] if git_svn else []),
+                        )) for commit in self.commits_in_range(self.commits[self.default_branch][0].hash, args[2])
+                    ])
+                )
+            ), mocks.Subprocess.Route(
                 self.executable, 'rev-list', '--count', '--no-merges', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
@@ -511,7 +536,7 @@ nothing to commit, working tree clean
 
         branches = [self.default_branch]
         if end in self.commits.keys() and end != self.default_branch:
-            branches.append(end)
+            branches.insert(0, end)
         else:
             for branch, commits in self.commits.items():
                 if branch == self.default_branch:

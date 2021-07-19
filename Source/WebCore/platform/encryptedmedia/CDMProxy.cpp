@@ -117,18 +117,8 @@ void KeyStore::merge(const KeyStore& other)
 {
     ASSERT(isMainThread());
     LOG(EME, "EME - CDMProxy - merging %u new keys into a key store of %u keys", other.numKeys(), numKeys());
-    for (const auto& key : other) {
-        // NOTE: Do we care that we will not append a key if it matches a key ID
-        // in the keystore and has different data. Should we overwrite? Which is "newer"?
-        // Don't think we need this extra complexity.
-        size_t keyWithMatchingKeyIDIndex = m_keys.findMatching([&] (const RefPtr<KeyHandle>& storedKey) { return *key == *storedKey; });
-        if (keyWithMatchingKeyIDIndex == WTF::notFound)
-            m_keys.append(key);
-        else {
-            LOG(EME, "EME - CDMProxy - keys with the same ID!");
-            ASSERT(key->value() == m_keys[keyWithMatchingKeyIDIndex]->value());
-        }
-    }
+    for (const auto& key : other)
+        add(key.copyRef());
 
 #if !LOG_DISABLED
     LOG(EME, "EME - CDMProxy - key store now has %u keys", numKeys());
@@ -162,14 +152,15 @@ bool KeyStore::add(RefPtr<KeyHandle>&& key)
         return *key == *storedKey;
     });
 
+    addSessionReferenceTo(key);
     if (keyWithMatchingKeyIDIndex != WTF::notFound) {
         auto& keyWithMatchingKeyID = m_keys[keyWithMatchingKeyIDIndex];
-        didStoreChange = keyWithMatchingKeyID == key;
+        didStoreChange = keyWithMatchingKeyID != key;
         if (didStoreChange)
-            keyWithMatchingKeyID = key;
+            keyWithMatchingKeyID->mergeKeyInto(WTFMove(key));
     } else {
         LOG(EME, "EME - ClearKey - New key with ID %s getting added to key store", key->idAsString().ascii().data());      
-        m_keys.append(key);
+        m_keys.append(WTFMove(key));
         didStoreChange = true;
     }
 
@@ -183,33 +174,38 @@ bool KeyStore::add(RefPtr<KeyHandle>&& key)
             });
     }
 
-    key->addSessionReference();
     return didStoreChange;
 }
 
-void KeyStore::removeAllKeysFrom(const KeyStore& other)
+void KeyStore::unrefAllKeysFrom(const KeyStore& other)
 {
     for (const auto& key : other)
-        remove(key);
+        unref(key);
 }
 
-bool KeyStore::remove(const RefPtr<KeyHandle>& key)
+void KeyStore::unrefAllKeys()
+{
+    KeyStore store(*this);
+    unrefAllKeysFrom(store);
+}
+
+bool KeyStore::unref(const RefPtr<KeyHandle>& key)
 {
     bool storeChanged = false;
 
     size_t keyWithMatchingKeyIDIndex = m_keys.find(key);
-    LOG(EME, "EME - ClearKey - requested to remove key with ID %s and %u session references", key->idAsString().ascii().data(), key->numSessionReferences());
+    LOG(EME, "EME - ClearKey - requested to unref key with ID %s and %d session references", key->idAsString().ascii().data(), key->numSessionReferences());
 
     if (keyWithMatchingKeyIDIndex != WTF::notFound) {
         auto& keyWithMatchingKeyID = m_keys[keyWithMatchingKeyIDIndex];
-        keyWithMatchingKeyID->removeSessionReference();
-        if (!keyWithMatchingKeyID->numSessionReferences()) {
-            LOG(EME, "EME - ClearKey - remove key with ID %s", keyWithMatchingKeyID->idAsString().ascii().data());
+        removeSessionReferenceFrom(keyWithMatchingKeyID);
+        if (!keyWithMatchingKeyID->hasReferences()) {
+            LOG(EME, "EME - ClearKey - unref key with ID %s", keyWithMatchingKeyID->idAsString().ascii().data());
             m_keys.remove(keyWithMatchingKeyIDIndex);
             storeChanged = true;
         }
     } else
-        LOG(EME, "EME - ClearKey - attempt to remove key with ID %s ignored, does not exist", key->idAsString().ascii().data());
+        LOG(EME, "EME - ClearKey - attempt to unref key with ID %s ignored, does not exist", key->idAsString().ascii().data());
 
     return storeChanged;
 }
@@ -246,6 +242,14 @@ const CDMInstanceProxy* CDMProxy::instance() const
 {
     Locker locker { m_instanceLock };
     return m_instance;
+}
+
+void CDMProxy::unrefAllKeysFrom(const KeyStore& keyStore)
+{
+    Locker locker { m_keysLock };
+    m_keyStore.unrefAllKeysFrom(keyStore);
+    LOG(EME, "EME - CDMProxy - removing from key store from a session closure");
+    m_keysCondition.notifyAll();
 }
 
 void CDMProxy::setInstance(CDMInstanceProxy* instance)
@@ -377,17 +381,19 @@ void CDMInstanceProxy::mergeKeysFrom(const KeyStore& keyStore)
 {
     // FIXME: Notify JS when appropriate.
     ASSERT(isMainThread());
-    m_keyStore.merge(keyStore);
     if (m_cdmProxy) {
         LOG(EME, "EME - CDMInstanceProxy - merging keys into proxy instance and notifying CDMProxy of changes");
         m_cdmProxy->updateKeyStore(keyStore);
     }
 }
 
-void CDMInstanceProxy::removeAllKeysFrom(const KeyStore& keyStore)
+void CDMInstanceProxy::unrefAllKeysFrom(const KeyStore& keyStore)
 {
     ASSERT(isMainThread());
-    m_keyStore.removeAllKeysFrom(keyStore);
+    if (m_cdmProxy) {
+        LOG(EME, "EME - CDMInstanceProxy - removing keys from proxy instance and notifying CDMProxy of changes");
+        m_cdmProxy->unrefAllKeysFrom(keyStore);
+    }
 }
 
 CDMInstanceSessionProxy::CDMInstanceSessionProxy(CDMInstanceProxy& instance)

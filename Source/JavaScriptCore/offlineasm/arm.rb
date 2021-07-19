@@ -374,6 +374,14 @@ def emitArmTest(operands)
     end
 end
 
+def emitArmDoubleCompare(operands, code)
+    $asm.puts "mov #{operands[2].armOperand}, \#0"
+    $asm.puts "vcmpe.f64 #{armOperands(operands[0..1])}"
+    $asm.puts "vmrs APSR_nzcv, FPSCR"
+    $asm.puts "it #{code}"
+    $asm.puts "mov#{code} #{operands[2].armOperand}, \#1"
+end
+
 def emitArmCompare(operands, code)
     $asm.puts "movs #{operands[2].armOperand}, \#0"
     $asm.puts "cmp #{operands[0].armOperand}, #{operands[1].armOperand}"
@@ -641,6 +649,14 @@ class Instruction
             emitArmCompare(operands, "lt")
         when "cilteq", "cplteq", "cblteq"
             emitArmCompare(operands, "le")
+        when "cdgt"
+            emitArmDoubleCompare(operands, "gt")
+        when "cdgteq"
+            emitArmDoubleCompare(operands, "ge")
+        when "cdlt"
+            emitArmDoubleCompare(operands, "mi")
+        when "cdlteq"
+            emitArmDoubleCompare(operands, "ls")
         when "tis", "tbs", "tps"
             emitArmTestSet(operands, "mi")
         when "tiz", "tbz", "tpz"

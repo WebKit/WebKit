@@ -189,6 +189,10 @@ interface ID3D11Device1;
 #include "PlatformXRSystem.h"
 #endif
 
+#if HAVE(ARKIT_INLINE_PREVIEW)
+#include "ModelElementController.h"
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -403,6 +407,7 @@ struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
 enum class ImageAnalysisType : uint8_t;
+enum class TapHandlingResult : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -567,6 +572,17 @@ public:
 #if USE(SYSTEM_PREVIEW)
     SystemPreviewController* systemPreviewController() { return m_systemPreviewController.get(); }
     void systemPreviewActionTriggered(const WebCore::SystemPreviewInfo&, const String&);
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    ModelElementController* modelElementController() { return m_modelElementController.get(); }
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
+    void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -833,7 +849,7 @@ public:
     void applicationWillEnterForegroundForMedia();
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
-    void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&);
+    void didTapAtPoint(const WebCore::IntPoint&, TapHandlingResult);
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
     void handleSmartMagnificationInformationForPotentialTap(uint64_t requestID, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel);
@@ -1724,7 +1740,7 @@ public:
     void decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
     void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
-    void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SubstituteData::SessionHistoryVisibility);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt);
     void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
     void decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSyncDelayedReply&&);
@@ -2595,6 +2611,10 @@ private:
 
 #if USE(SYSTEM_PREVIEW)
     std::unique_ptr<SystemPreviewController> m_systemPreviewController;
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    std::unique_ptr<ModelElementController> m_modelElementController;
 #endif
 
 #if ENABLE(WEB_AUTHN)

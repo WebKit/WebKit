@@ -82,8 +82,9 @@ PASS parseThenSerializeRule('::first-line { }') is '::first-line { }'
 PASS parseThenSerializeRule('::selection { }') is '::selection { }'
 
 PASS parseThenSerializeRule(':-webkit-any-link { }') is ':-webkit-any-link { }'
-PASS parseThenSerializeRule(':-webkit-autofill { }') is ':-webkit-autofill { }'
 PASS parseThenSerializeRule(':-webkit-drag { }') is ':-webkit-drag { }'
+PASS parseThenSerializeRule(':autofill { }') is ':autofill { }'
+PASS parseThenSerializeRule(':-webkit-autofill { }') is ':autofill { }'
 
 PASS parseThenSerializeRule(':nth-child(odd) { }') is ':nth-child(2n+1) { }'
 PASS parseThenSerializeRule(':nth-child(even) { }') is ':nth-child(2n) { }'

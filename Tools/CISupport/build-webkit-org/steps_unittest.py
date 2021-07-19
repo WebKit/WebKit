@@ -420,7 +420,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-webkit', '--release', '--gtk'],
+                command=['perl', './Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')

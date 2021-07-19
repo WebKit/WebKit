@@ -60,7 +60,6 @@ class LibWebRTCCodecsProxy;
 class LocalAudioSessionRoutingArbitrator;
 class RemoteAudioDestinationManager;
 class RemoteAudioHardwareListenerProxy;
-class RemoteAudioMediaStreamTrackRendererManager;
 class RemoteAudioMediaStreamTrackRendererInternalUnitManager;
 class RemoteAudioSessionProxy;
 class RemoteAudioSessionProxyManager;
@@ -243,7 +242,6 @@ private:
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     std::unique_ptr<RemoteAudioMediaStreamTrackRendererInternalUnitManager> m_audioMediaStreamTrackRendererInternalUnitManager;
-    Ref<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)

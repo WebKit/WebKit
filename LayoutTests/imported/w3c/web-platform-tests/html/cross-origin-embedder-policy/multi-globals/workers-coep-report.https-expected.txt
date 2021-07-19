@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+ Hello
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+
+FAIL Multiple globals for Worker constructor: COEP reports assert_unreached: worker should have been blocked by COEP Reached unreachable code
+

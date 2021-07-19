@@ -139,7 +139,3 @@
     margin-inline-start: 2px;
     vertical-align: -4px;
 }
-
-.object-tree-property :matches(.formatted-string, .formatted-regexp) {
-    white-space: nowrap;
-}

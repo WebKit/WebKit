@@ -89,11 +89,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCEReactionsStringifierPrototype, JSTestCEReactionsStringifierPrototype::Base);
 
 using JSTestCEReactionsStringifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestCEReactionsStringifier>;
 
+template<> const unsigned JSTestCEReactionsStringifierDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestCEReactionsStringifierDOMConstructor::s_info = { "TestCEReactionsStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierDOMConstructor) };
 
 template<> JSValue JSTestCEReactionsStringifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -109,17 +112,30 @@ template<> void JSTestCEReactionsStringifierDOMConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestCEReactionsStringifierPrototypeTableIndex[8] = {
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestCEReactionsStringifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "value", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifier_value), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifier_value) } },
-    { "valueWithoutReactions", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifier_valueWithoutReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifier_valueWithoutReactions) } },
+    { "value", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifier_value), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifier_value) } },
+    { "valueWithoutReactions", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsStringifier_valueWithoutReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactionsStringifier_valueWithoutReactions) } },
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsStringifierPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactionsStringifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierPrototype) };
+static const HashTable JSTestCEReactionsStringifierPrototypeTable = { 4, 7, true, JSTestCEReactionsStringifier::info(), JSTestCEReactionsStringifierPrototypeTableValues, JSTestCEReactionsStringifierPrototypeTableIndex };
+const ClassInfo JSTestCEReactionsStringifierPrototype::s_info = { "TestCEReactionsStringifier", &Base::s_info, &JSTestCEReactionsStringifierPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsStringifierPrototype) };
 
 void JSTestCEReactionsStringifierPrototype::finishCreation(VM& vm)
 {

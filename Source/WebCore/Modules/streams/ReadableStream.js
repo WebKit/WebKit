@@ -100,17 +100,15 @@ function getReader(options)
     if (!@isReadableStream(this))
         throw @makeThisTypeError("ReadableStream", "getReader");
 
-    if (options === @undefined)
-         options = { };
-
-    if (options.mode === @undefined)
+    const mode = @toDictionary(options, { }, "ReadableStream.getReader takes an object as first argument").mode;
+    if (mode === @undefined)
         return new @ReadableStreamDefaultReader(this);
 
     // String conversion is required by spec, hence double equals.
-    if (options.mode == 'byob')
+    if (mode == 'byob')
         return new @ReadableStreamBYOBReader(this);
 
-    @throwRangeError("Invalid mode is specified");
+    @throwTypeError("Invalid mode is specified");
 }
 
 function pipeThrough(streams, options)

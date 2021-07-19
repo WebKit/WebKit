@@ -1075,8 +1075,13 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 #if ENABLE(MODEL_ELEMENT)
     else if (is<RenderModel>(renderer())) {
         auto element = downcast<HTMLModelElement>(renderer().element());
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+        if (auto* platformLayer = element->platformLayer())
+            m_graphicsLayer->setContentsToPlatformLayer(platformLayer, GraphicsLayer::ContentsLayerPurpose::Model);
+#else
         if (auto model = element->model())
             m_graphicsLayer->setContentsToModel(WTFMove(model));
+#endif
 
         layerConfigChanged = true;
     }

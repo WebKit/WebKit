@@ -6,7 +6,7 @@
 description("Testing the <code>AirplayPlacard</code> class.");
 
 debug("Placard with all parameters");
-const placard = new AirplayPlacard({ layoutTraits: LayoutTraits.macOS });
+const placard = new AirplayPlacard({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBe("placard.children[0].children[0].iconName", "Icons.AirplayPlacard");
 shouldBeEqualToString("placard.children[0].children[1].element.innerText", "AirPlay");

@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -73,7 +74,9 @@ TEST(WebKit, InvokeShareWithoutSelection)
     [webView waitForNextPresentationUpdate];
 }
 
-#if ENABLE(IMAGE_ANALYSIS) && ENABLE(APP_HIGHLIGHTS)
+#if ENABLE(IMAGE_ANALYSIS)
+
+#if ENABLE(APP_HIGHLIGHTS)
 
 TEST(WebKit, AppHighlightsInImageOverlays)
 {
@@ -99,6 +102,39 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     EXPECT_EQ([contentView targetForAction:createHighlightForNewQuickNoteWithRangeSelector withSender:nil], contentView);
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(APP_HIGHLIGHTS)
+#endif // ENABLE(APP_HIGHLIGHTS)
+
+static BOOL gCanPerformActionWithSenderResult = NO;
+static BOOL canPerformActionWithSender(id /* instance */, SEL, SEL /* action */, id /* sender */)
+{
+    return gCanPerformActionWithSenderResult;
+}
+
+TEST(WebKit, CaptureTextFromCamera)
+{
+    gCanPerformActionWithSenderResult = YES;
+    InstanceMethodSwizzler swizzler { UIResponder.class, @selector(canPerformAction:withSender:), reinterpret_cast<IMP>(canPerformActionWithSender) };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto contentView = [webView textInputContentView];
+
+    [webView synchronouslyLoadHTMLString:@"<input value='foo' autofocus>"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ([webView targetForAction:@selector(captureTextFromCamera:) withSender:nil], contentView);
+    EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+
+    [webView collapseToEnd];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+
+    gCanPerformActionWithSenderResult = NO;
+    EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -80,11 +80,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestInterfaceLeadingUnderscorePrototype, JSTestInterfaceLeadingUnderscorePrototype::Base);
 
 using JSTestInterfaceLeadingUnderscoreDOMConstructor = JSDOMConstructorNotConstructable<JSTestInterfaceLeadingUnderscore>;
 
+template<> const unsigned JSTestInterfaceLeadingUnderscoreDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestInterfaceLeadingUnderscoreDOMConstructor::s_info = { "TestInterfaceLeadingUnderscore", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscoreDOMConstructor) };
 
 template<> JSValue JSTestInterfaceLeadingUnderscoreDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -100,15 +103,24 @@ template<> void JSTestInterfaceLeadingUnderscoreDOMConstructor::initializeProper
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestInterfaceLeadingUnderscorePrototypeTableIndex[4] = {
+    { 1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestInterfaceLeadingUnderscorePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceLeadingUnderscoreConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "readonly", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceLeadingUnderscore_readonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "readonly", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceLeadingUnderscore_readonly), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 };
 
-const ClassInfo JSTestInterfaceLeadingUnderscorePrototype::s_info = { "TestInterfaceLeadingUnderscore", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscorePrototype) };
+static const HashTable JSTestInterfaceLeadingUnderscorePrototypeTable = { 2, 3, true, JSTestInterfaceLeadingUnderscore::info(), JSTestInterfaceLeadingUnderscorePrototypeTableValues, JSTestInterfaceLeadingUnderscorePrototypeTableIndex };
+const ClassInfo JSTestInterfaceLeadingUnderscorePrototype::s_info = { "TestInterfaceLeadingUnderscore", &Base::s_info, &JSTestInterfaceLeadingUnderscorePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceLeadingUnderscorePrototype) };
 
 void JSTestInterfaceLeadingUnderscorePrototype::finishCreation(VM& vm)
 {

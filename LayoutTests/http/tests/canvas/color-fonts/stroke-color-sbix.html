@@ -20,6 +20,7 @@ document.fonts.load(font).then(function() {
     let canvas = document.getElementById("canvas");
     let context = canvas.getContext("2d");
     context.font = font;
+    context.lineWidth = 2;
     context.strokeStyle = "green";
     context.strokeText("A\u7EB5B", 100, 100);
     if (window.testRunner)

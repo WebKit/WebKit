@@ -50,10 +50,8 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitTextCombiner, webkit_text_combiner, GST_TYPE_
 
 using namespace WebCore;
 
-void webKitTextCombinerHandleCapsEvent(WebKitTextCombiner* combiner, GstPad* pad, GstEvent* event)
+void webKitTextCombinerHandleCaps(WebKitTextCombiner* combiner, GstPad* pad, const GstCaps* caps)
 {
-    GstCaps* caps;
-    gst_event_parse_caps(event, &caps);
     ASSERT(caps);
     GST_DEBUG_OBJECT(combiner, "Handling caps %" GST_PTR_FORMAT, caps);
 

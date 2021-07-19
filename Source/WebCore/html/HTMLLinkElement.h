@@ -40,7 +40,7 @@ class Page;
 struct MediaQueryParserContext;
 
 template<typename T> class EventSender;
-typedef EventSender<HTMLLinkElement> LinkEventSender;
+using LinkEventSender = EventSender<HTMLLinkElement>;
 
 class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLLinkElement);

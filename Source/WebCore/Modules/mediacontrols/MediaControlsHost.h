@@ -54,7 +54,7 @@ public:
     static const AtomString& automaticKeyword();
     static const AtomString& forcedOnlyKeyword();
 
-    String platform() const;
+    String layoutTraitsClassName() const;
 
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList&);
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList&);

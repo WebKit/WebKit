@@ -1,8 +1,8 @@
 html5lib Parser Test
 
 
-FAIL html5lib_innerHTML_foreign-fragment.html 4917b7458e1fff6c5cb21d7baf6863cc9550c61e assert_equals: expected "#document\n| <svg nobr>\n|   \"X\"" but got "#document\n| <nobr>\n|   \"X\""
-FAIL html5lib_innerHTML_foreign-fragment.html b6d19b8ccacd2fde354df002b856f649ae91b20e assert_equals: expected "#document\n| <svg font>\n|   color=\"\"\n| \"X\"" but got "#document\n| <font>\n|   color=\"\"\n| \"X\""
+PASS html5lib_innerHTML_foreign-fragment.html 4917b7458e1fff6c5cb21d7baf6863cc9550c61e
+PASS html5lib_innerHTML_foreign-fragment.html b6d19b8ccacd2fde354df002b856f649ae91b20e
 PASS html5lib_innerHTML_foreign-fragment.html 0c2411aa96ee023941778adaa11977890b232dc3
 PASS html5lib_innerHTML_foreign-fragment.html af0d0fc82bcd7e5ba5bc40f781701552b19bb862
 PASS html5lib_innerHTML_foreign-fragment.html 0135b05656c198b96a9e0f94333aa2c0190ec795
@@ -39,17 +39,17 @@ PASS html5lib_innerHTML_foreign-fragment.html 3657e075c88c2088e844cfb5140d344083
 PASS html5lib_innerHTML_foreign-fragment.html 909832844e7ff22822696f30c9ad9aba08b86a25
 PASS html5lib_innerHTML_foreign-fragment.html 6ed082cc506da530d3128c24b8980cb551f28c43
 PASS html5lib_innerHTML_foreign-fragment.html 18609521e139b2ffea10b1cd0cab5dc133b921c4
-FAIL html5lib_innerHTML_foreign-fragment.html 14e07b0c2adecfe362428885346c200e89f08e66 assert_equals: expected "#document\n| <math div>" but got "#document\n| <div>"
+PASS html5lib_innerHTML_foreign-fragment.html 14e07b0c2adecfe362428885346c200e89f08e66
 PASS html5lib_innerHTML_foreign-fragment.html 0cb505b329a178f11563ae05fe553f33f57d01cd
-FAIL html5lib_innerHTML_foreign-fragment.html b4c43a4fcdaa1a4c753674c4f92987b70d54d80b assert_equals: expected "#document\n| <math div>" but got "#document\n| <div>"
+PASS html5lib_innerHTML_foreign-fragment.html b4c43a4fcdaa1a4c753674c4f92987b70d54d80b
 PASS html5lib_innerHTML_foreign-fragment.html 7021fb0933e92112b94ee54b923efb6bc71e3b07
 PASS html5lib_innerHTML_foreign-fragment.html 7c4b1614e2180b6649f3b02cf5c4a9d735166e1b
 PASS html5lib_innerHTML_foreign-fragment.html bdeacb9250263776c63c2c7f731717c389bdc34c
 PASS html5lib_innerHTML_foreign-fragment.html 2c46c15bdba5835b0f2f0e9eb5bc8566047b7d6d
 PASS html5lib_innerHTML_foreign-fragment.html 8dfcfbf823ad6c7b6f7b81efc352f29b4e41e8be
 PASS html5lib_innerHTML_foreign-fragment.html 74a8a40517c6fe110f0c71af7efb56d459ea8227
-FAIL html5lib_innerHTML_foreign-fragment.html 0c1782eb0f62f616627f0132729d6a194f8b7546 assert_equals: expected "#document\n| <svg div>\n|   <svg h1>\n|     \"X\"" but got "#document\n| <div>\n|   <h1>\n|     \"X\""
-FAIL html5lib_innerHTML_foreign-fragment.html 9dc5a819afe33d6babc04edc8f92cb8045f0f006 assert_equals: expected "#document\n| <svg div>" but got "#document\n| <div>"
+PASS html5lib_innerHTML_foreign-fragment.html 0c1782eb0f62f616627f0132729d6a194f8b7546
+PASS html5lib_innerHTML_foreign-fragment.html 9dc5a819afe33d6babc04edc8f92cb8045f0f006
 PASS html5lib_innerHTML_foreign-fragment.html 1a7663e45ee098567d82d0fa4351794cc7ef26f9
 PASS html5lib_innerHTML_foreign-fragment.html 74fc819300ea11a14c04d5840d1daf6f998be64c
 PASS html5lib_innerHTML_foreign-fragment.html fe33f97f6a5482b2663340572a0d79309199c815
@@ -58,92 +58,9 @@ PASS html5lib_innerHTML_foreign-fragment.html 822f22f8f09e3a5cc1575f17487f313854
 PASS html5lib_innerHTML_foreign-fragment.html 48e58a3e03d51a1676401ad872c03b96c52d3e2e
 PASS html5lib_innerHTML_foreign-fragment.html 4e716ca1a2ba1079c8e163f8ba13dfc448abbf0f
 PASS html5lib_innerHTML_foreign-fragment.html 33b553bb92ae345ef57f85312ad6e04c742f151e
-4917b7458e1fff6c5cb21d7baf6863cc9550c61e
-
-Input
-
-undefined
-Expected
-
-#document
-| <svg nobr>
-|   "X"
-Actual
-
-|<svg path>
-| <nobr>
-|   "X"
-b6d19b8ccacd2fde354df002b856f649ae91b20e
-
-Input
-
-undefined
-Expected
-
-#document
-| <svg font>
-|   color=""
-| "X"
-Actual
-
-|<svg path>
-| <font>
-|   color=""
-| "X"
-14e07b0c2adecfe362428885346c200e89f08e66
-
-Input
-
-undefined
-Expected
-
-#document
-| <math div>
-Actual
-
-|<math annotation-xml>
-| <div>
-b4c43a4fcdaa1a4c753674c4f92987b70d54d80b
-
-Input
-
-undefined
-Expected
-
-#document
-| <math div>
-Actual
-
-|<math math>
-| <div>
-0c1782eb0f62f616627f0132729d6a194f8b7546
-
-Input
-
-undefined
-Expected
-
-#document
-| <svg div>
-|   <svg h1>
-|     "X"
-Actual
-
-|<svg svg>
-| <div>
-|   <h1>
-|     "X"
-9dc5a819afe33d6babc04edc8f92cb8045f0f006
-
-Input
-
-undefined
-Expected
-
-#document
-| <svg div>
-Actual
-
-|<svg svg>
-| <div>
+PASS html5lib_innerHTML_foreign-fragment.html e4208cd58954d48c8493fdf215595a4afe21621a
+PASS html5lib_innerHTML_foreign-fragment.html 6c4299f29a55fe8d2972ab3b0b8af6c8c640c88f
+PASS html5lib_innerHTML_foreign-fragment.html 69fb90a251264e4e80762fa9acecd2c0bffc0c4c
+PASS html5lib_innerHTML_foreign-fragment.html f856588390b813aafc272f42800d31ba9a4844e6
+PASS html5lib_innerHTML_foreign-fragment.html 4c871c875e73e61adb24de1d18fad01363982e21
 

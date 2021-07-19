@@ -45,6 +45,7 @@
 #import "ShareableBitmapUtilities.h"
 #import "SharedMemory.h"
 #import "SyntheticEditingCommandType.h"
+#import "TapHandlingResult.h"
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
@@ -902,24 +903,23 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
-    bool shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint = ([&] {
+    auto tapHandlingResult = ([&] {
         if (!m_currentSyntheticClickMayNotBeMeaningful)
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
         if (oldFocusedElement != newFocusedElement)
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
         if (is<HTMLTextFormControlElement>(nodeRespondingToClick) || nodeRespondingToClick.hasEditableStyle())
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
         if (isProbablyMeaningfulClick(nodeRespondingToClick))
-            return false;
+            return TapHandlingResult::MeaningfulClick;
 
-        return true;
+        return TapHandlingResult::NonMeaningfulClick;
     })();
 
-    if (shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint)
-        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(roundedIntPoint(location)));
+    send(Messages::WebPageProxy::DidTapAtPoint(roundedIntPoint(location), tapHandlingResult));
 
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
@@ -935,7 +935,7 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEvent::M
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
-        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     } else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::OneFingerTap);
@@ -1143,7 +1143,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
         auto adjustedIntPoint = roundedIntPoint(adjustedPoint);
-        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
         return;
     }
@@ -1221,7 +1221,7 @@ void WebPage::commitPotentialTapFailed()
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
 
     auto adjustedIntPoint = roundedIntPoint(m_potentialTapLocation);
-    send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+    send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
     send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
 }
 
@@ -2895,8 +2895,10 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     }
 
 #if ENABLE(DATA_DETECTION)
-    if (info.isImageOverlayText && is<HTMLElement>(element))
-        dataDetectorImageOverlayPositionInformation(downcast<HTMLElement>(element), request, info);
+    if (info.isImageOverlayText && innerNonSharedNode->shadowHost() == &element && is<HTMLElement>(element)) {
+        if (auto htmlElement = makeRef(downcast<HTMLElement>(element)); htmlElement->hasImageOverlay())
+            dataDetectorImageOverlayPositionInformation(htmlElement.get(), request, info);
+    }
 #endif
 
     info.elementContext = page.contextForElement(element);
@@ -3034,8 +3036,9 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     if (isEditable)
         lineRect.setWidth(blockFlow.contentWidth());
 
+    info.isHorizontalWritingMode = renderer->isHorizontalWritingMode();
     info.lineCaretExtent = view->contentsToRootView(lineRect);
-    info.caretHeight = info.lineCaretExtent.height();
+    info.caretLength = info.isHorizontalWritingMode ? info.lineCaretExtent.height() : info.lineCaretExtent.width();
 
     bool lineContainsRequestPoint = info.lineCaretExtent.contains(request.point);
     // Force an I-beam cursor if the page didn't request a hand, and we're inside the bounds of the line.
@@ -3048,7 +3051,7 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
         info.lineCaretExtent = view->contentsToRootView(approximateLineRectInContentCoordinates);
         if (!info.lineCaretExtent.contains(request.point) || !isEditable)
             info.lineCaretExtent.setY(request.point.y() - info.lineCaretExtent.height() / 2);
-        info.caretHeight = info.lineCaretExtent.height();
+        info.caretLength = info.isHorizontalWritingMode ? info.lineCaretExtent.height() : info.lineCaretExtent.width();
     }
 
     auto nodeShouldNotUseIBeam = ^(Node* node) {
@@ -3072,6 +3075,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     FloatPoint adjustedPoint;
     auto* nodeRespondingToClickEvents = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
 
+    info.isContentEditable = nodeRespondingToClickEvents && nodeRespondingToClickEvents->isContentEditable();
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
 
     if (request.includeHasDoubleClickHandler)

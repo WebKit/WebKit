@@ -53,20 +53,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDedicatedWorkerGlobalScope_DedicatedWorkerGlo
 
 using JSDedicatedWorkerGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSDedicatedWorkerGlobalScope>;
 
-/* Hash table */
-
-static const struct CompactHashIndex JSDedicatedWorkerGlobalScopeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
-static const HashTableValue JSDedicatedWorkerGlobalScopeTableValues[] =
-{
-    { "DedicatedWorkerGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDedicatedWorkerGlobalScope_DedicatedWorkerGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-};
-
-static const HashTable JSDedicatedWorkerGlobalScopeTable = { 1, 1, true, JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopeTableValues, JSDedicatedWorkerGlobalScopeTableIndex };
+template<> const unsigned JSDedicatedWorkerGlobalScopeDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSDedicatedWorkerGlobalScopeDOMConstructor::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSDedicatedWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -81,7 +68,7 @@ template<> void JSDedicatedWorkerGlobalScopeDOMConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
 
 static const struct CompactHashIndex JSDedicatedWorkerGlobalScopePrototypeTableIndex[2] = {
     { -1, -1 },
@@ -104,7 +91,21 @@ void JSDedicatedWorkerGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSDedicatedWorkerGlobalScope::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, &JSDedicatedWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScope) };
+/* Hash table for Instance */
+
+static const struct CompactHashIndex JSDedicatedWorkerGlobalScopeInstanceTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSDedicatedWorkerGlobalScopeInstanceTableValues[] =
+{
+    { "DedicatedWorkerGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDedicatedWorkerGlobalScope_DedicatedWorkerGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+};
+
+static const HashTable JSDedicatedWorkerGlobalScopeInstanceTable = { 1, 1, true, JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopeInstanceTableValues, JSDedicatedWorkerGlobalScopeInstanceTableIndex };
+const ClassInfo JSDedicatedWorkerGlobalScope::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, &JSDedicatedWorkerGlobalScopeInstanceTable, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScope) };
 
 JSDedicatedWorkerGlobalScope::JSDedicatedWorkerGlobalScope(VM& vm, Structure* structure, Ref<DedicatedWorkerGlobalScope>&& impl)
     : JSWorkerGlobalScope(vm, structure, WTFMove(impl))

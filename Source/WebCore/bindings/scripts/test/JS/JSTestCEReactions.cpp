@@ -104,11 +104,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCEReactionsPrototype, JSTestCEReactionsPrototype::Base);
 
 using JSTestCEReactionsDOMConstructor = JSDOMConstructorNotConstructable<JSTestCEReactions>;
 
+template<> const unsigned JSTestCEReactionsDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestCEReactionsDOMConstructor::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsDOMConstructor) };
 
 template<> JSValue JSTestCEReactionsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -124,22 +127,60 @@ template<> void JSTestCEReactionsDOMConstructor::initializeProperties(VM& vm, JS
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestCEReactionsPrototypeTableIndex[33] = {
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 5, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 8, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, 32 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 7, -1 },
+    { -1, -1 },
+    { 6, -1 },
+};
+
 
 static const HashTableValue JSTestCEReactionsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactionsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "attributeWithCEReactions", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_attributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_attributeWithCEReactions) } },
-    { "reflectAttributeWithCEReactions", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_reflectAttributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_reflectAttributeWithCEReactions) } },
-    { "stringifierAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_stringifierAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_stringifierAttribute) } },
-    { "attributeWithCEReactionsNotNeeded", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_attributeWithCEReactionsNotNeeded), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_attributeWithCEReactionsNotNeeded) } },
-    { "reflectAttributeWithCEReactionsNotNeeded", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_reflectAttributeWithCEReactionsNotNeeded), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded) } },
-    { "stringifierAttributeNotNeeded", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_stringifierAttributeNotNeeded), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_stringifierAttributeNotNeeded) } },
+    { "attributeWithCEReactions", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_attributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_attributeWithCEReactions) } },
+    { "reflectAttributeWithCEReactions", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_reflectAttributeWithCEReactions), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_reflectAttributeWithCEReactions) } },
+    { "stringifierAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_stringifierAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_stringifierAttribute) } },
+    { "attributeWithCEReactionsNotNeeded", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_attributeWithCEReactionsNotNeeded), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_attributeWithCEReactionsNotNeeded) } },
+    { "reflectAttributeWithCEReactionsNotNeeded", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_reflectAttributeWithCEReactionsNotNeeded), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_reflectAttributeWithCEReactionsNotNeeded) } },
+    { "stringifierAttributeNotNeeded", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestCEReactions_stringifierAttributeNotNeeded), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestCEReactions_stringifierAttributeNotNeeded) } },
     { "methodWithCEReactions", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsPrototypeFunction_methodWithCEReactions), (intptr_t) (0) } },
     { "methodWithCEReactionsNotNeeded", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestCEReactionsPrototypeFunction_methodWithCEReactionsNotNeeded), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestCEReactionsPrototype::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsPrototype) };
+static const HashTable JSTestCEReactionsPrototypeTable = { 9, 31, true, JSTestCEReactions::info(), JSTestCEReactionsPrototypeTableValues, JSTestCEReactionsPrototypeTableIndex };
+const ClassInfo JSTestCEReactionsPrototype::s_info = { "TestCEReactions", &Base::s_info, &JSTestCEReactionsPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsPrototype) };
 
 void JSTestCEReactionsPrototype::finishCreation(VM& vm)
 {

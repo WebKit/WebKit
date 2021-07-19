@@ -863,7 +863,7 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS)
     WEBCORE_EXPORT bool hasCachedTextRecognitionResult(const HTMLElement&) const;
-    void cacheTextRecognitionResult(const HTMLElement&, const IntSize& offsetSize, const TextRecognitionResult&);
+    void cacheTextRecognitionResult(const HTMLElement&, const IntRect& containerRect, const TextRecognitionResult&);
 #endif
 
 private:
@@ -1189,7 +1189,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.
-    Vector<std::pair<WeakPtr<HTMLElement>, std::pair<TextRecognitionResult, IntSize>>> m_textRecognitionResultsByElement;
+    Vector<std::pair<WeakPtr<HTMLElement>, std::pair<TextRecognitionResult, IntRect>>> m_textRecognitionResultsByElement;
     WeakHashSet<HTMLElement> m_elementsWithTextRecognitionResults;
 #endif
 };

@@ -1084,6 +1084,16 @@
 		5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		538F15E7268FBBB600D601C4 /* UnifiedSource148.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DD268FBBB300D601C4 /* UnifiedSource148.cpp */; };
+		538F15E8268FBBB600D601C4 /* UnifiedSource151.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DE268FBBB300D601C4 /* UnifiedSource151.cpp */; };
+		538F15E9268FBBB600D601C4 /* UnifiedSource152.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15DF268FBBB300D601C4 /* UnifiedSource152.cpp */; };
+		538F15EA268FBBB600D601C4 /* UnifiedSource154.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E0268FBBB400D601C4 /* UnifiedSource154.cpp */; };
+		538F15EB268FBBB600D601C4 /* UnifiedSource150.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E1268FBBB400D601C4 /* UnifiedSource150.cpp */; };
+		538F15ED268FBBB600D601C4 /* UnifiedSource153.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E3268FBBB500D601C4 /* UnifiedSource153.cpp */; };
+		538F15EE268FBBB600D601C4 /* UnifiedSource147.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E4268FBBB500D601C4 /* UnifiedSource147.cpp */; };
+		538F15EF268FBBB600D601C4 /* UnifiedSource155.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E5268FBBB500D601C4 /* UnifiedSource155.cpp */; };
+		538F15F0268FBBB600D601C4 /* UnifiedSource149.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E6268FBBB600D601C4 /* UnifiedSource149.cpp */; };
+		538F15F2268FBC7B00D601C4 /* UnifiedSource146.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15F1268FBC7B00D601C4 /* UnifiedSource146.cpp */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
 		539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 539930C722AD3B9A0051CDE2 /* WeakObjectRefConstructor.h */; };
 		539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAD22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h */; };
@@ -1877,6 +1887,7 @@
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36EDCE524F0975700E60DA2 /* Concurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = E36EDCE424F0975700E60DA2 /* Concurrency.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3711992253FA87F00BA69A0 /* Gate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3711991253FA87E00BA69A0 /* Gate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E374166E26912BC700C80789 /* ObjectConstructorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E374166D26912BC700C80789 /* ObjectConstructorInlines.h */; };
 		E3750CC82502E87E006A0AAB /* IntlDateTimeFormatInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3750CC72502E87E006A0AAB /* IntlDateTimeFormatInlines.h */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
@@ -3859,6 +3870,16 @@
 		5381B9361E60E9660090F794 /* WasmFaultSignalHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFaultSignalHandler.cpp; sourceTree = "<group>"; };
 		5381B9381E60E97D0090F794 /* WasmFaultSignalHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFaultSignalHandler.h; sourceTree = "<group>"; };
 		5383AA2F1E65E8A100A532FC /* JSWebAssemblyCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyCodeBlock.cpp; path = js/JSWebAssemblyCodeBlock.cpp; sourceTree = "<group>"; };
+		538F15DD268FBBB300D601C4 /* UnifiedSource148.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource148.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource148.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15DE268FBBB300D601C4 /* UnifiedSource151.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource151.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource151.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15DF268FBBB300D601C4 /* UnifiedSource152.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource152.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource152.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15E0268FBBB400D601C4 /* UnifiedSource154.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource154.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource154.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15E1268FBBB400D601C4 /* UnifiedSource150.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource150.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource150.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15E3268FBBB500D601C4 /* UnifiedSource153.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource153.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource153.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15E4268FBBB500D601C4 /* UnifiedSource147.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource147.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource147.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15E5268FBBB500D601C4 /* UnifiedSource155.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource155.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource155.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15E6268FBBB600D601C4 /* UnifiedSource149.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource149.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource149.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		538F15F1268FBC7B00D601C4 /* UnifiedSource146.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource146.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource146.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGenericTypedArrayViewPrototypeFunctions.h; sourceTree = "<group>"; };
 		53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewPrototype.h; sourceTree = "<group>"; };
 		53917E831B791CB8000EBD33 /* TypedArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TypedArrayPrototype.js; path = builtins/TypedArrayPrototype.js; sourceTree = SOURCE_ROOT; };
@@ -5129,6 +5150,7 @@
 		E36CC9462086314F0051FFD6 /* WasmCreationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCreationMode.h; sourceTree = "<group>"; };
 		E36EDCE424F0975700E60DA2 /* Concurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Concurrency.h; sourceTree = "<group>"; };
 		E3711991253FA87E00BA69A0 /* Gate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gate.h; sourceTree = "<group>"; };
+		E374166D26912BC700C80789 /* ObjectConstructorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectConstructorInlines.h; sourceTree = "<group>"; };
 		E3750CC72502E87E006A0AAB /* IntlDateTimeFormatInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatInlines.h; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
@@ -6199,7 +6221,6 @@
 		1429D92C0ED22D7000B89619 /* jit */ = {
 			isa = PBXGroup;
 			children = (
-				0FB57068267A642E0080FA8B /* HashableRegisterSet.h */,
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
 				6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */,
@@ -6226,6 +6247,7 @@
 				0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */,
 				0F93274C1C1F66AA00CF6564 /* GPRInfo.cpp */,
 				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
+				0FB57068267A642E0080FA8B /* HashableRegisterSet.h */,
 				DC2143051CA32E52000A8869 /* ICStats.cpp */,
 				DC2143061CA32E52000A8869 /* ICStats.h */,
 				DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */,
@@ -6904,6 +6926,16 @@
 				530A66B71FA3E77D0026A545 /* UnifiedSource143.cpp */,
 				530A66AD1FA3E7770026A545 /* UnifiedSource144.cpp */,
 				530A66B01FA3E77A0026A545 /* UnifiedSource145.cpp */,
+				538F15F1268FBC7B00D601C4 /* UnifiedSource146.cpp */,
+				538F15E4268FBBB500D601C4 /* UnifiedSource147.cpp */,
+				538F15DD268FBBB300D601C4 /* UnifiedSource148.cpp */,
+				538F15E6268FBBB600D601C4 /* UnifiedSource149.cpp */,
+				538F15E1268FBBB400D601C4 /* UnifiedSource150.cpp */,
+				538F15DE268FBBB300D601C4 /* UnifiedSource151.cpp */,
+				538F15DF268FBBB300D601C4 /* UnifiedSource152.cpp */,
+				538F15E3268FBBB500D601C4 /* UnifiedSource153.cpp */,
+				538F15E0268FBBB400D601C4 /* UnifiedSource154.cpp */,
+				538F15E5268FBBB500D601C4 /* UnifiedSource155.cpp */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -7767,6 +7799,7 @@
 				142D3938103E4560007DCB52 /* NumericStrings.h */,
 				BC2680C60E16D4E900A06E92 /* ObjectConstructor.cpp */,
 				BC2680C70E16D4E900A06E92 /* ObjectConstructor.h */,
+				E374166D26912BC700C80789 /* ObjectConstructorInlines.h */,
 				FE48E6371EB118AD005D7A96 /* ObjectInitializationScope.cpp */,
 				FE48E6361EB1188F005D7A96 /* ObjectInitializationScope.h */,
 				E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */,
@@ -9157,7 +9190,6 @@
 				FE912B5125311AD100FABDDF /* AbstractSlotVisitorInlines.h in Headers */,
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
 				E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */,
-				6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */,
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
 				9168BD872447BA4E0080FFB4 /* AggregateError.h in Headers */,
 				918E15C32447B22700447A56 /* AggregateErrorConstructor.h in Headers */,
@@ -9257,6 +9289,7 @@
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
 				43C392AB1C3BEB0500241F53 /* AssemblerCommon.h in Headers */,
 				0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */,
+				6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */,
 				A784A26111D16622005776AC /* ASTBuilder.h in Headers */,
 				8B6016F61F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h in Headers */,
 				E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */,
@@ -9904,6 +9937,7 @@
 				0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */,
 				142E3136134FF0A600AFADB5 /* HandleSet.h in Headers */,
 				1478297B1379E8A800A7C2A3 /* HandleTypes.h in Headers */,
+				0FB57069267A642E0080FA8B /* HashableRegisterSet.h in Headers */,
 				79A090801D768465008B889B /* HashMapImpl.h in Headers */,
 				FEF5B4232628A0EE0016E776 /* HashMapImplInlines.h in Headers */,
 				79DFCBDB1D88C59600527D03 /* HasOwnPropertyCache.h in Headers */,
@@ -10097,7 +10131,6 @@
 				0F2B66E517B6B5AB00A7AE3F /* JSArrayBufferConstructor.h in Headers */,
 				0F2B66E717B6B5AB00A7AE3F /* JSArrayBufferPrototype.h in Headers */,
 				A38D250E25800D440042BFDD /* JSArrayBufferPrototypeInlines.h in Headers */,
-				0FB57069267A642E0080FA8B /* HashableRegisterSet.h in Headers */,
 				0F2B66E917B6B5AB00A7AE3F /* JSArrayBufferView.h in Headers */,
 				0F2B66EA17B6B5AB00A7AE3F /* JSArrayBufferViewInlines.h in Headers */,
 				539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */,
@@ -10385,6 +10418,7 @@
 				79AC30FF1F99536400484FD7 /* ObjectAllocationProfileInlines.h in Headers */,
 				BC18C4450E16F5CD00B34460 /* ObjectConstructor.h in Headers */,
 				996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */,
+				E374166E26912BC700C80789 /* ObjectConstructorInlines.h in Headers */,
 				FE48E6381EB118D2005D7A96 /* ObjectInitializationScope.h in Headers */,
 				E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */,
 				0FD3E40A1B618B6600C80E1E /* ObjectPropertyCondition.h in Headers */,
@@ -11768,6 +11802,16 @@
 				530A66C21FA3E78B0026A545 /* UnifiedSource143.cpp in Sources */,
 				530A66C31FA3E78B0026A545 /* UnifiedSource144.cpp in Sources */,
 				530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */,
+				538F15F2268FBC7B00D601C4 /* UnifiedSource146.cpp in Sources */,
+				538F15EE268FBBB600D601C4 /* UnifiedSource147.cpp in Sources */,
+				538F15E7268FBBB600D601C4 /* UnifiedSource148.cpp in Sources */,
+				538F15F0268FBBB600D601C4 /* UnifiedSource149.cpp in Sources */,
+				538F15EB268FBBB600D601C4 /* UnifiedSource150.cpp in Sources */,
+				538F15E8268FBBB600D601C4 /* UnifiedSource151.cpp in Sources */,
+				538F15E9268FBBB600D601C4 /* UnifiedSource152.cpp in Sources */,
+				538F15ED268FBBB600D601C4 /* UnifiedSource153.cpp in Sources */,
+				538F15EA268FBBB600D601C4 /* UnifiedSource154.cpp in Sources */,
+				538F15EF268FBBB600D601C4 /* UnifiedSource155.cpp in Sources */,
 				525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

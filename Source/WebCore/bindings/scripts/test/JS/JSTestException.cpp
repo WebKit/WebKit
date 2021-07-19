@@ -80,11 +80,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestExceptionPrototype, JSTestExceptionPrototype::Base);
 
 using JSTestExceptionDOMConstructor = JSDOMConstructorNotConstructable<JSTestException>;
 
+template<> const unsigned JSTestExceptionDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestExceptionDOMConstructor::s_info = { "TestException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestExceptionDOMConstructor) };
 
 template<> JSValue JSTestExceptionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -100,15 +103,25 @@ template<> void JSTestExceptionDOMConstructor::initializeProperties(VM& vm, JSDO
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestExceptionPrototypeTableIndex[5] = {
+    { -1, -1 },
+    { 0, 4 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
 
 static const HashTableValue JSTestExceptionPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "name", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestException_name), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "name", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestException_name), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 };
 
-const ClassInfo JSTestExceptionPrototype::s_info = { "TestException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
+static const HashTable JSTestExceptionPrototypeTable = { 2, 3, true, JSTestException::info(), JSTestExceptionPrototypeTableValues, JSTestExceptionPrototypeTableIndex };
+const ClassInfo JSTestExceptionPrototype::s_info = { "TestException", &Base::s_info, &JSTestExceptionPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
 
 void JSTestExceptionPrototype::finishCreation(VM& vm)
 {

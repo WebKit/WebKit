@@ -37,6 +37,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/Settings.h>
 #include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/pc/peer_connection_factory.h>
@@ -87,7 +88,7 @@ void LibWebRTCProvider::registerMDNSName(DocumentIdentifier documentIdentifier, 
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RTCSocketFactory(String&& userAgent);
+    RTCSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&&);
 
 private:
     // SuspendableSocketFactory
@@ -97,19 +98,25 @@ private:
     rtc::AsyncResolverInterface* CreateAsyncResolver() final;
     void suspend() final;
     void resume() final;
+    void disableRelay() final { m_isRelayDisabled = true; }
 
 private:
     String m_userAgent;
+    bool m_isFirstParty { false };
+    bool m_isRelayDisabled { false };
+    RegistrableDomain m_domain;
 };
 
-RTCSocketFactory::RTCSocketFactory(String&& userAgent)
+RTCSocketFactory::RTCSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&& domain)
     : m_userAgent(WTFMove(userAgent))
+    , m_isFirstParty(isFirstParty)
+    , m_domain(WTFMove(domain))
 {
 }
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateUdpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createUdpSocket(this, address, minPort, maxPort);
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createUdpSocket(this, address, minPort, maxPort, m_isFirstParty, m_isRelayDisabled, m_domain);
 }
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options)
@@ -150,9 +157,9 @@ void LibWebRTCProvider::startedNetworkThread()
     WebProcess::singleton().libWebRTCNetwork().setAsActive();
 }
 
-std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent)
+std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&& domain)
 {
-    return makeUnique<RTCSocketFactory>(WTFMove(userAgent));
+    return makeUnique<RTCSocketFactory>(WTFMove(userAgent), isFirstParty, WTFMove(domain));
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> LibWebRTCProvider::createRTCDataChannelRemoteHandlerConnection()

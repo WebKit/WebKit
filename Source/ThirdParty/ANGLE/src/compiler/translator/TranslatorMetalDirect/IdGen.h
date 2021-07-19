@@ -26,6 +26,7 @@ class IdGen : angle::NonCopyable
     Name createNewName(std::initializer_list<ImmutableString> baseNames);
     Name createNewName(std::initializer_list<Name> baseNames);
     Name createNewName(std::initializer_list<const char *> baseNames);
+    Name createNewName();
 
   private:
     template <typename String, typename StringToImmutable>

@@ -13,7 +13,7 @@ function doTest(o, m) {
 
     assert(!!error);
     assert(error instanceof SyntaxError);
-    assert(error.message === "Cannot reference undeclared private names");
+    assert(error.message.startsWith("Cannot reference undeclared private names"));
 }
 
 class C {

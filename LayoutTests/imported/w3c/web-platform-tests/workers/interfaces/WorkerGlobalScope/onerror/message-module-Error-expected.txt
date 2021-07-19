@@ -1,0 +1,14 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Throw Error in toplevel: module: listener Test timed out
+TIMEOUT Throw Error in toplevel: module: handler Test timed out
+PASS Throw Error in setTimeout-function: module: listener
+PASS Throw Error in setTimeout-function: module: handler
+PASS Throw Error in setTimeout-string: module: listener
+PASS Throw Error in setTimeout-string: module: handler
+PASS Throw Error in onmessage: module: listener
+PASS Throw Error in onmessage: module: handler
+PASS Throw Error in onerror: module: listener
+PASS Throw Error in onerror: module: handler
+

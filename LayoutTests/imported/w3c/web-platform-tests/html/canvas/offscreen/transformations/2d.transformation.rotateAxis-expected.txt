@@ -1,0 +1,7 @@
+2d.transformation.rotateAxis
+
+rotateAxis() results in the correct transformation matrix
+
+
+FAIL rotateAxis() results in the correct transformation matrix ctx.rotateAxis is not a function. (In 'ctx.rotateAxis(axis.x, axis.y, axis.z, angle)', 'ctx.rotateAxis' is undefined)
+

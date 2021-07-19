@@ -83,6 +83,7 @@
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/SubstituteData.h>
 #include <WebCore/TextManipulationController.h>
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
@@ -209,6 +210,10 @@ class SharedBuffer;
 class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
+
+#if HAVE(ARKIT_INLINE_PREVIEW)
+class HTMLModelElement;
+#endif
 
 enum SyntheticClickType : int8_t;
 enum class CreateNewGroupForHighlight : bool;
@@ -1461,6 +1466,14 @@ public:
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
 
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+    void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&);
+    void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
+#endif
+
     void didHandleOrPreventMouseDownOrMouseUpEvent();
     void prepareToRunModalJavaScriptDialog();
 
@@ -1555,7 +1568,7 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    void loadDataImpl(uint64_t navigationID, bool shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&&, Ref<WebCore::SharedBuffer>&&, WebCore::ResourceRequest&&, WebCore::ResourceResponse&&, const URL& failingURL, const UserData&, std::optional<NavigatingToAppBoundDomain>, WebCore::SubstituteData::SessionHistoryVisibility, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow);
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);

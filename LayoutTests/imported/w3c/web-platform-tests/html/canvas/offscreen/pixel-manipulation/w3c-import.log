@@ -60,8 +60,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.source.outside.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.source.size.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.source.size.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.unaffected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.unaffected.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.zero.html

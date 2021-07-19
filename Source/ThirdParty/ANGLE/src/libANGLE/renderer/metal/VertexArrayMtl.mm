@@ -744,87 +744,83 @@ std::vector<DrawCommandRange> VertexArrayMtl::getDrawIndices(const gl::Context *
                              uint32_t indexCount,
                              size_t offset)
 {
-    ContextMtl *contextMtl   = mtl::GetImpl(glContext);
+    ContextMtl *contextMtl = mtl::GetImpl(glContext);
     std::vector<DrawCommandRange> drawCommands;
-    
-    BufferMtl *idxBuffer     = mtl::GetImpl(getState().getElementArrayBuffer());
-    const std::vector<IndexRange> restartIndices = idxBuffer->getRestartIndices(contextMtl, originalIndexType);
+    // The indexed draw needs to be split to separate draw commands in case primitive restart is enabled
+    // and the drawn primitive supports primitive restart. Otherwise the whole indexed draw can be sent
+    // as one draw command.
     bool isSimpleType =
         primitiveMode == gl::PrimitiveMode::Points ||
         primitiveMode == gl::PrimitiveMode::Lines ||
         primitiveMode == gl::PrimitiveMode::Triangles;
-    //If prim restart isn't enabled, or we're drawing a restartable type, or there's no restarts, skip breaking up draw commands.
-    if(restartIndices.size() == 0 || !isSimpleType || !glContext->getState().isPrimitiveRestartEnabled())
+    if (!isSimpleType || !glContext->getState().isPrimitiveRestartEnabled())
     {
         drawCommands.push_back({indexCount, offset});
         return drawCommands;
     }
-    else
+
+    BufferMtl *idxBuffer = mtl::GetImpl(getState().getElementArrayBuffer());
+    const std::vector<IndexRange> &restartIndices = idxBuffer->getRestartIndices(contextMtl, originalIndexType);
+    // Reminder, offset is in bytes, not elements.
+    // Slice draw commands based off of indices.
+    int nIndicesPerPrimitive;
+    switch (primitiveMode)
     {
-        //Reminder, offset is in bytes, not elements.
-        //Slice draw commands based off of indices.
-        int nIndicesPerPrimitive;
-        switch(primitiveMode)
-        {
-            case gl::PrimitiveMode::Points:
-                nIndicesPerPrimitive = 1;
-                break;
-            case gl::PrimitiveMode::Lines:
-                nIndicesPerPrimitive = 2;
-                break;
-            case gl::PrimitiveMode::Triangles:
-                nIndicesPerPrimitive = 3;
-                break;
-            default:
-                //Unreachable
-                ASSERT(FALSE);
-                return drawCommands;
-        }
-        const GLuint indexTypeBytes        = gl::GetDrawElementsTypeSize(indexType);
-        uint32_t indicesLeft = indexCount;
-        size_t currentIndexOffset = offset / indexTypeBytes;
-        
-        for(auto & range : restartIndices)
-        {
-            if(range.restartBegin > currentIndexOffset)
-            {
-                int64_t nIndicesInSlice = ((int64_t)range.restartBegin - currentIndexOffset) - ((int64_t) range.restartBegin - currentIndexOffset) % nIndicesPerPrimitive;
-                size_t restartSize = (range.restartEnd - range.restartBegin) + 1;
-                if(nIndicesInSlice > nIndicesPerPrimitive)
-                    drawCommands.push_back({(uint32_t)nIndicesInSlice, currentIndexOffset * indexTypeBytes});
-                //Account for dropped indices due to incomplete primitives.
-                size_t indicesUsed = ( (range.restartBegin + restartSize) - currentIndexOffset);
-                if(indicesLeft <= indicesUsed)
-                {
-                    indicesLeft = 0;
-                }
-                else
-                {
-                    indicesLeft -= indicesUsed;
-                }
-                currentIndexOffset = (size_t)(range.restartBegin + restartSize);
-            }
-            //If the initial offset into the index buffer is within a restart zone, move to the end of the restart zone.
-            else if(range.restartEnd >= currentIndexOffset)
-            {
-                size_t restartSize = (range.restartEnd - currentIndexOffset) + 1;
-                if(indicesLeft <= restartSize)
-                {
-                    indicesLeft = 0;
-                }
-                else
-                {
-                    indicesLeft -= restartSize;
-                }
-                currentIndexOffset = (size_t)(currentIndexOffset + restartSize);
-            }
-            
-        }
-        if(indicesLeft >= nIndicesPerPrimitive)
-            drawCommands.push_back({indicesLeft, currentIndexOffset * indexTypeBytes});
-        return drawCommands;
+        case gl::PrimitiveMode::Points:
+            nIndicesPerPrimitive = 1;
+            break;
+        case gl::PrimitiveMode::Lines:
+            nIndicesPerPrimitive = 2;
+            break;
+        case gl::PrimitiveMode::Triangles:
+            nIndicesPerPrimitive = 3;
+            break;
+        default:
+            UNREACHABLE();
+            return drawCommands;
     }
-    
+    const GLuint indexTypeBytes = gl::GetDrawElementsTypeSize(indexType);
+    uint32_t indicesLeft = indexCount;
+    size_t currentIndexOffset = offset / indexTypeBytes;
+
+    for (auto &range : restartIndices)
+    {
+        if (range.restartBegin > currentIndexOffset)
+        {
+            int64_t nIndicesInSlice = ((int64_t)range.restartBegin - currentIndexOffset) - ((int64_t) range.restartBegin - currentIndexOffset) % nIndicesPerPrimitive;
+            size_t restartSize = (range.restartEnd - range.restartBegin) + 1;
+            if (nIndicesInSlice > nIndicesPerPrimitive)
+                drawCommands.push_back({(uint32_t) nIndicesInSlice, currentIndexOffset * indexTypeBytes});
+            // Account for dropped indices due to incomplete primitives.
+            size_t indicesUsed = ( (range.restartBegin + restartSize) - currentIndexOffset);
+            if (indicesLeft <= indicesUsed)
+            {
+                indicesLeft = 0;
+            }
+            else
+            {
+                indicesLeft -= indicesUsed;
+            }
+            currentIndexOffset = (size_t)(range.restartBegin + restartSize);
+        }
+        // If the initial offset into the index buffer is within a restart zone, move to the end of the restart zone.
+        else if (range.restartEnd >= currentIndexOffset)
+        {
+            size_t restartSize = (range.restartEnd - currentIndexOffset) + 1;
+            if (indicesLeft <= restartSize)
+            {
+                indicesLeft = 0;
+            }
+            else
+            {
+                indicesLeft -= restartSize;
+            }
+            currentIndexOffset = (size_t)(currentIndexOffset + restartSize);
+        }
+    }
+    if (indicesLeft >= nIndicesPerPrimitive)
+        drawCommands.push_back({indicesLeft, currentIndexOffset * indexTypeBytes});
+    return drawCommands;
 }
 
 

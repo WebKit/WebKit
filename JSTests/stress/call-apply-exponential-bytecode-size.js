@@ -1,7 +1,6 @@
-// This test seems to require 64 MB for the executable memory pool. As per
-// jit/ExecutableAllocator.cpp, it is 64 MB or above only for arm64 and
-// x86-64.
-//@skip if $architecture != "arm64" and $architecture != "x86-64"
+// This test seems to require 64 MB for the executable memory pool, but only
+// arm64 and x86-64 have that much by default.
+//@ requireOptions("--jitMemoryReservationSize=67108864") if !["arm64", "x86-64"].include?($architecture)
 "use strict";
 
 function assert(b) {

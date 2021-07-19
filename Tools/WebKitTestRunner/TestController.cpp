@@ -984,7 +984,10 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageClearWheelEventTestMonitor(m_mainWebView->page());
 
+    // GStreamer uses fakesink to avoid sound output during testing and doing this creates trouble with volume events.
+#if !USE(GSTREAMER)
     WKPageSetMediaVolume(m_mainWebView->page(), 0);
+#endif
 
     WKPageClearUserMediaState(m_mainWebView->page());
 
@@ -2212,9 +2215,9 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
         exit(1);
 }
 
-void TestController::didNotHandleTapAsMeaningfulClick()
+void TestController::didHandleTap(bool wasMeaningful)
 {
-    m_currentInvocation->didNotHandleTapAsMeaningfulClick();
+    m_currentInvocation->didHandleTap(wasMeaningful);
 }
 
 void TestController::didBeginNavigationGesture(WKPageRef)

@@ -108,6 +108,7 @@
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyEventCodesIOS.h>
+#import <WebCore/KeyboardScroll.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NotImplemented.h>
@@ -116,6 +117,7 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/ScrollTypes.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
 #import <WebCore/TextAlternativeWithRange.h>
@@ -1180,6 +1182,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _removeContainerForContextMenuHintPreviews];
     [self _removeContainerForDragPreviews];
     [self _removeContainerForDropPreviews];
+    [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
 
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
@@ -2025,6 +2028,15 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 - (CGRect)tapHighlightViewRect
 {
     return [_highlightView frame];
+}
+
+- (UIGestureRecognizer *)imageAnalysisGestureRecognizer
+{
+#if ENABLE(IMAGE_ANALYSIS)
+    return _imageAnalysisGestureRecognizer.get();
+#else
+    return nil;
+#endif
 }
 
 - (void)_showTapHighlight
@@ -3878,7 +3890,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if ((action == @selector(captureTextFromCamera:) || action == @selector(_insertTextFromCamera:)) && !editorState.isContentEditable)
+    if (action == @selector(captureTextFromCamera:) && (!editorState.isContentEditable || editorState.selectionIsRange))
         return NO;
 #endif
 
@@ -4623,7 +4635,20 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    if (_page->isRunningModalJavaScriptDialog() || _domPasteRequestHandler) {
+    bool respondWithLastKnownAutocorrectionContext = ([&] {
+        if (_page->isRunningModalJavaScriptDialog())
+            return true;
+
+        if (_domPasteRequestHandler)
+            return true;
+
+        if (_isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext)
+            return true;
+
+        return false;
+    })();
+
+    if (respondWithLastKnownAutocorrectionContext) {
         completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]);
         return;
     }
@@ -4648,7 +4673,33 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
 {
     _lastAutocorrectionContext = context;
+    [self unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded];
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
+}
+
+- (void)updateSoftwareKeyboardSuppressionStateFromWebView
+{
+    BOOL webViewIsSuppressingSoftwareKeyboard = [_webView _suppressSoftwareKeyboard];
+    if (webViewIsSuppressingSoftwareKeyboard) {
+        _unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate = NO;
+        self._suppressSoftwareKeyboard = webViewIsSuppressingSoftwareKeyboard;
+        return;
+    }
+
+    if (self._suppressSoftwareKeyboard == webViewIsSuppressingSoftwareKeyboard)
+        return;
+
+    if (!std::exchange(_unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate, YES))
+        _page->requestAutocorrectionContext();
+}
+
+- (void)unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded
+{
+    if (!std::exchange(_unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate, NO))
+        return;
+
+    SetForScope<BOOL> unsuppressSoftwareKeyboardScope { _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext, YES };
+    self._suppressSoftwareKeyboard = NO;
 }
 
 - (void)runModalJavaScriptDialog:(CompletionHandler<void()>&&)callback
@@ -5910,21 +5961,23 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return YES;
 }
 
-- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction
+- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction
 {
-    BOOL directionIsHorizontal = direction == WebKit::ScrollingDirection::Left || direction == WebKit::ScrollingDirection::Right;
+    BOOL directionIsHorizontal = direction == WebCore::ScrollDirection::ScrollLeft || direction == WebCore::ScrollDirection::ScrollRight;
 
     switch (increment) {
-    case WebKit::ScrollingIncrement::Document: {
+    case WebCore::ScrollGranularity::ScrollByDocument: {
         CGSize documentSize = [self convertRect:self.bounds toView:self.webView].size;
         return directionIsHorizontal ? documentSize.width : documentSize.height;
     }
-    case WebKit::ScrollingIncrement::Page: {
+    case WebCore::ScrollGranularity::ScrollByPage: {
         CGSize pageSize = [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:self.webView];
         return directionIsHorizontal ? pageSize.width : pageSize.height;
     }
-    case WebKit::ScrollingIncrement::Line:
+    case WebCore::ScrollGranularity::ScrollByLine:
         return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pixelsPerLineStep()) toView:self.webView].height;
+    case WebCore::ScrollGranularity::ScrollByPixel:
+        return 0;
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -9585,8 +9638,9 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     double scaleFactor = self._contentZoomScale;
 
     UIPointerStyle *(^iBeamCursor)(void) = ^{
-        float beamLength = _positionInformation.caretHeight * scaleFactor;
-        UIAxis iBeamConstraintAxes = UIAxisVertical;
+        float beamLength = _positionInformation.caretLength * scaleFactor;
+        auto axisOrientation = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
+        UIAxis iBeamConstraintAxes = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
 
         // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
         if (beamLength > [UITextInteraction _maximumBeamSnappingLength])
@@ -9596,7 +9650,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         if ([region.identifier isEqual:editablePointerRegionIdentifier])
             iBeamConstraintAxes = UIAxisNeither;
 
-        return [UIPointerStyle styleWithShape:[UIPointerShape beamWithPreferredLength:beamLength axis:UIAxisVertical] constrainedAxes:iBeamConstraintAxes];
+        return [UIPointerStyle styleWithShape:[UIPointerShape beamWithPreferredLength:beamLength axis:axisOrientation] constrainedAxes:iBeamConstraintAxes];
     };
 
     if (self.webView._editable) {
@@ -10064,8 +10118,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return NO;
 }
 
-#pragma mark - WKImageAnalysisGestureRecognizerDelegate
-
 - (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
 {
     auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
@@ -10091,6 +10143,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         completion(WebKit::makeTextRecognitionResult(result));
     }).get()];
 }
+
+#pragma mark - WKImageAnalysisGestureRecognizerDelegate
 
 - (void)imageAnalysisGestureDidBegin:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
 {
@@ -10119,7 +10173,25 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
             return;
 
-        bool shouldAnalyzeImageAtLocation = information.isImage && information.image && information.imageElementContext && !information.isAnimatedImage;
+        bool shouldAnalyzeImageAtLocation = ([&] {
+            if (!information.isImage)
+                return false;
+
+            if (!information.image)
+                return false;
+
+            if (!information.imageElementContext)
+                return false;
+
+            if (information.isAnimatedImage)
+                return false;
+
+            if (information.isContentEditable)
+                return false;
+
+            return true;
+        })();
+
         if (!strongSelf->_pendingImageAnalysisRequestIdentifier || !shouldAnalyzeImageAtLocation) {
             [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
             return;
@@ -10274,11 +10346,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif
         }];
     } forRequest:request];
-}
-
-- (void)_insertTextFromCameraForWebView:(id)sender
-{
-    [super _insertTextFromCamera:sender];
 }
 
 - (void)captureTextFromCameraForWebView:(id)sender

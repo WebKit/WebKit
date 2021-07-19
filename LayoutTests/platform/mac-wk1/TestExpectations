@@ -74,6 +74,7 @@ imported/w3c/web-platform-tests/audio-output [ Skip ]
 
 fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ]
 
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
@@ -224,6 +225,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.htm
 platform/mac/media/media-source/media-source-change-source.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
 
+# WebM not supported in WK1 on macOS.
+http/tests/media/video-webm-stall.html
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -358,6 +362,9 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker-cache-storage.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw.https.html [ Skip ]
@@ -530,6 +537,8 @@ fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 # This newly imported test times out on WK1 but passes on WK2.
 webkit.org/b/172222 imported/w3c/web-platform-tests/notifications/event-onclose.html [ Skip ]
 
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
 
@@ -541,10 +550,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-
 
 # Console logs are flaky.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity.html [ DumpJSConsoleLogInStdErr ]
-
-# MathML WPT tests failing on WK1
-webkit.org/b/201680 imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-013.html [ ImageOnlyFailure ]
-webkit.org/b/201680 imported/w3c/web-platform-tests/mathml/relations/css-styling/displaystyle-014.html [ ImageOnlyFailure ]
 
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
@@ -642,8 +647,6 @@ webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
-
-imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
 
 # webkit.org/b/163585
 media/track/track-cues-enter-exit.html [ Pass Crash ]
@@ -808,8 +811,6 @@ webkit.org/b/191357 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavi
 webkit.org/b/191357 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html [ Skip ]
 webkit.org/b/191357 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html [ Skip ]
 
-webkit.org/b/189908 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
-
 webkit.org/b/189756 compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
@@ -864,6 +865,7 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-set
 imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Skip ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
 fast/images/animated-heics-draw.html [ Skip ]
@@ -1031,8 +1033,6 @@ webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-par
 webkit.org/b/215296 media/modern-media-controls/placard/placard-ltr.html [ Pass Timeout ]
 
 webkit.org/b/215299 imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
-
-webkit.org/b/215335 [ Release ] webanimations/css-transition-retargeting-during-ready-promise.html [ Pass Failure ]
 
 webkit.org/b/215336 [ Release ] svg/text/hidpi-text-selection-rect-position.html [ Pass Failure ]
 
@@ -1268,9 +1268,9 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] transforms/2d/rotate-composited.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/221300 Updating tests expectations for 3 tests
-[ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
-[ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
-[ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
+[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
+[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
+[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
 [ BigSur ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ Pass ImageOnlyFailure ]
 
@@ -1295,9 +1295,15 @@ webkit.org/b/226517 [ BigSur ] media/media-event-listeners.html [ Pass Timeout ]
 [ arm64 ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
 [ arm64 ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
 
+webkit.org/b/227367 media/media-fullscreen-return-to-inline.html [ Pass Timeout ]
+
 webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/227237 Updating test expectations for 3 tests.
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1.html [ Pass ImageOnlyFailure ]
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1.html [ Pass ImageOnlyFailure ]
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/227366 [ BigSur ] http/tests/preload/onload_event.html [ Pass Timeout ]
+
+webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]

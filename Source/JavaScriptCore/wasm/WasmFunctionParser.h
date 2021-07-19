@@ -243,7 +243,8 @@ auto FunctionParser<Context>::parse() -> Result
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfLocals), "can't get Function's number of locals in group ", i);
         totalNumberOfLocals += numberOfLocals;
         WASM_PARSER_FAIL_IF(totalNumberOfLocals > maxFunctionLocals, "Function's number of locals is too big ", totalNumberOfLocals, " maximum ", maxFunctionLocals);
-        WASM_PARSER_FAIL_IF(!parseValueType(typeOfLocal), "can't get Function local's type in group ", i);
+        WASM_PARSER_FAIL_IF(!parseValueType(m_info, typeOfLocal), "can't get Function local's type in group ", i);
+        WASM_PARSER_FAIL_IF(!isDefaultableType(typeOfLocal), "Function locals must have a defaultable type");
 
         WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(totalNumberOfLocals), "can't allocate enough memory for function's ", totalNumberOfLocals, " locals");
         for (uint32_t i = 0; i < numberOfLocals; ++i)
@@ -644,7 +645,7 @@ auto FunctionParser<Context>::parseAnnotatedSelectImmediates(AnnotatedSelectImme
     WASM_PARSER_FAIL_IF(sizeOfAnnotationVector != 1, "select invalid result arity for");
 
     Type targetType;
-    WASM_PARSER_FAIL_IF(!parseValueType(targetType), "select can't parse annotations");
+    WASM_PARSER_FAIL_IF(!parseValueType(m_info, targetType), "select can't parse annotations");
 
     result.sizeOfAnnotationVector = sizeOfAnnotationVector;
     result.targetType = targetType;
@@ -699,7 +700,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> Pa
 
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
     for (unsigned i = 0; i < target.branchTargetArity(); ++i)
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(target.branchTargetType(i), m_expressionStack[offset + i].type()), "branch's stack type is not a block's type branch target type. Stack value has type", m_expressionStack[offset + i].type().kind, " but branch target expects a value of ", target.branchTargetType(i).kind, " at index ", i);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a block's type branch target type. Stack value has type ", m_expressionStack[offset + i].type().kind, " but branch target expects a value of ", target.branchTargetType(i).kind, " at index ", i);
 
     return { };
 }
@@ -1079,7 +1080,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case RefNull: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
         Type typeOfNull;
-        WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a reference type");
+        WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type");
         m_expressionStack.constructAndAppend(typeOfNull, m_context.addConstant(typeOfNull, JSValue::encode(jsNull())));
         return { };
     }
@@ -1109,7 +1110,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
             SignatureIndex signatureIndex = m_info.signatureIndexFromFunctionIndexSpace(index);
-            m_expressionStack.constructAndAppend(Type {TypeKind::TypeIdx, signatureIndex}, result);
+            m_expressionStack.constructAndAppend(Type {TypeKind::TypeIdx, Nullable::No, signatureIndex}, result);
             return { };
         }
 

@@ -412,49 +412,47 @@ void BufferMtl::clearConversionBuffers()
 }
 
 template<typename T>
-static void calculateRestartRanges(ContextMtl* ctx, mtl::BufferRef idxBuffer, std::vector<IndexRange> * ranges)
+static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::BufferRef idxBuffer)
 {
-    ranges->clear();
-    T *bufferData = (T*)(idxBuffer->mapReadOnly(ctx));
-    const size_t numIndices = idxBuffer->size()/sizeof(T);
-    for(int i = 0; i < numIndices; i++)
+    std::vector<IndexRange> result;
+    const T *bufferData = reinterpret_cast<const T *>(idxBuffer->mapReadOnly(ctx));
+    const size_t numIndices = idxBuffer->size() / sizeof(T);
+    constexpr T restartMarker = std::numeric_limits<T>::max();
+    for (size_t i = 0; i < numIndices; ++i)
     {
-        T value = bufferData[i];
-        if(value == std::numeric_limits<T>::max())
+        // Find the start of the restart range, i.e. first index with value of restart marker.
+        if (bufferData[i] != restartMarker)
+            continue;
+        size_t restartBegin = i;
+        // Find the end of the restart range, i.e. last index with value of restart marker.
+        do
         {
-            IndexRange newRange;
-            newRange.restartBegin = i;
-            //Find the end of the restart range.
-            do
-            {
-                ++i;
-                if(i < numIndices)
-                    value = bufferData[i];
-            }while (i < numIndices && value == std::numeric_limits<T>::max());
-            newRange.restartEnd = i-1;
-            ranges->push_back(newRange);
-        }
+            ++i;
+        } while (i < numIndices && bufferData[i] == restartMarker);
+        result.emplace_back(restartBegin, i - 1);
     }
+    idxBuffer->unmap(ctx);
+    return result;
 }
 
 const std::vector<IndexRange> & BufferMtl::getRestartIndices(ContextMtl * ctx, gl::DrawElementsType indexType)
 {
     if(mRestartIndicesDirty)
     {
+        std::vector<IndexRange>().swap(mRestartIndices);
         switch(indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
-                calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer(),&mRestartIndices);
+                mRestartIndices = calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer());
                 break;
             case gl::DrawElementsType::UnsignedShort:
-                calculateRestartRanges<uint16_t>(ctx, getCurrentBuffer(),&mRestartIndices);
+                mRestartIndices = calculateRestartRanges<uint16_t>(ctx, getCurrentBuffer());
                 break;
             case gl::DrawElementsType::UnsignedInt:
-                calculateRestartRanges<uint32_t>(ctx, getCurrentBuffer(),&mRestartIndices);
+                mRestartIndices = calculateRestartRanges<uint32_t>(ctx, getCurrentBuffer());
                 break;
             default:
                 ASSERT(false);
-                
         }
         mRestartIndicesDirty = false;
     }

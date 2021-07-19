@@ -489,6 +489,9 @@ static void* openFunc(const char* uri)
         }
     }
 
+    if (!data)
+        return &globalDescriptor;
+
     return new OffsetBuffer({ data->data(), data->size() });
 }
 

@@ -24,10 +24,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/coep-frame-javascript.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/data.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/data.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker-cache-storage.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/javascript.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/javascript.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/meta-http-equiv.https.html
@@ -47,6 +50,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-srcdoc.https.html
@@ -62,5 +67,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/sandbox.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/service-worker-cache-storage.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/shared-workers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/srcdoc.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/srcdoc.https.html.headers

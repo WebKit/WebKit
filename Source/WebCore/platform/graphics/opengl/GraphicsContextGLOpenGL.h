@@ -45,15 +45,9 @@
 #include "PlatformCALayer.h"
 #endif
 
-#if USE(ANGLE)
-#include "GraphicsContextGLANGLEUtilities.h"
-#else
+#if !USE(ANGLE)
 #include "ANGLEWebKitBridge.h"
 #include "ExtensionsGLOpenGLCommon.h"
-#endif
-
-#if PLATFORM(MAC)
-#include "ScopedHighPerformanceGPURequest.h"
 #endif
 
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
@@ -80,6 +74,10 @@ class BView;
 namespace Nicosia {
 class GCGLLayer;
 }
+#endif
+
+#if PLATFORM(MAC)
+#include "ScopedHighPerformanceGPURequest.h"
 #endif
 
 namespace WebCore {
@@ -540,6 +538,10 @@ public:
     // detach call below.
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    void* attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
+    void detachIOSurfaceFromSharedTexture(void* handle);
+#endif
 #endif
 
 private:
@@ -579,10 +581,6 @@ private:
     bool reshapeDisplayBufferBacking();
     bool allocateAndBindDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
-#endif
-#if USE(ANGLE)
-    // Returns false if context should be lost due to timeout.
-    bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
 #endif
 
 #if PLATFORM(COCOA)
@@ -796,11 +794,6 @@ private:
 #endif
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     std::unique_ptr<GraphicsContextGLCV> m_cv;
-#endif
-#if USE(ANGLE)
-    static constexpr size_t maxPendingFrames = 3;
-    size_t m_oldestFrameCompletionFence { 0 };
-    ScopedGLFence m_frameCompletionFences[maxPendingFrames];
 #endif
 };
 

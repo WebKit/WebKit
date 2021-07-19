@@ -4,9 +4,9 @@
 <script src=/resources/testharnessreport.js></script>
 <script src="/common/get-host-info.sub.js"></script>
 <script src="/common/utils.js"></script>
-<script src="../../resources/common.js"></script>
-<script src="../resources/dispatcher.js"></script>
-<script src="../resources/reporting-common.js"></script>
+<script src="/html/cross-origin-opener-policy/resources/common.js"></script>
+<script src="/html/cross-origin-opener-policy/resources/dispatcher.js"></script>
+<script src="/html/cross-origin-opener-policy/reporting/resources/reporting-common.js"></script>>
 <script>
 
 let tests = [
@@ -23,7 +23,7 @@ let tests = [
     []
   ],
   // Open a same-origin popup with a same-origin COOP but no COEP. Produces two
-  // reports (one from and one to). The from report has an effective-policy of
+  // reports (one from and one to). The from report has an effectivePolicy of
   // same-origin-plus-coep, both pages being same origin, the entire
   // next/pervious document urls are available.
   [
@@ -38,10 +38,9 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": `${location.href}`,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": /uuid=EXECUTOR_UUID$/, // next destination url
-            "violation-type": "navigation-from-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "nextResponseURL": /uuid=EXECUTOR_UUID$/, // next destination url
+            "type": "navigation-from-response"
           },
           "url": `${location.href}`,
           "type": "coop"
@@ -52,10 +51,10 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": /uuid=EXECUTOR_UUID$/,
-            "effective-policy": "same-origin",
-            "navigation-uri": `${location.href}`, // previous document url
-            "violation-type": "navigation-to-document"
+            "effectivePolicy": "same-origin",
+            "previousResponseURL": `${location.href}`, // previous document url
+            "referrer": `${location.origin}/`, // referrer (origin, as dictated by the referrer policy)
+            "type": "navigation-to-response"
           },
           "url": /uuid=EXECUTOR_UUID$/,
           "type": "coop"
@@ -64,7 +63,7 @@ let tests = [
     ]
   ],
   // Open a cross-origin popup with a same-origin COOP and COEP.  Produces two
-  // reports (one from and one to). The from report has an effective-policy of
+  // reports (one from and one to). The from report has an effectivePolicy of
   // same-origin-plus-coep, both pages being cross origin, the next/pervious
   // document urls are not available and the initial document url/referrer are
   // used instead.
@@ -80,10 +79,9 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": `${location.href}`,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": /uuid=EXECUTOR_UUID$/, // initial navigation url
-            "violation-type": "navigation-from-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "nextResponseURL": /uuid=EXECUTOR_UUID$/, // initial navigation url
+            "type": "navigation-from-response"
           },
           "url": `${location.href}`,
           "type": "coop"
@@ -94,10 +92,10 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": /uuid=EXECUTOR_UUID$/,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": `${location.origin}/`, // referrer (origin, as dictated by the referrer policy)
-            "violation-type": "navigation-to-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "previousResponseURL": ``,
+            "referrer": `${location.origin}/`, // referrer (origin, as dictated by the referrer policy)
+            "type": "navigation-to-response"
           },
           "url": /uuid=EXECUTOR_UUID$/,
           "type": "coop"
@@ -111,7 +109,7 @@ let tests = [
     SAME_ORIGIN,
     "",
     "",
-    `same-origin; report-to="${popupReportEndpoint.name}"`,
+    `same-origin; report-to="${popupReportOnlyEndpoint.name}"`,
     "require-corp",
     [
       {
@@ -119,15 +117,15 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": `${location.href}`,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": /uuid=EXECUTOR_UUID$/, // next destination url
-            "violation-type": "navigation-from-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "nextResponseURL": /uuid=EXECUTOR_UUID$/, // initial navigation url
+            "type": "navigation-from-response"
           },
           "url": `${location.href}`,
           "type": "coop"
         }
-      },]
+      }
+    ]
   ],
   // Open a cross-origin popup with a same-origin COOP report only. A report is
   // sent to both this page's endpoint and the popup's.
@@ -143,10 +141,9 @@ let tests = [
         "report": {
           "body": {
             "disposition": "enforce",
-            "document-uri": `${location.href}`,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": /uuid=EXECUTOR_UUID$/, // next destination url
-            "violation-type": "navigation-from-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "nextResponseURL": /uuid=EXECUTOR_UUID$/, // initial navigation url
+            "type": "navigation-from-response"
           },
           "url": `${location.href}`,
           "type": "coop"
@@ -157,10 +154,10 @@ let tests = [
         "report": {
           "body": {
             "disposition": "reporting",
-            "document-uri": /uuid=EXECUTOR_UUID$/,
-            "effective-policy": "same-origin-plus-coep",
-            "navigation-uri": `${location.origin}/`, // referrer (origin, as dictated by the referrer policy)
-            "violation-type": "navigation-to-document"
+            "effectivePolicy": "same-origin-plus-coep",
+            "previousResponseURL": ``,
+            "referrer": `${location.origin}/`, // referrer (origin, as dictated by the referrer policy)
+            "type": "navigation-to-response"
           },
           "url": /uuid=EXECUTOR_UUID$/,
           "type": "coop"

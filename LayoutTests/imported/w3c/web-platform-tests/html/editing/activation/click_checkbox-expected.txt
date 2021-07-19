@@ -1,0 +1,9 @@
+When you mouse click the checkbox below it should not be checked:
+
+
+
+Now keyboard "click" the checkbox and confirm it's still not checked.
+
+
+PASS Interaction of UI input and the click in progress flag
+

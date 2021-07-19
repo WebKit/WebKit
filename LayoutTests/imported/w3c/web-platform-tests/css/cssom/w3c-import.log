@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-replace-on-regular-sheet.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-modify-after-removal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-template-adoption.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-002.html
@@ -80,11 +81,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-mutationrecord-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-registered-custom-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-attr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-declarations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-form-controls.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-logical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/declaration-block-all-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/escape.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/flex-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-family-serialization-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-animations-replaced-into-ib-split.html
@@ -112,6 +116,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/inline-style-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-across-context.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-charset-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script.html
@@ -126,6 +131,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/mediaquery-sort-dedup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/overflow-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/page-descriptors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/preferred-stylesheet-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/preferred-stylesheet-reversed-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/removerule-invalidation-crash.html
@@ -135,6 +141,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialization-CSSDeclaration-with-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-custom-props.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-media-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-namespaced-type-selectors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-values.html

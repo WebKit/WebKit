@@ -287,7 +287,7 @@ void HTMLLinkElement::process()
 
     if (m_disabledState != Disabled && treatAsStyleSheet && document().frame() && url.isValid()) {
         String charset = attributeWithoutSynchronization(charsetAttr);
-        if (charset.isEmpty())
+        if (!TextEncoding { charset }.isValid())
             charset = document().charset();
 
         if (m_cachedSheet) {

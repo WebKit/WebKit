@@ -21,6 +21,7 @@ document.fonts.load(font).then(function() {
     let context = canvas.getContext("2d");
     context.font = font;
     context.strokeStyle = "green";
+    context.lineWidth = 2;
     context.strokeText("BAB", 100, 100);
     if (window.testRunner)
         testRunner.notifyDone();

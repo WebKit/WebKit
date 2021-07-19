@@ -105,6 +105,7 @@ class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
+class ProcessAssertion;
 class StorageManagerSet;
 class WebPageNetworkParameters;
 class WebSWServerConnection;
@@ -497,6 +498,10 @@ private:
     void addServiceWorkerSession(PAL::SessionID, bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    void setIsHoldingLockedFiles(bool);
+#endif
+
     void firePrivateClickMeasurementTimerImmediately(PAL::SessionID);
 
     class SessionStorageQuotaManager {
@@ -572,6 +577,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
+    RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
 
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;

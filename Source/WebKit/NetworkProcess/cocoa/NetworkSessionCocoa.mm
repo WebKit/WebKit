@@ -1347,13 +1347,13 @@ void NetworkSessionCocoa::initializeNSURLSessionsInSet(SessionSet& sessionSet, N
     sessionSet.sessionWithoutCredentialStorage.initialize(configuration, *this, WebCore::StoredCredentialsPolicy::DoNotUse, NavigatingToAppBoundDomain::No);
 }
 
-NetworkSessionCocoa::SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID)
+SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID)
 {
     SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(webPageProxyID) : nullptr;
     return sessionSet ? *sessionSet : m_defaultSessionSet.get();
 }
 
-const NetworkSessionCocoa::SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID) const
+const SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID) const
 {
     SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(webPageProxyID) : nullptr;
     return sessionSet ? *sessionSet : m_defaultSessionSet.get();
@@ -1364,7 +1364,7 @@ SessionWrapper& NetworkSessionCocoa::initializeEphemeralStatelessSessionIfNeeded
     return sessionSetForPage(webPageProxyID).initializeEphemeralStatelessSessionIfNeeded(isNavigatingToAppBoundDomain, *this);
 }
 
-SessionWrapper& NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
+SessionWrapper& SessionSet::initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
 {
     if (ephemeralStatelessSession.session)
         return ephemeralStatelessSession;
@@ -1471,7 +1471,7 @@ SessionWrapper& NetworkSessionCocoa::isolatedSession(WebPageProxyIdentifier webP
     return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstPartyDomain, isNavigatingToAppBoundDomain, *this);
 }
 
-SessionWrapper& NetworkSessionCocoa::SessionSet::isolatedSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain firstPartyDomain, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
+SessionWrapper& SessionSet::isolatedSession(WebCore::StoredCredentialsPolicy storedCredentialsPolicy, const WebCore::RegistrableDomain firstPartyDomain, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
 {
     auto& entry = isolatedSessions.ensure(firstPartyDomain, [this, &session, isNavigatingToAppBoundDomain] {
         auto newEntry = makeUnique<IsolatedSession>();
@@ -1692,21 +1692,22 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
-    RetainPtr<NSURLSessionWebSocketTask> task = [sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
+    auto& sessionSet = sessionSetForPage(webPageProxyID);
+    RetainPtr<NSURLSessionWebSocketTask> task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     task.get().maximumMessageSize = 0;
-    return makeUnique<WebSocketTask>(channel, webPageProxyID, request, WTFMove(task));
+    return makeUnique<WebSocketTask>(channel, webPageProxyID, makeWeakPtr(sessionSet), request, WTFMove(task));
 }
 
 void NetworkSessionCocoa::addWebSocketTask(WebPageProxyIdentifier webPageProxyID, WebSocketTask& task)
 {
-    RELEASE_ASSERT(!sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.webSocketDataTaskMap.contains(task.identifier()));
-    sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.webSocketDataTaskMap.add(task.identifier(), &task);
+    auto addResult = sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.webSocketDataTaskMap.add(task.identifier(), &task);
+    RELEASE_ASSERT(addResult.isNewEntry);
 }
 
-void NetworkSessionCocoa::removeWebSocketTask(WebPageProxyIdentifier webPageProxyID, WebSocketTask& task)
+void NetworkSessionCocoa::removeWebSocketTask(SessionSet& sessionSet, WebSocketTask& task)
 {
-    RELEASE_ASSERT(sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.webSocketDataTaskMap.contains(task.identifier()));
-    sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.webSocketDataTaskMap.remove(task.identifier());
+    bool contained = sessionSet.sessionWithCredentialStorage.webSocketDataTaskMap.remove(task.identifier());
+    RELEASE_ASSERT(contained);
 }
 
 #endif // HAVE(NSURLSESSION_WEBSOCKET)

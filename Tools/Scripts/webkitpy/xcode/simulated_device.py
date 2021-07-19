@@ -112,7 +112,7 @@ class SimulatedDeviceManager(object):
         try:
             device_type_string = SimulatedDeviceManager._device_identifier_to_name[readPlist(host.filesystem.open_binary_file_for_reading(device_plist))['deviceType']]
             device_type = DeviceType.from_string(device_type_string, runtime.version)
-            assert device_type.software_variant == runtime.os_variant
+            device_type.software_variant = runtime.os_variant
         except (ValueError, AssertionError):
             return None
 

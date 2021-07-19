@@ -471,9 +471,6 @@ private:
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
-    void platformSuspendProcess();
-    void platformResumeProcess();
-
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -639,7 +636,7 @@ private:
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 
     struct AudibleMediaActivity {
-        UniqueRef<ProcessAssertion> assertion;
+        Ref<ProcessAssertion> assertion;
         WebProcessWithAudibleMediaToken token;
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;

@@ -364,6 +364,7 @@ bool doesGC(Graph& graph, Node* node)
     case CreatePromise:
     case CreateGenerator:
     case CreateAsyncGenerator:
+    case ObjectAssign:
     case ObjectCreate:
     case ObjectKeys:
     case ObjectGetOwnPropertyNames:

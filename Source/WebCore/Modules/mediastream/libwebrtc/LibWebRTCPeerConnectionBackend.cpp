@@ -102,6 +102,13 @@ void LibWebRTCPeerConnectionBackend::resume()
     m_endpoint->resume();
 }
 
+void LibWebRTCPeerConnectionBackend::disableICECandidateFiltering()
+{
+    PeerConnectionBackend::disableICECandidateFiltering();
+    if (auto* factory = m_endpoint->rtcSocketFactory())
+        factory->disableRelay();
+}
+
 static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.bundlePolicy) {

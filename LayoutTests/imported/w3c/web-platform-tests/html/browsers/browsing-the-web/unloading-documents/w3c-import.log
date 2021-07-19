@@ -27,6 +27,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-on-navigation-of-parent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-sticky-activation-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-sticky-activation-popup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/beforeunload-synchronous.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/navigation-within-beforeunload-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/navigation-within-beforeunload-2.html

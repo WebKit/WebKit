@@ -26,9 +26,6 @@ PASS interactive content <input> as second child under <label>
 PASS interactive content <label>label</label> as first child of <label>
 PASS interactive content <label>label</label> deeply nested under <label>
 PASS interactive content <label>label</label> as second child under <label>
-PASS interactive content <object usemap=""></object> as first child of <label>
-PASS interactive content <object usemap=""></object> deeply nested under <label>
-PASS interactive content <object usemap=""></object> as second child under <label>
 PASS interactive content <select></select> as first child of <label>
 PASS interactive content <select></select> deeply nested under <label>
 PASS interactive content <select></select> as second child under <label>

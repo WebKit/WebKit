@@ -363,7 +363,7 @@ public:
     void completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermissionCallbackRef);
     void setIsMediaKeySystemPermissionGranted(bool);
 
-    void didNotHandleTapAsMeaningfulClick();
+    void didHandleTap(bool wasMeaningful);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);

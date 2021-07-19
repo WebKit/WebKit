@@ -1,0 +1,6 @@
+
+PASS Document is sandboxed via its CSP.
+PASS The initial empty document inherit sandbox via CSP.
+PASS The synchronous re-navigation to about:blank inherits sandbox via CSP
+PASS Popup do not inherit sandbox, because of 'allow-popups-to-escape-sandbox' the document doesn't inherit CSP. The document isn't sandboxed
+

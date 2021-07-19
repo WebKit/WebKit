@@ -44,20 +44,19 @@ Ref<RemoteAudioHardwareListener> RemoteAudioHardwareListener::create(AudioHardwa
 
 RemoteAudioHardwareListener::RemoteAudioHardwareListener(AudioHardwareListener::Client& client, WebProcess& webProcess)
     : AudioHardwareListener(client)
-    , m_process(webProcess)
     , m_identifier(RemoteAudioHardwareListenerIdentifier::generate())
+    , m_gpuProcessConnection(makeWeakPtr(WebProcess::singleton().ensureGPUProcessConnection()))
 {
-    auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
-    connection.addClient(*this);
-    connection.messageReceiverMap().addMessageReceiver(Messages::RemoteAudioHardwareListener::messageReceiverName(), m_identifier.toUInt64(), *this);
-    connection.connection().send(Messages::GPUConnectionToWebProcess::CreateAudioHardwareListener(m_identifier), { });
+    m_gpuProcessConnection->addClient(*this);
+    m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioHardwareListener::messageReceiverName(), m_identifier.toUInt64(), *this);
+    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateAudioHardwareListener(m_identifier), { });
 }
 
 RemoteAudioHardwareListener::~RemoteAudioHardwareListener()
 {
-    if (auto* connection = WebProcess::singleton().existingGPUProcessConnection()) {
-        connection->messageReceiverMap().removeMessageReceiver(*this);
-        connection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseAudioHardwareListener(m_identifier), 0);
+    if (m_gpuProcessConnection) {
+        m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseAudioHardwareListener(m_identifier), 0);
     }
 }
 

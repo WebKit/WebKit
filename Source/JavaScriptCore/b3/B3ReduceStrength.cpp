@@ -619,6 +619,33 @@ private:
             break;
 
         case Sub:
+            // Turn this: Sub(BitXor(BitAnd(value, mask1), mask2), mask2)
+            // Into this: SShr(Shl(value, amount), amount)
+            // Conditions: 
+            // 1. mask1 = (1 << width) - 1
+            // 2. mask2 = 1 << (width - 1)
+            // 3. amount = datasize - width
+            // 4. 0 < width < datasize
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(0)->child(0)->opcode() == BitAnd
+                && m_value->child(0)->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(1)->hasInt()) {
+                uint64_t mask1 = m_value->child(0)->child(0)->child(1)->asInt();
+                uint64_t mask2 = m_value->child(0)->child(1)->asInt();
+                uint64_t mask3 = m_value->child(1)->asInt();
+                uint64_t width = WTF::bitCount(mask1);
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                bool isValidMask1 = mask1 && !(mask1 & (mask1 + 1)) && width < datasize;
+                bool isValidMask2 = mask2 == mask3 && ((mask2 << 1) - 1) == mask1;
+                if (isValidMask1 && isValidMask2) {
+                    Value* amount = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), datasize - width);
+                    Value* shlValue = m_insertionSet.insert<Value>(m_index, Shl, m_value->origin(), m_value->child(0)->child(0)->child(0), amount);
+                    replaceWithNew<Value>(SShr, m_value->origin(), shlValue, amount);
+                    break;
+                }
+            }
+
             // Turn this: Sub(constant1, constant2)
             // Into this: constant1 - constant2
             if (Value* constantSub = m_value->child(0)->subConstant(m_proc, m_value->child(1))) {
@@ -627,6 +654,18 @@ private:
             }
 
             if (m_value->isInteger()) {
+                // Turn this: Sub(Neg(value), 1)
+                // Into this: BitXor(value, -1)
+                if (m_value->child(0)->opcode() == Neg && m_value->child(1)->isInt(1)) {
+                    Value* minusOne;
+                    if (m_value->child(0)->child(0)->type() == Int32)
+                        minusOne = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), -1);
+                    else
+                        minusOne = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), -1);
+                    replaceWithNew<Value>(BitXor, m_value->origin(), m_value->child(0)->child(0), minusOne);
+                    break;
+                }
+
                 // Turn this: Sub(value, constant)
                 // Into this: Add(value, -constant)
                 if (Value* negatedConstant = m_value->child(1)->negConstant(m_proc)) {
@@ -1060,13 +1099,13 @@ private:
             }
 
             // Turn this: BitAnd(Shl(value, shiftAmount), maskShift)
+            // Into this: Shl(BitAnd(value, mask), shiftAmount)
             // Conditions:
             // 1. maskShift = mask << shiftAmount
             // 2. mask = (1 << width) - 1
             // 3. 0 <= shiftAmount < datasize
             // 4. 0 < width < datasize
             // 5. shiftAmount + width <= datasize
-            // Into this: Shl(BitAnd(value, mask), shiftAmount)
             if (m_value->child(0)->opcode() == Shl
                 && m_value->child(0)->child(1)->hasInt()
                 && m_value->child(0)->child(1)->asInt() >= 0
@@ -1422,6 +1461,65 @@ private:
             if (Value* constant = m_value->child(0)->zShrConstant(m_proc, m_value->child(1))) {
                 replaceWithNewValue(constant);
                 break;
+            }
+
+            // Turn this: ZShr(Shl(value, amount)), amount)
+            // Into this: BitAnd(value, mask)
+            // Conditions:
+            // 1. 0 <= amount < datasize
+            // 2. width = datasize - amount
+            // 3. mask is !(mask & (mask + 1)) where bitCount(mask) == width
+            if (m_value->child(0)->opcode() == Shl
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() >= 0
+                && m_value->child(1)->hasInt()
+                && m_value->child(1)->asInt() >= 0) {
+                uint64_t amount1 = m_value->child(0)->child(1)->asInt();
+                uint64_t amount2 = m_value->child(1)->asInt();
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                if (amount1 == amount2 && amount1 < datasize) {
+                    uint64_t width = datasize - amount1;
+                    uint64_t mask = (1ULL << width) - 1ULL;
+                    Value* maskValue;
+                    if (datasize == 32)
+                        maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask);
+                    else
+                        maskValue = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), mask);
+                    replaceWithNew<Value>(BitAnd, m_value->origin(), m_value->child(0)->child(0), maskValue);
+                    break;
+                }
+            }
+
+            // Turn this: ZShr(BitAnd(value, maskShift), shiftAmount)
+            // Into this: BitAnd(ZShr(value, shiftAmount), mask)
+            // Conditions:
+            // 1. maskShift = mask << shiftAmount
+            // 2. mask = (1 << width) - 1
+            // 3. 0 <= shiftAmount < datasize
+            // 4. 0 < width < datasize
+            // 5. shiftAmount + width <= datasize
+            if (m_value->child(0)->opcode() == BitAnd
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(1)->hasInt()
+                && m_value->child(1)->asInt() >= 0) {
+                uint64_t shiftAmount = m_value->child(1)->asInt();
+                uint64_t maskShift = m_value->child(0)->child(1)->asInt();
+                uint64_t maskShiftAmount = WTF::countTrailingZeros(maskShift);
+                uint64_t mask = maskShift >> maskShiftAmount;
+                uint64_t width = WTF::bitCount(mask);
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
+                bool isValidShiftAmount = maskShiftAmount == shiftAmount && shiftAmount < datasize;
+                bool isValidMask = mask && !(mask & (mask + 1)) && width < datasize;
+                if (isValidShiftAmount && isValidMask && shiftAmount + width <= datasize) {
+                    Value* maskValue;
+                    if (datasize == 32)
+                        maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask);
+                    else
+                        maskValue = m_insertionSet.insert<Const64Value>(m_index, m_value->origin(), mask);
+                    Value* shiftValue = m_insertionSet.insert<Value>(m_index, ZShr, m_value->origin(), m_value->child(0)->child(0), m_value->child(1));
+                    replaceWithNew<Value>(BitAnd, m_value->origin(), shiftValue, maskValue);
+                    break;
+                }
             }
 
             handleShiftAmount();

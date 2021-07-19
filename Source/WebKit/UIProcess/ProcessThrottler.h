@@ -149,7 +149,7 @@ private:
 
     ProcessThrottlerClient& m_process;
     ProcessID m_processIdentifier { 0 };
-    std::unique_ptr<ProcessAssertion> m_assertion;
+    RefPtr<ProcessAssertion> m_assertion;
     RunLoop::Timer<ProcessThrottler> m_prepareToSuspendTimeoutTimer;
     HashSet<ForegroundActivity*> m_foregroundActivities;
     HashSet<BackgroundActivity*> m_backgroundActivities;

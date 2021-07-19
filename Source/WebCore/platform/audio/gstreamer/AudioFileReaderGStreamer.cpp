@@ -324,7 +324,7 @@ void AudioFileReader::decodeAudioForBusCreation()
 {
     ASSERT(&m_runLoop == &RunLoop::current());
 
-    // Build the pipeline (giostreamsrc | filesrc) ! decodebin
+    // Build the pipeline giostreamsrc ! decodebin
     // A deinterleave element is added once a src pad becomes available in decodebin.
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("audio-file-reader-", pipelineId.exchangeAdd(1)).ascii().data());
@@ -347,13 +347,11 @@ void AudioFileReader::decodeAudioForBusCreation()
         return GST_BUS_DROP;
     }, this, nullptr);
 
-    GstElement* source;
-    if (m_data) {
-        ASSERT(m_dataSize);
-        source = makeGStreamerElement("giostreamsrc", nullptr);
-        GRefPtr<GInputStream> memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, nullptr));
-        g_object_set(source, "stream", memoryStream.get(), nullptr);
-    }
+    ASSERT(m_data);
+    ASSERT(m_dataSize);
+    auto* source = makeGStreamerElement("giostreamsrc", nullptr);
+    auto memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, nullptr));
+    g_object_set(source, "stream", memoryStream.get(), nullptr);
 
     m_decodebin = makeGStreamerElement("decodebin", "decodebin");
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);

@@ -125,9 +125,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
     GCGLenum textureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
 
-    auto size = data.surface->size();
-    if (!size.width() || !size.height())
-        return;
 
     if (!m_opaqueTexture)
         m_opaqueTexture = gCGL->createTexture();
@@ -139,17 +136,32 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     gCGL->texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
 
     // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
-    m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLOpenGL::PbufferAttachmentUsage::Write, GL::BGRA, size.width(), size.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
-    if (!m_ioSurfaceTextureHandle && m_opaqueTexture) {
-        gCGL->deleteTexture(m_opaqueTexture);
-        return;
+    if (data.isShared) {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+        m_ioSurfaceTextureHandle = gCGL->attachIOSurfaceToSharedTexture(textureTarget, data.surface.get());
+        m_ioSurfaceTextureHandleIsShared = true;
+#else
+        ASSERT_NOT_REACHED();
+#endif
+    } else {
+        auto size = data.surface->size();
+        if (!size.width() || !size.height())
+            return;
+        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLOpenGL::PbufferAttachmentUsage::Write, GL::BGRA, size.width(), size.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
+        m_ioSurfaceTextureHandleIsShared = false;
     }
 
-    // FIXME: This is assuming multisampling is turned off and we're rendering directly into the framebuffer.
+    if (!m_ioSurfaceTextureHandle) {
+        gCGL->deleteTexture(m_opaqueTexture);
+        m_opaqueTexture = 0;
+        return;
+    }
 
     // Now set up the framebuffer to use the texture that points to the IOSurface. The depth and
     // stencil buffers were attached by startFrame.
     gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
+
+    // FIXME: This is assuming multisampling is turned off and we're rendering directly into the framebuffer.
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
@@ -187,7 +199,16 @@ void WebXROpaqueFramebuffer::endFrame()
 
     if (m_ioSurfaceTextureHandle) {
         auto gCGL = static_cast<GraphicsContextGLOpenGL*>(&gl);
-        gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
+        if (m_ioSurfaceTextureHandleIsShared) {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+            gCGL->detachIOSurfaceFromSharedTexture(m_ioSurfaceTextureHandle);
+#else
+            ASSERT_NOT_REACHED();
+#endif
+        } else
+            gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
+        m_ioSurfaceTextureHandle = nullptr;
+        m_ioSurfaceTextureHandleIsShared = false;
     }
 #else
 

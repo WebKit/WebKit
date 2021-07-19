@@ -23,9 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const InsideMargin = 6; // Minimum margin to guarantee around all controls, this constant needs to stay in sync with the --inline-controls-inside-margin CSS variable.
-const BottomControlsBarHeight = 31; // This constant needs to stay in sync with the --inline-controls-bar-height CSS variable.
-
 class InlineMediaControls extends MediaControls
 {
 
@@ -133,7 +130,9 @@ class InlineMediaControls extends MediaControls
         this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.some(button => button.visible);
 
         // Compute the visible size for the controls bar.
-        this.bottomControlsBar.width = this._shouldUseAudioLayout ? this.width : (this.width - 2 * InsideMargin);
+        if (!this._inlineInsideMargin)
+            this._inlineInsideMargin = this.computedValueForStylePropertyInPx("--inline-controls-inside-margin");
+        this.bottomControlsBar.width = this._shouldUseAudioLayout ? this.width : (this.width - 2 * this._inlineInsideMargin);
 
         // Compute the absolute minimum width to display the center control (status label or time control).
         const centerControl = this.statusLabel.enabled ? this.statusLabel : this.timeControl;
@@ -218,7 +217,9 @@ class InlineMediaControls extends MediaControls
 
         // Ensure we position the bottom controls bar at the bottom of the frame, accounting for
         // the inside margin, unless this would yield a position outside of the frame.
-        this.bottomControlsBar.y = Math.max(0, this.height - BottomControlsBarHeight - InsideMargin);
+        if (!this._inlineBottomControlsBarHeight)
+            this._inlineBottomControlsBarHeight = this.computedValueForStylePropertyInPx("--inline-controls-bar-height");
+        this.bottomControlsBar.y = Math.max(0, this.height - this._inlineBottomControlsBarHeight - this._inlineInsideMargin);
 
         this.bottomControlsBar.children = controlsBarChildren;
         if (!this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout)

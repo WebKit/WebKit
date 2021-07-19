@@ -34,7 +34,7 @@ namespace WebCore {
 
     class SubstituteData {
     public:
-        enum class SessionHistoryVisibility {
+        enum class SessionHistoryVisibility : bool {
             Visible,
             Hidden,
         };

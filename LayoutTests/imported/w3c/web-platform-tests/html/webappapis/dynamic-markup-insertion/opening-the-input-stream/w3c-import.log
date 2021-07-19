@@ -61,10 +61,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/no-new-global.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/origin-check-in-document-open-same-origin-domain.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/pageshow-event.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/readiness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/reload.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/remove-initial-about-blankness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext-subframe.txt
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/type-argument-plaintext.window.js

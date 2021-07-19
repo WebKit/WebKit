@@ -100,7 +100,7 @@ void CurlStream::appendMonitoringFd(fd_set& readfds, fd_set& writefds, fd_set& e
     if (m_sendBuffers.size())
         FD_SET(*socket, &writefds);
 
-    if (maxfd < *socket)
+    if (maxfd < static_cast<int>(*socket))
         maxfd = *socket;
 }
 

@@ -141,6 +141,10 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
 
+#if HAVE(ARKIT_INLINE_PREVIEW)
+#include <WebCore/HTMLModelElement.h>
+#endif
+
 #if !OS(WINDOWS)
 #include <unistd.h>
 #endif
@@ -568,6 +572,11 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
 #endif
 
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    if (!parameters.modelElementCacheDirectory.isEmpty())
+        WebCore::HTMLModelElement::setModelElementCacheDirectory(parameters.modelElementCacheDirectory);
+#endif
+
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -605,7 +614,7 @@ void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
     m_hasSuspendedPageProxy = hasSuspendedPageProxy;
 }
 
-void WebProcess::setIsInProcessCache(bool isInProcessCache, CompletionHandler<void()>&& completionHandler)
+void WebProcess::setIsInProcessCache(bool isInProcessCache)
 {
 #if PLATFORM(COCOA)
     if (isInProcessCache) {
@@ -620,8 +629,6 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache, CompletionHandler<vo
 #else
     UNUSED_PARAM(isInProcessCache);
 #endif
-
-    completionHandler();
 }
 
 void WebProcess::markIsNoLongerPrewarmed()

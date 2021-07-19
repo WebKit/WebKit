@@ -1,3 +1,1105 @@
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Unable to use 'data:application/javascript' url for Worker
+        https://bugs.webkit.org/show_bug.cgi?id=225716
+        <rdar://problem/78222538>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/cors/data-url-worker-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https-expected.txt:
+        * web-platform-tests/html/webappapis/the-windoworworkerglobalscope-mixin/Worker_Self_Origin-expected.txt:
+        * web-platform-tests/service-workers/service-worker/local-url-inherit-controller.https-expected.txt:
+        * web-platform-tests/workers/Worker_script_mimetype-expected.txt:
+        * web-platform-tests/workers/constructors/Worker/same-origin-expected.txt:
+        * web-platform-tests/workers/data-url-expected.txt:
+        * web-platform-tests/workers/dedicated-worker-in-data-url-context.window-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url-cross-origin-expected.txt:
+        * web-platform-tests/workers/modules/dedicated-worker-import-data-url.any-expected.txt:
+
+2021-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Resync cookies web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227641
+
+        Reviewed by Darin Adler.
+
+        Resync cookies web-platform-tests from upstream 2c19d6ee62676ac90146.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/cookies/*: Updated.
+
+2021-07-06  Antti Koivisto  <antti@apple.com>
+
+        Import basic :has() tests
+        https://bugs.webkit.org/show_bug.cgi?id=227703
+
+        Reviewed by Alan Bujtas.
+
+        Along with some other updates to css/selectors.
+
+        * web-platform-tests/css/selectors/focus-visible-022.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-022.tentative.html: Added.
+        * web-platform-tests/css/selectors/has-basic-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-basic.html: Added.
+        * web-platform-tests/css/selectors/has-relative-argument-expected.txt: Added.
+        * web-platform-tests/css/selectors/has-relative-argument.html: Added.
+        * web-platform-tests/css/selectors/is-where-parsing-expected.txt:
+        * web-platform-tests/css/selectors/is-where-parsing.html:
+        * web-platform-tests/css/selectors/parsing/parse-has-expected.txt: Added.
+        * web-platform-tests/css/selectors/parsing/parse-has.html: Added.
+        * web-platform-tests/css/selectors/parsing/w3c-import.log:
+        * web-platform-tests/css/selectors/user-invalid.html:
+        * web-platform-tests/css/selectors/user-valid-expected.txt: Added.
+        * web-platform-tests/css/selectors/user-valid.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
+2021-07-05  Cameron McCormack  <heycam@apple.com>
+
+        Move some Mac MathML test expectation files around
+        https://bugs.webkit.org/show_bug.cgi?id=227520
+        <rdar://79749198>
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt:
+        Make the macOS expectation file the default for these tests.
+
+2021-07-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use AbortSignal's [PrivateIdentifier] whenSignalAborted() static method
+        https://bugs.webkit.org/show_bug.cgi?id=227673
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/streams/piping/abort.any-expected.txt:
+        * web-platform-tests/streams/piping/abort.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any.worker-expected.txt:
+
+2021-07-04  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227657
+
+        Reviewed by Sam Weinig.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream c21b0b8ca7.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-020.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-021.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-028-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-028.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-029-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-029.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-030-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-030.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-031-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-031.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-032-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-032.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-033-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-033.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-034-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-034.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-035-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-035.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-036-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-036.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-037-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-037.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-038-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-038.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
+2021-07-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of expected failures and update list of baselines.
+
+        - Rebase WPT tests after recent updates (see r279516 or r279202)
+        - Generate new expectations after r279427
+
+        Unreviewed gardening.
+
+        * web-platform-tests/fetch/api/headers/header-values-expected.txt: Removed.
+        * web-platform-tests/fetch/api/redirect/redirect-count-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.CSSHSL-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.toStringFunctionCallback-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.toStringFunctionCallback.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.invalid.inputs-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.invalid.inputs.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.negative.rotation-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.negative.rotation.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.positive.rotation-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.positive.rotation.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.blur.exceptions-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.blur.exceptions.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.colorMatrix-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.colorMatrix.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.discrete-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.discrete.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.gamma-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.gamma.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.identity-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.identity.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.linear-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.linear.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.table-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.table.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompoint-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompoint.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.double-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.double.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.closed-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.closed.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.1-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.1.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.2-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.2.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.3-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.3.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.4-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.4.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.negative-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.negative.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.newsubpath-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.newsubpath.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.nonfinite-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.nonfinite.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.1-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.1.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.2-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.2.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.none-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.none.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.toomany-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.toomany.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.selfintersect-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.selfintersect.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.winding-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.winding.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.1-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.1.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.2-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.2.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.3-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.3.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.4-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.4.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.5-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.5.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.6-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.6.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.direction-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.direction.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.rtl.text-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.rtl.text.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.textAlign-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.textAlign.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.combined.3d.transforms-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.combined.3d.transforms.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.x-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.x.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.y-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.y.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.z-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotate3d.z.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotateAxis-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.rotateAxis.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.3d-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.scale.3d.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.3d-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.setTransform.3d.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.3d-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.transform.3d.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.3d-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/transformations/2d.transformation.translate.3d.worker-expected.txt: Added.
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Resync WebCryptoAPI web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227601
+
+        Reviewed by Geoffrey Garen.
+
+        Resync WebCryptoAPI web-platform-tests from upstream 2c19d6ee62676ac90146.
+
+        * web-platform-tests/WebCryptoAPI/*: Updated.
+
+2021-07-02  Chris Dumez  <cdumez@apple.com>
+
+        Resync encoding web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227602
+
+        Reviewed by Alex Christensen.
+
+        Resync encoding web-platform-tests from upstream 2c19d6ee62676ac90146.
+
+        * web-platform-tests/encoding/*: Updated.
+
+2021-06-30  Darin Adler  <darin@apple.com>
+
+        CSS parser using a token for Unicode ranges, but recent CSS specification says it should not
+        https://bugs.webkit.org/show_bug.cgi?id=227569
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-syntax/unicode-range-selector-expected.txt:
+        * web-platform-tests/css/css-syntax/urange-parsing-expected.txt:
+        Expect passes instead of fails.
+
+2021-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Align beacon CORS mode with Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=227590
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/beacon/beacon-cors.https.window-expected.txt:
+
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        ReadableStream.getReader do not throw a proper exception when parameter is of wrong type
+        https://bugs.webkit.org/show_bug.cgi?id=226220
+        <rdar://problem/78711382>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/streams/readable-streams/default-reader.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/templated.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/templated.any.worker-expected.txt:
+
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Rebasing tests as timing changes a bit.
+        This aligns with Chrome and Firefox behavior.
+
+        * web-platform-tests/webrtc/no-media-call-expected.txt:
+        * web-platform-tests/webrtc/promises-call-expected.txt:
+
+2021-07-01  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Support unprefixed :autofill pseudo-class.
+        https://bugs.webkit.org/show_bug.cgi?id=220459
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/autofill-expected.txt: Test passes now
+
+2021-06-30  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r279427) [ Mac ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=227557
+        <rdar://problem/79993241>
+
+        Unreviewed, silence console logging to address test flakiness.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity-expected.txt:
+
+2021-06-30  Truitt Savell  <tsavell@apple.com>
+
+        Update test expectations for imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/dialog.html after the changes in r279427
+        https://bugs.webkit.org/show_bug.cgi?id=227553
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/dialog-expected.txt:
+
+2021-06-30  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279405.
+
+        Casued 50+ webrtc crashes on Big Sur Debug
+
+        Reverted changeset:
+
+        "[Cocoa] Migrate WebRTC UDP socket handling to NW API"
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+        https://commits.webkit.org/r279405
+
+2021-06-30  Darin Adler  <darin@apple.com>
+
+        CSS specification prohibits numbers with trailing decimal point (e.g. "1.px"), but we allow them
+        https://bugs.webkit.org/show_bug.cgi?id=227517
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-syntax/decimal-points-in-numbers-expected.txt:
+        Expect a pass instead of a fail.
+
+2021-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Resync html WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227460
+
+        Reviewed by Sam Weinig.
+
+        Resync html WPT tests from upstream a38612f39e7752c3532.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/*: Updated.
+
+2021-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Resync workers WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227512
+
+        Reviewed by Sam Weinig.
+
+        Resync workers WPT tests from upstream a38612f39e7752c353208.
+
+        * resources/resource-files.json:
+        * web-platform-tests/workers/*: Updated.
+
+2021-06-30  Tim Nguyen  <ntim@apple.com>
+
+        Add modal dialog UA styles
+        https://bugs.webkit.org/show_bug.cgi?id=226175
+
+        Reviewed by Antti Koivisto.
+
+        This adds an :-internal-modal-dialog pseudo class and a test to make sure it does not leak.
+
+        This improves WPT results a lot and expectations have been updated. Some tests start failing,
+        but those are mainly top-layer related (which isn't implemented yet).
+
+        * web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/dialog-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt:
+
+2021-06-30  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227523
+
+        Reviewed by Antti Koivisto.
+
+        WPT Revision: https://github.com/web-platform-tests/wpt/commit/616577e3962171d2ffe41472e13f6353e6ea43ef
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/abspos-dialog-layout.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-iframe.sub.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-audio-video-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-not-in-tree-crash.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-scrolled-viewport-expected.txt: Removed.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-scrolled-viewport.html: Removed.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
+2021-06-30  Tim Nguyen  <ntim@apple.com>
+
+        Implement support for <dialog> element close event
+        https://bugs.webkit.org/show_bug.cgi?id=227493
+
+        Reviewed by Antti Koivisto.
+
+        With this change, the m_isOpen flag of HTMLDialogElement is only changed on attribute change, so attribute changes can
+        be detected more easily to fire this new "close" event.
+
+        Test: web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close.html
+        Adjusted existing test expectations for new `close` event.
+
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.https-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-properties.https-expected.txt:
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-windowless-body-expected.txt:
+
+2021-06-30  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Rebasing tests as timing changes a bit.
+        This aligns with Chrome and Firefox behavior.
+
+        * web-platform-tests/webrtc/no-media-call-expected.txt:
+        * web-platform-tests/webrtc/promises-call-expected.txt:
+
+2021-06-29  Tim Nguyen  <ntim@apple.com>
+
+        Implement form[method=dialog]
+        https://bugs.webkit.org/show_bug.cgi?id=226172
+
+        Reviewed by Chris Dumez.
+
+        Marked relevant WPT as pass & unskipped relevant test.
+
+        * web-platform-tests/html/dom/reflection-forms-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync speech-api WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227503
+
+        Reviewed by Sam Weinig.
+
+        Resync speech-api WPT tests from upstream a38612f39e7752c353208.
+
+        * web-platform-tests/speech-api/*: Updated.
+
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync css/cssom WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227506
+
+        Reviewed by Sam Weinig.
+
+        Resync css/cssom WPT tests from upstream a38612f39e7752c353208.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/cssom/*: Updated.
+
+2021-06-29  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Encoding specified in the 'charset' attribute should have precedence over 'content' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=227464
+
+        Reviewed by Geoffrey Garen. 
+
+        * web-platform-tests/html/syntax/parsing/meta-inhead-insertion-mode-expected.txt:
+
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync service-worker WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227490
+
+        Reviewed by Geoffrey Garen.
+
+        Resync service-worker WPT tests from upstream a38612f39e7752c353208.
+
+        * web-platform-tests/service-workers/*: Updated.
+
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync IDL interfaces from upstream web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=227485
+
+        Reviewed by Sam Weinig.
+
+        Resync IDL interfaces from upstream web-platform-tests a38612f39e7752c353208.
+
+        * web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window-expected.txt:
+        * web-platform-tests/css/css-images/idlharness.html:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        * web-platform-tests/css/cssom/idlharness.html:
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any-expected.txt: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.html: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.js: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.worker-expected.txt: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/idlharness.tentative.any.worker.html: Removed.
+        * web-platform-tests/fetch/cors-rfc1918/w3c-import.log: Removed.
+        * web-platform-tests/geolocation-API/idlharness.https.window-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/mediacapture-streams/idlharness.https.window-expected.txt:
+        * web-platform-tests/mediacapture-streams/idlharness.https.window.js:
+        (async idl_array):
+        * web-platform-tests/payment-request/idlharness.https.window-expected.txt:
+        * web-platform-tests/pointerevents/idlharness.window-expected.txt:
+        * web-platform-tests/uievents/idlharness.window-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any.worker-expected.txt:
+        Update / rebaseline a few tests due to IDL interface changes.
+
+        * web-platform-tests/interfaces/*: Updated.
+
+2021-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Resync intersection-observer WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227500
+
+        Reviewed by Sam Weinig.
+
+        Resync intersection-observer WPT tests from upstream a38612f39e7752c353208.
+
+        * web-platform-tests/intersection-observer/target-is-root-expected.txt: Added.
+        * web-platform-tests/intersection-observer/target-is-root.html: Added.
+        * web-platform-tests/intersection-observer/w3c-import.log:
+
+2021-06-29  Darin Adler  <darin@apple.com>
+
+        CSS style sheets loaded by HTMLLinkElement do not fall back correctly when charset is an invalid encoding name
+        https://bugs.webkit.org/show_bug.cgi?id=227498
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-syntax/charset/page-windows-1251-charset-attribute-bogus-expected.txt:
+        Expect a pass instead of a fail.
+
+2021-06-29  Alex Christensen  <achristensen@webkit.org>
+
+        xhr.send(URLSearchParams) should align default Content-Type header field with Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=227477
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/xhr/setrequestheader-content-type-expected.txt:
+
+2021-06-29  Martin Robinson  <mrobinson@igalia.com>
+
+        CSS scroll snap should allow scrolling to the middle of snap areas that overflow the snapport
+        https://bugs.webkit.org/show_bug.cgi?id=223021
+        <rdar://problem/75518606>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas-expected.txt: Update test
+        expectations to reflect newly passing tests.
+
+2021-06-28  Darin Adler  <darin@apple.com>
+
+        CSS parser "consume declaration" algorithm does not handle whitespace correctly
+        https://bugs.webkit.org/show_bug.cgi?id=227368
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/css/css-properties-values-api/at-property-animation-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/at-property-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/at-property-shadow-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/determine-registration-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-property-cssom-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-expected.txt:
+        Regenerated to reflect the whitespace trimming: one new pass, no new failures. Some of
+        these tests will also need updates to match the newer CSS specification. Not doing those
+        here right now.
+
+        * web-platform-tests/css/css-properties-values-api/at-property.html:
+        Pulled down a newer version of this test from the WPT repository with expectations in line
+        with newer CSS specification.
+
+        * web-platform-tests/css/css-syntax/declarations-trim-whitespace-expected.txt:
+        * web-platform-tests/css/css-variables/variable-cssText-expected.txt:
+        Expect most tests to pass instead of fail. There are still some failures. Given my reading
+        of the CSS specification I suspect it is the tests that are incorrect.
+
+        * web-platform-tests/css/css-variables/variable-definition-expected.txt:
+        * web-platform-tests/css/css-variables/variable-definition.html:
+        Pulled down a newer version of this test from the WPT repository with expectations in line
+        with newer CSS specification. Some tests are still failing because of expectations about
+        trailing whitespace. Given my reading of the CSS specification I suspect it is the tests
+        that are incorrect.
+
+        * web-platform-tests/css/css-variables/variable-reference-expected.txt:
+        * web-platform-tests/css/css-variables/variable-reference.html:
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration-expected.txt:
+        * web-platform-tests/css/css-variables/variable-substitution-variable-declaration.html:
+        Pulled down a newer version of these tests from the WPT repository with expectations in
+        line with newer CSS specification.
+
+        * web-platform-tests/css/cssom/variable-names-expected.txt: Expect tests to pass, not fail.
+
+2021-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Resync fetch WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227307
+
+        Reviewed by Geoff Garen.
+
+        Resync fetch WPT tests from upstream a38612f39e7752c35320.
+
+        * web-platform-tests/fetch/*: Updated.
+
+2021-06-25  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Consider container's writing mode to get grid item's margin
+        https://bugs.webkit.org/show_bug.cgi?id=226877
+
+        Reviewed by Sergio Villar Senin.
+
+        Update test results.
+  
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-011-expected.txt:
+
+2021-06-25  Ziran Sun  <zsun@igalia.com>
+
+        Resync web-platform-tests/css/css-grid tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=223593
+
+        Reviewed by Sergio Villar Senin and Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/absolute-positioning-grid-container-parent-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/descendant-static-position-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/descendant-static-position-004.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-img-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-rtl-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-safe-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-img-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-rtl-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-last-baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-003-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-item-dynamic-change-004.html: Added.
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-013-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-018-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-018.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-019-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-019.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-020-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-020.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-021-expected.xht: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-021.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-022-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-022.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-001.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-002.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/abspos/positioned-grid-items-negative-indices-003.html: Added.
+        * web-platform-tests/css/css-grid/abspos/support/colors-8x16.png: Added.
+        * web-platform-tests/css/css-grid/abspos/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/abspos/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035.html:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036.html:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004.html:
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-align-cycles-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-026-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-026.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-027-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-027.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-028-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-content-distribution-028.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-015-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-015.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-016-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-016.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-003.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-008.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-non-static-positioned-items-012.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-016-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment-positioned-items-with-margin-border-padding-016.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-alignment.html: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002.html:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003.html:
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-003.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-003.tentative.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-004-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-004.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-005-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-005.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-006-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-006.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-007-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-007.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-008-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-008.html: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-009-expected.xht: Added.
+        * web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-009.html: Added.
+        * web-platform-tests/css/css-grid/alignment/support/25x50-green.png: Added.
+        * web-platform-tests/css/css-grid/alignment/support/50x50-green.png: Added.
+        * web-platform-tests/css/css-grid/alignment/support/w3c-import.log:
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/dynamic-grid-with-auto-fill-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/dynamic-grid-with-auto-fill.html: Added.
+        * web-platform-tests/css/css-grid/dynamic-grid-within-flexbox-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/dynamic-grid-within-flexbox.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-003-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-004-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-min-size-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-multiple-values-005.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-definition/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-001.html:
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-002.html:
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-002-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-003-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-003.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-004-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/aspect-ratio-004.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-auto-margin-and-replaced-item-001.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-015-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-015.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-001-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-002-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-002.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-007-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-007.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-010-expected.xht: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-010.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-011-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-011.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-012-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-012.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-013-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-items/replaced-element-013.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003-expected.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003-expected.html.
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-009.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-003.html.
+        * web-platform-tests/css/css-grid/grid-model/grid-button-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-001.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-overflow-padding-002.html:
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-within-flexbox-definite-change-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html.
+        * web-platform-tests/css/css-grid/grid-within-flexbox-definite-change.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-002.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-003.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-004.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-005.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/baseline-alignment-affects-intrinsic-size-006.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height-expected.xht: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-002-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-002.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-001-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-001.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-002-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-flex-track-intrinsic-sizes-002.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-with-orthogonal-items-expected.txt:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-with-orthogonal-items.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-content-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-multi-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-multi-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-align-tracks-stretch-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-005.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-fragmentation-006.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-gap-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-gap-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-content-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-content-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002a-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002a.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002b-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-item-self-baseline-002b.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-placement-named-lines-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-template-columns-computed-withcontent-expected.txt: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-grid-template-columns-computed-withcontent.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-005.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-intrinsic-sizing-006.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-005.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-006-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-006.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-007-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-item-placement-007.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-003.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-content-004.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-multi-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-multi-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-justify-tracks-stretch-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-order-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-parsing.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-001.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002.html: Added.
+        * web-platform-tests/css/css-grid/masonry/tentative/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-004.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/w3c-import.log:
+        * web-platform-tests/css/css-grid/support/grid-child-utils.js:
+        * web-platform-tests/css/css-grid/table-grid-item-005-expected.txt: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-005.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-002.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-003.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/table-grid-item-dynamic-004.html: Added.
+        * web-platform-tests/css/css-grid/w3c-import.log:
+
 2021-06-24  Darin Adler  <darin@apple.com>
 
         CSS parser does not handle unpaired surrogates correctly

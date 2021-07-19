@@ -1133,6 +1133,7 @@ webkit.org/b/161359 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Pass Failure ]
 
 # Newly imported WPT tests that are timing out on iOS.
+imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_siblings.html [ Skip ]
@@ -1141,6 +1142,7 @@ imported/w3c/web-platform-tests/uievents/mouse/layout_change_should_fire_mouseov
 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/mouseover-out.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/click/click_events_on_input.html [ Pass Failure ]
@@ -1216,9 +1218,6 @@ webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 webkit.org/b/171985 [ Release ] workers/bomb.html [ Pass Timeout ]
 
 webkit.org/b/175939 [ Debug ] editing/execCommand/forward-delete-read-write-canvas.html [ Skip ]
-
-# <rdar://problem/32826391>
-imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
 webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Skip ]
 
@@ -1873,6 +1872,14 @@ webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass F
 
 webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html [ Failure ]
 
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-001.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-002.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-003.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-011.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-012.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-013.html [ ImageOnlyFailure ]
+
 webkit.org/b/215929 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
@@ -1907,8 +1914,6 @@ webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure Slow ]
 
-webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
-
 webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
 
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
@@ -1922,6 +1927,9 @@ webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.ht
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
+
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Pass Failure ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Pass Failure ]
 
 # @counter-style WPT failures specific to ios-wk2
 imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ ImageOnlyFailure ]
@@ -1941,4 +1949,4 @@ webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-s
 
 webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
 
-webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout ]
+webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]

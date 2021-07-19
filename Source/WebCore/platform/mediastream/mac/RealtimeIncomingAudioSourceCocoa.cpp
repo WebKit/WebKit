@@ -104,14 +104,16 @@ void RealtimeIncomingAudioSourceCocoa::logTimerFired()
 
 void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
 {
-    if (sampleRate != m_sampleRate)
+    ++m_chunksReceived;
+
+    static constexpr size_t initialSampleRate = 16000;
+    static constexpr size_t initialChunksReceived = 20;
+    // We usually receive some initial callbacks with no data at 16000, then we got real data at the actual sample rate.
+    // To limit reallocations, let's skip these initial calls.
+    if (m_chunksReceived < initialChunksReceived && sampleRate == initialSampleRate)
         return;
 
-#if !RELEASE_LOG_DISABLED
-    ++m_chunksReceived;
-#endif
-
-    if (!m_audioBufferList || m_numberOfChannels != numberOfChannels) {
+    if (!m_audioBufferList || m_numberOfChannels != numberOfChannels || m_sampleRate != sampleRate) {
 #if !RELEASE_LOG_DISABLED
         m_audioFormatChanged = true;
 #endif

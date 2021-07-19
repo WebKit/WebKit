@@ -126,6 +126,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSExposedToWorkerAndWindowPrototype, JSExposedToWorkerAndWindowPrototype::Base);
 
@@ -148,6 +150,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowDOM
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSExposedToWorkerAndWindowDOMConstructorConstruct, JSExposedToWorkerAndWindowDOMConstructor::construct);
 
+template<> const unsigned JSExposedToWorkerAndWindowDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSExposedToWorkerAndWindowDOMConstructor::s_info = { "ExposedToWorkerAndWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindowDOMConstructor) };
 
 template<> JSValue JSExposedToWorkerAndWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -163,7 +166,15 @@ template<> void JSExposedToWorkerAndWindowDOMConstructor::initializeProperties(V
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSExposedToWorkerAndWindowPrototypeTableIndex[4] = {
+    { -1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+};
+
 
 static const HashTableValue JSExposedToWorkerAndWindowPrototypeTableValues[] =
 {
@@ -171,7 +182,8 @@ static const HashTableValue JSExposedToWorkerAndWindowPrototypeTableValues[] =
     { "doSomething", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsExposedToWorkerAndWindowPrototypeFunction_doSomething), (intptr_t) (0) } },
 };
 
-const ClassInfo JSExposedToWorkerAndWindowPrototype::s_info = { "ExposedToWorkerAndWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindowPrototype) };
+static const HashTable JSExposedToWorkerAndWindowPrototypeTable = { 2, 3, true, JSExposedToWorkerAndWindow::info(), JSExposedToWorkerAndWindowPrototypeTableValues, JSExposedToWorkerAndWindowPrototypeTableIndex };
+const ClassInfo JSExposedToWorkerAndWindowPrototype::s_info = { "ExposedToWorkerAndWindow", &Base::s_info, &JSExposedToWorkerAndWindowPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSExposedToWorkerAndWindowPrototype) };
 
 void JSExposedToWorkerAndWindowPrototype::finishCreation(VM& vm)
 {

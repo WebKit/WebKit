@@ -707,7 +707,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
 {
     Structure* structure = baseCell->structure(vm);
 
-    if (structure->typeInfo().prohibitsPropertyCaching())
+    if (structure->typeInfo().prohibitsPropertyCaching() || slot.isTaintedByOpaqueObject())
         return;
     
     if (structure->needImpurePropertyWatchpoint())

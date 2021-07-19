@@ -28,7 +28,10 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestUIDelegate.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -81,6 +84,47 @@ TEST(WebSocket, LongMessageNoDeflate)
     auto webView = adoptNS([WKWebView new]);
     [webView loadHTMLString:html baseURL:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS");
+}
+
+TEST(WebSocket, PageWithAttributedBundleIdentifierDestroyed)
+{
+    HTTPServer server([](Connection connection) {
+        connection.webSocketHandshake();
+    });
+
+    NSString *html = [NSString stringWithFormat:@""
+    "<script>"
+    "    var ws = new WebSocket('ws://127.0.0.1:%d/');"
+    "    ws.onopen = function() { alert('opened successfully'); };"
+    "    ws.onerror = function(error) { alert('FAIL - error ' + error.message); }"
+    "</script>", server.port()];
+
+    pid_t originalNetworkProcessPID { 0 };
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    __block size_t webSocketsConnected { 0 };
+    auto delegate = adoptNS([TestUIDelegate new]);
+    delegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        EXPECT_WK_STREQ(message, "opened successfully");
+        webSocketsConnected++;
+        completionHandler();
+    };
+    constexpr size_t viewCount = 20;
+
+    @autoreleasepool {
+        std::array<RetainPtr<WKWebView>, viewCount> views;
+        for (size_t i = 0; i < viewCount; i++) {
+            configuration.get()._attributedBundleIdentifier = [NSString stringWithFormat:@"test.bundle.identifier.%zu", i];
+            views[i] = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+            views[i].get().UIDelegate = delegate.get();
+            [views[i] loadHTMLString:html baseURL:nil];
+        }
+        while (webSocketsConnected < viewCount)
+            Util::spinRunLoop();
+        originalNetworkProcessPID = configuration.get().websiteDataStore._networkProcessIdentifier;
+    }
+
+    Util::spinRunLoop(viewCount * 3);
+    EXPECT_EQ(originalNetworkProcessPID, configuration.get().websiteDataStore._networkProcessIdentifier);
 }
 
 }

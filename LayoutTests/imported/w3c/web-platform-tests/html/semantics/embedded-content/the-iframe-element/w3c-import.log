@@ -28,6 +28,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allow.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allowfullscreen.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-append-to-child-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-display-none-with-object.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-document-move-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-first-load-canceled-second-load-blank.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-eager.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-loading-lazy-base-url-2.html
@@ -87,6 +90,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_grandchild.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_parentage.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-inherit-to-blank-document-unsandboxed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-inherit-to-blank-document-unsandboxed.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-toggle-in-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_002.htm

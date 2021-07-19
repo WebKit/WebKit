@@ -34,8 +34,7 @@ class PlayPauseButton extends Button
             layoutDelegate
         });
 
-        if (this.layoutTraits & LayoutTraits.macOS && this.layoutTraits & LayoutTraits.Fullscreen)
-            this.scaleFactor = 2;
+        this.scaleFactor = this.layoutTraits.playPauseButtonScaleFactor();
     }
 
     // Public

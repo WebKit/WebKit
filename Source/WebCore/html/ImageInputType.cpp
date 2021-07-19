@@ -215,4 +215,9 @@ unsigned ImageInputType::width() const
     return 0;
 }
 
+String ImageInputType::resultForDialogSubmit() const
+{
+    return makeString(m_clickLocation.x(), ',', m_clickLocation.y());
+}
+
 } // namespace WebCore

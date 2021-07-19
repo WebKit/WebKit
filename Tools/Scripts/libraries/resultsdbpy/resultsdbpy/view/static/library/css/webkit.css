@@ -1696,7 +1696,8 @@ pre {
 }
 
 .tabs .tab.active .link {
-  border-bottom: 1px solid var(--greyDarker);
+  border-bottom: 1px solid var(--linkColor);
+  color: var(--linkColor);
 }
 
 .tabs .tab .link {

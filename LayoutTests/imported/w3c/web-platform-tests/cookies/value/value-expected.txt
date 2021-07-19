@@ -1,0 +1,25 @@
+
+FAIL Set value containing a comma assert_equals: The cookie was set as expected. expected "test=1, baz=qux" but got "test=1,baz=qux"
+PASS Set quoted value containing a comma
+FAIL Ignore values after semicolon assert_equals: The cookie was set as expected. expected "test=\"3zz" but got "test=\"3zz;pp\""
+PASS Ingore whitespace at the end of value
+PASS Set value including quotes and whitespace up until semicolon
+PASS Set value with a single quote excluding whitespace
+FAIL Set nameless cookie to its value assert_equals: The cookie was set as expected. expected "test7" but got ""
+FAIL Set nameless cookie to its value with an escaped quote assert_equals: The cookie was set as expected. expected "\"test8\"HHH\"" but got ""
+PASS Set value with unbalanced leading quote
+FAIL Set nameless cookie followed by '=' to its value assert_equals: The cookie was set as expected. expected "test10" but got ""
+PASS Set cookie with large value ( = 4kb)
+PASS Ignore cookie with large value ( > 4kb)
+PASS Set cookie but ignore value after LF
+PASS Set cookie ignoring whitespace after value endquote
+PASS Ignore whitespace and ; after value
+PASS Ignore whitespace preceding value
+PASS Set cookie with quotes in value
+PASS Set cookie keeping whitespace inside quoted value
+FAIL Set cookie value ignoring characters after semicolon assert_equals: The cookie was set as expected. expected "test=\"19" but got "test=\"19;wow\""
+PASS Set cookie with another = inside quoted value
+PASS Set cookie ignoring whitespace surrounding value and characters after first semicolon
+FAIL Set valueless cookie, given `Set-Cookie: test22=` assert_equals: The cookie was set as expected. expected "testA=22; test22=; testB=22" but got "test22=; testA=22; testB=22"
+FAIL URL-encoded cookie value is not decoded assert_equals: The cookie was set as expected. expected "test=%32%33" but got "test=%32%33; test22=; testA=22; testB=22"
+

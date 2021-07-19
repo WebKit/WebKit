@@ -80,9 +80,58 @@ static JSC_DECLARE_CUSTOM_GETTER(jsDOMWindow_TestPromiseRejectionEventConstructo
 
 using JSDOMWindowDOMConstructor = JSDOMConstructorNotConstructable<JSDOMWindow>;
 
-/* Hash table */
+template<> const unsigned JSDOMWindowDOMConstructor::StructureFlags = Base::StructureFlags;
+template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
-static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
+template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
+{
+    return JSEventTarget::getConstructor(vm, &globalObject);
+}
+
+template<> void JSDOMWindowDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
+{
+    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "DOMWindow"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+}
+
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSDOMWindowPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSDOMWindowPrototypeTableValues[] =
+{
+    { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+};
+
+static const HashTable JSDOMWindowPrototypeTable = { 1, 1, true, JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, JSDOMWindowPrototypeTableIndex };
+const ClassInfo JSDOMWindowPrototype::s_info = { "DOMWindow", &Base::s_info, &JSDOMWindowPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindowPrototype) };
+
+void JSDOMWindowPrototype::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    reifyStaticProperties(vm, JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, *this);
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
+static JSValue createJSDOMWindowInstance_TestEnabledForContext(VM& vm, JSObject*)
+{
+    return CustomGetterSetter::create(vm, jsDOMWindow_TestEnabledForContextConstructor, nullptr);
+}
+
+static bool isEnabledJSDOMWindowInstance_TestEnabledForContext(JSGlobalObject* globalObject)
+{
+    UNUSED_PARAM(globalObject);
+    return (jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->isSecureContext() && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()));
+}
+
+/* Hash table for Instance */
+
+static const struct CompactHashIndex JSDOMWindowInstanceTableIndex[37] = {
     { -1, -1 },
     { 5, 35 },
     { -1, -1 },
@@ -107,8 +156,8 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
-    { 9, -1 },
+    { 7, -1 },
+    { 10, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -117,70 +166,34 @@ static const struct CompactHashIndex JSDOMWindowTableIndex[37] = {
     { -1, -1 },
     { 3, 34 },
     { 6, 36 },
-    { 7, -1 },
     { 8, -1 },
-    { 10, -1 },
+    { 9, -1 },
+    { 11, -1 },
 };
 
 
-static const HashTableValue JSDOMWindowTableValues[] =
+static const HashTableValue JSDOMWindowInstanceTableValues[] =
 {
-    { "DOMWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_DOMWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "ExposedToWorkerAndWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_ExposedToWorkerAndWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestConditionalIncludes", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestConditionalIncludesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestConditionallyReadWrite", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestDefaultToJSON", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestDefaultToJSONConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestDefaultToJSONFilteredByExposed", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestDefaultToJSONFilteredByExposedConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestEnabledBySetting", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestEnabledBySettingConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "DOMWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_DOMWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "ExposedToWorkerAndWindow", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_ExposedToWorkerAndWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestConditionalIncludes", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestConditionalIncludesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestConditionallyReadWrite", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestDefaultToJSON", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestDefaultToJSONConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestDefaultToJSONFilteredByExposed", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestDefaultToJSONFilteredByExposedConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestEnabledBySetting", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestEnabledBySettingConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestEnabledForContext", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSDOMWindowInstance_TestEnabledForContext), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSDOMWindowInstance_TestEnabledForContext) } },
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    { "TestInterface", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "TestInterface", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
-    { "TestNode", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestObject", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestPromiseRejectionEvent", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestPromiseRejectionEventConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "TestNode", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestNodeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestObject", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "TestPromiseRejectionEvent", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindow_TestPromiseRejectionEventConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 };
 
-static const HashTable JSDOMWindowTable = { 11, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
-template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
-
-template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
-{
-    return JSEventTarget::getConstructor(vm, &globalObject);
-}
-
-template<> void JSDOMWindowDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
-{
-    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "DOMWindow"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-}
-
-/* Hash table for prototype */
-
-static const struct CompactHashIndex JSDOMWindowPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
-
-static const HashTableValue JSDOMWindowPrototypeTableValues[] =
-{
-    { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-};
-
-static const HashTable JSDOMWindowPrototypeTable = { 1, 1, true, JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, JSDOMWindowPrototypeTableIndex };
-const ClassInfo JSDOMWindowPrototype::s_info = { "DOMWindow", &Base::s_info, &JSDOMWindowPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindowPrototype) };
-
-void JSDOMWindowPrototype::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    reifyStaticProperties(vm, JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, *this);
-    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
-}
-
-const ClassInfo JSDOMWindow::s_info = { "DOMWindow", &Base::s_info, &JSDOMWindowTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindow) };
+static const HashTable JSDOMWindowInstanceTable = { 12, 31, true, JSDOMWindow::info(), JSDOMWindowInstanceTableValues, JSDOMWindowInstanceTableIndex };
+const ClassInfo JSDOMWindow::s_info = { "DOMWindow", &Base::s_info, &JSDOMWindowInstanceTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindow) };
 
 JSDOMWindow::JSDOMWindow(VM& vm, Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
     : JSEventTarget(vm, structure, WTFMove(impl), proxy)
@@ -193,8 +206,7 @@ void JSDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
 
     static_assert(!std::is_base_of<ActiveDOMObject, DOMWindow>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
-    if ((jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsDOMWindow_TestEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().TestEnabledBySettingPrivateName(), CustomGetterSetter::create(vm, jsDOMWindow_TestEnabledBySettingConstructor, nullptr), static_cast<unsigned>(JSC::PropertyAttribute::CustomValue));
 }
 
 JSValue JSDOMWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)

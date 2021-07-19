@@ -1,3 +1,192 @@
+2021-07-06  Kyle Piddington  <kpiddington@apple.com>
+
+        REGRESSION (r279466):  [Big Sur] webgl/1.0.3/conformance & webgl/2.0.0/conformance are failing
+        https://bugs.webkit.org/show_bug.cgi?id=227596
+        Provide Intel workaround for Big Sur systems. Atan and invariant have 
+        issues on older systems, and require us to disable fastmath to produce correct results. 
+
+        Reviewed by Kenneth Russell.
+
+        * include/platform/FeaturesMtl.h:
+        * src/compiler/translator/TranslatorMetalDirect.h:
+        (sh::TranslatorMetalReflection::reset):
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitPostQualifier):
+        (GenMetalTraverser::visitUnary):
+        (GenMetalTraverser::visitAggregate):
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+        * src/libANGLE/renderer/metal/ProgramMtl.h:
+        (rx::ProgramMtl::getTranslatedShaderInfo const):
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.h:
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+        (rx::mtl::GlslangGetMSL):
+        * src/libANGLE/renderer/metal/mtl_render_utils.h:
+        * src/libANGLE/renderer/metal/mtl_render_utils.mm:
+        (rx::mtl::TransformFeedbackUtils::createMslXfbLibrary):
+        (rx::mtl::TransformFeedbackUtils::getTransformFeedbackRenderPipeline):
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::CreateShaderLibrary):
+
+2021-07-01  Ben Nham  <nham@apple.com>
+
+        Unreviewed, reverting r279172.
+
+        Broke WebGL context construction on some devices.
+
+        Reverted changeset:
+
+        "rAF driven WebGL submits excessive amount of GPU work when frames are slow"
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+        https://commits.webkit.org/r279172
+
+2021-07-01  Kyle Piddington  <kpiddington@apple.com>
+
+        BabylonJS Under water demo is slower than it should be on Intel
+        https://bugs.webkit.org/show_bug.cgi?id=227226
+
+        Remove fastMath restriction on Intel
+        Removing fastmath in all scenarios leads to unacceptable performance on integrated graphics
+        Currently, webgl conformance tests and the Safari tests don't have any invariance tests that show invariance issues. deQP tests are similarly passing.
+        In Metal-ANGLE, gl_position and gl_fragcoord are valid attributes to be marked as invariant. All others will be ignored.
+
+        Reviewed by Kenneth Russell.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitPostQualifier):
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::CreateShaderLibrary):
+
+2021-06-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ASSERT in  webgl/1.0.x/conformance/glsl/misc/uninitialized-local-global-variables.html   IdGen ASSERT(*base != '_');
+        https://bugs.webkit.org/show_bug.cgi?id=227482
+
+        Reviewed by Kenneth Russell.
+
+        Give unnamed structs normal "_<number>" name.
+        The original code thought it gave "ANGLE__unnamed<number>", but in reality it
+        gave "__unnamed<number>".
+        Since other constructs already create names of form "_<number>", it is unwarranted to
+        special case this particular case to give "_unnamed<number>" or "ANGLE_unnamed<number" or
+        "ANGLE_<number>".
+
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+        * src/tests/compiler_tests/MSLOutput_test.cpp:
+        (TEST_F):
+
+2021-06-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal primitive restart range computation could index with size_t
+        https://bugs.webkit.org/show_bug.cgi?id=227449
+
+        Reviewed by Kenneth Russell.
+
+        Make the `calculateRestartRanges()` a bit simpler in order
+        for it to be easier to understand.
+
+        * src/libANGLE/renderer/metal/BufferMtl.h:
+        (rx::IndexRange::IndexRange):
+        Add documentation what the mtl::IndexRange is.
+        Add constructor so that `std::vector::emplace_back()` works.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::calculateRestartRanges):
+        Index with size_t to make it simpler to understand if the index
+        overflows or not.
+        Use reinterpret_cast in order to not accidentally cast away
+        const from `mtl::BufferRef::mapReadOnly()`.
+        Skip the non-marker elements with `continue` to avoid deep nesting.
+        Give a name to the restart range marker value.
+        Remove intermediate variable `value = bufferData[i]` as it is never
+        used more than once. This simplifies the code as the do-while loop
+        does not need to check the if condition as the loop ending condition
+        already checks.
+        Make the array a returned result instead of out variable.
+
+        (rx::BufferMtl::getRestartIndices):
+
+2021-06-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal primitive restart range computation should not be done unless primitive restart is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=227452
+
+        Reviewed by Kenneth Russell.
+
+        Primitive restart needs to scan the whole index buffer for values.
+        This should not be done unless needed.
+
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::getDrawIndices):
+        First check for primitive restart enabledness.
+        Compute the primitive restart values after this.
+        The algoritm should succeed when the count of primitive
+        restart ranges is zero, and it does not do much of work.
+        Use the restart range vector as reference, so that no copy
+        would be done.
+        Add spaces the if statements, comments and references.
+        Move the else arm of the if statement with return statement
+        to body of the function to reduce nesting.
+
+2021-06-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        iPhone 6S - iOS 15.0 - unable to retrieve WebGL2 context
+        https://bugs.webkit.org/show_bug.cgi?id=226975
+        rdar://78966563
+
+        Reviewed by Kenneth Russell.
+
+        Limit the OpenGL ES 3.0 contexts to iOS GPU Family 3, not
+        4.
+
+        The limit was most likely added to guard sample_compare
+        lod_options properties .lod and .gradient. However, these
+        are always supported on iOS.
+
+        Currently there is already ES 3.0 features implemented
+        in ANGLE that are guarded by iOS GPU Family 3.
+
+        Fixes WebGL 2.0 to work on iPhone6s and similar
+        devices  (A9, A9X).
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::getMaxSupportedESVersion const):
+
+2021-06-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal index buffer left mapped when building primitive restart ranges
+        https://bugs.webkit.org/show_bug.cgi?id=227371
+
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::calculateRestartRanges):
+        Add unmap.
+
+2021-06-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] WebGL content is unable to use the discrete GPU
+        https://bugs.webkit.org/show_bug.cgi?id=227408
+        <rdar://problem/79216506>
+
+        Reviewed by Dean Jackson.
+
+        There appears to be a key collision:
+
+        Source/ThirdParty/ANGLE/include/platform/PlatformMethods.h:#define EGL_PLATFORM_ANGLE_PLATFORM_METHODS_ANGLEX 0x3482
+        Source/ThirdParty/ANGLE/include/EGL/eglext_angle.h:#define EGL_POWER_PREFERENCE_ANGLE 0x3482
+
+        Both these keys seem to be accepted by EGL_GetPlatformDisplayEXT().
+
+        This patch just changes the value of one of them to a value I picked out of a hat, just so they don't conflict.
+        We should work with upstream to either:
+        A) Find a better solution (maybe disambiguate these values based on which function is accepting them), or
+        B) Make a robust way to make sure keys don't collide in the future.
+
+        * include/platform/PlatformMethods.h:
+
 2021-06-24  John Cunningham  <johncunningham@apple.com>
 
         [ANGLE Metal] - Set barriers on transform feedback buffers only up to the in use buffer count

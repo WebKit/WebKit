@@ -31,8 +31,8 @@
 
 #if USE(CAIRO)
 
+#include "GraphicsContextCairo.h"
 #include "ImageBufferCairoBackend.h"
-#include "PlatformContextCairo.h"
 
 namespace WebCore {
 
@@ -53,9 +53,8 @@ protected:
     RefPtr<NativeImage> cairoSurfaceCoerceToImage() const;
     unsigned bytesPerRow() const override;
 
-    mutable RefPtr<cairo_surface_t> m_surface;
-    PlatformContextCairo m_platformContext { nullptr };
-    std::unique_ptr<GraphicsContext> m_context;
+    RefPtr<cairo_surface_t> m_surface;
+    mutable GraphicsContextCairo m_context;
 };
 
 } // namespace WebCore

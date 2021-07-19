@@ -578,7 +578,8 @@ class VertexFormatConversionUtils final : angle::NonCopyable
 
   private:
     AutoObjCPtr<id<MTLLibrary>> createMslXfbLibrary(ContextMtl *contextMtl,
-                                                    const std::string &translatedMsl);
+                                                    const std::string &translatedMsl,
+                                                    bool enableFastMath);
 };
 
 // RenderUtils: container class of various util classes above

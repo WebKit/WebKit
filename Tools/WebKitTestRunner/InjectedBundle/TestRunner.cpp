@@ -646,7 +646,7 @@ enum {
     EnterFullscreenForElementCallbackID,
     ExitFullscreenForElementCallbackID,
     AppBoundRequestContextDataForDomainCallbackID,
-    DidNotHandleTapAsMeaningfulClickCallbackID,
+    DidHandleTapCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1107,14 +1107,15 @@ void TestRunner::installCustomMenuAction(JSStringRef name, bool dismissesAutomat
     }));
 }
 
-void TestRunner::installDidNotHandleTapAsMeaningfulClickCallback(JSValueRef callback)
+void TestRunner::installDidHandleTapCallback(JSValueRef callback)
 {
-    cacheTestRunnerCallback(DidNotHandleTapAsMeaningfulClickCallbackID, callback);
+    cacheTestRunnerCallback(DidHandleTapCallbackID, callback);
 }
 
-void TestRunner::callDidNotHandleTapAsMeaningfulClickCallback()
+void TestRunner::callDidHandleTapCallback(bool wasMeaningful)
 {
-    callTestRunnerCallback(DidNotHandleTapAsMeaningfulClickCallbackID);
+    auto result = JSValueMakeBoolean(mainFrameJSContext(), wasMeaningful);
+    callTestRunnerCallback(DidHandleTapCallbackID, 1, &result);
 }
 
 void TestRunner::installDidBeginSwipeCallback(JSValueRef callback)

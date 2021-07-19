@@ -5189,6 +5189,16 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 {
     StrictModeScope strictModeScope(generator);
 
+    if (!m_name.isNull())
+        generator.pushClassHeadLexicalScope(m_classHeadEnvironment);
+
+    // Class heritage must be evaluated outside of private fields access.
+    RefPtr<RegisterID> superclass;
+    if (m_classHeritage) {
+        superclass = generator.newTemporary();
+        generator.emitNode(superclass.get(), m_classHeritage);
+    }
+
     if (m_needsLexicalScope)
         generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::ClassScope, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested);
 
@@ -5199,12 +5209,6 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.pushPrivateAccessNames(m_lexicalVariables.privateNameEnvironment());
     if (shouldEmitPrivateBrand)
         generator.emitCreatePrivateBrand(m_position, m_position, m_position);
-
-    RefPtr<RegisterID> superclass;
-    if (m_classHeritage) {
-        superclass = generator.newTemporary();
-        generator.emitNode(superclass.get(), m_classHeritage);
-    }
 
     RefPtr<RegisterID> constructor = generator.tempDestination(dst);
     bool needsHomeObject = false;
@@ -5272,7 +5276,7 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         }
     }
 
-    if (m_needsLexicalScope && !m_name.isNull()) {
+    if (!m_name.isNull()) {
         Variable classNameVar = generator.variable(m_name);
         RELEASE_ASSERT(classNameVar.isResolved());
         RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, classNameVar);
@@ -5293,11 +5297,14 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitCall(generator.newTemporary(), staticFieldInitializer.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
     }
 
+    if (hasPrivateNames)
+        generator.popPrivateAccessNames();
+
     if (m_needsLexicalScope)
         generator.popLexicalScope(this);
 
-    if (hasPrivateNames)
-        generator.popPrivateAccessNames();
+    if (!m_name.isNull())
+        generator.popClassHeadLexicalScope(m_classHeadEnvironment);
 
     return generator.move(generator.finalDestination(dst, constructor.get()), constructor.get());
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -272,6 +272,8 @@ public:
     ExceptionOr<Vector<String>> formControlStateOfPreviousHistoryItem();
     ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<String>&);
 
+    ExceptionOr<Ref<DOMRect>> absoluteLineRectFromPoint(int x, int y);
+
     ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
     ExceptionOr<bool> isCaretBlinkingSuspended();
 
@@ -484,6 +486,8 @@ public:
     uint64_t storageAreaMapCount() const;
 
     uint64_t elementIdentifier(Element&) const;
+    bool isElementAlive(Document&, uint64_t documentIdentifier) const;
+
     uint64_t frameIdentifier(const Document&) const;
     uint64_t pageIdentifier(const Document&) const;
 
@@ -644,6 +648,7 @@ public:
     String getImageSourceURL(Element&);
 
 #if ENABLE(VIDEO)
+    unsigned mediaElementCount();
     Vector<String> mediaResponseSources(HTMLMediaElement&);
     Vector<String> mediaResponseContentRanges(HTMLMediaElement&);
     void simulateAudioInterruption(HTMLMediaElement&);
@@ -878,6 +883,7 @@ public:
         RefPtr<DOMPointReadOnly> topRight;
         RefPtr<DOMPointReadOnly> bottomRight;
         RefPtr<DOMPointReadOnly> bottomLeft;
+        bool hasLeadingWhitespace { true };
 
         ~ImageOverlayText();
     };
@@ -1163,6 +1169,14 @@ public:
     void systemBeep();
 
     String dumpStyleResolvers();
+
+    enum class AutoplayPolicy : uint8_t {
+        Default,
+        Allow,
+        AllowWithoutSound,
+        Deny,
+    };
+    ExceptionOr<void> setDocumentAutoplayPolicy(Document&, AutoplayPolicy);
 
 private:
     explicit Internals(Document&);

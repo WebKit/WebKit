@@ -1361,7 +1361,7 @@ LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing(std::optional<La
 }
 
 // Hit Testing
-bool RenderBox::hitTestVisualOverflow(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+bool RenderBox::hitTestVisualOverflow(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
 {
     if (isRenderView())
         return true;
@@ -1370,22 +1370,21 @@ bool RenderBox::hitTestVisualOverflow(const HitTestLocation& locationInContainer
     LayoutRect overflowBox = visualOverflowRect();
     flipForWritingMode(overflowBox);
     overflowBox.moveBy(adjustedLocation);
-    return locationInContainer.intersects(overflowBox);
+    return hitTestLocation.intersects(overflowBox);
 }
 
-bool RenderBox::hitTestClipPath(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
 {
     if (!style().clipPath())
         return true;
 
-    LayoutPoint adjustedLocation = accumulatedOffset + location();
-    const LayoutSize localOffset = toLayoutSize(adjustedLocation);
-
+    auto offsetFromHitTestRoot = toLayoutSize(accumulatedOffset + location());
+    auto hitTestLocationInLocalCoordinates = hitTestLocation.point() - offsetFromHitTestRoot;
     switch (style().clipPath()->type()) {
     case ClipPathOperation::Shape: {
         auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
         auto referenceBoxRect = referenceBox(clipPath.referenceBox());
-        if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath.windRule()))
+        if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(hitTestLocationInLocalCoordinates, clipPath.windRule()))
             return false;
         break;
     }
@@ -1397,7 +1396,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& locationInContainer, cons
         if (!is<SVGClipPathElement>(*element))
             break;
         auto& clipper = downcast<RenderSVGResourceClipper>(*element->renderer());
-        if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint(locationInContainer.point() - localOffset)))
+        if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint { hitTestLocationInLocalCoordinates }))
             return false;
         break;
     }
@@ -1408,7 +1407,7 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& locationInContainer, cons
     return true;
 }
 
-bool RenderBox::hitTestBorderRadius(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
 {
     if (isRenderView() || !style().hasBorderRadius())
         return true;
@@ -1417,7 +1416,7 @@ bool RenderBox::hitTestBorderRadius(const HitTestLocation& locationInContainer, 
     LayoutRect borderRect = borderBoxRect();
     borderRect.moveBy(adjustedLocation);
     RoundedRect border = style().getRoundedBorderFor(borderRect);
-    return locationInContainer.intersects(border);
+    return hitTestLocation.intersects(border);
 }
 
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)

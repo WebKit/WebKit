@@ -1,0 +1,26 @@
+
+PASS navigation allowed for PASS navigation allowed for [""]
+PASS navigation allowed for ["jibberish"]
+PASS navigation allowed for [{"percentEncoded":"require%FFcorp"}]
+PASS navigation allowed for ["require-corp;"]
+PASS navigation allowed for ["\u000brequire-corp\u000b"]
+PASS navigation allowed for ["\frequire-corp\f"]
+PASS navigation allowed for ["\rrequire-corp\r"]
+PASS navigation allowed for ["Require-corp"]
+PASS navigation allowed for ["\"require-corp\""]
+PASS navigation allowed for [":cmVxdWlyZS1jb3Jw:"]
+PASS navigation allowed for ["require-corp;\tfoo=bar"]
+PASS navigation allowed for ["require-corp require-corp"]
+PASS navigation allowed for ["require-corp,require-corp"]
+PASS navigation allowed for ["require-corp","require-corp"]
+PASS navigation allowed for ["","require-corp"]
+PASS navigation allowed for ["require-corp",""]
+FAIL navigation blocked for ["require-corp"] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for [" require-corp "] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for ["\trequire-corp\t"] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for [" \trequire-corp"] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for ["require-corp\t "] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for ["require-corp; foo=bar"] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for ["require-corp;require-corp"] assert_equals: expected null but got Document node with 1 child
+FAIL navigation blocked for ["require-corp; report-to=\"data:","\""] assert_equals: expected null but got Document node with 1 child
+

@@ -8,13 +8,13 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>TracksButton</code> class.");
 
-const tracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS });
+const tracksButton = new TracksButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBeEqualToString("tracksButton.element.localName", "button");
 shouldBeTrue('tracksButton.element.classList.contains("tracks")');
 shouldBe("tracksButton.iconName", "Icons.Tracks");
 
-const fullscreenTracksButton = new TracksButton({ layoutTraits: LayoutTraits.macOS | LayoutTraits.Fullscreen });
+const fullscreenTracksButton = new TracksButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Fullscreen) });
 
 shouldBecomeEqual('tracksButton.image.element.style.webkitMaskImage.includes("macOS/MediaSelector.svg")', "true", () => {
     shouldBecomeEqual('fullscreenTracksButton.image.element.style.webkitMaskImage.includes("macOS/MediaSelector-fullscreen.svg")', "true", finishJSTest);

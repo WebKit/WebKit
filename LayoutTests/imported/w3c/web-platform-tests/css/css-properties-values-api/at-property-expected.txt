@@ -56,9 +56,9 @@ PASS Rule not applied [<gandalf>, grey, false]
 PASS Rule not applied [gandalf, grey, false]
 PASS Rule not applied [<color>, notacolor, false]
 PASS Rule not applied [<length>, 10em, false]
-FAIL Non-inherited properties do not inherit assert_equals: expected "40px" but got " 40px"
-FAIL Inherited properties inherit assert_equals: expected "40px" but got " 40px"
+FAIL Non-inherited properties do not inherit assert_equals: expected "0px" but got "40px"
+PASS Inherited properties inherit
 FAIL Initial values substituted as computed value assert_equals: expected "rgb(0, 128, 0)" but got ""
 PASS Non-universal registration are invalid without an initial value
-FAIL Initial value may be omitted for universal registration assert_equals: expected "" but got " calc(1px + 1px)"
+FAIL Initial value may be omitted for universal registration assert_equals: expected "" but got "calc(1px + 1px)"
 

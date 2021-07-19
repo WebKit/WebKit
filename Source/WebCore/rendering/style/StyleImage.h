@@ -78,6 +78,8 @@ public:
 
     bool hasCachedImage() const { return m_isCachedImage || selectedImage()->isCachedImage(); }
 
+    virtual bool usesDataProtocol() const { return false; }
+
 protected:
     StyleImage()
         : m_isCachedImage(false)

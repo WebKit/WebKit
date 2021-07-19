@@ -152,7 +152,7 @@ LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGri
     auto& columnList = grid.columns().list();
     auto logicalWidth = LayoutUnit { };
     for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
-        logicalWidth += columnList.at(columnIndex).logicalWidth();
+        logicalWidth += columnList.at(columnIndex).usedLogicalWidth();
     // No column spacing when spanning.
     logicalWidth += (cell.columnSpan() - 1) * grid.horizontalSpacing();
     auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());

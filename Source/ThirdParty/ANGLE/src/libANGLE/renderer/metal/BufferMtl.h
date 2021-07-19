@@ -30,8 +30,11 @@ struct DrawCommandRange
     uint32_t count;
     size_t offset;
 };
+
+// Inclusive range of consecutive primitive restart value indexes.
 struct IndexRange
 {
+    IndexRange(size_t begin, size_t end) : restartBegin(begin), restartEnd(end) {}
     size_t restartBegin;
     size_t restartEnd;
 };

@@ -207,6 +207,7 @@ webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
 # WebXR is not yet supported in GTK
 webkit.org/b/208988 http/wpt/webxr [ Skip ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/208988 webxr [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
@@ -806,9 +807,6 @@ webkit.org/b/152247 fast/forms/input-appearance-spinbutton-up.html [ Skip ]
 webkit.org/b/152247 fast/forms/input-appearance-spinbutton.html [ Skip ]
 webkit.org/b/152247 fast/forms/listbox-scrollbar-hit-test.html [ Skip ]
 
-# This is a Mac specific feature
-webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
-
 # The test directly sends Cocoa events
 swipe/pushState-programmatic-back-while-swiping-crash.html [ Skip ]
 
@@ -979,10 +977,6 @@ webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.htm
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-terminate.https.html [ Crash ]
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
-
-webkit.org/b/225637 imported/w3c/web-platform-tests/fetch/content-length/content-length.html [ Crash ]
-# Crashing since r277601.
-webkit.org/b/225637 imported/w3c/web-platform-tests/eventsource/eventsource-close.htm [ Crash ]
 
 webkit.org/b/225921 editing/execCommand/print.html [ Crash ]
 webkit.org/b/225921 fast/media/print-restores-previous-mediatype.html [ Crash ]
@@ -1733,8 +1727,6 @@ webkit.org/b/172811 fast/forms/number/number-appearance-rtl.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-layer.html [ Failure ]
 
-webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
-
 webkit.org/b/174460 fast/canvas/canvas-blend-image.html [ Failure ]
 webkit.org/b/174460 fast/canvas/canvas-blend-solid.html [ Failure ]
 
@@ -1806,8 +1798,6 @@ webkit.org/b/185913 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-re
 webkit.org/b/186099 editing/caret/caret-in-empty-cell.html [ ImageOnlyFailure ]
 
 webkit.org/b/186142 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
-
-webkit.org/b/186618 imported/w3c/web-platform-tests/fetch/api/headers/header-values.html [ Failure ]
 
 webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 

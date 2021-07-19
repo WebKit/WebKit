@@ -34,6 +34,10 @@ def enumerablePseudoType(stringPseudoType):
     if stringPseudoType.endswith('('):
         stringPseudoType = stringPseudoType[:-1]
 
+    internalPrefix = '-internal-'
+    if (stringPseudoType.startswith(internalPrefix)):
+        stringPseudoType = stringPseudoType[len(internalPrefix):]
+
     webkitPrefix = '-webkit-'
     if (stringPseudoType.startswith(webkitPrefix)):
         stringPseudoType = stringPseudoType[len(webkitPrefix):]

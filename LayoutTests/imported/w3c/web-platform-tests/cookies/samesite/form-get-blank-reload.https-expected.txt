@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: [object MessageEvent]
+Blocked access to external URL https://www1.localhost:9443/cookies/samesite/resources/puppet.html
+
+Harness Error (TIMEOUT), message = null
+
+PASS Reloaded same-host top-level form GETs are strictly same-site
+TIMEOUT Reloaded subdomain top-level form GETs are strictly same-site Test timed out
+NOTRUN Reloaded cross-site top-level form GETs are laxly same-site
+

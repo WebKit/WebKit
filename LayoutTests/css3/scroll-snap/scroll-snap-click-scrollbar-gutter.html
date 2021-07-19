@@ -34,21 +34,32 @@
                 scroll-snap-type: both mandatory;
             }
 
-            .block {
-                height: 1000px;
-                width: 250px;
-                scroll-snap-align: start;
-            }
-
             .horizontal-drawer {
                 height: 100%;
                 width: 2000px;
             }
 
-            .horizontal-drawer .block {
-                width: 1000px;
-                height: 250px;
+            .horizontal-drawer > div {
+                float: left;
+                width: 990px;
+                height: 100%;
             }
+
+            .horizontal-drawer > div.snap-point {
+                scroll-snap-align: start;
+                width: 10px;
+             }
+
+            #vertical-container > div {
+                width: 100%;
+                height: 990px;
+            }
+
+            #vertical-container > div.snap-point {
+                scroll-snap-align: start;
+                height: 10px;
+            }
+
         </style>
         <script src="../../resources/js-test.js"></script>
         <script src="../../resources/ui-helper.js"></script>
@@ -87,13 +98,17 @@
     <body onload="onLoad();">
         <div id="horizontal-container" class="container">
             <div class="horizontal-drawer">
-                <div class="block" style="float: left; background: #80475E"></div>
-                <div class="block" style="width: 450px; float: left; background: #CC5A71"></div>
+                <div class="snap-point" style="background: #80475E"></div>
+                <div></div>
+                <div class="snap-point" style="background: #CC5A71"></div>
+                <div></div>
             </div>
         </div>
         <div id="vertical-container" class="container">
-            <div class="block" style="background: #80475E"></div>
-            <div class="block" style="height: 450px; background: #CC5A71"></div>
+            <div class="snap-point" style="background: #80475E"></div>
+            <div></div>
+            <div class="snap-point" style="background: #CC5A71"></div>
+            <div></div>
         </div>
         <p id="console"></p>
         <script>

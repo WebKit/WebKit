@@ -116,9 +116,9 @@ private:
     Length crossSizeLengthForChild(SizeType, const RenderBox&) const;
     bool shouldApplyMinSizeAutoForChild(const RenderBox&) const;
     LayoutUnit crossAxisExtentForChild(const RenderBox& child) const;
-    LayoutUnit crossAxisIntrinsicExtentForChild(const RenderBox& child);
-    LayoutUnit childIntrinsicLogicalHeight(const RenderBox& child) const;
-    LayoutUnit childIntrinsicLogicalWidth(const RenderBox& child);
+    LayoutUnit crossAxisIntrinsicExtentForChild(RenderBox& child);
+    LayoutUnit childIntrinsicLogicalHeight(RenderBox& child) const;
+    LayoutUnit childIntrinsicLogicalWidth(RenderBox& child);
     LayoutUnit mainAxisExtentForChild(const RenderBox& child) const;
     LayoutUnit mainAxisContentExtentForChildIncludingScrollbar(const RenderBox& child) const;
     LayoutUnit crossAxisExtent() const;
@@ -145,6 +145,8 @@ private:
     bool childHasComputableAspectRatio(const RenderBox&) const;
     bool childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&);
     bool childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const;
+    LayoutUnit computeCrossSizeForChildUsingContainerCrossSize(const RenderBox& child) const;
+    void computeChildIntrinsicLogicalWidths(RenderObject&, LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
     void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);
     LayoutUnit computeInnerFlexBaseSizeForChild(RenderBox& child, LayoutUnit mainAxisBorderAndPadding);

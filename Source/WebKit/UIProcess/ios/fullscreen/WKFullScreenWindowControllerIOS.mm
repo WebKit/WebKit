@@ -861,6 +861,7 @@ private:
         completionHandler();
 
     [_fullscreenViewController setPrefersStatusBarHidden:YES];
+    [_fullscreenViewController invalidate];
     _fullscreenViewController = nil;
 }
 

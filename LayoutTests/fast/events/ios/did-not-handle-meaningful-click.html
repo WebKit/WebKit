@@ -22,32 +22,35 @@ addEventListener("load", async () => {
     let text = document.getElementById("text");
     let button = document.getElementById("target");
 
-    async function simulateTapAndCheckDidNotHandleTapAsMeaningfulClick(element, expectation) {
-        didNotHandleTapAsMeaningfulClickCallback = false;
-        testRunner.installDidNotHandleTapAsMeaningfulClickCallback(() => {
-            didNotHandleTapAsMeaningfulClickCallback = true;
+    async function simulateTapAndCheckDidHandleTapAsMeaningfulClick(element, expectation) {
+        didHandleTap = false;
+        didHandleTapAsMeaningfulClick = false;
+        testRunner.installDidHandleTapCallback(wasMeaningful => {
+            didHandleTap = true;
+            didHandleTapAsMeaningfulClick = wasMeaningful;
         });
 
         await UIHelper.activateElement(element);
         await UIHelper.waitForDoubleTapDelay();
+        shouldBeTrue("didHandleTap");
         if (expectation)
-            shouldBeTrue("didNotHandleTapAsMeaningfulClickCallback");
+            shouldBeTrue("didHandleTapAsMeaningfulClick");
         else
-            shouldBeFalse("didNotHandleTapAsMeaningfulClickCallback");
+            shouldBeFalse("didHandleTapAsMeaningfulClick");
 
         testRunner.clearTestRunnerCallbacks();
     }
 
-    await simulateTapAndCheckDidNotHandleTapAsMeaningfulClick(text, true);
-    await simulateTapAndCheckDidNotHandleTapAsMeaningfulClick(button, false);
+    await simulateTapAndCheckDidHandleTapAsMeaningfulClick(text, false);
+    await simulateTapAndCheckDidHandleTapAsMeaningfulClick(button, true);
 
     document.body.addEventListener("click", () => { });
-    await simulateTapAndCheckDidNotHandleTapAsMeaningfulClick(text, true);
+    await simulateTapAndCheckDidHandleTapAsMeaningfulClick(text, false);
 
     document.body.addEventListener("mousedown", (event) => {
         event.preventDefault();
     });
-    await simulateTapAndCheckDidNotHandleTapAsMeaningfulClick(text, false);
+    await simulateTapAndCheckDidHandleTapAsMeaningfulClick(text, true);
 
     text.remove();
     button.remove();

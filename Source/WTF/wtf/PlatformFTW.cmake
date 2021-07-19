@@ -37,6 +37,7 @@ list(APPEND WTF_SOURCES
 if (USE_CF)
     list(APPEND WTF_PUBLIC_HEADERS
         cf/CFURLExtras.h
+        cf/SpanCF.h
         cf/TypeCastsCF.h
 
         text/cf/StringConcatenateCF.h

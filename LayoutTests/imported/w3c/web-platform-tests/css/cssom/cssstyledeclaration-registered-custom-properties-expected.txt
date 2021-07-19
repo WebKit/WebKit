@@ -1,0 +1,4 @@
+
+FAIL Registered custom properties are included in CSSComputedStyleDeclaration assert_not_equals: got disallowed value -1
+FAIL Only relevant custom properties are included assert_not_equals: got disallowed value -1
+

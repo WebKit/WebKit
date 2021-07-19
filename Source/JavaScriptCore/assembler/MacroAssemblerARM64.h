@@ -390,26 +390,6 @@ public:
         and32(dataTempRegister, dest);
     }
 
-    void ubfx32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
-    {
-        m_assembler.ubfx<32>(dest, src, lsb.m_value, width.m_value);
-    }
-
-    void ubfx64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
-    {
-        m_assembler.ubfx<64>(dest, src, lsb.m_value, width.m_value);
-    }
-
-    void ubfiz32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
-    {
-        m_assembler.ubfiz<32>(dest, src, lsb.m_value, width.m_value);
-    }
-
-    void ubfiz64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
-    {
-        m_assembler.ubfiz<64>(dest, src, lsb.m_value, width.m_value);
-    }
-
     void and64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         m_assembler.and_<64>(dest, src1, src2);
@@ -467,6 +447,107 @@ public:
         move(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.and_<64>(dest, dest, dataTempRegister);
     }
+
+    // Bit operations:
+    void extractUnsignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfx<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void extractUnsignedBitfield64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfx<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void insertUnsignedBitfieldInZero32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfiz<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void insertUnsignedBitfieldInZero64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.ubfiz<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void insertBitField32(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfi<32>(dest, source, lsb.m_value, width.m_value);
+    }
+
+    void insertBitField64(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfi<64>(dest, source, lsb.m_value, width.m_value);
+    }
+
+    void clearBitField32(TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfc<32>(dest, lsb.m_value, width.m_value);
+    }
+
+    void clearBitField64(TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfc<64>(dest, lsb.m_value, width.m_value);
+    }
+
+    void clearBitsWithMask32(RegisterID src, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.bic<32>(dest, src, mask);
+    }
+
+    void clearBitsWithMask64(RegisterID src, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.bic<64>(dest, src, mask);
+    }
+
+    void orNot32(RegisterID src, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.orn<32>(dest, src, mask);
+    }
+
+    void orNot64(RegisterID src, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.orn<64>(dest, src, mask);
+    }
+
+    void extractInsertBitfieldAtLowEnd32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfxil<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void extractInsertBitfieldAtLowEnd64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.bfxil<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void insertSignedBitfieldInZero32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfiz<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void insertSignedBitfieldInZero64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfiz<64>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void extractSignedBitfield32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfx<32>(dest, src, lsb.m_value, width.m_value);
+    }
+
+    void extractSignedBitfield64(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
+    {
+        m_assembler.sbfx<64>(dest, src, lsb.m_value, width.m_value);
+    }    
+
+    void extractRegister32(RegisterID n, RegisterID m, TrustedImm32 lsb, RegisterID d)
+    {
+        m_assembler.extr<32>(d, n, m, lsb.m_value);
+    }
+
+    void extractRegister64(RegisterID n, RegisterID m, TrustedImm32 lsb, RegisterID d)
+    {
+        m_assembler.extr<64>(d, n, m, lsb.m_value);
+    } 
 
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
@@ -2750,18 +2831,6 @@ public:
     {
         m_assembler.tst<64>(left, right);
         m_assembler.fcsel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
-    }
-
-    // Bit field operations:
-    void bitFieldInsert32(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
-    {
-        m_assembler.bfi<32>(dest, source, lsb.m_value, width.m_value);
-    }
-
-    // destBitOffset is the top bit of the destination where the bits should be copied to. Zero is the lowest order bit.
-    void bitFieldInsert64(RegisterID source, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
-    {
-        m_assembler.bfi<64>(dest, source, lsb.m_value, width.m_value);
     }
 
     // Forwards / external control flow operations:

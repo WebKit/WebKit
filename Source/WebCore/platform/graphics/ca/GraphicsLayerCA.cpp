@@ -1285,6 +1285,7 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
         m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
 
+        m_contentsLayer->setAnchorPoint({ });
         m_contentsLayerPurpose = ContentsLayerPurpose::Model;
         contentsLayerChanged = true;
     } else {
@@ -1298,6 +1299,12 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
 
     noteLayerPropertyChanged(ContentsRectsChanged | OpacityChanged);
 }
+
+GraphicsLayer::PlatformLayerID GraphicsLayerCA::contentsLayerIDForModel() const
+{
+    return m_contentsLayerPurpose == ContentsLayerPurpose::Model ? m_contentsLayer->layerID() : 0;
+}
+
 #endif
 
 void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)

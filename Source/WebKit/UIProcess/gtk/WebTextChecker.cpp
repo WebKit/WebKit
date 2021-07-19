@@ -51,9 +51,8 @@ void WebTextChecker::setClient(const WKTextCheckerClientBase* client)
 
 static void updateStateForAllContexts()
 {
-    const Vector<WebProcessPool*>& contexts = WebProcessPool::allProcessPools();
-    for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->textCheckerStateChanged();
+    for (auto& processPool : WebProcessPool::allProcessPools())
+        processPool->textCheckerStateChanged();
 }
 
 void WebTextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)

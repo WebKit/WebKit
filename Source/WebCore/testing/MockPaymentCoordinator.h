@@ -128,7 +128,7 @@ private:
     HashSet<String, ASCIICaseInsensitiveHash> m_availablePaymentNetworks;
     MockPaymentContactFields m_requiredBillingContactFields;
     MockPaymentContactFields m_requiredShippingContactFields;
-    bool m_supportsUnrestrictedApplePay { true };
+    bool m_supportsUnrestrictedApplePay { false };
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     ApplePayInstallmentConfiguration m_installmentConfiguration;
 #endif

@@ -131,7 +131,6 @@
     }
 
     .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container, .local-overrides-container) {
-        height: 100%;
         overflow-y: auto;
     }
 

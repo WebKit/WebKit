@@ -386,10 +386,6 @@ typedef enum {
 - (void)_beginPinningInputViews;
 - (void)_endPinningInputViews;
 
-#if HAVE(VK_IMAGE_ANALYSIS)
-- (void)_insertTextFromCamera:(id)sender;
-#endif
-
 @end
 
 @class FBSDisplayConfiguration;

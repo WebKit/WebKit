@@ -192,8 +192,10 @@ const AtomString& VideoFullscreenModelVideoElement::eventNameAll()
 
 void VideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
-    if (m_videoElement)
+    if (m_videoElement) {
+        UserGestureIndicator gestureIndicator(ProcessingUserGesture, &m_videoElement->document());
         m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(videoFullscreenMode));
+    }
 }
 
 void VideoFullscreenModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler)

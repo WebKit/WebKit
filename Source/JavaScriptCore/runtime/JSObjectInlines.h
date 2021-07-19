@@ -380,10 +380,6 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         return true;
     }
 
-    // We want the structure transition watchpoint to fire after this object has switched structure.
-    // This allows adaptive watchpoints to observe if the new structure is the one we want.
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
-
     unsigned currentAttributes;
     offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
@@ -395,9 +391,12 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
-        if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
+        if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+            // We want the structure transition watchpoint to fire after this object has switched structure.
+            // This allows adaptive watchpoints to observe if the new structure is the one we want.
+            DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
             setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferredWatchpointFire));
-        else
+        } else
             slot.setExistingProperty(this, offset);
 
         return true;
@@ -406,8 +405,10 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     if ((mode == PutModePut) && !isStructureExtensible(vm))
         return false;
     
-    newStructure = Structure::addNewPropertyTransition(
-        vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
+    // We want the structure transition watchpoint to fire after this object has switched structure.
+    // This allows adaptive watchpoints to observe if the new structure is the one we want.
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
+    newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
     
     validateOffset(offset);
     ASSERT(newStructure->isValidOffset(offset));
@@ -682,6 +683,8 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
     if (staticPropertiesReified(vm))
         return;
 
+    JSGlobalObject* globalObject = this->globalObject(vm);
+
     // Add properties from the static hashtables of properties
     for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
         const HashTable* table = info->staticPropHashTable;
@@ -689,8 +692,11 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
-                propertyNames.add(Identifier::fromString(vm, iter.key()));
+            if (mode == DontEnumPropertiesMode::Exclude && (iter->attributes() & PropertyAttribute::DontEnum))
+                continue;
+            if ((iter->attributes() & PropertyAttribute::PropertyCallback) && !iter->isLazyPropertyEnabled(globalObject))
+                continue;
+            propertyNames.add(Identifier::fromString(vm, iter.key()));
         }
     }
 }

@@ -1266,9 +1266,15 @@ static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, Gd
     if (controller && controller->isSwipeGestureEnabled()) {
         double deltaX;
         gdk_event_get_scroll_deltas(event, &deltaX, nullptr);
-        bool isEnd = gdk_event_is_scroll_stop_event(event) ? true : false;
+
         int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event));
-        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+
+        GdkDevice* device = gdk_event_get_source_device(event);
+        GdkInputSource source = gdk_device_get_source(device);
+
+        bool isEnd = gdk_event_is_scroll_stop_event(event) ? true : false;
+
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
             return;
     }
@@ -1329,9 +1335,14 @@ static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double d
 
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
     if (controller && controller->isSwipeGestureEnabled()) {
-        bool isEnd = gdk_scroll_event_is_stop(event) ? true : false;
         int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(eventController));
-        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+
+        GdkDevice* device = gdk_event_get_device(event);
+        GdkInputSource source = gdk_device_get_source(device);
+
+        bool isEnd = gdk_scroll_event_is_stop(event) ? true : false;
+
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         if (controller->handleScrollWheelEvent(&scrollData))
             return GDK_EVENT_STOP;
     }
@@ -1847,6 +1858,19 @@ static gboolean webkitWebViewBaseFocus(GtkWidget* widget, GtkDirectionType direc
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus(widget, direction);
 }
 
+
+static void webkitWebViewBaseZoomBegin(WebKitWebViewBase* webViewBase, GdkEventSequence* sequence, GtkGesture* gesture)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->pageGrabbedTouch)
+        return;
+
+    double x, y;
+    gtk_gesture_get_bounding_box_center(gesture, &x, &y);
+
+    webkitWebViewBaseSynthesizeWheelEvent(webViewBase, 0, 0, x, y, WheelEventPhase::Began, WheelEventPhase::NoPhase);
+}
+
 static void webkitWebViewBaseZoomChanged(WebKitWebViewBase* webViewBase, gdouble scale, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -1920,6 +1944,8 @@ static void webkitWebViewBaseTouchDragBegin(WebKitWebViewBase* webViewBase, gdou
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->dragOffset.set(0, 0);
     priv->isBeingDragged = false;
+
+    webkitWebViewBaseSynthesizeWheelEvent(webViewBase, 0, 0, startX, startY, WheelEventPhase::Began, WheelEventPhase::NoPhase);
 }
 
 static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, double offsetX, double offsetY, GtkGesture* gesture)
@@ -1956,7 +1982,7 @@ static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, dou
         ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
         if (controller && controller->isSwipeGestureEnabled()) {
             int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
-            PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = true, .isEnd = false };
+            PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = GDK_SOURCE_TOUCHSCREEN, .isEnd = false };
             if (controller->handleScrollWheelEvent(&scrollData))
                 return;
         }
@@ -1980,7 +2006,7 @@ static void webkitWebViewBaseTouchDragEnd(WebKitWebViewBase* webViewBase, gdoubl
         ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
         if (controller && controller->isSwipeGestureEnabled()) {
             int32_t eventTime = static_cast<int32_t>(gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
-            PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = eventTime, .isTouch = false, .isEnd = true };
+            PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = eventTime, .source = GDK_SOURCE_TOUCHSCREEN, .isEnd = true };
             controller->handleScrollWheelEvent(&scrollData);
         }
     }
@@ -2061,6 +2087,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->touchGestureGroup = gtk_gesture_zoom_new(viewWidget);
     g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-zoom-gesture", priv->touchGestureGroup, g_object_unref);
 #endif
+    g_signal_connect_object(priv->touchGestureGroup, "begin", G_CALLBACK(webkitWebViewBaseZoomBegin), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->touchGestureGroup, "scale-changed", G_CALLBACK(webkitWebViewBaseZoomChanged), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(priv->touchGestureGroup, "end", G_CALLBACK(webkitWebViewBaseZoomEnd), viewWidget, G_CONNECT_SWAPPED);
 

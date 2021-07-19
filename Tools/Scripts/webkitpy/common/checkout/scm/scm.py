@@ -219,6 +219,8 @@ class SCM:
             if self._filesystem.isdir(filename):
                 if keep_webkitbuild_directory and filename == "WebKitBuild":
                     continue
+                if filename == 'Tools/Scripts/libraries/autoinstalled':
+                    continue
                 self._filesystem.rmtree(filename)
             else:
                 self._filesystem.remove(filename)

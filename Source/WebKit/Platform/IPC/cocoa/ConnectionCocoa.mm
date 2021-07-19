@@ -89,7 +89,7 @@ private:
         : m_xpcConnection(xpcConnection)
         , m_watchdogTimer(RunLoop::main(), this, &ConnectionTerminationWatchdog::watchdogTimerFired)
 #if PLATFORM(IOS_FAMILY)
-        , m_assertion(makeUnique<WebKit::ProcessAndUIAssertion>(xpc_connection_get_pid(m_xpcConnection.get()), "ConnectionTerminationWatchdog"_s, WebKit::ProcessAssertionType::Background))
+        , m_assertion(WebKit::ProcessAndUIAssertion::create(xpc_connection_get_pid(m_xpcConnection.get()), "ConnectionTerminationWatchdog"_s, WebKit::ProcessAssertionType::Background))
 #endif
     {
         m_watchdogTimer.startOneShot(interval);
@@ -104,7 +104,7 @@ private:
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     RunLoop::Timer<ConnectionTerminationWatchdog> m_watchdogTimer;
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<WebKit::ProcessAndUIAssertion> m_assertion;
+    Ref<WebKit::ProcessAndUIAssertion> m_assertion;
 #endif
 };
     

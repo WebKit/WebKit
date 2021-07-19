@@ -30,8 +30,8 @@ dictionary ContentDescription {
 
 [Exposed=(Window,Worker)]
 interface ContentIndex {
-  Promise<void> add(ContentDescription description);
-  Promise<void> delete(DOMString id);
+  Promise<undefined> add(ContentDescription description);
+  Promise<undefined> delete(DOMString id);
   Promise<sequence<ContentDescription>> getAll();
 };
 
@@ -39,7 +39,8 @@ dictionary ContentIndexEventInit : ExtendableEventInit {
   required DOMString id;
 };
 
-[Constructor(DOMString type, ContentIndexEventInit init), Exposed=ServiceWorker]
+[Exposed=ServiceWorker]
 interface ContentIndexEvent : ExtendableEvent {
+  constructor(DOMString type, ContentIndexEventInit init);
   readonly attribute DOMString id;
 };

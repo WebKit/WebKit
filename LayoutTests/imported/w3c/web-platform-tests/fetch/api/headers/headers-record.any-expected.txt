@@ -1,0 +1,15 @@
+
+PASS Passing nothing to Headers constructor
+PASS Passing undefined to Headers constructor
+PASS Passing null to Headers constructor
+PASS Basic operation with one property
+PASS Basic operation with one property and a proto
+PASS Correct operation ordering with two properties
+PASS Correct operation ordering with two properties one of which has an invalid name
+PASS Correct operation ordering with two properties one of which has an invalid value
+PASS Correct operation ordering with non-enumerable properties
+PASS Correct operation ordering with undefined descriptors
+PASS Correct operation ordering with repeated keys
+PASS Basic operation with Symbol keys
+PASS Operation with non-enumerable Symbol keys
+

@@ -82,6 +82,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestOverloadedConstructorsWithSequencePrototype, JSTestOverloadedConstructorsWithSequencePrototype::Base);
 
@@ -150,6 +152,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsW
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestOverloadedConstructorsWithSequenceConstructorConstruct, JSTestOverloadedConstructorsWithSequenceDOMConstructor::construct);
 
+template<> const unsigned JSTestOverloadedConstructorsWithSequenceDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestOverloadedConstructorsWithSequenceDOMConstructor::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequenceDOMConstructor) };
 
 template<> JSValue JSTestOverloadedConstructorsWithSequenceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -165,14 +168,21 @@ template<> void JSTestOverloadedConstructorsWithSequenceDOMConstructor::initiali
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestOverloadedConstructorsWithSequencePrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestOverloadedConstructorsWithSequencePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestOverloadedConstructorsWithSequenceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestOverloadedConstructorsWithSequencePrototype::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequencePrototype) };
+static const HashTable JSTestOverloadedConstructorsWithSequencePrototypeTable = { 1, 1, true, JSTestOverloadedConstructorsWithSequence::info(), JSTestOverloadedConstructorsWithSequencePrototypeTableValues, JSTestOverloadedConstructorsWithSequencePrototypeTableIndex };
+const ClassInfo JSTestOverloadedConstructorsWithSequencePrototype::s_info = { "TestOverloadedConstructorsWithSequence", &Base::s_info, &JSTestOverloadedConstructorsWithSequencePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsWithSequencePrototype) };
 
 void JSTestOverloadedConstructorsWithSequencePrototype::finishCreation(VM& vm)
 {

@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -51,7 +51,6 @@ enum CSSParserTokenType {
     SuffixMatchToken,
     SubstringMatchToken,
     ColumnToken,
-    UnicodeRangeToken,
     WhitespaceToken,
     CDOToken,
     CDCToken,
@@ -102,8 +101,7 @@ public:
     CSSParserToken(CSSParserTokenType, StringView, BlockType = NotBlock);
 
     CSSParserToken(CSSParserTokenType, UChar); // for DelimiterToken
-    CSSParserToken(CSSParserTokenType, double, NumericValueType, NumericSign); // for NumberToken
-    CSSParserToken(CSSParserTokenType, UChar32, UChar32); // for UnicodeRangeToken
+    CSSParserToken(double, NumericValueType, NumericSign, StringView originalText); // for NumberToken
 
     CSSParserToken(HashTokenType, StringView);
 
@@ -128,11 +126,11 @@ public:
     NumericSign numericSign() const;
     NumericValueType numericValueType() const;
     double numericValue() const;
+    StringView originalText() const;
     HashTokenType getHashTokenType() const { ASSERT(m_type == HashToken); return m_hashTokenType; }
     BlockType getBlockType() const { return static_cast<BlockType>(m_blockType); }
     CSSUnitType unitType() const { return static_cast<CSSUnitType>(m_unit); }
-    UChar32 unicodeRangeStart() const { ASSERT(m_type == UnicodeRangeToken); return m_unicodeRange.start; }
-    UChar32 unicodeRangeEnd() const { ASSERT(m_type == UnicodeRangeToken); return m_unicodeRange.end; }
+    StringView unitString() const;
     CSSValueID id() const;
     CSSValueID functionId() const;
 
@@ -142,39 +140,33 @@ public:
 
     void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr) const;
 
-    CSSParserToken copyWithUpdatedString(const StringView&) const;
+    CSSParserToken copyWithUpdatedString(StringView) const;
 
 private:
     void initValueFromStringView(StringView string)
     {
         m_valueLength = string.length();
         m_valueIs8Bit = string.is8Bit();
-        m_valueDataCharRaw = m_valueIs8Bit ? const_cast<void*>(static_cast<const void*>(string.characters8())) : const_cast<void*>(static_cast<const void*>(string.characters16()));
+        m_valueDataCharRaw = m_valueIs8Bit ? static_cast<const void*>(string.characters8()) : static_cast<const void*>(string.characters16());
     }
     unsigned m_type : 6; // CSSParserTokenType
     unsigned m_blockType : 2; // BlockType
     unsigned m_numericValueType : 1; // NumericValueType
     unsigned m_numericSign : 2; // NumericSign
     unsigned m_unit : 7; // CSSUnitType
-
-    bool valueDataCharRawEqual(const CSSParserToken& other) const;
+    unsigned m_nonUnitPrefixLength : 4; // Only for DimensionType, only needs to be long enough for UnicodeRange parsing.
 
     // m_value... is an unpacked StringView so that we can pack it
     // tightly with the rest of this object for a smaller object size.
     bool m_valueIs8Bit : 1;
     unsigned m_valueLength;
-    void* m_valueDataCharRaw; // Either LChar* or UChar*.
+    const void* m_valueDataCharRaw; // Either LChar* or UChar*.
 
     union {
         UChar m_delimiter;
         HashTokenType m_hashTokenType;
         double m_numericValue;
         mutable int m_id;
-
-        struct {
-            UChar32 start;
-            UChar32 end;
-        } m_unicodeRange;
     };
 };
 

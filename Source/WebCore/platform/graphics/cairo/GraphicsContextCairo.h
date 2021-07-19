@@ -29,21 +29,21 @@
 #if USE(CAIRO)
 
 #include "GraphicsContext.h"
+#include "PlatformContextCairo.h"
 
 typedef struct _cairo cairo_t;
+typedef struct _cairo_surface cairo_surface_t;
 
 namespace WebCore {
 
-class PlatformContextCairo;
-
 class WEBCORE_EXPORT GraphicsContextCairo final : public GraphicsContext {
 public:
-    GraphicsContextCairo(PlatformContextCairo&);
-    GraphicsContextCairo(PlatformContextCairo*);
-    GraphicsContextCairo(cairo_t*);
+    explicit GraphicsContextCairo(RefPtr<cairo_t>&&);
+    explicit GraphicsContextCairo(cairo_surface_t*);
 
 #if PLATFORM(WIN)
     GraphicsContextCairo(HDC, bool hasAlpha = false); // FIXME: To be removed.
+    explicit GraphicsContextCairo(PlatformContextCairo*);
 #endif
 
     virtual ~GraphicsContextCairo();
@@ -114,8 +114,7 @@ public:
 #endif
 
 private:
-    std::unique_ptr<PlatformContextCairo> m_ownedPlatformContext;
-    PlatformContextCairo& m_platformContext;
+    mutable PlatformContextCairo m_platformContext;
 
     std::unique_ptr<GraphicsContextPlatformPrivate> m_private;
 };

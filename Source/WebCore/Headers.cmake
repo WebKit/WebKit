@@ -898,6 +898,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameViewLayoutContext.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
+    page/KeyboardScroll.h
     page/LayoutMilestone.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h
@@ -1329,7 +1330,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/angle/ANGLEHeaders.h
     platform/graphics/angle/ExtensionsGLANGLE.h
-    platform/graphics/angle/GraphicsContextGLANGLEUtilities.h
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawGlyphsRecorder.h

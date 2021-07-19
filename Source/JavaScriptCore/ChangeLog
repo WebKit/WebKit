@@ -1,3 +1,1161 @@
+2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Object.assign and putDirectInternal
+        https://bugs.webkit.org/show_bug.cgi?id=227677
+
+        Reviewed by Filip Pizlo.
+
+        This patch improves Object.assign performance (and this requires putDirectInternal improvement).
+
+        1. Object.assign is handled by DFG / FTL as ObjectAssign node
+        2. We found that putDirectInternal is suboptimal. This patch removes several bottlenecks. They are super critical from the measurement of
+           microbenchmarks.
+            2.1. Creating and destroying DeferredStructureTransitionWatchpointFire is not free. We should do that only when we need it.
+            2.2. Before r277620, we are checking m_replacementWatchpointSets's nullptr and that was fast. But after that, we are always
+                 calling HashMap::get, and it is not inlined. This means that if we have StructureRareData, we are always calling HashMap::get
+                 even though there is no m_replacementWatchpointSets set. This patch adds HashMap::isNullStorage to avoid this call by inlinely
+                 check this via `LIKELY(m_replacementWatchpointSets.isNullStorage())`.
+            2.3. Structure::addPropertyTransitionToExistingStructure has very cheap fast path and we must inline them to get performance benefit
+                 for major single-transition case.
+
+        Added microbenchmarks show significant performance improvements. And Speedometer2 shows 0.6 - 1.0% improvement.
+
+                                                 ToT                     Patched
+
+            object-assign-transition      105.2539+-0.2970     ^     88.8046+-0.2029        ^ definitely 1.1852x faster
+            object-assign-replace         116.1568+-0.0905     ^     75.0673+-0.0658        ^ definitely 1.5474x faster
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Watchpoint.cpp:
+        (JSC::DeferredWatchpointFire::fireAllSlow):
+        (JSC::DeferredWatchpointFire::DeferredWatchpointFire): Deleted.
+        (JSC::DeferredWatchpointFire::~DeferredWatchpointFire): Deleted.
+        (JSC::DeferredWatchpointFire::fireAll): Deleted.
+        * bytecode/Watchpoint.h:
+        (JSC::DeferredWatchpointFire::DeferredWatchpointFire):
+        (JSC::DeferredWatchpointFire::fireAll):
+        (JSC::FireDetail::FireDetail): Deleted.
+        (JSC::FireDetail::~FireDetail): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectAssign):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectAssign):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::deleteProperty):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectAssignGeneric):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectConstructorInlines.h: Added.
+        (JSC::canPerformFastPropertyEnumerationForObjectAssign):
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::singleTransition const): Deleted.
+        (JSC::StructureTransitionTable::get const): Deleted.
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl): Deleted.
+        (JSC::Structure::addPropertyTransitionToExistingStructure): Deleted.
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently): Deleted.
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::didReplaceProperty):
+        (JSC::Structure::propertyReplacementWatchpointSet):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::StructureTransitionTable::singleTransition const):
+        (JSC::StructureTransitionTable::get const):
+
+2021-07-06  Yijia Huang  <yijia_huang@apple.com>
+
+        Fix instruction check failure of UBFX and SBFIZ in testb3 due to the speculative fix in bug 227554
+        https://bugs.webkit.org/show_bug.cgi?id=227563
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes two modifications to resolve rdar://79978150:
+            1. Fix the bug caused by the patch introducing BFI.
+            2. Discard the corresponding speculative fix in https://bugs.webkit.org/show_bug.cgi?id=227554.
+
+        The previous patch, added bit field insert (BFI) to AIR opcode, causes the Gmail page 
+        hanging issue on Safari. The root cause is the incorrect definition of register role in 
+        BFI's AIR opcode. Since BFI inserts a bit field at the low end of the destination register 
+        while keeping the high bit unchanged, the destination register should have both roles of 
+        use and define simultaneously, which is not (missing use) in the previous patch. 
+
+        This will result in the loss of preserving the value of the destination register, 
+        which does happen when browsing the Gmail page on Safari.
+
+            // B3 IR snippets from Gmail
+            Int32 b@23  = Add(b@104, b@111, D@100)
+            ...
+            Int32 b@55  = Const32(65535, D@50)
+            Int32 b@137 = BitAnd(b@118, $65535(b@55), D@160)
+            Int32 b@168 = Const32(16, D@40)
+            Int32 b@141 = Shl(b@137, $16(b@168), D@163)
+            Int32 b@143 = BitAnd(b@23, $65535(b@55), D@166)
+            Int32 b@144 = BitOr(b@141, b@143, D@169)
+
+        The pattern of BFI is d = ((n & mask1) << lsb) | (d & mask2). So, it is obvious that 
+        BFI can be utilized in b@144 where the d is b@23.
+
+            // Incorrect AIR opcode of BFI
+            arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, ZD:G:32
+                Tmp, Imm, Imm, Tmp
+
+            // Air w/o use role
+            Add32            %x3, %x7, %x7,      b@23
+            ...
+            InsertBitField32 %x3, $16, $16, %x4, b@144
+
+            // Generated code w/o use role
+            add      w7, w3,  w7
+            ...
+            bfi      w4, w3, #16, #16
+
+        In Air, the added value is stored in the w7. But the value is not preserved after 
+        lowering with BFI. To fix this, the use role should be enabled for the destination 
+        register.
+
+            // Correnct AIR opcode of BFI
+            arm64: InsertBitField32 U:G:32, U:G:32, U:G:32, UZD:G:32
+                Tmp, Imm, Imm, Tmp
+
+            // Air w/ use role
+            Add32            %x3, %x7, %x7,      b@23
+            ...
+            Move32           %x7, %x4,           b@144
+            InsertBitField32 %x3, $16, $16, %x4, b@144
+
+            // Generated code w/ use role
+            add      w7, w3, w7
+            ...
+            ubfx     x4, x7,  #0, #32
+            bfi      w4, w3, #16, #16
+
+        In addition, BFXIL, which has pattern d = ((n >> lsb) & mask1) | (d & mask2), also needs 
+        the similar update.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3_2.cpp:
+        (testInsertBitField32):
+        (testInsertBitField64):
+        (testExtractInsertBitfieldAtLowEnd32):
+        (testExtractInsertBitfieldAtLowEnd64):
+        * runtime/OptionsList.h:
+
+2021-07-04  Robin Morisset  <rmorisset@apple.com>
+
+        ActiveScratchBufferScope should take the buffer as argument
+        https://bugs.webkit.org/show_bug.cgi?id=227670
+        rdar://80011612
+
+        Reviewed by Mark Lam.
+
+        https://bugs.webkit.org/show_bug.cgi?id=227013 created ActiveScratchBufferScope.
+        It is used by operations that can cause the GC to run, to mark as roots the contents of the scratch buffer that is live during that time (if any).
+        The bug is that it simply asks the VM for a scratch buffer of the right size, but this will always return the last scratch buffer, and not necessarily the one that the operation is actually using.
+
+        A fairly simple fix is to pass it directly the scratch buffer, since the operation normally can get it easily enough.
+        In most cases the operation has access to the m_buffer field of the ScratchBuffer, but getting a pointer to the entire structure from that is fairly simple (I added ScratchBuffer::fromData() to do so).
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/VM.h:
+        (JSC::ScratchBuffer::fromData):
+        * runtime/VMInlines.h:
+        (JSC::ActiveScratchBufferScope::ActiveScratchBufferScope):
+        (JSC::ActiveScratchBufferScope::~ActiveScratchBufferScope):
+
+2021-07-04  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Simplify generation of runtime conditionally read-write attributes
+        https://bugs.webkit.org/show_bug.cgi?id=227672
+
+        Reviewed by Sam Weinig.
+
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::makeReadOnlyCopy const):
+
+2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+
+        Reviewed by Saam Barati.
+
+        To make the implementation of WebIDL runtime enabled properties independent of eager
+        property reification, this change:
+
+        1. Introduces IsLazyPropertyEnabledCallback, which is needed separately from existing
+           value callback to maintain the invariant that reifyStaticProperty() always puts a
+           property, and to keep enumeration fast.
+
+           Calling disableCaching() isn't enough to achieve correct [[Get]] inline caching,
+           so isTaintedByOpaqueObject() is leveraged to prohibit caching of runtime disabled
+           properties, just like in operationTryGetByIdOptimize().
+
+           The only case that might seem weird is runtime disabled properties, which were
+           enabled after all static properties were reified via [[Delete]], are not appearing.
+           It's fixable, yet there is currently no demand for it.
+
+        2. Adds support for LazyPropertyCallback returning GetterSetter / CustomGetterSetter,
+           ensuring correct structure flags and slot initialization. Previously, the callback
+           was used to init only objects and constructors, using putDirect() unconditionally.
+
+           To avoid mixing other non-basic attributes with PropertyCallback, which would require
+           hoisting of checks against PropertyCallback and complicating attribute validation in
+           HashTableValue methods, this patch checks the type of callback's return value instead.
+
+           In the future, sticking to this approach will make returning CustomValue impossible
+           as it can't be distinguished from CustomAccessor. That's fine because all present
+           CustomValue usages merely do lazy init, which PropertyCallback is better suited for.
+
+        Also, this patch:
+
+        3. Expands setUpStaticFunctionSlot() to handle constant integers so the code using
+           `Node.ELEMENT_NODE` & friends doesn't regress (proven by attached microbenchmark).
+
+        4. Removes extra checks from setUpStaticPropertySlot(), which is called only on
+           non-reified properties.
+
+        5. Removes invariant that DOMJITAttribute property is read-only, which was broken
+           by `document.body` having a non-JIT custom setter. This aligns non-reified
+           properties with structure ones.
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::tryAdd):
+        * runtime/JSObject.cpp:
+        (JSC::lookupPropertyForPut):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::reifyAllStaticProperties):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getOwnNonIndexPropertySlot):
+        (JSC::JSObject::fillStructurePropertySlot):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getNonReifiedStaticPropertyNames):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticPropertySlot):
+        (JSC::setUpStaticFunctionSlot): Deleted.
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::isLazyPropertyEnabled const):
+        (JSC::getStaticPropertySlotFromTable):
+        (JSC::reifyStaticProperty):
+        (JSC::reifyStaticProperties):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
+2021-07-02  Keith Miller  <keith_miller@apple.com>
+
+        Add 10 more unified source cpp files for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=227643
+
+        Reviewed by Alex Christensen.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generate-unified-sources.sh:
+        * UnifiedSources-output.xcfilelist:
+
+2021-07-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Add new revision variable in pkgconfig file
+        https://bugs.webkit.org/show_bug.cgi?id=227629
+
+        Reviewed by Michael Catanzaro.
+
+        * javascriptcoregtk.pc.in: Include SVN_REVISION as revision variable, useful for apps to
+        know on which upstream SVN revision their WebKitGTK-based app is built on.
+
+2021-07-01  Yijia Huang  <yijia_huang@apple.com>
+
+        Remove unnecessary canBeInternal invocations to mitigate the cost of potential unmatched patterns in B3LowerToAir
+        https://bugs.webkit.org/show_bug.cgi?id=227508
+
+        Reviewed by Filip Pizlo.
+
+        The bit pattern doesn't cause worse code generation in the all-internals-are-captured 
+        case. So, they don't need canBeInternal checks which might terminate potential matched 
+        scenarios.
+
+        The equivalent pattern of SBFIZ is ((src << amount) >> amount) << lsb. Given the code:
+
+        a = x << C
+        b = a >> C
+        c = b << D
+
+        print(a)
+        print(b)
+        print(c)
+
+        The pattern won't match because of !canBeInternal for a and b (useCounts > 1). 
+        So, this would emit three separate instructions. But if we removed canBeInternal, 
+        it would still be just three separate instructions, and they wouldn't be any more 
+        expensive. Suppose the print(b) is removed, above. Then, with the canBeInternal check, 
+        it is emitting three instructions. Without the canBeInternal check, it would emit only 
+        two (x << C and SBFIZ to compute c). And that would be less expensive.
+
+        * b3/B3LowerToAir.cpp:
+
+2021-07-01  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to use EXTR supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227171
+
+        Reviewed by Robin Morisset.
+
+        This patch includes two modifications:
+            1. Introduce a strength reduction rule to zero extend bitfield.
+            2. Add Extract Register (EXTR) to Air opcode to serve instruction selector.
+
+        -------------------------------------------------------
+        ### Part A zero extend bitfield ###
+        -------------------------------------------------------
+        A new strength reduction rule is added for the canonical form of the zero-extend 
+        bitfield.
+
+        Turn this: ZShr(Shl(value, amount)), amount)
+        Into this: BitAnd(value, mask)
+
+        with constraints:
+        1. 0 <= amount < datasize
+        2. width = datasize - amount
+        3. mask is !(mask & (mask + 1)) where bitCount(mask) == width
+
+        -------------------
+        ### Part B EXTR ###
+        -------------------
+
+        Given instruction:
+        extr Rd, Rn, Rm, lowWidth
+
+        Extract register (EXTR) extracts a register from a pair of registers, where 
+        concat = Rn:Rm and Rd = concat<lowWidth + datasize - 1:lowWidth>.
+
+        The equivalent pattern of this instruction is:
+
+        d = ((n & mask) << highWidth) | (m >> lowWidth)
+        highWidth = datasize - lowWidth
+        mask = (1 << lowWidth) - 1
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = mask
+        Int @3 = BitAnd(@0, @2)
+        Int @4 = highWidth
+        Int @5 = Shl(@3, @4)
+        Int @6 = lowWidth
+        Int @7 = ZShr(@1, @6)
+        Int @8 = BitOr(@7, @5)
+        Void@9 = Return(@10, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        InsertUnsignedBitfieldInZero %x0, highWidth, lowWidth, %x0, @5
+        Urshift                      %x1,  lowWidth,      %x1,      @7
+        Or                           %x0,       %x1,      %x0,      @8
+        Ret                          %x0,                           @9
+
+        After Adding BIC:
+        // New optimized AIR
+        ExtractRegister   %x0, %x1, lowWidth, %x0, @8
+        Ret               %x0,                     @9
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::extractRegister32):
+        (JSC::MacroAssemblerARM64::extractRegister64):
+        * assembler/testmasm.cpp:
+        (JSC::testExtractRegister32):
+        (JSC::testExtractRegister64):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testBitfieldZeroExtend32):
+        (testBitfieldZeroExtend64):
+        (testExtractRegister32):
+        (testExtractRegister64):
+        (addBitTests):
+
+2021-06-30  Saam Barati  <sbarati@apple.com>
+
+        Turn off data ICs by default
+        https://bugs.webkit.org/show_bug.cgi?id=227334
+        <rdar://problem/79802812>
+
+        Reviewed by Yusuke Suzuki.
+
+        There are GC crashes that are caused by access data IC sharing. This
+        patch is both turning off data IC sharing by default, and turning off data
+        ICs by default.
+        
+        We should re-enable this once we figure out the issue:
+        https://bugs.webkit.org/show_bug.cgi?id=227551
+        
+        Some of our testing modes are still running with data ICs on, so the code doesn't
+        bit rot. And a select few tests are running with data IC sharing on, for
+        similar reasons, even though we know it has issues. If those tests start
+        crashing, we'll just disable sharing completely until the issue is resolved.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * runtime/OptionsList.h:
+
+2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Stop generating default parameter code if class constructor is called without 'new'
+        https://bugs.webkit.org/show_bug.cgi?id=227547
+        rdar://78821453
+
+        Reviewed by Mark Lam.
+
+        We already do not generate body bytecode when class constructor is called without 'new' because many features including "super()" assume
+        that they generate bytecode only when it is called as a constructor. But we are not doing that for default parameters' bytecode generation.
+        This patch stops generating bytecode for default parameters if class constructor is called without 'new'.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * runtime/ConstructorKind.h:
+
+2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Private names should be handled by usedVariables mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=227476
+        rdar://76049469
+
+        Reviewed by Saam Barati.
+
+        Private name handling in the current parser has many problems.
+
+            1. The parser backtracks when it sees destructuring assignment, arrow function etc. In that case, the discarded code
+               must not have any effect on the outside of that code. However, private name handling is annotating "used" of the
+               upper scopes, which is wrong.
+            2. In class expression, private name lookup intentionally skips the class-scope when parsing class heritage. But this
+               is not correct since CodeBlock will perform lookup on the normal scope chain and this will look into the class-scope
+               inconsistently. This means that we could encounter different private name at runtime. (it is tested in the added test).
+            3. We skip inner function parsing when it is parsed previously. At that case, we must preserve private name annotation,
+               but restored function information does not preserve that.
+
+        This patch changes how private name is handled.
+
+            1. We were anyway defining #XXX variables which holds private symbols. So we track "use" information by the mechanism used
+               for usual variables. We remove Used / Declared bits from PrivateNameEntry since they are not necessary at runtime, and
+               these information is handled / tracked in Parser's Scope. For backtracking, we already have a mechanism to roll-back
+               m_usedVariables, so using variable mechanism automatically fixes the problem.
+            2. We define class-head-scope separately from class-scope. class-heritage expression can see class name, but it cannot use
+               private names. Previously, our implementation attempted to achieve that by hacky way: skipping this class-scope for private
+               names only while parsing class-heritage. But this was wrong since it does not consider CodeBlock's linking phase as described
+               in the problem (2). Instead, we just define class-head-scope which holds class constructor name.
+            3. We clean up popScopeInternal to populate lexical-variables and function-stack. Previously, we are stealing them before popping
+               the scope when necessary, but this is a hack and a bit wrong since scope's popping operation needs to access these information
+               in some cases. Instead, popScopeInternal populates them after popping the scope.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushClassHeadLexicalScope):
+        (JSC::BytecodeGenerator::popClassHeadLexicalScope):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createForOfLoop):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        * parser/NodeConstructors.h:
+        (JSC::ForNode::ForNode):
+        (JSC::TryNode::TryNode):
+        (JSC::ClassExprNode::ClassExprNode):
+        (JSC::SwitchNode::SwitchNode):
+        (JSC::BlockNode::BlockNode):
+        (JSC::EnumerationNode::EnumerationNode):
+        (JSC::ForInNode::ForInNode):
+        (JSC::ForOfNode::ForOfNode):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        * parser/Nodes.h:
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode): Deleted.
+        * parser/Parser.cpp:
+        (JSC::isPrivateFieldName):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseSwitchStatement):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::usePrivateName): Deleted.
+        * parser/Parser.h:
+        (JSC::Scope::finalizeLexicalEnvironment):
+        (JSC::Scope::takeLexicalEnvironment):
+        (JSC::Scope::takeDeclaredVariables):
+        (JSC::Scope::takeFunctionDeclarations):
+        (JSC::Scope::forEachUsedVariable):
+        (JSC::Scope::usePrivateName):
+        (JSC::Scope::currentUsedVariablesSize):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::popScope):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::Scope::copyUndeclaredPrivateNamesTo): Deleted.
+        (JSC::Scope::hasUsedButUndeclaredPrivateNames const): Deleted.
+        (JSC::Parser::privateNameScope): Deleted.
+        (JSC::Parser::copyUndeclaredPrivateNamesToOuterScope): Deleted.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClassExpr):
+        (JSC::SyntaxChecker::createBlockStatement):
+        (JSC::SyntaxChecker::createForLoop):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createForOfLoop):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        * parser/VariableEnvironment.cpp:
+        (JSC::VariableEnvironmentEntry::dump const):
+        (JSC::VariableEnvironment::declarePrivateField):
+        (JSC::VariableEnvironment::declarePrivateAccessor):
+        (JSC::VariableEnvironment::declarePrivateMethod):
+        (JSC::VariableEnvironment::dump const):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironment::declarePrivateField):
+        (JSC::VariableEnvironment::privateNameEnvironment):
+        (JSC::VariableEnvironment::addPrivateNamesFrom):
+        (JSC::PrivateNameEntry::isUsed const): Deleted.
+        (JSC::PrivateNameEntry::isDeclared const): Deleted.
+        (JSC::PrivateNameEntry::setIsUsed): Deleted.
+        (JSC::PrivateNameEntry::setIsDeclared): Deleted.
+        (JSC::VariableEnvironment::usePrivateName): Deleted.
+        (JSC::VariableEnvironment::copyPrivateNamesTo const): Deleted.
+        (JSC::VariableEnvironment::copyUndeclaredPrivateNamesTo const): Deleted.
+
+2021-06-30  Mark Lam  <mark.lam@apple.com>
+
+        ARM64: Disable selection of BFI instruction variants by default.
+        https://bugs.webkit.org/show_bug.cgi?id=227554
+        rdar://79978150
+
+        Reviewed by Saam Barati.
+
+        We suspect that this may have caused some hangs.  Disabling while we investigate.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/testb3_2.cpp:
+        (testInsertBitField32):
+        (testInsertBitField64):
+        * runtime/OptionsList.h:
+
+2021-06-29  Joonghun Park  <jh718.park@samsung.com>
+
+        Remove "function declared ‘static’ but never defined" build warnings since r278971.
+        https://bugs.webkit.org/show_bug.cgi?id=227436
+
+        This patch removes the build warnings below.
+        warning: ‘bool JSC::cannotBeIdentPartOrEscapeStart(LChar)’ declared ‘static’ but never defined [-Wunused-function]
+
+        Reviewed by Michael Catanzaro.
+
+        * runtime/LiteralParser.cpp: Add definitions for cannotBeIdentPartOrEscapeStart.
+        (JSC::cannotBeIdentPartOrEscapeStart):
+
+2021-06-29  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to use SBX and SBFIZ supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227203
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes two modifications:
+            1. Introduce a strength reduction rule for sign extending bitfield.
+            2. Add Signed Bitfield Extract (SBFX) and Signed Bitfield Insert 
+               in Zero (SBFIZ) to Air opcode to serve instruction selector.
+
+        -------------------------------------------------------
+        ### Part A Sign extending from a variable bit-width ###
+        -------------------------------------------------------
+        According to Bit Twiddling Hacks, there are two ways to sign extend bitfield.
+        (https://graphics.stanford.edu/~seander/bithacks.html#VariableSignExtend)
+
+        int bf;    // sign extend this width-bit number to bfsx
+        int width; // number of bits representing the number in bf
+        int bfsx;  // resulting sign-extended number
+
+        Approach 1
+        mask1 = (1 << width) - 1
+        mask2 = 1 << (width - 1)
+        bf    = bf & mask1      // zero bits in bf above position width  
+        bfsx  = (bf ^ mask2) - mask2
+
+        Approach 2
+        amount = CHAR_BIT * sizeof(bf) - width
+        bfsx   = (bf << amount) >> amount
+
+        Then, a new strength reduction rule is introduced:
+            Turn this: ((bf & mask1) ^ mask2) - mask2 
+            Into this: (bf << amount) >> amount
+
+        -------------------
+        ### Part B SBFX ###
+        -------------------
+        Given instruction:
+        sbfx Rd, Rn, lsb, width
+
+        Signed Bitfield Extract (SBFX) extracts width number of adjacent bits at lsb position 
+        from a register Rn, sign-extends them to the size of the register, and writes the 
+        result to the destination register Rd.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            bf    = src >> lsb
+            dst   = ((bf & mask1) ^ mask2) - mask2
+            mask1 = (1 << width) - 1
+            mask2 = 1 << (width - 1) // (mask2 << 1) - 1 = mask1
+
+        Pattern 2:
+            bf     = src >> lsb
+            amount = CHAR_BIT * sizeof(bf) - width
+            dst    = (bf << amount) >> amount
+        
+        Then, (bf << amount) >> amount is selected as the canonical form with the strength reduction 
+        rule introduced above.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = lsb
+        Int @2 = amount
+        Int @3 = ZShr(@0, @1)
+        Int @4 = Shl(@3, @2)
+        Int @5 = SShr(@4, @2)
+        Void@6 = Return(@5, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Urshift %x0,    lsb, %x0, @3
+        Lshift  %x0, amount, %x0, @4
+        Rshift  %x0, amount, %x0, @5
+        Ret     %x0,              @6
+
+        After Adding BIC:
+        // New optimized AIR
+        ExtractSignedBitfield %x0, lsb, width, %x0, @5
+        Ret                   %x0,                  @6
+    
+        --------------------
+        ### Part B SBFIZ ###
+        --------------------
+        Given instruction:
+        sbfiz Rd, Rn, lsb, width
+
+        Signed Bitfield Insert in Zero (SBFIZ) zeroes the destination register Rd and copies 
+        width number of contiguous bits from a source register Rn into lsb position in the 
+        destination register, sign-extending the most significant bit of the transferred value.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            bfsx  = ((src & mask1) ^ mask2) - mask2
+            dst   = bfsx << lsb
+            mask1 = (1 << width) - 1
+            mask2 = 1 << (width - 1) // (mask2 << 1) - 1 = mask1
+
+        Pattern 2:
+            amount = CHAR_BIT * sizeof(bf) - width
+            bfsx   = (src << amount) >> amount
+            dst    = bfsx << lsb
+        
+        Then, ((src << amount) >> amount) << lsb is selected as the canonical form with the 
+        strength reduction rule introduced above.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = lsb
+        Int @2 = amount
+        Int @3 = Shl(@0, @2)
+        Int @4 = SShr(@3, @2)
+        Int @5 = Shl(@4, @1)
+        Void@6 = Return(@5, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Lshift %x0, amount, %x0, @3
+        Rshift %x0, amount, %x0, @4
+        Lshift %x0,    lsb, %x0, @5
+        Ret    %x0,              @6
+
+        After Adding BIC:
+        // New optimized AIR
+        InsertSignedBitfieldInZero %x0, lsb, width, %x0, @5
+        Ret                        %x0,                  @6
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::insertSignedBitfieldInZero32):
+        (JSC::MacroAssemblerARM64::insertSignedBitfieldInZero64):
+        (JSC::MacroAssemblerARM64::extractSignedBitfield32):
+        (JSC::MacroAssemblerARM64::extractSignedBitfield64):
+        * assembler/testmasm.cpp:
+        (JSC::testInsertSignedBitfieldInZero32):
+        (JSC::testInsertSignedBitfieldInZero64):
+        (JSC::testExtractSignedBitfield32):
+        (JSC::testExtractSignedBitfield64):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (addBitTests):
+        * b3/testb3_3.cpp:
+        (testInsertSignedBitfieldInZero32):
+        (testInsertSignedBitfieldInZero64):
+        (testExtractSignedBitfield32):
+        (testExtractSignedBitfield64):
+
+2021-06-28  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new pattern to instruction selector to use BIC supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227202
+
+        Reviewed by Filip Pizlo.
+
+        This patch includes three modifications:
+            1. Add bit clear (BIC), or not (ORN), and extract and insert bitfield at the 
+               lower end (BFXIL) to Air opcode to serve instruction selector.
+            2. Add bitfield clear (BFC) to MacroAssembler.
+            4. Do refactoring - rename Air opcodes added in the previous patches.
+
+        ------------------
+        ### Part A BIC ###
+        ------------------
+        Given the operation:
+
+        bic Rd, Rn, Rm
+
+        The BIC (Bit Clear) instruction performs an AND operation on the bits in Rn with the 
+        complements of the corresponding bits in the value of Rm. The instruction selector can 
+        utilize this to lowering certain patterns in B3 IR before further Air optimization. 
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            d = n & (-m - 1)
+
+        Pattern 2:
+            d = n & (m ^ -1)
+
+        In order to get benefits for complement operation, the current instruction selector uses 
+        mvn instruction to lower the pattern value ^ -1. Then, a new strength reduction rule is 
+        introduced:
+            Turn this: -value - 1 
+            Into this: value ^ -1
+
+        So, d = n & (m ^ -1) is selected as the canonical form.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = -1
+        Int @3 = BitXor(@1, @2)
+        Int @4 = BitAnd(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Not %x1, %x1,      @3
+        And %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        After Adding BIC:
+        // New optimized AIR
+        Bic %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        ------------------
+        ### Part A ORN ###
+        ------------------
+        Given the operation:
+
+        orn Rd, Rn, Rm
+
+        Bitwise OR NOT (shifted register) performs a bitwise (inclusive) OR of a register value 
+        Rn and the complement of an optionally-shifted register value Rm, and writes the result 
+        to the destination register Rd.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+            d = n | (-m - 1)
+
+        Pattern 2:
+            d = n | (m ^ -1)
+
+        Then, d = n | (m ^ -1) is selected as the canonical form.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = -1
+        Int @3 = BitXor(@1, @2)
+        Int @4 = BitOr(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        Not %x1, %x1,      @3
+        Or  %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        After Adding BIC:
+        // New optimized AIR
+        Orn %x0, %x1, %x0, @4
+        Ret %x0,           @5
+
+        --------------------
+        ### Part A BFXIL ###
+        --------------------
+        Given the operation:
+
+        bfxil Rd, Rn, lsb, width
+
+        Bitfield extract and insert at low end(BFXIL) copies any number of low-order bits 
+        from a source register into the same number of adjacent bits at the low end in 
+        the destination register, leaving other bits unchanged.
+
+        The equivalent patterns of this instruction are:
+
+        Pattern 1:
+        mask1 = (1 << width) - 1
+        mask2 = ~mask1
+        ((n >> lsb) & mask1) | (d & mask2)
+
+        Pattern 2:
+        mask1 = ((1 << width) - 1) << lsb
+        mask2 = ~(mask1 >> lsb)
+        ((n & mask1) >> lsb) | (d & mask2)
+
+        Then, introduce a strength reduction rule for easier recognization.
+        Turn this: (v & maskShift) >> shiftAmount
+        Into this: (v >> shiftAmount) & mask
+
+        with constraints:
+        1. maskShift = mask << lsb
+        2. mask = (1 << width) - 1
+        3. 0 <= shiftAmount < datasize
+        4. 0 < width < datasize
+        5. shiftAmount + width <= datasize
+
+        The canonical form to match BFXIL is d = ((n >> lsb) & mask1) | (d & mask2).
+        
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = lsb
+        Int @3 = mask1
+        Int @4 = mask2
+        Int @5 = BitAnd(@1, @3)
+        Int @6 = BitAnd(@0, @4))
+        Int @7 = ZShr(@5, @2)
+        Int @8 = BitOr(@7, @6)
+        Void@9 = Return(@8, Terminal)
+
+        Before Adding BIC:
+        // Old optimized AIR
+        And                      mask2, %x0,   %x0,      @6
+        ExtractUnsignedBitfield    %x1, lsb, width, %x1, @7
+        Or                         %x0, %x1,   %x0,      @8
+        Ret                        %x0,                  @9
+
+        After Adding BIC:
+        // New optimized AIR
+        ExtractInsertBitfieldAtLowEnd %x1, lsb, width, %x0, @8
+        Ret64                         %x0,                  @9
+
+        --------------
+        ### Part B ###
+        --------------
+        The Bitfield Clear (BFC), leaving other bits unchanged, is similar to BFI which is an 
+        alias of BFM. Given the operation:
+
+        bfc Rd, lsb, width
+
+        The equivalent pattern of this instruction is:
+
+        mask = ((1 << width) - 1) << lsb
+        d = d & ~mask
+
+        Since mask is a constant and B3 performs constant fold in the optimization phase, this 
+        pattern will directly lower to the BitAnd binary operation. So, no need to match this pattern.
+
+        --------------
+        ### Part C ###
+        --------------
+        At MacroAssembler level, the emitters are exepected to be expressed in english 
+        (e.g. something like clearBitField for BFC). Do refactoring to rename Air opcode for 
+        UBFX, UBFIZ, BFI, and BIC.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::bfc):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::extractUnsignedBitfield32):
+        (JSC::MacroAssemblerARM64::extractUnsignedBitfield64):
+        (JSC::MacroAssemblerARM64::insertUnsignedBitfieldInZero32):
+        (JSC::MacroAssemblerARM64::insertUnsignedBitfieldInZero64):
+        (JSC::MacroAssemblerARM64::insertBitField32):
+        (JSC::MacroAssemblerARM64::insertBitField64):
+        (JSC::MacroAssemblerARM64::clearBitField32):
+        (JSC::MacroAssemblerARM64::clearBitField64):
+        (JSC::MacroAssemblerARM64::clearBitsWithMask32):
+        (JSC::MacroAssemblerARM64::clearBitsWithMask64):
+        (JSC::MacroAssemblerARM64::orNot32):
+        (JSC::MacroAssemblerARM64::orNot64):
+        (JSC::MacroAssemblerARM64::ubfx32): Deleted.
+        (JSC::MacroAssemblerARM64::ubfx64): Deleted.
+        (JSC::MacroAssemblerARM64::ubfiz32): Deleted.
+        (JSC::MacroAssemblerARM64::ubfiz64): Deleted.
+        (JSC::MacroAssemblerARM64::bitFieldInsert32): Deleted.
+        (JSC::MacroAssemblerARM64::bitFieldInsert64): Deleted.
+        * assembler/testmasm.cpp:
+        (JSC::testMultiplySignExtend32):
+        (JSC::testMultiplySubSignExtend32):
+        (JSC::testExtractUnsignedBitfield32):
+        (JSC::testExtractUnsignedBitfield64):
+        (JSC::testInsertUnsignedBitfieldInZero32):
+        (JSC::testInsertUnsignedBitfieldInZero64):
+        (JSC::testInsertBitField32):
+        (JSC::testInsertBitField64):
+        (JSC::testClearBitField32):
+        (JSC::testClearBitField64):
+        (JSC::testClearBitsWithMask32):
+        (JSC::testClearBitsWithMask64):
+        (JSC::testOrNot32):
+        (JSC::testOrNot64):
+        (JSC::testMul32SignExtend): Deleted.
+        (JSC::testMulSubSignExtend32): Deleted.
+        (JSC::testUbfx32): Deleted.
+        (JSC::testUbfx64): Deleted.
+        (JSC::testUbfiz32): Deleted.
+        (JSC::testUbfiz64): Deleted.
+        (JSC::testBitFieldInsert32): Deleted.
+        (JSC::testBitFieldInsert64): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testInsertBitField32):
+        (testInsertBitField64):
+        (testBIC32):
+        (testBIC64):
+        (testOrNot32):
+        (testOrNot64):
+        (addBitTests):
+        (testBitFieldInsert32): Deleted.
+        (testBitFieldInsert64): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::cageWithoutUntagging):
+        (JSC::AssemblyHelpers::cageConditionallyAndUntag):
+
+2021-06-28  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Add LLInt fast path for less, lesseq, greater and greatereq
+        https://bugs.webkit.org/show_bug.cgi?id=226266
+
+        Reviewed by Tadeu Zagallo.
+
+        The motivation is to add fast path for integers and doubles
+        in LLInt, so we don't need to go to slow path for those cases.
+
+        This patch implements the less, lesseq, greater, greatereq 
+        instruction for ARMv7, MIPS and CLoop.
+
+        Microbenchmarking results:
+        * x86_64: number-comparison-inline definitely 1.3520x faster
+        * ARMv7: number-comparison-inline definitely 1.3520x faster
+
+        JetStream2 results:
+        * x86_64 jit: 1.015 times better
+        * x86_64 no-jit: 1.018 times better
+        * ARMv7 no-jit: 1.004 times worse
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/mips.rb:
+
+2021-06-28  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Prevent sign-extended casts for 32 bits arch
+        https://bugs.webkit.org/show_bug.cgi?id=227170
+
+        Reviewed by Yusuke Suzuki.
+
+        In a number of places, addresses are reinterpreted as uint64, which can
+        lead to wrong addresses in 32 bits arch.
+
+        * assembler/testmasm.cpp:
+        (JSC::testBranchTruncateDoubleToInt32):
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcode::appendPCRelativeOffset):
+        * runtime/JSCell.cpp:
+        (JSC::reportZappedCellAndCrash):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitEntryTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+
+2021-06-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279266.
+        https://bugs.webkit.org/show_bug.cgi?id=227402
+
+        Causes crash loop
+
+        Reverted changeset:
+
+        "Remove references to order files"
+        https://bugs.webkit.org/show_bug.cgi?id=227377
+        https://trac.webkit.org/changeset/279266
+
+2021-06-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove references to order files
+        https://bugs.webkit.org/show_bug.cgi?id=227377
+        rdar://76070556
+
+        Reviewed by Mark Lam.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
+2021-06-24  Asumu Takikawa  <asumu@igalia.com>
+
+        [WASM-Function-References] Add support for (ref null? $t) type constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226296
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds the `ref` type constructor from the typed function references proposal:
+
+          https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md
+
+        It's also required for the type imports and GC proposals as well. Ref types represent
+        references to any heap type (including existing funcref and externref) with a specified
+        nullability.
+
+        This requires a new isNullable flag in the type representation. This flag also enables
+        non-null externref and funcrefs, and hence this commit also adds the necessary checks
+        at Wasm/JS boundaries.
+
+        Non-null reference types also generally cannot be used as function locals.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::gTypeIdx):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        (JSC::Wasm::JSCallingConvention::marshallLocation const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isSubtype):
+        (JSC::Wasm::isValidHeapTypeKind):
+        (JSC::Wasm::isDefaultableType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        (JSC::Wasm::FunctionParser<Context>::parseAnnotatedSelectImmediates):
+        (JSC::Wasm::FunctionParser<Context>::checkBranchTarget):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::get const):
+        (JSC::Wasm::Global::set):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        (JSC::Wasm::Parser<SuccessType>::parseRefType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseElementSegmentVectorOfExpressions):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::computeHash):
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        (JSC::WebAssemblyFunctionBase::offsetOfSignatureIndex):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::linkImpl):
+        * wasm/wasm.json:
+
 2021-06-24  Mark Lam  <mark.lam@apple.com>
 
         Use ldp and stp more for saving / restoring registers on ARM64.
@@ -468,7 +1626,7 @@
             A) Add UBFIZ to instruction selector.
             B) Fix UBFX, introduced in https://bugs.webkit.org/show_bug.cgi?id=226984, 
                to match all patterns. 
-            C) Fix error condition in one strength reduction introduced 
+            C) Fix error condition in one strength reduction rule introduced 
                in https://bugs.webkit.org/show_bug.cgi?id=227138.
 
         Part A

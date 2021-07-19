@@ -94,25 +94,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDomainSecurityPrototype, JSTestDomainSecurityPrototype::Base);
 
 using JSTestDomainSecurityDOMConstructor = JSDOMConstructorNotConstructable<JSTestDomainSecurity>;
 
-/* Hash table */
-
-static const struct CompactHashIndex JSTestDomainSecurityTableIndex[2] = {
-    { 0, -1 },
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestDomainSecurityTableValues[] =
-{
-    { "excitingAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDomainSecurity_excitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-};
-
-static const HashTable JSTestDomainSecurityTable = { 1, 1, true, JSTestDomainSecurity::info(), JSTestDomainSecurityTableValues, JSTestDomainSecurityTableIndex };
+template<> const unsigned JSTestDomainSecurityDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestDomainSecurityDOMConstructor::s_info = { "TestDomainSecurity", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurityDOMConstructor) };
 
 template<> JSValue JSTestDomainSecurityDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -128,7 +117,21 @@ template<> void JSTestDomainSecurityDOMConstructor::initializeProperties(VM& vm,
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestDomainSecurityPrototypeTableIndex[10] = {
+    { -1, -1 },
+    { 0, 8 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, 9 },
+    { 3, -1 },
+};
+
 
 static const HashTableValue JSTestDomainSecurityPrototypeTableValues[] =
 {
@@ -138,7 +141,8 @@ static const HashTableValue JSTestDomainSecurityPrototypeTableValues[] =
     { "overloadedMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDomainSecurityPrototypeFunction_overloadedMethod), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestDomainSecurityPrototype::s_info = { "TestDomainSecurity", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurityPrototype) };
+static const HashTable JSTestDomainSecurityPrototypeTable = { 4, 7, true, JSTestDomainSecurity::info(), JSTestDomainSecurityPrototypeTableValues, JSTestDomainSecurityPrototypeTableIndex };
+const ClassInfo JSTestDomainSecurityPrototype::s_info = { "TestDomainSecurity", &Base::s_info, &JSTestDomainSecurityPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurityPrototype) };
 
 void JSTestDomainSecurityPrototype::finishCreation(VM& vm)
 {
@@ -147,7 +151,21 @@ void JSTestDomainSecurityPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestDomainSecurity::s_info = { "TestDomainSecurity", &Base::s_info, &JSTestDomainSecurityTable, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurity) };
+/* Hash table for Instance */
+
+static const struct CompactHashIndex JSTestDomainSecurityInstanceTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSTestDomainSecurityInstanceTableValues[] =
+{
+    { "excitingAttr", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestDomainSecurity_excitingAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+};
+
+static const HashTable JSTestDomainSecurityInstanceTable = { 1, 1, true, JSTestDomainSecurity::info(), JSTestDomainSecurityInstanceTableValues, JSTestDomainSecurityInstanceTableIndex };
+const ClassInfo JSTestDomainSecurity::s_info = { "TestDomainSecurity", &Base::s_info, &JSTestDomainSecurityInstanceTable, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurity) };
 
 JSTestDomainSecurity::JSTestDomainSecurity(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDomainSecurity>&& impl)
     : JSDOMWrapper<TestDomainSecurity>(structure, globalObject, WTFMove(impl))

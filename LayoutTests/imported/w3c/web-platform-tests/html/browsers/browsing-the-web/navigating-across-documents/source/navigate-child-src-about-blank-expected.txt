@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Error: assert_equals: expected "http://localhost:8800/" but got "http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-src-about-blank.html"
 
-PASS Set the src attribute to about:blank and check referrer
+FAIL Set the src attribute to about:blank and check referrer Error: assert_equals: expected "http://localhost:8800/" but got "http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-src-about-blank.html"
 

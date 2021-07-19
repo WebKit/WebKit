@@ -1,3 +1,262 @@
+2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Object.assign and putDirectInternal
+        https://bugs.webkit.org/show_bug.cgi?id=227677
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+        (WTF::HashTable::isNullStorage const):
+
+2021-07-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Only use WebGL on Metal by default on safe versions of macOS
+        https://bugs.webkit.org/show_bug.cgi?id=227633
+        <rdar://problem/78527887>
+
+        Reviewed by Dean Jackson.
+
+        Tested by WebGL test suite.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformHave.h:
+
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        Disable relay for UDP sockets when not needed
+        https://bugs.webkit.org/show_bug.cgi?id=227253
+        <rdar://problem/79912154>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformHave.h:
+        Add a macro for new NW methods.
+
+2021-07-01  Antoine Quint  <graouts@webkit.org>
+
+        [Model] Restrict IPC calls to ARKit SPI availability and runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227581
+
+        Reviewed by Tim Horton.
+
+        Define a new compile-time flag when either of the iOS or macOS ARKit SPIs are available.
+
+        * wtf/PlatformHave.h:
+
+2021-07-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] <select> menus should scroll to the selected option
+        https://bugs.webkit.org/show_bug.cgi?id=227562
+        <rdar://problem/77887668>
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/PlatformHave.h:
+
+        Add HAVE(UIMENUOPTIONS_SINGLE_SELECTION).
+
+2021-07-01  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Add a new experimental flag for NW backed UDP sockets.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-07-01  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] (Re-)enable GroupActivities after upstreaming
+        https://bugs.webkit.org/show_bug.cgi?id=227546
+
+        Reviewed by Eric Carlson.
+
+        Add support for HAVE_GROUP_ACTIVITIES.
+
+        * wtf/PlatformHave.h:
+
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227530
+        <rdar://problem/79968206>
+
+        Reviewed by Dean Jackson.
+
+        Add a new compile-time flag indicating the availability of the ASVInlinePreview SPI on macOS.
+        We only define it when the header itself is present for now to avoid issues with older macOS
+        12 SDKs, but ultimately we will only use the macOS version check.
+
+        * wtf/PlatformHave.h:
+
+2021-06-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Add ID and versioning support for AppHighlights
+        https://bugs.webkit.org/show_bug.cgi?id=227279
+
+        Reviewed by Tim Horton.
+
+        Allow PersistentDecoders to rewind, to help support v0 highlight data.
+
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::Decoder):
+        (WTF::Persistence::Decoder::rewind):
+        * wtf/persistence/PersistentDecoder.h:
+
+2021-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use WeakHashMap and WeakPtr with Node in more places
+        https://bugs.webkit.org/show_bug.cgi?id=227192
+        <rdar://problem/79828322>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/WeakHashMap.h:
+        (WTF::WeakHashMap::WeakHashMapIteratorBase::makePeek): Fixed type mismatch errors.
+        (WTF::WeakHashMap::ensure): Made this function return AddResult like HashMap::ensure.
+        (WTF::WeakHashMap::take): Added.
+        (WTF::WeakHashMap::removeIf): Fixed the bug that the callback was called with the iterator
+        of m_impl and not WeakHashMapIterator.
+        * wtf/WeakHashSet.h:
+        (WTF::HashTraits<Ref<WeakPtrImpl<Counter>>>::isReleasedWeakValue): Moved to WeakPtr.h
+        * wtf/WeakPtr.h:
+        (WTF::HashTraits<Ref<WeakPtrImpl<Counter>>>::isReleasedWeakValue): Moved from WeakHashSet.h
+
+2021-06-30  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279405.
+
+        Casued 50+ webrtc crashes on Big Sur Debug
+
+        Reverted changeset:
+
+        "[Cocoa] Migrate WebRTC UDP socket handling to NW API"
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+        https://commits.webkit.org/r279405
+
+2021-06-30  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * wtf/PlatformHave.h:
+        This is not available on the simulator; disable it.
+
+2021-06-30  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Migrate WebRTC UDP socket handling to NW API
+        https://bugs.webkit.org/show_bug.cgi?id=227210
+
+        Reviewed by Eric Carlson.
+
+        Add a new experimental flag for NW backed UDP sockets.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-06-29  Antoine Quint  <graouts@webkit.org>
+
+        WebKit_iosmac build failure: SystemPreviewSPI.h:29:9: fatal error: 'AssetViewer/ARQuickLookWebKitItem.h' file not found
+        https://bugs.webkit.org/show_bug.cgi?id=227507
+        <rdar://problem/79902043>
+
+        Reviewed by Dean Jackson.
+
+        When we added new SPIs in Source/WebCore/PAL/pal/spi/ios/SystemPreviewSPI.h as part of r279312 we also included this file
+        from a new file that is compiled on Catalyst. This revealed an issue where existing SPIs included in that file weren't
+        actually available on Catalyst. We now make sure we compile those out on Catalyst.
+
+        * wtf/PlatformHave.h:
+
+2021-06-29  Antti Koivisto  <antti@apple.com>
+
+        Enable Probabilistic Guard Malloc for RuleData and RuleFeature vectors
+        https://bugs.webkit.org/show_bug.cgi?id=227446
+
+        Reviewed by Geoffrey Garen.
+
+        Add SystemMalloc type that can be used with containers like Vector and
+        ProbabilisticGuardMalloc alias for it on Mac/iOS platforms.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/SystemMalloc.h: Added.
+        (WTF::SystemMalloc::malloc):
+        (WTF::SystemMalloc::tryMalloc):
+        (WTF::SystemMalloc::zeroedMalloc):
+        (WTF::SystemMalloc::tryZeroedMalloc):
+        (WTF::SystemMalloc::realloc):
+        (WTF::SystemMalloc::tryRealloc):
+        (WTF::SystemMalloc::free):
+        * wtf/Vector.h:
+        (WTF::Malloc>::appendVector):
+
+        Include all template parameters for the appendVector argument.
+
+2021-06-28  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Prevent sign-extended casts for 32 bits arch
+        https://bugs.webkit.org/show_bug.cgi?id=227170
+
+        Reviewed by Yusuke Suzuki.
+
+        In a number of places, addresses are reinterpreted as uint64, which can
+        lead to wrong addresses in 32 bits arch.
+
+        * wtf/LoggerHelper.h:
+        (WTF::LoggerHelper::childLogIdentifier):
+
+2021-06-28  Sam Weinig  <weinig@apple.com>
+
+        Add helpers to create Spans from CFDataRef and NSData
+        https://bugs.webkit.org/show_bug.cgi?id=227217
+
+        Reviewed by Chris Dumez.
+
+        Add overloads of asBytes() for CFDataRef and NSData. This is going to
+        be a common enough pattern to warrent these helpers.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PlatformFTW.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/cf/SpanCF.h: Added.
+        (WTF::asBytes):
+        * wtf/cocoa/SpanCocoa.h: Added.
+        (WTF::asBytes):
+
+2021-06-27  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227392
+        <rdar://problem/79770136>
+
+        Reviewed by Tim Horton.
+
+        Add a new compile-time flag indicating the availability of the ASVInlinePreview SPI on iOS.
+        We only define it when the header itself is present for now to avoid issues with older iOS
+        15 SDKs, but ultimately we will only use the iOS version check.
+
+        * wtf/PlatformHave.h:
+
+2021-06-25  Kenneth Russell  <kbr@chromium.org>
+
+        Set ImageBitmap experimental feature flag to true
+        https://bugs.webkit.org/show_bug.cgi?id=227140
+
+        Reviewed by Dean Jackson.
+
+        Web developers - most recently Google's Meet team - have asked for
+        ImageBitmap support in WebKit. The implementation was
+        substantially upgraded during development of WebGL 2.0, and is
+        thoroughly tested on the EWS. Change the default value for
+        ImageBitmap's experimental flag to true; this can be removed
+        completely after one release cycle.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-06-24  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Remove ENABLE_SCROLL_SNAP compile-time option

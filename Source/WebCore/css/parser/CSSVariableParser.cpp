@@ -33,6 +33,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserHelpers.h"
 
 namespace WebCore {
 
@@ -55,8 +56,8 @@ static bool isValidConstantName(const CSSParserToken& token)
     return token.type() == IdentToken;
 }
 
-bool isValidVariableReference(CSSParserTokenRange, bool& hasAtApplyRule, const CSSParserContext&);
-bool isValidConstantReference(CSSParserTokenRange, bool& hasAtApplyRule, const CSSParserContext&);
+static bool isValidVariableReference(CSSParserTokenRange, bool& hasAtApplyRule, const CSSParserContext&);
+static bool isValidConstantReference(CSSParserTokenRange, bool& hasAtApplyRule, const CSSParserContext&);
 
 static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, bool& hasAtApplyRule, const CSSParserContext& parserContext, bool isTopLevelBlock = true)
 {
@@ -126,10 +127,10 @@ bool isValidVariableReference(CSSParserTokenRange range, bool& hasAtApplyRule, c
     if (range.atEnd())
         return true;
 
-    if (range.consume().type() != CommaToken)
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
         return false;
     if (range.atEnd())
-        return false;
+        return true;
 
     bool hasReferences = false;
     return classifyBlock(range, hasReferences, hasAtApplyRule, parserContext);
@@ -143,10 +144,10 @@ bool isValidConstantReference(CSSParserTokenRange range, bool& hasAtApplyRule, c
     if (range.atEnd())
         return true;
 
-    if (range.consume().type() != CommaToken)
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
         return false;
     if (range.atEnd())
-        return false;
+        return true;
 
     bool hasReferences = false;
     return classifyBlock(range, hasReferences, hasAtApplyRule, parserContext);

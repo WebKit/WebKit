@@ -4111,8 +4111,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
+    auto offsetFromRoot = offsetFromAncestor(rootLayer);
     // FIXME: We need to correctly hit test the clip-path when we have a RenderInline too.
-    if (renderer().hasClipPath() && is<RenderBox>(renderer()) && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
+    if (auto* rendererBox = this->renderBox(); rendererBox && !rendererBox->hitTestClipPath(hitTestLocation, toLayoutPoint(offsetFromRoot - toLayoutSize(renderBoxLocation()))))
         return nullptr;
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
@@ -4135,8 +4136,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // Collect the fragments. This will compute the clip rectangles for each layer fragment.
     LayerFragments layerFragments;
-    collectFragments(layerFragments, rootLayer, hitTestRect, IncludeCompositedPaginatedLayers, RootRelativeClipRects, IncludeOverlayScrollbarSize, RespectOverflowClip,
-        offsetFromAncestor(rootLayer));
+    collectFragments(layerFragments, rootLayer, hitTestRect, IncludeCompositedPaginatedLayers, RootRelativeClipRects, IncludeOverlayScrollbarSize, RespectOverflowClip, offsetFromRoot);
 
     LayoutPoint localPoint;
     if (canResize() && m_scrollableArea && m_scrollableArea->hitTestResizerInFragments(layerFragments, hitTestLocation, localPoint)) {

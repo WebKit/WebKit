@@ -50,8 +50,6 @@ struct ThunderSystemDeleter {
 
 using UniqueThunderSystem = std::unique_ptr<OpenCDMSystem, ThunderSystemDeleter>;
 
-using UniqueThunderSession = std::unique_ptr<OpenCDMSession, WTF::BoxPtrDeleter<OpenCDMSession>>;
-
 } // namespace Thunder
 
 class CDMFactoryThunder final : public CDMFactory, public CDMProxyFactory {
@@ -161,7 +159,7 @@ private:
     bool m_doesKeyStoreNeedMerging { false };
     InitData m_initData;
     OpenCDMSessionCallbacks m_thunderSessionCallbacks { };
-    Thunder::UniqueThunderSession m_session;
+    BoxPtr<OpenCDMSession> m_session;
     RefPtr<SharedBuffer> m_message;
     bool m_needsIndividualization { false };
     Vector<ChallengeGeneratedCallback> m_challengeCallbacks;

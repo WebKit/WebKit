@@ -414,7 +414,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 builder.append(":-webkit-any-link");
                 break;
             case CSSSelector::PseudoClassAutofill:
-                builder.append(":-webkit-autofill");
+                builder.append(":autofill");
                 break;
             case CSSSelector::PseudoClassAutofillStrongPassword:
                 builder.append(":-webkit-autofill-strong-password");
@@ -423,7 +423,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 builder.append(":-webkit-autofill-strong-password-viewable");
                 break;
             case CSSSelector::PseudoClassDirectFocus:
-                builder.append(":-webkit-direct-focus");
+                builder.append(":-internal-direct-focus");
                 break;
             case CSSSelector::PseudoClassDrag:
                 builder.append(":-webkit-drag");
@@ -543,6 +543,9 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassLink:
                 builder.append(":link");
+                break;
+            case CSSSelector::PseudoClassModalDialog:
+                builder.append(":-internal-modal-dialog");
                 break;
             case CSSSelector::PseudoClassNoButton:
                 builder.append(":no-button");

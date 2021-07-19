@@ -40,58 +40,54 @@
 
 namespace WebCore {
 
-template <typename LayoutType>
-static std::pair<std::optional<unsigned>, std::optional<unsigned>> indicesOfNearestSnapOffsets(LayoutType offset, const Vector<SnapOffset<LayoutType>>& snapOffsets)
+template <typename UnitType>
+struct PotentialSnapPointSearchResult {
+    std::optional<std::pair<UnitType, unsigned>> previous;
+    std::optional<std::pair<UnitType, unsigned>> next;
+    std::optional<std::pair<UnitType, unsigned>> snapStop;
+    bool landedInsideSnapAreaThatConsumesViewport;
+};
+
+template <typename InfoType, typename UnitType>
+static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(const InfoType& info, ScrollEventAxis axis, UnitType viewportLength, UnitType destinationOffset, std::optional<UnitType> originalOffset)
 {
-    unsigned lowerIndex = 0;
-    unsigned upperIndex = snapOffsets.size() - 1;
-    while (lowerIndex < upperIndex - 1) {
-        int middleIndex = (lowerIndex + upperIndex) / 2;
-        auto middleOffset = snapOffsets[middleIndex].offset;
-        if (offset == middleOffset) {
-            upperIndex = middleIndex;
-            lowerIndex = middleIndex;
-            break;
-        }
+    const auto& snapOffsets = info.offsetsForAxis(axis);
+    std::optional<std::pair<UnitType, unsigned>> previous, next, exact, snapStop;
+    bool landedInsideSnapAreaThatConsumesViewport = false;
 
-        if (offset > middleOffset)
-            lowerIndex = middleIndex;
-        else
-            upperIndex = middleIndex;
-    }
-
-    return std::make_pair(lowerIndex, upperIndex);
-}
-
-template <typename LayoutType>
-static std::optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(const Vector<SnapOffset<LayoutType>>& snapOffsets, LayoutType scrollOriginOffset, LayoutType scrollDestinationOffset)
-{
-    LayoutType difference = scrollDestinationOffset - scrollOriginOffset;
-    if (!difference)
-        return std::nullopt;
-
-    unsigned searchStartOffset = 0;
-    size_t iteration = 1;
-    if (difference < 0) {
-        searchStartOffset = snapOffsets.size() - 1;
-        iteration = -1;
-    }
-
-    auto isPast = [difference](LayoutType mark, LayoutType candidate) {
-        return (difference > 0 && candidate > mark) || (difference < 0 && candidate < mark);
+    // A particular snap stop is better if it's between the original offset and destination offset and closer original
+    // offset than the previously selected snap stop. We always want to stop at the snap stop closest to the original offset.
+    auto isBetterSnapStop = [&](UnitType candidate) {
+        if (!originalOffset)
+            return false;
+        auto original = *originalOffset;
+        if (candidate <= std::min(destinationOffset, original) || candidate >= std::max(destinationOffset, original))
+            return false;
+        return !snapStop || std::abs(float { candidate - original }) < std::abs(float { (*snapStop).first - original });
     };
 
-    for (int i = searchStartOffset; i >= 0 && static_cast<size_t>(i) < snapOffsets.size(); i += iteration) {
-        auto offset = snapOffsets[i].offset;
-        if (isPast(scrollDestinationOffset, offset))
-            break;
-        if (snapOffsets[i].stop != ScrollSnapStop::Always)
-            continue;
-        if (isPast(scrollOriginOffset, offset))
-            return i;
+    for (unsigned i = 0; i < snapOffsets.size(); i++) {
+        UnitType potentialSnapOffset = snapOffsets[i].offset;
+
+        const auto& snapArea = info.snapAreas[snapOffsets[i].snapAreaIndex];
+        auto snapAreaMin = axis == ScrollEventAxis::Horizontal ? snapArea.x() : snapArea.y();
+        auto snapAreaMax = axis == ScrollEventAxis::Horizontal ? snapArea.maxX() : snapArea.maxY();
+        landedInsideSnapAreaThatConsumesViewport |= snapAreaMin <= destinationOffset && snapAreaMax >= (destinationOffset + viewportLength);
+
+        if (potentialSnapOffset == destinationOffset)
+            exact = std::make_pair(potentialSnapOffset, i);
+        else if (potentialSnapOffset < destinationOffset)
+            previous = std::make_pair(potentialSnapOffset, i);
+        else if (!next && potentialSnapOffset > destinationOffset)
+            next = std::make_pair(potentialSnapOffset, i);
+
+        if (snapOffsets[i].stop == ScrollSnapStop::Always && isBetterSnapStop(potentialSnapOffset))
+            snapStop = std::make_pair(potentialSnapOffset, i);
     }
 
-    return std::nullopt;
+    if (exact)
+        return { exact, exact, snapStop, landedInsideSnapAreaThatConsumesViewport };
+    return { previous, next, snapStop, landedInsideSnapAreaThatConsumesViewport };
 }
 
 template <typename InfoType, typename SizeType, typename LayoutType>
@@ -102,12 +98,20 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
     if (snapOffsets.isEmpty())
         return pairForNoSnapping;
 
-    if (originalOffsetForDirectionalSnapping) {
-        if (auto firstSnapStopOffsetIndex = findFirstSnapStopOffsetBetweenOriginAndDestination(snapOffsets, *originalOffsetForDirectionalSnapping, scrollDestinationOffset))
-            return std::make_pair(snapOffsets[*firstSnapStopOffsetIndex].offset, firstSnapStopOffsetIndex);
-    }
-
     auto viewportLength = axis == ScrollEventAxis::Horizontal ? viewportSize.width() : viewportSize.height();
+    auto [previous, next, snapStop, landedInsideSnapAreaThatConsumesViewport] = searchForPotentialSnapPoints(info, axis, viewportLength, scrollDestinationOffset, originalOffsetForDirectionalSnapping);
+    if (snapStop)
+        return *snapStop;
+
+    // From https://www.w3.org/TR/css-scroll-snap-1/#snap-overflow
+    // "If the snap area is larger than the snapport in a particular axis, then any scroll position
+    // in which the snap area covers the snapport, and the distance between the geometrically
+    // previous and subsequent snap positions in that axis is larger than size of the snapport in
+    // that axis, is a valid snap position in that axis. The UA may use the specified alignment as a
+    // more precise target for certain scroll operations (e.g. explicit paging)."
+    if (landedInsideSnapAreaThatConsumesViewport && (!previous || !next || ((*next).first - (*previous).first) >= viewportLength))
+        return pairForNoSnapping;
+
     auto isNearEnoughToOffsetForProximity = [&](LayoutType candidateSnapOffset) {
         if (info.strictness != ScrollSnapStrictness::Proximity)
             return true;
@@ -126,41 +130,37 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
         return isNearEnoughToOffsetForProximity(snapOffsets.last().offset) ? std::make_pair(snapOffsets.last().offset, std::make_optional(lastIndex)) : pairForNoSnapping;
     }
 
-    auto [lowerIndex, upperIndex] = indicesOfNearestSnapOffsets<LayoutType>(scrollDestinationOffset, snapOffsets);
-    ASSERT(lowerIndex);
-    ASSERT(upperIndex);
-    LayoutType lowerSnapPosition = snapOffsets[*lowerIndex].offset;
-    LayoutType upperSnapPosition = snapOffsets[*upperIndex].offset;
+    if (previous && !isNearEnoughToOffsetForProximity((*previous).first))
+        previous.reset();
+    if (next && !isNearEnoughToOffsetForProximity((*next).first))
+        next.reset();
 
-    if (!isNearEnoughToOffsetForProximity(lowerSnapPosition)) {
-        lowerSnapPosition = scrollDestinationOffset;
-        lowerIndex.reset();
+    if (originalOffsetForDirectionalSnapping) {
+        // From https://www.w3.org/TR/css-scroll-snap-1/#choosing
+        // "User agents must ensure that a user can “escape” a snap position, regardless of the scroll
+        // method. For example, if the snap type is mandatory and the next snap position is more than
+        // two screen-widths away, a naïve “always snap to nearest” selection algorithm might “trap” the
+        //
+        // For a directional scroll, we never snap back to the original scroll position or before it,
+        // always preferring the snap offset in the scroll direction.
+        auto& originalOffset = *originalOffsetForDirectionalSnapping;
+        if (originalOffset < scrollDestinationOffset && previous && (*previous).first <= originalOffset)
+            previous.reset();
+        if (originalOffset > scrollDestinationOffset && next && (*next).first >= originalOffset)
+            next.reset();
     }
 
-    if (!isNearEnoughToOffsetForProximity(upperSnapPosition)) {
-        upperSnapPosition = scrollDestinationOffset;
-        upperIndex.reset();
+    if (!previous && !next)
+        return pairForNoSnapping;
+    if (!previous)
+        return *next;
+    if (!next)
+        return *previous;
 
-    }
-
-    if (!std::abs(velocity)) {
-        bool isCloserToLowerSnapPosition = !upperIndex || (lowerIndex && scrollDestinationOffset - lowerSnapPosition <= upperSnapPosition - scrollDestinationOffset);
-        return isCloserToLowerSnapPosition ? std::make_pair(lowerSnapPosition, lowerIndex) : std::make_pair(upperSnapPosition, upperIndex);
-    }
-
-    // Non-zero velocity indicates a flick gesture. Even if another snap point is closer, we should choose the one in the direction of the flick gesture
-    // as long as a scroll snap offset is close enough for proximity (or we aren't using proximity). If we are doing directional
-    // snapping, we should never snap to a point that was on the other side of the original position in the opposite direction of this scroll.
-    // This allows directional scrolling to escape snap points.
-    if (velocity < 0)  {
-        if (upperIndex && (!originalOffsetForDirectionalSnapping || *originalOffsetForDirectionalSnapping > upperSnapPosition))
-            return std::make_pair(upperSnapPosition, upperIndex);
-        return std::make_pair(lowerSnapPosition, lowerIndex);
-    }
-
-    if (lowerIndex && (!originalOffsetForDirectionalSnapping || *originalOffsetForDirectionalSnapping < lowerSnapPosition))
-        return std::make_pair(lowerSnapPosition, lowerIndex);
-    return std::make_pair(upperSnapPosition, upperIndex);
+    // If this scroll isn't directional, then choose whatever snap point is closer, otherwise pick the offset in the scroll direction.
+    if (!std::abs(velocity))
+        return (scrollDestinationOffset - (*previous).first) <= ((*next).first - scrollDestinationOffset) ? *previous : *next;
+    return velocity < 0 ? *previous : *next;
 }
 
 enum class InsetOrOutset {

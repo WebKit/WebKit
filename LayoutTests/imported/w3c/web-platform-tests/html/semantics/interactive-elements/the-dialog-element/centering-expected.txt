@@ -1,17 +1,25 @@
 
-FAIL horizontal-tb: tall viewport assert_equals: expected "45px" but got "8px"
-FAIL horizontal-tb: wide viewport assert_equals: expected "15px" but got "8px"
-FAIL horizontal-tb: square viewport assert_equals: expected "45px" but got "8px"
-FAIL horizontal-tb: dialog and viewport match assert_equals: expected "0px" but got "8px"
-FAIL horizontal-tb: dialog bigger than viewport assert_equals: expected "0px" but got "8px"
-FAIL vertical-rl: tall viewport assert_equals: expected "10px" but got "12px"
-FAIL vertical-lr: tall viewport assert_equals: expected "10px" but got "12px"
-FAIL vertical-lr: dialog bigger than viewport assert_equals: expected "0px" but got "-18px"
-FAIL vertical-rl (dialog horizontal-tb): tall viewport assert_equals: expected "10px" but got "0px"
-FAIL vertical-lr (dialog horizontal-tb): tall viewport assert_equals: expected "10px" but got "0px"
-PASS vertical-lr (dialog horizontal-tb): dialog bigger than viewport
-FAIL horizontal-tb (container vertical-rl): tall viewport assert_equals: expected "10px" but got "8px"
-FAIL vertical-rl (container horizontal-tb): tall viewport assert_equals: expected "45px" but got "8px"
-FAIL horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport assert_equals: expected "10px" but got "0px"
-FAIL vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport assert_equals: expected "45px" but got "0px"
+PASS horizontal-tb: tall viewport, default-sizes: true
+PASS horizontal-tb: tall viewport, default-sizes: false
+PASS horizontal-tb: wide viewport, default-sizes: true
+PASS horizontal-tb: wide viewport, default-sizes: false
+PASS horizontal-tb: square viewport, default-sizes: true
+PASS horizontal-tb: square viewport, default-sizes: false
+PASS horizontal-tb: dialog and viewport match, default-sizes: false
+PASS vertical-rl: tall viewport, default-sizes: true
+PASS vertical-rl: tall viewport, default-sizes: false
+PASS vertical-lr: tall viewport, default-sizes: true
+PASS vertical-lr: tall viewport, default-sizes: false
+PASS vertical-rl (dialog horizontal-tb): tall viewport, default-sizes: true
+PASS vertical-rl (dialog horizontal-tb): tall viewport, default-sizes: false
+PASS vertical-lr (dialog horizontal-tb): tall viewport, default-sizes: true
+PASS vertical-lr (dialog horizontal-tb): tall viewport, default-sizes: false
+PASS horizontal-tb (container vertical-rl): tall viewport, default-sizes: true
+PASS horizontal-tb (container vertical-rl): tall viewport, default-sizes: false
+PASS vertical-rl (container horizontal-tb): tall viewport, default-sizes: true
+PASS vertical-rl (container horizontal-tb): tall viewport, default-sizes: false
+PASS horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport, default-sizes: true
+PASS horizontal-tb (container vertical-rl) (dialog horizontal-tb): tall viewport, default-sizes: false
+PASS vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport, default-sizes: true
+PASS vertical-rl (container horizontal-tb) (dialog vertical-rl): tall viewport, default-sizes: false
 

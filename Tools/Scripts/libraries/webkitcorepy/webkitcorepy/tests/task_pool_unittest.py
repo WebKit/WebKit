@@ -173,4 +173,4 @@ class TaskPoolUnittest(unittest.TestCase):
         with OutputCapture():
             with self.assertRaises(TaskPool.Exception):
                 with TaskPool(workers=1, teardown=teardown, grace_period=1, force_fork=True) as pool:
-                    pool.do(wait, 2)
+                    pool.do(wait, 5)

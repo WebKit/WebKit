@@ -1,0 +1,6 @@
+Open Popup 1
+This is popup #1
+
+
+FAIL Basic test of the 'popup' attribute on a button assert_false: expected false got undefined
+

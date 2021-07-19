@@ -292,7 +292,7 @@ void testGetEffectiveAddress(size_t pointer, ptrdiff_t length, int32_t offset, C
 // Nan, should either yield 0 in dest or fail.
 void testBranchTruncateDoubleToInt32(double val, int32_t expected)
 {
-    const uint64_t valAsUInt = *reinterpret_cast<uint64_t*>(&val);
+    const uint64_t valAsUInt = bitwise_cast<uint64_t>(val);
 #if CPU(BIG_ENDIAN)
     const bool isBigEndian = true;
 #else
@@ -904,7 +904,7 @@ void testMul32WithImmediates()
 }
 
 #if CPU(ARM64)
-void testMul32SignExtend()
+void testMultiplySignExtend32()
 {
     for (auto value : int32Operands()) {
         auto mul = compile([=] (CCallHelpers& jit) {
@@ -1089,7 +1089,7 @@ void testSub64ArgImm64()
     }
 }
 
-void testMulSubSignExtend32()
+void testMultiplySubSignExtend32()
 {
     // d = a - SExt32(n) *  SExt32(m)
     auto sub = compile([=] (CCallHelpers& jit) {
@@ -1112,7 +1112,7 @@ void testMulSubSignExtend32()
     }
 }
 
-void testUbfx32()
+void testExtractUnsignedBitfield32()
 {
     uint32_t src = 0xf0f0f0f0;
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
@@ -1122,7 +1122,7 @@ void testUbfx32()
                 auto ubfx32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
-                    jit.ubfx32(GPRInfo::argumentGPR0, 
+                    jit.extractUnsignedBitfield32(GPRInfo::argumentGPR0, 
                         CCallHelpers::TrustedImm32(lsb), 
                         CCallHelpers::TrustedImm32(width), 
                         GPRInfo::returnValueGPR);
@@ -1136,7 +1136,7 @@ void testUbfx32()
     }
 }
 
-void testUbfx64()
+void testExtractUnsignedBitfield64()
 {
     uint64_t src = 0xf0f0f0f0f0f0f0f0;
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
@@ -1146,7 +1146,7 @@ void testUbfx64()
                 auto ubfx64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
-                    jit.ubfx64(GPRInfo::argumentGPR0, 
+                    jit.extractUnsignedBitfield64(GPRInfo::argumentGPR0, 
                         CCallHelpers::TrustedImm32(lsb), 
                         CCallHelpers::TrustedImm32(width), 
                         GPRInfo::returnValueGPR);
@@ -1160,7 +1160,7 @@ void testUbfx64()
     }
 }
 
-void testUbfiz32()
+void testInsertUnsignedBitfieldInZero32()
 {
     uint32_t src = 0xf0f0f0f0;
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
@@ -1170,7 +1170,7 @@ void testUbfiz32()
                 auto ubfiz32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
-                    jit.ubfiz32(GPRInfo::argumentGPR0, 
+                    jit.insertUnsignedBitfieldInZero32(GPRInfo::argumentGPR0, 
                         CCallHelpers::TrustedImm32(lsb), 
                         CCallHelpers::TrustedImm32(width), 
                         GPRInfo::returnValueGPR);
@@ -1185,7 +1185,7 @@ void testUbfiz32()
     }
 }
 
-void testUbfiz64()
+void testInsertUnsignedBitfieldInZero64()
 {
     uint64_t src = 0xf0f0f0f0f0f0f0f0;
     Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
@@ -1195,7 +1195,7 @@ void testUbfiz64()
                 auto ubfiz64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
-                    jit.ubfiz64(GPRInfo::argumentGPR0, 
+                    jit.insertUnsignedBitfieldInZero64(GPRInfo::argumentGPR0, 
                         CCallHelpers::TrustedImm32(lsb), 
                         CCallHelpers::TrustedImm32(width), 
                         GPRInfo::returnValueGPR);
@@ -1210,7 +1210,7 @@ void testUbfiz64()
     }
 }
 
-void testBitFieldInsert32()
+void testInsertBitField32()
 {
     uint32_t src = 0x0f0f0f0f;
     uint32_t dst = 0xf0f0f0f0;
@@ -1221,7 +1221,7 @@ void testBitFieldInsert32()
                 auto bfi32 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
-                    jit.bitFieldInsert64(GPRInfo::argumentGPR0, 
+                    jit.insertBitField32(GPRInfo::argumentGPR0, 
                         CCallHelpers::TrustedImm32(lsb), 
                         CCallHelpers::TrustedImm32(width), 
                         GPRInfo::argumentGPR1);
@@ -1240,7 +1240,7 @@ void testBitFieldInsert32()
     }
 }
 
-void testBitFieldInsert64()
+void testInsertBitField64()
 {
     uint64_t src = 0x0f0f0f0f0f0f0f0f;
     uint64_t dst = 0xf0f0f0f0f0f0f0f0;
@@ -1251,7 +1251,7 @@ void testBitFieldInsert64()
                 auto bfi64 = compile([=] (CCallHelpers& jit) {
                     emitFunctionPrologue(jit);
 
-                    jit.bitFieldInsert64(GPRInfo::argumentGPR0, 
+                    jit.insertBitField64(GPRInfo::argumentGPR0, 
                         CCallHelpers::TrustedImm32(lsb), 
                         CCallHelpers::TrustedImm32(width), 
                         GPRInfo::argumentGPR1);
@@ -1265,6 +1265,377 @@ void testBitFieldInsert64()
                 uint64_t rhs = invoke<uint64_t>(bfi64, src, dst);
                 uint64_t lhs = ((src & mask1) << lsb) | (dst & mask2);
                 CHECK_EQ(rhs, lhs);
+            }
+        }
+    }
+}
+
+void testExtractInsertBitfieldAtLowEnd32()
+{
+    uint32_t src = 0xf0f0f0f0;
+    uint32_t dst = 0x0f0f0f0f;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto bfxil32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.extractInsertBitfieldAtLowEnd32(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::argumentGPR1);
+                    jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                uint32_t mask1 = (1U << width) - 1U;
+                uint32_t mask2 = ~mask1;
+                uint32_t rhs = invoke<uint32_t>(bfxil32, src, dst);
+                uint32_t lhs = ((src >> lsb) & mask1) | (dst & mask2);
+                CHECK_EQ(rhs, lhs);
+            }
+        }
+    }
+}
+
+void testExtractInsertBitfieldAtLowEnd64()
+{
+    uint64_t src = 0x0f0f0f0f0f0f0f0f;
+    uint64_t dst = 0xf0f0f0f0f0f0f0f0;
+    Vector<uint64_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+                auto bfxil64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.extractInsertBitfieldAtLowEnd64(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::argumentGPR1);
+                    jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                uint64_t mask1 = (1ULL << width) - 1ULL;
+                uint64_t mask2 = ~mask1;
+                uint64_t rhs = invoke<uint64_t>(bfxil64, src, dst);
+                uint64_t lhs = ((src >> lsb) & mask1) | (dst & mask2);
+                CHECK_EQ(rhs, lhs);
+            }
+        }
+    }
+}
+
+void testClearBitField32()
+{
+    uint32_t src = std::numeric_limits<uint32_t>::max();
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto bfc32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.clearBitField32(CCallHelpers::TrustedImm32(lsb), CCallHelpers::TrustedImm32(width), GPRInfo::argumentGPR0);
+                    jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                uint32_t mask = ((1U << width) - 1U) << lsb;
+                uint32_t rhs = invoke<uint32_t>(bfc32, src);
+                uint32_t lhs = src & ~mask;
+                CHECK_EQ(rhs, lhs);
+            }
+        }
+    }
+}
+
+void testClearBitField64()
+{
+    uint64_t src = std::numeric_limits<uint64_t>::max();
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto bfc64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.clearBitField64(CCallHelpers::TrustedImm32(lsb), CCallHelpers::TrustedImm32(width), GPRInfo::argumentGPR0);
+                    jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+                uint64_t mask = ((1ULL << width) - 1ULL) << lsb;
+                uint64_t rhs = invoke<uint64_t>(bfc64, src);
+                uint64_t lhs = src & ~mask;
+                CHECK_EQ(rhs, lhs);
+            }
+        }
+    }
+}
+
+void testClearBitsWithMask32()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.clearBitsWithMask32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto mask : int32Operands()) {
+        uint32_t src = std::numeric_limits<uint32_t>::max();
+        CHECK_EQ(invoke<uint32_t>(test, src, mask), (src & ~mask));
+        CHECK_EQ(invoke<uint32_t>(test, 0U, mask), 0U);
+    }
+}
+
+void testClearBitsWithMask64()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.clearBitsWithMask64(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto mask : int64Operands()) {
+        uint64_t src = std::numeric_limits<uint64_t>::max();
+        CHECK_EQ(invoke<uint64_t>(test, src, mask), (src & ~mask));
+        CHECK_EQ(invoke<uint64_t>(test, 0ULL, mask), 0ULL);
+    }
+}
+
+void testOrNot32()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.orNot32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto mask : int32Operands()) {
+        int32_t src = std::numeric_limits<uint32_t>::max();
+        CHECK_EQ(invoke<int32_t>(test, src, mask), (src | ~mask));
+        CHECK_EQ(invoke<int32_t>(test, 0U, mask), ~mask);
+    }
+}
+
+void testOrNot64()
+{
+    auto test = compile([] (CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+
+        jit.orNot64(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    for (auto mask : int64Operands()) {
+        int64_t src = std::numeric_limits<uint64_t>::max();
+        CHECK_EQ(invoke<int64_t>(test, src, mask), (src | ~mask));
+        CHECK_EQ(invoke<int64_t>(test, 0ULL, mask), ~mask);
+    }
+}
+
+void testInsertSignedBitfieldInZero32()
+{
+    uint32_t src = 0xf0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto insertSignedBitfieldInZero32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.insertSignedBitfieldInZero32(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t bf = src;
+                int32_t mask1 = (1 << width) - 1;
+                int32_t mask2 = 1 << (width - 1);
+                int32_t bfsx = ((bf & mask1) ^ mask2) - mask2;
+
+                CHECK_EQ(invoke<int32_t>(insertSignedBitfieldInZero32, src), bfsx << lsb);
+            }
+        }
+    }
+}
+
+void testInsertSignedBitfieldInZero64()
+{
+    int64_t src = 0xf0f0f0f0f0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+                auto insertSignedBitfieldInZero64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.insertSignedBitfieldInZero64(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t bf = src;
+                int64_t amount = CHAR_BIT * sizeof(bf) - width;
+                int64_t bfsx = (bf << amount) >> amount;
+
+                CHECK_EQ(invoke<int64_t>(insertSignedBitfieldInZero64, src), bfsx << lsb);
+            }
+        }
+    }
+}
+
+void testExtractSignedBitfield32()
+{
+    int32_t src = 0xf0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 32) {
+                auto extractSignedBitfield32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.extractSignedBitfield32(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t bf = src >> lsb;
+                int32_t mask1 = (1 << width) - 1;
+                int32_t mask2 = 1 << (width - 1);
+                int32_t bfsx = ((bf & mask1) ^ mask2) - mask2;
+
+                CHECK_EQ(invoke<int32_t>(extractSignedBitfield32, src), bfsx);
+            }
+        }
+    }
+}
+
+void testExtractSignedBitfield64()
+{
+    int64_t src = 0xf0f0f0f0f0f0f0f0;
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    for (auto lsb : imms) {
+        for (auto width : imms) {
+            if (lsb >= 0 && width > 0 && lsb + width < 64) {
+                auto extractSignedBitfield64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.extractSignedBitfield64(GPRInfo::argumentGPR0, 
+                        CCallHelpers::TrustedImm32(lsb), 
+                        CCallHelpers::TrustedImm32(width), 
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t bf = src >> lsb;
+                int64_t amount = CHAR_BIT * sizeof(bf) - width;
+                int64_t bfsx = (bf << amount) >> amount;
+
+                CHECK_EQ(invoke<int64_t>(extractSignedBitfield64, src), bfsx);
+            }
+        }
+    }
+}
+
+void testExtractRegister32()
+{
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    uint32_t datasize = CHAR_BIT * sizeof(uint32_t);
+
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto lsb : imms) {
+                if (0 <= lsb && lsb < datasize) {
+                    auto extractRegister32 = compile([=] (CCallHelpers& jit) {
+                        emitFunctionPrologue(jit);
+
+                        jit.extractRegister32(GPRInfo::argumentGPR0, 
+                            GPRInfo::argumentGPR1, 
+                            CCallHelpers::TrustedImm32(lsb), 
+                            GPRInfo::returnValueGPR);
+
+                        emitFunctionEpilogue(jit);
+                        jit.ret();
+                    });
+
+                    // ((n & mask) << highWidth) | (m >> lowWidth)
+                    // Where: highWidth = datasize - lowWidth
+                    //        mask = (1 << lowWidth) - 1
+                    uint32_t highWidth = datasize - lsb;
+                    uint32_t mask = (1U << lsb) - 1U;
+                    uint32_t left = highWidth == datasize ? 0U : (n & mask) << highWidth;
+                    uint32_t right = (static_cast<uint32_t>(m) >> lsb);
+                    uint32_t rhs = left | right;
+                    uint32_t lhs = invoke<uint32_t>(extractRegister32, n, m);
+                    CHECK_EQ(lhs, rhs);
+                }
+            }
+        }
+    }
+}
+
+void testExtractRegister64()
+{
+    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
+    uint64_t datasize = CHAR_BIT * sizeof(uint64_t);
+
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto lsb : imms) {
+                if (0 <= lsb && lsb < datasize) {
+                    auto extractRegister64 = compile([=] (CCallHelpers& jit) {
+                        emitFunctionPrologue(jit);
+
+                        jit.extractRegister64(GPRInfo::argumentGPR0, 
+                            GPRInfo::argumentGPR1, 
+                            CCallHelpers::TrustedImm32(lsb), 
+                            GPRInfo::returnValueGPR);
+
+                        emitFunctionEpilogue(jit);
+                        jit.ret();
+                    });
+
+                    uint64_t highWidth = datasize - lsb;
+                    uint64_t mask = (1ULL << lsb) - 1ULL;
+                    uint64_t left = highWidth == datasize ? 0ULL : (n & mask) << highWidth;
+                    uint64_t right = (static_cast<uint64_t>(m) >> lsb);
+                    uint64_t rhs = left | right;
+                    uint64_t lhs = invoke<uint64_t>(extractRegister64, n, m);
+                    CHECK_EQ(lhs, rhs);
+                }
             }
         }
     }
@@ -3425,9 +3796,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 #if CPU(ARM64)
     RUN(testLoadStorePair64Int64());
     RUN(testLoadStorePair64Double());
-    RUN(testMul32SignExtend());
-    RUN(testMultiplyAddSignExtend32Left());
-    RUN(testMultiplyAddSignExtend32Right());
+    RUN(testMultiplySignExtend32());
+
     RUN(testSub32Args());
     RUN(testSub32Imm());
     RUN(testSub32ArgImm());
@@ -3435,13 +3805,33 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testSub64ArgImm32());
     RUN(testSub64Imm64());
     RUN(testSub64ArgImm64());
-    RUN(testMulSubSignExtend32());
-    RUN(testUbfx32());
-    RUN(testUbfx64());
-    RUN(testUbfiz32());
-    RUN(testUbfiz64());
-    RUN(testBitFieldInsert32());
-    RUN(testBitFieldInsert64());
+
+    RUN(testMultiplyAddSignExtend32Left());
+    RUN(testMultiplyAddSignExtend32Right());
+    RUN(testMultiplySubSignExtend32());
+
+    RUN(testExtractUnsignedBitfield32());
+    RUN(testExtractUnsignedBitfield64());
+    RUN(testInsertUnsignedBitfieldInZero32());
+    RUN(testInsertUnsignedBitfieldInZero64());
+    RUN(testInsertBitField32());
+    RUN(testInsertBitField64());
+    RUN(testExtractInsertBitfieldAtLowEnd32());
+    RUN(testExtractInsertBitfieldAtLowEnd64());
+    RUN(testClearBitField32());
+    RUN(testClearBitField64());
+    RUN(testClearBitsWithMask32());
+    RUN(testClearBitsWithMask64());
+
+    RUN(testOrNot32());
+    RUN(testOrNot64());
+
+    RUN(testInsertSignedBitfieldInZero32());
+    RUN(testInsertSignedBitfieldInZero64());
+    RUN(testExtractSignedBitfield32());
+    RUN(testExtractSignedBitfield64());
+    RUN(testExtractRegister32());
+    RUN(testExtractRegister64());
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)

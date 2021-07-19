@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-parent-then-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-src.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function.html

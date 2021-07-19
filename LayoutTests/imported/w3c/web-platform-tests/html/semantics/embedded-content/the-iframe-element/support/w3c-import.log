@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-trying-to-navigate-its-child.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-trying-to-navigate-itself.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-which-content-height-equals-400px.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-with-object.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe_sandbox_001.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe_sandbox_002.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe_sandbox_003.htm

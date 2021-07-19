@@ -26,8 +26,10 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabaseTrackerClient.h>
-#include <pal/HysteresisActivity.h>
+#include <wtf/Forward.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -36,6 +38,7 @@ namespace WebKit {
 class WebSQLiteDatabaseTracker final : public WebCore::SQLiteDatabaseTrackerClient, public CanMakeWeakPtr<WebSQLiteDatabaseTracker, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTracker)
 public:
+    // IsHoldingLockedFilesHandler may get called on a non-main thread, but while holding a Lock.
     using IsHoldingLockedFilesHandler = Function<void(bool)>;
     explicit WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&&);
 
@@ -44,15 +47,16 @@ public:
     void setIsSuspended(bool);
 
 private:
-    void setIsHoldingLockedFiles(bool);
+    void setIsHoldingLockedFiles(bool) WTF_REQUIRES_LOCK(m_lock);
 
     // WebCore::SQLiteDatabaseTrackerClient.
     void willBeginFirstTransaction() final;
     void didFinishLastTransaction() final;
 
     IsHoldingLockedFilesHandler m_isHoldingLockedFilesHandler;
-    PAL::HysteresisActivity m_hysteresis;
-    bool m_isSuspended { false };
+    Lock m_lock;
+    uint64_t m_currentHystererisID WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    bool m_isSuspended WTF_GUARDED_BY_LOCK(m_lock) { false };
 };
 
 } // namespace WebKit

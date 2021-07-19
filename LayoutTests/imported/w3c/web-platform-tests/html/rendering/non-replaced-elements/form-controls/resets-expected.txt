@@ -161,20 +161,20 @@ PASS <select><optgroup><option> - text-transform
 PASS <select><optgroup><option> - text-indent
 PASS <select><optgroup><option> - text-shadow
 PASS <select><optgroup><option> - text-align
-PASS <optgroup><option> (in select) - letter-spacing
-PASS <optgroup><option> (in select) - word-spacing
-PASS <optgroup><option> (in select) - line-height
-PASS <optgroup><option> (in select) - text-transform
-PASS <optgroup><option> (in select) - text-indent
-PASS <optgroup><option> (in select) - text-shadow
-PASS <optgroup><option> (in select) - text-align
-PASS <option> (in select > optgroup) - letter-spacing
-PASS <option> (in select > optgroup) - word-spacing
-PASS <option> (in select > optgroup) - line-height
-PASS <option> (in select > optgroup) - text-transform
-PASS <option> (in select > optgroup) - text-indent
-PASS <option> (in select > optgroup) - text-shadow
-PASS <option> (in select > optgroup) - text-align
+PASS <optgroup><option> (in <select>) - letter-spacing
+PASS <optgroup><option> (in <select>) - word-spacing
+PASS <optgroup><option> (in <select>) - line-height
+PASS <optgroup><option> (in <select>) - text-transform
+PASS <optgroup><option> (in <select>) - text-indent
+PASS <optgroup><option> (in <select>) - text-shadow
+PASS <optgroup><option> (in <select>) - text-align
+PASS <option> (in <select><optgroup>) - letter-spacing
+PASS <option> (in <select><optgroup>) - word-spacing
+PASS <option> (in <select><optgroup>) - line-height
+PASS <option> (in <select><optgroup>) - text-transform
+PASS <option> (in <select><optgroup>) - text-indent
+PASS <option> (in <select><optgroup>) - text-shadow
+PASS <option> (in <select><optgroup>) - text-align
 PASS <select multiple=""> - letter-spacing
 PASS <select multiple=""> - word-spacing
 PASS <select multiple=""> - line-height
@@ -217,27 +217,27 @@ PASS <table><tbody><tr><td> - text-transform
 FAIL <table><tbody><tr><td> - text-indent assert_equals: expected "0px" but got "5px"
 PASS <table><tbody><tr><td> - text-shadow
 PASS <table><tbody><tr><td> - text-align
-PASS <tbody><tr><td> (in table) - letter-spacing
-PASS <tbody><tr><td> (in table) - word-spacing
-PASS <tbody><tr><td> (in table) - line-height
-PASS <tbody><tr><td> (in table) - text-transform
-FAIL <tbody><tr><td> (in table) - text-indent assert_equals: expected "0px" but got "5px"
-PASS <tbody><tr><td> (in table) - text-shadow
-PASS <tbody><tr><td> (in table) - text-align
-PASS <tr><td> (in table > tbody) - letter-spacing
-PASS <tr><td> (in table > tbody) - word-spacing
-PASS <tr><td> (in table > tbody) - line-height
-PASS <tr><td> (in table > tbody) - text-transform
-FAIL <tr><td> (in table > tbody) - text-indent assert_equals: expected "0px" but got "5px"
-PASS <tr><td> (in table > tbody) - text-shadow
-PASS <tr><td> (in table > tbody) - text-align
-PASS <td> (in table > tbody > tr) - letter-spacing
-PASS <td> (in table > tbody > tr) - word-spacing
-PASS <td> (in table > tbody > tr) - line-height
-PASS <td> (in table > tbody > tr) - text-transform
-FAIL <td> (in table > tbody > tr) - text-indent assert_equals: expected "0px" but got "5px"
-PASS <td> (in table > tbody > tr) - text-shadow
-PASS <td> (in table > tbody > tr) - text-align
+PASS <tbody><tr><td> (in <table>) - letter-spacing
+PASS <tbody><tr><td> (in <table>) - word-spacing
+PASS <tbody><tr><td> (in <table>) - line-height
+PASS <tbody><tr><td> (in <table>) - text-transform
+FAIL <tbody><tr><td> (in <table>) - text-indent assert_equals: expected "0px" but got "5px"
+PASS <tbody><tr><td> (in <table>) - text-shadow
+PASS <tbody><tr><td> (in <table>) - text-align
+PASS <tr><td> (in <table><tbody>) - letter-spacing
+PASS <tr><td> (in <table><tbody>) - word-spacing
+PASS <tr><td> (in <table><tbody>) - line-height
+PASS <tr><td> (in <table><tbody>) - text-transform
+FAIL <tr><td> (in <table><tbody>) - text-indent assert_equals: expected "0px" but got "5px"
+PASS <tr><td> (in <table><tbody>) - text-shadow
+PASS <tr><td> (in <table><tbody>) - text-align
+PASS <td> (in <table><tbody><tr>) - letter-spacing
+PASS <td> (in <table><tbody><tr>) - word-spacing
+PASS <td> (in <table><tbody><tr>) - line-height
+PASS <td> (in <table><tbody><tr>) - text-transform
+FAIL <td> (in <table><tbody><tr>) - text-indent assert_equals: expected "0px" but got "5px"
+PASS <td> (in <table><tbody><tr>) - text-shadow
+PASS <td> (in <table><tbody><tr>) - text-align
 PASS <marquee> - letter-spacing
 PASS <marquee> - word-spacing
 PASS <marquee> - line-height

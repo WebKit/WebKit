@@ -68,7 +68,12 @@ static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc, bool hasAlpha)
 }
 
 GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool hasAlpha)
-    : GraphicsContextCairo(createCairoContextWithHDC(dc, hasAlpha).get())
+    : GraphicsContextCairo(createCairoContextWithHDC(dc, hasAlpha))
+{
+}
+
+GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo* platformContext)
+    : GraphicsContextCairo(platformContext->cr())
 {
 }
 #endif

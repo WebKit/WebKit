@@ -256,10 +256,13 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // * Xcode 10 moves the deployment target check for iOS < 9.0 to link time
 //   making ABSL_HAVE_FEATURE unreliable there.
 //
-#if ABSL_HAVE_FEATURE(cxx_thread_local) && \
-    !(TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_9_0)
-#define ABSL_HAVE_THREAD_LOCAL 1
-#endif
+
+// WEBRTC_WEBKIT_BUILD Start: Disable thread local for now and resort on pthread_getspecific/pthread_setspecific. See rdar://79915864.
+// #if ABSL_HAVE_FEATURE(cxx_thread_local) && \
+//     !(TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_9_0)
+// #define ABSL_HAVE_THREAD_LOCAL 1
+// #endif
+// WEBRTC_WEBKIT_BUILD End
 #else  // !defined(__APPLE__)
 #define ABSL_HAVE_THREAD_LOCAL 1
 #endif

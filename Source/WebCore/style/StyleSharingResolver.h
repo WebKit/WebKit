@@ -64,6 +64,7 @@ private:
     const ScopeRuleSets& m_ruleSets;
     const SelectorFilter& m_selectorFilter;
 
+    // FIXME: Use WeakHashMap or HashMap<CheckedPtr, CheckedPtr>.
     HashMap<const Element*, const Element*> m_elementsSharingStyle;
 };
 

@@ -25,6 +25,7 @@
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
+#include "ObjectConstructorInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Symbol.h"
@@ -75,7 +76,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
   isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
   is                        objectConstructorIs                         DontEnum|Function 2 ObjectIsIntrinsic
-  assign                    objectConstructorAssign                     DontEnum|Function 2
+  assign                    objectConstructorAssign                     DontEnum|Function 2 ObjectAssignIntrinsic
   values                    objectConstructorValues                     DontEnum|Function 1
   entries                   objectConstructorEntries                    DontEnum|Function 1
   fromEntries               JSBuiltin                                   DontEnum|Function 1
@@ -263,6 +264,43 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorKeys, (JSGlobalObject* globalObject, C
     RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude, CachedPropertyNamesKind::Keys)));
 }
 
+void objectAssignGeneric(JSGlobalObject* globalObject, VM& vm, JSObject* target, JSObject* source)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // [[GetOwnPropertyNames]], [[Get]] etc. could modify target object and invalidate this assumption.
+    // For example, [[Get]] of source object could configure setter to target object. So disable the fast path.
+
+    PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
+    source->methodTable(vm)->getOwnPropertyNames(source, globalObject, properties, DontEnumPropertiesMode::Include);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    unsigned numProperties = properties.size();
+    for (unsigned j = 0; j < numProperties; j++) {
+        const auto& propertyName = properties[j];
+        ASSERT(!propertyName.isPrivateName());
+
+        PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
+        bool hasProperty = source->methodTable(vm)->getOwnPropertySlot(source, globalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, void());
+        if (!hasProperty)
+            continue;
+        if (slot.attributes() & PropertyAttribute::DontEnum)
+            continue;
+
+        JSValue value;
+        if (LIKELY(!slot.isTaintedByOpaqueObject()))
+            value = slot.getValue(globalObject, propertyName);
+        else
+            value = source->get(globalObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        PutPropertySlot putPropertySlot(target, true);
+        target->putInline(globalObject, propertyName, value, putPropertySlot);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+}
+
 JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -294,29 +332,6 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            auto canPerformFastPropertyEnumerationForObjectAssign = [] (Structure* structure) {
-                if (structure->typeInfo().overridesGetOwnPropertySlot())
-                    return false;
-                if (structure->typeInfo().overridesAnyFormOfGetOwnPropertyNames())
-                    return false;
-                // FIXME: Indexed properties can be handled.
-                // https://bugs.webkit.org/show_bug.cgi?id=185358
-                if (hasIndexedProperties(structure->indexingType()))
-                    return false;
-                if (structure->hasGetterSetterProperties())
-                    return false;
-                if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto())
-                    return false;
-                if (structure->hasCustomGetterSetterProperties())
-                    return false;
-                if (structure->isUncacheableDictionary())
-                    return false;
-                // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
-                if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
-                    return false;
-                return true;
-            };
-
             if (canPerformFastPropertyEnumerationForObjectAssign(source->structure(vm))) {
                 // |source| Structure does not have any getters. And target can perform fast put.
                 // So enumerating properties and putting properties are non observable.
@@ -327,6 +342,9 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 // leading hypothesis here is that we fire some value replacement watchpoint
                 // that ends up transitioning the structure underneath us.
                 // https://bugs.webkit.org/show_bug.cgi?id=187837
+
+                // FIXME: This fast path is very similar to DFGOperations' one. But extracting it to a function caused performance
+                // regression in object-assign-replace. Since the code is small and fast path, we keep both.
 
                 // Do not clear since Vector::clear shrinks the backing store.
                 properties.resize(0);
@@ -355,38 +373,9 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
             }
         }
 
-        // [[GetOwnPropertyNames]], [[Get]] etc. could modify target object and invalidate this assumption.
-        // For example, [[Get]] of source object could configure setter to target object. So disable the fast path.
         targetCanPerformFastPut = false;
-
-        PropertyNameArray properties(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-        source->methodTable(vm)->getOwnPropertyNames(source, globalObject, properties, DontEnumPropertiesMode::Include);
+        objectAssignGeneric(globalObject, vm, target, source);
         RETURN_IF_EXCEPTION(scope, { });
-
-        unsigned numProperties = properties.size();
-        for (unsigned j = 0; j < numProperties; j++) {
-            const auto& propertyName = properties[j];
-            ASSERT(!propertyName.isPrivateName());
-
-            PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
-            bool hasProperty = source->methodTable(vm)->getOwnPropertySlot(source, globalObject, propertyName, slot);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!hasProperty)
-                continue;
-            if (slot.attributes() & PropertyAttribute::DontEnum)
-                continue;
-
-            JSValue value;
-            if (LIKELY(!slot.isTaintedByOpaqueObject()))
-                value = slot.getValue(globalObject, propertyName);
-            else
-                value = source->get(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, { });
-
-            PutPropertySlot putPropertySlot(target, true);
-            target->putInline(globalObject, propertyName, value, putPropertySlot);
-            RETURN_IF_EXCEPTION(scope, { });
-        }
     }
     return JSValue::encode(target);
 }

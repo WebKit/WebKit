@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/cookie-helper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/cookie-test.js
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/cookie.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/drop.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/dropSameSite.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/dropSameSiteMultiAttribute.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/dropSameSiteNone.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/dropSecure.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/echo-cookie.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/echo-json.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/helpers.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/imgIfMatch.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/list.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/postToParent.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/redirectWithCORSHeaders.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/set-cookie.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/set.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSite.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSiteMultiAttribute.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSameSiteNone.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/setSecure.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/testharness-helpers.js

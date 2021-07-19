@@ -42,11 +42,12 @@ namespace WebKit {
 class NetworkSession;
 class NetworkSessionCocoa;
 class NetworkSocketChannel;
+struct SessionSet;
 
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, RetainPtr<NSURLSessionWebSocketTask>&&);
+    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, WeakPtr<SessionSet>&&, const WebCore::ResourceRequest&, RetainPtr<NSURLSessionWebSocketTask>&&);
     ~WebSocketTask();
 
     void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
@@ -63,6 +64,7 @@ public:
     TaskIdentifier identifier() const;
 
     NetworkSessionCocoa* networkSession();
+    SessionSet* sessionSet() { return m_sessionSet.get(); }
 
     WebPageProxyIdentifier pageID() const { return m_pageID; }
     String partition() const { return m_partition; }
@@ -75,6 +77,7 @@ private:
     bool m_receivedDidClose { false };
     bool m_receivedDidConnect { false };
     WebPageProxyIdentifier m_pageID;
+    WeakPtr<SessionSet> m_sessionSet;
     String m_partition;
 };
 

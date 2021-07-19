@@ -139,13 +139,15 @@ static int createFlatpakInfo()
         // xdg-desktop-portal relates your name to certain permissions so we want
         // them to be application unique which is best done via GApplication.
         GApplication* app = g_application_get_default();
-        if (!app) {
-            g_warning("GApplication is required for xdg-desktop-portal access in the WebKit sandbox. Actions that require xdg-desktop-portal will be broken.");
-            return -1;
-        }
+        if (!app)
+            g_error("GApplication is required for xdg-desktop-portal access in the WebKit sandbox.");
+
+        const char* appID = g_application_get_application_id(app);
+        if (!appID)
+            g_error("GApplication must have a valid ID for xdg-desktop-portal access in the WebKit sandbox.");
 
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        g_key_file_set_string(keyFile.get(), "Application", "name", g_application_get_application_id(app));
+        g_key_file_set_string(keyFile.get(), "Application", "name", appID);
         data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
     }
 
@@ -182,7 +184,7 @@ public:
         m_permissions = WTFMove(permissions);
     };
 
-    void launch()
+    void launch(bool enableLogging)
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isRunning());
 
@@ -202,7 +204,7 @@ public:
             syncFdStr.get(),
         };
 
-        if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"))
+        if (enableLogging)
             proxyArgs.append("--log");
 
         proxyArgs.appendVector(m_permissions);
@@ -504,7 +506,7 @@ static void bindA11y(Vector<CString>& args)
             "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
         });
 
-        proxy.launch();
+        proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"));
     }
 
     if (proxy.proxyPath().data()) {
@@ -890,7 +892,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
                 permissions.append("--talk=org.freedesktop.portal.Desktop");
             }
             proxy.setPermissions(WTFMove(permissions));
-            proxy.launch();
+            proxy.launch(!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"));
         }
     } else {
         // Only X11 users need this for XShm which is only the Web process.

@@ -1975,6 +1975,43 @@ macro compareUnsignedJumpOp(opcodeName, opcodeStruct, integerCompare)
 end
 
 
+macro compareOp(opcodeName, opcodeStruct, integerCompareAndSet, doubleCompareAndSet)
+    llintOpWithReturn(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, return)
+        get(m_lhs, t2)
+        get(m_rhs, t3)
+        loadConstantOrVariable(size, t2, t0, t1)
+        loadConstantOrVariable2Reg(size, t3, t2, t3)
+        bineq t0, Int32Tag, .op1NotInt
+        bineq t2, Int32Tag, .op2NotInt
+        integerCompareAndSet(t1, t3, t1)
+        return(BooleanTag, t1)
+
+    .op1NotInt:
+        bia t0, LowestTag, .slow
+        bib t2, LowestTag, .op1NotIntOp2Double
+        bineq t2, Int32Tag, .slow
+        ci2ds t3, ft1
+        jmp .op1NotIntReady
+    .op1NotIntOp2Double:
+        fii2d t3, t2, ft1
+    .op1NotIntReady:
+        fii2d t1, t0, ft0
+        doubleCompareAndSet(ft0, ft1, t1)
+        return(BooleanTag, t1)
+
+    .op2NotInt:
+        ci2ds t1, ft0
+        bia t2, LowestTag, .slow
+        fii2d t3, t2, ft1
+        doubleCompareAndSet(ft0, ft1, t1)
+        return(BooleanTag, t1)
+
+    .slow:
+        callSlowPath(_slow_path_%opcodeName%)
+        dispatch()
+    end)
+end
+
 macro compareUnsignedOp(opcodeName, opcodeStruct, integerCompareAndSet)
     llintOpWithReturn(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, return)
         get(m_rhs, t2)

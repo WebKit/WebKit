@@ -20,8 +20,8 @@ var sheetStyle = document.styleSheets[0].cssRules[0].style;
 
 test(function() {
   // Nothing registered yet, whatever you specify works
-  assert_equals(computedStyle.getPropertyValue('--a'), ' 10em');
-  assert_equals(computedStyle.getPropertyValue('--b'), ' 10em');
+  assert_equals(computedStyle.getPropertyValue('--a'), '10em');
+  assert_equals(computedStyle.getPropertyValue('--b'), '10em');
 
   inlineStyle.setProperty('--a', 'hello');
   inlineStyle.setProperty('--b', 'bonjour');
@@ -57,7 +57,7 @@ test(function() {
   assert_equals(inlineStyle.getPropertyValue('--a'), '');
   assert_equals(inlineStyle.getPropertyValue('--b'), '');
   assert_equals(computedStyle.getPropertyValue('--a'), '160px');
-  assert_equals(computedStyle.getPropertyValue('--b'), ' 10em');
+  assert_equals(computedStyle.getPropertyValue('--b'), '10em');
 }, "Values can be removed from inline styles");
 
 test(function() {

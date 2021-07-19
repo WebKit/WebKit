@@ -397,6 +397,8 @@ public:
 
     virtual String displayString() const;
 
+    virtual String resultForDialogSubmit() const;
+
 protected:
     explicit InputType(Type type, HTMLInputElement& element)
         : m_type(type)

@@ -50,6 +50,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << isAttachment;
     encoder << isAnimatedImage;
     encoder << isElement;
+    encoder << isContentEditable;
     encoder << containerScrollingNodeID;
     encoder << adjustedPointForNodeRespondingToClickEvents;
     encoder << url;
@@ -62,7 +63,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #endif
     encoder << textBefore;
     encoder << textAfter;
-    encoder << caretHeight;
+    encoder << caretLength;
     encoder << lineCaretExtent;
     encoder << cursor;
     encoder << linkIndicator;
@@ -82,6 +83,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #endif
     encoder << shouldNotUseIBeamInEditableContent;
     encoder << isImageOverlayText;
+    encoder << isHorizontalWritingMode;
     encoder << elementContext;
     encoder << imageElementContext;
 }
@@ -127,6 +129,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.isElement))
         return false;
 
+    if (!decoder.decode(result.isContentEditable))
+        return false;
+
     if (!decoder.decode(result.containerScrollingNodeID))
         return false;
 
@@ -159,7 +164,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.textAfter))
         return false;
 
-    if (!decoder.decode(result.caretHeight))
+    if (!decoder.decode(result.caretLength))
         return false;
 
     if (!decoder.decode(result.lineCaretExtent))
@@ -207,6 +212,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.isImageOverlayText))
+        return false;
+
+    if (!decoder.decode(result.isHorizontalWritingMode))
         return false;
 
     if (!decoder.decode(result.elementContext))

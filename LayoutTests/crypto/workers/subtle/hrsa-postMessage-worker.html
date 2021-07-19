@@ -48,6 +48,8 @@ worker.onmessage = function(evt) {
         finishJSTest();
     } else {
         if (publicKey = evt.data.publicKey) {
+            if (count)
+                testFailed("Public key should have been received first");
             testPassed("All checks passed in worker for public key");
             shouldBe("publicKey.type", "'public'");
             shouldBe("publicKey.extractable", "true");
@@ -57,6 +59,8 @@ worker.onmessage = function(evt) {
             shouldBe("publicKey.algorithm.hash.name", "'SHA-256'");
             shouldBe("publicKey.usages", "['verify']");
         } else if (privateKey = evt.data.privateKey) {
+            if (!count)
+                testFailed("Private key should have been received second");
             testPassed("All checks passed in worker for private key");
             shouldBe("privateKey.type", "'private'");
             shouldBe("privateKey.extractable", "false");

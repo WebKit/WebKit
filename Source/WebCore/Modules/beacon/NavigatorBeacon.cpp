@@ -130,7 +130,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
 
     if (body) {
-        options.mode = FetchOptions::Mode::Cors;
+        options.mode = FetchOptions::Mode::NoCors;
         String mimeType;
         auto result = FetchBody::extract(WTFMove(body.value()), mimeType);
         if (result.hasException())
@@ -142,8 +142,8 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         request.setHTTPBody(fetchBody.bodyAsFormData());
         if (!mimeType.isEmpty()) {
             request.setHTTPContentType(mimeType);
-            if (isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType))
-                options.mode = FetchOptions::Mode::NoCors;
+            if (!isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, mimeType))
+                options.mode = FetchOptions::Mode::Cors;
         }
     }
 

@@ -33,6 +33,7 @@
 
 namespace WebKit {
 class NetworkSocketChannel;
+struct SessionSet;
 
 class WebSocketTask {
     WTF_MAKE_FAST_ALLOCATED;
@@ -46,6 +47,8 @@ public:
 
     void cancel();
     void resume();
+
+    SessionSet* sessionSet() { return nullptr; }
 
 private:
     void didConnect(GRefPtr<SoupWebsocketConnection>&&);

@@ -55,6 +55,7 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -589,26 +590,24 @@ bool HTMLAnchorElement::willRespondToMouseClickEvents()
     return isLink() || HTMLElement::willRespondToMouseClickEvents();
 }
 
-typedef HashMap<const HTMLAnchorElement*, RefPtr<Element>> RootEditableElementMap;
-
-static RootEditableElementMap& rootEditableElementMap()
+static auto& rootEditableElementMap()
 {
-    static NeverDestroyed<RootEditableElementMap> map;
-    return map;
+    static NeverDestroyed<WeakHashMap<HTMLAnchorElement, WeakPtr<Element>>> map;
+    return map.get();
 }
 
 Element* HTMLAnchorElement::rootEditableElementForSelectionOnMouseDown() const
 {
     if (!m_hasRootEditableElementForSelectionOnMouseDown)
         return 0;
-    return rootEditableElementMap().get(this);
+    return rootEditableElementMap().get(*this).get();
 }
 
 void HTMLAnchorElement::clearRootEditableElementForSelectionOnMouseDown()
 {
     if (!m_hasRootEditableElementForSelectionOnMouseDown)
         return;
-    rootEditableElementMap().remove(this);
+    rootEditableElementMap().remove(*this);
     m_hasRootEditableElementForSelectionOnMouseDown = false;
 }
 
@@ -619,7 +618,7 @@ void HTMLAnchorElement::setRootEditableElementForSelectionOnMouseDown(Element* e
         return;
     }
 
-    rootEditableElementMap().set(this, element);
+    rootEditableElementMap().set(*this, makeWeakPtr(element));
     m_hasRootEditableElementForSelectionOnMouseDown = true;
 }
 

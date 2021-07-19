@@ -35,6 +35,7 @@
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "TapHandlingResult.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListItemInternal.h"
@@ -3083,8 +3084,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_setSuppressSoftwareKeyboard:(BOOL)suppressSoftwareKeyboard
 {
-    [super _setSuppressSoftwareKeyboard:suppressSoftwareKeyboard];
-    [_contentView _setSuppressSoftwareKeyboard:suppressSoftwareKeyboard];
+    super._suppressSoftwareKeyboard = suppressSoftwareKeyboard;
+    [_contentView updateSoftwareKeyboardSuppressionStateFromWebView];
 }
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
@@ -3373,5 +3374,19 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 @end
 
 #undef WKWEBVIEW_RELEASE_LOG
+
+_WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult result)
+{
+    switch (result) {
+    case WebKit::TapHandlingResult::DidNotHandleTapAsClick:
+        return _WKTapHandlingResultDidNotHandleTapAsClick;
+    case WebKit::TapHandlingResult::NonMeaningfulClick:
+        return _WKTapHandlingResultNonMeaningfulClick;
+    case WebKit::TapHandlingResult::MeaningfulClick:
+        return _WKTapHandlingResultMeaningfulClick;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKTapHandlingResultDidNotHandleTapAsClick;
+}
 
 #endif // PLATFORM(IOS_FAMILY)

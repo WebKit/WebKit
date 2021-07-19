@@ -21,123 +21,110 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import shutil
-import tempfile
-import unittest
 
-from datetime import datetime
-from webkitcorepy import LoggerCapture, OutputCapture
+from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import program, mocks
 
 
-class TestSetupGitSvn(unittest.TestCase):
+class TestSetupGitSvn(testing.PathTestCase):
     git_remote = 'git@example.org:Example'
     svn_remote = 'https://svn.example.org/repository/example'
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestSetupGitSvn, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_svn(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(dirname, remote=self.svn_remote), MockTime:
-                self.assertEqual(1, program.main(
-                    args=('setup-git-svn',),
-                    path=dirname,
-                    subversion=self.svn_remote,
-                ))
-            self.assertEqual(captured.stderr.getvalue(), 'Cannot setup git-svn on Subversion repository\n')
-
-        finally:
-            shutil.rmtree(dirname)
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path, remote=self.svn_remote), MockTime:
+            self.assertEqual(1, program.main(
+                args=('setup-git-svn',),
+                path=self.path,
+                subversion=self.svn_remote,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), 'Cannot setup git-svn on Subversion repository\n')
 
     def test_empty(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with OutputCapture() as captured, mocks.local.Git(dirname, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:
-                self.assertEqual(0, program.main(
-                    args=('setup-git-svn',),
-                    path=dirname,
-                    subversion=self.svn_remote,
-                ))
+        with OutputCapture() as captured, mocks.local.Git(self.path, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:
+            self.assertEqual(0, program.main(
+                args=('setup-git-svn',),
+                path=self.path,
+                subversion=self.svn_remote,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Adding svn-remote to git config\n' +
+            'Populating svn commit mapping (will take a few minutes)...\n',
+        )
+
+        with open(os.path.join(self.path, '.git/config')) as config:
             self.assertEqual(
-                captured.stdout.getvalue(),
-                'Adding svn-remote to git config\n' +
-                'Populating svn commit mapping (will take a few minutes)...\n',
+                config.read(),
+                '[core]\n'
+                '\trepositoryformatversion = 0\n'
+                '\tfilemode = true\n'
+                '\tbare = false\n'
+                '\tlogallrefupdates = true\n'
+                '\tignorecase = true\n'
+                '\tprecomposeunicode = true\n'
+                '[remote "origin"]\n'
+                '\turl = {git_remote}\n'
+                '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
+                '[branch "main"]\n'
+                '\tremote = origin\n'
+                '\tmerge = refs/heads/main\n'
+                '[svn-remote "svn"]\n'
+                '\turl = {svn_remote}\n'
+                '\tfetch = trunk:refs/remotes/origin/main\n'.format(
+                    git_remote=self.git_remote,
+                    svn_remote=self.svn_remote,
+                ),
             )
-
-            with open(os.path.join(dirname, '.git/config')) as config:
-                self.assertEqual(
-                    config.read(),
-                    '[core]\n'
-                    '\trepositoryformatversion = 0\n'
-                    '\tfilemode = true\n'
-                    '\tbare = false\n'
-                    '\tlogallrefupdates = true\n'
-                    '\tignorecase = true\n'
-                    '\tprecomposeunicode = true\n'
-                    '[remote "origin"]\n'
-                    '\turl = {git_remote}\n'
-                    '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
-                    '[branch "main"]\n'
-                    '\tremote = origin\n'
-                    '\tmerge = refs/heads/main\n'
-                    '[svn-remote "svn"]\n'
-                    '\turl = {svn_remote}\n'
-                    '\tfetch = trunk:refs/remotes/origin/main\n'.format(
-                        git_remote=self.git_remote,
-                        svn_remote=self.svn_remote,
-                    ),
-                )
-
-        finally:
-            shutil.rmtree(dirname)
 
     def test_add(self):
-        try:
-            dirname = tempfile.mkdtemp()
-            with OutputCapture(), mocks.local.Git(dirname, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:
-                self.assertEqual(0, program.main(
-                    args=('setup-git-svn',),
-                    path=dirname,
-                    subversion=self.svn_remote,
-                ))
+        with OutputCapture(), mocks.local.Git(self.path, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:
+            self.assertEqual(0, program.main(
+                args=('setup-git-svn',),
+                path=self.path,
+                subversion=self.svn_remote,
+            ))
 
-            with OutputCapture() as captured, mocks.local.Git(dirname, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:
-                self.assertEqual(0, program.main(
-                    args=('setup-git-svn', '--all-branches'),
-                    path=dirname,
-                    subversion=self.svn_remote,
-                ))
+        with OutputCapture() as captured, mocks.local.Git(self.path, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:
+            self.assertEqual(0, program.main(
+                args=('setup-git-svn', '--all-branches'),
+                path=self.path,
+                subversion=self.svn_remote,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Adding svn-remote to git config\n' +
+            'Populating svn commit mapping (will take a few minutes)...\n',
+        )
+
+        with open(os.path.join(self.path, '.git/config')) as config:
             self.assertEqual(
-                captured.stdout.getvalue(),
-                'Adding svn-remote to git config\n' +
-                'Populating svn commit mapping (will take a few minutes)...\n',
+                config.read(),
+                '[core]\n'
+                '\trepositoryformatversion = 0\n'
+                '\tfilemode = true\n'
+                '\tbare = false\n'
+                '\tlogallrefupdates = true\n'
+                '\tignorecase = true\n'
+                '\tprecomposeunicode = true\n'
+                '[remote "origin"]\n'
+                '\turl = {git_remote}\n'
+                '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
+                '[branch "main"]\n'
+                '\tremote = origin\n'
+                '\tmerge = refs/heads/main\n'
+                '[svn-remote "svn"]\n'
+                '\turl = {svn_remote}\n'
+                '\tfetch = trunk:refs/remotes/origin/main\n'
+                '\tfetch = branches/branch-a:refs/remotes/origin/branch-a\n'
+                '\tfetch = branches/branch-b:refs/remotes/origin/branch-b\n'.format(
+                    git_remote=self.git_remote,
+                    svn_remote=self.svn_remote,
+                ),
             )
-
-            with open(os.path.join(dirname, '.git/config')) as config:
-                self.assertEqual(
-                    config.read(),
-                    '[core]\n'
-                    '\trepositoryformatversion = 0\n'
-                    '\tfilemode = true\n'
-                    '\tbare = false\n'
-                    '\tlogallrefupdates = true\n'
-                    '\tignorecase = true\n'
-                    '\tprecomposeunicode = true\n'
-                    '[remote "origin"]\n'
-                    '\turl = {git_remote}\n'
-                    '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'
-                    '[branch "main"]\n'
-                    '\tremote = origin\n'
-                    '\tmerge = refs/heads/main\n'
-                    '[svn-remote "svn"]\n'
-                    '\turl = {svn_remote}\n'
-                    '\tfetch = trunk:refs/remotes/origin/main\n'
-                    '\tfetch = branches/branch-a:refs/remotes/origin/branch-a\n'
-                    '\tfetch = branches/branch-b:refs/remotes/origin/branch-b\n'.format(
-                        git_remote=self.git_remote,
-                        svn_remote=self.svn_remote,
-                    ),
-                )
-
-        finally:
-            shutil.rmtree(dirname)

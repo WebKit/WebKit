@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Ahem;
+  font-size: 10px;
+  margin: 0px;
+}
+.container {
+  border: 1px solid green;
+  width: 200px;
+  height: 200px;
+}
+</style>
+</head>
+<body>
+<div id=first class=container style="writing-mode: horizontal-tb;">
+  <div>short text</div>
+  <div>long enough to wrap to next line</div>
+  <div>short text</div>
+</div>
+<div id=second class=container style="writing-mode: vertical-lr;">
+  <div>short text</div>
+  <div>long enough to wrap to next line</div>
+  <div>short text</div>
+</div>
+<div id=third class=container style="writing-mode: vertical-rl;">
+  <div>short text</div>
+  <div>long enough to wrap to next line</div>
+  <div>short text</div>
+</div>
+<pre id=result></pre>
+</body>
+<script>
+  document.body.offsetHeight;
+  if (window.internals) {
+    testRunner.dumpAsText();
+    let line1 = internals.absoluteLineRectFromPoint(first.offsetLeft + 5, first.offsetTop + 15);
+    let line2 = internals.absoluteLineRectFromPoint(second.offsetLeft + 15, second.offsetTop + 5);
+    let line3 = internals.absoluteLineRectFromPoint(third.offsetWidth - 15, third.offsetTop + 5);
+    result.innerHTML= "[" + line1.x + "x" + line1.y + "]" + "[" + line1.width + "x" + line1.height + "]"
+      + "<br>[" + line2.x + "x" + line2.y + "]" + "[" + line2.width + "x" + line2.height + "]"
+      + "<br>[" + line3.x + "x" + line3.y + "]" + "[" + line3.width + "x" + line3.height + "]";
+}
+</script>
+</html>

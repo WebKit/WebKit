@@ -34,7 +34,6 @@
 #include "CairoOperations.h"
 #include "Color.h"
 #include "GraphicsContext.h"
-#include "GraphicsContextCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
 #include "PixelBuffer.h"
 #include <cairo.h>
@@ -46,17 +45,14 @@ namespace WebCore {
 ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const Parameters& parameters, RefPtr<cairo_surface_t>&& surface)
     : ImageBufferCairoBackend(parameters)
     , m_surface(WTFMove(surface))
+    , m_context(m_surface.get())
 {
     ASSERT(cairo_surface_status(m_surface.get()) == CAIRO_STATUS_SUCCESS);
-
-    RefPtr<cairo_t> cr = adoptRef(cairo_create(m_surface.get()));
-    m_platformContext.setCr(cr.get());
-    m_context = makeUnique<GraphicsContextCairo>(m_platformContext);
 }
 
 GraphicsContext& ImageBufferCairoSurfaceBackend::context() const
 {
-    return *m_context;
+    return m_context;
 }
 
 IntSize ImageBufferCairoSurfaceBackend::backendSize() const

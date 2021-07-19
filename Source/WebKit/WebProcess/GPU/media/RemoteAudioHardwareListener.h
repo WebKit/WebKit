@@ -64,8 +64,8 @@ private:
     void audioHardwareDidBecomeInactive();
     void audioOutputDeviceChanged(size_t bufferSizeMinimum, size_t bufferSizeMaximum);
 
-    WebProcess& m_process;
     RemoteAudioHardwareListenerIdentifier m_identifier;
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

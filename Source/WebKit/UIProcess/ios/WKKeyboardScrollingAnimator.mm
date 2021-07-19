@@ -33,6 +33,7 @@
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/KeyEventCodesIOS.h>
+#import <WebCore/KeyboardScroll.h>
 #import <WebCore/RectEdges.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/UIKitSPI.h>
@@ -40,34 +41,11 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-namespace WebKit {
-
-struct KeyboardScroll {
-    WebCore::FloatSize offset; // Points per increment.
-    WebCore::FloatSize maximumVelocity; // Points per second.
-    WebCore::FloatSize force;
-
-    WebKit::ScrollingIncrement increment;
-    WebKit::ScrollingDirection direction;
-};
-
-struct KeyboardScrollParameters {
-    CGFloat springMass { 1 };
-    CGFloat springStiffness { 109 };
-    CGFloat springDamping { 20 };
-
-    CGFloat maximumVelocityMultiplier { 25 };
-    CGFloat timeToMaximumVelocity { 1 };
-
-    CGFloat rubberBandForce { 5000 };
-};
-
-}
 
 @protocol WKKeyboardScrollableInternal <NSObject>
 @required
 - (BOOL)isKeyboardScrollable;
-- (CGFloat)distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction;
+- (CGFloat)distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction;
 - (void)scrollToContentOffset:(WebCore::FloatPoint)offset animated:(BOOL)animated;
 - (void)scrollWithScrollToExtentAnimationTo:(CGPoint)offset;
 - (CGPoint)contentOffset;
@@ -97,7 +75,7 @@ struct KeyboardScrollParameters {
     id <WKKeyboardScrollableInternal> _scrollable;
     RetainPtr<CADisplayLink> _displayLink;
 
-    std::optional<WebKit::KeyboardScroll> _currentScroll;
+    std::optional<WebCore::KeyboardScroll> _currentScroll;
 
     BOOL _scrollTriggeringKeyIsPressed;
 
@@ -124,9 +102,9 @@ struct KeyboardScrollParameters {
     return self;
 }
 
-- (const WebKit::KeyboardScrollParameters &)parameters
+- (const WebCore::KeyboardScrollParameters &)parameters
 {
-    static const WebKit::KeyboardScrollParameters parameters;
+    static const WebCore::KeyboardScrollParameters parameters;
     return parameters;
 }
 
@@ -137,47 +115,33 @@ struct KeyboardScrollParameters {
     _scrollable = nil;
 }
 
-static WebCore::FloatSize unitVector(WebKit::ScrollingDirection direction)
+static WebCore::FloatSize perpendicularAbsoluteUnitVector(WebCore::ScrollDirection direction)
 {
     switch (direction) {
-    case WebKit::ScrollingDirection::Up:
-        return { 0, -1 };
-    case WebKit::ScrollingDirection::Down:
-        return { 0, 1 };
-    case WebKit::ScrollingDirection::Left:
-        return { -1, 0 };
-    case WebKit::ScrollingDirection::Right:
+    case WebCore::ScrollDirection::ScrollUp:
+    case WebCore::ScrollDirection::ScrollDown:
         return { 1, 0 };
-    }
-}
-
-static WebCore::FloatSize perpendicularAbsoluteUnitVector(WebKit::ScrollingDirection direction)
-{
-    switch (direction) {
-    case WebKit::ScrollingDirection::Up:
-    case WebKit::ScrollingDirection::Down:
-        return { 1, 0 };
-    case WebKit::ScrollingDirection::Left:
-    case WebKit::ScrollingDirection::Right:
+    case WebCore::ScrollDirection::ScrollLeft:
+    case WebCore::ScrollDirection::ScrollRight:
         return { 0, 1 };
     }
 }
 
-static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
+static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
 {
     switch (direction) {
-    case WebKit::ScrollingDirection::Up:
+    case WebCore::ScrollDirection::ScrollUp:
         return WebCore::BoxSide::Top;
-    case WebKit::ScrollingDirection::Down:
+    case WebCore::ScrollDirection::ScrollDown:
         return WebCore::BoxSide::Bottom;
-    case WebKit::ScrollingDirection::Left:
+    case WebCore::ScrollDirection::ScrollLeft:
         return WebCore::BoxSide::Left;
-    case WebKit::ScrollingDirection::Right:
+    case WebCore::ScrollDirection::ScrollRight:
         return WebCore::BoxSide::Right;
     }
 }
 
-- (std::optional<WebKit::KeyboardScroll>)keyboardScrollForEvent:(::WebEvent *)event
+- (std::optional<WebCore::KeyboardScroll>)keyboardScrollForEvent:(::WebEvent *)event
 {
     static const unsigned kWebSpaceKey = 0x20;
 
@@ -255,50 +219,52 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
         case Key::LeftArrow:
         case Key::RightArrow:
             if (altPressed)
-                return WebKit::ScrollingIncrement::Page;
-            return WebKit::ScrollingIncrement::Line;
+                return WebCore::ScrollGranularity::ScrollByPage;
+            return WebCore::ScrollGranularity::ScrollByLine;
         case Key::UpArrow:
         case Key::DownArrow:
             if (altPressed)
-                return WebKit::ScrollingIncrement::Page;
+                return WebCore::ScrollGranularity::ScrollByPage;
             if (cmdPressed)
-                return WebKit::ScrollingIncrement::Document;
-            return WebKit::ScrollingIncrement::Line;
+                return WebCore::ScrollGranularity::ScrollByDocument;
+            return WebCore::ScrollGranularity::ScrollByLine;
         case Key::PageUp:
         case Key::PageDown:
         case Key::Space:
-            return WebKit::ScrollingIncrement::Page;
+            return WebCore::ScrollGranularity::ScrollByPage;
         case Key::Other:
             ASSERT_NOT_REACHED();
-            return WebKit::ScrollingIncrement::Line;
+            return WebCore::ScrollGranularity::ScrollByLine;
         };
     }();
 
     auto direction = ^() {
         switch (key) {
         case Key::LeftArrow:
-            return WebKit::ScrollingDirection::Left;
+            return WebCore::ScrollDirection::ScrollLeft;
         case Key::RightArrow:
-            return WebKit::ScrollingDirection::Right;
+            return WebCore::ScrollDirection::ScrollRight;
         case Key::UpArrow:
         case Key::PageUp:
-            return WebKit::ScrollingDirection::Up;
+            return WebCore::ScrollDirection::ScrollUp;
         case Key::DownArrow:
         case Key::PageDown:
-            return WebKit::ScrollingDirection::Down;
+            return WebCore::ScrollDirection::ScrollDown;
         case Key::Space:
-            return shiftPressed ? WebKit::ScrollingDirection::Up : WebKit::ScrollingDirection::Down;
+            return shiftPressed ? WebCore::ScrollDirection::ScrollUp : WebCore::ScrollDirection::ScrollDown;
         case Key::Other:
             ASSERT_NOT_REACHED();
-            return WebKit::ScrollingDirection::Down;
+            return WebCore::ScrollDirection::ScrollDown;
         };
     }();
 
+    // FIXME (227461): Replace with call to WebCore::KeyboardScroll constructor.
+
     CGFloat scrollDistance = [_scrollable distanceForIncrement:increment inDirection:direction];
 
-    WebKit::KeyboardScroll scroll;
-    scroll.offset = unitVector(direction).scaled(scrollDistance);
-    scroll.increment = increment;
+    WebCore::KeyboardScroll scroll;
+    scroll.offset = WebCore::unitVectorForScrollDirection(direction).scaled(scrollDistance);
+    scroll.granularity = increment;
     scroll.direction = direction;
     scroll.maximumVelocity = scroll.offset.scaled(self.parameters.maximumVelocityMultiplier);
 
@@ -327,7 +293,7 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
     _scrollTriggeringKeyIsPressed = YES;
     _currentScroll = scroll;
 
-    if (scroll->increment == WebKit::ScrollingIncrement::Document) {
+    if (scroll->granularity == WebCore::ScrollGranularity::ScrollByDocument) {
         _velocity = { };
         [self stopAnimatedScroll];
         [self stopDisplayLink];
@@ -360,16 +326,16 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
     }
 }
 
-static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCore::FloatPoint b, WebKit::ScrollingDirection direction)
+static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCore::FloatPoint b, WebCore::ScrollDirection direction)
 {
     switch (direction) {
-    case WebKit::ScrollingDirection::Up:
+    case WebCore::ScrollDirection::ScrollUp:
         return WebCore::FloatPoint(a.x(), std::min(a.y(), b.y()));
-    case WebKit::ScrollingDirection::Down:
+    case WebCore::ScrollDirection::ScrollDown:
         return WebCore::FloatPoint(a.x(), std::max(a.y(), b.y()));
-    case WebKit::ScrollingDirection::Left:
+    case WebCore::ScrollDirection::ScrollLeft:
         return WebCore::FloatPoint(std::min(a.x(), b.x()), a.y());
-    case WebKit::ScrollingDirection::Right:
+    case WebCore::ScrollDirection::ScrollRight:
         return WebCore::FloatPoint(std::max(a.x(), b.x()), a.y());
     }
 
@@ -446,7 +412,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
             // The scroll view cannot scroll in this direction, and is rubber-banding.
             // Apply a constant and significant force; otherwise, the force for a
             // single-line increment is not strong enough to rubber-band perceptibly.
-            force = unitVector(direction).scaled(self.parameters.rubberBandForce);
+            force = WebCore::unitVectorForScrollDirection(direction).scaled(self.parameters.rubberBandForce);
         }
 
         // If we've reached or exceeded the maximum velocity, stop applying any force.
@@ -566,7 +532,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     return [_delegate isScrollableForKeyboardScrollViewAnimator:self];
 }
 
-- (CGFloat)distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction
+- (CGFloat)distanceForIncrement:(WebCore::ScrollGranularity)increment inDirection:(WebCore::ScrollDirection)direction
 {
     auto scrollView = _scrollView.getAutoreleased();
     if (!scrollView)
@@ -575,16 +541,18 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     const CGFloat defaultPageScrollFraction = 0.8;
     const CGFloat defaultLineScrollHeight = 40;
 
-    BOOL directionIsHorizontal = direction == WebKit::ScrollingDirection::Left || direction == WebKit::ScrollingDirection::Right;
+    BOOL directionIsHorizontal = direction == WebCore::ScrollDirection::ScrollLeft || direction == WebCore::ScrollDirection::ScrollRight;
 
     if (!_delegateRespondsToDistanceForIncrement) {
         switch (increment) {
-        case WebKit::ScrollingIncrement::Document:
+        case WebCore::ScrollGranularity::ScrollByDocument:
             return directionIsHorizontal ? scrollView.contentSize.width : scrollView.contentSize.height;
-        case WebKit::ScrollingIncrement::Page:
+        case WebCore::ScrollGranularity::ScrollByPage:
             return (directionIsHorizontal ? scrollView.frame.size.width : scrollView.frame.size.height) * defaultPageScrollFraction;
-        case WebKit::ScrollingIncrement::Line:
+        case WebCore::ScrollGranularity::ScrollByLine:
             return defaultLineScrollHeight * scrollView.zoomScale;
+        case WebCore::ScrollGranularity::ScrollByPixel:
+            return 0;
         }
         ASSERT_NOT_REACHED();
         return 0;

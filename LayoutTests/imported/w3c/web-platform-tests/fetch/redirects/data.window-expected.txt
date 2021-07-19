@@ -1,0 +1,5 @@
+
+FAIL <img> fetch that redirects to data: URL assert_unreached: Reached unreachable code
+FAIL <script> fetch that redirects to data: URL assert_unreached: Reached unreachable code
+PASS XMLHttpRequest fetch that redirects to data: URL
+

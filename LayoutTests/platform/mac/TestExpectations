@@ -1237,8 +1237,6 @@ webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass T
 
 webkit.org/b/173560 inspector/css/add-rule.html [ Pass Timeout ]
 
-webkit.org/b/173780 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-settimeout.html [ Pass Failure ]
-
 # Missing support for 521-bit elliptic curves.
 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html
 crypto/subtle/ec-import-spki-key-export-spki-key-p521.html
@@ -1260,8 +1258,6 @@ crypto/subtle/ecdsa-import-key-verify-p521.html
 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
 
 webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failure ]
-
-webkit.org/b/172052 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
 svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
@@ -1285,7 +1281,6 @@ fast/canvas/set-colors.html [ Failure ]
 
 # WebCryptoAPI features that enabled only for High Sierra/iOS 11
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
@@ -1315,9 +1310,6 @@ http/wpt/crypto/rsa-pss-crash.any.worker.html [ Pass ]
 # <rdar://problem/32352702> REGRESSION: fast/dom/HTMLMeterElement/meter-appearances LayoutTests failing
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
-
-# <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm is failing on High Sierra
-imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
 # <rdar://problem/32864306> Unskip after bots have CTFontCopyPhysicalFont()
 fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
@@ -1523,8 +1515,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Pass Failure ]
 
 webaudio/oscillator-sine.html [ Skip ]
-
-webkit.org/b/199013 [ Debug ] imported/w3c/web-platform-tests/websockets/Create-Secure-verify-url-set-non-default-port.any.html [ Pass Failure ]
 
 webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 
@@ -1777,7 +1767,10 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 [ Catalina Mojave ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
 
 # These tests require macOS Monterey.
-[ Catalina Mojave BigSur ] platform/mac/media/media-source/media-vorbis-partial.html [ Skip ]
+[ Catalina Mojave BigSur ] media/media-source/media-webm-vorbis-partial.html [ Skip ]
+[ Catalina Mojave BigSur ] media/media-source/media-source-webm-vorbis-partial.html [ Skip ]
+[ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
+[ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
@@ -1808,7 +1801,6 @@ fast/text/international/system-language/declarative-language.html [ Pass Failure
 
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Pass Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
 
 # <rdar://problem/59785942> [ iOS macOS ] imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub.html is flaky failing
 imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub.html [ Pass Failure ]
@@ -2040,8 +2032,6 @@ webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ 
 
 webkit.org/b/189672 [ Release ] webgl/2.0.0/conformance2/textures/canvas/tex-2d-rg32f-rg-float.html [ Pass Failure ]
 
-webkit.org/b/215786 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Pass ]
-
 webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Pass ]
 
 webkit.org/b/215814 [ Debug ] inspector/console/queryInstances.html [ Pass Failure ]
@@ -2099,8 +2089,8 @@ webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.
 webkit.org/b/217620 inspector/audit/basic-async.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Skip ]
-imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-with-activation-succeeds.html [ Skip ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-without-activation-fails.tentative.html [ Skip ]
+webkit.org/b/227501 [ Debug ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
 
 webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
@@ -2111,11 +2101,6 @@ webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 # Mojave doesn't support COLR fonts.
 webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
-
-webkit.org/b/223005 [ BigSur+ arm64 ] fast/text/canvas-color-fonts/stroke-color-COLR.html [ ImageOnlyFailure ]
-webkit.org/b/223005 [ BigSur+ arm64 ] fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [ ImageOnlyFailure ]
-webkit.org/b/223005 [ BigSur+ arm64 ] http/tests/canvas/color-fonts/stroke-color-sbix.html [ ImageOnlyFailure ]
-webkit.org/b/223005 [ BigSur+ arm64 ] http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html [ ImageOnlyFailure ]
 
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
@@ -2152,6 +2137,9 @@ webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-t
 [ Catalina Mojave ] fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 [ Catalina Mojave ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
+# WebM support is on Monterey and later
+[ Catalina Mojave BigSur ] http/tests/media/video-webm-stall.html [ Skip ]
+
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailure ]
@@ -2178,8 +2166,6 @@ webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-dur
 
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
-webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
-
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 
 # webkit.org/b/223223 these two tests fail on Apple Silicon only
@@ -2191,7 +2177,6 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ arm64 ] webrtc/concurrentVideoPlayback.html [ Pass Timeout ]
 [ arm64 ] webrtc/direction-change.html [ Pass Timeout ]
 [ arm64 ] webrtc/multi-video.html [ Pass Timeout ]
-[ arm64 ] webrtc/multi-audio.html [ Pass Timeout Crash ]
 [ arm64 ] webrtc/h265.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-setDirection.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-rotation.html [ Pass Timeout ]
@@ -2205,6 +2190,8 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ arm64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure ]
 [ arm64 ] webrtc/h264-baseline.html  [ Failure Timeout ]
 [ arm64 ] webrtc/video-stats.html [ Pass Failure ]
+
+webkit.org/b/223043 [ BigSur ] webrtc/multi-audio.html [ Pass Failure ]
 
 webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
 
@@ -2315,3 +2302,7 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 webkit.org/b/226520 media/video-played-collapse.html [ Pass Timeout Failure ]
 
 webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
+
+webkit.org/b/215335 [ BigSur Release ] webanimations/css-transition-retargeting-during-ready-promise.html [ Pass Failure ]
+
+webkit.org/b/223472 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Pass Failure ]

@@ -53,16 +53,17 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
-class PrivateClickMeasurementManager;
 class NetworkDataTask;
 class NetworkLoadScheduler;
 class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkSocketChannel;
+class PrivateClickMeasurementManager;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
 struct NetworkSessionCreationParameters;
+struct SessionSet;
 
 enum class WebsiteDataType : uint32_t;
 
@@ -142,7 +143,7 @@ public:
     void clearPrefetchCache() { m_prefetchCache.clear(); }
 
     virtual std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol);
-    virtual void removeWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
+    virtual void removeWebSocketTask(SessionSet&, WebSocketTask&) { }
     virtual void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
 
     WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }

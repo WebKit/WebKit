@@ -23,9 +23,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/fetch-via-serviceworker--respondWith--sw.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/go-back.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/helper.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/post-to-owner-onload.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/post-to-owner.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/record-header.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/redirectTestHelper.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/serviceworker-accessors-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/serviceworker-accessors.sw.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/sharedWorker.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/unload-with-beacon.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/metadata/resources/xslt-test.sub.xml

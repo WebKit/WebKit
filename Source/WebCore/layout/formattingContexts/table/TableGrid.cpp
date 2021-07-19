@@ -40,34 +40,6 @@ TableGrid::Column::Column(const ContainerBox* columnBox)
 {
 }
 
-void TableGrid::Column::setLogicalWidth(LayoutUnit computedLogicalWidth)
-{
-#if ASSERT_ENABLED
-    m_hasComputedWidth = true;
-#endif
-    m_computedLogicalWidth = computedLogicalWidth;
-}
-
-LayoutUnit TableGrid::Column::logicalWidth() const
-{
-    ASSERT(m_hasComputedWidth);
-    return m_computedLogicalWidth;
-}
-
-void TableGrid::Column::setLogicalLeft(LayoutUnit computedLogicalLeft)
-{
-#if ASSERT_ENABLED
-    m_hasComputedLeft = true;
-#endif
-    m_computedLogicalLeft = computedLogicalLeft;
-}
-
-LayoutUnit TableGrid::Column::logicalLeft() const
-{
-    ASSERT(m_hasComputedLeft);
-    return m_computedLogicalLeft;
-}
-
 void TableGrid::Columns::addColumn(const ContainerBox& columnBox)
 {
     m_columnList.append({ &columnBox });

@@ -924,8 +924,6 @@ static PlatformFont *_font(Element& element)
     return (__bridge PlatformFont *)renderer->style().fontCascade().primaryFont().getCTFont();
 }
 
-#define UIFloatIsZero(number) (fabs(number - 0) < FLT_EPSILON)
-
 NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
 {
     NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
@@ -1022,7 +1020,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             [attrs setObject:@0.0 forKey:NSKernAttributeName];
         else {
             double kernVal = letterSpacing.length() ? letterSpacing.toDouble() : 0.0;
-            if (UIFloatIsZero(kernVal))
+            if (fabs(kernVal - 0) < FLT_EPSILON)
                 [attrs setObject:@0.0 forKey:NSKernAttributeName]; // auto and normal, the other possible values, are both "kerning enabled"
             else
                 [attrs setObject:@(kernVal) forKey:NSKernAttributeName];

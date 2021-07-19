@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/HashTraits.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
@@ -80,6 +81,14 @@ private:
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
 #endif
+};
+
+template<typename Counter> struct HashTraits<Ref<WeakPtrImpl<Counter>>> : RefHashTraits<WeakPtrImpl<Counter>> {
+    static constexpr bool hasIsReleasedWeakValueFunction = true;
+    static bool isReleasedWeakValue(const Ref<WeakPtrImpl<Counter>>& value)
+    {
+        return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value.get();
+    }
 };
 
 template<typename T, typename Counter> class WeakPtr {

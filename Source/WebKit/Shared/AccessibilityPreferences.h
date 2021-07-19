@@ -27,23 +27,19 @@
 
 #include "ArgumentCoders.h"
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <WebCore/CaptionUserPreferences.h>
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+#include "AccessibilitySupportSPI.h"
 #endif
 
 namespace WebKit {
 
 struct AccessibilityPreferences {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    bool reduceMotionEnabled { false };
-    bool increaseButtonLegibility { false };
-    bool enhanceTextLegibility { false };
-    bool darkenSystemColors { false };
-    bool invertColorsEnabled { false };
-#endif
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode;
-    Vector<String> preferredLanguages;
+    AXValueState reduceMotionEnabled { AXValueStateEmpty };
+    AXValueState increaseButtonLegibility { AXValueStateEmpty };
+    AXValueState enhanceTextLegibility { AXValueStateEmpty };
+    AXValueState darkenSystemColors { AXValueStateEmpty };
+    AXValueState invertColorsEnabled { AXValueStateEmpty };
 #endif
 };
 
@@ -55,3 +51,19 @@ template<> struct ArgumentCoder<WebKit::AccessibilityPreferences> {
     static std::optional<WebKit::AccessibilityPreferences> decode(Decoder&);
 };
 }
+
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+namespace WTF {
+
+template<> struct EnumTraits<AXValueState> {
+    using values = EnumValues<
+        AXValueState,
+        AXValueState::AXValueStateInvalid,
+        AXValueState::AXValueStateEmpty,
+        AXValueState::AXValueStateOff,
+        AXValueState::AXValueStateOn
+    >;
+};
+
+} // namespace WTF
+#endif

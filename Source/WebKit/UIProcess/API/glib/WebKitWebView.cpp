@@ -73,8 +73,7 @@
 #include <jsc/JSCContextPrivate.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/JSDOMExceptionHandling.h>
-#include <WebCore/PlatformScreen.h>
-#include <WebCore/RefPtrCairo.h>
+#include <WebCore/URLSoup.h>
 #include <glib/gi18n-lib.h>
 #include <libsoup/soup.h>
 #include <wtf/SetForScope.h>
@@ -91,6 +90,7 @@
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GUniquePtrGtk.h>
+#include <WebCore/RefPtrCairo.h>
 #endif
 
 #if PLATFORM(WPE)

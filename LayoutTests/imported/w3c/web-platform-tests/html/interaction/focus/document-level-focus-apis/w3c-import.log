@@ -14,4 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-has-system-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/interaction/focus/document-level-focus-apis/document-level-apis.html

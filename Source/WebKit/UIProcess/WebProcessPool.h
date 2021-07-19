@@ -138,7 +138,7 @@ public:
 
     API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
 
-    static const Vector<WebProcessPool*>& allProcessPools();
+    static Vector<Ref<WebProcessPool>> allProcessPools();
 
     template <typename T>
     T* supplement()
@@ -575,6 +575,10 @@ private:
     static void accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
 #endif
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    static void mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
+#endif
+
 #if PLATFORM(MAC)
     static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);
 #endif
@@ -589,6 +593,10 @@ private:
     // PAL::SystemSleepListener
     void systemWillSleep() final;
     void systemDidWake() final;
+#endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    void setMediaAccessibilityPreferences(WebProcessProxy&);
 #endif
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
@@ -763,9 +771,9 @@ private:
     WebProcessWithAudibleMediaCounter m_webProcessWithAudibleMediaCounter;
 
     struct AudibleMediaActivity {
-        UniqueRef<ProcessAssertion> uiProcessMediaPlaybackAssertion;
+        Ref<ProcessAssertion> uiProcessMediaPlaybackAssertion;
 #if ENABLE(GPU_PROCESS)
-        std::unique_ptr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
+        RefPtr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
 #endif
     };
     std::optional<AudibleMediaActivity> m_audibleMediaActivity;

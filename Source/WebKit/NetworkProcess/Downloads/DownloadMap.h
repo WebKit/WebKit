@@ -53,7 +53,7 @@ public:
 
 private:
     DownloadMapType m_downloads;
-    std::unique_ptr<ProcessAssertion> m_downloadAssertion;
+    RefPtr<ProcessAssertion> m_downloadAssertion;
 };
 
 #endif // !ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)

@@ -17,15 +17,15 @@ PASS Geolocation interface object name
 PASS Geolocation interface: existence and properties of interface prototype object
 PASS Geolocation interface: existence and properties of interface prototype object's "constructor" property
 PASS Geolocation interface: existence and properties of interface prototype object's @@unscopables property
-PASS Geolocation interface: operation getCurrentPosition(PositionCallback, optional PositionErrorCallback, optional PositionOptions)
-PASS Geolocation interface: operation watchPosition(PositionCallback, optional PositionErrorCallback, optional PositionOptions)
+PASS Geolocation interface: operation getCurrentPosition(PositionCallback, optional PositionErrorCallback?, optional PositionOptions)
+PASS Geolocation interface: operation watchPosition(PositionCallback, optional PositionErrorCallback?, optional PositionOptions)
 PASS Geolocation interface: operation clearWatch(long)
 PASS Geolocation must be primary interface of navigator.geolocation
 PASS Stringification of navigator.geolocation
-PASS Geolocation interface: navigator.geolocation must inherit property "getCurrentPosition(PositionCallback, optional PositionErrorCallback, optional PositionOptions)" with the proper type
-PASS Geolocation interface: calling getCurrentPosition(PositionCallback, optional PositionErrorCallback, optional PositionOptions) on navigator.geolocation with too few arguments must throw TypeError
-PASS Geolocation interface: navigator.geolocation must inherit property "watchPosition(PositionCallback, optional PositionErrorCallback, optional PositionOptions)" with the proper type
-PASS Geolocation interface: calling watchPosition(PositionCallback, optional PositionErrorCallback, optional PositionOptions) on navigator.geolocation with too few arguments must throw TypeError
+PASS Geolocation interface: navigator.geolocation must inherit property "getCurrentPosition(PositionCallback, optional PositionErrorCallback?, optional PositionOptions)" with the proper type
+PASS Geolocation interface: calling getCurrentPosition(PositionCallback, optional PositionErrorCallback?, optional PositionOptions) on navigator.geolocation with too few arguments must throw TypeError
+PASS Geolocation interface: navigator.geolocation must inherit property "watchPosition(PositionCallback, optional PositionErrorCallback?, optional PositionOptions)" with the proper type
+PASS Geolocation interface: calling watchPosition(PositionCallback, optional PositionErrorCallback?, optional PositionOptions) on navigator.geolocation with too few arguments must throw TypeError
 PASS Geolocation interface: navigator.geolocation must inherit property "clearWatch(long)" with the proper type
 PASS Geolocation interface: calling clearWatch(long) on navigator.geolocation with too few arguments must throw TypeError
 PASS GeolocationPosition interface: existence and properties of interface object
@@ -42,10 +42,10 @@ PASS GeolocationCoordinates interface object name
 PASS GeolocationCoordinates interface: existence and properties of interface prototype object
 PASS GeolocationCoordinates interface: existence and properties of interface prototype object's "constructor" property
 PASS GeolocationCoordinates interface: existence and properties of interface prototype object's @@unscopables property
+PASS GeolocationCoordinates interface: attribute accuracy
 PASS GeolocationCoordinates interface: attribute latitude
 PASS GeolocationCoordinates interface: attribute longitude
 PASS GeolocationCoordinates interface: attribute altitude
-PASS GeolocationCoordinates interface: attribute accuracy
 PASS GeolocationCoordinates interface: attribute altitudeAccuracy
 PASS GeolocationCoordinates interface: attribute heading
 PASS GeolocationCoordinates interface: attribute speed

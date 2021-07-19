@@ -463,31 +463,34 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     // Should such non-editing behaviors be implemented in Editor or EventHandler::defaultArrowEventHandler() perhaps?
     
     bool didPerformAction = false;
+    
+    if (!frame->settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled()) {
+        if (selector == "moveUp:")
+            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByLine);
+        else if (selector == "moveToBeginningOfParagraph:")
+            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByPage);
+        else if (selector == "moveToBeginningOfDocument:") {
+            didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByDocument);
+            didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollByDocument);
+        } else if (selector == "moveDown:")
+            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByLine);
+        else if (selector == "moveToEndOfParagraph:")
+            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByPage);
+        else if (selector == "moveToEndOfDocument:") {
+            didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByDocument);
+            didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollByDocument);
+        } else if (selector == "moveLeft:")
+            didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByLine);
+        else if (selector == "moveWordLeft:")
+            didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByPage);
+        else if (selector == "moveRight:")
+            didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByLine);
+        else if (selector == "moveWordRight:")
+            didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByPage);
+    }
 
-    if (selector == "moveUp:")
-        didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByLine);
-    else if (selector == "moveToBeginningOfParagraph:")
-        didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByPage);
-    else if (selector == "moveToBeginningOfDocument:") {
-        didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByDocument);
-        didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollByDocument);
-    } else if (selector == "moveDown:")
-        didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByLine);
-    else if (selector == "moveToEndOfParagraph:")
-        didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByPage);
-    else if (selector == "moveToEndOfDocument:") {
-        didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByDocument);
-        didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollByDocument);
-    } else if (selector == "moveLeft:")
-        didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByLine);
-    else if (selector == "moveWordLeft:")
-        didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByPage);
-    else if (selector == "moveToLeftEndOfLine:")
+    if (selector == "moveToLeftEndOfLine:")
         didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->backForward().goBack() : m_page->backForward().goForward();
-    else if (selector == "moveRight:")
-        didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByLine);
-    else if (selector == "moveWordRight:")
-        didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByPage);
     else if (selector == "moveToRightEndOfLine:")
         didPerformAction = m_userInterfaceLayoutDirection == WebCore::UserInterfaceLayoutDirection::LTR ? m_page->backForward().goForward() : m_page->backForward().goBack();
 

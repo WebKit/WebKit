@@ -1,3 +1,166 @@
+2021-07-02  Harshil Ratnu  <hratnu@apple.com>
+
+        Web Inspector: add contextual documentation for CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=226883
+
+        Reviewed by Devin Rousso.
+
+        Overview: Add contextual documentation for all supported CSS properties in Styles and Computed panel within Web 
+        Inspector.
+        Details: Add an info button which appears next to the property field on Hover. Clicking on the info button shows
+        a popover with the documentation for the property. Tabbing out or clicking anywhere other than the value field 
+        dismisses the popover.
+        Architecture: Add a ContextualDocumentationButton in SpreadsheetStyleProperty and append that to the end of the 
+        property content. This Button, when clicked, creates an instance of the ContextualDocumentation.js which will 
+        search the ContextualDocumentationDB to find the related property and it's relevant details. Embed these details
+        in an instance of Popover.js and present next to the associated propertyName.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * Scripts/copy-user-interface-resources.pl:
+        Add details for the ContextualDocumentationDatabase from External Folder to build properly.
+
+        * UserInterface/Base/Setting.js:
+        Add setting to show syntax in documentation popover and define default state as false.
+
+        * UserInterface/External/ContextualDocumentationDatabase/ContextualDocumentationDatabase.js: Added.
+        * UserInterface/External/ContextualDocumentationDatabase/LICENSE: Added.
+        * UserInterface/Images/InfoIcon.svg: Added.
+        * UserInterface/Main.html:
+        Add and link new files.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property .go-to-arrow):
+        (.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .property:not(:hover) .go-to-arrow):
+        Remove absolute positioning from go-to-arrow button to align it with rest of the text in line and style it 
+        similar to contextual-documentation-button. 
+        (.sidebar > .panel.details.css-style > .content > .computed .property .go-to-arrow): Deleted.
+        (.sidebar > .panel.details.css-style > .content > .computed .property:not(:hover) .go-to-arrow): Deleted.
+        Change hover area to include white space on the side of computed variables.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property .go-to-arrow):
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property .go-to-arrow):
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .contextual-documentation-button):
+        (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .contextual-documentation-button):
+        Add unifrom styling for go-to-arrow button and contextual-documentation-button for computed properties.
+
+        * UserInterface/Views/ContextualDocumentationPopover.css: Added.
+        (.popover .documentation-popover-content):
+        (.popover .documentation-popover-content > p):
+        (.popover .documentation-popover-content > .name-header):
+        (.popover .documentation-popover-content > .syntax):
+        (.popover .documentation-popover-content > .syntax > .syntax-title):
+        (.popover .documentation-popover-content > .reference-link):
+        * UserInterface/Views/ContextualDocumentationPopover.js: Added.
+        (WI.ContextualDocumentationPopover):
+        (WI.ContextualDocumentationPopover.prototype.show):
+        (WI.ContextualDocumentationPopover.prototype._presentOverTargetElement):
+        (WI.ContextualDocumentationPopover.prototype._getDocumentationDetails):
+        (WI.ContextualDocumentationPopover.prototype._createDocumentationElement):
+        Add new class that extends Popover.js and  handles fetching the values from VS Code documentation, puts relevant
+        information in the popover and presents the popover when the documentation-button is clicked.
+
+        * UserInterface/Views/Main.css:
+        (.contextual-documentation-button):
+        (.contextual-documentation-button:active):
+        (@media (prefers-color-scheme: dark) .contextual-documentation-button):
+        Add general styling for contextualDocumentationButton.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createElementsSettingsView):
+        Add a new setting in Elements Tab to show syntax.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.willDismissPopover):
+        Add a method - willDismissPopover to handle changes when the documentation popover is about to dismiss.
+        (WI.SpreadsheetStyleProperty.prototype.update):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+        (WI.SpreadsheetStyleProperty.prototype._addContextualDocumentationButton):
+        Add a method which gets called for all property fields and also gets called when property name is changed and
+        updated by clicking out of the property name field or tabbing into the next value field and is responsible for
+        adding the info button add the end of the property.
+        (WI.SpreadsheetStyleProperty.prototype._handleContextualDocumentationButtonClicked):
+        (WI.SpreadsheetStyleProperty.prototype._presentContextualDocumentation):
+        Add a method which creates an instance of the ContextualDocumentationPopover.js class and shows it.
+
+2021-07-02  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles: should autocomplete `var()` and `attr()` values
+        https://bugs.webkit.org/show_bug.cgi?id=227098
+        <rdar://problem/79418247>
+
+        Reviewed by Devin Rousso.
+
+        Add support for completion suggestions in the Styles details sidebar panel
+        for CSS Variables for use with var() and DOM node attributes for use with attr().
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.prototype.addValues):
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.prototype.get allCSSVariables):
+        (WI.DOMNodeStyles.prototype._updateStyleCascade):
+        (WI.DOMNodeStyles.prototype._collectCSSVariables):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.getFunctionValueCompletions):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+
+2021-07-01  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Regression: r279271] Sources: Breakpoints section in navigation sidebar disappears when Web Inspector becomes taller than 650px
+        https://bugs.webkit.org/show_bug.cgi?id=227597
+
+        Reviewed by Devin Rousso.
+
+        As of r279271, flex base size is no longer clamped by max-height. As a result the non-clamped element
+        (`resources-container`) was sized to the full height of the container, leaving no space for the other sections
+        to be shown. Removing the `height: 100%;` declaration resolves this by allowing the flex container to lay out
+        its children as needed. Because the resources container has no maximum height constraint, it still occupies the
+        remaining height of the container. Each container will also continue to shrink/grow at their prescribed ratio
+        just as they did before r279271.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (@media (min-height: 650px) .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container, .local-overrides-container)):
+
+2021-06-30  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Styles: Autocomplete should support function completions
+        https://bugs.webkit.org/show_bug.cgi?id=227097
+
+        Reviewed by Devin Rousso.
+
+        Covered by new test:
+        - inspector/unit-tests/css-keyword-completions.html
+
+        Add support for completing autocompleting values as part of a CSS function in the Styles sidebar panel.
+        
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forPartialPropertyName):
+        (WI.CSSKeywordCompletions.forPartialPropertyValue):
+        Tokenize the provided partial value text to correct provide completion for functions, like `env(`.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._nameCompletionDataProvider):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+        Moved logic to `WI.CSSKeywordCompletions`.
+
+2021-06-25  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Sources: Scope Chain sidebar panel is stripping repeating whitespace from strings
+        https://bugs.webkit.org/show_bug.cgi?id=227234
+
+        Reviewed by Devin Rousso.
+
+        String and Regular Expression values in Object Trees were having `white-space: nowrap;` applied to them, which
+        was redundant because `white-space: pre;` was already defined for `.formatted-string` and `.formatted-regexp`,
+        which makes sure that the text does not wrap unless it contains a newline, and these previews have newlines
+        replaced with a Unicode symbol to visually represent a newline without breaking to a new line.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-property :matches(.formatted-string, .formatted-regexp)): Deleted.
+
 2021-06-14  Patrick Angle  <pangle@apple.com>
 
         [REGRESSION: r276616] Uncaught Exception: TypeError: undefined is not an object (evaluating 'this._setupCodeMirror.getValue')

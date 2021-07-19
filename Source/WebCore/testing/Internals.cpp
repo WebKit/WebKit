@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1658,6 +1658,23 @@ void Internals::setCustomPrivateRecorderCreator()
 }
 #endif // ENABLE(MEDIA_STREAM)
 
+ExceptionOr<Ref<DOMRect>> Internals::absoluteLineRectFromPoint(int x, int y)
+{
+    if (!contextDocument() || !contextDocument()->page())
+        return Exception { InvalidAccessError };
+
+    auto& document = *contextDocument();
+    if (!document.frame() || !document.view())
+        return Exception { InvalidAccessError };
+
+    auto& frame = *document.frame();
+    auto& view = *document.view();
+    document.updateLayoutIgnorePendingStylesheets();
+
+    auto position = frame.visiblePositionForPoint(view.rootViewToContents(IntPoint { x, y }));
+    return DOMRect::create(position.absoluteSelectionBoundsForLine());
+}
+
 ExceptionOr<Ref<DOMRect>> Internals::absoluteCaretBounds()
 {
     Document* document = contextDocument();
@@ -2704,6 +2721,11 @@ uint64_t Internals::storageAreaMapCount() const
 uint64_t Internals::elementIdentifier(Element& element) const
 {
     return element.document().identifierForElement(element).toUInt64();
+}
+
+bool Internals::isElementAlive(Document& document, uint64_t elementIdentifier) const
+{
+    return document.searchForElementByIdentifier(makeObjectIdentifier<ElementIdentifierType>(elementIdentifier));
 }
 
 uint64_t Internals::frameIdentifier(const Document& document) const
@@ -3864,6 +3886,11 @@ String Internals::getImageSourceURL(Element& element)
 }
 
 #if ENABLE(VIDEO)
+
+unsigned Internals::mediaElementCount()
+{
+    return HTMLMediaElement::allMediaElements().size();
+}
 
 Vector<String> Internals::mediaResponseSources(HTMLMediaElement& media)
 {
@@ -5649,7 +5676,7 @@ static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine
     return {
         getQuad<Internals::ImageOverlayLine>(line),
         line.children.map([](auto& textChild) -> TextRecognitionWordData {
-            return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild) };
+            return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild), textChild.hasLeadingWhitespace };
         })
     };
 }
@@ -6391,5 +6418,20 @@ String Internals::dumpStyleResolvers()
     return result.toString();
 }
 
+ExceptionOr<void> Internals::setDocumentAutoplayPolicy(Document& document, Internals::AutoplayPolicy policy)
+{
+    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::Default) == static_cast<uint8_t>(Internals::AutoplayPolicy::Default), "Internals::Default != WebCore::Default");
+    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::Allow) == static_cast<uint8_t>(Internals::AutoplayPolicy::Allow), "Internals::Allow != WebCore::Allow");
+    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::AllowWithoutSound) == static_cast<uint8_t>(Internals::AutoplayPolicy::AllowWithoutSound), "Internals::AllowWithoutSound != WebCore::AllowWithoutSound");
+    static_assert(static_cast<uint8_t>(WebCore::AutoplayPolicy::Deny) == static_cast<uint8_t>(Internals::AutoplayPolicy::Deny), "Internals::Deny != WebCore::Deny");
+
+    auto* loader = document.loader();
+    if (!loader)
+        return Exception { InvalidStateError };
+
+    loader->setAutoplayPolicy(static_cast<WebCore::AutoplayPolicy>(policy));
+
+    return { };
+}
 
 } // namespace WebCore

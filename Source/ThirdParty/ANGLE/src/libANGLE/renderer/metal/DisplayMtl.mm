@@ -386,12 +386,13 @@ ExternalImageSiblingImpl *DisplayMtl::createExternalImageSibling(const gl::Conte
 
 gl::Version DisplayMtl::getMaxSupportedESVersion() const
 {
-    // NOTE(hqle): Supports GLES 3.0 on iOS GPU Family 4+ for now.
-#if TARGET_OS_SIMULATOR  // Simulator should be able to support ES3, despite not supporting iOS GPU
-                         // Family 4 in its entirety.
+#if TARGET_OS_SIMULATOR  
+    // Simulator should be able to support ES3, despite not supporting iOS GPU
+    // Family 3 in its entirety.
+    // FIXME: None of the feature conditions are checked for simulator support.
     return gl::Version(3, 0);
 #else
-    if (supportsEitherGPUFamily(4, 1))
+    if (supportsEitherGPUFamily(3, 1))
     {
         return gl::Version(3, 0);
     }
@@ -883,9 +884,6 @@ void DisplayMtl::initializeExtensions() const
 
         // GL_OES_EGL_sync
         mNativeExtensions.eglSyncOES = true;
-
-        // GL_ARB_sync
-        mNativeExtensions.glSyncARB = true;
     }
 }
 
@@ -979,6 +977,7 @@ void DisplayMtl::initializeFeatures()
 
     ANGLE_FEATURE_CONDITION((&mFeatures), intelThinMipmapWorkaround, isIntel());
     ANGLE_FEATURE_CONDITION((&mFeatures), intelExplicitBoolCastWorkaround, isIntel() && GetMacOSVersion() < OSVersion(11, 0, 0));
+    ANGLE_FEATURE_CONDITION((&mFeatures), intelDisableFastMath, isIntel() && GetMacOSVersion() < OSVersion(12, 0, 0));
 
     angle::PlatformMethods *platform = ANGLEPlatformCurrent();
     platform->overrideFeaturesMtl(platform, &mFeatures);

@@ -1,11 +1,11 @@
 
-FAIL application/javascript MIME allowed The operation is insecure.
-FAIL text/plain MIME allowed The operation is insecure.
-FAIL empty MIME allowed The operation is insecure.
-FAIL communication goes both ways The operation is insecure.
-FAIL indexedDB is present The operation is insecure.
-FAIL indexedDB is inaccessible The operation is insecure.
-FAIL cross-origin worker The operation is insecure.
-FAIL worker has opaque origin The operation is insecure.
-FAIL invalid javascript produces error The operation is insecure.
+PASS application/javascript MIME allowed
+PASS text/plain MIME allowed
+PASS empty MIME allowed
+PASS communication goes both ways
+PASS indexedDB is present
+PASS indexedDB is inaccessible
+PASS cross-origin worker
+PASS worker has opaque origin
+PASS invalid javascript produces error
 

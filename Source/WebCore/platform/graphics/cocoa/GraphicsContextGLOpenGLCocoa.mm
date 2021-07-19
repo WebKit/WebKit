@@ -37,6 +37,7 @@
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
+#import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
@@ -115,11 +116,23 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
         displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE);
         displayAttributes.append(EGL_TRUE);
     }
-    if (attrs.useMetal) {
+    bool canUseMetal = platformSupportsMetal();
+    if (attrs.useMetal && canUseMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
-    LOG(WebGL, "Attempting to use ANGLE's %s backend.\n", attrs.useMetal ? "Metal" : "OpenGL");
+
+    LOG(WebGL, "Attempting to use ANGLE's %s backend.\n", attrs.useMetal && canUseMetal ? "Metal" : "OpenGL");
+    if (attrs.powerPreference != GraphicsContextGLAttributes::PowerPreference::Default) {
+        displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
+        if (attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower)
+            displayAttributes.append(EGL_LOW_POWER_ANGLE);
+        else {
+            ASSERT(attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance);
+            displayAttributes.append(EGL_HIGH_POWER_ANGLE);
+        }
+    }
+
     displayAttributes.append(EGL_NONE);
     display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
 
@@ -197,10 +210,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     : GraphicsContextGL(attrs, sharedContext)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-    if (attrs.useMetal && !platformSupportsMetal()) {
-        attrs.useMetal = false;
-        setContextAttributes(attrs);
-    }
 
     m_displayObj = InitializeEGLDisplay(attrs);
     if (!m_displayObj)
@@ -287,12 +296,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (m_isForWebGL2) {
         // For WebGL 2.0 occlusion queries to work.
         requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
-    } else {
-        if (contextAttributes().useMetal) {
-            // The implementation uses GLsync objects. Enable the functionality for WebGL 1.0 contexts
-            // that use OpenGL ES 2.0.
-            requiredExtensions.append("GL_ARB_sync"_s);
-        }
     }
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (!needsEAGLOnMac()) {
@@ -300,7 +303,8 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
         // For creating the EGL surface from an IOSurface.
         requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
-    }
+            }
+
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
     ExtensionsGL& extensions = getExtensions();
     for (auto& extension : requiredExtensions) {
@@ -391,11 +395,6 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
             gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
             gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
-        for (auto& fence : m_frameCompletionFences)
-            fence.reset();
-    } else {
-        for (auto& fence : m_frameCompletionFences)
-            fence.abandon();
     }
     if (m_displayBufferPbuffer) {
         EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
@@ -684,6 +683,53 @@ void GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface(void* handle)
     EGL_DestroySurface(display, handle);
 }
 
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+void* GraphicsContextGLOpenGL::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
+{
+    constexpr EGLint emptyAttributes[] = { EGL_NONE };
+
+    // Create a MTLTexture out of the IOSurface.
+    // FIXME: We need to use the same device that ANGLE is using, which might not be the default.
+
+    RetainPtr<MTLSharedTextureHandle> handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
+    if (!handle) {
+        LOG(WebGL, "Unable to create a MTLSharedTextureHandle from the IOSurface in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    if (!handle.get().device) {
+        LOG(WebGL, "MTLSharedTextureHandle does not have a Metal device in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    auto texture = adoptNS([handle.get().device newSharedTextureWithHandle:handle.get()]);
+    if (!texture) {
+        LOG(WebGL, "Unable to create a MTLSharedTexture from the texture handle in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    // FIXME: Does the texture have the correct usage mode?
+
+    // Create an EGLImage out of the MTLTexture
+    auto display = platformDisplay();
+    auto eglImage = EGL_CreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+    if (!eglImage) {
+        LOG(WebGL, "Unable to create an EGLImage from the Metal handle in attachIOSurfaceToTexture.");
+        return nullptr;
+    }
+
+    // Tell the currently bound texture to use the EGLImage.
+    gl::EGLImageTargetTexture2DOES(target, eglImage);
+
+    return eglImage;
+}
+
+void GraphicsContextGLOpenGL::detachIOSurfaceFromSharedTexture(void* handle)
+{
+    auto display = platformDisplay();
+    EGL_DestroyImageKHR(display, handle);
+}
+#endif
 
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
@@ -731,14 +777,8 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     // Error will be handled by next call to makeContextCurrent() which will notice lack of display buffer.
     if (!hasNewBacking)
         allocateAndBindDisplayBufferBacking();
-    markLayerComposited();
 
-    if (contextAttributes().useMetal) {
-        // OpenGL sync objects are not signaling upon completion on Catalina-era drivers.
-        // OpenGL drivers typically implement some sort of internal throttling.
-        bool success = waitAndUpdateOldestFrame();
-        UNUSED_VARIABLE(success); // FIXME: implement context lost.
-    }
+    markLayerComposited();
 }
 
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()

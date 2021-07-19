@@ -39,6 +39,7 @@
 #include "WebEventFactory.h"
 #include "WebKitColorChooser.h"
 #include "WebKitPopupMenu.h"
+#include "WebKitWebViewBaseInternal.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
@@ -421,19 +422,29 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     if (!event.nativeEvent())
         return;
 
-#if !USE(GTK4)
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     if (controller && controller->isSwipeGestureEnabled()) {
-        double deltaX;
-        gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, nullptr);
-        bool isEnd = gdk_event_is_scroll_stop_event(event.nativeEvent()) ? true : false;
+        // While we don't use deltaY, none of the params can be null in GTK4 so we have to pass something.
+        double deltaX, deltaY;
+        gdk_event_get_scroll_deltas(event.nativeEvent(), &deltaX, &deltaY);
+
         int32_t eventTime = static_cast<int32_t>(gdk_event_get_time(event.nativeEvent()));
-        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .isTouch = false, .isEnd = isEnd };
+
+        GdkDevice* device = gdk_event_get_source_device(event.nativeEvent());
+        GdkInputSource source = gdk_device_get_source(device);
+
+        bool isEnd = gdk_event_is_scroll_stop_event(event.nativeEvent()) ? true : false;
+
+        PlatformGtkScrollData scrollData = { .delta = deltaX, .eventTime = eventTime, .source = source, .isEnd = isEnd };
         controller->wheelEventWasNotHandledByWebCore(&scrollData);
         return;
     }
 
     webkitWebViewBaseForwardNextWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+
+#if USE(GTK4)
+    gdk_display_put_event(gtk_widget_get_display(m_viewWidget), event.nativeEvent());
+#else
     gtk_main_do_event(event.nativeEvent());
 #endif
 }
@@ -444,6 +455,7 @@ void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&,
 
 void PageClientImpl::navigationGestureDidBegin()
 {
+    webkitWebViewBaseSynthesizeWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget), 0, 0, 0, 0, WheelEventPhase::Began, WheelEventPhase::NoPhase);
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool, WebBackForwardListItem&)

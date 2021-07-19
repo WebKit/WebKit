@@ -79,11 +79,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestIndexedSetterThrowingExceptionPrototype, JSTestIndexedSetterThrowingExceptionPrototype::Base);
 
 using JSTestIndexedSetterThrowingExceptionDOMConstructor = JSDOMConstructorNotConstructable<JSTestIndexedSetterThrowingException>;
 
+template<> const unsigned JSTestIndexedSetterThrowingExceptionDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestIndexedSetterThrowingExceptionDOMConstructor::s_info = { "TestIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingExceptionDOMConstructor) };
 
 template<> JSValue JSTestIndexedSetterThrowingExceptionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,14 +102,21 @@ template<> void JSTestIndexedSetterThrowingExceptionDOMConstructor::initializePr
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestIndexedSetterThrowingExceptionPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestIndexedSetterThrowingExceptionPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestIndexedSetterThrowingExceptionConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestIndexedSetterThrowingExceptionPrototype::s_info = { "TestIndexedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingExceptionPrototype) };
+static const HashTable JSTestIndexedSetterThrowingExceptionPrototypeTable = { 1, 1, true, JSTestIndexedSetterThrowingException::info(), JSTestIndexedSetterThrowingExceptionPrototypeTableValues, JSTestIndexedSetterThrowingExceptionPrototypeTableIndex };
+const ClassInfo JSTestIndexedSetterThrowingExceptionPrototype::s_info = { "TestIndexedSetterThrowingException", &Base::s_info, &JSTestIndexedSetterThrowingExceptionPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestIndexedSetterThrowingExceptionPrototype) };
 
 void JSTestIndexedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 {

@@ -1,5 +1,7 @@
 
 
-PASS .before 1
+FAIL .before 1 assert_equals:
+<img id="item" src="support/100x100-green.png" class=" before" data-expected-width="200" data-expected-height="200">
+width expected 200 but got 100
 PASS .after 2
 

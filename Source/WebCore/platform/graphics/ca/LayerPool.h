@@ -70,7 +70,7 @@ private:
     HashMap<IntSize, LayerList> m_reuseLists;
     // Ordered by recent use. The last size is the most recently used.
     Vector<IntSize> m_sizesInPruneOrder;
-    unsigned m_totalBytes;
+    unsigned m_totalBytes { 0 };
     unsigned m_maxBytesForPool;
 
     Timer m_pruneTimer;

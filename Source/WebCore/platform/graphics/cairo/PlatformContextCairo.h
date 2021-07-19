@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformContextCairo_h
-#define PlatformContextCairo_h
+#pragma once
 
 #if USE(CAIRO)
 
@@ -42,8 +41,7 @@ struct StrokeSource;
 struct ShadowState;
 }
 
-// Much like PlatformContextSkia in the Skia port, this class holds information that
-// would normally be private to GraphicsContext, except that we want to allow access
+// This class holds information that would normally be private to GraphicsContext, except that we want to allow access
 // to it in Font and Image code. This allows us to separate the concerns of Cairo-specific
 // code from the platform-independent GraphicsContext.
 
@@ -51,11 +49,10 @@ class PlatformContextCairo {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContextCairo);
 public:
-    PlatformContextCairo(cairo_t*);
+    explicit PlatformContextCairo(RefPtr<cairo_t>&&);
     ~PlatformContextCairo();
 
-    cairo_t* cr() { return m_cr.get(); }
-    void setCr(cairo_t* cr) { m_cr = cr; }
+    cairo_t* cr() const { return m_cr.get(); }
 
     GraphicsContextPlatformPrivate* graphicsContextPrivate() { return m_graphicsContextPrivate; }
     void setGraphicsContextPrivate(GraphicsContextPlatformPrivate* graphicsContextPrivate) { m_graphicsContextPrivate = graphicsContextPrivate; }
@@ -86,5 +83,3 @@ private:
 } // namespace WebCore
 
 #endif // USE(CAIRO)
-
-#endif // PlatformContextCairo_h

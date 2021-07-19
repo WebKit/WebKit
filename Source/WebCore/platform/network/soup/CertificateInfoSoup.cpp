@@ -103,6 +103,49 @@ CertificateInfo CertificateInfo::isolatedCopy() const
     return CertificateInfo(copy.get(), m_tlsErrors);
 }
 
+std::optional<CertificateSummary> CertificateInfo::summary() const
+{
+    if (!m_certificate)
+        return std::nullopt;
+
+#if GLIB_CHECK_VERSION(2, 69, 0)
+    CertificateSummary summaryInfo;
+
+    GRefPtr<GDateTime> validNotBefore;
+    GRefPtr<GDateTime> validNotAfter;
+    GUniqueOutPtr<char> subjectName;
+    GRefPtr<GPtrArray> dnsNames;
+    GRefPtr<GPtrArray> ipAddresses;
+    g_object_get(m_certificate.get(), "not-valid-before", &validNotBefore.outPtr(), "not-valid-after", &validNotAfter.outPtr(),
+        "subject-name", &subjectName.outPtr(), "dns-names", &dnsNames.outPtr(), "ip-addresses", &ipAddresses.outPtr(), nullptr);
+
+    if (validNotBefore)
+        summaryInfo.validFrom = Seconds(static_cast<double>(g_date_time_to_unix(validNotBefore.get())));
+    if (validNotAfter)
+        summaryInfo.validUntil = Seconds(static_cast<double>(g_date_time_to_unix(validNotAfter.get())));
+    if (subjectName)
+        summaryInfo.subject = String::fromUTF8(subjectName.get());
+    if (dnsNames) {
+        for (unsigned i = 0; i < dnsNames->len; ++i) {
+            GBytes* bytes = static_cast<GBytes*>(dnsNames->pdata[i]);
+            gsize dataLength;
+            const auto* data = g_bytes_get_data(bytes, &dataLength);
+            summaryInfo.dnsNames.append(String(static_cast<const char*>(data), dataLength));
+        }
+    }
+    if (ipAddresses) {
+        for (unsigned i = 0; i < ipAddresses->len; ++i) {
+            GUniquePtr<char> ipAddress(g_inet_address_to_string(static_cast<GInetAddress*>(ipAddresses->pdata[i])));
+            summaryInfo.ipAddresses.append(String::fromUTF8(ipAddress.get()));
+        }
+    }
+
+    return summaryInfo;
+#else
+    return std::nullopt;
+#endif
+}
+
 } // namespace WebCore
 
 #endif

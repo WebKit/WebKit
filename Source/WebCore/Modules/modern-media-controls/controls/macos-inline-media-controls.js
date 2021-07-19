@@ -30,7 +30,7 @@ class MacOSInlineMediaControls extends InlineMediaControls
 
     constructor(options = {})
     {
-        options.layoutTraits = LayoutTraits.macOS;
+        options.layoutTraits = new MacOSLayoutTraits(LayoutTraits.Mode.Inline);
 
         super(options);
 
@@ -59,8 +59,13 @@ class MacOSInlineMediaControls extends InlineMediaControls
         if (!this._volumeSliderContainer)
             return;
 
+        if (!this._inlineInsideMargin)
+            this._inlineInsideMargin = this.computedValueForStylePropertyInPx("--inline-controls-inside-margin");
+        if (!this._inlineBottomControlsBarHeight)
+            this._inlineBottomControlsBarHeight = this.computedValueForStylePropertyInPx("--inline-controls-bar-height");
+
         this._volumeSliderContainer.x = this.rightContainer.x + this.muteButton.x;
-        this._volumeSliderContainer.y = this.bottomControlsBar.y - BottomControlsBarHeight - InsideMargin;
+        this._volumeSliderContainer.y = this.bottomControlsBar.y - this._inlineBottomControlsBarHeight - this._inlineInsideMargin;
     }
 
     get preferredMuteButtonStyle()

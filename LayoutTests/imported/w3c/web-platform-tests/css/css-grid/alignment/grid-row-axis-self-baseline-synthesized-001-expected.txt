@@ -1,4 +1,4 @@
-Horizontal grid and verticalRL item
+Horizontal grid and verticalRL items do not share a baseline context
 ÉÉ É ÉÉÉ É ÉÉ É
 É É ÉÉ
 Horizontal grid and verticalLR item
@@ -7,11 +7,17 @@ Horizontal grid and verticalLR item
 VerticalLR grid and Horizontal item
 ÉÉ É ÉÉÉ É ÉÉ É
 É É ÉÉ
-VerticalLR grid and Horizontal item
+VerticalRL grid and Horizontal item
 ÉÉ É ÉÉÉ É ÉÉ É
 É É ÉÉ
 
-PASS .grid 1
+FAIL .grid 1 assert_equals:
+<div class="grid width300 justifyItemsBaseline">
+  <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="200" data-expected-height="100">ÉÉ É ÉÉÉ É ÉÉ É</div>
+  <div class="secondRowFirstColumn bigFont paddingRight verticalRL" data-offset-x="0" data-offset-y="100" data-expected-width="125" data-expected-height="200">É É ÉÉ</div>
+  <div class="autoRowSpanning2AutoColumn width25"></div>
+</div>
+offsetLeft expected 0 but got 60
 PASS .grid 2
 PASS .grid 3
 PASS .grid 4

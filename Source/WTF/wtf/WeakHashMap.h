@@ -93,14 +93,14 @@ public:
         ALWAYS_INLINE IteratorPeekType makePeek()
         {
             auto* entry = m_position.get();
-            KeyType* key = entry->key->template get<KeyType>();
+            auto* key = static_cast<KeyType*>(entry->key->template get<KeyType>());
             return IteratorPeekType { *key, entry->value };
         }
 
         ALWAYS_INLINE IteratorPeekType makePeek() const
         {
             auto* entry = m_position.get();
-            KeyType* key = entry->key->template get<KeyType>();
+            auto* key = static_cast<KeyType*>(entry->key->template get<KeyType>());
             return IteratorPeekType { *key, const_cast<ValueType&>(entry->value) };
         }
 
@@ -194,7 +194,13 @@ public:
     const_iterator begin() const { return WeakHashMapConstIterator(*this, m_map.begin()); }
     const_iterator end() const { return WeakHashMapConstIterator(*this, m_map.end()); }
 
-    template <typename Functor> void ensure(const KeyType& key, Functor&& functor) { return m_map.ensure(key, functor); }
+    template <typename Functor>
+    AddResult ensure(const KeyType& key, Functor&& functor)
+    {
+        amortizedCleanupIfNeeded();
+        auto result = m_map.ensure(makeKeyImpl(key), functor);
+        return AddResult { WeakHashMapIterator(*this, result.iterator), result.isNewEntry };
+    }
 
     template<typename T>
     AddResult add(const KeyType& key, T&& value)
@@ -238,6 +244,15 @@ public:
         return m_map.contains(*keyImpl);
     }
 
+    typename ValueTraits::TakeType take(const KeyType& key)
+    {
+        amortizedCleanupIfNeeded();
+        auto* keyImpl = keyImplIfExists(key);
+        if (!keyImpl)
+            return ValueTraits::take(ValueTraits::emptyValue());
+        return m_map.take(*keyImpl);
+    }
+
     typename ValueTraits::PeekType get(const KeyType& key)
     {
         amortizedCleanupIfNeeded();
@@ -266,11 +281,13 @@ public:
     bool removeIf(Functor&& functor)
     {
         m_operationCountSinceLastCleanup = 0;
-        return m_map.removeIf([&](auto& iterator) {
-            bool isReleasedWeakKey = !iterator.key.get();
+        return m_map.removeIf([&](auto& entry) {
+            auto* key = static_cast<KeyType*>(entry.key->template get<KeyType>());
+            bool isReleasedWeakKey = !key;
             if (isReleasedWeakKey)
                 return true;
-            return functor(iterator);
+            PeekType peek { *key, entry.value };
+            return functor(peek);
         });
     }
 

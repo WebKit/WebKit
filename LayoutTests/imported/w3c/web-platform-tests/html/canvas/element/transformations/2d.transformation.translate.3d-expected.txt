@@ -1,0 +1,6 @@
+2d.transformation.translate.3d
+translate() function with three arguments modifies the underlying matrix appropriately
+Actual output:
+
+PASS translate() function with three arguments modifies the underlying matrix appropriately
+

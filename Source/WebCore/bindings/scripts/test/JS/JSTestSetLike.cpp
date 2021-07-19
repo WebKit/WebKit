@@ -95,11 +95,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestSetLikePrototype, JSTestSetLikePrototype::Base);
 
 using JSTestSetLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestSetLike>;
 
+template<> const unsigned JSTestSetLikeDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestSetLikeDOMConstructor::s_info = { "TestSetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeDOMConstructor) };
 
 template<> JSValue JSTestSetLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -115,29 +118,70 @@ template<> void JSTestSetLikeDOMConstructor::initializeProperties(VM& vm, JSDOMG
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestSetLikePrototypeTableIndex[34] = {
+    { 5, -1 },
+    { -1, -1 },
+    { 4, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 9, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 6, 33 },
+    { -1, -1 },
+    { 0, 32 },
+    { -1, -1 },
+    { 8, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 3, -1 },
+    { 7, -1 },
+};
+
 
 static const HashTableValue JSTestSetLikePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLike_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_has), (intptr_t) (1) } },
-    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_entries), (intptr_t) (0) } },
-    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_keys), (intptr_t) (0) } },
-    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_values), (intptr_t) (0) } },
-    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_forEach), (intptr_t) (1) } },
-    { "add", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_add), (intptr_t) (1) } },
-    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_clear), (intptr_t) (0) } },
-    { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_delete), (intptr_t) (1) } },
+    { "size", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSetLike_size), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "has", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_has), (intptr_t) (1) } },
+    { "entries", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_entries), (intptr_t) (0) } },
+    { "keys", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_keys), (intptr_t) (0) } },
+    { "values", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_values), (intptr_t) (0) } },
+    { "forEach", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_forEach), (intptr_t) (1) } },
+    { "add", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_add), (intptr_t) (1) } },
+    { "clear", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_clear), (intptr_t) (0) } },
+    { "delete", JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function, NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSetLikePrototypeFunction_delete), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestSetLikePrototype::s_info = { "TestSetLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikePrototype) };
+static const HashTable JSTestSetLikePrototypeTable = { 10, 31, true, JSTestSetLike::info(), JSTestSetLikePrototypeTableValues, JSTestSetLikePrototypeTableIndex };
+const ClassInfo JSTestSetLikePrototype::s_info = { "TestSetLike", &Base::s_info, &JSTestSetLikePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestSetLikePrototype) };
 
 void JSTestSetLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestSetLike::info(), JSTestSetLikePrototypeTableValues, *this);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    auto& entries = vm.propertyNames->builtinNames().entriesPublicName();
+    reifyStaticProperty(vm, nullptr, entries, *info()->staticPropHashTable->entry(entries), *this);
+    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, entries), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

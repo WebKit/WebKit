@@ -151,7 +151,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 
 #if ENABLE(IMAGE_ANALYSIS)
 #define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
-    M(_insertTextFromCamera) \
     M(captureTextFromCamera)
 #else
 #define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M)
@@ -441,6 +440,8 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _isFocusingElementWithKeyboard;
     BOOL _isBlurringFocusedElement;
     BOOL _isRelinquishingFirstResponderToFocusedElement;
+    BOOL _unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate;
+    BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
@@ -544,6 +545,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 @property (nonatomic, readonly) NSArray<WKDeferringGestureRecognizer *> *deferringGestures;
 @property (nonatomic, readonly) WebKit::GestureRecognizerConsistencyEnforcer& gestureRecognizerConsistencyEnforcer;
 @property (nonatomic, readonly) CGRect tapHighlightViewRect;
+@property (nonatomic, readonly) UIGestureRecognizer *imageAnalysisGestureRecognizer;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
@@ -708,6 +710,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (void)_didChangeLinkPreviewAvailability;
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
+
+- (void)updateSoftwareKeyboardSuppressionStateFromWebView;
 
 #if USE(UICONTEXTMENU)
 - (UIView *)textEffectsWindow;

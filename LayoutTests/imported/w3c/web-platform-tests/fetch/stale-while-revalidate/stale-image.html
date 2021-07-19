@@ -10,11 +10,8 @@ Use a child document to load the second stale image into because
 an image loaded into the same document will skip cache-control headers.
 See: https://html.spec.whatwg.org/#the-list-of-available-images
 -->
-<div id="frames">
 <iframe id="child1" srcdoc=""></iframe>
 <iframe id="child2" srcdoc=""></iframe>
-<iframe id="child3" srcdoc=""></iframe>
-</div>
 <script>
 
 var request_token = token();
@@ -32,10 +29,10 @@ let loadImage = async (document) => {
 promise_test(async t => {
   await new Promise(r => window.onload = r);
 
-  let img1 = await loadImage(child1.contentDocument);
+  let img1 = await loadImage(document);
   assert_equals(img1.width, 16, "(initial version loaded)");
 
-  let img2 = await loadImage(child2.contentDocument);
+  let img2 = await loadImage(child1.contentDocument);
   assert_equals(img2.width, 16, "(stale version loaded)");
 
   // Query the server again and again. At some point it must have received the
@@ -49,10 +46,9 @@ promise_test(async t => {
       break;
   }
 
-  let img3 = await loadImage(child3.contentDocument);
+  let img3 = await loadImage(child2.contentDocument);
   assert_equals(img3.width, 256, "(revalidated version loaded)");
 
-  frames.innerHTML = "";
 }, 'Cache returns stale resource');
 
 </script>

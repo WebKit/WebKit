@@ -61,12 +61,16 @@ private:
     // Messages
     void didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
+    // WebCore::RemoteCommandListener
     void updateSupportedCommands() final;
+
+    GPUProcessConnection& ensureGPUProcessConnection();
 
     WebProcess& m_process;
     RemoteRemoteCommandListenerIdentifier m_identifier;
     WebCore::RemoteCommandListener::RemoteCommandsSet m_currentCommands;
     bool m_currentSupportSeeking { false };
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

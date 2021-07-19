@@ -43,7 +43,7 @@ void installMemoryPressureHandler()
         ViewSnapshotStore::singleton().discardSnapshotImages();
 #endif
 
-        for (auto* processPool : WebProcessPool::allProcessPools())
+        for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->handleMemoryPressureWarning(critical);
     });
     memoryPressureHandler.install();

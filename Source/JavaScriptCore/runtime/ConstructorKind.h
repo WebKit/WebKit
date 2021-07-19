@@ -28,9 +28,9 @@
 namespace JSC {
 
 enum class ConstructorKind : uint8_t {
-    None,
-    Base,
-    Extends,
+    None, // All the other functions
+    Base, // Class base constructor
+    Extends, // Class derived constructor
     Naked, // Naked constructor, only used for builtin functions
 };
 

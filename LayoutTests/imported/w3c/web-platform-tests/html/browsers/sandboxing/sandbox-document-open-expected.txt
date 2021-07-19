@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS document.open()
+PASS other_document.open()
+

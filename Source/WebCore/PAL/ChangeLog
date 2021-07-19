@@ -1,3 +1,227 @@
+2021-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Set kVTCompressionPropertyKey_MaxKeyFrameInterval in VideoSampleBufferCompressor
+        https://bugs.webkit.org/show_bug.cgi?id=227680
+        <rdar://78027782>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h:
+
+2021-07-01  John Wilander  <wilander@apple.com>
+
+        PCM: Change import from CryptoKitCBridging to CryptoKitPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=227556
+        <rdar://79992592>
+
+        Reviewed by Alex Christensen.
+
+        Patch by Frederic Jacobs.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/CryptoKitPrivateSoftLink.h: Renamed from Source/WebCore/PAL/pal/cocoa/CryptoKitCBridgingSoftLink.h.
+        * pal/cocoa/CryptoKitPrivateSoftLink.mm: Renamed from Source/WebCore/PAL/pal/cocoa/CryptoKitCBridgingSoftLink.mm.
+        * pal/spi/cocoa/CryptoKitPrivateSPI.h: Renamed from Source/WebCore/PAL/pal/spi/cocoa/CryptoKitCBridgingSPI.h.
+
+2021-07-01  Amir Mark Jr  <amir_mark@apple.com>
+
+        Unreviewed, reverting r279452.
+
+        Broke MacOS build
+
+        Reverted changeset:
+
+        "PCM: Change import from CryptoKitCBridging to
+        CryptoKitPrivate"
+        https://bugs.webkit.org/show_bug.cgi?id=227556
+        https://commits.webkit.org/r279452
+
+2021-06-30  John Wilander  <wilander@apple.com>
+
+        PCM: Change import from CryptoKitCBridging to CryptoKitPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=227556
+        <rdar://79992592>
+
+        Reviewed by Alex Christensen.
+
+        Patch by Frederic Jacobs.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/CryptoKitPrivateSoftLink.h: Renamed from Source/WebCore/PAL/pal/cocoa/CryptoKitCBridgingSoftLink.h.
+        * pal/cocoa/CryptoKitPrivateSoftLink.mm: Renamed from Source/WebCore/PAL/pal/cocoa/CryptoKitCBridgingSoftLink.mm.
+        * pal/spi/cocoa/CryptoKitPrivateSPI.h: Renamed from Source/WebCore/PAL/pal/spi/cocoa/CryptoKitCBridgingSPI.h.
+
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [macOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227530
+        <rdar://problem/79968206>
+
+        Reviewed by Dean Jackson.
+
+        Declare the ASVInlinePreview class for macOS.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/mac/SystemPreviewSPI.h: Added.
+
+2021-06-30  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for displaying <model> in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=227443
+        <rdar://problem/79859937>
+
+        Reviewed by Sam Weinig.
+
+        Declare additional ASVInlinePreview methods required for fullscreen support.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2021-06-28  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for manipulating <model> inline
+        https://bugs.webkit.org/show_bug.cgi?id=227448
+        <rdar://problem/79863579>
+
+        Reviewed by Tim Horton.
+
+        Declare additional ASVInlinePreview methods.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2021-06-29  Antoine Quint  <graouts@webkit.org>
+
+        WebKit_iosmac build failure: SystemPreviewSPI.h:29:9: fatal error: 'AssetViewer/ARQuickLookWebKitItem.h' file not found
+        https://bugs.webkit.org/show_bug.cgi?id=227507
+        <rdar://problem/79902043>
+
+        Reviewed by Dean Jackson.
+
+        When we added new SPIs in Source/WebCore/PAL/pal/spi/ios/SystemPreviewSPI.h as part of r279312 we also included this file
+        from a new file that is compiled on Catalyst. This revealed an issue where existing SPIs included in that file weren't
+        actually available on Catalyst. We now make sure we compile those out on Catalyst.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2021-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Loading WebM hangs if server sends only small amount of data
+        https://bugs.webkit.org/show_bug.cgi?id=226217
+        <rdar://problem/78709010>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/spi/cf/CoreMediaSPI.h:
+
+2021-06-28  Jean-Yves Avenard  <jya@apple.com>
+
+        Not all uses of AudioToolbox framework use soft linking
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        <rdar://problem/79606090>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add methods whose definitions were scattered across
+        the code.
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Same as above.
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add missing methods
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Add missing methods; Reshuffled definitions as many didn't
+        exist on Windows, yet could potentially be loaded and error.
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h: Add missing methods and fix some spelling in define names
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Add missing methods
+
+2021-06-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279322.
+        https://bugs.webkit.org/show_bug.cgi?id=227434
+
+
+        Reverted changeset:
+
+        "Not all uses of AudioToolbox framework use soft linking"
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        https://commits.webkit.org/r279322
+
+2021-06-27  Jean-Yves Avenard  <jya@apple.com>
+
+        Not all uses of AudioToolbox framework use soft linking
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        <rdar://problem/79606090>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add methods whose definitions were scattered across
+        the code.
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Same as above.
+        * pal/cf/AudioToolboxSoftLink.cpp:
+        * pal/cf/AudioToolboxSoftLink.h: Add missing methods
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Add missing methods; Reshuffled definitions as many didn't
+        exist on Windows, yet could potentially be loaded and error.
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h: Add missing methods and fix some spelling in define names
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h: Add missing methods
+
+2021-06-27  Antoine Quint  <graouts@webkit.org>
+
+        [Model] [iOS] Add support for rendering model resources
+        https://bugs.webkit.org/show_bug.cgi?id=227392
+        <rdar://problem/79770136>
+
+        Reviewed by Tim Horton.
+
+        Declare the ASVInlinePreview class.
+
+        * pal/spi/ios/SystemPreviewSPI.h:
+
+2021-06-22  Dean Jackson  <dino@apple.com>
+
+        Add support for MTLSharedTextures in WebXR
+        https://bugs.webkit.org/show_bug.cgi?id=227245
+        <rdar://problem/79591620>
+
+        Reviewed by Tim Horton.
+
+        Define MTLSharedTextureHandle's initWithIOSurface.
+
+        * pal/spi/cocoa/MetalSPI.h:
+
+2021-06-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the macOS Monterey build
+
+        Some internal builders are still attempting to build WebKit for macOS Monterey using an SDK without the fix for
+        rdar://74299451. Restore the forward staging declaration for `-initWithDataProvider:contentType:previewTitle:`
+        in the meantime.
+
+        * pal/spi/mac/QuickLookMacSPI.h:
+
+2021-06-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r279208.
+        https://bugs.webkit.org/show_bug.cgi?id=227381
+
+        Broke the Apple Windows build.
+
+        Reverted changeset:
+
+        "Not all uses of AudioToolbox framework use soft linking"
+        https://bugs.webkit.org/show_bug.cgi?id=227250
+        https://trac.webkit.org/changeset/279208
+
 2021-06-23  Jean-Yves Avenard  <jya@apple.com>
 
         Not all uses of AudioToolbox framework use soft linking

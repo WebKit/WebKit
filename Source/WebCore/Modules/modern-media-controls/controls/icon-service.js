@@ -73,8 +73,8 @@ const iconService = new class IconService {
 
     imageForIconAndLayoutTraits(icon, layoutTraits)
     {
-        const [fileName, platform] = this._fileNameAndPlatformForIconAndLayoutTraits(icon, layoutTraits);
-        const path = `${platform}/${fileName}.${icon.type}`;
+        const [fileName, resourceDirectory] = this._fileNameAndResourceDirectoryForIconAndLayoutTraits(icon, layoutTraits);
+        const path = `${resourceDirectory}/${fileName}.${icon.type}`;
 
         let image = this.images[path];
         if (image)
@@ -101,27 +101,19 @@ const iconService = new class IconService {
 
     // Private
 
-    _fileNameAndPlatformForIconAndLayoutTraits(icon, layoutTraits)
+    _fileNameAndResourceDirectoryForIconAndLayoutTraits(icon, layoutTraits)
     {
-        let platform;
-        if (layoutTraits & LayoutTraits.macOS)
-            platform = "macOS";
-        else if (layoutTraits & LayoutTraits.iOS)
-            platform = "iOS";
-        else if (layoutTraits & LayoutTraits.watchOS)
-            platform = "watchOS";
-        else
-            throw "Could not identify icon's platform from layout traits.";
+        let resourceDirectory = layoutTraits.resourceDirectory();
 
         let iconName = icon.name;
-        if (layoutTraits & LayoutTraits.macOS && layoutTraits & LayoutTraits.Fullscreen && IconsWithFullscreenVariants.includes(icon))
+        if (layoutTraits.supportsIconWithFullscreenVariant() && IconsWithFullscreenVariants.includes(icon))
             iconName += "-fullscreen";
 
         let fileName = iconName;
         if (icon.type === "png")
             fileName = `${iconName}@${window.devicePixelRatio}x`;
 
-        return [fileName, platform];
+        return [fileName, resourceDirectory];
     }
 
 };

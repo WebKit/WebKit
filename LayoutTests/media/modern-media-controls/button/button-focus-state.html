@@ -7,7 +7,7 @@ description("Testing an <code>IconButton</code> has a blue background-color when
 
 window.jsTestIsAsync = true;
 
-const button = new Button({ layoutDelegate: { layoutTraits: LayoutTraits.macOS }, iconName: Icons.Pause });
+const button = new Button({ layoutDelegate: { layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) }, iconName: Icons.Pause });
 document.body.appendChild(button.element);
 
 

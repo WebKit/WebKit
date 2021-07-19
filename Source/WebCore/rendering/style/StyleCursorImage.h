@@ -38,6 +38,7 @@ public:
     static Ref<StyleCursorImage> create(CSSCursorImageValue&);
     virtual ~StyleCursorImage();
     bool operator==(const StyleImage& other) const;
+    bool usesDataProtocol() const final;
 
 private:
     void setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom) final;

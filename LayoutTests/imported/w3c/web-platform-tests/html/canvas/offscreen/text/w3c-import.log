@@ -101,6 +101,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontKerning.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontVariant.settings.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.fontVariant.settings.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.direction.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.direction.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.rtl.text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.rtl.text.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.textAlign.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.measure.textAlign.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.nonfinite.spacing.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.drawing.style.spacing.measure.worker.js

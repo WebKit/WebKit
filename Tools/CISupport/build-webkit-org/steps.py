@@ -289,6 +289,9 @@ class CompileWebKit(shell.Compile):
             # this much faster than full debug info, and crash logs still have line numbers.
             self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
             self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=line-tables-only'])
+        if platform == 'gtk':
+            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration").title(), "install")
+            self.setCommand(self.command + [f'--prefix={prefix}'])
 
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
@@ -320,6 +323,10 @@ class Compile32bitJSC(CompileWebKit):
 class CompileJSCOnly(CompileWebKit):
     command = ["perl", "./Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
+
+class InstallBuiltProduct(shell.ShellCommand):
+    command = ["python3", "Tools/Scripts/install-built-product",
+               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 class ArchiveBuiltProduct(shell.ShellCommand):
     command = ["python3", "Tools/CISupport/built-product-archive",

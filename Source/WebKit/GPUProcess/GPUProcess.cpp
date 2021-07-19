@@ -400,12 +400,6 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-WorkQueue& GPUProcess::audioMediaStreamTrackRendererQueue()
-{
-    if (!m_audioMediaStreamTrackRendererQueue)
-        m_audioMediaStreamTrackRendererQueue = WorkQueue::create("RemoteAudioMediaStreamTrackRenderer", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive);
-    return *m_audioMediaStreamTrackRendererQueue;
-}
 WorkQueue& GPUProcess::videoMediaStreamTrackRendererQueue()
 {
     if (!m_videoMediaStreamTrackRendererQueue)

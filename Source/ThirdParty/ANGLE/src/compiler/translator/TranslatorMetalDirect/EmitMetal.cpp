@@ -979,6 +979,9 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
     if (isInvariant)
     {
         mOut << " [[invariant]]";
+        TranslatorMetalReflection *reflection =
+            ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+        reflection->hasInvariance = true;
     }
 }
 
@@ -2136,6 +2139,12 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
     else
     {
         const TOperator op = aggregateNode->getOp();
+        if(op == EOpAtan)
+        {
+            TranslatorMetalReflection *reflection =
+                ((sh::TranslatorMetalDirect *)&mCompiler)->getTranslatorMetalReflection();
+            reflection->hasAtan = true;
+        }
         switch (op)
         {
             case TOperator::EOpCallFunctionInAST:

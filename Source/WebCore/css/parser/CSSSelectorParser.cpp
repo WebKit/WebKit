@@ -583,6 +583,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         if (selector->match() == CSSSelector::PseudoClass) {
             if (m_context.mode != UASheetMode && selector->pseudoClassType() == CSSSelector::PseudoClassDirectFocus)
                 return nullptr;
+            if (m_context.mode != UASheetMode && selector->pseudoClassType() == CSSSelector::PseudoClassModalDialog)
+                return nullptr;
             if (!m_context.focusVisibleEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassFocusVisible)
                 return nullptr;
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -866,7 +868,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
         nString = range.consume().value().toString();
     } else if (token.type() == DimensionToken && token.numericValueType() == IntegerValueType) {
         result.first = token.numericValue();
-        nString = token.value().toString();
+        nString = token.unitString().toString();
     } else if (token.type() == IdentToken) {
         if (token.value()[0] == '-') {
             result.first = -1;

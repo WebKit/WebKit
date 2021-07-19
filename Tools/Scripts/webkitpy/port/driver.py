@@ -560,7 +560,7 @@ class Driver(object):
             _log.debug(err_line)
             if self._port.get_option("sample_on_timeout"):
                 self._port.sample_process(child_process_name, child_process_pid, self._target_host)
-        if out_line == "FAIL: Timed out waiting for notifyDone to be called\n":
+        if out_line == b"FAIL: Timed out waiting for notifyDone to be called\n":
             self._driver_timed_out = True
 
     def _check_for_address_sanitizer_violation(self, error_line):

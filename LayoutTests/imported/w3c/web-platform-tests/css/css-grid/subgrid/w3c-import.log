@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/abs-pos-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/abs-pos-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/abs-pos-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/abs-pos-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/abs-pos-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/auto-track-sizing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/auto-track-sizing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-001-expected.html
@@ -107,3 +109,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-004.html

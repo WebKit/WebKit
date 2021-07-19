@@ -28,6 +28,178 @@
 
 #if ENABLE(B3_JIT)
 
+void testInsertSignedBitfieldInZero32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    int32_t src = 0xffffffff;
+    Vector<int32_t> lsbs = { 1, 14, 29 };
+    Vector<int32_t> widths = { 30, 17, 2 };
+
+    // Test Pattern: (((src & mask1) ^ mask2) - mask2) << lsb
+    // where: mask1 = (1 << width) - 1
+    //        mask2 = 1 << (width - 1)
+    auto test = [&] (int32_t lsb, int32_t mask1, int32_t mask2) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* srcValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* mask1Value = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* mask2Value = root->appendNew<Const32Value>(proc, Origin(), mask2);
+
+        Value* andValue = root->appendNew<Value>(proc, BitAnd, Origin(), srcValue, mask1Value);
+        Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), andValue, mask2Value);
+        Value* subValue = root->appendNew<Value>(proc, Sub, Origin(), xorValue, mask2Value);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), subValue, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "sbfiz");
+        return invoke<int32_t>(*code, src);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        int32_t lsb = lsbs.at(i);
+        int32_t width = widths.at(i);
+        int32_t mask1 = (1 << width) - 1;
+        int32_t mask2 = 1 << (width - 1);
+        int32_t bfsx = ((src & mask1) ^ mask2) - mask2;
+        CHECK(test(lsb, mask1, mask2) == (bfsx << lsb));
+    }
+}
+
+void testInsertSignedBitfieldInZero64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    int64_t src = 0xffffffffffffffff;
+    Vector<int64_t> lsbs = { 1, 30, 62 };
+    Vector<int64_t> widths = { 62, 33, 1 };
+
+    // Test Pattern: ((src << amount) >> amount) << lsb
+    // where: amount = datasize - width
+    auto test = [&] (int64_t lsb, int64_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* srcValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* amountValue = root->appendNew<Const64Value>(proc, Origin(), amount);
+
+        Value* signedRightShiftValue = root->appendNew<Value>(
+            proc, SShr, Origin(), 
+            root->appendNew<Value>(proc, Shl, Origin(), srcValue, amountValue), 
+            amountValue);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), signedRightShiftValue, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "sbfiz");
+        return invoke<uint64_t>(*code, src);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        int64_t lsb = lsbs.at(i);
+        int64_t width = widths.at(i);
+        int64_t amount = CHAR_BIT * sizeof(src) - width;
+        int64_t bfsx = (src << amount) >> amount;
+        CHECK(test(lsb, amount) == (bfsx << lsb));
+    }
+}
+
+void testExtractSignedBitfield32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    int32_t src = 0xffffffff;
+    Vector<int32_t> lsbs = { 1, 14, 29 };
+    Vector<int32_t> widths = { 30, 17, 2 };
+
+    // Test Pattern: (((src >> lsb) & mask1) ^ mask2) - mask2
+    // where: mask1 = (1 << width) - 1
+    //        mask2 = 1 << (width - 1)
+    auto test = [&] (int32_t lsb, int32_t mask1, int32_t mask2) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* srcValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* mask1Value = root->appendNew<Const32Value>(proc, Origin(), mask1);
+        Value* mask2Value = root->appendNew<Const32Value>(proc, Origin(), mask2);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), srcValue, lsbValue);
+        Value* andValue = root->appendNew<Value>(proc, BitAnd, Origin(), shiftValue, mask1Value);
+        Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), andValue, mask2Value);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Sub, Origin(), xorValue, mask2Value));
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "sbfx");
+        return invoke<int32_t>(*code, src);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        int32_t lsb = lsbs.at(i);
+        int32_t width = widths.at(i);
+        int32_t mask1 = (1 << width) - 1;
+        int32_t mask2 = 1 << (width - 1);
+        int32_t result = (((src >> lsb) & mask1) ^ mask2) - mask2;
+        CHECK(test(lsb, mask1, mask2) == result);
+    }
+}
+
+void testExtractSignedBitfield64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    int64_t src = 0xffffffffffffffff;
+    Vector<int64_t> lsbs = { 1, 30, 62 };
+    Vector<int64_t> widths = { 62, 33, 1 };
+
+    // Test Pattern: ((src >> lsb) << amount) >> amount
+    // where: amount = datasize - width
+    auto test = [&] (int64_t lsb, int64_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* srcValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* amountValue = root->appendNew<Const64Value>(proc, Origin(), amount);
+
+        Value* rightShiftValue = root->appendNew<Value>(proc, ZShr, Origin(), srcValue, lsbValue);
+        Value* leftShiftValue = root->appendNew<Value>(proc, Shl, Origin(), rightShiftValue, amountValue);
+        Value* signedRightShiftValue = root->appendNew<Value>(proc, SShr, Origin(), leftShiftValue, amountValue);
+        root->appendNewControlValue(proc, Return, Origin(), signedRightShiftValue);
+
+        auto code = compileProc(proc);
+        if (isARM64())
+            checkUsesInstruction(*code, "sbfx");
+        return invoke<uint64_t>(*code, src);
+    };
+
+    for (size_t i = 0; i < lsbs.size(); ++i) {
+        int64_t lsb = lsbs.at(i);
+        int64_t width = widths.at(i);
+        int64_t amount = CHAR_BIT * sizeof(src) - width;
+        int64_t result = ((src >> lsb) << amount) >> amount;
+        CHECK(test(lsb, amount) == result);
+    }
+}
+
 void testBitOrBitOrArgImmImm32(int a, int b, int c)
 {
     Procedure proc;

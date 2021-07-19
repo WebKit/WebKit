@@ -42,7 +42,7 @@ LegacyGlobalSettings& LegacyGlobalSettings::singleton()
 void LegacyGlobalSettings::setCacheModel(CacheModel cacheModel)
 {
     m_cacheModel = cacheModel;
-    for (auto processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setCacheModel(cacheModel);
 }
 

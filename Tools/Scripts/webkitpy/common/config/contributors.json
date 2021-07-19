@@ -2437,6 +2437,15 @@
          "hta"
       ]
    },
+   "Harshil Ratnu" : {
+      "emails" : [
+         "harshil.sratnu@gmail.com"
+      ],
+      "expertise" : "Web Inspector",
+      "nicks" : [
+         "harshil"
+      ]
+   },
    "Hayato Ito" : {
       "emails" : [
          "hayato@chromium.org"
@@ -5820,6 +5829,16 @@
          "seumas"
       ]
    },
+   "W.D. Xiong" : {
+      "emails" : [
+         "wdx@apple.com",
+         "w_xiong@apple.com"
+      ],
+      "nicks" : [
+         "wdx"
+      ],
+      "status" : "committer"
+   },
    "Web Components Team" : {
       "emails" : [
          "webcomponents-bugzilla@chromium.org"
@@ -6094,6 +6113,15 @@
       "nicks" : [
          "zhifei_fang",
          "z.f"
+      ],
+      "status" : "committer"
+   },
+   "Ziran Sun" : {
+      "emails" : [
+         "zsun@igalia.com"
+      ],
+      "nicks" : [
+         "zsun"
       ],
       "status" : "committer"
    },

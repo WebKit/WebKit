@@ -361,6 +361,8 @@ void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer
         for (; layer1 && layer2; layer1 = layer1->next(), layer2 = layer2->next()) {
             if (!arePointingToEqualData(layer1->image(), layer2->image()))
                 return false;
+            if (layer1->image() && layer1->image()->usesDataProtocol())
+                return false;
         }
 
         return !layer1 && !layer2;

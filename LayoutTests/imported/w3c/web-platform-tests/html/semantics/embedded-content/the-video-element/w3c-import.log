@@ -30,3 +30,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_relative.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_size_preserved_after_ended.html

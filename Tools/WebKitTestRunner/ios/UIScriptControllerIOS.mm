@@ -979,6 +979,16 @@ void UIScriptControllerIOS::setDidHideKeyboardCallback(JSValueRef callback)
     }).get();
 }
 
+void UIScriptControllerIOS::setWillStartInputSessionCallback(JSValueRef callback)
+{
+    UIScriptController::setWillStartInputSessionCallback(callback);
+    webView().willStartInputSessionCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeWillStartInputSession);
+    }).get();
+}
+
 void UIScriptControllerIOS::chooseMenuAction(JSStringRef jsAction, JSValueRef callback)
 {
     auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
@@ -1270,6 +1280,16 @@ void UIScriptControllerIOS::installTapGestureOnWindow(JSValueRef callback)
             return;
         m_context->fireCallback(CallbackTypeWindowTapRecognized);
     }).get();
+}
+
+bool UIScriptControllerIOS::suppressSoftwareKeyboard() const
+{
+    return webView()._suppressSoftwareKeyboard;
+}
+
+void UIScriptControllerIOS::setSuppressSoftwareKeyboard(bool suppressSoftwareKeyboard)
+{
+    webView()._suppressSoftwareKeyboard = suppressSoftwareKeyboard;
 }
 
 }

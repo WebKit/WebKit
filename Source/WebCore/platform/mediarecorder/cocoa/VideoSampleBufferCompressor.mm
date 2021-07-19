@@ -158,6 +158,8 @@ bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptio
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_RealTime failed with %d", error);
     error = setCompressionSessionProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, m_maxKeyFrameIntervalDuration);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration failed with %d", error);
+    error = setCompressionSessionProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_MaxKeyFrameInterval, m_maxKeyFrameIntervalDuration * m_expectedFrameRate);
+    RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_MaxKeyFrameInterval failed with %d", error);
     error = setCompressionSessionProperty(m_vtSession.get(), PAL::kVTCompressionPropertyKey_ExpectedFrameRate, m_expectedFrameRate);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ExpectedFrameRate failed with %d", error);
 

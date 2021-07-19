@@ -265,6 +265,10 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setCacheStorageDirectory(resolvePathForSandboxExtension(m_configuration->cacheStorageDirectory()));
     if (!m_configuration->hstsStorageDirectory().isEmpty() && m_resolvedConfiguration->hstsStorageDirectory().isEmpty())
         m_resolvedConfiguration->setHSTSStorageDirectory(resolvePathForSandboxExtension(m_configuration->hstsStorageDirectory()));
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    if (!m_configuration->modelElementCacheDirectory().isEmpty())
+        m_resolvedConfiguration->setModelElementCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->modelElementCacheDirectory()));
+#endif
 
     // Resolve directories for file paths.
     if (!m_configuration->cookieStorageFile().isEmpty()) {
@@ -1284,7 +1288,7 @@ void WebsiteDataStore::getResourceLoadStatisticsDataSummary(CompletionHandler<vo
         });
     });
     
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->sendResourceLoadStatisticsDataImmediately([wtfCallbackAggregator] { });
 }
 
@@ -1625,7 +1629,7 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools(size_t limit) con
     if (processPools.isEmpty()) {
         // Check if we're one of the legacy data stores.
         for (auto& processPool : WebProcessPool::allProcessPools()) {
-            processPools.add(processPool);
+            processPools.add(processPool.ptr());
             if (processPools.size() == limit)
                 break;
         }
@@ -1907,7 +1911,7 @@ uint64_t WebsiteDataStore::perThirdPartyOriginStorageQuota() const
 
 void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
 {
-    for (auto processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setCacheModelSynchronouslyForTesting(cacheModel);
 }
 

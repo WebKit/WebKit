@@ -1,0 +1,3 @@
+
+FAIL Test pixels on CanvasFilter() componentTransfer with table type Can't find variable: CanvasFilter
+

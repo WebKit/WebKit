@@ -1,0 +1,13 @@
+
+PASS Throws RangeError when responseInit's status is 0
+PASS Throws RangeError when responseInit's status is 100
+PASS Throws RangeError when responseInit's status is 199
+PASS Throws RangeError when responseInit's status is 600
+PASS Throws RangeError when responseInit's status is 1000
+PASS Throws TypeError when responseInit's statusText is
+
+PASS Throws TypeError when responseInit's statusText is Ā
+PASS Throws TypeError when building a response with body and a body status of 204
+PASS Throws TypeError when building a response with body and a body status of 205
+PASS Throws TypeError when building a response with body and a body status of 304
+

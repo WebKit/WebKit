@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "HTMLDialogElement.h"
+#include "EventNames.h"
+#include "EventSender.h"
 
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -35,9 +37,20 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
 
+static DialogEventSender& dialogCloseEventSender()
+{
+    static NeverDestroyed<DialogEventSender> sharedCloseEventSender(eventNames().closeEvent);
+    return sharedCloseEventSender;
+}
+
 HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
+}
+
+HTMLDialogElement::~HTMLDialogElement()
+{
+    dialogCloseEventSender().cancelEvent(*this);
 }
 
 bool HTMLDialogElement::isOpen() const
@@ -61,7 +74,7 @@ void HTMLDialogElement::show()
     if (isOpen())
         return;
     
-    toggleOpen();
+    setOpen(true);
 }
 
 ExceptionOr<void> HTMLDialogElement::showModal()
@@ -74,7 +87,9 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (!isConnected())
         return Exception { InvalidStateError };
 
-    toggleOpen();
+    setOpen(true);
+    m_isModal = true;
+
     return { };
 }
 
@@ -83,25 +98,43 @@ void HTMLDialogElement::close(const String& returnValue)
     if (!isOpen())
         return;
     
-    toggleOpen();
+    setOpen(false);
     if (!returnValue.isNull())
         m_returnValue = returnValue;
+}
+
+void HTMLDialogElement::dispatchPendingEvent(DialogEventSender* eventSender)
+{
+    ASSERT_UNUSED(eventSender, eventSender == &dialogCloseEventSender());
+    dispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == HTMLNames::openAttr) {
+        bool oldValue = m_isOpen;
         m_isOpen = !value.isNull();
+
+        // Emit close event
+        if (oldValue != m_isOpen && !m_isOpen) {
+            m_isModal = false;
+            dialogCloseEventSender().cancelEvent(*this);
+            dialogCloseEventSender().dispatchEventSoon(*this);
+        }
         return;
     }
     
     HTMLElement::parseAttribute(name, value);
 }
 
-void HTMLDialogElement::toggleOpen()
+void HTMLDialogElement::setOpen(bool value)
 {
-    m_isOpen = !m_isOpen;
-    setAttributeWithoutSynchronization(HTMLNames::openAttr, m_isOpen ? emptyAtom() : nullAtom());
+    setAttributeWithoutSynchronization(HTMLNames::openAttr, value ? emptyAtom() : nullAtom());
+}
+
+bool HTMLDialogElement::isModal() const
+{
+    return m_isModal;
 }
 
 }

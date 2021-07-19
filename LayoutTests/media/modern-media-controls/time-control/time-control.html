@@ -5,15 +5,15 @@
 
 description("Testing the <code>TimeControl</code> class.");
 
-const timeControl = new TimeControl;
+const timeControl = new TimeControl({ layoutTraits: new IOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBeEqualToString("timeControl.element.localName", "div");
 shouldBeEqualToString("timeControl.element.className", "time-control");
 
 debug("");
-shouldBeTrue("timeControl.elapsedTimeLabel instanceof TimeLabel");
-shouldBeTrue("timeControl.scrubber instanceof Slider");
-shouldBeTrue("timeControl.remainingTimeLabel instanceof TimeLabel");
+shouldBeType("timeControl.elapsedTimeLabel", "TimeLabel");
+shouldBeType("timeControl.scrubber", "Slider");
+shouldBeType("timeControl.remainingTimeLabel", "TimeLabel");
 
 debug("");
 debug("timeControl.width = 500;");

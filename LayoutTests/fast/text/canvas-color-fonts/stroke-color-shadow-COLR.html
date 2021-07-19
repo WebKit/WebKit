@@ -20,6 +20,7 @@ document.fonts.load(font).then(function() {
     let canvas = document.getElementById("canvas");
     let context = canvas.getContext("2d");
     context.font = font;
+    context.lineWidth = 2;
     context.strokeStyle = "white";
     context.shadowColor = "green";
     context.shadowOffsetX = 100;

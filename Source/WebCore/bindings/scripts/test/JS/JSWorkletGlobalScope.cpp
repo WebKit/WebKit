@@ -53,20 +53,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsWorkletGlobalScope_WorkletGlobalScopeConstruc
 
 using JSWorkletGlobalScopeDOMConstructor = JSDOMConstructorNotConstructable<JSWorkletGlobalScope>;
 
-/* Hash table */
-
-static const struct CompactHashIndex JSWorkletGlobalScopeTableIndex[2] = {
-    { 0, -1 },
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSWorkletGlobalScopeTableValues[] =
-{
-    { "WorkletGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkletGlobalScope_WorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-};
-
-static const HashTable JSWorkletGlobalScopeTable = { 1, 1, true, JSWorkletGlobalScope::info(), JSWorkletGlobalScopeTableValues, JSWorkletGlobalScopeTableIndex };
+template<> const unsigned JSWorkletGlobalScopeDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSWorkletGlobalScopeDOMConstructor::s_info = { "WorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeDOMConstructor) };
 
 template<> JSValue JSWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -81,7 +68,7 @@ template<> void JSWorkletGlobalScopeDOMConstructor::initializeProperties(VM& vm,
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
 
 static const struct CompactHashIndex JSWorkletGlobalScopePrototypeTableIndex[2] = {
     { -1, -1 },
@@ -104,7 +91,21 @@ void JSWorkletGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSWorkletGlobalScope::s_info = { "WorkletGlobalScope", &Base::s_info, &JSWorkletGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScope) };
+/* Hash table for Instance */
+
+static const struct CompactHashIndex JSWorkletGlobalScopeInstanceTableIndex[2] = {
+    { 0, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSWorkletGlobalScopeInstanceTableValues[] =
+{
+    { "WorkletGlobalScope", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsWorkletGlobalScope_WorkletGlobalScopeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+};
+
+static const HashTable JSWorkletGlobalScopeInstanceTable = { 1, 1, true, JSWorkletGlobalScope::info(), JSWorkletGlobalScopeInstanceTableValues, JSWorkletGlobalScopeInstanceTableIndex };
+const ClassInfo JSWorkletGlobalScope::s_info = { "WorkletGlobalScope", &Base::s_info, &JSWorkletGlobalScopeInstanceTable, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScope) };
 
 JSWorkletGlobalScope::JSWorkletGlobalScope(VM& vm, Structure* structure, Ref<WorkletGlobalScope>&& impl)
     : JSEventTarget(vm, structure, WTFMove(impl))

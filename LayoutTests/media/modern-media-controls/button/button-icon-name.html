@@ -23,7 +23,7 @@ shouldBeEqualToString("button.iconName", "");
 
 debug("");
 debug("Setting macOS inline layout traits and setting play icon");
-layoutDelegate.layoutTraits = LayoutTraits.macOS;
+layoutDelegate.layoutTraits = new MacOSLayoutTraits(LayoutTraits.Mode.Inline);
 button.iconName = Icons.Pause;
 
 shouldBecomeEqual('button.image.element.style.webkitMaskImage.includes("macOS/Pause.svg")', "true", () => {

@@ -60,7 +60,7 @@ auto SectionParser::parseType() -> PartialResult
 
         for (unsigned i = 0; i < argumentCount; ++i) {
             Type argumentType;
-            WASM_PARSER_FAIL_IF(!parseValueType(argumentType), "can't get ", i, "th argument Type");
+            WASM_PARSER_FAIL_IF(!parseValueType(m_info, argumentType), "can't get ", i, "th argument Type");
             arguments.append(argumentType);
         }
 
@@ -72,7 +72,7 @@ auto SectionParser::parseType() -> PartialResult
         WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th signature");
         for (unsigned i = 0; i < returnCount; ++i) {
             Type value;
-            WASM_PARSER_FAIL_IF(!parseValueType(value), "can't get ", i, "th Type's return value");
+            WASM_PARSER_FAIL_IF(!parseValueType(m_info, value), "can't get ", i, "th Type's return value");
             returnTypes.append(value);
         }
 
@@ -483,7 +483,7 @@ auto SectionParser::parseElement() -> PartialResult
         case 0x05: {
             WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             Type refType;
-            WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
+            WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
             WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
@@ -507,7 +507,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             Type refType;
-            WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
+            WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
             WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
@@ -525,7 +525,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
 
             Type refType;
-            WASM_PARSER_FAIL_IF(!parseRefType(refType), "can't parse reftype in elem section");
+            WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
             WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
 
             uint32_t indexCount;
@@ -605,7 +605,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
 
     case RefNull: {
         Type typeOfNull;
-        WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a reference type");
+        WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type");
         resultType = typeOfNull;
         bitsOrImportNumber = JSValue::encode(jsNull());
         break;
@@ -616,7 +616,12 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ref.func index");
         WASM_PARSER_FAIL_IF(index >= m_info->functions.size(), "ref.func index", index, " exceeds the number of functions ", m_info->functions.size());
 
-        resultType = Types::Funcref;
+        if (Options::useWebAssemblyTypedFunctionReferences()) {
+            SignatureIndex signatureIndex = m_info->signatureIndexFromFunctionIndexSpace(index);
+            resultType = { TypeKind::TypeIdx, Nullable::No, signatureIndex };
+        } else
+            resultType = Types::Funcref;
+
         bitsOrImportNumber = index;
         break;
     }
@@ -691,7 +696,7 @@ auto SectionParser::parseElementSegmentVectorOfExpressions(Vector<uint32_t>& res
             m_info->addDeclaredFunction(functionIndex);
         } else {
             Type typeOfNull;
-            WASM_PARSER_FAIL_IF(!parseRefType(typeOfNull), "ref.null type must be a func type in elem section");
+            WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a func type in elem section");
             WASM_PARSER_FAIL_IF(!typeOfNull.isFuncref(), "ref.null extern is forbidden in element section's, ", elementNum, "th element's ", index, "th index");
             functionIndex = Element::nullFuncIndex;
         }
@@ -727,7 +732,7 @@ auto SectionParser::parseI32InitExprForDataSection(std::optional<I32InitExpr>& i
 auto SectionParser::parseGlobalType(GlobalInformation& global) -> PartialResult
 {
     uint8_t mutability;
-    WASM_PARSER_FAIL_IF(!parseValueType(global.type), "can't get Global's value type");
+    WASM_PARSER_FAIL_IF(!parseValueType(m_info, global.type), "can't get Global's value type");
     WASM_PARSER_FAIL_IF(!parseUInt8(mutability), "can't get Global type's mutability");
     WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Global's mutability: 0x", hex(mutability, 2, Lowercase));
     global.mutability = static_cast<GlobalInformation::Mutability>(mutability);

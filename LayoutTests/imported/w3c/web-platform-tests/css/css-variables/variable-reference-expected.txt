@@ -7,10 +7,10 @@ PASS width: var(--prop, blue);
 PASS width: var(--prop1, var(--prop2));
 PASS width: var(--prop1, var(--prop2, var(--prop3, auto)));
 PASS width: var(--prop1) var(--prop2)
+PASS width: var(--prop,);
 PASS width: var();
 PASS width: var(prop);
 PASS width: var(-prop);
-PASS width: var(--prop,);
 PASS width: var(--prop 20px);
 PASS width: var(--prop, var(prop));
 PASS width: var(--prop, var(-prop));

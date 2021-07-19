@@ -68,7 +68,7 @@ static bool resolveVariableFallback(CSSParserTokenRange range, Vector<CSSParserT
     if (range.atEnd())
         return false;
     ASSERT(range.peek().type() == CommaToken);
-    range.consume();
+    range.consumeIncludingWhitespace();
     return resolveTokenRange(range, result, builderState);
 }
 

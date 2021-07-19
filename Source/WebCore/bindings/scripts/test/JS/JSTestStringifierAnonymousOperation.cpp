@@ -83,11 +83,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierAnonymousOperationPrototype, JSTestStringifierAnonymousOperationPrototype::Base);
 
 using JSTestStringifierAnonymousOperationDOMConstructor = JSDOMConstructorNotConstructable<JSTestStringifierAnonymousOperation>;
 
+template<> const unsigned JSTestStringifierAnonymousOperationDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestStringifierAnonymousOperationDOMConstructor::s_info = { "TestStringifierAnonymousOperation", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierAnonymousOperationDOMConstructor) };
 
 template<> JSValue JSTestStringifierAnonymousOperationDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -103,7 +106,15 @@ template<> void JSTestStringifierAnonymousOperationDOMConstructor::initializePro
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestStringifierAnonymousOperationPrototypeTableIndex[4] = {
+    { 1, -1 },
+    { 0, -1 },
+    { -1, -1 },
+    { -1, -1 },
+};
+
 
 static const HashTableValue JSTestStringifierAnonymousOperationPrototypeTableValues[] =
 {
@@ -111,7 +122,8 @@ static const HashTableValue JSTestStringifierAnonymousOperationPrototypeTableVal
     { "toString", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestStringifierAnonymousOperationPrototypeFunction_toString), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestStringifierAnonymousOperationPrototype::s_info = { "TestStringifierAnonymousOperation", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestStringifierAnonymousOperationPrototype) };
+static const HashTable JSTestStringifierAnonymousOperationPrototypeTable = { 2, 3, true, JSTestStringifierAnonymousOperation::info(), JSTestStringifierAnonymousOperationPrototypeTableValues, JSTestStringifierAnonymousOperationPrototypeTableIndex };
+const ClassInfo JSTestStringifierAnonymousOperationPrototype::s_info = { "TestStringifierAnonymousOperation", &Base::s_info, &JSTestStringifierAnonymousOperationPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestStringifierAnonymousOperationPrototype) };
 
 void JSTestStringifierAnonymousOperationPrototype::finishCreation(VM& vm)
 {

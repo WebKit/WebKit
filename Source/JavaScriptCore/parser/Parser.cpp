@@ -214,6 +214,11 @@ void JSToken::dump(PrintStream& out) const
     out.print(*m_data.cooked);
 }
 
+static ALWAYS_INLINE bool isPrivateFieldName(UniquedStringImpl* uid)
+{
+    return uid->length() && uid->at(0) == '#';
+}
+
 template <typename LexerType>
 Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>::parseInner(const Identifier& calleeName, ParsingContext parsingContext, std::optional<int> functionConstructorParametersEndPosition, const FixedVector<JSTextPosition>* classFieldLocations, const PrivateNameEnvironment* parentScopePrivateNames)
 {
@@ -291,8 +296,21 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
     if (!sourceElements || !validEnding)
         return makeUnexpected(hasError() ? m_errorMessage : "Parser error"_s);
 
-    if (hasPrivateNames && scope->hasUsedButUndeclaredPrivateNames())
-        return makeUnexpected("Cannot reference undeclared private names");
+    if (Options::usePrivateClassFields() && !m_lexer->isReparsingFunction() && m_seenPrivateNameUseInNonReparsingFunctionMode) {
+        String errorMessage;
+        scope->forEachUsedVariable([&] (UniquedStringImpl* impl) {
+            if (!isPrivateFieldName(impl))
+                return IterationStatus::Continue;
+            if (parentScopePrivateNames && parentScopePrivateNames->contains(impl))
+                return IterationStatus::Continue;
+            if (scope->lexicalVariables().contains(impl))
+                return IterationStatus::Continue;
+            errorMessage = makeString("Cannot reference undeclared private names: \"", String(impl), "\"");
+            return IterationStatus::Done;
+        });
+        if (!errorMessage.isNull())
+            return makeUnexpected(errorMessage);
+    }
 
     IdentifierSet capturedVariables;
     UniquedStringImplPtrSet sloppyModeHoistedFunctions;
@@ -302,6 +320,7 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
     VariableEnvironment& varDeclarations = scope->declaredVariables();
     for (auto& entry : capturedVariables)
         varDeclarations.markVariableAsCaptured(entry);
+    scope->finalizeLexicalEnvironment();
 
     if (isGeneratorWrapperParseMode(parseMode) || isAsyncFunctionOrAsyncGeneratorWrapperParseMode(parseMode)) {
         if (scope->usedVariablesContains(m_vm.propertyNames->arguments.impl()))
@@ -311,7 +330,7 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
     CodeFeatures features = context.features();
     if (scope->shadowsArguments())
         features |= ShadowsArgumentsFeature;
-    if (m_seenTaggedTemplate)
+    if (m_seenTaggedTemplateInNonReparsingFunctionMode)
         features |= NoEvalCacheFeature;
     if (scope->hasNonSimpleParameterList())
         features |= NonSimpleParameterListFeature;
@@ -331,7 +350,7 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
     }
 #endif // ASSERT_ENABLED
 
-    return ParseInnerResult { parameters, sourceElements, scope->takeFunctionDeclarations(), WTFMove(varDeclarations), WTFMove(sloppyModeHoistedFunctions), features, context.numConstants() };
+    return ParseInnerResult { parameters, sourceElements, scope->takeFunctionDeclarations(), scope->takeDeclaredVariables(), scope->takeLexicalEnvironment(), WTFMove(sloppyModeHoistedFunctions), features, context.numConstants() };
 }
 
 template <typename LexerType>
@@ -1384,21 +1403,14 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     bool isConstDeclaration = match(CONSTTOKEN);
     bool forLoopConstDoesNotHaveInitializer = false;
 
-    VariableEnvironment dummySet;
-    VariableEnvironment* lexicalVariables = nullptr;
     AutoCleanupLexicalScope lexicalScope;
 
-    auto gatherLexicalVariablesIfNecessary = [&] {
+    auto popLexicalScopeIfNecessary = [&]() -> VariableEnvironment {
         if (isLetDeclaration || isConstDeclaration) {
-            ScopeRef scope = lexicalScope.scope();
-            lexicalVariables = &scope->finalizeLexicalEnvironment();
-        } else
-            lexicalVariables = &dummySet;
-    };
-
-    auto popLexicalScopeIfNecessary = [&] {
-        if (isLetDeclaration || isConstDeclaration)
-            popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
+            auto [lexicalVariables, functionDeclarations] = popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
+            return lexicalVariables;
+        }
+        return { };
     };
 
     if (isVarDeclaration || isLetDeclaration || isConstDeclaration) {
@@ -1477,19 +1489,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
         failIfFalse(statement, "Expected statement as body of for-", isOfEnumeration ? "of" : "in", " statement");
-        gatherLexicalVariablesIfNecessary();
-        TreeStatement result;
+        VariableEnvironment lexicalVariables = popLexicalScopeIfNecessary();
         if (isOfEnumeration)
-            result = context.createForOfLoop(isAwaitFor, location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
-        else {
-            ASSERT(!isAwaitFor);
-            if (isVarDeclaration && forInInitializer)
-                result = context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
-            else
-                result = context.createForInLoop(location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
-        }
-        popLexicalScopeIfNecessary();
-        return result;
+            return context.createForOfLoop(isAwaitFor, location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+        ASSERT(!isAwaitFor);
+        if (isVarDeclaration && forInInitializer)
+            return context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+        return context.createForInLoop(location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
     }
     
     if (!match(SEMICOLON)) {
@@ -1542,10 +1548,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
         failIfFalse(statement, "Expected a statement as the body of a for loop");
-        gatherLexicalVariablesIfNecessary();
-        TreeStatement result = context.createForLoop(location, decls, condition, increment, statement, startLine, endLine, *lexicalVariables);
-        popLexicalScopeIfNecessary();
-        return result;
+        VariableEnvironment lexicalVariables = popLexicalScopeIfNecessary();
+        return context.createForLoop(location, decls, condition, increment, statement, startLine, endLine, WTFMove(lexicalVariables));
     }
     
     // For-in and For-of loop
@@ -1579,30 +1583,22 @@ enumerationLoop:
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
     failIfFalse(statement, "Expected a statement as the body of a for-", isOfEnumeration ? "of" : "in", "loop");
-    gatherLexicalVariablesIfNecessary();
-    TreeStatement result;
     if (pattern) {
         ASSERT(!decls);
+        VariableEnvironment lexicalVariables = popLexicalScopeIfNecessary();
         if (isOfEnumeration)
-            result = context.createForOfLoop(isAwaitFor, location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
-        else {
-            ASSERT(!isAwaitFor);
-            result = context.createForInLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
-        }
-
-        popLexicalScopeIfNecessary();
-        return result;
+            return context.createForOfLoop(isAwaitFor, location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+        ASSERT(!isAwaitFor);
+        return context.createForInLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
     }
 
     semanticFailIfFalse(isSimpleAssignmentTarget(context, decls), "Left side of assignment is not a reference");
+
+    VariableEnvironment lexicalVariables = popLexicalScopeIfNecessary();
     if (isOfEnumeration)
-        result = context.createForOfLoop(isAwaitFor, location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
-    else {
-        ASSERT(!isAwaitFor);
-        result = context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
-    }
-    popLexicalScopeIfNecessary();
-    return result;
+        return context.createForOfLoop(isAwaitFor, location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
+    ASSERT(!isAwaitFor);
+    return context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, WTFMove(lexicalVariables));
 }
 
 template <typename LexerType>
@@ -1751,9 +1747,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseSwitchStateme
     endSwitch();
     handleProductionOrFail(CLOSEBRACE, "}", "end", "body of a 'switch'");
     
-    TreeStatement result = context.createSwitchStatement(location, expr, firstClauses, defaultClause, secondClauses, startLine, endLine, lexicalScope->finalizeLexicalEnvironment(), lexicalScope->takeFunctionDeclarations());
-    popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
-    return result;
+    auto [lexicalEnvironment, functionDeclarations] = popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
+    return context.createSwitchStatement(location, expr, firstClauses, defaultClause, secondClauses, startLine, endLine, WTFMove(lexicalEnvironment), WTFMove(functionDeclarations));
 }
 
 template <typename LexerType>
@@ -1820,6 +1815,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     failIfFalse(tryBlock, "Cannot parse the body of try block");
     int lastLine = m_lastTokenEndPosition.line;
     VariableEnvironment catchEnvironment; 
+    DeclarationStacks::FunctionStack functionStack;
     if (match(CATCH)) {
         next();
         
@@ -1849,9 +1845,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
             constexpr bool isCatchBlock = true;
             catchBlock = parseBlockStatement(context, isCatchBlock);
             failIfFalse(catchBlock, "Unable to parse 'catch' block");
-            catchEnvironment = catchScope->finalizeLexicalEnvironment();
+            std::tie(catchEnvironment, functionStack) = popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
+            ASSERT(functionStack.isEmpty());
             RELEASE_ASSERT(!ident || (catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl())));
-            popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
         }
     }
     
@@ -1862,7 +1858,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         failIfFalse(finallyBlock, "Cannot parse finally body");
     }
     failIfFalse(catchBlock || finallyBlock, "Try statements must have at least a catch or finally block");
-    return context.createTryStatement(location, tryBlock, catchPattern, catchBlock, finallyBlock, firstLine, lastLine, catchEnvironment);
+    return context.createTryStatement(location, tryBlock, catchPattern, catchBlock, finallyBlock, firstLine, lastLine, WTFMove(catchEnvironment));
 }
 
 template <typename LexerType>
@@ -1899,17 +1895,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
     JSTokenLocation location(tokenLocation());
     int startOffset = m_token.m_data.offset;
     int start = tokenLine();
-    VariableEnvironment emptyEnvironment;
-    DeclarationStacks::FunctionStack emptyFunctionStack;
+    VariableEnvironment lexicalEnvironment;
+    DeclarationStacks::FunctionStack functionStack;
     next();
     if (match(CLOSEBRACE)) {
         int endOffset = m_token.m_data.offset;
         next();
-        TreeStatement result = context.createBlockStatement(location, 0, start, m_lastTokenEndPosition.line, shouldPushLexicalScope ? currentScope()->finalizeLexicalEnvironment() : emptyEnvironment, shouldPushLexicalScope ? currentScope()->takeFunctionDeclarations() : WTFMove(emptyFunctionStack));
+        if (shouldPushLexicalScope)
+            std::tie(lexicalEnvironment, functionStack) = popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
+        TreeStatement result = context.createBlockStatement(location, 0, start, m_lastTokenEndPosition.line, WTFMove(lexicalEnvironment), WTFMove(functionStack));
         context.setStartOffset(result, startOffset);
         context.setEndOffset(result, endOffset);
-        if (shouldPushLexicalScope)
-            popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
         return result;
     }
     TreeSourceElements subtree = parseSourceElements(context, DontCheckForStrictMode);
@@ -1917,12 +1913,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
     matchOrFail(CLOSEBRACE, "Expected a closing '}' at the end of a block statement");
     int endOffset = m_token.m_data.offset;
     next();
-    TreeStatement result = context.createBlockStatement(location, subtree, start, m_lastTokenEndPosition.line, shouldPushLexicalScope ? currentScope()->finalizeLexicalEnvironment() : emptyEnvironment, shouldPushLexicalScope ? currentScope()->takeFunctionDeclarations() : WTFMove(emptyFunctionStack));
+    if (shouldPushLexicalScope)
+        std::tie(lexicalEnvironment, functionStack) = popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
+    TreeStatement result = context.createBlockStatement(location, subtree, start, m_lastTokenEndPosition.line, WTFMove(lexicalEnvironment), WTFMove(functionStack));
     context.setStartOffset(result, startOffset);
     context.setEndOffset(result, endOffset);
-    if (shouldPushLexicalScope)
-        popScope(lexicalScope, TreeBuilder::NeedsFreeVariableInfo);
-
     return result;
 }
 
@@ -2095,9 +2090,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     failIfFalse(function, "Expected valid function statement after 'function' keyword");
     TreeSourceElements sourceElements = context.createSourceElements();
     context.appendStatement(sourceElements, function);
-    TreeStatement result = context.createBlockStatement(location, sourceElements, start, m_lastTokenEndPosition.line, currentScope()->finalizeLexicalEnvironment(), currentScope()->takeFunctionDeclarations());
-    popScope(blockScope, TreeBuilder::NeedsFreeVariableInfo);
-    return result;
+    auto [lexicalEnvironment, functionDeclarations] = popScope(blockScope, TreeBuilder::NeedsFreeVariableInfo);
+    return context.createBlockStatement(location, sourceElements, start, m_lastTokenEndPosition.line, WTFMove(lexicalEnvironment), WTFMove(functionDeclarations));
 }
 
 template <typename LexerType>
@@ -2606,6 +2600,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
             if (TreeBuilder::NeedsFreeVariableInfo)
                 parentScope->addClosedVariableCandidateUnconditionally(impl);
         }
+        return IterationStatus::Continue;
     });
 
     auto performParsingFunctionBody = [&] {
@@ -2890,14 +2885,25 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     info.startColumn = tokenColumn();
     info.startOffset = location.startOffset;
 
-    AutoPopScopeRef classScope(this, pushScope());
-    classScope->setIsLexicalScope();
-    classScope->preventVarDeclarations();
-    classScope->setStrictMode();
-    bool declaresPrivateMethod = false;
-    bool declaresPrivateAccessor = false;
-    bool declaresStaticPrivateMethod = false;
-    bool declaresStaticPrivateAccessor = false;
+    // We have a subtle problem here. Class heritage evaluation should find class declaration's constructor name, but should not find private name evaluation.
+    // For example,
+    //
+    //     class A extends (
+    //         class {
+    //             constructor() {
+    //                 print(A); // This is OK.
+    //                 print(A.#test); // This is SyntaxError.
+    //             }
+    //         }) {
+    //         static #test = 42;
+    //     }
+    //
+    // We need to create two scopes here since private name lookup will traverse scope at linking time in CodeBlock.
+    // This classHeadScope is similar to functionScope in FunctionExpression with name.
+    AutoPopScopeRef classHeadScope(this, pushScope());
+    classHeadScope->setIsLexicalScope();
+    classHeadScope->preventVarDeclarations();
+    classHeadScope->setStrictMode();
     next();
 
     ASSERT_WITH_MESSAGE(requirements != FunctionNameRequirements::Unnamed, "Currently, there is no caller that uses FunctionNameRequirements::Unnamed for class syntax.");
@@ -2905,7 +2911,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     if (match(IDENT) || isAllowedIdentifierAwait(m_token)) {
         info.className = m_token.m_data.ident;
         next();
-        failIfTrue(classScope->declareLexicalVariable(info.className, true) & DeclarationResult::InvalidStrictMode, "'", info.className->impl(), "' is not a valid class name");
+        failIfTrue(classHeadScope->declareLexicalVariable(info.className, true) & DeclarationResult::InvalidStrictMode, "'", info.className->impl(), "' is not a valid class name");
     } else if (requirements == FunctionNameRequirements::Named) {
         if (match(OPENBRACE))
             semanticFail("Class statements must have a name");
@@ -2921,11 +2927,21 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         parentClass = parseMemberExpression(context);
         failIfFalse(parentClass, "Cannot parse the parent class name");
     }
-    classScope->setIsClassScope();
     const ConstructorKind constructorKind = parentClass ? ConstructorKind::Extends : ConstructorKind::Base;
 
     JSTextPosition classHeadEnd = lastTokenEndPosition();
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of a class body");
+
+    AutoPopScopeRef classScope(this, pushScope());
+    classScope->setIsLexicalScope();
+    classScope->preventVarDeclarations();
+    classScope->setStrictMode();
+    classScope->setIsClassScope();
+
+    bool declaresPrivateMethod = false;
+    bool declaresPrivateAccessor = false;
+    bool declaresStaticPrivateMethod = false;
+    bool declaresStaticPrivateAccessor = false;
 
     TreeExpression constructor = 0;
     TreePropertyList classElements = 0;
@@ -3168,14 +3184,11 @@ parseMethod:
             classElements->setHasPrivateAccessors(declaresPrivateAccessor || declaresStaticPrivateAccessor);
     }
 
-    if (Options::usePrivateClassFields()) {
-        // Fail if there are no parent private name scopes and any used-but-undeclared private names.
-        semanticFailIfFalse(copyUndeclaredPrivateNamesToOuterScope(), "Cannot reference undeclared private names");
-    }
-
-    auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements, start, divot, classHeadEnd);
-    popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
-    return classExpression;
+    auto [lexicalEnvironment, functionDeclarations] = popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
+    auto [classHeadEnvironment, classHeadFunctionDeclarations] = popScope(classHeadScope, TreeBuilder::NeedsFreeVariableInfo);
+    ASSERT(functionDeclarations.isEmpty());
+    ASSERT(classHeadFunctionDeclarations.isEmpty());
+    return context.createClassExpr(location, info, WTFMove(classHeadEnvironment), WTFMove(lexicalEnvironment), constructor, parentClass, classElements, start, divot, classHeadEnd);
 }
 
 template <typename LexerType>
@@ -4237,8 +4250,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
         if (Options::usePrivateIn() && match(PRIVATENAME)) {
             const Identifier* ident = m_token.m_data.ident;
             ASSERT(ident);
-            semanticFailIfFalse(usePrivateName(ident), "Cannot reference private names outside of class");
-            currentScope()->useVariable(ident, false);
+            currentScope()->usePrivateName(*ident);
+            m_seenPrivateNameUseInNonReparsingFunctionMode = true;
             next();
             semanticFailIfTrue(m_token.m_type != INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
             current = context.createPrivateIdentifierNode(location, *ident);
@@ -5048,22 +5061,6 @@ static inline void recordCallOrApplyDepth(ParserType*, VM&, std::optional<typena
 }
 
 template <typename LexerType>
-bool Parser<LexerType>::usePrivateName(const Identifier* ident)
-{
-    if (m_lexer->isReparsingFunction())
-        return true;
-
-    if (auto maybeCurrent = findPrivateNameScope()) {
-        ScopeRef current = maybeCurrent.value();
-        if (!current->hasPrivateName(*ident))
-            current->usePrivateName(*ident);
-        return true;
-    }
-
-    return false;
-}
-
-template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpression(TreeBuilder& context)
 {
     TreeExpression base = 0;
@@ -5116,16 +5113,15 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         next();
         failIfTrue(match(OPENPAREN) && currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext, "super call is not valid in this context");
         ScopeRef functionScope = currentFunctionScope();
-        if (!functionScope->setNeedsSuperBinding()) {
-            // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
-            // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
-            // inside of the constructor or method.
-            if (!m_lexer->isReparsingFunction()) {
-                SuperBinding functionSuperBinding = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
-                    ? functionScope->expectedSuperBinding()
-                    : closestOrdinaryFunctionScope->expectedSuperBinding();
-                semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded && !isClassFieldInitializer, "super is not valid in this context");
-            }
+        functionScope->setNeedsSuperBinding();
+        // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
+        // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
+        // inside of the constructor or method.
+        if (!m_lexer->isReparsingFunction()) {
+            SuperBinding functionSuperBinding = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
+                ? functionScope->expectedSuperBinding()
+                : closestOrdinaryFunctionScope->expectedSuperBinding();
+            semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded && !isClassFieldInitializer, "super is not valid in this context");
         }
     } else if (baseIsImport) {
         next();
@@ -5234,18 +5230,17 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     failIfFalse(arguments, "Cannot parse call arguments");
                     if (baseIsSuper) {
                         ScopeRef functionScope = currentFunctionScope();
-                        if (!functionScope->setHasDirectSuper()) {
-                            // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
-                            // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
-                            // inside of the constructor or method.
-                            if (!m_lexer->isReparsingFunction()) {
-                                ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
-                                ConstructorKind functionConstructorKind = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
-                                    ? functionScope->constructorKind()
-                                    : closestOrdinaryFunctionScope->constructorKind();
-                                semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "super is not valid in this context");
-                                semanticFailIfTrue(functionConstructorKind != ConstructorKind::Extends, "super is not valid in this context");
-                            }
+                        functionScope->setHasDirectSuper();
+                        // It unnecessary to check of using super during reparsing one more time. Also it can lead to syntax error
+                        // in case of arrow function because during reparsing we don't know whether we currently parse the arrow function
+                        // inside of the constructor or method.
+                        if (!m_lexer->isReparsingFunction()) {
+                            ScopeRef closestOrdinaryFunctionScope = closestParentOrdinaryFunctionNonLexicalScope();
+                            ConstructorKind functionConstructorKind = !functionScope->isArrowFunction() && !closestOrdinaryFunctionScope->isEvalContext()
+                                ? functionScope->constructorKind()
+                                : closestOrdinaryFunctionScope->constructorKind();
+                            semanticFailIfTrue(functionConstructorKind == ConstructorKind::None, "super is not valid in this context");
+                            semanticFailIfTrue(functionConstructorKind != ConstructorKind::Extends, "super is not valid in this context");
                         }
                         if (currentScope()->isArrowFunction())
                             functionScope->setInnerArrowFunctionUsesSuperCall();
@@ -5272,9 +5267,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     failIfTrue(baseIsSuper, "Cannot access private names from super");
                     if (UNLIKELY(currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext))
                         semanticFailIfFalse(currentScope()->hasPrivateName(*ident), "Cannot reference undeclared private field '", ident->impl(), "'");
-                    semanticFailIfFalse(usePrivateName(ident), "Cannot reference private names outside of class");
+                    currentScope()->usePrivateName(*ident);
+                    m_seenPrivateNameUseInNonReparsingFunctionMode = true;
                     m_parserState.lastPrivateName = ident;
-                    currentScope()->useVariable(ident, false);
                     type = DotType::PrivateMember;
                     m_token.m_type = IDENT;
                 }
@@ -5294,7 +5289,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 failIfFalse(templateLiteral, "Cannot parse template literal");
                 base = context.createTaggedTemplate(startLocation, base, templateLiteral, expressionStart, expressionEnd, lastTokenEndPosition());
                 m_parserState.nonLHSCount = nonLHSCount;
-                m_seenTaggedTemplate = true;
+                m_seenTaggedTemplateInNonReparsingFunctionMode = true;
                 break;
             }
             default:

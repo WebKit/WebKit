@@ -7,7 +7,7 @@ PASS mediaControls.element.localName is "div"
 PASS mediaControls.element.classList.contains('media-controls') is true
 PASS mediaControls.element.classList.contains('inline') is true
 PASS mediaControls.element.classList.contains('ios') is true
-PASS mediaControls.layoutTraits is LayoutTraits.iOS
+PASS mediaControls.layoutTraits is an instance of IOSLayoutTraits
 PASS accessibilityController.accessibleElementById('groupping-label').description is "AXLabel: Video Controls"
 PASS accessibilityController.accessibleElementById('groupping-label').description is "AXLabel: Audio Controls"
 

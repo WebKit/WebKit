@@ -52,6 +52,10 @@
 #include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
 #endif
 
+#if USE(AVFOUNDATION)
+#import <wtf/MachSendRight.h>
+#endif
+
 #if ENABLE(APPLE_PAY)
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>

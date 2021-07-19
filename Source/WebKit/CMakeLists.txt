@@ -147,9 +147,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteSourceBufferProxy
 
     GPUProcess/webrtc/LibWebRTCCodecsProxy
-    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRenderer
     GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager
-    GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager
     GPUProcess/webrtc/RemoteMediaRecorder
     GPUProcess/webrtc/RemoteMediaRecorderManager
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayer

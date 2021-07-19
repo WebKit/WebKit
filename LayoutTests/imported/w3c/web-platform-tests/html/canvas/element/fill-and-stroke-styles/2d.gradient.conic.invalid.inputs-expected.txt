@@ -1,0 +1,6 @@
+2d.gradient.conic.invalid.inputs
+Conic gradient function with invalid inputs
+Actual output:
+
+PASS Conic gradient function with invalid inputs
+

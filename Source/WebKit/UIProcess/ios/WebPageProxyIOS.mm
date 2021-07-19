@@ -49,6 +49,7 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "ShareableResource.h"
+#import "TapHandlingResult.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
 #import "UserInterfaceIdiom.h"
@@ -1009,10 +1010,10 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     m_uiClient->didNotHandleTapAsClick(point);
 }
 
-void WebPageProxy::didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint& point)
+void WebPageProxy::didTapAtPoint(const WebCore::IntPoint& point, TapHandlingResult result)
 {
-    pageClient().didNotHandleTapAsMeaningfulClickAtPoint(point);
-    m_uiClient->didNotHandleTapAsMeaningfulClickAtPoint(point);
+    pageClient().didTapAtPoint(point, result);
+    m_uiClient->didTapAtPoint(point, result);
 }
     
 void WebPageProxy::didCompleteSyntheticClick()

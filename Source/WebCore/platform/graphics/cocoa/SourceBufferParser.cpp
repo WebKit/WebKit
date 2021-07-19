@@ -55,6 +55,24 @@ RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type, b
     return nullptr;
 }
 
+static SourceBufferParser::CallOnClientThreadCallback callOnMainThreadCallback()
+{
+    return [](Function<void()>&& function) {
+        callOnMainThread(WTFMove(function));
+    };
+}
+
+void SourceBufferParser::setCallOnClientThreadCallback(CallOnClientThreadCallback&& callback)
+{
+    ASSERT(callback);
+    m_callOnClientThreadCallback = WTFMove(callback);
+}
+
+SourceBufferParser::SourceBufferParser()
+    : m_callOnClientThreadCallback(callOnMainThreadCallback())
+{
+}
+
 void SourceBufferParser::setMinimumAudioSampleDuration(float)
 {
 }

@@ -43,7 +43,7 @@ class MediaController
         this._usesLTRUserInterfaceLayoutDirection = false;
 
         if (host) {
-            host.controlsDependOnPageScaleFactor = this.layoutTraits & LayoutTraits.iOS;
+            host.controlsDependOnPageScaleFactor = this.layoutTraits.controlsDependOnPageScaleFactor();
             this.container.insertBefore(host.textTrackContainer, this.controls.element);
             if (host.isInMediaDocument)
                 this.mediaDocumentController = new MediaDocumentController(this);
@@ -96,27 +96,16 @@ class MediaController
 
     get layoutTraits()
     {
-        let traits = LayoutTraits.Unknown;
-
-        switch (this.host?.platform) {
-        case "macos":
-        case "maccatalyst":
-        default: // For when `this.host` is not defined.
-            traits = LayoutTraits.macOS;
-            break;
-
-        case "ios":
-            traits = LayoutTraits.iOS;
-            break;
-
-        case "watchos":
-            traits = LayoutTraits.watchOS;
-            break;
+        let mode = this.isFullscreen ? LayoutTraits.Mode.Fullscreen : LayoutTraits.Mode.Inline;
+    
+        if (this.host) {
+            let LayoutTraitsClass = eval(this.host.layoutTraitsClassName);
+            return new LayoutTraitsClass(mode);
         }
-
-        if (this.isFullscreen)
-            return traits | LayoutTraits.Fullscreen;
-        return traits;
+        
+        // Default for when host is not defined.
+        // FIXME: Always require a host and add a JS implemented TestMediaControlsHost for unit tests.
+        return new MacOSLayoutTraits(mode);
     }
 
     togglePlayback()
@@ -220,8 +209,9 @@ class MediaController
 
     _supportingObjectClasses()
     {
-        if (this.layoutTraits & LayoutTraits.watchOS)
-            return [WatchOSMediaControlsSupport];
+        let overridenSupportingObjectClasses = this.layoutTraits.overridenSupportingObjectClasses();
+        if (overridenSupportingObjectClasses)
+            return overridenSupportingObjectClasses;
 
         return [AirplaySupport, AudioSupport, ControlsVisibilitySupport, FullscreenSupport, MuteSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport, VolumeSupport];
     }
@@ -230,7 +220,7 @@ class MediaController
     {
         const layoutTraits = this.layoutTraits;
         const previousControls = this.controls;
-        const ControlsClass = this._controlsClassForLayoutTraits(layoutTraits);
+        const ControlsClass = layoutTraits.mediaControlsClass();
         if (previousControls && previousControls.constructor === ControlsClass) {
             this._updateTextTracksClassList();
             this._updateControlsSize();
@@ -316,24 +306,12 @@ class MediaController
         this.controls.shouldCenterControlsVertically = this.isAudio;
     }
 
-    _controlsClassForLayoutTraits(layoutTraits)
-    {
-        if (layoutTraits & LayoutTraits.watchOS)
-            return WatchOSMediaControls;
-        if (layoutTraits & LayoutTraits.iOS)
-            return IOSInlineMediaControls;
-        if (layoutTraits & LayoutTraits.Fullscreen)
-            return MacOSFullscreenMediaControls;
-        return MacOSInlineMediaControls;
-    }
-
     _updateTextTracksClassList()
     {
         if (!this.host)
             return;
 
-        const layoutTraits = this.layoutTraits;
-        if (layoutTraits & LayoutTraits.Fullscreen)
+        if (this.layoutTraits.isFullscreen)
             return;
 
         this.host.textTrackContainer.classList.toggle("visible-controls-bar", !this.controls.faded);
@@ -349,13 +327,11 @@ class MediaController
 
     _shouldControlsBeAvailable()
     {
-        // Controls are always available on watchOS.
-        if (this.layoutTraits & LayoutTraits.watchOS)
+        if (this.layoutTraits.controlsAlwaysAvailable())
             return true;
 
-        // Controls are always available while in fullscreen on macOS, and they are never available when in fullscreen on iOS.
-        if (this.isFullscreen)
-            return !!(this.layoutTraits & LayoutTraits.macOS);
+        if (this.layoutTraits.controlsNeverAvailable())
+            return false;
 
         // Otherwise, for controls to be available, the controls attribute must be present on the media element
         // or the MediaControlsHost must indicate that controls are forced.

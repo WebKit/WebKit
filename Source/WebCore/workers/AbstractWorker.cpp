@@ -49,7 +49,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url, bool shouldBypass
     if (!scriptURL.isValid())
         return Exception { SyntaxError };
 
-    if (!context.securityOrigin()->canRequest(scriptURL))
+    if (!context.securityOrigin()->canRequest(scriptURL) && !scriptURL.protocolIsData())
         return Exception { SecurityError };
 
     ASSERT(context.contentSecurityPolicy());

@@ -208,8 +208,6 @@ public:
     
     void synthesizeAppIsBackground(bool background);
 
-    void setIsHoldingLockedFiles(bool);
-
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
@@ -339,7 +337,6 @@ private:
 #endif
 
     ProcessThrottler m_throttler;
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -347,9 +344,9 @@ private:
 #endif
 
     struct UploadActivity {
-        std::unique_ptr<ProcessAssertion> uiAssertion;
-        std::unique_ptr<ProcessAssertion> networkAssertion;
-        HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> webProcessAssertions;
+        RefPtr<ProcessAssertion> uiAssertion;
+        RefPtr<ProcessAssertion> networkAssertion;
+        HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>> webProcessAssertions;
     };
     std::optional<UploadActivity> m_uploadActivity;
 

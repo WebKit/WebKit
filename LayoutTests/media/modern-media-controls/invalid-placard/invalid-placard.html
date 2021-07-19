@@ -5,7 +5,7 @@
 
 description("Testing the <code>InvalidPlacard</code> class.");
 
-const placard = new InvalidPlacard({ layoutTraits: LayoutTraits.macOS });
+const placard = new InvalidPlacard({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 shouldBe("placard.children[0].children[0].iconName", "Icons.InvalidPlacard");
 shouldBe("placard.children[0].children.length", "1");
 debug("");

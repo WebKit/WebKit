@@ -89,21 +89,6 @@ FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float
 {
 }
 
-// FIXME: We should make this constructor platform-independent.
-FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fontSmoothingMode)
-    : m_fonts(FontCascadeFonts::createForPlatformFont(fontData))
-    , m_enableKerning(computeEnableKerning())
-    , m_requiresShaping(computeRequiresShaping())
-{
-    m_fontDescription.setFontSmoothing(fontSmoothingMode);
-#if PLATFORM(IOS_FAMILY)
-    m_fontDescription.setSpecifiedSize(CTFontGetSize(fontData.font()));
-    m_fontDescription.setComputedSize(CTFontGetSize(fontData.font()));
-    m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitItalic);
-    m_fontDescription.setWeight((CTFontGetSymbolicTraits(fontData.font()) & kCTFontTraitBold) ? boldWeightValue() : normalWeightValue());
-#endif
-}
-
 FontCascade::FontCascade(const FontCascade& other)
     : m_fontDescription(other.m_fontDescription)
     , m_fonts(other.m_fonts)

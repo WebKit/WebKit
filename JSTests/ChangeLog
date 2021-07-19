@@ -1,3 +1,234 @@
+2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize Object.assign and putDirectInternal
+        https://bugs.webkit.org/show_bug.cgi?id=227677
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/object-assign-replace.js: Added.
+        (test):
+        * microbenchmarks/object-assign-transition.js: Added.
+        (test):
+
+2021-07-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Rework runtime enabled properties leveraging PropertyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+
+        Reviewed by Saam Barati.
+
+        * stress/lazy-property-cross-realm.js: Added.
+        * stress/lazy-property-get-cache.js: Added.
+        * stress/lazy-property-gopd.js: Added.
+        * stress/lazy-property-hasownproperty-cache.js: Added.
+        * stress/lazy-property-put-cache.js: Added.
+
+2021-06-30  Saam Barati  <sbarati@apple.com>
+
+        Turn off data ICs by default
+        https://bugs.webkit.org/show_bug.cgi?id=227334
+        <rdar://problem/79802812>
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/deltablue-varargs.js:
+        * microbenchmarks/richards-try-catch.js:
+
+2021-06-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Stop generating default parameter code if class constructor is called without 'new'
+        https://bugs.webkit.org/show_bug.cgi?id=227547
+        rdar://78821453
+
+        Reviewed by Mark Lam.
+
+        * stress/calling-non-callable-constructors.js: Added.
+        (shouldThrow):
+
+2021-06-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Private names should be handled by usedVariables mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=227476
+        rdar://76049469
+
+        Reviewed by Saam Barati.
+
+2021-06-30  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip interpreter-wasm.js on ARM and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=227295
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        Changed the testcase to be guarded by $vm.isWasmSupported(), so the
+        test will be executed once wasm is available in the arch
+
+        * microbenchmarks/interpreter-wasm.js:
+        (key.in.Module.Module.hasOwnProperty): Deleted.
+        (quit_): Deleted.
+        (locateFile): Deleted.
+        (ENVIRONMENT_IS_NODE.read_): Deleted.
+        (ENVIRONMENT_IS_NODE.readBinary): Deleted.
+        (ENVIRONMENT_IS_NODE.quit_): Deleted.
+        (ENVIRONMENT_IS_NODE.Module.string_appeared_here): Deleted.
+        (else.read_): Deleted.
+        (else.readBinary): Deleted.
+        (else.quit_): Deleted.
+        (else): Deleted.
+        (else.xhr.onload): Deleted.
+        (else.readAsync): Deleted.
+        (else.setWindowTitle): Deleted.
+        (key.in.moduleOverrides.moduleOverrides.hasOwnProperty): Deleted.
+        (dynamicAlloc): Deleted.
+        (getNativeTypeSize): Deleted.
+        (warnOnce): Deleted.
+        (convertJsFunctionToWasm): Deleted.
+        (addFunctionWasm): Deleted.
+        (removeFunctionWasm): Deleted.
+        (): Deleted.
+        (setTempRet0): Deleted.
+        (setValue): Deleted.
+        (assert): Deleted.
+        (getCFunc): Deleted.
+        (toC.string_appeared_here): Deleted.
+        (convertReturnValue): Deleted.
+        (ccall): Deleted.
+        (UTF8ArrayToString): Deleted.
+        (UTF8ToString): Deleted.
+        (stringToUTF8Array): Deleted.
+        (stringToUTF8): Deleted.
+        (lengthBytesUTF8): Deleted.
+        (allocateUTF8OnStack): Deleted.
+        (writeArrayToMemory): Deleted.
+        (writeAsciiToMemory): Deleted.
+        (updateGlobalBufferAndViews): Deleted.
+        (callRuntimeCallbacks): Deleted.
+        (preRun): Deleted.
+        (initRuntime): Deleted.
+        (preMain): Deleted.
+        (exitRuntime): Deleted.
+        (postRun): Deleted.
+        (addOnPreRun): Deleted.
+        (addOnPostRun): Deleted.
+        (addRunDependency): Deleted.
+        (removeRunDependency): Deleted.
+        (hasPrefix): Deleted.
+        (isDataURI): Deleted.
+        (isFileURI): Deleted.
+        (getBinary): Deleted.
+        (getBinaryPromise): Deleted.
+        (createWasm.receiveInstance): Deleted.
+        (createWasm.receiveInstantiatedSource): Deleted.
+        (createWasm.instantiateArrayBuffer): Deleted.
+        (createWasm.instantiateAsync.): Deleted.
+        (createWasm.instantiateAsync): Deleted.
+        (createWasm): Deleted.
+        (__ATINIT__.push.func): Deleted.
+        (demangle): Deleted.
+        (demangleAll): Deleted.
+        (_emscripten_get_sbrk_ptr): Deleted.
+        (_emscripten_memcpy_big): Deleted.
+        (abortOnCannotGrowMemory): Deleted.
+        (_emscripten_resize_heap): Deleted.
+        (PATH.splitPath): Deleted.
+        (PATH.normalizeArray): Deleted.
+        (PATH.normalize): Deleted.
+        (PATH.dirname): Deleted.
+        (PATH.basename): Deleted.
+        (PATH.extname): Deleted.
+        (PATH.join): Deleted.
+        (PATH.join2): Deleted.
+        (SYSCALLS.printChar): Deleted.
+        (SYSCALLS.getStr): Deleted.
+        (SYSCALLS.get64): Deleted.
+        (_fd_write): Deleted.
+        (_setTempRet0): Deleted.
+        (___wasm_call_ctors.Module.string_appeared_here): Deleted.
+        (_main.Module.string_appeared_here): Deleted.
+        (_malloc.Module.string_appeared_here): Deleted.
+        (___errno_location.Module.string_appeared_here): Deleted.
+        (_free.Module.string_appeared_here): Deleted.
+        (stackSave.Module.string_appeared_here): Deleted.
+        (stackAlloc.Module.string_appeared_here): Deleted.
+        (stackRestore.Module.string_appeared_here): Deleted.
+        (__growWasmMemory.Module.string_appeared_here): Deleted.
+        (dynCall_ii.Module.string_appeared_here): Deleted.
+        (dynCall_iiii.Module.string_appeared_here): Deleted.
+        (dynCall_jiji.Module.string_appeared_here): Deleted.
+        (ExitStatus): Deleted.
+        (dependenciesFulfilled): Deleted.
+        (callMain): Deleted.
+        (run.doRun): Deleted.
+        (run): Deleted.
+        (exit): Deleted.
+
+2021-06-25  Guillaume Emont  <guijemont@igalia.com>
+
+        Unskip stress/call-apply-exponential-bytecode-size.js on most platforms
+        https://bugs.webkit.org/show_bug.cgi?id=227354
+
+        Reviewed by Yusuke Suzuki.
+
+        Instead of skipping, we increase the JIT memory size for this test on
+        platforms that have less than 64 MB by default.
+
+        * stress/call-apply-exponential-bytecode-size.js:
+
+2021-06-25  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip structure-storedPrototype-should-only-assert-on-the-mutator-thread.js on arm and mips
+        https://bugs.webkit.org/show_bug.cgi?id=227222
+
+        Tested with 50 iterations in both arm and mips.
+
+        Unreviewed Gardening.
+
+        * stress/structure-storedPrototype-should-only-assert-on-the-mutator-thread.js:
+
+2021-06-25  Paulo Matos  <pmatos@igalia.com>
+
+        Unskip materialized-regexp-has-correct-last-index-set-by-match on arm and mips
+        https://bugs.webkit.org/show_bug.cgi?id=227213
+
+        Unreviewed Gardening.
+
+        * stress/materialized-regexp-has-correct-last-index-set-by-match.js:
+
+2021-06-25  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unskip materialize-regexp-cyclic-regexp.js on ARM and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=227223
+
+        Tested with 50 iterations in both arm and mips.
+
+        Unreviewed Gardening.
+
+        * stress/materialize-regexp-cyclic-regexp.js:
+
+2021-06-24  Asumu Takikawa  <asumu@igalia.com>
+
+        [WASM-Function-References] Add support for (ref null? $t) type constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226296
+
+        Adds additional tests for uses of `(ref $t)` and `(ref null $t)`
+        types, including with non-null extern/funcrefs.
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/function-references/ref_types.js: Added.
+        (module):
+        (async testRefTypeLocal):
+        (async testNonNullRefTypeLocal):
+        (async testRefTypeInSignature):
+        (async testRefTypeParamCheck):
+        (async testRefGlobalCheck):
+        (async testExternFuncrefNonNullCheck):
+        (async testExternrefCompatibility):
+        (async testNonNullExternrefIncompatible):
+        (async testFuncrefCompatibility):
+        (async testNonNullFuncrefIncompatible):
+        * wasm/wasm.json:
+
 2021-06-24  Guillaume Emont  <guijemont@igalia.com>
 
         Improve our checking of NaN values in DataView tests

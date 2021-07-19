@@ -270,6 +270,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &oncanplaythroughAttr.get(),
         &onchangeAttr.get(),
         &onclickAttr.get(),
+        &oncloseAttr.get(),
         &oncontextmenuAttr.get(),
         &oncopyAttr.get(),
         &oncutAttr.get(),
@@ -1346,7 +1347,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
 
     struct TextRecognitionLineElements {
         Ref<HTMLDivElement> line;
-        Vector<Ref<HTMLDivElement>> children;
+        Vector<Ref<HTMLElement>> children;
     };
 
     struct TextRecognitionElements {
@@ -1434,7 +1435,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
                 auto textContainer = HTMLDivElement::create(document());
                 textContainer->classList().add(imageOverlayTextClass);
                 lineContainer->appendChild(textContainer);
-                textContainer->appendChild(Text::create(document(), makeString('\n', child.text)));
+                textContainer->appendChild(Text::create(document(), child.hasLeadingWhitespace ? makeString('\n', child.text) : child.text));
                 lineElements.children.uncheckedAppend(WTFMove(textContainer));
             }
 
@@ -1456,13 +1457,6 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
             setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     }
 
-    if (auto* renderer = this->renderer()) {
-        if (!is<RenderImage>(renderer))
-            return;
-
-        downcast<RenderImage>(*renderer).setHasImageOverlay();
-    }
-
     if (!hadExistingTextRecognitionElements) {
         static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
         auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
@@ -1470,16 +1464,29 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
         shadowRoot->appendChild(WTFMove(style));
     }
 
-    IntSize containerSize { offsetWidth(), offsetHeight() };
+    document().updateLayoutIgnorePendingStylesheets();
+
+    auto* renderer = this->renderer();
+    if (!is<RenderImage>(renderer))
+        return;
+
+    downcast<RenderImage>(*renderer).setHasImageOverlay();
+
+    auto containerRect = enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+    auto convertToContainerCoordinates = [&](const FloatQuad& normalizedQuad) {
+        auto quad = normalizedQuad;
+        quad.scale(containerRect.width(), containerRect.height());
+        quad.move(containerRect.x(), containerRect.y());
+        return quad;
+    };
+
     for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
         auto& lineElements = textRecognitionElements.lines[lineIndex];
         auto& lineContainer = lineElements.line;
         auto& line = result.lines[lineIndex];
-        auto lineQuad = line.normalizedQuad;
+        auto lineQuad = convertToContainerCoordinates(line.normalizedQuad);
         if (lineQuad.isEmpty())
             continue;
-
-        lineQuad.scale(containerSize.width(), containerSize.height());
 
         auto lineBounds = rotatedBoundingRectWithMinimumAngleOfRotation(lineQuad, 0.01);
         lineContainer->setInlineStyleProperty(CSSPropertyWidth, lineBounds.size.width(), CSSUnitType::CSS_PX);
@@ -1500,8 +1507,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
         };
 
         auto offsetsAlongHorizontalAxis = line.children.map([&](auto& child) -> WTF::Range<float> {
-            auto textQuad = child.normalizedQuad;
-            textQuad.scale(containerSize.width(), containerSize.height());
+            auto textQuad = convertToContainerCoordinates(child.normalizedQuad);
             return {
                 offsetAlongHorizontalAxis(textQuad.p1(), textQuad.p4()),
                 offsetAlongHorizontalAxis(textQuad.p2(), textQuad.p3())
@@ -1561,8 +1567,6 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
                 textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueAll);
         }
 
-        lineContainer->appendChild(HTMLBRElement::create(document()));
-
         if (document().isImageDocument())
             lineContainer->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
     }
@@ -1575,9 +1579,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
             continue;
 
         // FIXME: We should come up with a way to coalesce the bounding quads into one or more rotated rects with the same angle of rotation.
-        auto targetQuad = dataDetector.normalizedQuads.first();
-        targetQuad.scale(containerSize.width(), containerSize.height());
-
+        auto targetQuad = convertToContainerCoordinates(dataDetector.normalizedQuads.first());
         auto targetBounds = rotatedBoundingRectWithMinimumAngleOfRotation(targetQuad, 0.01);
         dataDetectorContainer->setInlineStyleProperty(CSSPropertyWidth, targetBounds.size.width(), CSSUnitType::CSS_PX);
         dataDetectorContainer->setInlineStyleProperty(CSSPropertyHeight, targetBounds.size.height(), CSSUnitType::CSS_PX);
@@ -1595,7 +1597,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
 
     if (cacheTextRecognitionResults == CacheTextRecognitionResults::Yes) {
         if (auto* page = document().page())
-            page->cacheTextRecognitionResult(*this, containerSize, result);
+            page->cacheTextRecognitionResult(*this, containerRect, result);
     }
 }
 

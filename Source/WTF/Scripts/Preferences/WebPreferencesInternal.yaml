@@ -220,6 +220,18 @@ EnterKeyHintEnabled:
     WebCore:
       default: false
 
+EventHandlerDrivenSmoothKeyboardScrollingEnabled:
+ type: bool
+ humanReadableName: "EventHandler driven smooth keyboard scrolling"
+ humanReadableDescription: "Enable EventHandler driven smooth keyboard scrolling"
+ defaultValue:
+  WebKitLegacy:
+   default: false
+  WebKit:
+   default: false
+  WebCore:
+   default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ExperimentalPlugInSandboxProfilesEnabled:
   type: bool

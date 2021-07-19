@@ -165,6 +165,7 @@ JSValue objectConstructorGetOwnPropertyDescriptor(JSGlobalObject*, JSObject*, co
 JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
 JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode, std::optional<CachedPropertyNamesKind>);
 bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
+void objectAssignGeneric(JSGlobalObject*, VM&, JSObject* target, JSObject* source);
 
 JSC_DECLARE_HOST_FUNCTION(objectConstructorIs);
 

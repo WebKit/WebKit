@@ -198,4 +198,9 @@ bool StyleCachedImage::knownToBeOpaque(const RenderElement& renderer) const
     return m_cachedImage && m_cachedImage->currentFrameKnownToBeOpaque(&renderer);
 }
 
+bool StyleCachedImage::usesDataProtocol() const
+{
+    return m_cssValue->imageURL().protocolIsData();
+}
+
 }

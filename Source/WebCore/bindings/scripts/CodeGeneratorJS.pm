@@ -12,6 +12,7 @@
 # Copyright (C) 2007, 2008, 2009, 2012 Google Inc.
 # Copyright (C) 2013 Samsung Electronics. All rights reserved.
 # Copyright (C) 2015, 2016 Canon Inc. All rights reserved.
+# Copyright (C) 2021 Alexey Shvayka <shvaikalesh@gmail.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -36,6 +37,12 @@ use constant FileNamePrefix => "JS";
 use Carp qw<longmess>;
 use Data::Dumper;
 use Hasher;
+
+use constant {
+    CONTEXT_NAME_CONSTRUCTOR => "Constructor",
+    CONTEXT_NAME_PROTOTYPE => "Prototype",
+    CONTEXT_NAME_INSTANCE => "Instance",
+};
 
 my $codeGenerator;
 my $writeDependencies;
@@ -107,6 +114,12 @@ my $headerTemplate = << "EOF";
     Boston, MA 02110-1301, USA.
 */
 EOF
+
+sub IDLInterface::className
+{
+    my $self = shift;
+    return "JS" . $self->type->name;
+}
 
 sub assert
 {
@@ -2042,6 +2055,16 @@ sub IsAcceleratedDOMAttribute
     return 1;
 }
 
+sub StringifyJSCAttributes
+{
+    my $specials = shift;
+    my $length = scalar(@$specials);
+
+    return "0" if $length == 0;
+    return "static_cast<unsigned>(@${specials})" if $length == 1;
+    return join(" | ", @$specials);
+}
+
 sub GetJSCAttributesForAttribute
 {
     my $interface = shift;
@@ -2055,10 +2078,16 @@ sub GetJSCAttributesForAttribute
     push(@specials, "JSC::PropertyAttribute::DontEnum") if ($attribute->extendedAttributes->{NotEnumerable} || $isGlobalConstructor);
     push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
     push(@specials, "JSC::PropertyAttribute::CustomAccessor") unless $isGlobalConstructor or IsJSBuiltin($interface, $attribute);
+
+    if (NeedsRuntimeCheck($interface, $attribute)) {
+        push(@specials, "JSC::PropertyAttribute::PropertyCallback");
+        return \@specials;
+    }
+
     push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
     push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
     push(@specials, "JSC::PropertyAttribute::Accessor | JSC::PropertyAttribute::Builtin") if  IsJSBuiltin($interface, $attribute);
-    return "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
+    return \@specials;
 }
 
 sub GetIndexedGetterOperation
@@ -2089,53 +2118,6 @@ sub GetNamedDeleterOperation
 {
     my $interface = shift;
     return GetSpecialAccessorOperationForType($interface, "deleter", "DOMString", 1);
-}
-
-sub InstanceOperationCount
-{
-    my $interface = shift;
-    my $count = 0;
-
-    foreach my $operation (@{$interface->operations}) {
-        $count++ if OperationShouldBeOnInstance($interface, $operation);
-    }
-
-    return $count;
-}
-
-sub PrototypeOperationCount
-{
-    my $interface = shift;
-    my $count = 0;
-
-    foreach my $operation (@{$interface->operations}) {
-        $count++ if !$operation->isStatic && !OperationShouldBeOnInstance($interface, $operation);
-    }
-
-    return $count;
-}
-
-sub InstancePropertyCount
-{
-    my $interface = shift;
-    my $count = 0;
-    foreach my $attribute (@{$interface->attributes}) {
-        $count++ if AttributeShouldBeOnInstance($interface, $attribute);
-    }
-    $count += InstanceOperationCount($interface);
-    return $count;
-}
-
-sub PrototypePropertyCount
-{
-    my $interface = shift;
-    my $count = 0;
-    foreach my $attribute (@{$interface->attributes}) {
-        $count++ if !AttributeShouldBeOnInstance($interface, $attribute);
-    }
-    $count += PrototypeOperationCount($interface);
-    $count++ if NeedsConstructorProperty($interface);
-    return $count;
 }
 
 sub InstanceOverridesGetOwnPropertySlot
@@ -2179,13 +2161,6 @@ sub InstanceOverridesDeleteProperty
         || GetNamedDeleterOperation($interface);
 }
 
-sub PrototypeHasStaticPropertyTable
-{
-    my $interface = shift;
-    my $numConstants = @{$interface->constants};
-    return $numConstants > 0 || PrototypePropertyCount($interface) > 0;
-}
-
 sub InstanceNeedsVisitChildren
 {
     my $interface = shift;
@@ -2195,6 +2170,7 @@ sub InstanceNeedsVisitChildren
     }
 
     return 1 if $interface->extendedAttributes->{JSCustomMarkFunction};
+    return 1 if $interface->extendedAttributes->{GenerateAddOpaqueRoot};
     return 1 if $interface->extendedAttributes->{Plugin};
     return 1 if $interface->extendedAttributes->{ReportExtraMemoryCost};
     return 0;
@@ -2909,7 +2885,7 @@ sub GenerateHeader
         push(@headerContent, "    }\n\n");
     }
 
-    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if InstancePropertyCount($interface) > 0;
+    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if InstanceHasProperties($interface);
     $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1 if $interface->extendedAttributes->{NewImpurePropertyFiresWatchpoints};
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObject};
     $structureFlags{"JSC::MasqueradesAsUndefined"} = 1 if $interface->extendedAttributes->{MasqueradesAsUndefined};
@@ -3310,115 +3286,219 @@ sub GenerateHeader
     }
 }
 
+sub ShouldBeOnInstance
+{
+    my ($interface, $context) = @_;
+
+    return OperationShouldBeOnInstance($interface, $context) if ref($context) eq "IDLOperation";
+    return AttributeShouldBeOnInstance($interface, $context) if ref($context) eq "IDLAttribute";
+
+    assert("Unsupported argument: " . ref($context));
+}
+
+sub PrototypeHasProperties
+{
+    my $interface = shift;
+    return 1 if @{$interface->constants};
+    return 1 if NeedsConstructorProperty($interface);
+    foreach my $operationOrAttribute (@{$interface->operations}, @{$interface->attributes}) {
+        return 1 unless ShouldBeOnInstance($interface, $operationOrAttribute);
+    }
+    return 0;
+}
+
+sub InstanceHasProperties
+{
+    my $interface = shift;
+    foreach my $operationOrAttribute (@{$interface->operations}, @{$interface->attributes}) {
+        return 1 if ShouldBeOnInstance($interface, $operationOrAttribute);
+    }
+    return 0;
+}
+
+sub GetAttributeGetter
+{
+    my ($interface, $attribute) = @_;
+    return $attribute->extendedAttributes->{DOMJIT}
+        ? "&DOMJITAttributeFor" . $interface->type->name . $codeGenerator->WK_ucfirst($attribute->name)
+        : GetAttributeGetterName($interface, $interface->className, $attribute);
+}
+
+sub GetAttributeSetter
+{
+    my ($interface, $attribute) = @_;
+    # FIXME: Remove IsConstructorType check by utilizing LazyProperty for window.%Interface% constructors.
+    return IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type) ? "nullptr" : GetAttributeSetterName($interface, $interface->className, $attribute);
+}
+
+sub GetAttributeJSValue
+{
+    my ($interface, $attribute) = @_;
+    my $getter = GetAttributeGetter($interface, $attribute);
+    my $setter = GetAttributeSetter($interface, $attribute);
+    return IsAcceleratedDOMAttribute($interface, $attribute)
+        ? "DOMAttributeGetterSetter::create(vm, ${getter}, ${setter}, DOMAttributeAnnotation { " . $interface->className . "::info(), nullptr })"
+        : "CustomGetterSetter::create(vm, ${getter}, ${setter})";
+}
+
+sub GetOperationJSValue
+{
+    my ($interface, $operation, $globalObjectPtr) = @_;
+    my $functionName = GetFunctionName($interface, $interface->className, $operation);
+    return IsJSBuiltin($interface, $operation)
+        ? "JSFunction::create(vm, ${functionName}(vm), ${globalObjectPtr})"
+        : "JSFunction::create(vm, ${globalObjectPtr}, " . GetFunctionLength($operation) . ", \"" . $operation->name . "\"_s, ${functionName})";
+}
+
+sub GenerateLazyPropertyCallbacks
+{
+    my ($interface, $context, $jsValue, $contextNamePrefix, $conditional) = @_;
+
+    if ($conditional) {
+        my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+        push(@implContent, "#if ${conditionalString}\n");
+    }
+
+    my $contextName = $context->name;
+    $contextName =~ s/-/_/g; # For CSS property names
+    my $nameSuffix = $interface->className . "${contextNamePrefix}_${contextName}";
+
+    my $valueCallbackName = "create${nameSuffix}";
+    my $vm = ref($context) eq "IDLConstant" ? "" : " vm";
+    my $thisObject = ref($context) eq "IDLOperation" ? " thisObject" : "";
+    push(@implContent, "static JSValue ${valueCallbackName}(VM&${vm}, JSObject*${thisObject})\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return ${jsValue};\n");
+    push(@implContent, "}\n\n");
+
+    # FIXME: Share this callbacks between all interfaces to reduce WebCore binary size.
+    my $isEnabledCallbackName = "isEnabled${nameSuffix}";
+    push(@implContent, "static bool ${isEnabledCallbackName}(JSGlobalObject* globalObject)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    UNUSED_PARAM(globalObject);\n");
+    push(@implContent, "    return " . GenerateRuntimeEnableConditionalString($interface, $context, "globalObject") . ";\n");
+    push(@implContent, "}\n");
+
+    push(@implContent, "#endif\n") if $conditional;
+    push(@implContent, "\n");
+
+    return ($valueCallbackName, $isEnabledCallbackName);
+}
+
 sub GeneratePropertiesHashTable
 {
-    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $readWriteConditionals, $runtimeEnabledOperations, $runtimeEnabledAttributes) = @_;
+    my ($interface, $contextName, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $readWriteConditionals) = @_;
 
-    # FIXME: These should be functions on $interface.
     my $interfaceName = $interface->type->name;
-    my $className = "JS$interfaceName";
-    
-    # - Add all properties in a hashtable definition
-    my $propertyCount = $isInstance ? InstancePropertyCount($interface) : PrototypePropertyCount($interface);
+    my $propertyCount = 0;
+    my $hasSetterOrReadonlyProperties = "false";
 
-    if (!$isInstance && NeedsConstructorProperty($interface)) {
-        die if !$propertyCount;
+    my $isConstructor = $contextName eq CONTEXT_NAME_CONSTRUCTOR;
+    my $isPrototype = $contextName eq CONTEXT_NAME_PROTOTYPE;
+    my $isInstance = $contextName eq CONTEXT_NAME_INSTANCE;
+
+    if ($isPrototype && NeedsConstructorProperty($interface)) {
         push(@$hashKeys, "constructor");
         my $getter = "js" . $interfaceName . "Constructor";
         push(@$hashValue1, $getter);
 
         push(@$hashValue2, "0");
         push(@$hashSpecials, "static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)");
+        $propertyCount++;
+        $hasSetterOrReadonlyProperties = "true";
     }
 
-    return 0 if !$propertyCount;
-
     foreach my $attribute (@{$interface->attributes}) {
-        next if ($attribute->isStatic);
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
+        next if ($attribute->isStatic || 0) != $isConstructor;
         next if ($attribute->extendedAttributes->{PrivateIdentifier} and not $attribute->extendedAttributes->{PublicIdentifier});
-
-        # Global objects add RuntimeEnabled attributes after creation so do not add them to the static table.
-        if ($isInstance && NeedsRuntimeCheck($interface, $attribute)) {
-            $propertyCount -= 1;
-            next;
-        }
 
         my $name = $attribute->name;
         push(@$hashKeys, $name);
-
-        my $special = GetJSCAttributesForAttribute($interface, $attribute);
-        push(@$hashSpecials, $special);
-
-        if ($attribute->extendedAttributes->{DOMJIT}) {
-            push(@$hashValue1, "&DOMJITAttributeFor" . $interface->type->name . $codeGenerator->WK_ucfirst($attribute->name));
-        } else {
-            my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@$hashValue1, $getter);
-        }
-
-        if (IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type)) {
-            push(@$hashValue2, "0");
-        } else {
-            my $setter = GetAttributeSetterName($interface, $className, $attribute);
-            push(@$hashValue2, $setter);
-        }
 
         my $conditional = $attribute->extendedAttributes->{Conditional};
         $conditionals->{$name} = $conditional if $conditional;
         my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
         $readWriteConditionals->{$name} = $readWriteConditional if $readWriteConditional;
 
-        my $needsRuntimeCheck = NeedsRuntimeCheck($interface, $attribute);
-        my $needsRuntimeReadWriteCheck = NeedsRuntimeReadWriteCheck($interface, $attribute);
-        
-        if ($needsRuntimeCheck && $needsRuntimeReadWriteCheck) {
-            die "Being both runtime enabled and runtime conditionally read-write is not yet supported (used on the '${name}' attribute of '${interfaceName}').\n";
+        if (NeedsRuntimeCheck($interface, $attribute)) {
+            assert("Using DOMJIT with runtime enabled attributes is not yet supported (used on the '${name}' attribute of '${interfaceName}').") if $attribute->extendedAttributes->{DOMJIT};
+            assert("Using ConditionallyReadWrite with runtime enabled attributes is not yet supported (used on the '${name}' attribute of '${interfaceName}').") if $readWriteConditional;
+
+            my $jsValue = GetAttributeJSValue($interface, $attribute);
+            my ($valueCallbackName, $isEnabledCallbackName) = GenerateLazyPropertyCallbacks($interface, $attribute, $jsValue, $contextName, $conditional);
+            push(@$hashValue1, $valueCallbackName);
+            push(@$hashValue2, $isEnabledCallbackName);
+        } else {
+            push(@$hashValue1, GetAttributeGetter($interface, $attribute));
+            push(@$hashValue2, GetAttributeSetter($interface, $attribute));
         }
 
-        if ($needsRuntimeCheck || $needsRuntimeReadWriteCheck) {
-            push(@$runtimeEnabledAttributes, $attribute);
-        }
+        push(@$hashSpecials, StringifyJSCAttributes(GetJSCAttributesForAttribute($interface, $attribute)));
+        $propertyCount++;
+        $hasSetterOrReadonlyProperties = "true";
     }
 
     foreach my $operation (@{$interface->operations}) {
+        next if $interface->isCallback;
+        next if ($operation->isStatic || 0) != $isConstructor;
         next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
-        next if ($operation->isStatic);
         next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
         next if OperationShouldBeOnInstance($interface, $operation) != $isInstance;
         next if $operation->name eq "[Symbol.Iterator]";
 
-        # Global objects add RuntimeEnabled operations after creation so do not add them to the static table.
-        if ($isInstance && NeedsRuntimeCheck($interface, $operation)) {
-            $propertyCount -= 1;
-            next;
-        }
-
         my $name = $operation->name;
         push(@$hashKeys, $name);
-
-        my $functionName = GetFunctionName($interface, $className, $operation);
-        push(@$hashValue1, $functionName);
-
-        my $functionLength = GetFunctionLength($operation);
-
-        if ($operation->extendedAttributes->{DOMJIT}) {
-            push(@$hashValue2, "&DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($operation->name));
-        } else {
-            push(@$hashValue2, $functionLength);
-        }
-
-        push(@$hashSpecials, ComputeFunctionSpecial($interface, $operation));
 
         my $conditional = GetConditionalForOperationConsideringOverloads($operation);
         $conditionals->{$name} = $conditional if $conditional;
 
         if (NeedsRuntimeCheck($interface, $operation)) {
-            push(@$runtimeEnabledOperations, $operation);
+            assert("Using DOMJIT with runtime enabled operations is not yet supported (used on the '${name}' operation of '${interfaceName}').") if $operation->extendedAttributes->{DOMJIT};
+
+            my $jsValue = GetOperationJSValue($interface, $operation, "thisObject->globalObject()");
+            my ($valueCallbackName, $isEnabledCallbackName) = GenerateLazyPropertyCallbacks($interface, $operation, $jsValue, $contextName, $conditional);
+            push(@$hashValue1, $valueCallbackName);
+            push(@$hashValue2, $isEnabledCallbackName);
+        } else {
+            push(@$hashValue1, GetFunctionName($interface, $interface->className, $operation));
+            my $functionSignature = "&DOMJITSignatureFor" . $interface->type->name . $codeGenerator->WK_ucfirst($name);
+            push(@$hashValue2, $operation->extendedAttributes->{DOMJIT} ? $functionSignature : GetFunctionLength($operation));
         }
+
+        push(@$hashSpecials, StringifyJSCAttributes(ComputeFunctionSpecial($interface, $operation)));
+        $propertyCount++;
     }
 
-    return $propertyCount;
+    foreach my $constant (@{$interface->constants}) {
+        next if $isInstance;
+
+        my $name = $constant->name;
+        push(@$hashKeys, $name);
+
+        my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
+        $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
+        my $conditional = $constant->extendedAttributes->{Conditional};
+        $conditionals->{$name} = $conditional if $conditional;
+
+        my $special = "";
+        if (NeedsRuntimeCheck($interface, $constant)) {
+            my $jsValue = "jsNumber(" . $constant->value . ")";
+            my ($valueCallbackName, $isEnabledCallbackName) = GenerateLazyPropertyCallbacks($interface, $constant, $jsValue, $contextName, $conditional);
+            push(@$hashValue1, $valueCallbackName);
+            push(@$hashValue2, $isEnabledCallbackName);
+            push(@$hashSpecials, "JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback");
+        } else {
+            push(@$hashValue1, $constant->value);
+            push(@$hashValue2, "0");
+            push(@$hashSpecials, "JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ConstantInteger");
+        }
+
+        $propertyCount++;
+        $hasSetterOrReadonlyProperties = "true";
+    }
+
+    return ($propertyCount, $hasSetterOrReadonlyProperties);
 }
 
 # This computes an effective overload set for a given operation / constructor,
@@ -3986,7 +4066,7 @@ sub GenerateRuntimeEnableConditionalString
             push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
                 . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->allowsMediaDevices())");
         } else {
-            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
+            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()");
         }
     }
 
@@ -3999,7 +4079,7 @@ sub GenerateRuntimeEnableConditionalString
 
         AddToImplIncludes("DOMWrapperWorld.h");
 
-        push(@conjuncts, "worldForDOMObject(*this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()");
+        push(@conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->world()." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()");
     }
 
     if ($context->extendedAttributes->{EnabledBySetting}) {
@@ -4343,269 +4423,71 @@ sub GenerateImplementation
 
     GeneratePrototypeDeclaration(\@implContent, $className, $interface) if !HeaderNeedsPrototypeDeclaration($interface);
 
-    GenerateConstructorDeclaration(\@implContent, $className, $interface) if !$interface->extendedAttributes->{LegacyNoInterfaceObject};
-
-    my @hashKeys = ();
-    my @hashValue1 = ();
-    my @hashValue2 = ();
-    my @hashSpecials = ();
-    my %conditionals = ();
-    my %readWriteConditionals = ();
-    my $hashName = $className . "Table";
-    my @runtimeEnabledOperations = ();
-    my @runtimeEnabledAttributes = ();
-    my @runtimeEnabledConstants = ();
-
-    # Generate hash table for properties on the instance.
-    my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, \@runtimeEnabledOperations, \@runtimeEnabledAttributes);
-    $object->GenerateHashTable($className, $hashName, $numInstanceProperties, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 0) if $numInstanceProperties > 0;
-
     # - Add all interface object (aka constructor) properties (constants, static attributes, static operations).
     if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
-        my $hashSize = 0;
-        my $hashName = $className . "ConstructorTable";
+        GenerateConstructorDeclaration(\@implContent, $className, $interface);
 
-        my @hashKeys = ();
-        my @hashValue1 = ();
-        my @hashValue2 = ();
-        my @hashSpecials = ();
-        my %conditionals = ();
-        my %readWriteConditionals = ();
-
-        foreach my $constant (@{$interface->constants}) {
-            my $name = $constant->name;
-            push(@hashKeys, $name);
-            push(@hashValue1, $constant->value);
-            push(@hashValue2, "0");
-            push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
-
-            my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
-            $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
-
-            my $conditional = $constant->extendedAttributes->{Conditional};
-            $conditionals{$name} = $conditional if $conditional;
-
-            if (NeedsRuntimeCheck($interface, $constant)) {
-                push(@runtimeEnabledConstants, $constant);
-            }
-
-            $hashSize++;
-        }
-
-        foreach my $attribute (@{$interface->attributes}) {
-            next unless ($attribute->isStatic);
-            my $name = $attribute->name;
-            push(@hashKeys, $name);
-
-            my @specials = ();
-            push(@specials, "JSC::PropertyAttribute::DontDelete") if IsLegacyUnforgeable($interface, $attribute);
-            push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
-            push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
-            push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
-            my $special = "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
-            push(@hashSpecials, $special);
-
-            if ($attribute->extendedAttributes->{DOMJIT}) {
-                push(@hashValue1, "&DOMJITAttributeFor" . $interface->type->name . $codeGenerator->WK_ucfirst($attribute->name));
-            } else {
-                my $getter = GetAttributeGetterName($interface, $className, $attribute);
-                push(@hashValue1, $getter);
-            }
-
-            if (IsReadonly($attribute)) {
-                push(@hashValue2, "0");
-            } else {
-                my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@hashValue2, $setter);
-            }
-
-            my $conditional = $attribute->extendedAttributes->{Conditional};
-            $conditionals{$name} = $conditional if $conditional;
-
-            my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
-            $readWriteConditionals{$name} = $readWriteConditional if $readWriteConditional;
-
-            $hashSize++;
-        }
-
-        foreach my $operation (@{$interface->operations}) {
-            next unless ($operation->isStatic);
-            next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
-            my $name = $operation->name;
-            push(@hashKeys, $name);
-
-            my $functionName = GetFunctionName($interface, $className, $operation);
-            push(@hashValue1, $functionName);
-
-            my $functionLength = GetFunctionLength($operation);
-            if ($operation->extendedAttributes->{DOMJIT}) {
-                push(@hashValue2, "DOMJITFunctionFor" . $interface->type->name . $codeGenerator->WK_ucfirst($operation->name));
-            } else {
-                push(@hashValue2, $functionLength);
-            }
-
-            push(@hashSpecials, ComputeFunctionSpecial($interface, $operation));
-
-            my $conditional = $operation->extendedAttributes->{Conditional};
-            $conditionals{$name} = $conditional if $conditional;
-
-            $hashSize++;
-        }
-
-        $object->GenerateHashTable($className, $hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 1) if $hashSize > 0;
-
-        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
-
-        my $protoClassName = "${className}Prototype";
-        GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $visibleInterfaceName, $interface);
-
+        GenerateConstructorDefinitions(\@implContent, $className, $visibleInterfaceName, $interface);
         my $legacyFactoryFunction = $interface->extendedAttributes->{LegacyFactoryFunction};
-        GenerateConstructorDefinitions(\@implContent, $className, $protoClassName, $legacyFactoryFunction, $interface, "GeneratingLegacyFactoryFunction") if $legacyFactoryFunction;
-    }
-
-    # - Add functions and constants to a hashtable definition
-
-    $hashName = $className . "PrototypeTable";
-
-    @hashKeys = ();
-    @hashValue1 = ();
-    @hashValue2 = ();
-    @hashSpecials = ();
-    %conditionals = ();
-    %readWriteConditionals = ();
-    @runtimeEnabledOperations = ();
-    @runtimeEnabledAttributes = ();
-
-    # Generate hash table for properties on the prototype.
-    my $numPrototypeProperties = GeneratePropertiesHashTable($object, $interface, 0,
-        \@hashKeys, \@hashSpecials,
-        \@hashValue1, \@hashValue2,
-        \%conditionals, \%readWriteConditionals,
-        \@runtimeEnabledOperations, \@runtimeEnabledAttributes);
-
-    my $hashSize = $numPrototypeProperties;
-
-    foreach my $constant (@{$interface->constants}) {
-        my $name = $constant->name;
-
-        push(@hashKeys, $name);
-        push(@hashValue1, $constant->value);
-        push(@hashValue2, "0");
-        push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
-
-        my $conditional = $constant->extendedAttributes->{Conditional};
-        $conditionals{$name} = $conditional if $conditional;
-
-        $hashSize++;
+        GenerateConstructorDefinitions(\@implContent, $className, $legacyFactoryFunction, $interface, 1) if $legacyFactoryFunction;
     }
 
     if (!$interface->isNamespaceObject) {
-        my $justGenerateValueArray = !IsDOMGlobalObject($interface);
-
-        $object->GenerateHashTable($className, $hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, $justGenerateValueArray);
-
-        my $prototypeHashTable = $justGenerateValueArray ? "nullptr" : "&${className}PrototypeTable";
+        my $prototypeHashTable = GenerateHashTable($interface, CONTEXT_NAME_PROTOTYPE);
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${prototypeHashTable}, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
 
         push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
-    }
 
-    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalInterface($interface) && !$interface->isNamespaceObject) {
-        push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n");
-
-        my @runtimeEnabledProperties = @runtimeEnabledOperations;
-        push(@runtimeEnabledProperties, @runtimeEnabledAttributes);
-        push(@runtimeEnabledProperties, @runtimeEnabledConstants);
-
-        if (@runtimeEnabledProperties) {
-            push(@implContent, "    bool hasDisabledRuntimeProperties = false;\n");
+        if ($prototypeHashTable ne "nullptr" && !IsGlobalInterface($interface)) {
+            push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n");
         }
 
-        foreach my $operationOrAttribute (@runtimeEnabledProperties) {
-            my $conditionalString = $codeGenerator->GenerateConditionalString($operationOrAttribute);
-            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "globalObject()");
-            my $name = $operationOrAttribute->name;
-            push(@implContent, "    if (!${runtimeEnableConditionalString}) {\n");
-            push(@implContent, "        hasDisabledRuntimeProperties = true;\n");
-            push(@implContent, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
-            push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
-            push(@implContent, "        DeletePropertySlot slot;\n");
-            push(@implContent, "        JSObject::deleteProperty(this, globalObject(), propertyName, slot);\n");
-            push(@implContent, "    }\n");
-            push(@implContent, "#endif\n") if $conditionalString;
-        }
-
-        foreach my $attribute (@runtimeEnabledAttributes) {
+        foreach my $attribute (@{$interface->attributes}) {
             if (NeedsRuntimeReadWriteCheck($interface, $attribute)) {
                 AddToImplIncludes("WebCoreJSClientData.h");
                 my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute, "globalObject()");
 
                 my $attributeName = $attribute->name;
-                my $getter = GetAttributeGetterName($interface, $className, $attribute);
-                my $setter = "nullptr";
-                my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
+                assert("Being both runtime enabled and runtime conditionally read-write is not yet supported (used on the '${attributeName}' attribute of '${visibleInterfaceName}').") if NeedsRuntimeCheck($interface, $attribute);
 
                 my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
                 push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-                push(@implContent, "    // Adding back attribute, but as readonly, after removing the read-write variant above. \n");
+                push(@implContent, "    // Shadow read-write variant from the static hash table.\n");
                 push(@implContent, "    if (!${runtimeEnableConditionalString})\n");
-                if (IsAcceleratedDOMAttribute($interface, $attribute)) {
-                    my $classForThis = "${className}::info()";
-                    push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), JSC::DOMAttributeGetterSetter::create(vm, $getter, $setter, JSC::DOMAttributeAnnotation { $classForThis, nullptr }), attributesForStructure($jscAttributes));\n");
-                } else {
-                    assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
-                    push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
-                }
+
+                my $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames().${attributeName}PublicName()";
+                push(@implContent, "        reifyStaticProperty(vm, ${className}::info(), ${propertyName}, info()->staticPropHashTable->entry(${propertyName})->makeReadOnlyCopy(), *this);\n");
                 push(@implContent, "#endif\n") if $conditionalString;
             }
-        }
-
-        if (@runtimeEnabledProperties) {
-            push(@implContent, "    if (hasDisabledRuntimeProperties && structure()->isDictionary())\n");
-            push(@implContent, "        flattenDictionaryObject(vm);\n");
-        }
-
-        foreach my $operation (@{$interface->operations}) {
-            next unless ($operation->extendedAttributes->{PrivateIdentifier});
-            AddToImplIncludes("WebCoreJSClientData.h");
-            my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
-            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $operation->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $operation) . "), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-            push(@implContent, "#endif\n") if $conditionalString;
         }
 
         if (InterfaceNeedsIterator($interface)) {
             AddToImplIncludes("<JavaScriptCore/BuiltinNames.h>");
             if (IsKeyValueIterableInterface($interface) or $interface->mapLike or $interface->setLike) {
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
+                push(@implContent, "    auto& entries = vm.propertyNames->builtinNames().entriesPublicName();\n");
+                push(@implContent, "    reifyStaticProperty(vm, nullptr, entries, *info()->staticPropHashTable->entry(entries), *this);\n");
+                push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, entries), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             } else {
-                AddToImplIncludes("<JavaScriptCore/ArrayPrototype.h>");
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
+                push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             }
         }
         push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n") if $interface->iterable and !IsKeyValueIterableInterface($interface);
 
         addUnscopableProperties($interface);
-    }
 
-    assert("JSC_TO_STRING_TAG_WITHOUT_TRANSITION() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
-
-    if (!$interface->isNamespaceObject) {
+        assert("JSC_TO_STRING_TAG_WITHOUT_TRANSITION() requires strings two or more characters long.") if length($visibleInterfaceName) < 2;
         push(@implContent, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
+
+        GeneratePrivateIdentifiers($interface, CONTEXT_NAME_PROTOTYPE);
+
         push(@implContent, "}\n\n");
     }
 
-    # - Initialize static ClassInfo object
-    push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
+    my $instanceHashTable = GenerateHashTable($interface, CONTEXT_NAME_INSTANCE);
+    push(@implContent, "const ClassInfo ${className}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${instanceHashTable}");
 
-    if ($numInstanceProperties > 0) {
-        push(@implContent, "&${className}Table");
-    } else {
-        push(@implContent, "nullptr");
-    }
     if ($interface->extendedAttributes->{DOMJIT}) {
         push(@implContent, "\n");
         push(@implContent, "#if ENABLE(JIT)\n");
@@ -4671,78 +4553,8 @@ sub GenerateImplementation
         push(@implContent, "    putDirect(vm, vm.propertyNames->toPrimitiveSymbol, jsUndefined(), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
-    # Support for RuntimeEnabled attributes on instances.
-    foreach my $attribute (@{$interface->attributes}) {
-        next unless NeedsRuntimeCheck($interface, $attribute);
-        next unless AttributeShouldBeOnInstance($interface, $attribute);
+    GeneratePrivateIdentifiers($interface, CONTEXT_NAME_INSTANCE);
 
-        AddToImplIncludes("WebCoreJSClientData.h");
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute, "globalObject()");
-        my $attributeName = $attribute->name;
-        my $getter = GetAttributeGetterName($interface, $className, $attribute);
-        my $setter = IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type) ? "nullptr" : GetAttributeSetterName($interface, $className, $attribute);
-        my $jscAttributes = GetJSCAttributesForAttribute($interface, $attribute);
-        my $isPrivateAndPublic = $attribute->extendedAttributes->{PublicIdentifier} && $attribute->extendedAttributes->{PrivateIdentifier};
-
-        my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
-        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        push(@implContent, "    if (${runtimeEnableConditionalString})");
-        push(@implContent, " {") if $isPrivateAndPublic;
-        push(@implContent, "\n");
-        assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
-
-        if ($attribute->extendedAttributes->{PublicIdentifier} || !$attribute->extendedAttributes->{PrivateIdentifier}) {
-            push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PublicName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
-        }
-        if ($attribute->extendedAttributes->{PrivateIdentifier}) {
-            push(@implContent, "        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, $setter), attributesForStructure($jscAttributes));\n");
-        }
-
-        push(@implContent, "    }\n") if $isPrivateAndPublic;
-        push(@implContent, "#endif\n") if $conditionalString;
-    }
-
-    # Support PrivateIdentifier attributes on instances.
-    foreach my $attribute (@{$interface->attributes}) {
-        next if NeedsRuntimeCheck($interface, $attribute);
-        next unless $attribute->extendedAttributes->{PrivateIdentifier};
-        next unless AttributeShouldBeOnInstance($interface, $attribute);
-
-        AddToImplIncludes("WebCoreJSClientData.h");
-        my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
-        my $attributeName = $attribute->name;
-        my $getter = GetAttributeGetterName($interface, $className, $attribute);
-
-        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        assert("CustomGetterSetter is not allowed for DOMAttribute. DOMAttributeGetterSetter must be used.") if IsAcceleratedDOMAttribute($interface, $attribute);
-        push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));\n");
-        push(@implContent, "#endif\n") if $conditionalString;
-    }
-
-    # Support for RuntimeEnabled operations on instances.
-    foreach my $operation (@{$interface->operations}) {
-        next unless NeedsRuntimeCheck($interface, $operation);
-        next unless OperationShouldBeOnInstance($interface, $operation);
-        next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
-
-        AddToImplIncludes("WebCoreJSClientData.h");
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operation, "globalObject()");
-        my $functionName = $operation->name;
-        my $implementationFunction = GetFunctionName($interface, $className, $operation);
-        my $functionLength = GetFunctionLength($operation);
-        my $jsAttributes = ComputeFunctionSpecial($interface, $operation);
-
-        my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
-        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        push(@implContent, "    if (${runtimeEnableConditionalString})\n");
-        my $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $functionName . ($operation->extendedAttributes->{PrivateIdentifier} ? "PrivateName()" : "PublicName()");
-        if (IsJSBuiltin($interface, $operation)) {
-            push(@implContent, "        putDirectBuiltinFunction(vm, this, $propertyName, $implementationFunction(vm), attributesForStructure($jsAttributes));\n");
-        } else {
-            push(@implContent, "        putDirectNativeFunction(vm, this, $propertyName, $functionLength, $implementationFunction, NoIntrinsic, attributesForStructure($jsAttributes));\n");
-        }
-        push(@implContent, "#endif\n") if $conditionalString;
-    }
     push(@implContent, "    vm.heap.reportExtraMemoryAllocated(wrapped().memoryCost());\n") if $interface->extendedAttributes->{ReportExtraMemoryCost};
     push(@implContent, "}\n\n");
 
@@ -4886,6 +4698,10 @@ sub GenerateImplementation
             push(@implContent, "#if PLATFORM(COCOA)\n");
             push(@implContent, "    thisObject->wrapped().pluginReplacementScriptObject().visit(visitor);\n");
             push(@implContent, "#endif\n");
+        }
+        if ($interface->extendedAttributes->{GenerateAddOpaqueRoot}) {
+            my $functionName = $interface->extendedAttributes->{GenerateAddOpaqueRoot};
+            push(@implContent, "    visitor.addOpaqueRoot(thisObject->wrapped().${functionName}());\n");
         }
         if ($interface->extendedAttributes->{ReportExtraMemoryCost}) {
             push(@implContent, "    visitor.reportExtraMemoryVisited(thisObject->wrapped().memoryCost());\n");
@@ -6428,37 +6244,7 @@ sub GenerateCallbackImplementationContent
     my $numConstants = @{$constants};
     if ($numConstants > 0) {
         GenerateConstructorDeclaration($contentRef, $className, $interfaceOrCallback, $name);
-
-        my $hashSize = 0;
-        my $hashName = $className . "ConstructorTable";
-
-        my @hashKeys = ();
-        my @hashValue1 = ();
-        my @hashValue2 = ();
-        my @hashSpecials = ();
-        my %conditionals = ();
-        my %readWriteConditionals = ();
-
-        foreach my $constant (@{$constants}) {
-            my $name = $constant->name;
-            push(@hashKeys, $name);
-            push(@hashValue1, $constant->value);
-            push(@hashValue2, "0");
-            push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
-
-            my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
-            $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
-
-            my $conditional = $constant->extendedAttributes->{Conditional};
-            $conditionals{$name} = $conditional if $conditional;
-
-            $hashSize++;
-        }
-        $object->GenerateHashTable($className, $hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 1) if $hashSize > 0;
-
-        push(@$contentRef, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interfaceOrCallback));
-
-        GenerateConstructorDefinitions($contentRef, $className, "", $visibleName, $interfaceOrCallback);
+        GenerateConstructorDefinitions($contentRef, $className, $visibleName, $interfaceOrCallback);
 
         AddToImplIncludes("JSDOMGlobalObjectInlines.h");
         push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
@@ -7216,8 +7002,6 @@ sub GenerateHashTableValueArray
     my $packedSize = scalar @{$keys};
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[\] =\n\{\n");
 
-    my $hasSetter = "false";
-
     my $i = 0;
     foreach my $key (@{$keys}) {
         my $firstTargetType;
@@ -7243,10 +7027,12 @@ sub GenerateHashTableValueArray
             $firstTargetType = "";
         } elsif ("@$specials[$i]" =~ m/DOMJITAttribute/) {
             $firstTargetType = "static_cast<const JSC::DOMJIT::GetterSetter*>";
+        } elsif ("@$specials[$i]" =~ m/PropertyCallback/) {
+            $firstTargetType = "static_cast<LazyPropertyCallback>";
+            $secondTargetType = "static_cast<IsLazyPropertyEnabledCallback>";
         } else {
             $firstTargetType = "static_cast<PropertySlot::GetValueFunc>";
             $secondTargetType = "static_cast<PutPropertySlot::PutValueFunc>";
-            $hasSetter = "true";
         }
         if ("@$specials[$i]" =~ m/ConstantInteger/) {
             push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, { (long long)" . $firstTargetType . "(@$value1[$i]) } },\n");
@@ -7275,51 +7061,27 @@ sub GenerateHashTableValueArray
 
     push(@implContent, "    { 0, 0, NoIntrinsic, { 0, 0 } }\n") if (!$packedSize);
     push(@implContent, "};\n\n");
-
-    return $hasSetter;
 }
 
 sub GenerateHashTable
 {
-    my $object = shift;
+    my ($interface, $contextName) = @_;
 
-    my $className = shift;
-    my $name = shift;
-    my $size = shift;
-    my $keys = shift;
-    my $specials = shift;
-    my $value1 = shift;
-    my $value2 = shift;
-    my $conditionals = shift;
-    my $readWriteConditionals = shift;
-    my $justGenerateValueArray = shift;
+    my @keys = ();
+    my @specials = ();
+    my @value1 = ();
+    my @value2 = ();
+    my %conditionals = ();
+    my %readWriteConditionals = ();
 
+    my ($size, $hasSetterOrReadonlyProperties) = GeneratePropertiesHashTable($interface, $contextName, \@keys, \@specials, \@value1, \@value2, \%conditionals, \%readWriteConditionals);
+    return "nullptr" if $size == 0;
+
+    push(@implContent, "/* Hash table for ${contextName} */\n");
+
+    my $name = $interface->className . "${contextName}Table";
     my $nameEntries = "${name}Values";
-    $nameEntries =~ s/:/_/g;
     my $nameIndex = "${name}Index";
-    $nameIndex =~ s/:/_/g;
-
-    if (($name =~ /Prototype/) or ($name =~ /Constructor/)) {
-        my $type = $name;
-        my $implClass;
-
-        if ($name =~ /Prototype/) {
-            $type =~ s/Prototype.*//;
-            $implClass = $type; $implClass =~ s/Wrapper$//;
-            push(@implContent, "/* Hash table for prototype */\n");
-        } else {
-            $type =~ s/Constructor.*//;
-            $implClass = $type; $implClass =~ s/Constructor$//;
-            push(@implContent, "/* Hash table for constructor */\n");
-        }
-    } else {
-        push(@implContent, "/* Hash table */\n");
-    }
-
-    if ($justGenerateValueArray) {
-        GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries) if $size;
-        return;
-    }
 
     # Generate size data for compact' size hash table
 
@@ -7333,7 +7095,7 @@ sub GenerateHashTable
     my $numEntries = $compactSize;
 
     my $i = 0;
-    foreach (@{$keys}) {
+    foreach (@keys) {
         my $depth = 0;
         my $h = Hasher::GenerateHashValue($_) % $numEntries;
 
@@ -7365,12 +7127,53 @@ sub GenerateHashTable
     }
     push(@implContent, "};\n\n");
 
-    # Dump the hash table
-    my $hasSetter = GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries);
-    my $packedSize = scalar @{$keys};
+    GenerateHashTableValueArray(\@keys, \@specials, \@value1, \@value2, \%conditionals, \%readWriteConditionals, $nameEntries);
 
+    my $packedSize = scalar(@keys);
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetter, ${className}::info(), $nameEntries, $nameIndex };\n");
+    my $classForThis = $contextName eq CONTEXT_NAME_CONSTRUCTOR ? "nullptr" : $interface->className . "::info()";
+    push(@implContent, "static const HashTable $name = { $packedSize, $compactSizeMask, $hasSetterOrReadonlyProperties, $classForThis, $nameEntries, $nameIndex };\n");
+
+    return "&${name}";
+}
+
+sub GeneratePrivateIdentifiers
+{
+    my ($interface, $contextName) = @_;
+
+    my $isConstructor = $contextName eq CONTEXT_NAME_CONSTRUCTOR;
+    my $isInstance = $contextName eq CONTEXT_NAME_INSTANCE;
+
+    foreach my $operationOrAttribute (@{$interface->operations}, @{$interface->attributes}) {
+        next if !$operationOrAttribute->extendedAttributes->{PrivateIdentifier};
+        next if ($operationOrAttribute->isStatic || 0) != $isConstructor;
+        next if ShouldBeOnInstance($interface, $operationOrAttribute) != $isInstance;
+
+        assert("Using DOMJIT with private identifiers is not yet supported.") if $operationOrAttribute->extendedAttributes->{DOMJIT};
+
+        my $conditional = $operationOrAttribute->extendedAttributes->{Conditional};
+        if ($conditional) {
+            my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+            push(@implContent, "#if ${conditionalString}\n");
+        }
+
+        if (NeedsRuntimeCheck($interface, $operationOrAttribute)) {
+            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "globalObject()");
+            push(@implContent, "    if (${runtimeEnableConditionalString})\n");
+            push(@implContent, "    ");
+        }
+
+        AddToImplIncludes("WebCoreJSClientData.h");
+        my $propertyName = "static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $operationOrAttribute->name . "PrivateName()";
+        if (ref($operationOrAttribute) eq "IDLAttribute") {
+            my $jscAttribute = $codeGenerator->IsConstructorType($operationOrAttribute->type) ? "JSC::PropertyAttribute::CustomValue" : "JSC::PropertyAttribute::CustomAccessor";
+            push(@implContent, "    putDirectCustomAccessor(vm, ${propertyName}, " . GetAttributeJSValue($interface, $operationOrAttribute) . ", static_cast<unsigned>(${jscAttribute}));\n");
+        } else {
+            push(@implContent, "    putDirect(vm, ${propertyName}, " . GetOperationJSValue($interface, $operationOrAttribute, "this->globalObject()") . ");\n");
+        }
+
+        push(@implContent, "#endif\n") if $conditional;
+    }
 }
 
 sub SubstituteHeader
@@ -7531,7 +7334,7 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "\n");
     push(@$outputArray, "    void finishCreation(JSC::VM&);\n");
 
-    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if PrototypeHasStaticPropertyTable($interface) && IsGlobalInterface($interface);
+    $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if PrototypeHasProperties($interface);
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObjectOnPrototype};
 
     # structure flags
@@ -7576,13 +7379,13 @@ sub GenerateConstructorDeclaration
 
 sub GenerateConstructorDefinitions
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
+    my ($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
 
     if (IsConstructable($interface)) {
         my @constructors = @{$interface->constructors};
         if (@constructors > 1) {
             foreach my $constructor (@constructors) {
-                GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructor);
+                GenerateConstructorDefinition($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructor);
             }
 
             my $overloadFunctionPrefix = "construct${className}";
@@ -7598,18 +7401,18 @@ sub GenerateConstructorDefinitions
             push(@implContent, "}\n");
             push(@implContent, "JSC_ANNOTATE_HOST_FUNCTION(${className}ConstructorConstruct, ${className}DOMConstructor::construct);\n\n");
         } elsif (@constructors == 1) {
-            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
+            GenerateConstructorDefinition($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $constructors[0]);
         } else {
-            GenerateConstructorDefinition($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
+            GenerateConstructorDefinition($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
         }
     }
 
-    GenerateConstructorHelperMethods($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
+    GenerateConstructorHelperMethods($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction);
 }
 
 sub GenerateConstructorDefinition
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $operation) = @_;
+    my ($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction, $operation) = @_;
 
     return if HasJSBuiltinConstructor($interface);
 
@@ -7683,66 +7486,9 @@ sub GenerateConstructorDefinition
     }
 }
 
-sub ConstructorHasProperties
-{
-    my $interface = shift;
-
-    foreach my $constant (@{$interface->constants}) {
-        return 1;
-    }
-
-    foreach my $attribute (@{$interface->attributes}) {
-        next unless ($attribute->isStatic);
-        return 1;
-    }
-
-    foreach my $operation (@{$interface->operations}) {
-        next unless ($operation->isStatic);
-        return 1;
-    }
-
-    return 0;
-}
-
-sub GetRuntimeEnabledStaticProperties
-{
-    my ($interface) = @_;
-
-    my @runtimeEnabledProperties = ();
-
-    foreach my $attribute (@{$interface->attributes}) {
-        next if AttributeShouldBeOnInstance($interface, $attribute) != 0;
-        next if not $attribute->isStatic;
-
-        if (NeedsRuntimeCheck($interface, $attribute)) {
-            push(@runtimeEnabledProperties, $attribute);
-        }
-    }
-
-    foreach my $constant (@{$interface->constants}) {
-        if (NeedsRuntimeCheck($interface, $constant)) {
-            push(@runtimeEnabledProperties, $constant);
-        }
-    }
-
-    foreach my $operation (@{$interface->operations}) {
-        next if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
-        next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
-        next if OperationShouldBeOnInstance($interface, $operation) != 0;
-        next if $operation->name eq "[Symbol.Iterator]";
-        next if not $operation->isStatic;
-
-        if (NeedsRuntimeCheck($interface, $operation)) {
-            push(@runtimeEnabledProperties, $operation);
-        }
-    }
-
-    return @runtimeEnabledProperties;
-}
-
 sub GenerateConstructorHelperMethods
 {
-    my ($outputArray, $className, $protoClassName, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
+    my ($outputArray, $className, $visibleInterfaceName, $interface, $generatingLegacyFactoryFunction) = @_;
 
     my $constructorClassName = $generatingLegacyFactoryFunction ? "${className}LegacyFactoryFunction" : "${className}DOMConstructor";
     my $leastConstructorLength = 0;
@@ -7756,7 +7502,20 @@ sub GenerateConstructorHelperMethods
         $leastConstructorLength = 0;
     }
 
-    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${constructorClassName}) };\n\n");
+    my $constructorHashTable = "nullptr";
+    unless ($generatingLegacyFactoryFunction) {
+        $constructorHashTable = GenerateHashTable($interface, CONTEXT_NAME_CONSTRUCTOR);
+        push(@$outputArray, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
+
+        my $structureFlags = "Base::StructureFlags";
+        if ($constructorHashTable ne "nullptr") {
+            $structureFlags .= " | JSC::HasStaticPropertyTable";
+        }
+
+        push(@$outputArray, "template<> const unsigned ${constructorClassName}::StructureFlags = ${structureFlags};\n");
+    }
+
+    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${constructorHashTable}, nullptr, CREATE_METHOD_TABLE(${constructorClassName}) };\n\n");
 
     # If the interface has a parent interface which does not have [LegacyNoInterfaceObject], then use its interface object as prototype,
     # otherwise use FunctionPrototype: http://heycam.github.io/webidl/#interface-object
@@ -7791,6 +7550,7 @@ sub GenerateConstructorHelperMethods
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
     } elsif ($interface->isNamespaceObject) {
+        push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
         push(@$outputArray, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
     } else {
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
@@ -7809,26 +7569,10 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
-    my $classForThis = "${className}::info()";
-    if ($interface->isCallback) {
-        $classForThis = "nullptr";
-    }
-    push(@$outputArray, "    reifyStaticProperties(vm, ${classForThis}, ${className}ConstructorTableValues, *this);\n") if ConstructorHasProperties($interface);
+    GeneratePrivateIdentifiers($interface, CONTEXT_NAME_CONSTRUCTOR);
 
-    my @runtimeEnabledProperties = GetRuntimeEnabledStaticProperties($interface);
-
-    foreach my $operationOrAttribute (@runtimeEnabledProperties) {
-        my $conditionalString = $codeGenerator->GenerateConditionalString($operationOrAttribute);
-        push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "&globalObject");
-        my $name = $operationOrAttribute->name;
-        push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
-        push(@$outputArray, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
-        push(@$outputArray, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
-        push(@$outputArray, "        DeletePropertySlot slot;\n");
-        push(@$outputArray, "        JSObject::deleteProperty(this, &globalObject, propertyName, slot);\n");
-        push(@$outputArray, "    }\n");
-        push(@$outputArray, "#endif\n") if $conditionalString;
+    if ($constructorHashTable ne "nullptr") {
+        push(@$outputArray, "    reifyStaticProperties(vm, nullptr, ${className}ConstructorTableValues, *this);\n");
     }
 
     push(@$outputArray, "}\n\n");
@@ -7920,6 +7664,12 @@ sub ComputeFunctionSpecial
     my @specials = ();
     push(@specials, ("JSC::PropertyAttribute::DontDelete", "JSC::PropertyAttribute::ReadOnly")) if IsLegacyUnforgeable($interface, $operation);
     push(@specials, "JSC::PropertyAttribute::DontEnum") if $operation->extendedAttributes->{NotEnumerable};
+
+    if (NeedsRuntimeCheck($interface, $operation)) {
+        push(@specials, "JSC::PropertyAttribute::PropertyCallback");
+        return \@specials;
+    }
+
     if (IsJSBuiltin($interface, $operation)) {
         push(@specials, "JSC::PropertyAttribute::Builtin");
     } else {
@@ -7928,7 +7678,7 @@ sub ComputeFunctionSpecial
     if ($operation->extendedAttributes->{DOMJIT}) {
         push(@specials, "JSC::PropertyAttribute::DOMJITFunction") if $operation->extendedAttributes->{DOMJIT};
     }
-    return "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
+    return \@specials;
 }
 
 sub IsJSBuiltin

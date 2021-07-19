@@ -34,7 +34,7 @@ enum DeviceType {
     ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface MediaControlsHost {
-    readonly attribute DOMString platform;
+    readonly attribute DOMString layoutTraitsClassName;
 
     sequence<TextTrack> sortedTrackListForMenu(TextTrackList trackList);
     sequence<AudioTrack> sortedTrackListForMenu(AudioTrackList trackList);

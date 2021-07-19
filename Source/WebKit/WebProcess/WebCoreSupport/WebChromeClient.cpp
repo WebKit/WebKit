@@ -1515,4 +1515,18 @@ void WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent()
     m_page.didHandleOrPreventMouseDownOrMouseUpEvent();
 }
 
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+void WebChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const
+{
+    m_page.takeModelElementFullscreen(contentLayerId);
+}
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+void WebChromeClient::modelElementDidCreatePreview(WebCore::HTMLModelElement& element, const URL& url, const String& uuid, const WebCore::FloatSize& size) const
+{
+    m_page.modelElementDidCreatePreview(element, url, uuid, size);
+}
+#endif
+
 } // namespace WebKit

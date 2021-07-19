@@ -1,3 +1,0 @@
-
-PASS speechSynthesis.speak requires user activation
-

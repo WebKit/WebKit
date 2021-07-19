@@ -345,6 +345,8 @@ public:
 
     ExceptionOr<void> setSelectionRangeForBindings(int start, int end, const String& direction);
 
+    String resultForDialogSubmit() const final;
+
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 

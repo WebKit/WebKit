@@ -800,35 +800,47 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
     }
 }
 
+static void removeTrailingWhitespace(const CSSParserTokenRange& range, const CSSParserToken*& position)
+{
+    while (position != range.begin() && position[-1].type() == WhitespaceToken)
+        --position;
+}
+
+// https://drafts.csswg.org/css-syntax/#consume-declaration
 void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType ruleType)
 {
     CSSParserTokenRange rangeCopy = range; // For inspector callbacks
 
     ASSERT(range.peek().type() == IdentToken);
-    const CSSParserToken& token = range.consumeIncludingWhitespace();
-    CSSPropertyID propertyID = token.parseAsCSSPropertyID();
+    auto& token = range.consumeIncludingWhitespace();
+    auto propertyID = token.parseAsCSSPropertyID();
     if (range.consume().type() != ColonToken)
         return; // Parse error
+    range.consumeWhitespace();
 
-    if (m_context.isPropertyRuntimeDisabled(propertyID) || isInternalCSSProperty(propertyID))
-        propertyID = CSSPropertyInvalid;
-
+    auto declarationValueEnd = range.end();
     bool important = false;
-    const CSSParserToken* declarationValueEnd = range.end();
-    const CSSParserToken* last = range.end() - 1;
-    while (last->type() == WhitespaceToken)
-        --last;
-    if (last->type() == IdentToken && equalIgnoringASCIICase(last->value(), "important")) {
-        --last;
-        while (last->type() == WhitespaceToken)
-            --last;
-        if (last->type() == DelimiterToken && last->delimiter() == '!') {
-            important = true;
-            declarationValueEnd = last;
+    if (!range.atEnd()) {
+        auto end = range.end();
+        removeTrailingWhitespace(range, end);
+        declarationValueEnd = end;
+        if (end[-1].type() == IdentToken && equalIgnoringASCIICase(end[-1].value(), "important")) {
+            --end;
+            removeTrailingWhitespace(range, end);
+            if (end[-1].type() == DelimiterToken && end[-1].delimiter() == '!') {
+                important = true;
+                --end;
+                removeTrailingWhitespace(range, end);
+                declarationValueEnd = end;
+            }
         }
     }
 
     size_t propertiesCount = m_parsedProperties.size();
+
+    if (m_context.isPropertyRuntimeDisabled(propertyID) || isInternalCSSProperty(propertyID))
+        propertyID = CSSPropertyInvalid;
+
     if (propertyID == CSSPropertyInvalid && CSSVariableParser::isValidVariableName(token)) {
         AtomString variableName = token.value().toAtomString();
         consumeCustomPropertyValue(range.makeSubRange(&range.peek(), declarationValueEnd), variableName, important);
@@ -849,7 +861,9 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
 
 void CSSParserImpl::consumeCustomPropertyValue(CSSParserTokenRange range, const AtomString& variableName, bool important)
 {
-    if (RefPtr<CSSCustomPropertyValue> value = CSSVariableParser::parseDeclarationValue(variableName, range, m_context))
+    if (range.atEnd())
+        m_parsedProperties.append(CSSProperty(CSSPropertyCustom, CSSCustomPropertyValue::createEmpty(variableName), important));
+    else if (auto value = CSSVariableParser::parseDeclarationValue(variableName, range, m_context))
         m_parsedProperties.append(CSSProperty(CSSPropertyCustom, WTFMove(value), important));
 }
 

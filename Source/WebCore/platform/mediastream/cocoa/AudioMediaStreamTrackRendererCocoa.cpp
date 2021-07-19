@@ -45,7 +45,7 @@ void AudioMediaStreamTrackRendererCocoa::start(CompletionHandler<void()>&& callb
     clear();
 
     AudioMediaStreamTrackRendererUnit::singleton().retrieveFormatDescription([weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto* formatDescription) mutable {
-        if (weakThis)
+        if (weakThis && formatDescription)
             weakThis->m_outputDescription = makeUnique<CAAudioStreamDescription>(*formatDescription);
         callback();
     });

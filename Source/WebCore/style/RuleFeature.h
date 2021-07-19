@@ -25,6 +25,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/SystemMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -38,6 +39,13 @@ class RuleData;
 
 enum class MatchElement : uint8_t { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, Host };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
+
+#if HAVE(PROBABILISTIC_GUARD_MALLOC)
+// Help finding rdar://77450900
+using RuleMalloc = ProbabilisticGuardMalloc;
+#else
+using RuleMalloc = FastMalloc;
+#endif
 
 struct RuleFeature {
     RuleFeature(const RuleData&, std::optional<MatchElement> = std::nullopt);
@@ -58,6 +66,8 @@ struct RuleFeatureWithInvalidationSelector : public RuleFeature {
     const CSSSelector* invalidationSelector { nullptr };
 };
 
+using RuleFeatureVector = Vector<RuleFeature, 0, CrashOnOverflow, 16, RuleMalloc>;
+
 struct RuleFeatureSet {
     void add(const RuleFeatureSet&);
     void clear();
@@ -70,12 +80,12 @@ struct RuleFeatureSet {
     HashSet<AtomString> attributeCanonicalLocalNamesInRules;
     HashSet<AtomString> attributeLocalNamesInRules;
     HashSet<AtomString> contentAttributeNamesInRules;
-    Vector<RuleFeature> siblingRules;
-    Vector<RuleFeature> uncommonAttributeRules;
+    RuleFeatureVector siblingRules;
+    RuleFeatureVector uncommonAttributeRules;
     
-    HashMap<AtomString, std::unique_ptr<Vector<RuleFeature>>> classRules;
+    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
-    HashMap<CSSSelector::PseudoClassType, std::unique_ptr<Vector<RuleFeature>>, WTF::IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassRules;
+    HashMap<CSSSelector::PseudoClassType, std::unique_ptr<RuleFeatureVector>, WTF::IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassRules;
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClassType, WTF::IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> pseudoClassesAffectingHost;

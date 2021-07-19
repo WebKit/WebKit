@@ -20,4 +20,5 @@ PASS Script script-async-false
 PASS Script iframe-src
 PASS Script cross-origin
 PASS Script document-write
+PASS Script microtask
 

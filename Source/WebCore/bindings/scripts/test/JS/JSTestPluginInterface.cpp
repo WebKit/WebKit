@@ -78,11 +78,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestPluginInterfacePrototype, JSTestPluginInterfacePrototype::Base);
 
 using JSTestPluginInterfaceDOMConstructor = JSDOMConstructorNotConstructable<JSTestPluginInterface>;
 
+template<> const unsigned JSTestPluginInterfaceDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestPluginInterfaceDOMConstructor::s_info = { "TestPluginInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterfaceDOMConstructor) };
 
 template<> JSValue JSTestPluginInterfaceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -98,14 +101,21 @@ template<> void JSTestPluginInterfaceDOMConstructor::initializeProperties(VM& vm
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestPluginInterfacePrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestPluginInterfacePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestPluginInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestPluginInterfacePrototype::s_info = { "TestPluginInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterfacePrototype) };
+static const HashTable JSTestPluginInterfacePrototypeTable = { 1, 1, true, JSTestPluginInterface::info(), JSTestPluginInterfacePrototypeTableValues, JSTestPluginInterfacePrototypeTableIndex };
+const ClassInfo JSTestPluginInterfacePrototype::s_info = { "TestPluginInterface", &Base::s_info, &JSTestPluginInterfacePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterfacePrototype) };
 
 void JSTestPluginInterfacePrototype::finishCreation(VM& vm)
 {

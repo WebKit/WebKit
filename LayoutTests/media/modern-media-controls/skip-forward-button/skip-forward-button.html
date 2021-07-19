@@ -8,13 +8,13 @@ window.jsTestIsAsync = true;
 
 description("Testing the <code>SkipForwardButton</code> class.");
 
-const skipForwardButton = new SkipForwardButton({ layoutTraits: LayoutTraits.macOS });
+const skipForwardButton = new SkipForwardButton({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBeEqualToString("skipForwardButton.element.localName", "button");
 shouldBeTrue('skipForwardButton.element.classList.contains("skip-forward")');
 shouldBe("skipForwardButton.iconName", "Icons.SkipForward");
 
-const iOSSkipForwardButton = new SkipForwardButton({ layoutTraits: LayoutTraits.iOS });
+const iOSSkipForwardButton = new SkipForwardButton({ layoutTraits: new IOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBecomeEqual('skipForwardButton.image.element.style.webkitMaskImage.includes("macOS/SkipForward15.svg")', "true", () => {
     shouldBecomeEqual('iOSSkipForwardButton.image.element.style.webkitMaskImage.includes("iOS/SkipForward15.svg")', "true", finishJSTest);

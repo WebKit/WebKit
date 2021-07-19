@@ -120,6 +120,8 @@ class TranslatorMetalReflection
     {
         hasUBOs = false;
         hasFlatInput = false;
+        hasAtan = false;
+        hasInvariance = false;
         originalNames.clear();
         samplerBindings.clear();
         textureBindings.clear();
@@ -129,6 +131,8 @@ class TranslatorMetalReflection
 
     bool hasUBOs = false;
     bool hasFlatInput = false;
+    bool hasAtan = false;
+    bool hasInvariance = false;
 
   private:
     originalNamesMap originalNames;

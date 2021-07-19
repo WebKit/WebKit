@@ -174,9 +174,11 @@ static Vector<WebProcessPool*>& processPools()
     return processPools;
 }
 
-const Vector<WebProcessPool*>& WebProcessPool::allProcessPools()
+Vector<Ref<WebProcessPool>> WebProcessPool::allProcessPools()
 {
-    return processPools();
+    return WTF::map(processPools(), [] (auto&& v) -> Ref<WebProcessPool> {
+        return *v;
+    });
 }
 
 static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProtocolHandlers()
@@ -692,7 +694,14 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     if (!javaScriptConfigurationDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, javaScriptConfigurationDirectoryExtensionHandle);
-        
+
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    auto modelElementCacheDirectory = websiteDataStore.resolvedModelElementCacheDirectory();
+    SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
+    if (!modelElementCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(modelElementCacheDirectory, SandboxExtension::Type::ReadWrite, modelElementCacheDirectoryExtensionHandle);
+#endif
+
     return WebProcessDataStoreParameters {
         websiteDataStore.sessionID(),
         WTFMove(applicationCacheDirectory),
@@ -708,6 +717,10 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         websiteDataStore.thirdPartyCookieBlockingMode(),
         m_domainsWithUserInteraction,
         m_domainsWithCrossPageStorageAccessQuirk,
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW)
+        WTFMove(modelElementCacheDirectory),
+        WTFMove(modelElementCacheDirectoryExtensionHandle),
 #endif
         websiteDataStore.resourceLoadStatisticsEnabled()
     };
@@ -800,6 +813,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
         parameters.websiteDataStoreParameters = webProcessDataStoreParameters(process, *websiteDataStore);
 
     process.send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    setMediaAccessibilityPreferences(process);
+#endif
 
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
@@ -2015,9 +2032,9 @@ void WebProcessPool::updateAudibleMediaAssertions()
 
     WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media is now greater than zero. Taking UI process assertion.");
     m_audibleMediaActivity = AudibleMediaActivity {
-        makeUniqueRef<ProcessAssertion>(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback)
+        ProcessAssertion::create(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback)
 #if ENABLE(GPU_PROCESS)
-        , gpuProcess() ? makeUnique<ProcessAssertion>(gpuProcess()->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) : nullptr
+        , gpuProcess() ? RefPtr<ProcessAssertion> { ProcessAssertion::create(gpuProcess()->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) } : nullptr
 #endif
     };
 }
@@ -2030,11 +2047,8 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
     WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "setUseSeparateServiceWorkerProcess: (useSeparateServiceWorkerProcess=%d)", useSeparateServiceWorkerProcess);
 
     s_useSeparateServiceWorkerProcess = useSeparateServiceWorkerProcess;
-    auto processPools = WTF::map(WebProcessPool::allProcessPools(), [](auto* pool) { return makeWeakPtr(pool); });
-    for (auto& processPool : processPools) {
-        if (processPool)
-            processPool->terminateServiceWorkers();
-    }
+    for (auto& processPool : allProcessPools())
+        processPool->terminateServiceWorkers();
 }
 
 #if ENABLE(SERVICE_WORKER)

@@ -172,7 +172,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 
 static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->alwaysRunsAtBackgroundPriority())
             return true;
     }
@@ -181,7 +181,7 @@ static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
 
 static bool anyProcessPoolShouldTakeUIBackgroundAssertion()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->shouldTakeUIBackgroundAssertion())
             return true;
     }
@@ -316,14 +316,12 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
     m_customProtocolManagerProxy.invalidate();
 #endif
 
-    m_activityForHoldingLockedFiles = nullptr;
-
     m_uploadActivity = std::nullopt;
 
     if (defaultNetworkProcess() == this)
         defaultNetworkProcess() = nullptr;
 
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->networkProcessDidTerminate(*this, reason);
     for (auto& websiteDataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_websiteDataStores))
         websiteDataStore->networkProcessDidTerminate(*this);
@@ -1218,7 +1216,7 @@ void NetworkProcessProxy::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sess
 
 void NetworkProcessProxy::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
 {
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> { domains });
 }
 
@@ -1226,7 +1224,7 @@ void NetworkProcessProxy::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameD
 {    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
-    for (auto* processPool : WebProcessPool::allProcessPools())
+    for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain> { domains }, [callbackAggregator] { });
 }
 
@@ -1255,19 +1253,6 @@ void NetworkProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
-}
-    
-void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
-{
-    if (!isHoldingLockedFiles) {
-        RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the Network process is no longer holding locked files");
-        m_activityForHoldingLockedFiles = nullptr;
-        return;
-    }
-    if (!m_activityForHoldingLockedFiles) {
-        RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the Network process is holding locked files");
-        m_activityForHoldingLockedFiles = m_throttler.backgroundActivity("Holding locked files"_s).moveToUniquePtr();
-    }
 }
 
 void NetworkProcessProxy::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -1457,15 +1442,15 @@ void NetworkProcessProxy::setWebProcessHasUploads(WebCore::ProcessIdentifier pro
     if (!m_uploadActivity) {
         RELEASE_LOG(ProcessSuspension, "NetworkProcessProxy::setWebProcessHasUploads: The number of uploads in progress is now greater than 0. Taking Networking and UI process assertions.");
         m_uploadActivity = UploadActivity {
-            makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
-            makeUnique<ProcessAssertion>(processIdentifier(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
-            HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>>()
+            ProcessAssertion::create(getCurrentProcessID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
+            ProcessAssertion::create(processIdentifier(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
+            HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>>()
         };
     }
 
     m_uploadActivity->webProcessAssertions.ensure(processID, [&] {
         RELEASE_LOG(ProcessSuspension, "NetworkProcessProxy::setWebProcessHasUploads: Taking upload assertion on behalf of WebProcess with PID %d", process->processIdentifier());
-        return makeUnique<ProcessAssertion>(process->processIdentifier(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
+        return ProcessAssertion::create(process->processIdentifier(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking);
     });
 }
 
@@ -1511,7 +1496,7 @@ void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIde
 
 static bool anyProcessPoolHasForegroundWebProcesses()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->hasForegroundWebProcesses())
             return true;
     }
@@ -1520,7 +1505,7 @@ static bool anyProcessPoolHasForegroundWebProcesses()
 
 static bool anyProcessPoolHasBackgroundWebProcesses()
 {
-    for (auto* processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
         if (processPool->hasBackgroundWebProcesses())
             return true;
     }

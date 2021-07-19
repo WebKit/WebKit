@@ -146,6 +146,13 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition
     return true;
 }
 
+void ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
+{
+    ASSERT(scrollableArea().currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation);
+    ASSERT(m_scrollAnimation->isActive());
+    m_scrollAnimation->scroll(newPosition);
+}
+
 FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position)
 {
     return ScrollableArea::scrollOffsetFromPosition(position, toFloatSize(m_scrollableArea.scrollOrigin()));

@@ -85,11 +85,26 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
             break;
         case Wasm::TypeKind::TypeIdx:
         case Wasm::TypeKind::Funcref: {
-            if (!isWebAssemblyHostFunction(vm, arg) && !arg.isNull())
+            bool isNullable = signature.argument(argIndex).isNullable();
+            WebAssemblyFunction* wasmFunction = nullptr;
+            WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+            if (!isWebAssemblyHostFunction(vm, arg, wasmFunction, wasmWrapperFunction) && (!isNullable || !arg.isNull()))
                 return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function")));
+            if (signature.argument(argIndex).kind == Wasm::TypeKind::TypeIdx && (wasmFunction || wasmWrapperFunction)) {
+                Wasm::SignatureIndex paramIndex = signature.argument(argIndex).index;
+                Wasm::SignatureIndex argIndex;
+                if (wasmFunction)
+                    argIndex = wasmFunction->signatureIndex();
+                else
+                    argIndex = wasmWrapperFunction->signatureIndex();
+                if (paramIndex != argIndex)
+                    return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type")));
+            }
             break;
         }
         case Wasm::TypeKind::Externref:
+            if (!signature.argument(argIndex).isNullable() && arg.isNull())
+                return JSValue::encode(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null")));
             break;
         case Wasm::TypeKind::I64:
             arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toBigInt64(globalObject)));
@@ -102,6 +117,8 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
             break;
         case Wasm::TypeKind::Void:
         case Wasm::TypeKind::Func:
+        case Wasm::TypeKind::RefNull:
+        case Wasm::TypeKind::Ref:
             RELEASE_ASSERT_NOT_REACHED();
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -277,10 +294,13 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 jit.zeroExtend32ToWord(scratchGPR, wasmCallInfo.params[i].gpr());
             break;
         }
+        case Wasm::TypeKind::TypeIdx:
         case Wasm::TypeKind::Funcref: {
             // Ensure we have a WASM exported function.
             jit.load64(jsParam, scratchGPR);
             auto isNull = jit.branchIfNull(scratchGPR);
+            if (!type.isNullable())
+                slowPath.append(isNull);
             slowPath.append(jit.branchIfNotCell(scratchGPR));
 
             stackLimitGPRIsClobbered = true;
@@ -294,15 +314,28 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(WebAssemblyWrapperFunction::info())));
 
             isWasmFunction.link(&jit);
-            isNull.link(&jit);
+            if (type.kind == Wasm::TypeKind::TypeIdx) {
+                jit.load64(jsParam, scratchGPR);
+                jit.loadPtr(CCallHelpers::Address(scratchGPR, WebAssemblyFunctionBase::offsetOfSignatureIndex()), scratchGPR);
+                slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(type.index)));
+            }
+
+            if (type.isNullable())
+                isNull.link(&jit);
             FALLTHROUGH;
         }
         case Wasm::TypeKind::Externref: {
             if (isStack) {
                 jit.load64(jsParam, scratchGPR);
+                if (!type.isNullable())
+                    slowPath.append(jit.branchIfNull(scratchGPR));
                 jit.store64(scratchGPR, calleeFrame.withOffset(wasmCallInfo.params[i].offsetFromSP()));
-            } else
-                jit.load64(jsParam, wasmCallInfo.params[i].gpr());
+            } else {
+                auto externGPR = wasmCallInfo.params[i].gpr();
+                jit.load64(jsParam, externGPR);
+                if (!type.isNullable())
+                    slowPath.append(jit.branchIfNull(externGPR));
+            }
             break;
         }
         case Wasm::TypeKind::F32:

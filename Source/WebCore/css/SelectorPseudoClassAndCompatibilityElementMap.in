@@ -1,15 +1,17 @@
+-internal-direct-focus
+-internal-modal-dialog
 -khtml-drag
 -webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
 -webkit-autofill
 -webkit-autofill-strong-password
 -webkit-autofill-strong-password-viewable
--webkit-direct-focus
 -webkit-drag
 -webkit-full-page-media
 active
 after, PseudoClassUnknown, PseudoElementAfter
 any-link
+autofill
 before, PseudoClassUnknown, PseudoElementBefore
 checked
 corner-present

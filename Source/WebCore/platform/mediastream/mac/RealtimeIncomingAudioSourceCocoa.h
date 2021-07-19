@@ -65,8 +65,8 @@ private:
     size_t m_numberOfChannels { 0 };
     CAAudioStreamDescription m_streamDescription;
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
-#if !RELEASE_LOG_DISABLED
     size_t m_chunksReceived { 0 };
+#if !RELEASE_LOG_DISABLED
     size_t m_lastChunksReceived { 0 };
     bool m_audioFormatChanged { false };
     Timer m_logTimer;

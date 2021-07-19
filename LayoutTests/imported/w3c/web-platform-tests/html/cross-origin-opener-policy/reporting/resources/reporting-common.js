@@ -1,5 +1,5 @@
 
-const directory = "/html/cross-origin-opener-policy/reporting/resources";
+const directory = "/html/cross-origin-opener-policy/resources";
 const executor_path = directory + "/executor.html?pipe=";
 const coep_header = '|header(Cross-Origin-Embedder-Policy,require-corp)';
 
@@ -17,8 +17,8 @@ function isCoopOpenerBreakageReport(report) {
   if (report.type != "coop")
     return false;
 
-  if (report.body["violation-type"] != "navigation-from-document" &&
-      report.body["violation-type"] != "navigation-to-document") {
+  if (report.body.type != "navigation-from-response" &&
+      report.body.type != "navigation-to-response") {
     return false;
   }
 
@@ -27,7 +27,7 @@ function isCoopOpenerBreakageReport(report) {
 
 async function pollReports(endpoint) {
   const res = await fetch(
-    `${directory}/report.py?endpoint=${endpoint.name}`,
+    `/reporting/resources/report.py?endpoint=${endpoint.name}`,
       {cache: 'no-store'});
   if (res.status !== 200) {
     return;
@@ -76,12 +76,14 @@ async function checkForExpectedReport(expectedReport) {
       };
       await wait(waitTime);
     }
-    reject("No report matched the expected report for endpoint: "
-      + expectedReport.endpoint.name
-      + ", expected report: " + JSON.stringify(expectedReport.report)
-      + ", within available reports: "
-      + JSON.stringify(expectedReport.endpoint.reports)
-    );
+    reject(
+      replaceTokensInReceivedReport(
+        "No report matched the expected report for endpoint: "
+        + expectedReport.endpoint.name
+        + ", expected report: " + JSON.stringify(expectedReport.report)
+        + ", within available reports: "
+        + JSON.stringify(expectedReport.endpoint.reports)
+    ));
   });
 }
 
@@ -96,14 +98,19 @@ function replaceFromRegexOrString(str, match, value) {
 // EXECUTOR_UUID: the uuid generated with token().
 function replaceValuesInExpectedReport(expectedReport, executorUuid) {
   if (expectedReport.report.body !== undefined) {
-    if (expectedReport.report.body["document-uri"] !== undefined) {
-      expectedReport.report.body["document-uri"] = replaceFromRegexOrString(
-          expectedReport.report.body["document-uri"], "EXECUTOR_UUID",
+    if (expectedReport.report.body.nextResponseURL !== undefined) {
+      expectedReport.report.body.nextResponseURL = replaceFromRegexOrString(
+          expectedReport.report.body.nextResponseURL, "EXECUTOR_UUID",
           executorUuid);
     }
-    if (expectedReport.report.body["navigation-uri"] !== undefined) {
-      expectedReport.report.body["navigation-uri"] = replaceFromRegexOrString(
-          expectedReport.report.body["navigation-uri"], "EXECUTOR_UUID",
+    if (expectedReport.report.body.previousResponseURL !== undefined) {
+      expectedReport.report.body.previousResponseURL = replaceFromRegexOrString(
+          expectedReport.report.body.previousResponseURL, "EXECUTOR_UUID",
+          executorUuid);
+    }
+    if (expectedReport.report.body.referrer !== undefined) {
+      expectedReport.report.body.referrer = replaceFromRegexOrString(
+          expectedReport.report.body.referrer, "EXECUTOR_UUID",
           executorUuid);
     }
   }
@@ -112,6 +119,10 @@ function replaceValuesInExpectedReport(expectedReport, executorUuid) {
           expectedReport.report.url, "EXECUTOR_UUID", executorUuid);
   }
   return expectedReport;
+}
+
+function replaceTokensInReceivedReport(str) {
+  return str.replace(/.{8}-.{4}-.{4}-.{4}-.{12}/g, `(uuid)`);
 }
 
 // Run a test (such as coop_coep_test from ./common.js) then check that all
@@ -132,7 +143,7 @@ function getReportEndpoints(host) {
         'group': `${reportEndpoint.name}`,
         'max_age': 3600,
         'endpoints': [
-          {'url': `${host}/html/cross-origin-opener-policy/reporting/resources/report.py?endpoint=${reportEndpoint.name}`
+          {'url': `${host}/reporting/resources/report.py?endpoint=${reportEndpoint.name}`
           },
         ]
       };
@@ -160,7 +171,8 @@ function navigationReportingTest(testName, host, coop, coep, coopRo, coepRo,
       `|header(Cross-Origin-Embedder-Policy-Report-Only,${encodeURIComponent(coepRo)})`+
       `&uuid=${executorToken}`;
       const openee = window.open(openee_url);
-      t.add_cleanup(() => send(5, "window.close()"));
+      const uuid = token();
+      t.add_cleanup(() => send(uuid, "window.close()"));
 
       // 1. Make sure the new document is loaded.
       send(executorToken, `

@@ -34,7 +34,9 @@ enum RemotePlaybackState {
     ActiveDOMObject,
     Conditional=WIRELESS_PLAYBACK_TARGET,
     EnabledBySetting=RemotePlayback,
-    Exposed=Window
+    Exposed=Window,
+    GenerateIsReachable=ImplOwnerNodeRoot,
+    GenerateAddOpaqueRoot=opaqueRootConcurrently
 ] interface RemotePlayback : EventTarget {
     Promise<long> watchAvailability(RemotePlaybackAvailabilityCallback callback);
     Promise<undefined> cancelWatchAvailability(optional long id);

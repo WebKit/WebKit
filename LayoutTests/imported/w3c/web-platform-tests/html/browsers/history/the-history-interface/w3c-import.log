@@ -73,6 +73,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_replacestate_nooptionalparam.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_state.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/iframe_history_go_0.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse-during-beforeunload.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse-during-unload.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_1-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_2-1.html

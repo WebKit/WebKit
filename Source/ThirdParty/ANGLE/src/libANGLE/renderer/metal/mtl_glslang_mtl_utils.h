@@ -34,6 +34,7 @@ struct TranslatedShaderInfo
     std::array<uint32_t, kMaxGLUBOBindings> actualUBOBindings;
     std::array<uint32_t, kMaxShaderXFBs> actualXFBBindings;
     bool hasUBOArgumentBuffer;
+    bool hasInvariantOrAtan;
 };
 void MSLGetShaderSource(const gl::ProgramState &programState,
                         const gl::ProgramLinkedResources &resources,

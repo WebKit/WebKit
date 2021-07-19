@@ -57,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/shadow-content.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/target-in-detached-document.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/target-is-root.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/text-target.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/timestamp.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/unclipped-root.html

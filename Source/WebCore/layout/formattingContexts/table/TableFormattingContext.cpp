@@ -101,7 +101,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         cellBoxGeometry.setBorder(formattingGeometry.computedCellBorder(*cell));
         cellBoxGeometry.setPadding(formattingGeometry.computedPadding(cellBox, availableHorizontalSpace));
         cellBoxGeometry.setLogicalTop(rowList[cell->startRow()].logicalTop() - sectionOffset);
-        cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].logicalLeft());
+        cellBoxGeometry.setLogicalLeft(columnList[cell->startColumn()].usedLogicalLeft());
         cellBoxGeometry.setContentBoxWidth(formattingGeometry.horizontalSpaceForCellContent(*cell));
 
         if (cellBox.hasInFlowOrFloatingChild()) {
@@ -324,135 +324,184 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
     // 2. Collect the fixed width <col>s.
     auto& columnList = grid.columns().list();
     auto& formattingGeometry = this->formattingGeometry();
-    for (auto& column : columnList) {
-        auto fixedWidth = [&] () -> std::optional<LayoutUnit> {
-            auto* columnBox = column.box();
-            if (!columnBox) {
-                // Anonymous columns don't have associated layout boxes and can't have fixed col size.
-                return { };
-            }
-            if (auto width = columnBox->columnWidth())
-                return width;
-            return formattingGeometry.computedColumnWidth(*columnBox);
-        }();
+    auto collectColsFixedWidth = [&] {
+        for (auto& column : columnList) {
+            auto fixedWidth = [&] () -> std::optional<LayoutUnit> {
+                auto* columnBox = column.box();
+                if (!columnBox) {
+                    // Anonymous columns don't have associated layout boxes and can't have fixed col size.
+                    return { };
+                }
+                if (auto width = columnBox->columnWidth())
+                    return width;
+                return formattingGeometry.computedColumnWidth(*columnBox);
+            }();
         if (fixedWidth)
-            column.setFixedWidth(*fixedWidth);
-    }
+            column.setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
+        }
+    };
+    collectColsFixedWidth();
 
-    Vector<std::optional<float>> columnPercentList(columnList.size());
     auto hasColumnWithPercentWidth = false;
-    for (auto& cell : grid.cells()) {
-        auto& cellBox = cell->box();
-        ASSERT(cellBox.establishesBlockFormattingContext());
+    auto hasColumnWithFixedWidth = false;
+    Vector<std::optional<LayoutUnit>> maximumFixedColumnWidths(columnList.size());
+    Vector<std::optional<float>> maximumPercentColumnWidths(columnList.size());
 
-        auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
-        if (!intrinsicWidth) {
-            intrinsicWidth = formattingGeometry.intrinsicWidthConstraintsForCellContent(*cell);
-            formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
+    auto collectCellsIntrinsicWidthConstraints = [&] {
+        for (auto& cell : grid.cells()) {
+            auto& cellBox = cell->box();
+            ASSERT(cellBox.establishesBlockFormattingContext());
+
+            auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
+            if (!intrinsicWidth) {
+                intrinsicWidth = formattingGeometry.intrinsicWidthConstraintsForCellContent(*cell);
+                formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
+            }
+            auto cellPosition = cell->position();
+            auto& cellStyle = cellBox.style();
+            // Expand it with border and padding.
+            auto horizontalBorderAndPaddingWidth = formattingGeometry.computedCellBorder(*cell).width()
+                + formattingGeometry.fixedValue(cellStyle.paddingLeft()).value_or(0)
+                + formattingGeometry.fixedValue(cellStyle.paddingRight()).value_or(0);
+            intrinsicWidth->expand(horizontalBorderAndPaddingWidth);
+            // Spanner cells put their intrinsic widths on the initial slots.
+            grid.slot(cellPosition)->setWidthConstraints(*intrinsicWidth);
+
+            auto cellLogicalWidth = cellStyle.logicalWidth();
+            auto columnIndex = cellPosition.column;
+            switch (cellLogicalWidth.type()) {
+            case LengthType::Fixed: {
+                auto fixedWidth = LayoutUnit { cellLogicalWidth.value() } + horizontalBorderAndPaddingWidth;
+                maximumFixedColumnWidths[columnIndex] = std::max(maximumFixedColumnWidths[columnIndex].value_or(0_lu), fixedWidth);
+                hasColumnWithFixedWidth = true;
+                break;
+            }
+            case LengthType::Percent: {
+                maximumPercentColumnWidths[columnIndex] = std::max(maximumPercentColumnWidths[columnIndex].value_or(0.f), cellLogicalWidth.percent());
+                hasColumnWithPercentWidth = true;
+                break;
+            }
+            case LengthType::Relative:
+                ASSERT_NOT_IMPLEMENTED_YET();
+                break;
+            default:
+                break;
+            }
         }
-        auto cellPosition = cell->position();
-        // Expand it with border and padding.
-        auto horizontalBorderAndPaddingWidth = formattingGeometry.computedCellBorder(*cell).width()
-            + formattingGeometry.fixedValue(cellBox.style().paddingLeft()).value_or(0)
-            + formattingGeometry.fixedValue(cellBox.style().paddingRight()).value_or(0);
-        intrinsicWidth->expand(horizontalBorderAndPaddingWidth);
-        // Spanner cells put their intrinsic widths on the initial slots.
-        grid.slot(cellPosition)->setWidthConstraints(*intrinsicWidth);
-        if (auto fixedWidth = formattingGeometry.fixedValue(cellBox.style().logicalWidth())) {
-            *fixedWidth += horizontalBorderAndPaddingWidth;
-            columnList[cellPosition.column].setFixedWidth(std::max(*fixedWidth, columnList[cellPosition.column].fixedWidth().value_or(0)));
-        }
-        // Collect the percent values so that we can compute the maximum values per column.
-        auto& cellLogicalWidth = cellBox.style().logicalWidth();
-        if (cellLogicalWidth.isPercent()) {
-            // FIXME: Add support for column spanning distribution.
-            columnPercentList[cellPosition.column] = std::max(cellLogicalWidth.percent(), columnPercentList[cellPosition.column].value_or(0.0f));
-            hasColumnWithPercentWidth = true;
-        }
-    }
+    };
+    collectCellsIntrinsicWidthConstraints();
 
     Vector<IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
-    // 3. Collect he min/max width for each column but ignore column spans for now.
     Vector<SlotPosition> spanningCellPositionList;
     size_t numberOfActualColumns = 0;
-    for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
-        auto columnHasNonSpannedCell = false;
-        for (size_t rowIndex = 0; rowIndex < grid.rows().size(); ++rowIndex) {
-            auto& slot = *grid.slot({ columnIndex, rowIndex });
-            if (slot.isColumnSpanned())
-                continue;
-            columnHasNonSpannedCell = true;
-            if (slot.hasColumnSpan()) {
-                spanningCellPositionList.append({ columnIndex, rowIndex });
-                continue;
+    auto computeColumnsIntrinsicWidthConstraints = [&] {
+        // 3. Collect he min/max width for each column but ignore column spans for now.
+        for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+            auto columnHasNonSpannedCell = false;
+            for (size_t rowIndex = 0; rowIndex < grid.rows().size(); ++rowIndex) {
+                auto& slot = *grid.slot({ columnIndex, rowIndex });
+                if (slot.isColumnSpanned())
+                    continue;
+                columnHasNonSpannedCell = true;
+                if (slot.hasColumnSpan()) {
+                    spanningCellPositionList.append({ columnIndex, rowIndex });
+                    continue;
+                }
+                auto widthConstraints = slot.widthConstraints();
+                if (auto fixedColumnWidth = maximumFixedColumnWidths[columnIndex])
+                    widthConstraints.maximum = std::max(*fixedColumnWidth, widthConstraints.minimum);
+
+                columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
+                columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
             }
-            auto widthConstraints = slot.widthConstraints();
-            if (auto columnFixedWidth = columnList[columnIndex].fixedWidth())
-                widthConstraints.maximum = std::max(*columnFixedWidth, widthConstraints.minimum);
-
-            columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
-            columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
+            if (columnHasNonSpannedCell)
+                ++numberOfActualColumns;
         }
-        if (columnHasNonSpannedCell)
-            ++numberOfActualColumns;
-    }
+    };
+    computeColumnsIntrinsicWidthConstraints();
 
-    // 4. Distribute the spanning min/max widths.
-    for (auto spanningCellPosition : spanningCellPositionList) {
-        auto& slot = *grid.slot(spanningCellPosition);
-        auto& cell = slot.cell();
-        ASSERT(slot.hasColumnSpan());
-        auto widthConstraintsToDistribute = slot.widthConstraints();
-        for (size_t columnSpanIndex = cell.startColumn(); columnSpanIndex < cell.endColumn(); ++columnSpanIndex)
-            widthConstraintsToDistribute -= columnIntrinsicWidths[columnSpanIndex];
-        // <table style="border-spacing: 50px"><tr><td colspan=2>long long text</td></tr><tr><td>lo</td><td>xt</td><tr></table>
-        // [long long text]
-        // [lo]        [xt]
-        // While it looks like the spanning cell has to distribute all its spanning width, the border-spacing takes most of the space and
-        // no distribution is needed at all.
-        widthConstraintsToDistribute -= (cell.columnSpan() - 1) * grid.horizontalSpacing();
-        // FIXME: Check if fixed width columns should be skipped here.
-        widthConstraintsToDistribute.minimum = std::max(LayoutUnit { }, widthConstraintsToDistribute.minimum / cell.columnSpan());
-        widthConstraintsToDistribute.maximum = std::max(LayoutUnit { }, widthConstraintsToDistribute.maximum / cell.columnSpan());
-        if (widthConstraintsToDistribute.minimum || widthConstraintsToDistribute.maximum) {
+    auto resolveSpanningCells = [&] {
+        // 4. Distribute the spanning min/max widths.
+        for (auto spanningCellPosition : spanningCellPositionList) {
+            auto& slot = *grid.slot(spanningCellPosition);
+            auto& cell = slot.cell();
+            ASSERT(slot.hasColumnSpan());
+            auto widthConstraintsToDistribute = slot.widthConstraints();
             for (size_t columnSpanIndex = cell.startColumn(); columnSpanIndex < cell.endColumn(); ++columnSpanIndex)
-                columnIntrinsicWidths[columnSpanIndex] += widthConstraintsToDistribute;
+                widthConstraintsToDistribute -= columnIntrinsicWidths[columnSpanIndex];
+            // <table style="border-spacing: 50px"><tr><td colspan=2>long long text</td></tr><tr><td>lo</td><td>xt</td><tr></table>
+            // [long long text]
+            // [lo]        [xt]
+            // While it looks like the spanning cell has to distribute all its spanning width, the border-spacing takes most of the space and
+            // no distribution is needed at all.
+            widthConstraintsToDistribute -= (cell.columnSpan() - 1) * grid.horizontalSpacing();
+            // FIXME: Check if fixed width columns should be skipped here.
+            widthConstraintsToDistribute.minimum = std::max(LayoutUnit { }, widthConstraintsToDistribute.minimum / cell.columnSpan());
+            widthConstraintsToDistribute.maximum = std::max(LayoutUnit { }, widthConstraintsToDistribute.maximum / cell.columnSpan());
+            if (widthConstraintsToDistribute.minimum || widthConstraintsToDistribute.maximum) {
+                for (size_t columnSpanIndex = cell.startColumn(); columnSpanIndex < cell.endColumn(); ++columnSpanIndex)
+                    columnIntrinsicWidths[columnSpanIndex] += widthConstraintsToDistribute;
+            }
         }
-    }
+    };
+    resolveSpanningCells();
 
     // 5. The table min/max widths is just the accumulated column constraints with the percent adjustment.
     auto tableWidthConstraints = IntrinsicWidthConstraints { };
     for (auto& columnIntrinsicWidth : columnIntrinsicWidths)
         tableWidthConstraints += columnIntrinsicWidth;
 
-    // 6. Adjust the table max width with the percent column values if applicable.
-    if (hasColumnWithPercentWidth) {
+    auto adjustColumnsWithPercentAndFixedWidthValues = [&] {
+        // 6. Adjust the table max width with the percent column values if applicable.
+        if (!hasColumnWithFixedWidth && !hasColumnWithPercentWidth)
+            return;
+
+        if (hasColumnWithFixedWidth && !hasColumnWithPercentWidth) {
+            for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
+                if (auto fixedWidth = maximumFixedColumnWidths[columnIndex])
+                    columnList[columnIndex].setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
+            }
+            return;
+        } 
+
         auto remainingPercent = 100.0f;
         auto percentMaximumWidth = LayoutUnit { };
         auto nonPercentColumnsWidth = LayoutUnit { };
         // Resolve the percent values as follows
         // - the percent value is resolved against the column maximum width (fixed or content based) as if the max value represented the percentage value
         //   e.g 50% with the maximum width of 100px produces a resolved width of 200px for the column.
-        // - find the largest resolved value across the columns and used that as the maxiumum width for the precent based columns.
+        // - find the largest resolved value across the columns and used that as the maximum width for the percent based columns.
         // - Compute the non-percent based columns width by using the remaining percent value (e.g 50% and 10% columns would leave 40% for the rest of the columns)
         for (size_t columnIndex = 0; columnIndex < columnList.size(); ++columnIndex) {
-            auto percent = columnPercentList[columnIndex];
-            if (!percent) {
-                nonPercentColumnsWidth += columnIntrinsicWidths[columnIndex].maximum;
+            auto nonPercentColumnWidth = columnIntrinsicWidths[columnIndex].maximum;
+            if (auto fixedWidth = maximumFixedColumnWidths[columnIndex]) {
+                columnList[columnIndex].setComputedLogicalWidth({ *fixedWidth, LengthType::Fixed });
+                nonPercentColumnWidth = std::max(nonPercentColumnWidth, *fixedWidth);
+            }
+            if (!maximumPercentColumnWidths[columnIndex]) {
+                nonPercentColumnsWidth += nonPercentColumnWidth;
                 continue;
             }
-            ASSERT(*percent > 0);
-            columnList[columnIndex].setPercent(std::min(remainingPercent, *percent));
-            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { columnIntrinsicWidths[columnIndex].maximum * 100.0f / *columnList[columnIndex].percent() });
-            remainingPercent -= *columnList[columnIndex].percent();
+            auto percent = std::min(*maximumPercentColumnWidths[columnIndex], remainingPercent);
+            columnList[columnIndex].setComputedLogicalWidth({ percent, LengthType::Percent });
+            percentMaximumWidth = std::max(percentMaximumWidth, LayoutUnit { nonPercentColumnWidth * 100.0f / percent });
+            remainingPercent -= percent;
         }
-
         ASSERT(remainingPercent >= 0.f);
         auto adjustedMaximumWidth = percentMaximumWidth;
         if (remainingPercent)
             adjustedMaximumWidth = std::max(adjustedMaximumWidth, LayoutUnit { nonPercentColumnsWidth * 100.0f / remainingPercent });
+        else {
+            // When the table has percent width column(s) and they add up to (or over) 100%, the maximum width is computed to
+            // only constrained by the available horizontal width.
+            // This is a very odd transition of going from 99.9% to 100%, where 99.9% computes normally (see above)
+            // but as soon as we hit the 100% mark, the table suddenly stretches all the way to the horizontal available space.
+            // It may very well be an ancient bug we need to support (it maps to the epsilon value in AutoTableLayout::computeIntrinsicLogicalWidths which is to avoid division by zero).
+            adjustedMaximumWidth = LayoutUnit::max();
+        }
         tableWidthConstraints.maximum = std::max(tableWidthConstraints.maximum, adjustedMaximumWidth);
-    }
+    };
+    adjustColumnsWithPercentAndFixedWidthValues();
 
     // Expand the preferred width with leading and trailing cell spacing (note that column spanners count as one cell).
     tableWidthConstraints += (numberOfActualColumns + 1) * grid.horizontalSpacing();
@@ -472,8 +521,8 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
     auto columnLogicalLeft = grid.horizontalSpacing();
     for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
         auto& column = columns[columnIndex];
-        column.setLogicalLeft(columnLogicalLeft);
-        column.setLogicalWidth(distributedHorizontalSpaces[columnIndex]);
+        column.setUsedLogicalLeft(columnLogicalLeft);
+        column.setUsedLogicalWidth(distributedHorizontalSpaces[columnIndex]);
         columnLogicalLeft += distributedHorizontalSpaces[columnIndex] + grid.horizontalSpacing();
     }
 

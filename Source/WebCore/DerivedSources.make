@@ -1532,6 +1532,15 @@ LocalizableAdditions.strings.out : $(WebCore)/preprocess-localizable-strings.pl 
 
 # modern media controls
 
+POSSIBLE_ADDITIONAL_MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
+    $(foreach \
+        STYLE_SHEET, \
+        $(ADDITIONAL_MODERN_MEDIA_CONTROLS_STYLE_SHEETS), \
+        $(firstword $(realpath $(foreach \
+            ADDITIONS_PATH, \
+            $(ADDITIONS_PATHS), \
+            $(ADDITIONS_PATH)/$(STYLE_SHEET)))))
+
 MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/activity-indicator.css \
     $(WebCore)/Modules/modern-media-controls/controls/airplay-button.css \
@@ -1551,6 +1560,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/time-label.css \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-activity-indicator.css \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-media-controls.css \
+    $(POSSIBLE_ADDITIONAL_MODERN_MEDIA_CONTROLS_STYLE_SHEETS) \
 #
 
 all : ModernMediaControls.css
@@ -1583,12 +1593,22 @@ UserAgentStyleSheets.h : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindi
 
 # modern media controls
 
+POSSIBLE_ADDITIONAL_MODERN_MEDIA_CONTROLS_SCRIPTS = \
+    $(foreach \
+        SCRIPT, \
+        $(ADDITIONAL_MODERN_MEDIA_CONTROLS_SCRIPTS), \
+        $(firstword $(realpath $(foreach \
+            ADDITIONS_PATH, \
+            $(ADDITIONS_PATHS), \
+            $(ADDITIONS_PATH)/$(SCRIPT)))))
+
 MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/main.js \
     $(WebCore)/Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js \
     $(WebCore)/Modules/modern-media-controls/gesture-recognizers/tap.js \
     $(WebCore)/Modules/modern-media-controls/gesture-recognizers/pinch.js \
     $(WebCore)/Modules/modern-media-controls/controls/scheduler.js \
+    $(WebCore)/Modules/modern-media-controls/controls/layout-traits.js \
     $(WebCore)/Modules/modern-media-controls/controls/layout-node.js \
     $(WebCore)/Modules/modern-media-controls/controls/layout-item.js \
     $(WebCore)/Modules/modern-media-controls/controls/icon-service.js \
@@ -1617,14 +1637,17 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/background-click-delegate-notifier.js \
     $(WebCore)/Modules/modern-media-controls/controls/inline-media-controls.js \
     $(WebCore)/Modules/modern-media-controls/controls/ios-inline-media-controls.js \
+    $(WebCore)/Modules/modern-media-controls/controls/ios-layout-traits.js \
     $(WebCore)/Modules/modern-media-controls/controls/macos-inline-media-controls.js \
     $(WebCore)/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js \
+    $(WebCore)/Modules/modern-media-controls/controls/macos-layout-traits.js \
     $(WebCore)/Modules/modern-media-controls/controls/placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/airplay-placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/invalid-placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/pip-placard.js \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-activity-indicator.js \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-media-controls.js \
+    $(WebCore)/Modules/modern-media-controls/controls/watchos-layout-traits.js \
     $(WebCore)/Modules/modern-media-controls/media/media-controller-support.js \
     $(WebCore)/Modules/modern-media-controls/media/airplay-support.js \
     $(WebCore)/Modules/modern-media-controls/media/audio-support.js \
@@ -1649,6 +1672,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/media-document-controller.js \
     $(WebCore)/Modules/modern-media-controls/media/watchos-media-controls-support.js \
     $(WebCore)/Modules/modern-media-controls/media/media-controller.js \
+    $(POSSIBLE_ADDITIONAL_MODERN_MEDIA_CONTROLS_SCRIPTS) \
 #
 
 all : ModernMediaControls.js

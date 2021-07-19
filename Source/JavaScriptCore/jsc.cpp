@@ -1480,7 +1480,7 @@ JSC_DEFINE_HOST_FUNCTION(functionAddressOf, (JSGlobalObject*, CallFrame* callFra
     if (!value.isCell())
         return JSValue::encode(jsUndefined());
     // Need to cast to uint64_t so bitwise_cast will play along.
-    uint64_t asNumber = reinterpret_cast<uintptr_t>(value.asCell());
+    uint64_t asNumber = bitwise_cast<uintptr_t>(value.asCell());
     EncodedJSValue returnValue = JSValue::encode(jsNumber(bitwise_cast<double>(asNumber)));
     return returnValue;
 }

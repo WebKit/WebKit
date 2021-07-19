@@ -289,13 +289,7 @@ void WebProcessProxy::setIsInProcessCache(bool value)
     ASSERT(m_isInProcessCache != value);
     m_isInProcessCache = value;
 
-    if (!m_isInProcessCache)
-        platformResumeProcess();
-
-    sendWithAsyncReply(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), [weakThis = makeWeakPtr(*this), isEnteringProcessCache = value]() mutable {
-        if (isEnteringProcessCache && weakThis && weakThis->m_isInProcessCache)
-            weakThis->platformSuspendProcess();
-    });
+    send(Messages::WebProcess::SetIsInProcessCache(m_isInProcessCache), 0);
 
     if (m_isInProcessCache) {
         // WebProcessProxy objects normally keep the process pool alive but we do not want this to be the case
@@ -1476,6 +1470,7 @@ void WebProcessProxy::didSetAssertionType(ProcessAssertionType type)
     
     case ProcessAssertionType::MediaPlayback:
     case ProcessAssertionType::UnboundedNetworking:
+    case ProcessAssertionType::FinishTaskUninterruptable:
         ASSERT_NOT_REACHED();
     }
 
@@ -1493,7 +1488,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
     if (newHasAudibleWebPage) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Taking MediaPlayback assertion for WebProcess");
         m_audibleMediaActivity = AudibleMediaActivity {
-            makeUniqueRef<ProcessAssertion>(processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
+            ProcessAssertion::create(processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
             processPool().webProcessWithAudibleMediaToken()
         };
     } else {
@@ -2008,16 +2003,6 @@ void WebProcessProxy::systemBeep()
 {
     PAL::systemBeep();
 }
-
-#if !PLATFORM(MAC)
-void WebProcessProxy::platformSuspendProcess()
-{
-}
-
-void WebProcessProxy::platformResumeProcess()
-{
-}
-#endif
 
 } // namespace WebKit
 

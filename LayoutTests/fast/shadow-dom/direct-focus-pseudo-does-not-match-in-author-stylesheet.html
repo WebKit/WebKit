@@ -7,7 +7,7 @@
 
 jsTestIsAsync = true;
 
-description('This tests that -webkit-direct-focus is not recognized in author stylesheets');
+description('This tests that -internal-direct-focus is not recognized in author stylesheets');
 
 let focusedDefault = false;
 function didFocusDefault() { }
@@ -34,7 +34,7 @@ async function runTest() {
     await waitForFrameToBeFocused();
 
     shouldBeTrue('defaultFocus.matches(":focus")');
-    shouldThrowErrorName('defaultFocus.matches(":-webkit-direct-focus")', 'SyntaxError');
+    shouldThrowErrorName('defaultFocus.matches(":-internal-direct-focus")', 'SyntaxError');
 
     const host = document.body.appendChild(document.createElement('div'));
     const shadowRoot = host.attachShadow({mode: 'closed'});
@@ -43,7 +43,7 @@ async function runTest() {
     inputInShadowRoot.focus();
 
     shouldBeTrue('inputInShadowRoot.matches(":focus")');
-    shouldThrowErrorName('inputInShadowRoot.matches(":-webkit-direct-focus")', 'SyntaxError');
+    shouldThrowErrorName('inputInShadowRoot.matches(":-internal-direct-focus")', 'SyntaxError');
 
     finishJSTest();
 }

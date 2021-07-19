@@ -265,9 +265,9 @@ public:
     void setMarginLeft(LayoutUnit margin) { m_marginBox.setLeft(margin); }
     void setMarginRight(LayoutUnit margin) { m_marginBox.setRight(margin); }
 
-    LayoutUnit marginLogicalLeft() const { return m_marginBox.start(style().writingMode()); }
-    LayoutUnit marginLogicalRight() const { return m_marginBox.end(style().writingMode()); }
-    
+    LayoutUnit marginLogicalLeft(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.start((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    LayoutUnit marginLogicalRight(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.end((overrideStyle ? overrideStyle : &style())->writingMode()); }
+
     LayoutUnit marginBefore(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
     LayoutUnit marginAfter(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
     LayoutUnit marginStart(const RenderStyle* overrideStyle = nullptr) const final
@@ -305,10 +305,10 @@ public:
     LayoutRect reflectedRect(const LayoutRect&) const;
 
     void layout() override;
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-    bool hitTestVisualOverflow(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const;
-    bool hitTestClipPath(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const;
-    bool hitTestBorderRadius(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool hitTestVisualOverflow(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
+    bool hitTestClipPath(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
+    bool hitTestBorderRadius(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
 
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;

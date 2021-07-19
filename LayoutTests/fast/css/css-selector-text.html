@@ -154,8 +154,9 @@ testSelectorRoundTrip("::selection");
 debug('');
 
 testSelectorRoundTrip(":-webkit-any-link");
-testSelectorRoundTrip(":-webkit-autofill");
 testSelectorRoundTrip(":-webkit-drag");
+testSelectorRoundTrip(":autofill");
+testSelectorSerialization(":-webkit-autofill", ":autofill");
 
 debug('');
 

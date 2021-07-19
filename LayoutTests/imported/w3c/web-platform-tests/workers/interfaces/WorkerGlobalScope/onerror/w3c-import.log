@@ -15,10 +15,15 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/exception-in-onerror.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/exception-in-onerror.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/handled.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/handled.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-classic-DOMException.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-classic-Error.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-module-DOMException.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/message-module-Error.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/not-handled.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/not-handled.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/propagate-to-window-onerror.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/propagate-to-window-onerror.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/throw.js

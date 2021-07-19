@@ -5,7 +5,7 @@
 
 description("Testing the <code>MediaControls</code> constructor.");
 
-const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS });
+const mediaControls = new MediaControls({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBeEqualToString("mediaControls.element.localName", "div");
 shouldBeEqualToString("mediaControls.element.className", "media-controls");
@@ -13,27 +13,28 @@ shouldBeEqualToString("mediaControls.element.className", "media-controls");
 debug("");
 shouldBe("mediaControls.width", "300");
 shouldBe("mediaControls.height", "150");
-shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS");
+shouldBeType("mediaControls.layoutTraits", "MacOSLayoutTraits");
+shouldBeFalse("mediaControls.layoutTraits.isFullscreen");
 
 debug("");
-shouldBeTrue("mediaControls.playPauseButton instanceof PlayPauseButton");
-shouldBeTrue("mediaControls.airplayButton instanceof AirplayButton");
-shouldBeTrue("mediaControls.pipButton instanceof PiPButton");
-shouldBeTrue("mediaControls.fullscreenButton instanceof FullscreenButton");
-shouldBeTrue("mediaControls.statusLabel instanceof StatusLabel");
-shouldBeTrue("mediaControls.timeControl instanceof TimeControl");
-shouldBeTrue("mediaControls.airplayPlacard instanceof AirplayPlacard");
-shouldBeTrue("mediaControls.invalidPlacard instanceof InvalidPlacard");
-shouldBeTrue("mediaControls.pipPlacard instanceof PiPPlacard");
+shouldBeType("mediaControls.playPauseButton", "PlayPauseButton");
+shouldBeType("mediaControls.airplayButton", "AirplayButton");
+shouldBeType("mediaControls.pipButton", "PiPButton");
+shouldBeType("mediaControls.fullscreenButton", "FullscreenButton");
+shouldBeType("mediaControls.statusLabel", "StatusLabel");
+shouldBeType("mediaControls.timeControl", "TimeControl");
+shouldBeType("mediaControls.airplayPlacard", "AirplayPlacard");
+shouldBeType("mediaControls.invalidPlacard", "InvalidPlacard");
+shouldBeType("mediaControls.pipPlacard", "PiPPlacard");
 
 debug("");
-shouldBeTrue("mediaControls.bottomControlsBar instanceof ControlsBar");
+shouldBeType("mediaControls.bottomControlsBar", "ControlsBar");
 shouldBeEqualToString("mediaControls.bottomControlsBar.element.localName", "div");
 shouldBeTrue("mediaControls.bottomControlsBar.element.classList.contains('controls-bar')");
 shouldBeTrue("mediaControls.bottomControlsBar.element.classList.contains('bottom')");
 
 debug("");
-const mediaControlsWithArguments = new MediaControls({ width: 600, height: 300, layoutTraits: LayoutTraits.macOS });
+const mediaControlsWithArguments = new MediaControls({ width: 600, height: 300, layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 shouldBe("mediaControlsWithArguments.width", "600");
 shouldBe("mediaControlsWithArguments.height", "300");
 

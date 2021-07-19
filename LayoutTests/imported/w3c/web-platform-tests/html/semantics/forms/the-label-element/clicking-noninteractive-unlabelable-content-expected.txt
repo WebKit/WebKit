@@ -17,9 +17,6 @@ PASS noninteractive unlabelable content <img> as second child under <label>
 PASS noninteractive unlabelable content <input type="hidden"> as first child of <label>
 PASS noninteractive unlabelable content <input type="hidden"> deeply nested under <label>
 PASS noninteractive unlabelable content <input type="hidden"> as second child under <label>
-PASS noninteractive unlabelable content <object></object> as first child of <label>
-PASS noninteractive unlabelable content <object></object> deeply nested under <label>
-PASS noninteractive unlabelable content <object></object> as second child under <label>
 PASS noninteractive unlabelable content <video></video> as first child of <label>
 PASS noninteractive unlabelable content <video></video> deeply nested under <label>
 PASS noninteractive unlabelable content <video></video> as second child under <label>
@@ -38,9 +35,15 @@ PASS noninteractive unlabelable content <img tabindex=""> as second child under 
 PASS noninteractive unlabelable content <input type="hidden" tabindex=""> as first child of <label>
 PASS noninteractive unlabelable content <input type="hidden" tabindex=""> deeply nested under <label>
 PASS noninteractive unlabelable content <input type="hidden" tabindex=""> as second child under <label>
+PASS noninteractive unlabelable content <object></object> as first child of <label>
+PASS noninteractive unlabelable content <object></object> deeply nested under <label>
+PASS noninteractive unlabelable content <object></object> as second child under <label>
 PASS noninteractive unlabelable content <object tabindex=""></object> as first child of <label>
 PASS noninteractive unlabelable content <object tabindex=""></object> deeply nested under <label>
 PASS noninteractive unlabelable content <object tabindex=""></object> as second child under <label>
+PASS noninteractive unlabelable content <object usemap=""></object> as first child of <label>
+PASS noninteractive unlabelable content <object usemap=""></object> deeply nested under <label>
+FAIL noninteractive unlabelable content <object usemap=""></object> as second child under <label> assert_equals: clicking noninteractive unlabelable content should click button expected 1 but got 0
 PASS noninteractive unlabelable content <video tabindex=""></video> as first child of <label>
 PASS noninteractive unlabelable content <video tabindex=""></video> deeply nested under <label>
 PASS noninteractive unlabelable content <video tabindex=""></video> as second child under <label>

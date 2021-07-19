@@ -184,6 +184,16 @@ JSValueRef UIScriptController::didHideKeyboardCallback() const
     return m_context->callbackWithID(CallbackTypeDidHideKeyboard);
 }
 
+void UIScriptController::setWillStartInputSessionCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeWillStartInputSession);
+}
+
+JSValueRef UIScriptController::willStartInputSessionCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeWillStartInputSession);
+}
+
 void UIScriptController::setDidShowMenuCallback(JSValueRef callback)
 {
     m_context->registerCallback(callback, CallbackTypeDidShowMenu);

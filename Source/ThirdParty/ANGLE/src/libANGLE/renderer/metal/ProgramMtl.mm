@@ -734,8 +734,9 @@ angle::Result ProgramMtl::createMslShaderLib(mtl::Context *context,
 
         // Convert to actual binary shader
         mtl::AutoObjCPtr<NSError *> err = nil;
+        bool disableFastMath = (context->getDisplay()->getFeatures().intelDisableFastMath.enabled && translatedMslInfo->hasInvariantOrAtan);
         translatedMslInfo->metalLibrary =
-            mtl::CreateShaderLibrary(mtlDevice, translatedMslInfo->metalShaderSource, substitutionMacros, &err);
+            mtl::CreateShaderLibrary(mtlDevice, translatedMslInfo->metalShaderSource, substitutionMacros, !disableFastMath, &err);
         if (err && !translatedMslInfo->metalLibrary)
         {
             std::ostringstream ss;
@@ -821,6 +822,7 @@ void ProgramMtl::saveShaderInternalInfo(gl::BinaryOutputStream *stream)
         {
             stream->writeInt<uint32_t>(uboBinding);
         }
+        stream->writeBool(mMslShaderTranslateInfo[shaderType].hasInvariantOrAtan);
     }
 }
 
@@ -840,6 +842,7 @@ void ProgramMtl::loadShaderInternalInfo(gl::BinaryInputStream *stream)
         {
             uboBinding = stream->readInt<uint32_t>();
         }
+        mMslShaderTranslateInfo[shaderType].hasInvariantOrAtan = stream->readBool();
     }
 }
 

@@ -380,16 +380,16 @@ void InspectorDOMAgent::setDocument(Document* document)
 
 Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
 {
-    return m_nodeToId.ensure(&node, [&] {
+    return m_nodeToId.ensure(node, [&] {
         auto id = m_lastNodeId++;
-        m_idToNode.set(id, &node);
+        m_idToNode.set(id, makeWeakPtr(node));
         return id;
     }).iterator->value;
 }
 
 void InspectorDOMAgent::unbind(Node& node)
 {
-    auto id = m_nodeToId.take(&node);
+    auto id = m_nodeToId.take(node);
     if (!id)
         return;
 
@@ -566,7 +566,7 @@ Node* InspectorDOMAgent::nodeForId(Protocol::DOM::NodeId id)
     if (!m_idToNode.isValidKey(id))
         return nullptr;
 
-    return m_idToNode.get(id);
+    return m_idToNode.get(id).get();
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMAgent::requestChildNodes(Protocol::DOM::NodeId nodeId, std::optional<int>&& depth)
@@ -646,7 +646,7 @@ Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Protocol::ErrorS
     }
 
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
-    if (!m_nodeToId.contains(m_document.get())) {
+    if (!m_nodeToId.contains(*m_document)) {
         errorString = "Document must have been requested"_s;
         return 0;
     }
@@ -684,10 +684,10 @@ Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Protocol::ErrorS
 
 Protocol::DOM::NodeId InspectorDOMAgent::boundNodeId(const Node* node)
 {
-    if (!m_nodeToId.isValidKey(node))
+    if (!node)
         return 0;
 
-    return m_nodeToId.get(node);
+    return m_nodeToId.get(*node);
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributeValue(Protocol::DOM::NodeId nodeId, const String& name, const String& value)
@@ -2466,7 +2466,7 @@ void InspectorDOMAgent::willDestroyDOMNode(Node& node)
     if (containsOnlyHTMLWhitespace(&node))
         return;
 
-    auto nodeId = m_nodeToId.take(&node);
+    auto nodeId = m_nodeToId.take(node);
     if (!nodeId)
         return;
 
@@ -2753,9 +2753,9 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
         auto videoPlaybackQuality = mediaElement->getVideoPlaybackQuality();
         unsigned displayCompositedVideoFrames = videoPlaybackQuality->displayCompositedVideoFrames();
 
-        auto iterator = m_mediaMetrics.find(mediaElement);
+        auto iterator = m_mediaMetrics.find(*mediaElement);
         if (iterator == m_mediaMetrics.end()) {
-            m_mediaMetrics.set(mediaElement, MediaMetrics(displayCompositedVideoFrames));
+            m_mediaMetrics.set(*mediaElement, MediaMetrics(displayCompositedVideoFrames));
             continue;
         }
 
@@ -2773,7 +2773,7 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
     }
 
     m_mediaMetrics.removeIf([&] (auto& entry) {
-        return !HTMLMediaElement::allMediaElements().contains(entry.key);
+        return !HTMLMediaElement::allMediaElements().contains(&entry.key);
     });
 }
 #endif

@@ -40,6 +40,8 @@ public:
 
     size_t length() const { return m_bufferEnd - m_buffer; }
     size_t currentOffset() const { return m_bufferPosition - m_buffer; }
+    
+    WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool rewind(size_t);
 
     WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool verifyChecksum();
 

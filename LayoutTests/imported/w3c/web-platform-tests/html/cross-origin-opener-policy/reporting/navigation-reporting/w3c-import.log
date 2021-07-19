@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-with-coep.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-allow-popups-report-to.https.html
@@ -36,5 +37,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-report-to.https.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin.https.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unafe-none-report-to.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unafe-none-report-to.https.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unsafe-none-report-to.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unsafe-none-report-to.https.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-redirect-with-same-origin-allow-popups.https.html

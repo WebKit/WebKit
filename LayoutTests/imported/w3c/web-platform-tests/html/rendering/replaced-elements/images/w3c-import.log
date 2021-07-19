@@ -14,5 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/blocked-by-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/space-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/space.html

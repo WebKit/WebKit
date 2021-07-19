@@ -43,9 +43,9 @@ public:
         String identifier;
         String nodeName;
         String textData;
-        unsigned pathIndex { 0 };
+        uint32_t pathIndex { 0 };
 
-        NodePathComponent(String&& elementIdentifier, String&& name, String&& data, unsigned index)
+        NodePathComponent(String&& elementIdentifier, String&& name, String&& data, uint32_t index)
             : identifier(WTFMove(elementIdentifier))
             , nodeName(WTFMove(name))
             , textData(WTFMove(data))
@@ -53,7 +53,7 @@ public:
         {
         }
 
-        NodePathComponent(const String& elementIdentifier, const String& name, const String& data, unsigned index)
+        NodePathComponent(const String& elementIdentifier, const String& name, const String& data, uint32_t index)
             : identifier(elementIdentifier)
             , nodeName(name)
             , textData(data)
@@ -79,8 +79,9 @@ public:
 
     AppHighlightRangeData(const AppHighlightRangeData&) = default;
     AppHighlightRangeData() = default;
-    AppHighlightRangeData(String&& text, NodePath&& startContainer, unsigned startOffset, NodePath&& endContainer, unsigned endOffset)
-        : m_text(WTFMove(text))
+    AppHighlightRangeData(String&& identifier, String&& text, NodePath&& startContainer, uint64_t startOffset, NodePath&& endContainer, uint64_t endOffset)
+        : m_identifier(WTFMove(identifier))
+        , m_text(WTFMove(text))
         , m_startContainer(WTFMove(startContainer))
         , m_startOffset(startOffset)
         , m_endContainer(WTFMove(endContainer))
@@ -88,8 +89,9 @@ public:
     {
     }
 
-    AppHighlightRangeData(const String& text, const NodePath& startContainer, unsigned startOffset, const NodePath& endContainer, unsigned endOffset)
-        : m_text(text)
+    AppHighlightRangeData(const String& identifier, const String& text, const NodePath& startContainer, uint64_t startOffset, const NodePath& endContainer, uint64_t endOffset)
+        : m_identifier(identifier)
+        , m_text(text)
         , m_startContainer(startContainer)
         , m_startOffset(startOffset)
         , m_endContainer(endContainer)
@@ -97,11 +99,12 @@ public:
     {
     }
 
+    const String& identifier() const { return m_identifier; }
     const String& text() const { return m_text; }
     const NodePath& startContainer() const { return m_startContainer; }
-    unsigned startOffset() const { return m_startOffset; }
+    uint32_t startOffset() const { return m_startOffset; }
     const NodePath& endContainer() const { return m_endContainer; }
-    unsigned endOffset() const { return m_endOffset; }
+    uint32_t endOffset() const { return m_endOffset; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AppHighlightRangeData> decode(Decoder&);
@@ -109,11 +112,12 @@ public:
     Ref<SharedBuffer> toSharedBuffer() const;
 
 private:
+    String m_identifier;
     String m_text;
     NodePath m_startContainer;
-    unsigned m_startOffset { 0 };
+    uint32_t m_startOffset { 0 };
     NodePath m_endContainer;
-    unsigned m_endOffset { 0 };
+    uint32_t m_endOffset { 0 };
 };
 
 #endif

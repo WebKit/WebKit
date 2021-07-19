@@ -104,6 +104,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             switch (argType.kind) {
             case TypeKind::Void:
             case TypeKind::Func:
+            case TypeKind::RefNull:
+            case TypeKind::Ref:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::TypeIdx:
             case TypeKind::Externref:
@@ -177,6 +179,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             switch (argType.kind) {
             case TypeKind::Void:
             case TypeKind::Func:
+            case TypeKind::RefNull:
+            case TypeKind::Ref:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::TypeIdx:
             case TypeKind::Externref:
@@ -278,6 +282,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         switch (signature.returnType(0).kind) {
         case TypeKind::Void:
         case TypeKind::Func:
+        case TypeKind::RefNull:
+        case TypeKind::Ref:
             // For the JavaScript embedding, imports with these types in their signature return are a WebAssembly.Module validation error.
             RELEASE_ASSERT_NOT_REACHED();
             break;

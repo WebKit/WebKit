@@ -282,12 +282,6 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");
 
             offset = resumeReadingInfo->offset;
-
-            if (!destination) {
-                ASSERT(!m_pendingWakeupInfo);
-                m_pendingWakeupInfo = {{{ handle.identifier(), offset, newDestinationIdentifier, reason }, std::nullopt }};
-                break;
-            }
         }
     }
 

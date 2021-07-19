@@ -1,7 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT close() fires a close event Test timed out
+PASS close() fires a close event
 PASS close() on a <dialog> that doesn't have an open attribute aborts the steps
 PASS close() removes the open attribute and set the returnValue to the first argument
 PASS close() without argument removes the open attribute and there's no returnValue

@@ -560,22 +560,24 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                 const std::string &source,
                                                 NSDictionary<NSString *, NSObject *> * substitutionMacros,
+                                                bool enableFastMath,
                                                 AutoObjCPtr<NSError *> *error)
 {
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), substitutionMacros, error);
+    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(), substitutionMacros, enableFastMath, error);
 }
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                 const std::string &source,
                                                 AutoObjCPtr<NSError *> *error)
 {
-    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(),@{}, error);
+    return CreateShaderLibrary(metalDevice, source.c_str(), source.size(),@{}, true, error);
 }
 
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
                                                 const char *source,
                                                 size_t sourceLen,
                                                 NSDictionary<NSString *, NSObject *> * substitutionMacros,
+                                                bool enableFastMath,
                                                 AutoObjCPtr<NSError *> *errorOut)
 {
     ANGLE_MTL_OBJC_SCOPE
@@ -597,11 +599,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
 #endif
         options.languageVersion = GetUserSetOrHighestMSLVersion(options.languageVersion);
         // TODO(jcunningham): workaround for intel driver not preserving invariance on all shaders
-        const uint32_t vendor_id = GetDeviceVendorId(metalDevice);
-        if (vendor_id == angle::kVendorID_Intel)
-        {
-            options.fastMathEnabled = false;
-        }
+        options.fastMathEnabled &= enableFastMath;
         options.preprocessorMacros = substitutionMacros;
         auto library = [metalDevice newLibraryWithSource:nsSource options:options error:&nsError];
         if (angle::GetEnvironmentVar(kANGLEPrintMSLEnv)[0] == '1')

@@ -64,7 +64,7 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
 {
     RunLoop::main().dispatch([] {
-        for (auto* pool : WebKit::WebProcessPool::allProcessPools()) {
+        for (auto& pool : WebKit::WebProcessPool::allProcessPools()) {
             for (size_t i = 0; i < pool->processes().size(); ++i) {
                 auto process = pool->processes()[i];
                 process->enableRemoteInspectorIfNeeded();

@@ -63,6 +63,7 @@ struct InteractionInformationAtPosition {
     bool isAttachment { false };
     bool isAnimatedImage { false };
     bool isElement { false };
+    bool isContentEditable { false };
     WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink { false };
@@ -72,6 +73,7 @@ struct InteractionInformationAtPosition {
 #endif
     bool shouldNotUseIBeamInEditableContent { false };
     bool isImageOverlayText { false };
+    bool isHorizontalWritingMode { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;
@@ -85,7 +87,7 @@ struct InteractionInformationAtPosition {
     String textBefore;
     String textAfter;
 
-    float caretHeight { 0 };
+    float caretLength { 0 };
     WebCore::FloatRect lineCaretExtent;
 
     std::optional<WebCore::Cursor> cursor;

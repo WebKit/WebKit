@@ -48,11 +48,11 @@ PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
     // Balanced by the deref in the s_bufferKey user data destroy callback.
     buffer.ref();
 
-    m_cairo.surface = adoptRef(cairo_image_surface_create_for_data(buffer.data(),
+    m_surface = adoptRef(cairo_image_surface_create_for_data(buffer.data(),
         CAIRO_FORMAT_ARGB32, buffer.size().width(), buffer.size().height(), buffer.stride()));
 
     static cairo_user_data_key_t s_bufferKey;
-    cairo_surface_set_user_data(m_cairo.surface.get(), &s_bufferKey,
+    cairo_surface_set_user_data(m_surface.get(), &s_bufferKey,
         new std::pair<Buffer*, ForPainting*> { &buffer, this },
         [](void* data)
         {
@@ -69,19 +69,15 @@ PaintingContextCairo::ForPainting::ForPainting(Buffer& buffer)
             delete userData;
         });
 
-    m_cairo.context = adoptRef(cairo_create(m_cairo.surface.get()));
-    m_platformContext = makeUnique<WebCore::PlatformContextCairo>(m_cairo.context.get());
-    m_graphicsContext = makeUnique<WebCore::GraphicsContextCairo>(*m_platformContext);
+    m_graphicsContext = makeUnique<WebCore::GraphicsContextCairo>(m_surface.get());
 }
 
 PaintingContextCairo::ForPainting::~ForPainting()
 {
-    cairo_surface_flush(m_cairo.surface.get());
+    cairo_surface_flush(m_surface.get());
 
     m_graphicsContext = nullptr;
-    m_platformContext = nullptr;
-    m_cairo.context = nullptr;
-    m_cairo.surface = nullptr;
+    m_surface = nullptr;
 
     // With all the Cairo references purged, the cairo_surface_t object should be destroyed
     // as well. This is checked by asserting that m_deletionComplete is true, which should
@@ -97,7 +93,7 @@ WebCore::GraphicsContext& PaintingContextCairo::ForPainting::graphicsContext()
 
 void PaintingContextCairo::ForPainting::replay(const PaintingOperations& paintingOperations)
 {
-    PaintingOperationReplayCairo operationReplay { *m_platformContext };
+    PaintingOperationReplayCairo operationReplay { *m_graphicsContext->platformContext() };
     for (auto& operation : paintingOperations)
         operation->execute(operationReplay);
 }

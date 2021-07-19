@@ -129,7 +129,7 @@ public:
     virtual void emulatePlatformEvent(const String& action) = 0;
 
     void newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL);
-    void disableICECandidateFiltering();
+    virtual void disableICECandidateFiltering();
     void enableICECandidateFiltering();
 
     virtual void applyRotationForOutgoingVideoSources() { }
@@ -180,6 +180,8 @@ public:
 
     virtual void suspend() { }
     virtual void resume() { }
+
+    bool shouldFilterICECandidates() const { return m_shouldFilterICECandidates; };
 
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&, String&& url);

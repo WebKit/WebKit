@@ -78,6 +78,10 @@ class WAKResponder;
 #include "MediaUsageInfo.h"
 #endif
 
+#if HAVE(ARKIT_INLINE_PREVIEW)
+class HTMLModelElement;
+#endif
+
 #if ENABLE(WEBXR)
 #include "PlatformXR.h"
 #endif
@@ -594,6 +598,13 @@ public:
 
 #if ENABLE(TEXT_AUTOSIZING)
     virtual void textAutosizingUsesIdempotentModeChanged() { }
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+    virtual void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID) const { }
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    virtual void modelElementDidCreatePreview(WebCore::HTMLModelElement&, const URL&, const String&, const WebCore::FloatSize&) const { };
 #endif
 
 protected:

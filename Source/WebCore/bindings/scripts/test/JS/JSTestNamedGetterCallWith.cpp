@@ -79,11 +79,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedGetterCallWithPrototype, JSTestNamedGetterCallWithPrototype::Base);
 
 using JSTestNamedGetterCallWithDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedGetterCallWith>;
 
+template<> const unsigned JSTestNamedGetterCallWithDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedGetterCallWithDOMConstructor::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithDOMConstructor) };
 
 template<> JSValue JSTestNamedGetterCallWithDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,14 +102,21 @@ template<> void JSTestNamedGetterCallWithDOMConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestNamedGetterCallWithPrototypeTableIndex[2] = {
+    { -1, -1 },
+    { 0, -1 },
+};
+
 
 static const HashTableValue JSTestNamedGetterCallWithPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedGetterCallWithConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithPrototype) };
+static const HashTable JSTestNamedGetterCallWithPrototypeTable = { 1, 1, true, JSTestNamedGetterCallWith::info(), JSTestNamedGetterCallWithPrototypeTableValues, JSTestNamedGetterCallWithPrototypeTableIndex };
+const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterCallWith", &Base::s_info, &JSTestNamedGetterCallWithPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithPrototype) };
 
 void JSTestNamedGetterCallWithPrototype::finishCreation(VM& vm)
 {

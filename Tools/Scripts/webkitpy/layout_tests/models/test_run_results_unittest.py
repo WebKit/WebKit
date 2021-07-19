@@ -35,6 +35,7 @@ from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.tool.mocktool import MockOptions
 
+from webkitcorepy import OutputCapture
 from webkitscmpy import mocks
 
 
@@ -166,7 +167,7 @@ class SummarizedResultsTest(unittest.TestCase):
             self.assertEquals(summary['revision'], '6')
 
     def test_svn_revision_git(self):
-        with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True):
+        with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
             self.assertEquals(summary['revision'], '9')

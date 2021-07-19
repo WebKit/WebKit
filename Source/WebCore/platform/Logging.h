@@ -84,6 +84,7 @@ namespace WebCore {
     M(MediaSourceSamples) \
     M(MemoryPressure) \
     M(MessagePorts) \
+    M(ModelElement) \
     M(Network) \
     M(NotYetImplemented) \
     M(OverlayScrollbars) \

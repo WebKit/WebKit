@@ -20,13 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 
-import unittest
+from webkitcorepy import testing
 from webkitscmpy import local, mocks
 
 
-class TestScm(unittest.TestCase):
-    path = '/mock/directory'
+class TestScm(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestScm, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_detection(self):
         with mocks.local.Git(), mocks.local.Svn():

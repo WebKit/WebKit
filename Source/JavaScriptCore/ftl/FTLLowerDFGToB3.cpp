@@ -1113,6 +1113,9 @@ private:
         case CreateArgumentsButterfly:
             compileCreateArgumentsButterfly();
             break;
+        case ObjectAssign:
+            compileObjectAssign();
+            break;
         case ObjectCreate:
             compileObjectCreate();
             break;
@@ -7074,6 +7077,12 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+
+    void compileObjectAssign()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), lowCell(m_node->child1()), lowCell(m_node->child2()));
     }
 
     void compileObjectCreate()
@@ -16754,7 +16763,7 @@ private:
             merge->appendSomeRegister(ptr);
             merge->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 jit.move(params[2].gpr(), params[0].gpr());
-                jit.bitFieldInsert64(params[1].gpr(), CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(64 - MacroAssembler::maxNumberOfAllowedPACBits), params[0].gpr());
+                jit.insertBitField64(params[1].gpr(), CCallHelpers::TrustedImm32(0), CCallHelpers::TrustedImm32(64 - MacroAssembler::maxNumberOfAllowedPACBits), params[0].gpr());
             });
 
             result = doUntagArrayPtr(merge);

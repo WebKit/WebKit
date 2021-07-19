@@ -57,23 +57,15 @@
 
 namespace WebCore {
 
-GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo& platformContext)
-    : m_platformContext(platformContext)
+GraphicsContextCairo::GraphicsContextCairo(RefPtr<cairo_t>&& cr)
+    : m_platformContext(WTFMove(cr))
     , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext.cr()))
 {
     m_platformContext.setGraphicsContextPrivate(m_private.get());
 }
 
-GraphicsContextCairo::GraphicsContextCairo(cairo_t* cairoContext)
-    : m_ownedPlatformContext(makeUnique<PlatformContextCairo>(cairoContext))
-    , m_platformContext(*m_ownedPlatformContext)
-    , m_private(makeUnique<GraphicsContextPlatformPrivate>(m_platformContext.cr()))
-{
-    m_platformContext.setGraphicsContextPrivate(m_private.get());
-}
-
-GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo* platformContext)
-    : GraphicsContextCairo(*platformContext)
+GraphicsContextCairo::GraphicsContextCairo(cairo_surface_t* surface)
+    : GraphicsContextCairo(adoptRef(cairo_create(surface)))
 {
 }
 
@@ -133,7 +125,6 @@ void GraphicsContextCairo::drawLine(const FloatPoint& point1, const FloatPoint& 
     if (strokeStyle() == NoStroke)
         return;
 
-    ASSERT(hasPlatformContext());
     auto& state = this->state();
     Cairo::drawLine(*platformContext(), point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias);
 }

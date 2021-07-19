@@ -587,6 +587,8 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
 
 void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightsVisibility)
 {
+    RELEASE_ASSERT(isMainRunLoop());
+    
     if (!hasRunningProcess())
         return;
 
@@ -604,9 +606,16 @@ void WebPageProxy::setUpHighlightsObserver()
 {
     if (m_appHighlightsObserver)
         return;
+
+    auto weakThis = makeWeakPtr(*this);
     auto updateAppHighlightsVisibility = ^(BOOL isVisible) {
-        setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
+        ensureOnMainRunLoop([weakThis, isVisible] {
+            if (!weakThis)
+                return;
+            weakThis->setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
+        });
     };
+    
     m_appHighlightsObserver = adoptNS([allocSYNotesActivationObserverInstance() initWithHandler:updateAppHighlightsVisibility]);
 }
 

@@ -119,6 +119,7 @@ public:
 
     void suspend();
     void resume();
+    LibWebRTCProvider::SuspendableSocketFactory* rtcSocketFactory() { return m_rtcSocketFactory.get(); }
 
 private:
     LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend&, LibWebRTCProvider&);

@@ -112,32 +112,14 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestConditionallyReadWritePrototype, JSTestConditionallyReadWritePrototype::Base);
 
 using JSTestConditionallyReadWriteDOMConstructor = JSDOMConstructorNotConstructable<JSTestConditionallyReadWrite>;
 
-/* Hash table */
-
-static const struct CompactHashIndex JSTestConditionallyReadWriteTableIndex[8] = {
-    { -1, -1 },
-    { -1, -1 },
-    { 1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
-
-static const HashTableValue JSTestConditionallyReadWriteTableValues[] =
-{
-    { "runtimeConditionallyReadWriteAttributeUnforgeable", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable) } },
-    { "settingsConditionallyReadWriteAttributeUnforgeable", static_cast<unsigned>(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable) } },
-};
-
-static const HashTable JSTestConditionallyReadWriteTable = { 2, 7, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWriteTableValues, JSTestConditionallyReadWriteTableIndex };
+template<> const unsigned JSTestConditionallyReadWriteDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestConditionallyReadWriteDOMConstructor::s_info = { "TestConditionallyReadWrite", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWriteDOMConstructor) };
 
 template<> JSValue JSTestConditionallyReadWriteDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -153,84 +135,106 @@ template<> void JSTestConditionallyReadWriteDOMConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestConditionallyReadWritePrototypeTableIndex[19] = {
+    { 6, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 4, 18 },
+    { -1, -1 },
+    { 1, 17 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 0, 16 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { 3, -1 },
+    { 5, -1 },
+};
+
 
 static const HashTableValue JSTestConditionallyReadWritePrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWriteConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(CONDITION)
-    { "conditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_conditionallyReadWriteAttribute) } },
+    { "conditionallyReadWriteAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_conditionallyReadWriteAttribute) } },
 #else
-    { "conditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "conditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #endif
 #if ENABLE(CONDITION2)
 #if ENABLE(CONDITION)
-    { "conditionalAndConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute) } },
+    { "conditionalAndConditionallyReadWriteAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute) } },
 #else
-    { "conditionalAndConditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "conditionalAndConditionallyReadWriteAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_conditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #endif
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
-    { "runtimeConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute) } },
+    { "runtimeConditionallyReadWriteAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute) } },
     { "runtimeConditionallyReadWriteAttributePromise", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise) } },
-    { "settingsConditionallyReadWriteAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute) } },
+    { "settingsConditionallyReadWriteAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute) } },
     { "settingsConditionallyReadWriteAttributePromise", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise) } },
 };
 
-const ClassInfo JSTestConditionallyReadWritePrototype::s_info = { "TestConditionallyReadWrite", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWritePrototype) };
+static const HashTable JSTestConditionallyReadWritePrototypeTable = { 7, 15, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWritePrototypeTableValues, JSTestConditionallyReadWritePrototypeTableIndex };
+const ClassInfo JSTestConditionallyReadWritePrototype::s_info = { "TestConditionallyReadWrite", &Base::s_info, &JSTestConditionallyReadWritePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWritePrototype) };
 
 void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWritePrototypeTableValues, *this);
-    bool hasDisabledRuntimeProperties = false;
-    if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("runtimeConditionallyReadWriteAttribute"), strlen("runtimeConditionallyReadWriteAttribute"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("runtimeConditionallyReadWriteAttributePromise"), strlen("runtimeConditionallyReadWriteAttributePromise"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("settingsConditionallyReadWriteAttribute"), strlen("settingsConditionallyReadWriteAttribute"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
-        hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("settingsConditionallyReadWriteAttributePromise"), strlen("settingsConditionallyReadWriteAttributePromise"));
-        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
-        DeletePropertySlot slot;
-        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
-    }
-    // Adding back attribute, but as readonly, after removing the read-write variant above. 
+    // Shadow read-write variant from the static hash table.
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
-    // Adding back attribute, but as readonly, after removing the read-write variant above. 
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
-    // Adding back attribute, but as readonly, after removing the read-write variant above. 
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
+    if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePrivatePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePrivatePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
+    if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePromisePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributePromisePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute)));
-    // Adding back attribute, but as readonly, after removing the read-write variant above. 
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
-        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
-    if (hasDisabledRuntimeProperties && structure()->isDictionary())
-        flattenDictionaryObject(vm);
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
+    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePrivatePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePrivatePublicName())->makeReadOnlyCopy(), *this);
+    // Shadow read-write variant from the static hash table.
+    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
+        reifyStaticProperty(vm, JSTestConditionallyReadWrite::info(), static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePromisePublicName(), info()->staticPropHashTable->entry(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributePromisePublicName())->makeReadOnlyCopy(), *this);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestConditionallyReadWrite::s_info = { "TestConditionallyReadWrite", &Base::s_info, &JSTestConditionallyReadWriteTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWrite) };
+/* Hash table for Instance */
+
+static const struct CompactHashIndex JSTestConditionallyReadWriteInstanceTableIndex[4] = {
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { 0, -1 },
+};
+
+
+static const HashTableValue JSTestConditionallyReadWriteInstanceTableValues[] =
+{
+    { "runtimeConditionallyReadWriteAttributeUnforgeable", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeable) } },
+    { "settingsConditionallyReadWriteAttributeUnforgeable", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeable) } },
+};
+
+static const HashTable JSTestConditionallyReadWriteInstanceTable = { 2, 3, true, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWriteInstanceTableValues, JSTestConditionallyReadWriteInstanceTableIndex };
+const ClassInfo JSTestConditionallyReadWrite::s_info = { "TestConditionallyReadWrite", &Base::s_info, &JSTestConditionallyReadWriteInstanceTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionallyReadWrite) };
 
 JSTestConditionallyReadWrite::JSTestConditionallyReadWrite(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestConditionallyReadWrite>&& impl)
     : JSDOMWrapper<TestConditionallyReadWrite>(structure, globalObject, WTFMove(impl))
@@ -244,8 +248,8 @@ void JSTestConditionallyReadWrite::finishCreation(VM& vm)
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestConditionallyReadWrite>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
-    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
-    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().runtimeConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate, setJSTestConditionallyReadWrite_runtimeConditionallyReadWriteAttributeUnforgeablePrivate), static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor));
+    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().settingsConditionallyReadWriteAttributeUnforgeablePrivatePrivateName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate, setJSTestConditionallyReadWrite_settingsConditionallyReadWriteAttributeUnforgeablePrivate), static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor));
 }
 
 JSObject* JSTestConditionallyReadWrite::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)

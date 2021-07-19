@@ -1,4 +1,4 @@
 
-FAIL ":autofill" should be a valid selector The string did not match the expected pattern.
+PASS ":autofill" should be a valid selector
 PASS ":-webkit-autofill" should be a valid selector
 

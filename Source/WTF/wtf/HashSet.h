@@ -86,6 +86,7 @@ public:
     template<typename HashTranslator, typename T> iterator find(const T&) const;
     template<typename HashTranslator, typename T> bool contains(const T&) const;
 
+    ALWAYS_INLINE bool isNullStorage() const { return m_impl.isNullStorage(); }
 
     // The return value includes both an iterator to the added value's location,
     // and an isNewEntry bool that indicates if it is a new or existing entry in the set.

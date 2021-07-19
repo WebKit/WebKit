@@ -63,7 +63,7 @@
 #include "JSWeakMapInlines.h"
 #include "JSWeakSet.h"
 #include "NumberConstructor.h"
-#include "ObjectConstructor.h"
+#include "ObjectConstructorInlines.h"
 #include "Operations.h"
 #include "ParseInt.h"
 #include "RegExpGlobalDataInlines.h"
@@ -302,6 +302,68 @@ JSC_DEFINE_JIT_OPERATION(operationObjectCreateObject, JSCell*, (JSGlobalObject* 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     return constructEmptyObject(globalObject, prototype);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* globalObject, JSObject* target, JSObject* source))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm) && target->isStructureExtensible(vm);
+
+    if (targetCanPerformFastPut) {
+        Vector<RefPtr<UniquedStringImpl>, 8> properties;
+        MarkedArgumentBuffer values;
+        if (!source->staticPropertiesReified(vm)) {
+            source->reifyAllStaticProperties(globalObject);
+            RETURN_IF_EXCEPTION(scope, void());
+        }
+
+        if (canPerformFastPropertyEnumerationForObjectAssign(source->structure(vm))) {
+            // |source| Structure does not have any getters. And target can perform fast put.
+            // So enumerating properties and putting properties are non observable.
+
+            // FIXME: It doesn't seem like we should have to do this in two phases, but
+            // we're running into crashes where it appears that source is transitioning
+            // under us, and even ends up in a state where it has a null butterfly. My
+            // leading hypothesis here is that we fire some value replacement watchpoint
+            // that ends up transitioning the structure underneath us.
+            // https://bugs.webkit.org/show_bug.cgi?id=187837
+
+            // FIXME: This fast path is very similar to ObjectConstructor' one. But extracting it to a function caused performance
+            // regression in object-assign-replace. Since the code is small and fast path, we keep both.
+
+            // Do not clear since Vector::clear shrinks the backing store.
+            properties.resize(0);
+            values.clear();
+            source->structure(vm)->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+                if (entry.attributes & PropertyAttribute::DontEnum)
+                    return true;
+
+                PropertyName propertyName(entry.key);
+                if (propertyName.isPrivateName())
+                    return true;
+
+                properties.append(entry.key);
+                values.appendWithCrashOnOverflow(source->getDirect(entry.offset));
+
+                return true;
+            });
+
+            for (size_t i = 0; i < properties.size(); ++i) {
+                // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
+                // https://bugs.webkit.org/show_bug.cgi?id=185358
+                PutPropertySlot putPropertySlot(target, true);
+                target->putOwnDataProperty(vm, properties[i].get(), values.at(i), putPropertySlot);
+            }
+            return;
+        }
+    }
+
+    scope.release();
+    objectAssignGeneric(globalObject, vm, target, source);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject* globalObject, JSObject* constructor, uint32_t inlineCapacity))
@@ -1039,8 +1101,9 @@ JSC_DEFINE_JIT_OPERATION(operationArrayPushMultiple, EncodedJSValue, (JSGlobalOb
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    ActiveScratchBufferScope activeScratchBufferScope(vm, elementCount);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), elementCount);
     auto scope = DECLARE_THROW_SCOPE(vm);
+
 
     // We assume that multiple JSArray::push calls with ArrayWithInt32/ArrayWithContiguous do not cause JS traps.
     // If it can cause any JS interactions, we can call the caller JS function of this function and overwrite the
@@ -1734,7 +1797,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArray, char*, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    ActiveScratchBufferScope activeScratchBufferScope(vm, size);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), size);
 
     return bitwise_cast<char*>(constructArray(globalObject, arrayStructure, static_cast<JSValue*>(buffer), size));
 }
@@ -3042,7 +3105,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    ActiveScratchBufferScope activeScratchBufferScope(vm, numItems);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), numItems);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);

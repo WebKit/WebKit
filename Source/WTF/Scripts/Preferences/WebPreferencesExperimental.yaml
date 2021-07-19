@@ -458,7 +458,7 @@ ImageBitmapEnabled:
       default: true
     WebKit:
       "ENABLE(EXPERIMENTAL_FEATURES)" : true
-      default: false
+      default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 InProcessCookieCacheEnabled:
@@ -1202,11 +1202,14 @@ WebGLUsingMetal:
   condition: ENABLE(WEBGL) && PLATFORM(COCOA)
   defaultValue:
     WebKitLegacy:
-      default: true
+      "HAVE(WEBGL_COMPATIBLE_METAL)": true
+      default: false
     WebKit:
-      default: true
+      "HAVE(WEBGL_COMPATIBLE_METAL)": true
+      default: false
     WebCore:
-      default: true
+      "HAVE(WEBGL_COMPATIBLE_METAL)": true
+      default: false
 
 WebGPUEnabled:
   type: bool
@@ -1297,15 +1300,25 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebCore:
       default: false
 
-WebRTCPlatformSocketsEnabled:
+WebRTCPlatformTCPSocketsEnabled:
   type: bool
-  humanReadableName: "WebRTC Platform Sockets"
-  humanReadableDescription: "Enable WebRTC Platform Sockets"
+  humanReadableName: "WebRTC Platform TCP Sockets"
+  humanReadableDescription: "Enable WebRTC Platform TCP Sockets"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:
       default: true
+
+WebRTCPlatformUDPSocketsEnabled:
+  type: bool
+  humanReadableName: "WebRTC Platform UDP Sockets"
+  humanReadableDescription: "Enable WebRTC Platform UDP Sockets"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKit:
+      default: false
 
 WebRTCVP9Profile0CodecEnabled:
   type: bool

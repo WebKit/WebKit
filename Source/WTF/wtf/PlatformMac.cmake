@@ -11,6 +11,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     WeakObjCPtr.h
 
     cf/CFURLExtras.h
+    cf/SpanCF.h
     cf/TypeCastsCF.h
 
     cocoa/CrashReporter.h
@@ -18,6 +19,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/NSURLExtras.h
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
+    cocoa/SpanCocoa.h
     cocoa/VectorCocoa.h
 
     darwin/WeakLinking.h

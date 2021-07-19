@@ -1,0 +1,5 @@
+main frame - has 1 onunload handler(s)
+CONSOLE MESSAGE: Use of window.print is not allowed while unloading a page.
+
+PASS print() during unload
+

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,15 +20,20 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import unittest
+import os
 
-from webkitcorepy import OutputCapture
+from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import program, mocks, local, Commit, Contributor
 
 
-class TestCanonicalize(unittest.TestCase):
-    path = '/mock/repository'
+class TestCanonicalize(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestCanonicalize, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_invalid(self):
         with OutputCapture(), mocks.local.Git(), mocks.local.Svn(self.path), MockTime:

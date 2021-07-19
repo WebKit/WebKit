@@ -90,10 +90,10 @@ DownloadProxy& DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore
 
     if (m_downloads.size() == 1 && m_shouldTakeAssertion) {
         ASSERT(!m_downloadUIAssertion);
-        m_downloadUIAssertion = makeUnique<ProcessAssertion>(getCurrentProcessID(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
+        m_downloadUIAssertion = ProcessAssertion::create(getCurrentProcessID(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
 
         ASSERT(!m_downloadNetworkingAssertion);
-        m_downloadNetworkingAssertion = makeUnique<ProcessAssertion>(m_process.processIdentifier(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
+        m_downloadNetworkingAssertion = ProcessAssertion::create(m_process.processIdentifier(), "WebKit downloads"_s, ProcessAssertionType::UnboundedNetworking);
 
         RELEASE_LOG(ProcessSuspension, "UIProcess took 'WebKit downloads' assertions for UIProcess and NetworkProcess");
     }

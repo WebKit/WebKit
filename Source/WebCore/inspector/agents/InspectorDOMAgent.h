@@ -41,6 +41,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/AtomString.h>
 
 namespace Inspector {
@@ -248,8 +249,8 @@ private:
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     Page& m_inspectedPage;
     InspectorOverlay* m_overlay { nullptr };
-    HashMap<const Node*, Inspector::Protocol::DOM::NodeId> m_nodeToId;
-    HashMap<Inspector::Protocol::DOM::NodeId, Node*> m_idToNode;
+    WeakHashMap<Node, Inspector::Protocol::DOM::NodeId> m_nodeToId;
+    HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<Node>> m_idToNode;
     HashSet<Inspector::Protocol::DOM::NodeId> m_childrenRequested;
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
@@ -282,7 +283,7 @@ private:
     };
 
     // The pointer key for this map should not be used for anything other than matching.
-    HashMap<HTMLMediaElement*, MediaMetrics> m_mediaMetrics;
+    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
 #endif
 
     struct InspectorEventListener {

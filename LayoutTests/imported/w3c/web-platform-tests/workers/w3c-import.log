@@ -41,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/Worker-replace-self.any.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/Worker-simultaneous-errors.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/Worker-structure-message.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/Worker-terminate-forever.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/Worker-termination-with-port-messages.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/Worker-timeout-cancel-order.html
@@ -118,6 +119,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_event_properties.htm
 /LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_ports_readonly_array.htm
 /LayoutTests/imported/w3c/web-platform-tests/workers/postMessage_target_source.htm
+/LayoutTests/imported/w3c/web-platform-tests/workers/same-origin-check.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-from-blob-url.window.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-in-data-url-context.window.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/shared-worker-name-via-options.html

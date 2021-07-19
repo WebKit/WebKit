@@ -43,7 +43,6 @@
 #include "RemoteAudioHardwareListenerProxy.h"
 #include "RemoteAudioMediaStreamTrackRendererInternalUnitManager.h"
 #include "RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessages.h"
-#include "RemoteAudioMediaStreamTrackRendererManager.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -202,7 +201,6 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this))
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    , m_audioTrackRendererManager(RemoteAudioMediaStreamTrackRendererManager::create(*this))
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
@@ -232,7 +230,6 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
     m_connection->invalidate();
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    m_audioTrackRendererManager->close();
     m_sampleBufferDisplayLayerManager->close();
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
@@ -325,7 +322,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (m_userMediaCaptureManagerProxy && m_userMediaCaptureManagerProxy->hasSourceProxies())
         return false;
-    if (!m_audioTrackRendererManager->allowsExitUnderMemoryPressure())
+    if (m_audioMediaStreamTrackRendererInternalUnitManager && m_audioMediaStreamTrackRendererInternalUnitManager->hasUnits())
         return false;
     if (!m_sampleBufferDisplayLayerManager->allowsExitUnderMemoryPressure())
         return false;

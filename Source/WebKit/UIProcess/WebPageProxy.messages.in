@@ -170,7 +170,7 @@ messages -> WebPageProxy {
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum:uint8_t WebCore::RouteSharingPolicy policy, String routingContextUID)
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
-    DidNotHandleTapAsMeaningfulClickAtPoint(WebCore::IntPoint point)
+    DidTapAtPoint(WebCore::IntPoint point, enum:uint8_t WebKit::TapHandlingResult result)
     DidCompleteSyntheticClick()
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
     HandleSmartMagnificationInformationForPotentialTap(uint64_t requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel)
@@ -591,5 +591,12 @@ messages -> WebPageProxy {
     
 #if PLATFORM(MAC)
     ChangeUniversalAccessZoomFocus(WebCore::IntRect viewRect, WebCore::IntRect caretRect)
+#endif
+
+#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+    TakeModelElementFullscreen(uint64_t contentLayerID)
+#endif
+#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+    ModelElementDidCreatePreview(struct WebCore::ElementContext elementContext, URL url, String uuid, WebCore::FloatSize size)
 #endif
 }

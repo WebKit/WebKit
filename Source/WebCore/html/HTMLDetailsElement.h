@@ -28,7 +28,7 @@ namespace WebCore {
 class HTMLSlotElement;
 
 template<typename T> class EventSender;
-typedef EventSender<HTMLDetailsElement> DetailEventSender;
+using DetailEventSender = EventSender<HTMLDetailsElement>;
 
 class HTMLDetailsElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDetailsElement);

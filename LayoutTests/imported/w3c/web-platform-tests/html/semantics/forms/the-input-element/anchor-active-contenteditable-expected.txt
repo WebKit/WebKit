@@ -1,0 +1,4 @@
+anchor
+
+FAIL Anchor elements should not stay :active when contentEditable is enabled. assert_equals: expected null but got Element node <a id="anchorid" href="nonexistant" contenteditable="true...
+

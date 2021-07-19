@@ -161,6 +161,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestEventConstructorPrototype, JSTestEventConstructorPrototype::Base);
 
@@ -191,6 +193,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorDOMCons
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestEventConstructorDOMConstructorConstruct, JSTestEventConstructorDOMConstructor::construct);
 
+template<> const unsigned JSTestEventConstructorDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestEventConstructorDOMConstructor::s_info = { "TestEventConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructorDOMConstructor) };
 
 template<> JSValue JSTestEventConstructorDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -205,21 +208,35 @@ template<> void JSTestEventConstructorDOMConstructor::initializeProperties(VM& v
     putDirect(vm, vm.propertyNames->length, jsNumber(1), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for prototype */
+/* Hash table for Prototype */
+
+static const struct CompactHashIndex JSTestEventConstructorPrototypeTableIndex[9] = {
+    { 3, -1 },
+    { 0, 8 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+};
+
 
 static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "attr1", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructor_attr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "attr2", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructor_attr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "attr1", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructor_attr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "attr2", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructor_attr2), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 #if ENABLE(SPECIAL_EVENT)
-    { "attr3", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructor_attr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "attr3", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestEventConstructor_attr3), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 
-const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
+static const HashTable JSTestEventConstructorPrototypeTable = { 4, 7, true, JSTestEventConstructor::info(), JSTestEventConstructorPrototypeTableValues, JSTestEventConstructorPrototypeTableIndex };
+const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructor", &Base::s_info, &JSTestEventConstructorPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 {

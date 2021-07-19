@@ -29,6 +29,9 @@
 #if ENABLE(WHEEL_EVENT_LATCHING)
 
 #include "Element.h"
+#include "Frame.h"
+#include "FrameView.h"
+#include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
 #include <wtf/text/TextStream.h>

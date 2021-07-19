@@ -2383,6 +2383,12 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
     maxLogicalWidth = std::max(floatLeftWidth + floatRightWidth, maxLogicalWidth);
 }
 
+void RenderBlock::computeChildIntrinsicLogicalWidths(RenderObject& child, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
+{
+    minPreferredLogicalWidth = child.minPreferredLogicalWidth();
+    maxPreferredLogicalWidth = child.maxPreferredLogicalWidth();
+}
+
 void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
     if (child.isBox() && child.isHorizontalWritingMode() != isHorizontalWritingMode()) {
@@ -2403,32 +2409,7 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, Layout
         return;
     }
     
-    // The preferred widths of flexbox children should never depend on overriding sizes. They should
-    // always be computed without regard for any overrides that are present.
-    std::optional<LayoutUnit> overridingHeight;
-    std::optional<LayoutUnit> overridingWidth;
-    
-    if (child.isBox()) {
-        auto& box = downcast<RenderBox>(child);
-        if (box.isFlexItem()) {
-            if (box.hasOverridingLogicalHeight())
-                overridingHeight = std::optional<LayoutUnit>(box.overridingLogicalHeight());
-            if (box.hasOverridingLogicalWidth())
-                overridingWidth = std::optional<LayoutUnit>(box.overridingLogicalWidth());
-            box.clearOverridingContentSize();
-        }
-    }
-    
-    minPreferredLogicalWidth = child.minPreferredLogicalWidth();
-    maxPreferredLogicalWidth = child.maxPreferredLogicalWidth();
-    
-    if (child.isBox()) {
-        auto& box = downcast<RenderBox>(child);
-        if (overridingHeight)
-            box.setOverridingLogicalHeight(overridingHeight.value());
-        if (overridingWidth)
-            box.setOverridingLogicalWidth(overridingWidth.value());
-    }
+    computeChildIntrinsicLogicalWidths(child, minPreferredLogicalWidth, maxPreferredLogicalWidth);
 
     // For non-replaced blocks if the inline size is min|max-content or a definite
     // size the min|max-content contribution is that size plus border, padding and

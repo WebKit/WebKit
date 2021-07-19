@@ -54,7 +54,8 @@ NetworkProcess/webrtc/NetworkRTCMonitor.cpp
 NetworkProcess/webrtc/NetworkRTCProvider.cpp
 NetworkProcess/webrtc/NetworkRTCResolver.cpp
 NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp
-NetworkProcess/webrtc/NetworkRTCSocketCocoa.mm
+NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm
+NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
@@ -399,6 +400,7 @@ UIProcess/Cocoa/IconLoadingDelegate.mm
 UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm
 UIProcess/Cocoa/MediaUtilities.mm
 UIProcess/Cocoa/MediaPermissionUtilities.mm
+UIProcess/Cocoa/ModelElementControllerCocoa.mm
 UIProcess/Cocoa/NavigationState.mm
 UIProcess/Cocoa/PageClientImplCocoa.mm
 UIProcess/Cocoa/PlatformXRSystem.mm
@@ -489,6 +491,8 @@ UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
 UIProcess/ios/WKImageAnalysisGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
+UIProcess/ios/WKModelInteractionGestureRecognizer.mm
+UIProcess/ios/WKModelView.mm
 UIProcess/ios/WKMouseDeviceObserver.mm
 UIProcess/ios/WKMouseGestureRecognizer.mm
 UIProcess/ios/WKPasswordView.mm
@@ -718,8 +722,6 @@ RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp
 RemoteAudioSessionProxyMessageReceiver.cpp
-RemoteAudioMediaStreamTrackRendererManagerMessageReceiver.cpp
-RemoteAudioMediaStreamTrackRendererMessageReceiver.cpp
 RemoteAudioSourceProviderManagerMessageReceiver.cpp
 RemoteImageDecoderAVFProxyMessageReceiver.cpp
 RemoteImageDecoderAVFManagerMessageReceiver.cpp

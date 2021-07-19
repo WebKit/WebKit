@@ -5,7 +5,7 @@
 
 description("Testing the visibility of <code>MediaControls</code> when one of its buttons fires a focus event.");
 
-const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS });
+const mediaControls = new MediaControls({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
 
 shouldBeFalse("mediaControls.faded");
 mediaControls.faded = true;

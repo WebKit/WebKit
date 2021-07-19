@@ -39,6 +39,7 @@
 @property (nonatomic, copy) void (^didEndZoomingCallback)(void);
 @property (nonatomic, copy) void (^didShowKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
+@property (nonatomic, copy) void (^willStartInputSessionCallback)(void);
 @property (nonatomic, copy) void (^willPresentPopoverCallback)(void);
 @property (nonatomic, copy) void (^didDismissPopoverCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);

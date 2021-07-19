@@ -1711,6 +1711,7 @@ page/FrameView.cpp
 page/FrameViewLayoutContext.cpp
 page/History.cpp
 page/ImageOverlayController.cpp
+page/KeyboardScroll.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
 page/Location.cpp

@@ -1588,7 +1588,7 @@ LayoutUnit RenderGrid::logicalOffsetForOutOfFlowChild(const RenderBox& child, Gr
     bool isFlowAwareRowAxis = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, direction) == ForColumns;
     LayoutUnit childPosition = isFlowAwareRowAxis ? child.logicalLeft() : child.logicalTop();
     LayoutUnit gridBorder = isRowAxis ? borderLogicalLeft() : borderBefore();
-    LayoutUnit childMargin = isFlowAwareRowAxis ? child.marginLogicalLeft() : child.marginBefore();
+    LayoutUnit childMargin = isRowAxis ? child.marginLogicalLeft(&style()) : child.marginBefore(&style());
     LayoutUnit offset = childPosition - gridBorder - childMargin;
     if (!isRowAxis || style().isLeftToRightDirection())
         return offset;

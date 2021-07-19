@@ -481,6 +481,9 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
     SandboxExtension::consumePermanently(parameters.mediaCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.javaScriptConfigurationDirectoryExtensionHandle);
+#if HAVE(ARKIT_INLINE_PREVIEW)
+    SandboxExtension::consumePermanently(parameters.modelElementCacheDirectoryExtensionHandle);
+#endif
 #endif
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {
@@ -1091,27 +1094,32 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
 {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     auto appID = CFSTR("com.apple.WebKit.WebContent");
-    auto reduceMotionEnabled = preferences.reduceMotionEnabled ? AXValueStateOn : AXValueStateOff;
+    auto reduceMotionEnabled = preferences.reduceMotionEnabled;
+    WTFLogAlways("AX: reduce motion: %d", (int)reduceMotionEnabled);
     if (_AXSReduceMotionEnabledApp(appID) != reduceMotionEnabled)
         _AXSSetReduceMotionEnabledApp(reduceMotionEnabled, appID);
-    auto increaseButtonLegibility = preferences.increaseButtonLegibility ? AXValueStateOn : AXValueStateOff;
+    auto increaseButtonLegibility = preferences.increaseButtonLegibility;
     if (_AXSIncreaseButtonLegibilityApp(appID) != increaseButtonLegibility)
         _AXSSetIncreaseButtonLegibilityApp(increaseButtonLegibility, appID);
-    auto enhanceTextLegibility = preferences.enhanceTextLegibility ? AXValueStateOn : AXValueStateOff;
+    auto enhanceTextLegibility = preferences.enhanceTextLegibility;
     if (_AXSEnhanceTextLegibilityEnabledApp(appID) != enhanceTextLegibility)
         _AXSSetEnhanceTextLegibilityEnabledApp(enhanceTextLegibility, appID);
-    auto darkenSystemColors = preferences.darkenSystemColors ? AXValueStateOn : AXValueStateOff;
+    auto darkenSystemColors = preferences.darkenSystemColors;
     if (_AXDarkenSystemColorsApp(appID) != darkenSystemColors)
         _AXSSetDarkenSystemColorsApp(darkenSystemColors, appID);
-    auto invertColorsEnabled = preferences.invertColorsEnabled ? AXValueStateOn : AXValueStateOff;
+    auto invertColorsEnabled = preferences.invertColorsEnabled;
     if (_AXSInvertColorsEnabledApp(appID) != invertColorsEnabled)
         _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
 #endif
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(preferences.captionDisplayMode);
-    WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferences.preferredLanguages);
-#endif
 }
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode captionDisplayMode, const Vector<String>& preferredLanguages)
+{
+    WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(captionDisplayMode);
+    WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
+}
+#endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcess::colorPreferencesDidChange()

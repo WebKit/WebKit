@@ -42,7 +42,7 @@ class Separator : public TIntermTraverser
             //Name unnamed inline structs
             if(structure->symbolType() == SymbolType::Empty)
             {
-                const TStructure * structDefn = new TStructure(mSymbolTable,  mIdGen.createNewName("__unnamed").rawName(), &(structure->fields()) , SymbolType::AngleInternal);
+                const TStructure *structDefn = new TStructure(mSymbolTable, mIdGen.createNewName().rawName(), &structure->fields(), SymbolType::AngleInternal);
                 structVar = new TVariable(mSymbolTable, ImmutableString(""),
                                          new TType(structDefn, true), SymbolType::Empty);
                 instanceType = new TType(structDefn, false);

@@ -48,7 +48,6 @@
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
@@ -79,7 +78,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 #endif
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
 {
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(__bridge NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
 }

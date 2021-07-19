@@ -450,6 +450,8 @@ PASS list-style-position: inherit
 PASS list-style-type: disc
 PASS list-style-type: circle
 PASS list-style-type: square
+PASS list-style-type: disclosure-open
+PASS list-style-type: disclosure-closed
 PASS list-style-type: decimal
 PASS list-style-type: decimal-leading-zero
 PASS list-style-type: lower-roman

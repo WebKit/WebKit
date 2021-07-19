@@ -80,9 +80,6 @@ public:
         // Make sure the rendering thread is stopped before we proceed with the destruction.
         stop();
 
-        if (m_ringBuffer)
-            static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage()).invalidate();
-
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
             m_source->removeAudioSampleObserver(*this);
@@ -94,6 +91,9 @@ public:
             ASSERT_NOT_REACHED();
         }
         m_source->removeObserver(*this);
+
+        if (m_ringBuffer)
+            static_cast<SharedRingBufferStorage&>(m_ringBuffer->storage()).invalidate();
     }
 
     RealtimeMediaSource& source() { return m_source; }
