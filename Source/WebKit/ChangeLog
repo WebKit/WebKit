@@ -1,3 +1,21 @@
+2021-07-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK][WPE] Fix compilation when ATK is not used
+        https://bugs.webkit.org/show_bug.cgi?id=228077
+
+        Reviewed by Carlos Garcia Campos.
+
+        Guard ATK only inside implementations, so the code is more readable.
+
+        Also changed guard from ATK to GTK platform showEmojiPicker().
+
+        No new tests needed.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+
 2021-07-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Tapping images on twitter.com should not toggle tab bar visibility
