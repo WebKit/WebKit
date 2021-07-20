@@ -1,3 +1,11 @@
+2021-07-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Adding myself to Contributors.json
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-07-20  Eric Hutchison  <ehutchison@apple.com>
 
         Adding myself to Contributors.json.

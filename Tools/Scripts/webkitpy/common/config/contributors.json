@@ -810,6 +810,12 @@
          "AryehGregor"
       ]
    },
+   "Ayumi Kojima" : {
+      "emails" : [
+         "ayumi_kojima@apple.com"
+      ],
+      "status" : "committer"
+   },
    "BJ Burg" : {
       "emails" : [
          "bburg@apple.com",
