@@ -1,5 +1,89 @@
 2021-07-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r280066. rdar://problem/80851532
+
+    [JSC] StructureStubInfo's m_identifier should follow to the same protocol of inlineAccessBaseStructure
+    https://bugs.webkit.org/show_bug.cgi?id=228092
+    
+    Reviewed by Saam Barati.
+    
+    In r279813, we fixed a race condition related to inlineAccessBaseStructure: while we clear inlineAccessBaseStructure,
+    we still run code relying on this field's value until stub version of the code is generated. As a result,
+    we run the code which relies on the cells that are already collected. And we have the same problem with
+    m_identifier field too. This patch makes m_identifier follow to the same protocol of inlineAccessBaseStructure
+    so that we fix this race issue too: both fields will be alive until we switch to the code that are not relying on these
+    fields.
+    
+    We also make inlineAccessBaseStructure to m_inlineAccessBaseStructure to easily find that this is member field.
+    And we also use setWithoutWriteBarrier for m_inlineAccessBaseStructure since we emit codeBlock->vm().heap.writeBarrier(codeBlock)
+    immediately after that.
+    
+    * bytecode/AccessCase.cpp:
+    (JSC::AccessCase::fromStructureStubInfo):
+    * bytecode/GetByStatus.cpp:
+    (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/InByStatus.cpp:
+    (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+    * bytecode/PutByIdStatus.cpp:
+    (JSC::PutByIdStatus::computeForStubInfo):
+    * bytecode/StructureStubInfo.cpp:
+    (JSC::StructureStubInfo::initGetByIdSelf):
+    (JSC::StructureStubInfo::initArrayLength):
+    (JSC::StructureStubInfo::initStringLength):
+    (JSC::StructureStubInfo::initPutByIdReplace):
+    (JSC::StructureStubInfo::initInByIdSelf):
+    (JSC::StructureStubInfo::addAccessCase):
+    (JSC::StructureStubInfo::reset):
+    (JSC::StructureStubInfo::visitAggregateImpl):
+    (JSC::StructureStubInfo::visitWeakReferences):
+    (JSC::StructureStubInfo::propagateTransitions):
+    (JSC::StructureStubInfo::setCacheType): Deleted.
+    * bytecode/StructureStubInfo.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280066 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] StructureStubInfo's m_identifier should follow to the same protocol of inlineAccessBaseStructure
+            https://bugs.webkit.org/show_bug.cgi?id=228092
+
+            Reviewed by Saam Barati.
+
+            In r279813, we fixed a race condition related to inlineAccessBaseStructure: while we clear inlineAccessBaseStructure,
+            we still run code relying on this field's value until stub version of the code is generated. As a result,
+            we run the code which relies on the cells that are already collected. And we have the same problem with
+            m_identifier field too. This patch makes m_identifier follow to the same protocol of inlineAccessBaseStructure
+            so that we fix this race issue too: both fields will be alive until we switch to the code that are not relying on these
+            fields.
+
+            We also make inlineAccessBaseStructure to m_inlineAccessBaseStructure to easily find that this is member field.
+            And we also use setWithoutWriteBarrier for m_inlineAccessBaseStructure since we emit codeBlock->vm().heap.writeBarrier(codeBlock)
+            immediately after that.
+
+            * bytecode/AccessCase.cpp:
+            (JSC::AccessCase::fromStructureStubInfo):
+            * bytecode/GetByStatus.cpp:
+            (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/InByStatus.cpp:
+            (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+            * bytecode/PutByIdStatus.cpp:
+            (JSC::PutByIdStatus::computeForStubInfo):
+            * bytecode/StructureStubInfo.cpp:
+            (JSC::StructureStubInfo::initGetByIdSelf):
+            (JSC::StructureStubInfo::initArrayLength):
+            (JSC::StructureStubInfo::initStringLength):
+            (JSC::StructureStubInfo::initPutByIdReplace):
+            (JSC::StructureStubInfo::initInByIdSelf):
+            (JSC::StructureStubInfo::addAccessCase):
+            (JSC::StructureStubInfo::reset):
+            (JSC::StructureStubInfo::visitAggregateImpl):
+            (JSC::StructureStubInfo::visitWeakReferences):
+            (JSC::StructureStubInfo::propagateTransitions):
+            (JSC::StructureStubInfo::setCacheType): Deleted.
+            * bytecode/StructureStubInfo.h:
+
+2021-07-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r280050. rdar://problem/80851589
 
     [JSC] InByStatus / InByVariant should visit CacheableIdentifier
