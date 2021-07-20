@@ -1348,3 +1348,5 @@ webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/th
 webkit.org/b/225495 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-023.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/225490 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-containing-block-002.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/225470 [ BigSur Release ] svg/filters/feDiffuseLighting-bottomRightPixel.html [ Pass ImageOnlyFailure ]
