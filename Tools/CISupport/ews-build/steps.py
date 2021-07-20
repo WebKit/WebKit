@@ -141,11 +141,25 @@ class CleanUpGitIndexLock(shell.ShellCommand):
         platform = self.getProperty('platform', '*')
         if platform == 'wincairo':
             self.command = ['del', r'.git\index.lock']
+
+        self.send_email_for_git_issue()
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
         self.build.buildFinished(['Git issue, retrying build'], RETRY)
         return super(CleanUpGitIndexLock, self).evaluateCommand(cmd)
+
+    def send_email_for_git_issue(self):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+
+            email_subject = 'Git issue on {}'.format(worker_name)
+            email_text = 'Git issue on {}\n\nBuild: {}\n\nBuilder: {}'.format(worker_name, build_url, builder_name)
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, worker_name)
+        except Exception as e:
+            print('Error in sending email for git issue: {}'.format(e))
 
 
 class CheckOutSpecificRevision(shell.ShellCommand):
