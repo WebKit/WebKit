@@ -1,3 +1,33 @@
+2021-07-20  Rob Buis  <rbuis@igalia.com>
+
+        Fix grid aspect-ratio tests
+        https://bugs.webkit.org/show_bug.cgi?id=225860
+
+        Reviewed by Javier Fernandez.
+
+        Fix various combinations of implicit/explicit stretching in inline and
+        block directions as tested by grid-aspect-ratio-028.html until
+        grid-aspect-ratio-038.html and as specified [1, 2].
+        Also treat explicit stretching through justify-items/align-items: stretch
+        like justify-self/align-self: stretch.
+
+        [1] https://drafts.csswg.org/css-grid/#grid-item-sizing
+        [2] //drafts.csswg.org/css-sizing-4/#aspect-ratio
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasStretchedLogicalWidth const):
+        (WebCore::RenderBox::shouldComputeLogicalWidthFromAspectRatio const):
+        * rendering/RenderBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::selfAlignmentForChild const):
+        (WebCore::RenderGrid::alignSelfForChild const):
+        (WebCore::RenderGrid::justifySelfForChild const):
+        (WebCore::RenderGrid::aspectRatioPrefersInline):
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded):
+        (WebCore::RenderGrid::hasAutoSizeInColumnAxis const):
+        (WebCore::RenderGrid::hasAutoSizeInRowAxis const):
+        * rendering/RenderGrid.h:
+
 2021-07-19  Sihui Liu  <sihui_liu@apple.com>
 
         Implement IDBTransaction.commit()

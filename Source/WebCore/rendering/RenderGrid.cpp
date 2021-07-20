@@ -68,7 +68,7 @@ RenderGrid::~RenderGrid()
 
 StyleSelfAlignmentData RenderGrid::selfAlignmentForChild(GridAxis axis, const RenderBox& child, const RenderStyle* gridStyle) const
 {
-    return axis == GridRowAxis ? justifySelfForChild(child, gridStyle) : alignSelfForChild(child, gridStyle);
+    return axis == GridRowAxis ? justifySelfForChild(child, StretchingMode::Any, gridStyle) : alignSelfForChild(child, StretchingMode::Any, gridStyle);
 }
 
 bool RenderGrid::selfAlignmentChangedToStretch(GridAxis axis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& child) const
@@ -1118,18 +1118,31 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
     return std::max(0_lu, gridAreaBreadthForChild - GridLayoutFunctions::marginLogicalSizeForChild(*this, childBlockFlowDirection, child));
 }
 
-StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, const RenderStyle* gridStyle) const
+StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
 {
     if (!gridStyle)
         gridStyle = &style();
-    return child.style().resolvedAlignSelf(gridStyle, selfAlignmentNormalBehavior(&child));
+    auto normalBehavior = stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&child) : ItemPosition::Normal;
+    return child.style().resolvedAlignSelf(gridStyle, normalBehavior);
 }
 
-StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child, const RenderStyle* gridStyle) const
+StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
 {
     if (!gridStyle)
         gridStyle = &style();
-    return child.style().resolvedJustifySelf(gridStyle, selfAlignmentNormalBehavior(&child));
+    auto normalBehavior = stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&child) : ItemPosition::Normal;
+    return child.style().resolvedJustifySelf(gridStyle, normalBehavior);
+}
+
+bool RenderGrid::aspectRatioPrefersInline(const RenderBox& child, bool blockFlowIsColumnAxis)
+{
+    if (!child.style().hasAspectRatio())
+        return false;
+    bool hasExplicitInlineStretch = justifySelfForChild(child, StretchingMode::Explicit).position() == ItemPosition::Stretch;
+    bool hasExplicitBlockStretch = alignSelfForChild(child, StretchingMode::Explicit).position() == ItemPosition::Stretch;
+    if (!blockFlowIsColumnAxis)
+        std::swap(hasExplicitInlineStretch, hasExplicitBlockStretch);
+    return !hasExplicitBlockStretch;
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
@@ -1144,7 +1157,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     GridTrackSizingDirection childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
     bool blockFlowIsColumnAxis = childBlockDirection == ForRows;
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
-    if (allowedToStretchChildBlockSize) {
+    if (allowedToStretchChildBlockSize && !aspectRatioPrefersInline(child, blockFlowIsColumnAxis)) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
@@ -1867,11 +1880,12 @@ const char* RenderGrid::renderName() const
 bool RenderGrid::hasAutoSizeInColumnAxis(const RenderBox& child) const
 {
     if (child.style().hasAspectRatio()) {
-        if (isHorizontalWritingMode() == child.isHorizontalWritingMode()) {
+        // FIXME: should align-items + align-self: auto/justify-items + justify-self: auto be taken into account?
+        if (isHorizontalWritingMode() == child.isHorizontalWritingMode() && child.style().alignSelf().position() != ItemPosition::Stretch) {
             // A non-auto inline size means the same for block size (column axis size) because of the aspect ratio.
             if (!child.style().logicalWidth().isAuto())
                 return false;
-        } else {
+        } else if (child.style().justifySelf().position() != ItemPosition::Stretch) {
             const Length& logicalHeight = child.style().logicalHeight();
             if (logicalHeight.isFixed() || (logicalHeight.isPercentOrCalculated() && child.percentageLogicalHeightIsResolvable()))
                 return false;
@@ -1883,12 +1897,13 @@ bool RenderGrid::hasAutoSizeInColumnAxis(const RenderBox& child) const
 bool RenderGrid::hasAutoSizeInRowAxis(const RenderBox& child) const
 {
     if (child.style().hasAspectRatio()) {
-        if (isHorizontalWritingMode() == child.isHorizontalWritingMode()) {
+        // FIXME: should align-items + align-self: auto/justify-items + justify-self: auto be taken into account?
+        if (isHorizontalWritingMode() == child.isHorizontalWritingMode() && child.style().justifySelf().position() != ItemPosition::Stretch) {
             // A non-auto block size means the same for inline size (row axis size) because of the aspect ratio.
             const Length& logicalHeight = child.style().logicalHeight();
             if (logicalHeight.isFixed() || (logicalHeight.isPercentOrCalculated() && child.percentageLogicalHeightIsResolvable()))
                 return false;
-        } else {
+        } else if (child.style().alignSelf().position() != ItemPosition::Stretch) {
             if (!child.style().logicalWidth().isAuto())
                 return false;
         }

@@ -2777,7 +2777,7 @@ bool RenderBox::hasStretchedLogicalHeight() const
 }
 
 // FIXME: Can/Should we move this inside specific layout classes (flex. grid)? Can we refactor columnFlexItemHasStretchAlignment logic?
-bool RenderBox::hasStretchedLogicalWidth() const
+bool RenderBox::hasStretchedLogicalWidth(StretchingMode stretchingMode) const
 {
     auto& style = this->style();
     if (!style.logicalWidth().isAuto() || style.marginStart().isAuto() || style.marginEnd().isAuto())
@@ -2788,9 +2788,10 @@ bool RenderBox::hasStretchedLogicalWidth() const
         // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
         return false;
     }
+    auto normalItemPosition = stretchingMode == StretchingMode::Any ? containingBlock->selfAlignmentNormalBehavior(this) : ItemPosition::Normal;
     if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
-        return style.resolvedAlignSelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch;
-    return style.resolvedJustifySelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPosition::Stretch;
+        return style.resolvedAlignSelf(&containingBlock->style(), normalItemPosition).position() == ItemPosition::Stretch;
+    return style.resolvedJustifySelf(&containingBlock->style(), normalItemPosition).position() == ItemPosition::Stretch;
 }
 
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
@@ -5268,8 +5269,13 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
     if (shouldIgnoreAspectRatio())
         return false;
 
-    if (isGridItem() && shouldComputeSizeAsReplaced() && hasStretchedLogicalWidth() && hasStretchedLogicalHeight())
-        return false;
+    if (isGridItem()) {
+        if (shouldComputeSizeAsReplaced()) {
+            if (hasStretchedLogicalWidth() && hasStretchedLogicalHeight())
+                return false;
+        } else if (hasStretchedLogicalWidth(StretchingMode::Explicit))
+            return false;
+    }
 
     auto isResolvablePercentageHeight = [&] {
         return style().logicalHeight().isPercentOrCalculated() && (isOutOfFlowPositioned() || percentageLogicalHeightIsResolvable());

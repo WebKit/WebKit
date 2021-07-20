@@ -43,6 +43,8 @@ enum OverlayScrollbarSizeRelevancy { IgnoreOverlayScrollbarSize, IncludeOverlayS
 
 enum ShouldComputePreferred { ComputeActual, ComputePreferred };
 
+enum class StretchingMode { Any, Explicit };
+
 class RenderBox : public RenderBoxModelObject {
     WTF_MAKE_ISO_ALLOCATED(RenderBox);
 public:
@@ -437,7 +439,7 @@ override;
     bool sizesLogicalWidthToFitContent(SizeType) const;
 
     bool hasStretchedLogicalHeight() const;
-    bool hasStretchedLogicalWidth() const;
+    bool hasStretchedLogicalWidth(StretchingMode = StretchingMode::Any) const;
     bool isStretchingColumnFlexItem() const;
     bool columnFlexItemHasStretchAlignment() const;
     
