@@ -1,3 +1,12 @@
+2021-07-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Update myself (vjaquez) as committer in contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=228103
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-07-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         [build.webkit.org] lldb-webkit-test is failing on Catalina queues
