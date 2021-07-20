@@ -90,6 +90,12 @@
         * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-iframe-expected.txt:
         * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame-expected.txt:
 
+2021-07-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed Windows test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-07-20  Ziran Sun  <zsun@igalia.com>
 
         Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height
