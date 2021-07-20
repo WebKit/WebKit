@@ -897,7 +897,7 @@ def defaultRun
 
             runNoFTL
             runFTLEager
-            runFTLEagerNoCJITValidate
+            runFTLEagerNoCJITValidate if $buildType == "release"
             runFTLNoCJITSmallPool
 
             return if $mode == "basic"
@@ -937,7 +937,7 @@ def defaultNoNoLLIntRun
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
-            runFTLEagerNoCJITValidate
+            runFTLEagerNoCJITValidate if $buildType == "release"
         end
     end
 end
@@ -1008,7 +1008,7 @@ def defaultNoSamplingProfilerRun
         runFTLNoCJITNoPutStackValidate
         runFTLNoCJITNoInlineValidate
         runFTLEager
-        runFTLEagerNoCJITValidate
+        runFTLEagerNoCJITValidate if $buildType == "release"
         runFTLNoCJITSmallPool
     end
 end
