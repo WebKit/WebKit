@@ -1,3 +1,18 @@
+2021-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        Protect m_data when iterating in CachedRawResource::didAddClient
+        https://bugs.webkit.org/show_bug.cgi?id=228108
+        <rdar://80716674>
+
+        Reviewed by Chris Dumez.
+
+        I think something is destroying m_data when its segments are being iterated.
+        Protect it so it doesn't get destroyed.
+        Also, to be on the safe side, check that the client is still a client before using it.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+
 2021-07-20  Sam Sneddon  <gsnedders@apple.com>
 
         Change referrer-policy default to strict-origin-when-cross-origin
