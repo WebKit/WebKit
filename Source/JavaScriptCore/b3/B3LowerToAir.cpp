@@ -826,6 +826,23 @@ private:
         append(opcode, result);
     }
 
+    Air::Opcode opcodeBasedOnShiftKind(B3::Opcode b3Opcode, 
+        Air::Opcode shl32, Air::Opcode shl64, 
+        Air::Opcode sshr32, Air::Opcode sshr64, 
+        Air::Opcode zshr32, Air::Opcode zshr64)
+    {
+        switch (b3Opcode) {
+        case Shl:
+            return tryOpcodeForType(shl32, shl64, m_value->type());
+        case SShr:
+            return tryOpcodeForType(sshr32, sshr64, m_value->type());
+        case ZShr:
+            return tryOpcodeForType(zshr32, zshr64, m_value->type());
+        default:
+            return Air::Oops;
+        }
+    }
+
     // Call this method when doing two-operand lowering of a commutative operation. You have a choice of
     // which incoming Value is moved into the result. This will select which one is likely to be most
     // profitable to use as the result. Doing the right thing can have big performance consequences in tight
@@ -2649,20 +2666,10 @@ private:
 
             // add-with-shift Pattern: n + (m ShiftType amount)
             auto tryAppendAddWithShift = [&] (Value* left, Value* right) -> bool {
-                auto tryOpcode = [&] (B3::Opcode opcode) -> Air::Opcode {
-                    switch (opcode) {
-                    case Shl:
-                        return tryOpcodeForType(AddLeftShift32, AddLeftShift64, m_value->type());
-                    case SShr:
-                        return tryOpcodeForType(AddRightShift32, AddRightShift64, m_value->type());
-                    case ZShr:
-                        return tryOpcodeForType(AddUnsignedRightShift32, AddUnsignedRightShift64, m_value->type());
-                    default:
-                        return Air::Oops;
-                    }
-                };
-
-                Air::Opcode opcode = tryOpcode(right->opcode());
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(), 
+                    AddLeftShift32, AddLeftShift64, 
+                    AddRightShift32, AddRightShift64, 
+                    AddUnsignedRightShift32, AddUnsignedRightShift64);
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
                     return false;
                 if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
@@ -2734,20 +2741,10 @@ private:
 
             // sub-with-shift Pattern: n - (m ShiftType amount)
             auto tryAppendSubAndShift = [&] () -> bool {
-                auto tryOpcode = [&] (B3::Opcode opcode) -> Air::Opcode {
-                    switch (opcode) {
-                    case Shl:
-                        return tryOpcodeForType(SubLeftShift32, SubLeftShift64, m_value->type());
-                    case SShr:
-                        return tryOpcodeForType(SubRightShift32, SubRightShift64, m_value->type());
-                    case ZShr:
-                        return tryOpcodeForType(SubUnsignedRightShift32, SubUnsignedRightShift64, m_value->type());
-                    default:
-                        return Air::Oops;
-                    }
-                };
-
-                Air::Opcode opcode = tryOpcode(right->opcode());
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(), 
+                    SubLeftShift32, SubLeftShift64, 
+                    SubRightShift32, SubRightShift64, 
+                    SubUnsignedRightShift32, SubUnsignedRightShift64);
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
                     return false;
                 if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
@@ -3123,27 +3120,72 @@ private:
         }
 
         case BitXor: {
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
             // FIXME: If canBeInternal(child), we should generate this using the comparison path.
             // https://bugs.webkit.org/show_bug.cgi?id=152367
             
-            if (m_value->child(1)->isInt(-1)) {
-                appendUnOp<Not32, Not64>(m_value->child(0));
+            if (right->isInt(-1)) {
+                appendUnOp<Not32, Not64>(left);
                 return;
             }
             
             // This pattern is super useful on both x86 and ARM64, since the inversion of the CAS result
             // can be done with zero cost on x86 (just flip the set from E to NE) and it's a progression
             // on ARM64 (since STX returns 0 on success, so ordinarily we have to flip it).
-            if (m_value->child(1)->isInt(1)
-                && m_value->child(0)->opcode() == AtomicWeakCAS
-                && canBeInternal(m_value->child(0))) {
-                commitInternal(m_value->child(0));
-                appendCAS(m_value->child(0), true);
+            if (right->isInt(1) && left->opcode() == AtomicWeakCAS && canBeInternal(left)) {
+                commitInternal(left);
+                appendCAS(left, true);
                 return;
             }
-            
-            appendBinOp<Xor32, Xor64, XorDouble, XorFloat, Commutative>(
-                m_value->child(0), m_value->child(1));
+
+            // EON Pattern: d = n ^ (m ^ -1)
+            auto tryAppendEON = [&] (Value* left, Value* right) -> bool {
+                if (right->opcode() != BitXor)
+                    return false;
+                Value* nValue = left;
+                Value* minusOne = right->child(1);
+                if (m_locked.contains(nValue) || !minusOne->hasInt() || !minusOne->isInt(-1))
+                    return false;
+
+                // eon-with-shift Pattern: d = n ^ ((m ShiftType amount) ^ -1)
+                auto tryAppendEONWithShift = [&] (Value* shiftValue) -> bool {
+                    Air::Opcode opcode = opcodeBasedOnShiftKind(shiftValue->opcode(), 
+                        XorNotLeftShift32, XorNotLeftShift64, 
+                        XorNotRightShift32, XorNotRightShift64, 
+                        XorNotUnsignedRightShift32, XorNotUnsignedRightShift64);
+                    if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                        return false;
+                    Value* mValue = shiftValue->child(0);
+                    Value* amountValue = shiftValue->child(1);
+                    if (!canBeInternal(shiftValue) || m_locked.contains(mValue) || !imm(amountValue) || amountValue->asInt() < 0)
+                        return false;
+                    uint64_t amount = amountValue->asInt();
+                    uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+                    if (amount >= datasize)
+                        return false;
+
+                    append(opcode, tmp(nValue), tmp(mValue), imm(amountValue), tmp(m_value));
+                    commitInternal(shiftValue);
+                    return true;
+                };
+
+                if (tryAppendEONWithShift(right->child(0)))
+                    return true;
+
+                Value* mValue = right->child(0);
+                Air::Opcode opcode = opcodeForType(XorNot32, XorNot64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp) || m_locked.contains(mValue))
+                    return false;
+                append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
+                return true;
+            };
+
+            if (tryAppendEON(left, right) || tryAppendEON(right, left))
+                return;
+
+            appendBinOp<Xor32, Xor64, XorDouble, XorFloat, Commutative>(left, right);
             return;
         }
             

@@ -509,6 +509,46 @@ public:
         m_assembler.orn<64>(dest, src, mask);
     }
 
+    void xorNot32(RegisterID src, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.eon<32>(dest, src, mask);
+    }
+
+    void xorNot64(RegisterID src, RegisterID mask, RegisterID dest)
+    {
+        m_assembler.eon<64>(dest, src, mask);
+    }
+
+    void xorNotLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eon<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void xorNotRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eon<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void xorNotUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eon<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void xorNotLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eon<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void xorNotRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eon<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void xorNotUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eon<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
     void extractInsertBitfieldAtLowEnd32(RegisterID src, TrustedImm32 lsb, TrustedImm32 width, RegisterID dest)
     {
         m_assembler.bfxil<32>(dest, src, lsb.m_value, width.m_value);

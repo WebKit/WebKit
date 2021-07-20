@@ -1,3 +1,90 @@
+2021-07-20  Yijia Huang  <yijia_huang@apple.com>
+
+        Add ARM64 EON opcode and select it in AIR
+        https://bugs.webkit.org/show_bug.cgi?id=228057
+
+        Reviewed by Saam Barati.
+
+        EON Rd Rn Rm <shift> #amount
+
+        Bitwise Exclusive OR NOT (shifted register) performs a bitwise Exclusive OR NOT 
+        of a register value Rn and an optionally-shifted register value Rm, and writes the 
+        result to the destination register. The instruction selector can utilize this to 
+        lowering certain patterns in B3 IR before further Air optimization.
+
+        The equivalent pattern of EON Rd Rn Rm is d = n ^ (m ^ -1)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = -1
+        Int @3 = BitXor(@1, @2)
+        Int @4 = BitXor(@0, b@3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Not   %x1, %x1,      @3
+        Xor   %x0, %x1, %x0, @4
+        Ret   %x0,           @5
+
+        // New optimized AIR
+        XorNot %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        The equivalent pattern of EON-with-shift is d = n ^ ((m ShiftType amount) ^ -1)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = amount
+        Int @3 = -1
+        Int @4 = Shl(@1, @2)
+        Int @5 = BitXor(@4, @3)
+        Int @6 = BitXor(@0, @5)
+        Void b@7 = Return(b@6, Terminal)
+
+        // Old optimized AIR
+        Lshift   %x1, amount, %x1, @4
+        Not      %x1,    %x1,      @5
+        Xor      %x0,    %x1, %x0, @6
+        Ret      %x0,              @7
+
+        // New optimized AIR
+        XorNotLeftShift %x0, %x1, $63, %x0, @6
+        Ret             %x0,                @7
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::xorNot32):
+        (JSC::MacroAssemblerARM64::xorNot64):
+        (JSC::MacroAssemblerARM64::xorNotLeftShift32):
+        (JSC::MacroAssemblerARM64::xorNotRightShift32):
+        (JSC::MacroAssemblerARM64::xorNotUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::xorNotLeftShift64):
+        (JSC::MacroAssemblerARM64::xorNotRightShift64):
+        (JSC::MacroAssemblerARM64::xorNotUnsignedRightShift64):
+        * assembler/testmasm.cpp:
+        (JSC::testXorNot32):
+        (JSC::testXorNot64):
+        (JSC::testXorNotWithLeftShift32):
+        (JSC::testXorNotWithRightShift32):
+        (JSC::testXorNotWithUnsignedRightShift32):
+        (JSC::testXorNotWithLeftShift64):
+        (JSC::testXorNotWithRightShift64):
+        (JSC::testXorNotWithUnsignedRightShift64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testXorNot32):
+        (testXorNot64):
+        (testXorNotWithLeftShift32):
+        (testXorNotWithRightShift32):
+        (testXorNotWithUnsignedRightShift32):
+        (testXorNotWithLeftShift64):
+        (testXorNotWithRightShift64):
+        (testXorNotWithUnsignedRightShift64):
+        (addBitTests):
+
 2021-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] invalidParameterInstanceofSourceAppender should care direct call of Symbol.hasInstance
