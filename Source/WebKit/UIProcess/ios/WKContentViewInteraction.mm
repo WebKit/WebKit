@@ -8006,6 +8006,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (gestureRecognizer == _mouseGestureRecognizer)
+        return NO;
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS)
     if (deferringGestureRecognizer == _imageAnalysisDeferringGestureRecognizer)
         return [self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];

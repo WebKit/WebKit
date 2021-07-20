@@ -1,3 +1,56 @@
+2021-07-19  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r279975. rdar://problem/80788597
+
+    [iOS] WKMouseGestureRecognizer should not have failure requirements on WKDeferringGestureRecognizer
+    https://bugs.webkit.org/show_bug.cgi?id=228013
+    rdar://80342462
+    
+    Reviewed by Tim Horton.
+    
+    Avoid adding a gesture failure requirement between any WKDeferringGestureRecognizers and
+    WKMouseGestureRecognizer; It doesn't make sense to claim that WKMouseGestureRecognizer should only recognize
+    once active touch events have been handled by the web page. Under normal circumstances, this gesture failure
+    requirement is actually completely benign, since touch events should never be received by
+    WKMouseGestureRecognizer in the first place, and when using a trackpad, deferring gesture recognizers are not
+    triggered.
+    
+    However, if an app were to (hypothetically) swizzle out `-gestureRecognizer:shouldReceiveTouch:` to force
+    WKMouseGestureRecognizer to receive normal (non-trackpad) touch events, this could cause nearly all gesture
+    recognizers in the window to become unresponsive, since WKMouseGestureRecognizer would be stuck in Changed state
+    long after other gestures in the same subgraph have transitioned to Ended or Failed state, thereby preventing
+    all of these gestures from being reset to Possible state.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279975 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] WKMouseGestureRecognizer should not have failure requirements on WKDeferringGestureRecognizer
+            https://bugs.webkit.org/show_bug.cgi?id=228013
+            rdar://80342462
+
+            Reviewed by Tim Horton.
+
+            Avoid adding a gesture failure requirement between any WKDeferringGestureRecognizers and
+            WKMouseGestureRecognizer; It doesn't make sense to claim that WKMouseGestureRecognizer should only recognize
+            once active touch events have been handled by the web page. Under normal circumstances, this gesture failure
+            requirement is actually completely benign, since touch events should never be received by
+            WKMouseGestureRecognizer in the first place, and when using a trackpad, deferring gesture recognizers are not
+            triggered.
+
+            However, if an app were to (hypothetically) swizzle out `-gestureRecognizer:shouldReceiveTouch:` to force
+            WKMouseGestureRecognizer to receive normal (non-trackpad) touch events, this could cause nearly all gesture
+            recognizers in the window to become unresponsive, since WKMouseGestureRecognizer would be stuck in Changed state
+            long after other gestures in the same subgraph have transitioned to Ended or Failed state, thereby preventing
+            all of these gestures from being reset to Possible state.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+
 2021-07-14  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r279912 (239661@main); Adopt HAVE(SYSTEM_STATUS) macro.
