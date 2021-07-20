@@ -1,3 +1,28 @@
+2021-07-20  Said Abou-Hallawa  <said@apple.com>
+
+        Make SVGPropertyAnimator::computeCSSPropertyValue() take a reference to SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=228093
+        <rdar://80789262>
+
+        Reviewed by Simon Fraser.
+
+        The assumption is the pointer 'targetElement' can't be nullptr. So make
+        it a reference instead.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::computeCSSPropertyValue): Deleted.
+        (WebCore::inheritsFromProperty): Deleted.
+        (WebCore::SVGAnimationElement::determinePropertyValueTypes): Deleted.
+        * svg/SVGAnimationElement.h:
+        Delete unused methods from SVGAnimationElement.
+
+        * svg/properties/SVGPrimitivePropertyAnimator.h:
+        * svg/properties/SVGPropertyAnimator.h:
+        (WebCore::SVGPropertyAnimator::computeCSSPropertyValue const):
+        (WebCore::SVGPropertyAnimator::computeInheritedCSSPropertyValue const):
+        * svg/properties/SVGValuePropertyAnimatorImpl.h:
+        * svg/properties/SVGValuePropertyListAnimatorImpl.h:
+
 2021-07-20  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r278702): Cannot login to appaloosa-store.com/users/sign_in
