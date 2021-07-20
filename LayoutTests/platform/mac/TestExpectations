@@ -2327,5 +2327,7 @@ webkit.org/b/228011 inspector/canvas/setRecordingAutoCaptureFrameCount.html [ Pa
 
 webkit.org/b/214574 svg/animations/smil-leak-list-property-instances.svg [ Pass Failure ]
 
+webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Failure ]
+
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
 
