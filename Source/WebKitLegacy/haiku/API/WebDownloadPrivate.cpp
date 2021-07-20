@@ -134,6 +134,11 @@ void WebDownloadPrivate::didReceiveData(ResourceHandle*, const uint8_t* data, un
     m_progressListener.SendMessage(&message);
 }
 
+void WebDownloadPrivate::didFinishLoading(ResourceHandle* handle, const WebCore::NetworkLoadMetrics&)
+{
+    handleFinished(handle, B_DOWNLOAD_FINISHED);
+}
+
 void WebDownloadPrivate::didFail(ResourceHandle* handle, const ResourceError& /*error*/)
 {
     handleFinished(handle, B_DOWNLOAD_FAILED);
