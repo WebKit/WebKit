@@ -262,6 +262,15 @@ void InByStatus::filter(const StructureSet& structureSet)
 }
 
 template<typename Visitor>
+void InByStatus::visitAggregateImpl(Visitor& visitor)
+{
+    for (InByVariant& variant : m_variants)
+        variant.visitAggregate(visitor);
+}
+
+DEFINE_VISIT_AGGREGATE(InByStatus);
+
+template<typename Visitor>
 void InByStatus::markIfCheap(Visitor& visitor)
 {
     for (InByVariant& variant : m_variants)
