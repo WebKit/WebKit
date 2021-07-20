@@ -45,7 +45,6 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/PointerCharacteristics.h>
-#include <WebCore/RenderTheme.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WindowsKeyboardCodes.h>
@@ -176,17 +175,6 @@ void WebPage::showEmojiPicker(Frame& frame)
             frame->editor().insertText(result, nullptr);
     };
     sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.view()->contentsToRootView(frame.selection().absoluteCaretBounds())), WTFMove(completionHandler));
-}
-
-void WebPage::themeDidChange(String&& themeName)
-{
-    if (m_themeName == themeName)
-        return;
-
-    m_themeName = WTFMove(themeName);
-    g_object_set(gtk_settings_get_default(), "gtk-theme-name", m_themeName.utf8().data(), nullptr);
-    RenderTheme::singleton().platformColorsDidChange();
-    Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
 } // namespace WebKit

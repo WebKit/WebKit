@@ -55,6 +55,10 @@
 #include <WebCore/ApplicationManifest.h>
 #endif
 
+#if PLATFORM(GTK)
+#include "GtkSettingsState.h"
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -248,7 +252,7 @@ struct WebPageCreationParameters {
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 
 #if PLATFORM(GTK)
-    String themeName;
+    GtkSettingsState gtkSettings;
 #endif
     
     bool httpsUpgradeEnabled { true };

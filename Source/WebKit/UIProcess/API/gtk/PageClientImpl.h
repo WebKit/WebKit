@@ -176,8 +176,6 @@ private:
 
     void didChangeWebPageID() const override;
 
-    String themeName() const override;
-
     void makeViewBlank(bool) override;
 
     // Members of PageClientImpl class

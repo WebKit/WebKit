@@ -310,6 +310,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "GtkSettingsManagerProxy.h"
 #include "WebPrintOperationGtk.h"
 #include <WebCore/SelectionData.h>
 #include <gtk/gtk.h>
@@ -734,7 +735,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 
 #if PLATFORM(GTK)
-    themeDidChange(WTFMove(parameters.themeName));
+    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
 #endif
 
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
@@ -968,6 +969,10 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
+
+#if PLATFORM(GTK)
+    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+#endif
 
     platformReinitialize();
 }

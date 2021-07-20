@@ -625,10 +625,6 @@ public:
 
     virtual void didChangeWebPageID() const { }
 
-#if PLATFORM(GTK)
-    virtual String themeName() const = 0;
-#endif
-
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     virtual bool canHandleContextMenuTranslation() const = 0;
     virtual void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) = 0;

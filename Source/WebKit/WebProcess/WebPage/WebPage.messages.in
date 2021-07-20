@@ -515,10 +515,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 
-#if PLATFORM(GTK)
-    ThemeDidChange(String themeName)
-#endif
-
 #if PLATFORM(COCOA)
     RequestActiveNowPlayingSessionInfo() -> (bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier) Async
 #endif

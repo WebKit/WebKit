@@ -178,7 +178,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << canUseCredentialStorage;
 
 #if PLATFORM(GTK)
-    encoder << themeName;
+    encoder << gtkSettings;
 #endif
     
     encoder << httpsUpgradeEnabled;
@@ -591,7 +591,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 
 #if PLATFORM(GTK)
-    if (!decoder.decode(parameters.themeName))
+    if (!decoder.decode(parameters.gtkSettings))
         return std::nullopt;
 #endif
 

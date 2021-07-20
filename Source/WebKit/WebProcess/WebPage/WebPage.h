@@ -896,8 +896,6 @@ public:
 #if PLATFORM(GTK)
     void collapseSelectionInFrame(WebCore::FrameIdentifier);
     void showEmojiPicker(WebCore::Frame&);
-
-    void themeDidChange(String&&);
 #endif
 
     void didApplyStyle();
@@ -2340,10 +2338,6 @@ private:
     String m_processDisplayName;
     WebCore::AllowsContentJavaScript m_allowsContentJavaScriptFromMostRecentNavigation { WebCore::AllowsContentJavaScript::Yes };
 
-#if PLATFORM(GTK)
-    String m_themeName;
-#endif
-    
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };

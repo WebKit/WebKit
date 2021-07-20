@@ -36,6 +36,7 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/ViewGestureController
 
+    WebProcess/gtk/GtkSettingsManagerProxy
     WebProcess/WebPage/ViewGestureGeometryCollector
 )
 

@@ -244,6 +244,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "GtkSettingsManager.h"
 #include <WebCore/SelectionData.h>
 #endif
 
@@ -8232,7 +8233,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.canUseCredentialStorage = m_canUseCredentialStorage;
 
 #if PLATFORM(GTK)
-    parameters.themeName = pageClient().themeName();
+    parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)

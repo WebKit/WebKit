@@ -1,3 +1,89 @@
+2021-07-20  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Propagate GtkSettings to web process
+        https://bugs.webkit.org/show_bug.cgi?id=227854
+
+        Reviewed by Carlos Garcia Campos.
+
+        There's a number of properties in GtkSettings that web process uses:
+
+        - gtk-cursor-blink
+        - gtk-cursor-blink-time
+        - gtk-font-name
+        - gtk-primary-button-warps-slider
+        - gtk-theme-name
+        - gtk-xft-antialias
+        - gtk-xft-dpi
+        - gtk-xft-hinting
+        - gtk-xft-hintstyle
+        - gtk-xft-rgba
+
+        While we do propagate gtk-theme-name, we don't do it for any of the other settings.
+        This means that they can only be fetched from XSettings/GSettings/settings portal
+        by GTK itself, but if the app changes them or if they are changed from inspector,
+        web processes won't see that.
+
+        Introduce GtkSettingsManager as a specific place that listens to preferences
+        changes and notifies the web process, where GtkSettingsManagerProxy updates
+        GtkSettings on that side. Keep the dark mode preference separate since there's
+        existing cross-platform infrastructure for it.
+
+        Apply settings after reinitializing as well, it was only done after initialization
+        so failed with PSON.
+
+        * PlatformGTK.cmake:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/gtk/GtkSettingsState.cpp: Added.
+        (WebKit::GtkSettingsState::encode const):
+        (WebKit::GtkSettingsState::decode):
+        * Shared/gtk/GtkSettingsState.h: Added.
+        * Shared/gtk/NativeWebTouchEventGtk.cpp:
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (webkitWebViewBaseRoot):
+        (webkitWebViewBaseUnroot):
+        (webkitWebViewBaseConstructed):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/GtkSettingsManager.cpp: Added.
+        (WebKit::GtkSettingsManager::singleton):
+        (WebKit::GtkSettingsManager::themeName const):
+        (WebKit::GtkSettingsManager::fontName const):
+        (WebKit::GtkSettingsManager::xftAntialias const):
+        (WebKit::GtkSettingsManager::xftHinting const):
+        (WebKit::GtkSettingsManager::xftHintStyle const):
+        (WebKit::GtkSettingsManager::xftRGBA const):
+        (WebKit::GtkSettingsManager::xftDPI const):
+        (WebKit::GtkSettingsManager::cursorBlink const):
+        (WebKit::GtkSettingsManager::cursorBlinkTime const):
+        (WebKit::GtkSettingsManager::primaryButtonWarpsSlider const):
+        (WebKit::GtkSettingsManager::settingsDidChange):
+        (WebKit::GtkSettingsManager::GtkSettingsManager):
+        * UIProcess/gtk/GtkSettingsManager.h: Added.
+        (WebKit::GtkSettingsManager::settingsState const):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        * WebProcess/gtk/GtkSettingsManagerProxy.cpp: Added.
+        (WebKit::GtkSettingsManagerProxy::singleton):
+        (WebKit::GtkSettingsManagerProxy::GtkSettingsManagerProxy):
+        (WebKit::GtkSettingsManagerProxy::settingsDidChange):
+        (WebKit::GtkSettingsManagerProxy::applySettings):
+        * WebProcess/gtk/GtkSettingsManagerProxy.h: Added.
+        * WebProcess/gtk/GtkSettingsManagerProxy.messages.in: Added.
+
 2021-07-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK][WPE] Fix compilation when ATK is not used
