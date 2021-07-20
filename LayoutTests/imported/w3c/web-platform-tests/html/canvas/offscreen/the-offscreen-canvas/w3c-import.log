@@ -14,14 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.canvas.readonly.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.canvas.readonly.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.canvas.reference.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.canvas.reference.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.exists.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.exists.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.html
-/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.shared.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.shared.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.unique.html

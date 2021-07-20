@@ -1,3 +1,49 @@
+2021-07-20  Chris Lord  <clord@igalia.com>
+
+        Canvas and OffscreenCanvas getContext should check if argument is an object before trying to convert it to a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=227792
+
+        Reviewed by Sam Weinig.
+
+        Synchronise with upstream WPT 2d canvas getContext tests.
+
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.js: Added.
+        (test.const.options.get alpha):
+        (test.const.options.get willReadFrequently):
+        (test.const.options.get desynchronized):
+        (test.const.options.get colorSpace):
+        (test):
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker.js: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d-getcontext-options-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d-getcontext-options.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.cache-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.cache.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.create-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.create.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+
 2021-07-20  Sam Sneddon  <gsnedders@apple.com>
 
         Change referrer-policy default to strict-origin-when-cross-origin

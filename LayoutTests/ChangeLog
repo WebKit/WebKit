@@ -1,3 +1,14 @@
+2021-07-20  Chris Lord  <clord@igalia.com>
+
+        Canvas and OffscreenCanvas getContext should check if argument is an object before trying to convert it to a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=227792
+
+        Reviewed by Sam Weinig.
+
+        Canvas 2d getContext extraargs tests now pass.
+
+        * platform/glib/TestExpectations:
+
 2021-07-20  Sam Sneddon  <gsnedders@apple.com>
 
         Change referrer-policy default to strict-origin-when-cross-origin

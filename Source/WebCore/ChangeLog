@@ -1,3 +1,27 @@
+2021-07-20  Chris Lord  <clord@igalia.com>
+
+        Canvas and OffscreenCanvas getContext should check if argument is an object before trying to convert it to a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=227792
+
+        Reviewed by Sam Weinig.
+
+        Check if options argument is an object before converting to a dictionary.
+
+        Tests: imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.html
+               imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.worker.html
+               imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.html
+               imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker.html
+               imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.html
+               imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d-getcontext-options.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.cache.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.create.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::getContext):
+
 2021-07-20  Alex Christensen  <achristensen@webkit.org>
 
         Protect m_data when iterating in CachedRawResource::didAddClient
