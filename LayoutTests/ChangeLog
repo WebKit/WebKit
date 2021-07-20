@@ -1,5 +1,14 @@
 2021-07-20  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Mac wk2 ]inspector/canvas/recording-bitmaprenderer-full.html is a flaky failure and timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228131.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-07-20  Eric Hutchison  <ehutchison@apple.com>
+
         [ Mac , iOS Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=228127.
 

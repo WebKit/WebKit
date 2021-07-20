@@ -1404,4 +1404,6 @@ webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Fai
 
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure ]
 
+webkit.org/b/228131 inspector/canvas/recording-bitmaprenderer-full.html [ Pass Failure Timeout ]
+
 webkit.org/b/228034 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure Timeout ]
