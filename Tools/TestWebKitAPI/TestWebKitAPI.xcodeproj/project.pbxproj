@@ -149,6 +149,7 @@
 		2D00065F1C1F589A0088E6A7 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D00065D1C1F58940088E6A7 /* WKPDFView.mm */; };
 		2D01D06E23218FEE0039AA3A /* WKWebViewPrintFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */; };
 		2D08E9372267D0F4002518DA /* ReparentWebViewTimeout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */; };
+		2D09CF0026A68297009C43C0 /* GraphicsContextTestsCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D09CEFF26A68296009C43C0 /* GraphicsContextTestsCG.cpp */; };
 		2D116E1323E0CB3A00208900 /* iOSMouseSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D116E1223E0CB3900208900 /* iOSMouseSupport.mm */; };
 		2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */; };
 		2D2BEB2D22324E5F005544CA /* RequestTextInputContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2BEB2C22324E5F005544CA /* RequestTextInputContext.mm */; };
@@ -1937,6 +1938,7 @@
 		2D00065D1C1F58940088E6A7 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFView.mm; sourceTree = "<group>"; };
 		2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReparentWebViewTimeout.mm; sourceTree = "<group>"; };
+		2D09CEFF26A68296009C43C0 /* GraphicsContextTestsCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsContextTestsCG.cpp; path = cg/GraphicsContextTestsCG.cpp; sourceTree = "<group>"; };
 		2D116E1223E0CB3900208900 /* iOSMouseSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSMouseSupport.mm; sourceTree = "<group>"; };
 		2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DeferredViewInWindowStateChange.mm; path = WebKit/DeferredViewInWindowStateChange.mm; sourceTree = "<group>"; };
 		2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestNavigationDelegate.h; path = cocoa/TestNavigationDelegate.h; sourceTree = "<group>"; };
@@ -4974,6 +4976,7 @@
 			children = (
 				2DD87144265F23B4005F997C /* BifurcatedGraphicsContextTestsCG.cpp */,
 				F457275D25578D06007ACA34 /* DisplayListTestsCG.cpp */,
+				2D09CEFF26A68296009C43C0 /* GraphicsContextTestsCG.cpp */,
 			);
 			name = cg;
 			sourceTree = "<group>";
@@ -5539,6 +5542,7 @@
 				465E2807255B2A6A0063A787 /* GPUProcess.mm in Sources */,
 				E394AE6F23F2303E005B4936 /* GrantAccessToMobileAssets.mm in Sources */,
 				E34A6D192412DE390012AB6E /* GrantAccessToPreferencesService.mm in Sources */,
+				2D09CF0026A68297009C43C0 /* GraphicsContextTestsCG.cpp in Sources */,
 				8E4A85371E1D1AB200F53B0F /* GridPosition.cpp in Sources */,
 				51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */,
 				7CCE7EFA1A411AE600447C4C /* HitTestResultNodeHandle.cpp in Sources */,

@@ -1,3 +1,28 @@
+2021-07-20  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r278062): Misplaced text in Wikipedia search field
+        https://bugs.webkit.org/show_bug.cgi?id=228098
+        <rdar://problem/80495165>
+
+        Reviewed by Simon Fraser.
+
+        New test: GraphicsContextTests.DrawNativeImageDoesNotLeakCompositeOperator
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::setCGCompositeOperator):
+        (WebCore::GraphicsContextCG::drawNativeImage):
+        drawNativeImage uses CGContextStateSaver (not GraphicsContextStateSaver),
+        so any state changes it made must only be made to the CGContext, not
+        the WebCore::GraphicsContext.
+
+        However, r278062 mistakenly swapped setPlatformCompositeOperation out for
+        GraphicsContext::setCompositeOperation(), which mutates the state of
+        *both* contexts, and then (only sometimes!) depends on the state saver
+        to reset the state (but, of course, as mentioned, it only resets
+        the CGContext's state).
+
+        (WebCore::GraphicsContextCG::updateState):
+
 2021-07-20  Said Abou-Hallawa  <said@apple.com>
 
         Make SVGPropertyAnimator::computeCSSPropertyValue() take a reference to SVGElement
