@@ -1,5 +1,22 @@
 2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        REGRESSION(r272379): Characters with no fonts that support them are drawn as two .notdef glyphs in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=228097
+        <rdar://problem/80798113>
+
+        Reviewed by Alan Bujtas.
+
+        If a character is not in BMP, and we don't have a glyph for it,
+        we'll end up with two 0 glyphs in a row for the two surrogates of the character.
+        We need to make sure that, after shaping, these double-0-glyphs aren't preserved.
+
+        Test: fast/text/double-notdef-simple-text-codepath.html
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+
+2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Use references instead of pointers in WidthIterator::advanceInternal()
         https://bugs.webkit.org/show_bug.cgi?id=228099
 

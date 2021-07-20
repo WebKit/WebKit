@@ -1,3 +1,14 @@
+2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r272379): Characters with no fonts that support them are drawn as two .notdef glyphs in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=228097
+        <rdar://problem/80798113>
+
+        Reviewed by Alan Bujtas.
+
+        * fast/text/double-notdef-simple-text-codepath-expected.html: Added.
+        * fast/text/double-notdef-simple-text-codepath.html: Added.
+
 2021-07-20  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Test gardening, update baselines after r279987

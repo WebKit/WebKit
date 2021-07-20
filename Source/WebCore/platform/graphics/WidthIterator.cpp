@@ -106,6 +106,26 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
     ASSERT(lastGlyphCount <= glyphBufferSize);
 
     font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font.fontDescription().computedLocale(), m_run.text(), m_run.direction());
+
+    // <rdar://problem/80798113>: If a character is not in BMP, and we don't have a glyph for it,
+    // we'll end up with two 0 glyphs in a row for the two surrogates of the character.
+    // We need to make sure that, after shaping, these double-0-glyphs aren't preserved.
+    // FIXME: Delete this when rdar://80818297 is fixed everywhere.
+    if (&font == &m_font.primaryFont() && !m_run.text().is8Bit()) {
+        for (unsigned i = 0; i < glyphBuffer.size() - 1; ++i) {
+            if (!glyphBuffer.glyphAt(i) && !glyphBuffer.glyphAt(i + 1)) {
+                if (const auto& firstStringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run.length())) {
+                    if (const auto& secondStringOffset = glyphBuffer.checkedStringOffsetAt(i + 1, m_run.length())) {
+                        if (secondStringOffset.value() == firstStringOffset.value() + 1
+                            && U_IS_LEAD(m_run.text()[firstStringOffset.value()]) && U_IS_TRAIL(m_run.text()[secondStringOffset.value()])) {
+                            glyphBuffer.remove(i + 1, 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     glyphBufferSize = glyphBuffer.size();
     advances = glyphBuffer.advances(0);
 
