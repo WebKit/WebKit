@@ -2002,6 +2002,12 @@
       ],
       "status" : "reviewer"
    },
+   "Eric Hutchison" : {
+      "emails" : [
+         "ehutchison@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Eric Penner" : {
       "emails" : [
          "epenner@chromium.org"
