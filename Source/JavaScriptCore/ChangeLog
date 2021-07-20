@@ -1,3 +1,17 @@
+2021-07-19  Mark Lam  <mark.lam@apple.com>
+
+        DFG's parseIntResult() should check for negative zero.
+        https://bugs.webkit.org/show_bug.cgi?id=228068
+        rdar://80788603
+
+        Reviewed by Yusuke Suzuki.
+
+        We have to check for negative zero explicitly because C++ evaluates 0.0 == -0.0
+        as true.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::parseIntResult):
+
 2021-07-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] InByStatus / InByVariant should visit CacheableIdentifier
