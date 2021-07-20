@@ -1,3 +1,29 @@
+2021-07-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        IBeam cursor is horizontal in Mail compose window
+        https://bugs.webkit.org/show_bug.cgi?id=228107
+        <rdar://problem/80636912>
+
+        Reviewed by Wenson Hsieh.
+
+        Recently we added support for vertical writing mode for the IBeam
+        cursor in WebKit. This added a new parameter isHorizontalWritingMode
+        which defaults to false. This causes the IBeam to appear horizontal in
+        cases where WebPage::populateCaretContext is not called, regressing expected
+        behavior. 
+
+        This patch changes isHorizontalWritingMode to isVerticalWritingMode
+        to fix this, while still allowing support for vertical writing mode.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pointerInteraction:styleForRegion:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::populateCaretContext):
+
 2021-07-20  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Propagate GtkSettings to web process

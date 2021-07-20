@@ -73,7 +73,7 @@ struct InteractionInformationAtPosition {
 #endif
     bool shouldNotUseIBeamInEditableContent { false };
     bool isImageOverlayText { false };
-    bool isHorizontalWritingMode { false };
+    bool isVerticalWritingMode { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;

@@ -9689,8 +9689,8 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
     UIPointerStyle *(^iBeamCursor)(void) = ^{
         float beamLength = _positionInformation.caretLength * scaleFactor;
-        auto axisOrientation = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
-        UIAxis iBeamConstraintAxes = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
+        auto axisOrientation = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
+        UIAxis iBeamConstraintAxes = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
 
         // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
         if (beamLength > [UITextInteraction _maximumBeamSnappingLength])

@@ -3039,9 +3039,9 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     if (isEditable)
         lineRect.setWidth(blockFlow.contentWidth());
 
-    info.isHorizontalWritingMode = renderer->isHorizontalWritingMode();
+    info.isVerticalWritingMode = !renderer->isHorizontalWritingMode();
     info.lineCaretExtent = view->contentsToRootView(lineRect);
-    info.caretLength = info.isHorizontalWritingMode ? info.lineCaretExtent.height() : info.lineCaretExtent.width();
+    info.caretLength = info.isVerticalWritingMode ? info.lineCaretExtent.width() : info.lineCaretExtent.height();
 
     bool lineContainsRequestPoint = info.lineCaretExtent.contains(request.point);
     // Force an I-beam cursor if the page didn't request a hand, and we're inside the bounds of the line.
@@ -3054,7 +3054,7 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
         info.lineCaretExtent = view->contentsToRootView(approximateLineRectInContentCoordinates);
         if (!info.lineCaretExtent.contains(request.point) || !isEditable)
             info.lineCaretExtent.setY(request.point.y() - info.lineCaretExtent.height() / 2);
-        info.caretLength = info.isHorizontalWritingMode ? info.lineCaretExtent.height() : info.lineCaretExtent.width();
+        info.caretLength = info.isVerticalWritingMode ? info.lineCaretExtent.width() : info.lineCaretExtent.height();
     }
 
     auto nodeShouldNotUseIBeam = ^(Node* node) {
