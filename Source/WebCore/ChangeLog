@@ -1,3 +1,26 @@
+2021-07-20  Alan Bujtas  <zalan@apple.com>
+
+        Revert r272370: It delays first paint
+        https://bugs.webkit.org/show_bug.cgi?id=228121
+        <rdar://75362363>
+
+        Reviewed by Antti Koivisto.
+
+        r272370 breaks the cases when the rendering update is initiated when the layer tree is still frozen (circular dependency: visually empty check vs. rendering update)
+
+        * dom/Document.cpp:
+        (WebCore::Document::didInsertInDocumentShadowRoot):
+        * dom/Element.cpp:
+        (WebCore::Element::isVisibleWithoutResolvingFullStyle const):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::Scope):
+        (WebCore::Style::Scope::flushPendingSelfUpdate):
+        (WebCore::Style::Scope::clearPendingUpdate):
+        (WebCore::Style::Scope::scheduleUpdate):
+        (WebCore::Style::Scope::pendingUpdateTimerFired):
+        (WebCore::Style::Scope::insertedInDocument): Deleted.
+        * style/StyleScope.h:
+
 2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r272379): Characters with no fonts that support them are drawn as two .notdef glyphs in the fast text codepath

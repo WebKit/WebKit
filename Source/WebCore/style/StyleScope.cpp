@@ -61,12 +61,14 @@ namespace Style {
 
 Scope::Scope(Document& document)
     : m_document(document)
+    , m_pendingUpdateTimer(*this, &Scope::pendingUpdateTimerFired)
 {
 }
 
 Scope::Scope(ShadowRoot& shadowRoot)
     : m_document(shadowRoot.documentScope())
     , m_shadowRoot(&shadowRoot)
+    , m_pendingUpdateTimer(*this, &Scope::pendingUpdateTimerFired)
 {
 }
 
@@ -601,7 +603,8 @@ void Scope::flushPendingSelfUpdate()
     ASSERT(m_pendingUpdate);
 
     auto updateType = *m_pendingUpdate;
-    m_pendingUpdate = { };
+
+    clearPendingUpdate();
     
     updateActiveStyleSheets(updateType);
 }
@@ -613,6 +616,12 @@ void Scope::flushPendingDescendantUpdates()
     for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
         descendantShadowRoot->styleScope().flushPendingUpdate();
     m_hasDescendantWithPendingUpdate = false;
+}
+
+void Scope::clearPendingUpdate()
+{
+    m_pendingUpdateTimer.stop();
+    m_pendingUpdate = { };
 }
 
 void Scope::scheduleUpdate(UpdateType update)
@@ -634,16 +643,9 @@ void Scope::scheduleUpdate(UpdateType update)
             documentScope().m_hasDescendantWithPendingUpdate = true;
     }
 
-    m_document.scheduleRenderingUpdate({ });
-}
-
-void Scope::insertedInDocument()
-{
-    if (!m_pendingUpdate)
+    if (m_pendingUpdateTimer.isActive())
         return;
-
-    documentScope().m_hasDescendantWithPendingUpdate = true;
-    m_document.scheduleRenderingUpdate({ });
+    m_pendingUpdateTimer.startOneShot(0_s);
 }
 
 void Scope::evaluateMediaQueriesForViewportChange()
@@ -751,6 +753,11 @@ void Scope::invalidateMatchedDeclarationsCache()
 
     if (auto* resolver = resolverIfExists())
         resolver->invalidateMatchedDeclarationsCache();
+}
+
+void Scope::pendingUpdateTimerFired()
+{
+    flushPendingUpdate();
 }
 
 const Vector<RefPtr<StyleSheet>>& Scope::styleSheetsForStyleSheetList()

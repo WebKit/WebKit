@@ -8116,7 +8116,6 @@ void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
     ASSERT(shadowRoot.isConnected());
     ASSERT(!m_inDocumentShadowRoots.contains(&shadowRoot));
     m_inDocumentShadowRoots.add(&shadowRoot);
-    shadowRoot.styleScope().insertedInDocument();
 }
 
 void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)

@@ -3459,7 +3459,6 @@ bool Element::hasValidStyle() const
 
 bool Element::isVisibleWithoutResolvingFullStyle() const
 {
-    document().styleScope().flushPendingUpdate();
 
     if (renderStyle() || hasValidStyle())
         return renderStyle() && renderStyle()->visibility() == Visibility::Visible;
