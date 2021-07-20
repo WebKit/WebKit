@@ -846,6 +846,9 @@ static bool isProbablyMeaningfulClick(Node& clickNode)
     if (is<HTMLBodyElement>(clickNode) || is<Document>(clickNode) || clickNode.document().documentElement() == &clickNode)
         return false;
 
+    if (is<Element>(clickNode) && equalLettersIgnoringASCIICase(downcast<Element>(clickNode).attributeWithoutSynchronization(HTMLNames::draggableAttr), "true"))
+        return true;
+
     if (auto view = makeRefPtr(frame->mainFrame().view())) {
         auto elementBounds = WebPage::rootViewInteractionBounds(clickNode);
         auto unobscuredRect = view->unobscuredContentRect();
