@@ -1346,3 +1346,5 @@ webkit.org/b/228084 [ BigSur Release ] media/video-restricted-no-preload-auto.ht
 webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html [ Pass Failure ]
 
 webkit.org/b/225495 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-023.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/225490 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-containing-block-002.html [ Pass ImageOnlyFailure ]
