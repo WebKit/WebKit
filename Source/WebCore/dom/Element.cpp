@@ -1028,7 +1028,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     // If the element does not have any associated CSS layout box, the element has no associated scrolling box,
     // or the element has no overflow, terminate these steps.
     RenderBox* renderer = renderBox();
-    if (!renderer || !renderer->hasOverflowClip())
+    if (!renderer || !renderer->hasNonVisibleOverflow())
         return;
 
     auto scrollToOptions = normalizeNonFiniteCoordinatesOrFallBackTo(options,
@@ -1058,7 +1058,7 @@ void Element::scrollByUnits(int units, ScrollGranularity granularity)
     if (!renderer)
         return;
 
-    if (!renderer->hasOverflowClip())
+    if (!renderer->hasNonVisibleOverflow())
         return;
 
     ScrollDirection direction = ScrollDown;
@@ -2253,6 +2253,8 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
 
 void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
+    document().removeFromTopLayer(*this);
+
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
@@ -3738,7 +3740,7 @@ URL Element::getURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(*attribute));
     }
 #endif
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(name)));
+    return document().completeURL(getAttribute(name));
 }
 
 URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const

@@ -443,6 +443,61 @@ static void webProcessTerminatedCallback(WebKitWebView *webView, WebKitWebProces
         g_warning("WebProcess CRASHED");
 }
 
+static void certificateDialogResponse(GtkDialog *dialog, int response, WebKitAuthenticationRequest *request)
+{
+    if (response == GTK_RESPONSE_ACCEPT) {
+        GFile *file = gtk_file_chooser_get_file(GTK_FILE_CHOOSER(dialog));
+        if (file) {
+            char *path = g_file_get_path(file);
+            GError *error = NULL;
+            GTlsCertificate *certificate = g_tls_certificate_new_from_file(path, &error);
+            if (certificate) {
+                WebKitCredential *credential = webkit_credential_new_for_certificate(certificate, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
+                webkit_authentication_request_authenticate(request, credential);
+                webkit_credential_free(credential);
+                g_object_unref(certificate);
+            } else {
+                g_warning("Failed to create certificate for %s", path);
+                g_error_free(error);
+            }
+            g_free(path);
+            g_object_unref(file);
+        }
+    } else
+        webkit_authentication_request_authenticate(request, NULL);
+
+    g_object_unref(request);
+
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_window_destroy(GTK_WINDOW(dialog));
+#else
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+#endif
+}
+
+static gboolean webViewAuthenticate(WebKitWebView *webView, WebKitAuthenticationRequest *request, BrowserTab *tab)
+{
+    if (webkit_authentication_request_get_scheme(request) != WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED)
+        return FALSE;
+
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_root(GTK_WIDGET(tab)));
+#else
+    GtkWindow *window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(tab)));
+#endif
+    GtkWidget *fileChooser = gtk_file_chooser_dialog_new("Certificate required", window, GTK_FILE_CHOOSER_ACTION_OPEN, "Cancel", GTK_RESPONSE_CANCEL, "Open", GTK_RESPONSE_ACCEPT, NULL);
+    GtkFileFilter *filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "PEM Certificate");
+    gtk_file_filter_add_mime_type(filter, "application/x-x509-ca-cert");
+    gtk_file_filter_add_pattern(filter, "*.pem");
+    gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(fileChooser), filter);
+
+    g_signal_connect(fileChooser, "response", G_CALLBACK(certificateDialogResponse), g_object_ref(request));
+    gtk_widget_show(fileChooser);
+
+    return TRUE;
+}
+
 static gboolean inspectorOpenedInWindow(WebKitWebInspector *inspector, BrowserTab *tab)
 {
     tab->inspectorIsVisible = TRUE;
@@ -653,6 +708,7 @@ static void browserTabConstructed(GObject *gObject)
     g_signal_connect(tab->webView, "permission-request", G_CALLBACK(decidePermissionRequest), tab);
     g_signal_connect(tab->webView, "run-color-chooser", G_CALLBACK(runColorChooserCallback), tab);
     g_signal_connect(tab->webView, "web-process-terminated", G_CALLBACK(webProcessTerminatedCallback), NULL);
+    g_signal_connect(tab->webView, "authenticate", G_CALLBACK(webViewAuthenticate), tab);
 
     g_object_bind_property(tab->webView, "is-playing-audio", tab->titleAudioButton, "visible", G_BINDING_DEFAULT | G_BINDING_SYNC_CREATE);
     g_signal_connect(tab->webView, "notify::is-muted", G_CALLBACK(audioMutedChanged), tab);

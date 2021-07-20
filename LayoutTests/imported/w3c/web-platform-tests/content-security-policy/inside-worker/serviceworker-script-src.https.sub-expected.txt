@@ -1,0 +1,14 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS serviceworker-script-src
+TIMEOUT serviceworker-script-src 1 Test timed out
+NOTRUN serviceworker-script-src 2
+FAIL Cross-origin `importScripts()` not blocked in https: withour CSP A server with the specified hostname could not be found.
+PASS `eval()` not blocked in https: without CSP
+PASS `setTimeout([string])` not blocked in https: without CSP
+TIMEOUT Cross-origin `importScripts()` blocked in https: with script-src 'self' Test timed out
+NOTRUN `eval()` blocked in https: with script-src 'self'
+NOTRUN `setTimeout([string])` blocked in https: with script-src 'self'
+NOTRUN Reports are sent for https: with script-src 'self'
+

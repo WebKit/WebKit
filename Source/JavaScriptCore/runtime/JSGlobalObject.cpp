@@ -201,6 +201,7 @@
 #include "SymbolConstructor.h"
 #include "SymbolObject.h"
 #include "SymbolPrototype.h"
+#include "TemporalObject.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include "WeakMapConstructor.h"
@@ -1216,6 +1217,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     IntlObject* intl = IntlObject::create(vm, this, IntlObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Intl, intl, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (Options::useTemporal()) {
+        TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));
+        putDirectWithoutTransition(vm, vm.propertyNames->Temporal, temporal, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
 
     m_moduleLoader.initLater(
         [] (const Initializer<JSModuleLoader>& init) {

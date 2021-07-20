@@ -31,11 +31,11 @@
 #if ENABLE(WEBGL) && USE(CAIRO)
 
 #include "CairoUtilities.h"
+#include "GraphicsContext.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
 #include "ImageSource.h"
 #include "PixelBuffer.h"
-#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
 

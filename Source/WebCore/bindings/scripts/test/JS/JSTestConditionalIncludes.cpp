@@ -141,86 +141,32 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestConditionalIncludesPrototype, JSTestConditionalIncludesPrototype::Base);
 
 using JSTestConditionalIncludesDOMConstructor = JSDOMConstructorNotConstructable<JSTestConditionalIncludes>;
 
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesConstructor_MIXIN_CONSTANT(VM&, JSObject*)
-{
-    return jsNumber(1);
-}
-
-static bool isEnabledJSTestConditionalIncludesConstructor_MIXIN_CONSTANT(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesConstructor_MIXIN_REFLECTED_CONSTANT(VM&, JSObject*)
-{
-    return jsNumber(2);
-}
-
-static bool isEnabledJSTestConditionalIncludesConstructor_MIXIN_REFLECTED_CONSTANT(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesConstructor_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL(VM&, JSObject*)
-{
-    return jsNumber(5);
-}
-
-static bool isEnabledJSTestConditionalIncludesConstructor_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-/* Hash table for Constructor */
-
-static const struct CompactHashIndex JSTestConditionalIncludesConstructorTableIndex[8] = {
-    { 1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-};
-
+/* Hash table for constructor */
 
 static const HashTableValue JSTestConditionalIncludesConstructorTableValues[] =
 {
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_CONSTANT", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesConstructor_MIXIN_CONSTANT), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesConstructor_MIXIN_CONSTANT) } },
+    { "MIXIN_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_REFLECTED_CONSTANT", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesConstructor_MIXIN_REFLECTED_CONSTANT), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesConstructor_MIXIN_REFLECTED_CONSTANT) } },
+    { "MIXIN_REFLECTED_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesConstructor_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesConstructor_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL) } },
+    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(5) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 
-static const HashTable JSTestConditionalIncludesConstructorTable = { 3, 7, true, nullptr, JSTestConditionalIncludesConstructorTableValues, JSTestConditionalIncludesConstructorTableIndex };
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static_assert(TestConditionalIncludes::MIXIN_CONSTANT == 1, "MIXIN_CONSTANT in TestConditionalIncludes does not match value from IDL");
 #endif
@@ -231,8 +177,7 @@ static_assert(TestConditionalIncludes::CONST_IMPL == 2, "CONST_IMPL in TestCondi
 static_assert(TestConditionalIncludes::PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL == 5, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL in TestConditionalIncludes does not match value from IDL");
 #endif
 
-template<> const unsigned JSTestConditionalIncludesDOMConstructor::StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
-template<> const ClassInfo JSTestConditionalIncludesDOMConstructor::s_info = { "TestConditionalIncludes", &Base::s_info, &JSTestConditionalIncludesConstructorTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesDOMConstructor) };
+template<> const ClassInfo JSTestConditionalIncludesDOMConstructor::s_info = { "TestConditionalIncludes", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesDOMConstructor) };
 
 template<> JSValue JSTestConditionalIncludesDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -245,364 +190,260 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->prototype, JSTestConditionalIncludes::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestConditionalIncludes"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    reifyStaticProperties(vm, nullptr, JSTestConditionalIncludesConstructorTableValues, *this);
-}
-
+    reifyStaticProperties(vm, JSTestConditionalIncludes::info(), JSTestConditionalIncludesConstructorTableValues, *this);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinReadOnlyAttribute(VM& vm, JSObject*)
-{
-    return DOMAttributeGetterSetter::create(vm, jsTestConditionalIncludes_mixinReadOnlyAttribute, nullptr, DOMAttributeAnnotation { JSTestConditionalIncludes::info(), nullptr });
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinReadOnlyAttribute(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
+    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_CONSTANT"), strlen("MIXIN_CONSTANT"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
+    }
 #endif
-
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinAttribute(VM& vm, JSObject*)
-{
-    return DOMAttributeGetterSetter::create(vm, jsTestConditionalIncludes_mixinAttribute, setJSTestConditionalIncludes_mixinAttribute, DOMAttributeAnnotation { JSTestConditionalIncludes::info(), nullptr });
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinAttribute(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
+    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_REFLECTED_CONSTANT"), strlen("MIXIN_REFLECTED_CONSTANT"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
+    }
 #endif
-
 #if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinCustomAttribute(VM& vm, JSObject*)
-{
-    return DOMAttributeGetterSetter::create(vm, jsTestConditionalIncludes_mixinCustomAttribute, setJSTestConditionalIncludes_mixinCustomAttribute, DOMAttributeAnnotation { JSTestConditionalIncludes::info(), nullptr });
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinCustomAttribute(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
+    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"), strlen("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, &globalObject, propertyName, slot);
+    }
 #endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinNodeAttribute(VM& vm, JSObject*)
-{
-    return DOMAttributeGetterSetter::create(vm, jsTestConditionalIncludes_mixinNodeAttribute, setJSTestConditionalIncludes_mixinNodeAttribute, DOMAttributeAnnotation { JSTestConditionalIncludes::info(), nullptr });
 }
 
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinNodeAttribute(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_partialMixinAttributeFromPartial(VM& vm, JSObject*)
-{
-    return DOMAttributeGetterSetter::create(vm, jsTestConditionalIncludes_partialMixinAttributeFromPartial, nullptr, DOMAttributeAnnotation { JSTestConditionalIncludes::info(), nullptr });
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_partialMixinAttributeFromPartial(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinOperation(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 0, "mixinOperation"_s, jsTestConditionalIncludesPrototypeFunction_mixinOperation);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinOperation(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinComplexOperation(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 2, "mixinComplexOperation"_s, jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinComplexOperation(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinCustomOperation(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 0, "mixinCustomOperation"_s, jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinCustomOperation(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinConditionalOperation(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 0, "mixinConditionalOperation"_s, jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinConditionalOperation(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinSettingsConditionalOperation(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 0, "mixinSettingsConditionalOperation"_s, jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinSettingsConditionalOperation(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return (jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled && jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled);
-}
-#endif
-
-#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_mixinResultFieldOperation(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 0, "mixinResultFieldOperation"_s, jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_mixinResultFieldOperation(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_partialMixinOperationFromPartial(VM& vm, JSObject* thisObject)
-{
-    return JSFunction::create(vm, thisObject->globalObject(), 0, "partialMixinOperationFromPartial"_s, jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_partialMixinOperationFromPartial(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_MIXIN_CONSTANT(VM&, JSObject*)
-{
-    return jsNumber(1);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_MIXIN_CONSTANT(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_MIXIN_REFLECTED_CONSTANT(VM&, JSObject*)
-{
-    return jsNumber(2);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_MIXIN_REFLECTED_CONSTANT(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-#if ENABLE(Condition22) || ENABLE(Condition23)
-static JSValue createJSTestConditionalIncludesPrototype_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL(VM&, JSObject*)
-{
-    return jsNumber(5);
-}
-
-static bool isEnabledJSTestConditionalIncludesPrototype_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL(JSGlobalObject* globalObject)
-{
-    UNUSED_PARAM(globalObject);
-    return jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled;
-}
-#endif
-
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestConditionalIncludesPrototypeTableIndex[66] = {
-    { -1, -1 },
-    { -1, -1 },
-    { 2, 64 },
-    { -1, -1 },
-    { 14, -1 },
-    { -1, -1 },
-    { 3, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 16, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 4, -1 },
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { 1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 7, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 8, -1 },
-    { -1, -1 },
-    { 15, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 5, -1 },
-    { -1, -1 },
-    { 10, -1 },
-    { -1, -1 },
-    { 13, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 9, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 11, -1 },
-    { 6, 65 },
-    { 12, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestConditionalIncludesPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "testAttr", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_testAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(nullptr) } },
+    { "testAttr", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_testAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinReadOnlyAttribute", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinReadOnlyAttribute), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinReadOnlyAttribute) } },
+    { "mixinReadOnlyAttribute", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinReadOnlyAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinAttribute), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinAttribute) } },
+    { "mixinAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinAttribute) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinCustomAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinCustomAttribute), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinCustomAttribute) } },
+    { "mixinCustomAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinCustomAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinCustomAttribute) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "mixinNodeAttribute", JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinNodeAttribute), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinNodeAttribute) } },
+    { "mixinNodeAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_mixinNodeAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestConditionalIncludes_mixinNodeAttribute) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "partialMixinAttributeFromPartial", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_partialMixinAttributeFromPartial), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_partialMixinAttributeFromPartial) } },
+    { "partialMixinAttributeFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestConditionalIncludes_partialMixinAttributeFromPartial), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinOperation) } },
+    { "mixinOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinComplexOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinComplexOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinComplexOperation) } },
+    { "mixinComplexOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinComplexOperation), (intptr_t) (2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinCustomOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinCustomOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinCustomOperation) } },
+    { "mixinCustomOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinCustomOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinConditionalOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinConditionalOperation) } },
+    { "mixinConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinConditionalOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinSettingsConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinSettingsConditionalOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinSettingsConditionalOperation) } },
+    { "mixinSettingsConditionalOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinSettingsConditionalOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    { "mixinResultFieldOperation", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_mixinResultFieldOperation), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_mixinResultFieldOperation) } },
+    { "mixinResultFieldOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_mixinResultFieldOperation), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-    { "partialMixinOperationFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::PropertyCallback), NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_partialMixinOperationFromPartial), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_partialMixinOperationFromPartial) } },
+    { "partialMixinOperationFromPartial", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestConditionalIncludesPrototypeFunction_partialMixinOperationFromPartial), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_CONSTANT", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_MIXIN_CONSTANT), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_MIXIN_CONSTANT) } },
+    { "MIXIN_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "MIXIN_REFLECTED_CONSTANT", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_MIXIN_REFLECTED_CONSTANT), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_MIXIN_REFLECTED_CONSTANT) } },
+    { "MIXIN_REFLECTED_CONSTANT", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(2) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL", JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::PropertyCallback, NoIntrinsic, { (intptr_t)static_cast<LazyPropertyCallback>(createJSTestConditionalIncludesPrototype_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL), (intptr_t) static_cast<IsLazyPropertyEnabledCallback>(isEnabledJSTestConditionalIncludesPrototype_PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL) } },
+    { "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL", JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger, NoIntrinsic, { (long long)(5) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
 
-static const HashTable JSTestConditionalIncludesPrototypeTable = { 17, 63, true, JSTestConditionalIncludes::info(), JSTestConditionalIncludesPrototypeTableValues, JSTestConditionalIncludesPrototypeTableIndex };
-const ClassInfo JSTestConditionalIncludesPrototype::s_info = { "TestConditionalIncludes", &Base::s_info, &JSTestConditionalIncludesPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesPrototype) };
+const ClassInfo JSTestConditionalIncludesPrototype::s_info = { "TestConditionalIncludes", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesPrototype) };
 
 void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestConditionalIncludes::info(), JSTestConditionalIncludesPrototypeTableValues, *this);
+    bool hasDisabledRuntimeProperties = false;
+#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinOperation"), strlen("mixinOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinComplexOperation"), strlen("mixinComplexOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinCustomOperation"), strlen("mixinCustomOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinConditionalOperation"), strlen("mixinConditionalOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
+    if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled && jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled)) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinSettingsConditionalOperation"), strlen("mixinSettingsConditionalOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinResultFieldOperation"), strlen("mixinResultFieldOperation"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("partialMixinOperationFromPartial"), strlen("partialMixinOperationFromPartial"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinReadOnlyAttribute"), strlen("mixinReadOnlyAttribute"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinAttribute"), strlen("mixinAttribute"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinCustomAttribute"), strlen("mixinCustomAttribute"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinNodeAttribute"), strlen("mixinNodeAttribute"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("partialMixinAttributeFromPartial"), strlen("partialMixinAttributeFromPartial"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_CONSTANT"), strlen("MIXIN_CONSTANT"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_REFLECTED_CONSTANT"), strlen("MIXIN_REFLECTED_CONSTANT"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+#if ENABLE(Condition22) || ENABLE(Condition23)
+    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+        hasDisabledRuntimeProperties = true;
+        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"), strlen("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"));
+        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
+        DeletePropertySlot slot;
+        JSObject::deleteProperty(this, globalObject(), propertyName, slot);
+    }
+#endif
+    if (hasDisabledRuntimeProperties && structure()->isDictionary())
+        flattenDictionaryObject(vm);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

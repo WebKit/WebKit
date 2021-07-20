@@ -460,14 +460,14 @@ void URL::setHost(StringView newHost)
         newHost = newHost.substring(0, index);
 
     Vector<UChar, 512> encodedHostName;
-    if (!appendEncodedHostname(encodedHostName, newHost))
+    if (hasSpecialScheme() && !appendEncodedHostname(encodedHostName, newHost))
         return;
 
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1U;
     parse(makeString(
         StringView(m_string).left(hostStart()),
         slashSlashNeeded ? "//" : "",
-        StringView(encodedHostName.data(), encodedHostName.size()),
+        hasSpecialScheme() ? StringView(encodedHostName.data(), encodedHostName.size()) : newHost,
         StringView(m_string).substring(m_hostEnd)
     ));
 }
@@ -513,14 +513,14 @@ void URL::setHostAndPort(StringView hostAndPort)
     }
 
     Vector<UChar, 512> encodedHostName;
-    if (!appendEncodedHostname(encodedHostName, hostName))
+    if (hasSpecialScheme() && !appendEncodedHostname(encodedHostName, hostName))
         return;
 
     bool slashSlashNeeded = m_userStart == m_schemeEnd + 1U;
     parse(makeString(
         StringView(m_string).left(hostStart()),
         slashSlashNeeded ? "//" : "",
-        StringView(encodedHostName.data(), encodedHostName.size()),
+        hasSpecialScheme() ? StringView(encodedHostName.data(), encodedHostName.size()) : hostName,
         portString.isEmpty() ? "" : ":",
         portString,
         StringView(m_string).substring(pathStart())
@@ -631,7 +631,7 @@ void URL::setFragmentIdentifier(StringView identifier)
     if (!m_isValid)
         return;
 
-    parse(makeString(StringView(m_string).left(m_queryEnd), '#', identifier));
+    *this = URLParser(makeString(StringView(m_string).left(m_queryEnd), '#', identifier), { }, URLTextEncodingSentinelAllowingC0AtEndOfHash).result();
 }
 
 void URL::removeFragmentIdentifier()
@@ -682,7 +682,8 @@ void URL::setPath(StringView path)
 
     parse(makeString(
         StringView(m_string).left(pathStart()),
-        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIs("file"))) ? "" : "/",
+        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIs("file"))) || (!hasSpecialScheme() && path.isEmpty() && m_schemeEnd + 1 < pathStart()) ? "" : "/",
+        !hasSpecialScheme() && host().isEmpty() && path.startsWith("//") && path.length() > 2 ? "/." : "",
         escapePathWithoutCopying(path),
         StringView(m_string).substring(m_pathEnd)
     ));

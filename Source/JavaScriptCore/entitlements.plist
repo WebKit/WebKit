@@ -4,6 +4,8 @@
 <dict>
 	<key>com.apple.private.verified-jit</key>
 	<true/>
+	<key>com.apple.security.cs.single-jit</key>
+	<true/>
 	<key>dynamic-codesigning</key>
 	<true/>
 </dict>

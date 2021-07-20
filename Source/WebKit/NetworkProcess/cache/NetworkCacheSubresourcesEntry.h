@@ -59,8 +59,8 @@ public:
 
     bool isFirstParty() const;
 
-    bool isAppBound() const { return m_isAppBound; }
-    void setIsAppBound(bool isAppBound) { m_isAppBound = isAppBound; }
+    bool isAppInitiated() const { return m_isAppInitiated; }
+    void setIsAppInitiated(bool isAppInitiated) { m_isAppInitiated = isAppInitiated; }
 
 private:
     Key m_key;
@@ -68,7 +68,7 @@ private:
     WallTime m_firstSeen;
     bool m_isTransient { false };
     bool m_isSameSite { false };
-    bool m_isAppBound { false };
+    bool m_isAppInitiated { true };
     URL m_firstPartyForCookies;
     WebCore::HTTPHeaderMap m_requestHeaders;
     WebCore::ResourceLoadPriority m_priority;

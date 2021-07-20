@@ -1240,17 +1240,9 @@ private:
                 return true;
             }
             if (auto* regExp = jsDynamicCast<RegExpObject*>(vm, obj)) {
-                char flags[3];
-                int flagCount = 0;
-                if (regExp->regExp()->global())
-                    flags[flagCount++] = 'g';
-                if (regExp->regExp()->ignoreCase())
-                    flags[flagCount++] = 'i';
-                if (regExp->regExp()->multiline())
-                    flags[flagCount++] = 'm';
                 write(RegExpTag);
                 write(regExp->regExp()->pattern());
-                write(String(flags, flagCount));
+                write(String(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
                 return true;
             }
             if (obj->inherits<JSMessagePort>(vm)) {

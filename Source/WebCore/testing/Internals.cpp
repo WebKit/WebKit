@@ -538,10 +538,10 @@ void Internals::resetToConsistentState(Page& page)
     page.mainFrame().loader().clearTestingOverrides();
     page.applicationCacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
-    page.group().captionPreferences().setTestingMode(true);
-    page.group().captionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
-    page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
-    page.group().captionPreferences().setTestingMode(false);
+    page.group().ensureCaptionPreferences().setTestingMode(true);
+    page.group().ensureCaptionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
+    page.group().ensureCaptionPreferences().setCaptionsStyleSheetOverride(emptyString());
+    page.group().ensureCaptionPreferences().setTestingMode(false);
     PlatformMediaSessionManager::sharedManager().resetHaveEverRegisteredAsNowPlayingApplicationForTesting();
     PlatformMediaSessionManager::sharedManager().resetRestrictions();
     PlatformMediaSessionManager::sharedManager().setWillIgnoreSystemInterruptions(true);
@@ -616,7 +616,7 @@ Internals::Internals(Document& document)
 {
 #if ENABLE(VIDEO)
     if (document.page())
-        document.page()->group().captionPreferences().setTestingMode(true);
+        document.page()->group().ensureCaptionPreferences().setTestingMode(true);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -2245,7 +2245,7 @@ Vector<String> Internals::userPreferredAudioCharacteristics() const
     if (!document || !document->page())
         return Vector<String>();
 #if ENABLE(VIDEO)
-    return document->page()->group().captionPreferences().preferredAudioCharacteristics();
+    return document->page()->group().ensureCaptionPreferences().preferredAudioCharacteristics();
 #else
     return Vector<String>();
 #endif
@@ -2257,7 +2257,7 @@ void Internals::setUserPreferredAudioCharacteristic(const String& characteristic
     if (!document || !document->page())
         return;
 #if ENABLE(VIDEO)
-    document->page()->group().captionPreferences().setPreferredAudioCharacteristic(characteristic);
+    document->page()->group().ensureCaptionPreferences().setPreferredAudioCharacteristic(characteristic);
 #else
     UNUSED_PARAM(characteristic);
 #endif
@@ -4015,7 +4015,7 @@ ExceptionOr<String> Internals::captionsStyleSheetOverride()
         return Exception { InvalidAccessError };
 
 #if ENABLE(VIDEO)
-    return document->page()->group().captionPreferences().captionsStyleSheetOverride();
+    return document->page()->group().ensureCaptionPreferences().captionsStyleSheetOverride();
 #else
     return String { emptyString() };
 #endif
@@ -4028,7 +4028,7 @@ ExceptionOr<void> Internals::setCaptionsStyleSheetOverride(const String& overrid
         return Exception { InvalidAccessError };
 
 #if ENABLE(VIDEO)
-    document->page()->group().captionPreferences().setCaptionsStyleSheetOverride(override);
+    document->page()->group().ensureCaptionPreferences().setCaptionsStyleSheetOverride(override);
 #else
     UNUSED_PARAM(override);
 #endif
@@ -4042,7 +4042,7 @@ ExceptionOr<void> Internals::setPrimaryAudioTrackLanguageOverride(const String& 
         return Exception { InvalidAccessError };
 
 #if ENABLE(VIDEO)
-    document->page()->group().captionPreferences().setPrimaryAudioTrackLanguageOverride(language);
+    document->page()->group().ensureCaptionPreferences().setPrimaryAudioTrackLanguageOverride(language);
 #else
     UNUSED_PARAM(language);
 #endif
@@ -4056,7 +4056,7 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
         return Exception { InvalidAccessError };
 
 #if ENABLE(VIDEO)
-    auto& captionPreferences = document->page()->group().captionPreferences();
+    auto& captionPreferences = document->page()->group().ensureCaptionPreferences();
 
     if (equalLettersIgnoringASCIICase(mode, "automatic"))
         captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Automatic);

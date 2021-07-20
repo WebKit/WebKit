@@ -254,6 +254,9 @@ arm64: MultiplyAdd64 U:G:64, U:G:64, U:G:64, D:G:64
 arm64: MultiplyAddSignExtend32 U:G:32, U:G:32, U:G:64, D:G:64
     Tmp, Tmp, Tmp, Tmp
 
+arm64: MultiplyAddZeroExtend32 U:G:32, U:G:32, U:G:64, D:G:64
+    Tmp, Tmp, Tmp, Tmp
+
 arm64: MultiplySub32 U:G:32, U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp, Tmp
 
@@ -263,13 +266,22 @@ arm64: MultiplySub64 U:G:64, U:G:64, U:G:64, D:G:64
 arm64: MultiplySubSignExtend32 U:G:32, U:G:32, U:G:64, D:G:64
     Tmp, Tmp, Tmp, Tmp
 
+arm64: MultiplySubZeroExtend32 U:G:32, U:G:32, U:G:64, D:G:64
+    Tmp, Tmp, Tmp, Tmp
+
 arm64: MultiplyNeg32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
 
 arm64: MultiplyNeg64 U:G:64, U:G:64, ZD:G:64
     Tmp, Tmp, Tmp
 
-arm64: MultiplySignExtend32 U:G:32, U:G:32, ZD:G:64
+arm64: MultiplyNegSignExtend32 U:G:32, U:G:32, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: MultiplyNegZeroExtend32 U:G:32, U:G:32, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: MultiplySignExtend32 U:G:32, U:G:32, D:G:64
     Tmp, Tmp, Tmp
 
 arm64: Div32 U:G:32, U:G:32, ZD:G:32
@@ -663,14 +675,13 @@ Move32 U:G:32, ZD:G:32
 Move32 U:G:32, ZD:G:32, S:G:32
     Addr, Addr, Tmp
 
-# FIXME: StoreZero32 and StoreZero64 are hacks on ARM64, we can do better: https://bugs.webkit.org/show_bug.cgi?id=174821
-StoreZero32 D:G:32
-    Addr
-    Index
+arm64: Store32 U:G:32, ZD:G:32
+    ZeroReg, Addr
+    ZeroReg, Index
 
-64: StoreZero64 D:G:64
-    Addr
-    Index
+arm64: Store64 U:G:64, D:G:64
+    ZeroReg, Addr
+    ZeroReg, Index
 
 SignExtend32ToPtr U:G:32, D:G:Ptr
     Tmp, Tmp
@@ -870,6 +881,42 @@ arm64: ExtractRegister32 U:G:32, U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Imm, Tmp
 
 arm64: ExtractRegister64 U:G:64, U:G:32, U:G:32, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AddLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AddRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AddUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AddLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AddRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AddUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: SubLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: SubRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: SubUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: SubLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: SubRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: SubUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Imm, Tmp
 
 # The first operand is rax.

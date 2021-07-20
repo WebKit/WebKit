@@ -263,7 +263,7 @@ public:
     bool isNeg() { return (op() && rn() == 31); }
     const char* negName() { return sBit() ? "negs" : "neg"; }
     unsigned shift() { return (m_opcode >> 22) & 0x3; }
-    int immediate6() { return (static_cast<int>((m_opcode >> 10) & 0x3f) << 26) >> 26; }
+    int immediate6() { return (static_cast<uint32_t>((m_opcode >> 10) & 0x3f) << 26) >> 26; }
 };
 
 class A64DOpcodeBitfield : public A64DOpcode {
@@ -857,7 +857,7 @@ public:
     bool isMov() { return ((opc() == 1) && (rn() == 31)); }
     unsigned opNumber() { return (opc() << 1) | nBit(); }
     unsigned shift() { return (m_opcode >> 22) & 0x3; }
-    int immediate6() { return (static_cast<int>((m_opcode >> 10) & 0x3f) << 26) >> 26; }
+    int immediate6() { return (static_cast<uint32_t>((m_opcode >> 10) & 0x3f) << 26) >> 26; }
 };
 
 class A64DOpcodeMoveWide : public A64DOpcode {

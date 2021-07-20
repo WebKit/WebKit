@@ -702,6 +702,11 @@ private:
         return Arg();
     }
 
+    Arg zeroReg()
+    {
+        return Arg::zeroReg();
+    }
+
     Arg immOrTmp(Value* value)
     {
         if (Arg result = imm(value))
@@ -1094,17 +1099,17 @@ private:
     {
         using namespace Air;
         if (auto imm_value = imm(value)) {
-            if (isARM64() && imm_value.value() == 0) {
+            if (!imm_value.value()) {
                 switch (move.opcode) {
                 default:
                     break;
                 case Air::Move32:
-                    if (isValidForm(StoreZero32, dest.kind()) && dest.isValidForm(Width32))
-                        return Inst(StoreZero32, m_value, dest);
+                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width32))
+                        return Inst(Store32, m_value, zeroReg(), dest);
                     break;
                 case Air::Move:
-                    if (isValidForm(StoreZero64, dest.kind()) && dest.isValidForm(Width64))
-                        return Inst(StoreZero64, m_value, dest);
+                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Width64))
+                        return Inst(Store64, m_value, zeroReg(), dest);
                     break;
                 }
             }
@@ -2256,11 +2261,34 @@ private:
         }
 
         if (isARM64E()) {
+            if (isBranch) {
+                switch (width) {
+                case Width8:
+                    append(Air::ZeroExtend8To32, expectedValueTmp, expectedValueTmp);
+                    break;
+                case Width16:
+                    append(Air::ZeroExtend16To32, expectedValueTmp, expectedValueTmp);
+                    break;
+                case Width32:
+                case Width64:
+                    break;
+                }
+            }
             append(relaxedMoveForType(atomic->accessType()), expectedValueTmp, valueResultTmp);
             appendTrapping(OPCODE_FOR_WIDTH(AtomicStrongCAS, width), valueResultTmp, newValueTmp, address);
             if (returnsOldValue)
                 return;
             if (isBranch) {
+                switch (width) {
+                case Width8:
+                case Width16:
+                case Width32:
+                    appendTrapping(Air::Branch32, Arg::relCond(MacroAssembler::Equal), valueResultTmp, expectedValueTmp);
+                    break;
+                case Width64:
+                    appendTrapping(Air::Branch64, Arg::relCond(MacroAssembler::Equal), valueResultTmp, expectedValueTmp);
+                    break;
+                }
                 m_blockToBlock[m_block]->setSuccessors(success, failure);
                 return;
             }
@@ -2462,6 +2490,15 @@ private:
     void lower()
     {
         using namespace Air;
+
+        auto isMergeableB3Opcode = [&] (Value* v, B3::Opcode b3Opcode) -> bool { 
+            if (v->opcode() != b3Opcode || !canBeInternal(v))
+                return false;
+            if (m_locked.contains(v->child(0)))
+                return false;
+            return true;
+        };
+
         switch (m_value->opcode()) {
         case B3::Nop: {
             // Yes, we will totally see Nop's because some phases will replaceWithNop() instead of
@@ -2540,137 +2577,223 @@ private:
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }
-            
+
         case Add: {
             if (tryAppendLea())
                 return;
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
 
-            ASSERT(isValidForm(MultiplyAdd64, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp) 
-                == isValidForm(MultiplyAddSignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp));
-            Air::Opcode multiplyAddOpcode = tryOpcodeForType(MultiplyAdd32, MultiplyAdd64, m_value->type());
-            if (isValidForm(multiplyAddOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-                Value* left = m_value->child(0);
-                Value* right = m_value->child(1);
-                if (!imm(right) || m_valueToTmp[right]) {
-                    auto tryMultiply = [&] (Value* v) -> bool { 
-                        if (v->opcode() != Mul || !canBeInternal(v))
-                            return false;
-                        if (m_locked.contains(v->child(0)) || m_locked.contains(v->child(1)))
-                            return false;
-                        return true;
+            auto tryMultiplyAdd = [&] () -> bool {
+                if (imm(right) && !m_valueToTmp[right])
+                    return false;
+
+                // MADD: d = n * m + a
+                auto tryAppendMultiplyAdd = [&] (Value* left, Value* right) -> bool {
+                    if (left->opcode() != Mul || !canBeInternal(left) || m_locked.contains(right))
+                        return false;
+                    Value* multiplyLeft = left->child(0);
+                    Value* multiplyRight = left->child(1);
+                    Air::Opcode airOpcode = tryOpcodeForType(MultiplyAdd32, MultiplyAdd64, m_value->type());
+                    auto tryNewAirOpcode = [&] () -> Air::Opcode {
+                        if (airOpcode != MultiplyAdd64)
+                            return Air::Oops;
+                        // SMADDL: d = SExt32(n) * SExt32(m) + a
+                        if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                            return MultiplyAddSignExtend32;
+                        // UMADDL: d = ZExt32(n) * ZExt32(m) + a
+                        if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                            return MultiplyAddZeroExtend32;
+                        return Air::Oops;
                     };
 
-                    auto trySExt32 = [&] (Value* v) -> bool { 
-                        return v->opcode() == SExt32 && canBeInternal(v);
-                    };
-
-                    // MADD: d = n * m + a
-                    auto tryAppendMultiplyAdd = [&] (Value* left, Value* right) -> bool {
-                        if (!tryMultiply(left))
-                            return false;
-                        Value* multiplyLeft = left->child(0);
-                        Value* multiplyRight = left->child(1);
-
-                        // SMADDL: d = SExt32(n) *  SExt32(m) + a
-                        if (multiplyAddOpcode == MultiplyAdd64 && trySExt32(multiplyLeft) && trySExt32(multiplyRight)) {
-                            append(MultiplyAddSignExtend32, 
-                                tmp(multiplyLeft->child(0)), 
-                                tmp(multiplyRight->child(0)), 
-                                tmp(right), 
-                                tmp(m_value));
-                            commitInternal(multiplyLeft);
-                            commitInternal(multiplyRight);
-                            commitInternal(left);
-                            return true;
-                        }
-
-                        append(multiplyAddOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
+                    Air::Opcode newAirOpcode = tryNewAirOpcode();
+                    if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                        append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(right), tmp(m_value));
+                        commitInternal(multiplyLeft);
+                        commitInternal(multiplyRight);
                         commitInternal(left);
                         return true;
-                    };
+                    }
 
-                    if (tryAppendMultiplyAdd(left, right) || tryAppendMultiplyAdd(right, left))
-                        return;
-                }
-            }
+                    if (!isValidForm(airOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp))
+                        return false;
+                    if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
+                        return false;
+                    append(airOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
+                    commitInternal(left);
+                    return true;
+                };
 
-            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(m_value->child(0), m_value->child(1));
+                return tryAppendMultiplyAdd(left, right) || tryAppendMultiplyAdd(right, left);
+            };
+
+            if (tryMultiplyAdd())
+                return;
+
+            // add-with-shift Pattern: n + (m ShiftType amount)
+            auto tryAppendAddWithShift = [&] (Value* left, Value* right) -> bool {
+                auto tryOpcode = [&] (B3::Opcode opcode) -> Air::Opcode {
+                    switch (opcode) {
+                    case Shl:
+                        return tryOpcodeForType(AddLeftShift32, AddLeftShift64, m_value->type());
+                    case SShr:
+                        return tryOpcodeForType(AddRightShift32, AddRightShift64, m_value->type());
+                    case ZShr:
+                        return tryOpcodeForType(AddUnsignedRightShift32, AddUnsignedRightShift64, m_value->type());
+                    default:
+                        return Air::Oops;
+                    }
+                };
+
+                Air::Opcode opcode = tryOpcode(right->opcode());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                    return false;
+                if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
+                    return false;
+
+                uint64_t amount = right->child(1)->asInt();
+                uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+                if (amount >= datasize)
+                    return false;
+
+                append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
+                commitInternal(right);
+                return true;
+            };
+
+            if (tryAppendAddWithShift(left, right) || tryAppendAddWithShift(right, left))
+                return;
+
+            appendBinOp<Add32, Add64, AddDouble, AddFloat, Commutative>(left, right);
             return;
         }
 
         case Sub: {
-            Air::Opcode multiplySubOpcode = tryOpcodeForType(MultiplySub32, MultiplySub64, m_value->type());
-            if (multiplySubOpcode != Air::Oops
-                && isValidForm(multiplySubOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-                Value* left = m_value->child(0);
-                Value* right = m_value->child(1);
-                auto tryMultiply = [&] (Value* v) -> bool {
-                    if (v->opcode() != Mul || !canBeInternal(v))
-                        return false;
-                    if (m_locked.contains(v->child(0)) || m_locked.contains(v->child(1)))
-                        return false;
-                    return true;
-                };
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
+            auto tryAppendMultiplySub = [&] () -> bool {
+                if (imm(right) && !m_valueToTmp[right])
+                    return false;
 
                 // MSUB: d = a - n * m
-                if ((!imm(right) || m_valueToTmp[right]) && tryMultiply(right)) {
-                    Value* multiplyLeft = right->child(0);
-                    Value* multiplyRight = right->child(1);
-
+                if (m_locked.contains(left) || right->opcode() != Mul || !canBeInternal(right))
+                    return false;
+                Value* multiplyLeft = right->child(0);
+                Value* multiplyRight = right->child(1);
+                Air::Opcode airOpcode = tryOpcodeForType(MultiplySub32, MultiplySub64, m_value->type());
+                auto tryNewAirOpcode = [&] () -> Air::Opcode {
+                    if (airOpcode != MultiplySub64)
+                        return Air::Oops;
                     // SMSUBL: d = a - SExt32(n) * SExt32(m)
-                    if (multiplySubOpcode == MultiplySub64
-                        && isValidForm(MultiplySubSignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
-                        auto trySExt32 = [&] (Value* v) {
-                            if (v->opcode() != SExt32 || !canBeInternal(v))
-                                return false;
-                            if (m_locked.contains(v->child(0)))
-                                return false;
-                            return true;
-                        };
+                    if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                        return MultiplySubSignExtend32;
+                    // UMSUBL: d = a - ZExt32(n) * ZExt32(m)
+                    if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                        return MultiplySubZeroExtend32;
+                    return Air::Oops;
+                };
 
-                        auto tryAppendMultiplySubSignExtend32 = [&] () -> bool {
-                            if (!trySExt32(multiplyLeft) || !trySExt32(multiplyRight))
-                                return false;
-                            append(MultiplySubSignExtend32, 
-                                tmp(multiplyLeft->child(0)), 
-                                tmp(multiplyRight->child(0)), 
-                                tmp(left), 
-                                tmp(m_value));
-                            commitInternal(right);
-                            commitInternal(multiplyLeft);
-                            commitInternal(multiplyRight);
-                            return true;
-                        };
-
-                        if (tryAppendMultiplySubSignExtend32())
-                            return;
-                    }
-
-                    append(multiplySubOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
+                Air::Opcode newAirOpcode = tryNewAirOpcode();
+                if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                    append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(left), tmp(m_value));
+                    commitInternal(multiplyLeft);
+                    commitInternal(multiplyRight);
                     commitInternal(right);
-                    return;
+                    return true;
                 }
-            }
 
-            appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(m_value->child(0), m_value->child(1));
+                if (!isValidForm(airOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp))
+                    return false;
+                if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
+                    return false;
+                append(airOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(left), tmp(m_value));
+                commitInternal(right);
+                return true;
+            };
+
+            if (tryAppendMultiplySub())
+                return;
+
+            // sub-with-shift Pattern: n - (m ShiftType amount)
+            auto tryAppendSubAndShift = [&] () -> bool {
+                auto tryOpcode = [&] (B3::Opcode opcode) -> Air::Opcode {
+                    switch (opcode) {
+                    case Shl:
+                        return tryOpcodeForType(SubLeftShift32, SubLeftShift64, m_value->type());
+                    case SShr:
+                        return tryOpcodeForType(SubRightShift32, SubRightShift64, m_value->type());
+                    case ZShr:
+                        return tryOpcodeForType(SubUnsignedRightShift32, SubUnsignedRightShift64, m_value->type());
+                    default:
+                        return Air::Oops;
+                    }
+                };
+
+                Air::Opcode opcode = tryOpcode(right->opcode());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                    return false;
+                if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
+                    return false;
+
+                uint64_t amount = right->child(1)->asInt();
+                uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+                if (amount >= datasize)
+                    return false;
+
+                append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
+                commitInternal(right);
+                return true;
+            };
+
+            if (tryAppendSubAndShift())
+                return;
+
+            appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(left, right);
             return;
         }
 
         case Neg: {
-            Air::Opcode multiplyNegOpcode = tryOpcodeForType(MultiplyNeg32, MultiplyNeg64, m_value->type());
-            if (multiplyNegOpcode != Air::Oops
-                && isValidForm(multiplyNegOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)
-                && m_value->child(0)->opcode() == Mul
-                && canBeInternal(m_value->child(0))) {
-                Value* multiplyOperation = m_value->child(0);
-                Value* multiplyLeft = multiplyOperation->child(0);
-                Value* multiplyRight = multiplyOperation->child(1);
-                if (!m_locked.contains(multiplyLeft) && !m_locked.contains(multiplyRight)) {
-                    append(multiplyNegOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(m_value));
-                    commitInternal(multiplyOperation);
-                    return;
+            auto tryAppendMultiplyNeg = [&] () -> bool {
+                // MNEG : d = -(n * m)
+                if (m_value->child(0)->opcode() != Mul || !canBeInternal(m_value->child(0)))
+                    return false;
+                Value* multiplyLeft = m_value->child(0)->child(0);
+                Value* multiplyRight = m_value->child(0)->child(1);
+                Air::Opcode airOpcode = tryOpcodeForType(MultiplyNeg32, MultiplyNeg64, m_value->type());
+                auto tryNewAirOpcode = [&] () -> Air::Opcode {
+                    if (airOpcode != MultiplyNeg64)
+                        return Air::Oops;
+                    // SMNEGL: d = -(SExt32(n) * SExt32(m))
+                    if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                        return MultiplyNegSignExtend32;
+                    // UMNEGL: d = -(ZExt32(n) * ZExt32(m))
+                    if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                        return MultiplyNegZeroExtend32;
+                    return Air::Oops;
+                };
+
+                Air::Opcode newAirOpcode = tryNewAirOpcode();
+                if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                    append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(m_value));
+                    commitInternal(multiplyLeft);
+                    commitInternal(multiplyRight);
+                    commitInternal(m_value->child(0));
+                    return true;
                 }
-            }
+
+                if (!isValidForm(airOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp))
+                    return false;
+                if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
+                    return false;
+                append(airOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(m_value));
+                commitInternal(m_value->child(0));
+                return true;
+            };
+
+            if (tryAppendMultiplyNeg())
+                return;
 
             appendUnOp<Neg32, Neg64, NegateDouble, NegateFloat>(m_value->child(0));
             return;

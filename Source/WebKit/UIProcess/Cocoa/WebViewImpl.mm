@@ -2014,31 +2014,29 @@ void WebViewImpl::updateContentInsetsIfAutomatic()
     if (!m_automaticallyAdjustsContentInsets)
         return;
 
-    NSWindow *window = [m_view window];
-    if ((window.styleMask & NSWindowStyleMaskFullSizeContentView) && !window.titlebarAppearsTransparent && ![m_view enclosingScrollView]) {
-        NSRect contentLayoutRectInWebViewCoordinates = [m_view convertRect:window.contentLayoutRect fromView:nil];
-        CGFloat newTopContentInset = std::max<CGFloat>(contentLayoutRectInWebViewCoordinates.origin.y, 0);
-        if (m_page->topContentInset() != newTopContentInset)
-            setTopContentInset(newTopContentInset);
-    } else
-        setTopContentInset(0);
+    m_pendingTopContentInset = std::nullopt;
+
+    scheduleSetTopContentInsetDispatch();
 }
 
 CGFloat WebViewImpl::topContentInset() const
 {
-    if (m_didScheduleSetTopContentInset)
-        return m_pendingTopContentInset;
-    return m_page->topContentInset();
+    return m_pendingTopContentInset.value_or(m_page->topContentInset());
 }
 
 void WebViewImpl::setTopContentInset(CGFloat contentInset)
 {
     m_pendingTopContentInset = contentInset;
 
-    if (m_didScheduleSetTopContentInset)
+    scheduleSetTopContentInsetDispatch();
+}
+
+void WebViewImpl::scheduleSetTopContentInsetDispatch()
+{
+    if (m_didScheduleSetTopContentInsetDispatch)
         return;
 
-    m_didScheduleSetTopContentInset = true;
+    m_didScheduleSetTopContentInsetDispatch = true;
 
     RunLoop::main().dispatch([weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
@@ -2049,11 +2047,26 @@ void WebViewImpl::setTopContentInset(CGFloat contentInset)
 
 void WebViewImpl::dispatchSetTopContentInset()
 {
-    if (!m_didScheduleSetTopContentInset)
+    if (!m_didScheduleSetTopContentInsetDispatch)
         return;
 
-    m_didScheduleSetTopContentInset = false;
-    m_page->setTopContentInset(m_pendingTopContentInset);
+    m_didScheduleSetTopContentInsetDispatch = false;
+
+    if (!m_pendingTopContentInset) {
+        if (!m_automaticallyAdjustsContentInsets)
+            return;
+
+        NSWindow *window = [m_view window];
+        if ((window.styleMask & NSWindowStyleMaskFullSizeContentView) && !window.titlebarAppearsTransparent && ![m_view enclosingScrollView]) {
+            NSRect contentLayoutRectInWebViewCoordinates = [m_view convertRect:window.contentLayoutRect fromView:nil];
+            m_pendingTopContentInset = std::max<CGFloat>(contentLayoutRectInWebViewCoordinates.origin.y, 0);
+        } else
+            m_pendingTopContentInset = 0;
+    }
+
+    m_page->setTopContentInset(*m_pendingTopContentInset);
+
+    m_pendingTopContentInset = std::nullopt;
 }
 
 void WebViewImpl::prepareContentInRect(CGRect rect)

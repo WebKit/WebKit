@@ -210,7 +210,7 @@ static void encodeCFData(Encoder& encoder, CFDataRef data)
     const uint8_t* bytePtr = CFDataGetBytePtr(data);
 
     encoder << length;
-    encoder.encodeFixedLengthData(bytePtr, static_cast<size_t>(length));
+    encoder.encodeFixedLengthData({ bytePtr, static_cast<size_t>(length) });
 }
 
 static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)

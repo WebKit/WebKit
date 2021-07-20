@@ -130,7 +130,7 @@ std::unique_ptr<SubresourcesEntry> SubresourcesEntry::decodeStorageRecord(const 
 {
     auto entry = makeUnique<SubresourcesEntry>(storageEntry);
 
-    WTF::Persistence::Decoder decoder(storageEntry.header.data(), storageEntry.header.size());
+    WTF::Persistence::Decoder decoder(storageEntry.header.span());
     std::optional<Vector<SubresourceInfo>> subresources;
     decoder >> subresources;
     if (!subresources)

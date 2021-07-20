@@ -28,20 +28,17 @@
 
 #pragma once
 
+#include "GraphicsContextCairo.h"
 #include "NicosiaPaintingOperation.h"
-
-namespace WebCore {
-class PlatformContextCairo;
-}
 
 namespace Nicosia {
 
 struct PaintingOperationReplayCairo : PaintingOperationReplay {
-    PaintingOperationReplayCairo(WebCore::PlatformContextCairo& platformContext)
+    PaintingOperationReplayCairo(WebCore::GraphicsContextCairo& platformContext)
         : platformContext(platformContext)
     { }
 
-    WebCore::PlatformContextCairo& platformContext;
+    WebCore::GraphicsContextCairo& platformContext;
 };
 
 }

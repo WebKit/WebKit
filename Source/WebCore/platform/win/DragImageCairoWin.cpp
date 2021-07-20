@@ -28,8 +28,7 @@
 
 #include "BitmapInfo.h"
 #include "CachedImage.h"
-#include "GraphicsContext.h"
-#include "GraphicsContextPlatformPrivateCairo.h"
+#include "GraphicsContextCairo.h"
 #include "HWndDC.h"
 #include "Image.h"
 #include <cairo-win32.h>
@@ -39,12 +38,12 @@
 
 namespace WebCore {
 
-void deallocContext(PlatformContextCairo* target)
+void deallocContext(GraphicsContextCairo* target)
 {
     delete target;
 }
 
-GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
+GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, GraphicsContextCairo** targetRef)
 {
     BitmapInfo bmpInfo = BitmapInfo::create(size);
 
@@ -119,7 +118,7 @@ DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
     if (!dstDC)
         goto exit;
 
-    PlatformContextCairo* targetContext;
+    GraphicsContextCairo* targetContext;
     hbmp = allocImage(dstDC.get(), dstSize, &targetContext);
     if (!hbmp)
         goto exit;
@@ -153,7 +152,7 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientation)
     if (!workingDC)
         return 0;
 
-    PlatformContextCairo* drawContext = 0;
+    GraphicsContextCairo* drawContext = 0;
     auto hbmp = allocImage(workingDC.get(), IntSize(img->size()), &drawContext);
     if (!hbmp || !drawContext)
         return 0;

@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-Ref<ResizeObservation> ResizeObservation::create(Element* target)
+Ref<ResizeObservation> ResizeObservation::create(Element& target)
 {
     return adoptRef(*new ResizeObservation(target));
 }
 
-ResizeObservation::ResizeObservation(Element* element)
-    : m_target(element)
+ResizeObservation::ResizeObservation(Element& element)
+    : m_target { makeWeakPtr(element) }
 {
 }
 
@@ -92,7 +92,7 @@ bool ResizeObservation::elementSizeChanged(LayoutSize& currentSize) const
 size_t ResizeObservation::targetElementDepth() const
 {
     unsigned depth = 0;
-    for (Element* ownerElement  = m_target; ownerElement; ownerElement = ownerElement->document().ownerElement()) {
+    for (Element* ownerElement = m_target.get(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
         for (Element* parent = ownerElement; parent; parent = parent->parentElement())
             ++depth;
     }

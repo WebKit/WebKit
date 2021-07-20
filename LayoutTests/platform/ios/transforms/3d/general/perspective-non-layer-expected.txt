@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x25
         RenderInline {SPAN} at (0,0) size 159x19
           RenderText {#text} at (0,0) size 0x0
-          RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+          RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,25) size 784x0
         RenderBlock {DIV} at (0,0) size 784x0

@@ -36,6 +36,12 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
+
+OBJC_CLASS NSDictionary;
+
 namespace WebKit {
 
 class SandboxInitializationParameters;
@@ -106,6 +112,11 @@ protected:
     virtual void terminate();
 
     virtual void stopRunLoop();
+
+#if USE(OS_STATE)
+    void registerWithStateDumper(ASCIILiteral title);
+    virtual RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const { return { }; }
+#endif // USE(OS_STATE)
 
 #if USE(APPKIT)
     static void stopNSAppRunLoop();

@@ -51,8 +51,8 @@ PASS   context.createMediaStreamSource(null) threw TypeError: "Argument 1 ('medi
 PASS < [createMediaStreamSource] All assertions passed. (total 1 assertions)
 PASS > [createScriptProcessor]
 PASS   context.createScriptProcessor(1, 1, 1) threw IndexSizeError: "Unsupported buffer size for ScriptProcessorNode".
-PASS   context.createScriptProcessor(4096, 100, 1) threw NotSupportedError: "numberOfInputChannels exceeds maximum number of channels".
-PASS   context.createScriptProcessor(4096, 1, 100) threw NotSupportedError: "numberOfOutputChannels exceeds maximum number of channels".
+PASS   context.createScriptProcessor(4096, 100, 1) threw IndexSizeError: "numberOfInputChannels exceeds maximum number of channels".
+PASS   context.createScriptProcessor(4096, 1, 100) threw IndexSizeError: "numberOfOutputChannels exceeds maximum number of channels".
 PASS   context.createScriptProcessor() did not throw an exception.
 PASS   context.createScriptProcessor(0) did not throw an exception.
 PASS < [createScriptProcessor] All assertions passed. (total 5 assertions)
@@ -112,10 +112,10 @@ PASS   node.connect(context.destination, 100, 0) threw IndexSizeError: "Output i
 PASS   node.connect(context.destination, 0, 100) threw IndexSizeError: "Input index exceeds number of inputs".
 PASS   node.connect(node2.gain, 100) threw IndexSizeError: "Output index exceeds number of outputs".
 PASS   node.disconnect(99) threw IndexSizeError: "output index is out of bounds".
-PASS   node.connect(otherContext.destination) threw SyntaxError: "Source and destination nodes belong to different audio contexts".
+PASS   node.connect(otherContext.destination) threw InvalidAccessError: "Source and destination nodes belong to different audio contexts".
 PASS < [connections] All assertions passed. (total 6 assertions)
 PASS > [channel-stuff] channelCount, channelCountMode, channelInterpretation
-PASS   GainNode.channelCount = 99 threw IndexSizeError: "Channel count exceeds maximum limit".
+PASS   GainNode.channelCount = 99 threw NotSupportedError: "Channel count exceeds maximum limit".
 PASS   GainNode.channelCount is not equal to 99.
 PASS   node.channelCountMode = "fancy" did not throw an exception.
 PASS   node.channelCountMode is equal to max.
@@ -144,11 +144,11 @@ PASS > [offline-audio-context] supports 32 channels
 PASS   new OfflineAudioContext(32, 100, context.sampleRate) did not throw an exception.
 PASS < [offline-audio-context] All assertions passed. (total 1 assertions)
 PASS > [invalid-offline-audio-context-parameters] errors for invalid channel counts
-PASS   new OfflineAudioContext(0, 100, context.sampleRate) threw SyntaxError: "Number of channels is not in range".
-PASS   new OfflineAudioContext(99, 100, context.sampleRate) threw SyntaxError: "Number of channels is not in range".
-PASS   new OfflineAudioContext(1, 100, 1) threw SyntaxError: "sampleRate is not in range".
-PASS   new OfflineAudioContext(1, 100, 1e6) threw SyntaxError: "sampleRate is not in range".
-PASS   new OfflineAudioContext(1, 0, 44100) threw SyntaxError: "length cannot be 0".
+PASS   new OfflineAudioContext(0, 100, context.sampleRate) threw NotSupportedError: "Number of channels is not in range".
+PASS   new OfflineAudioContext(99, 100, context.sampleRate) threw NotSupportedError: "Number of channels is not in range".
+PASS   new OfflineAudioContext(1, 100, 1) threw NotSupportedError: "sampleRate is not in range".
+PASS   new OfflineAudioContext(1, 100, 1e6) threw NotSupportedError: "sampleRate is not in range".
+PASS   new OfflineAudioContext(1, 0, 44100) threw NotSupportedError: "length cannot be 0".
 PASS < [invalid-offline-audio-context-parameters] All assertions passed. (total 5 assertions)
 PASS > [invalid-frame-length]
 PASS   testContext = new OfflineAudioContext(1, -88200000000000, 44100) did not throw an exception.
@@ -251,9 +251,9 @@ PASS   script = context.createScriptProcessor(256, 3) did not throw an exception
 PASS   script.channelCount is equal to 3.
 PASS   script.channelCountMode is equal to explicit.
 PASS   script.channelCount = 3 did not throw an exception.
-PASS   ScriptProcessorNode.channelCount = 1 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed".
+PASS   ScriptProcessorNode.channelCount = 1 threw IndexSizeError: "ScriptProcessorNode's channelCount cannot be changed".
 PASS   ScriptProcessorNode.channelCount is not equal to 1.
-PASS   ScriptProcessorNode.channelCount = 7 threw NotSupportedError: "ScriptProcessorNode's channelCount cannot be changed".
+PASS   ScriptProcessorNode.channelCount = 7 threw IndexSizeError: "ScriptProcessorNode's channelCount cannot be changed".
 PASS   ScriptProcessorNode.channelCount is not equal to 7.
 PASS   script.channelCountMode = "explicit" did not throw an exception.
 PASS   ScriptProcessorNode.channelCountMode = max threw NotSupportedError: "ScriptProcessorNode's channelCountMode cannot be changed from 'explicit'".

@@ -100,6 +100,12 @@ namespace WebCore {
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
+static std::unique_ptr<CaptionPreferencesDelegate>& captionPreferencesDelegate()
+{
+    static NeverDestroyed<std::unique_ptr<CaptionPreferencesDelegate>> delegate;
+    return delegate.get();
+}
+
 static std::optional<CaptionUserPreferencesMediaAF::CaptionDisplayMode>& cachedCaptionDisplayMode()
 {
     static NeverDestroyed<std::optional<CaptionUserPreferencesMediaAF::CaptionDisplayMode>> captionDisplayMode;
@@ -177,17 +183,9 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::captio
 
     return platformCaptionDisplayMode();
 }
-    
-void CaptionUserPreferencesMediaAF::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
+
+void CaptionUserPreferencesMediaAF::platformSetCaptionDisplayMode(CaptionDisplayMode mode)
 {
-    if (testingMode() || !MediaAccessibilityLibrary()) {
-        CaptionUserPreferences::setCaptionDisplayMode(mode);
-        return;
-    }
-
-    if (captionDisplayMode() == Manual)
-        return;
-
     MACaptionAppearanceDisplayType displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
     switch (mode) {
     case Automatic:
@@ -205,6 +203,24 @@ void CaptionUserPreferencesMediaAF::setCaptionDisplayMode(CaptionUserPreferences
     }
 
     MACaptionAppearanceSetDisplayType(kMACaptionAppearanceDomainUser, displayType);
+}
+
+void CaptionUserPreferencesMediaAF::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
+{
+    if (testingMode() || !MediaAccessibilityLibrary()) {
+        CaptionUserPreferences::setCaptionDisplayMode(mode);
+        return;
+    }
+
+    if (captionDisplayMode() == Manual)
+        return;
+
+    if (captionPreferencesDelegate()) {
+        captionPreferencesDelegate()->setDisplayMode(mode);
+        return;
+    }
+    
+    platformSetCaptionDisplayMode(mode);
 }
 
 CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::platformCaptionDisplayMode()
@@ -289,6 +305,11 @@ void CaptionUserPreferencesMediaAF::captionPreferencesChanged()
         updateCaptionStyleSheetOverride();
 
     CaptionUserPreferences::captionPreferencesChanged();
+}
+
+void CaptionUserPreferencesMediaAF::setCaptionPreferencesDelegate(std::unique_ptr<CaptionPreferencesDelegate>&& delegate)
+{
+    captionPreferencesDelegate() = WTFMove(delegate);
 }
 
 String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
@@ -481,6 +502,11 @@ float CaptionUserPreferencesMediaAF::captionFontSizeScaleAndImportance(bool& imp
 #endif
 }
 
+void CaptionUserPreferencesMediaAF::platformSetPreferredLanguage(const String& language)
+{
+    MACaptionAppearanceAddSelectedLanguage(kMACaptionAppearanceDomainUser, language.createCFString().get());
+}
+
 void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
 {
     if (CaptionUserPreferences::captionDisplayMode() == Manual)
@@ -491,7 +517,12 @@ void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
         return;
     }
 
-    MACaptionAppearanceAddSelectedLanguage(kMACaptionAppearanceDomainUser, language.createCFString().get());
+    if (captionPreferencesDelegate()) {
+        captionPreferencesDelegate()->setPreferredLanguage(language);
+        return;
+    }
+
+    platformSetPreferredLanguage(language);
 }
 
 Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const

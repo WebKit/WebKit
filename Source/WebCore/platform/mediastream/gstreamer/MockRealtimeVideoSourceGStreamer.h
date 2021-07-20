@@ -32,6 +32,8 @@ class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource {
 public:
     static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, String&& name, String&& hashSalt);
 
+    static CaptureSourceOrError createMockDisplayCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
+
     ~MockRealtimeVideoSourceGStreamer() = default;
 
 private:

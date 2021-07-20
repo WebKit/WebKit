@@ -658,7 +658,7 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
             ts << " clip " << adjustedClipRect;
     }
 
-    if (layer.renderer().hasOverflowClip()) {
+    if (layer.renderer().hasNonVisibleOverflow()) {
         if (auto* scrollableArea = layer.scrollableArea()) {
             if (scrollableArea->scrollOffset().x())
                 ts << " scrollX " << scrollableArea->scrollOffset().x();

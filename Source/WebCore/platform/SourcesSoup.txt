@@ -25,6 +25,7 @@ platform/network/soup/AuthenticationChallengeSoup.cpp
 platform/network/soup/CertificateInfoSoup.cpp
 platform/network/soup/CookieSoup.cpp
 platform/network/soup/CookieStorageSoup.cpp
+platform/network/soup/CredentialSoup.cpp
 platform/network/soup/CredentialStorageSoup.cpp
 platform/network/soup/NetworkStorageSessionSoup.cpp
 platform/network/soup/ProxyServerSoup.cpp

@@ -44,7 +44,7 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
         scriptURL.isolatedCopy(),
         workerType,
         loadedFromDisk,
-        lastNavigationWasAppBound,
+        lastNavigationWasAppInitiated,
         crossThreadCopy(scriptResourceMap)
     };
 }

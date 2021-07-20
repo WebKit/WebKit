@@ -93,10 +93,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-flex-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html
@@ -120,6 +120,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-contribution-negative-margins-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-contribution-negative-margins.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-inline-blocks-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-inline-blocks-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-minimum-height-orthogonal-001.html

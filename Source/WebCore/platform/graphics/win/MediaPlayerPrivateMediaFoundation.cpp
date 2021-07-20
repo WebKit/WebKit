@@ -35,7 +35,6 @@
 #include "NotImplemented.h"
 #if USE(CAIRO)
 #include "CairoOperations.h"
-#include "PlatformContextCairo.h"
 #include <cairo.h>
 #endif
 

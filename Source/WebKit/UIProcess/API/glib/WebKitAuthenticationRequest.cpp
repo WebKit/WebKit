@@ -98,6 +98,8 @@ static inline WebKitAuthenticationScheme toWebKitAuthenticationScheme(WebCore::P
         return WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED;
     case WebCore::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
         return WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED;
+    case WebCore::ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+        return WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED;
     case WebCore::ProtectionSpaceAuthenticationSchemeUnknown:
         return WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN;
     default:
@@ -481,4 +483,21 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
     request->priv->handledRequest = true;
 
     g_signal_emit(request, signals[CANCELLED], 0);
+}
+
+/**
+ * webkit_authentication_request_get_certificate_pin_flags:
+ * @request: a #WebKitAuthenticationRequest
+ *
+ * Get the #GTlsPasswordFlags of the %WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED authentication challenge.
+ *
+ * Returns: a #GTlsPasswordFlags
+ *
+ * Since: 2.34
+ */
+GTlsPasswordFlags webkit_authentication_request_get_certificate_pin_flags(WebKitAuthenticationRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), G_TLS_PASSWORD_NONE);
+
+    return static_cast<GTlsPasswordFlags>(request->priv->authenticationChallenge->core().tlsPasswordFlags());
 }

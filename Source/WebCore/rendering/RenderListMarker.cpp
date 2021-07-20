@@ -1745,7 +1745,7 @@ void RenderListMarker::addOverflowFromListMarker()
         bool propagateLayoutOverflow = true;
         do {
             markerAncestor = parentBox(*markerAncestor);
-            if (markerAncestor->hasOverflowClip())
+            if (markerAncestor->hasNonVisibleOverflow())
                 propagateVisualOverflow = false;
             if (is<RenderBlock>(*markerAncestor)) {
                 if (propagateVisualOverflow)
@@ -1753,7 +1753,7 @@ void RenderListMarker::addOverflowFromListMarker()
                 if (propagateLayoutOverflow)
                     downcast<RenderBlock>(*markerAncestor).addLayoutOverflow(markerRect);
             }
-            if (markerAncestor->hasOverflowClip())
+            if (markerAncestor->hasNonVisibleOverflow())
                 propagateLayoutOverflow = false;
             if (markerAncestor->hasSelfPaintingLayer())
                 propagateVisualOverflow = false;

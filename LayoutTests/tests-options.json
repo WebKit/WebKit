@@ -566,13 +566,799 @@
     "imported/w3c/web-platform-tests/clipboard-apis/async-idlharness.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required_csp-header-crlf.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required_csp-header.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-star-allow.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/report-blocked-frame.sub.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/report-only-frame.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-paint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/script-tag.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/script-tag.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-classic.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-classic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-import-data.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-import.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-import.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-module.http.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worker-module.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-animation-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-animation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-audio-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-audio.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-layout-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-layout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-paint-import-data.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-paint.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/content-security-policy/generic/no-default-src.sub.html": [

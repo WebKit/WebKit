@@ -135,10 +135,10 @@ void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesS
     setShouldUseShortTimeout(store.getBoolValueForKey(WebPreferencesKey::shouldUseServiceWorkerShortTimeoutKey()));
 }
 
-void WebSWContextManagerConnection::updateAppBoundValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppBound lastNavigationWasAppBound)
+void WebSWContextManagerConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
     if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
-        serviceWorkerThreadProxy->setLastNavigationWasAppBound(lastNavigationWasAppBound == WebCore::LastNavigationWasAppBound::Yes);
+        serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);
 }
 
 void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& data, String&& userAgent)
@@ -234,7 +234,7 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
         return;
     }
 
-    serviceWorkerThreadProxy->setLastNavigationWasAppBound(request.isAppBound());
+    serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(request.isAppInitiated());
 
     if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
         m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier);

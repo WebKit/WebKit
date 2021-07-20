@@ -79,14 +79,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype, JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::Base);
 
 using JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithLegacyOverrideBuiltIns>;
 
-template<> const unsigned JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestNamedSetterWithLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor) };
 
 template<> JSValue JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -102,21 +99,14 @@ template<> void JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::initi
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestNamedSetterWithLegacyOverrideBuiltInsPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestNamedSetterWithLegacyOverrideBuiltInsPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterWithLegacyOverrideBuiltInsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestNamedSetterWithLegacyOverrideBuiltInsPrototypeTable = { 1, 1, true, JSTestNamedSetterWithLegacyOverrideBuiltIns::info(), JSTestNamedSetterWithLegacyOverrideBuiltInsPrototypeTableValues, JSTestNamedSetterWithLegacyOverrideBuiltInsPrototypeTableIndex };
-const ClassInfo JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::s_info = { "TestNamedSetterWithLegacyOverrideBuiltIns", &Base::s_info, &JSTestNamedSetterWithLegacyOverrideBuiltInsPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype) };
+const ClassInfo JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::s_info = { "TestNamedSetterWithLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype) };
 
 void JSTestNamedSetterWithLegacyOverrideBuiltInsPrototype::finishCreation(VM& vm)
 {

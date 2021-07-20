@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/empty.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/post-origin-on-load-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-data-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-data-iframe.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-eval.sub.html
@@ -21,4 +23,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-message-to-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-property-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-post-property-to-opener.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-service-worker.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-shared-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/sandboxed-shared-worker.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/sandbox/support/unsandboxed-post-property-to-opener.html

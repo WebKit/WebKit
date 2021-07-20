@@ -189,7 +189,7 @@ void PopUpSOAuthorizationSession::initSecretWebView()
     [m_secretWebView setUIDelegate:m_secretDelegate.get()];
     [m_secretWebView setNavigationDelegate:m_secretDelegate.get()];
 
-    m_secretWebView->_page->setShouldSuppressSOAuthorizationInAllNavigationPolicyDecision();
+    m_secretWebView->_page->preferences().setExtensibleSSOEnabled(false);
     WTFLogAlways("SecretWebView is created.");
 }
 

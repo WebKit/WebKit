@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=false ] -->
+<html>
+<head>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<div id="description">Test loadURL requests are succesfully attributed as non app initiated.</div>
+<pre id="console"></pre>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function loadURL() {
+        document.location.href = destinationOrigin + "/app-privacy-report/user-attribution-load-url.html";
+    }
+
+    function log(message) {
+        document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+    }
+
+    const destinationOrigin = "http://localhost:8000";
+    const startingOrigin = "http://127.0.0.1:8000";
+    function runTest() {
+        if (document.location.origin === startingOrigin) {
+            loadURL();
+        } else {
+            var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+            var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+            if (didLoadAppInitiatedRequest) {
+                log("FAIL did load app initiated request");
+                testRunner.notifyDone();
+            }
+
+            if (!didLoadNonAppInitiatedRequest) {
+                log("FAIL did not load non app initiated request");
+                testRunner.notifyDone();
+            }
+
+            log("PASS successfully loaded only non app initiated requests");
+            testRunner.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>

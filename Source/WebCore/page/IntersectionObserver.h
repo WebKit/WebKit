@@ -27,7 +27,6 @@
 
 #if ENABLE(INTERSECTION_OBSERVER)
 
-#include "ActiveDOMObject.h"
 #include "GCReachableRef.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
@@ -36,6 +35,12 @@
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
+namespace JSC {
+
+class AbstractSlotVisitor;
+
+}
 
 namespace WebCore {
 
@@ -60,7 +65,7 @@ struct IntersectionObserverData {
     Vector<IntersectionObserverRegistration> registrations;
 };
 
-class IntersectionObserver : public RefCounted<IntersectionObserver>, public ActiveDOMObject, public CanMakeWeakPtr<IntersectionObserver> {
+class IntersectionObserver : public RefCounted<IntersectionObserver>, public CanMakeWeakPtr<IntersectionObserver> {
 public:
     struct Init {
         std::optional<Variant<RefPtr<Element>, RefPtr<Document>>> root;
@@ -74,11 +79,13 @@ public:
 
     Document* trackingDocument() const { return m_root ? &m_root->document() : m_implicitRootDocument.get(); }
 
-    ContainerNode* root() const { return m_root; }
+    ContainerNode* root() const { return m_root.get(); }
     String rootMargin() const;
     const LengthBox& rootMarginBox() const { return m_rootMargin; }
     const Vector<double>& thresholds() const { return m_thresholds; }
-    const Vector<Element*> observationTargets() const { return m_observationTargets; }
+    const Vector<WeakPtr<Element>>& observationTargets() const { return m_observationTargets; }
+    bool hasObservationTargets() const { return m_observationTargets.size(); }
+    bool isObserving(const Element&) const;
 
     void observe(Element&);
     void unobserve(Element&);
@@ -91,7 +98,6 @@ public:
     TakenRecords takeRecords();
 
     void targetDestroyed(Element&);
-    bool hasObservationTargets() const { return m_observationTargets.size(); }
     void rootDestroyed();
 
     std::optional<ReducedResolutionSeconds> nowTimestamp() const;
@@ -100,24 +106,20 @@ public:
     void notify();
 
     IntersectionObserverCallback* callbackConcurrently() { return m_callback.get(); }
+    bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
 private:
     IntersectionObserver(Document&, Ref<IntersectionObserverCallback>&&, ContainerNode* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds);
-
-    // ActiveDOMObject.
-    bool virtualHasPendingActivity() const override;
-    const char* activeDOMObjectName() const override;
-    void stop() override;
 
     bool removeTargetRegistration(Element&);
     void removeAllTargets();
 
     WeakPtr<Document> m_implicitRootDocument;
-    ContainerNode* m_root;
+    WeakPtr<ContainerNode> m_root;
     LengthBox m_rootMargin;
     Vector<double> m_thresholds;
     RefPtr<IntersectionObserverCallback> m_callback;
-    Vector<Element*> m_observationTargets;
+    Vector<WeakPtr<Element>> m_observationTargets;
     Vector<GCReachableRef<Element>> m_pendingTargets;
     Vector<Ref<IntersectionObserverEntry>> m_queuedEntries;
 };

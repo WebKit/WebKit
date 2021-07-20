@@ -311,22 +311,22 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     highlightProperty(property)
     {
-        if (!property.overridden && this._hiddenUnusedVariables.has(property)) {
+        if (!property.overridden && this._hiddenUnusedVariables.find(propertiesMatch)) {
             this._pendingPropertyToHighlight = property;
             this.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.ShowAll;
             return true;
         }
 
-        let propertiesMatch = (cssProperty) => {
+        function propertiesMatch(cssProperty) {
             if (cssProperty.attached && !cssProperty.overridden) {
                 if (cssProperty.canonicalName === property.canonicalName || hasMatchingLonghandProperty(cssProperty))
                     return true;
             }
 
             return false;
-        };
+        }
 
-        let hasMatchingLonghandProperty = (cssProperty) => {
+        function hasMatchingLonghandProperty(cssProperty) {
             let cssProperties = cssProperty.relatedLonghandProperties;
 
             if (!cssProperties.length)
@@ -338,7 +338,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             }
 
             return false;
-        };
+        }
 
         for (let i = 0; i < this._propertyViews.length; ++i) {
             if (propertiesMatch(this._propertyViews[i].property)) {

@@ -178,10 +178,10 @@ private:
     bool supportsFullscreen() const override { return true; }
 
     void play() override;
-    void playInternal();
+    void playInternal(std::optional<MonotonicTime>&& = std::nullopt);
 
     void pause() override;
-    void pauseInternal();
+    void pauseInternal(std::optional<MonotonicTime>&& = std::nullopt);
 
     bool paused() const override;
 
@@ -264,6 +264,13 @@ private:
     bool isVideoOutputAvailable() const;
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
+
+#if HAVE(AVSAMPLEBUFFERRENDERSYNCHRONIZER_RATEATHOSTTIME)
+    bool supportsPlayAtHostTime() const final { return true; }
+    bool supportsPauseAtHostTime() const final { return true; }
+    bool playAtHostTime(const MonotonicTime&) final;
+    bool pauseAtHostTime(const MonotonicTime&) final;
+#endif
 
     friend class MediaSourcePrivateAVFObjC;
 

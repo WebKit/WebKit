@@ -52,7 +52,7 @@ public:
     // position:static elements that are not flex-items get their z-index coerced to auto.
     bool requiresLayer() const override
     {
-        return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasOverflowClip()
+        return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasNonVisibleOverflow()
             || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || style().specifiesColumns()
             || style().containsLayout() || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
     }
@@ -490,8 +490,8 @@ override;
     bool hasAlwaysPresentScrollbar(ScrollbarOrientation) const;
 
     bool scrollsOverflow() const { return scrollsOverflowX() || scrollsOverflowY(); }
-    bool scrollsOverflowX() const { return hasOverflowClip() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto); }
-    bool scrollsOverflowY() const { return hasOverflowClip() && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto); }
+    bool scrollsOverflowX() const { return hasNonVisibleOverflow() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto); }
+    bool scrollsOverflowY() const { return hasNonVisibleOverflow() && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto); }
 
     bool hasHorizontalOverflow() const { return scrollWidth() != roundToInt(paddingBoxWidth()); }
     bool hasVerticalOverflow() const { return scrollHeight() != roundToInt(paddingBoxHeight()); }
@@ -791,7 +791,7 @@ protected:
 
 private:
     // Used to store state between styleWillChange and styleDidChange
-    static bool s_hadOverflowClip;
+    static bool s_hadNonVisibleOverflow;
 };
 
 inline RenderBox* RenderBox::parentBox() const

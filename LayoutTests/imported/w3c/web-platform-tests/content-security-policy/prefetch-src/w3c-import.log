@@ -15,7 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked-by-default.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-allowed.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked-by-default.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked-by-default.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked.html.headers

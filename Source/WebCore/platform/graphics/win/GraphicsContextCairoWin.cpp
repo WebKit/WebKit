@@ -33,8 +33,6 @@
 #include "RefPtrCairo.h"
 
 #include <cairo-win32.h>
-#include "GraphicsContextPlatformPrivateCairo.h"
-
 
 namespace WebCore {
 
@@ -72,7 +70,7 @@ GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool hasAlpha)
 {
 }
 
-GraphicsContextCairo::GraphicsContextCairo(PlatformContextCairo* platformContext)
+GraphicsContextCairo::GraphicsContextCairo(GraphicsContextCairo* platformContext)
     : GraphicsContextCairo(platformContext->cr())
 {
 }
@@ -84,7 +82,7 @@ static void setRGBABitmapAlpha(unsigned char* bytes, size_t length, unsigned cha
         bytes[i + 3] = level;
 }
 
-static void drawBitmapToContext(PlatformContextCairo& platformContext, const DIBPixelData& pixelData, const IntSize& translate)
+static void drawBitmapToContext(GraphicsContextCairo& platformContext, const DIBPixelData& pixelData, const IntSize& translate)
 {
     // Need to make a cairo_surface_t out of the bitmap's pixel buffer and then draw
     // it into our context.
@@ -114,11 +112,7 @@ static void drawBitmapToContext(PlatformContextCairo& platformContext, const DIB
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend)
 {
-    bool createdBitmap = !deprecatedPrivateContext()->m_hdc || isInTransparencyLayer();
-    if (!hdc || !createdBitmap) {
-        deprecatedPrivateContext()->restore();
-        return;
-    }
+    ASSERT(hdc);
 
     if (dstRect.isEmpty())
         return;
@@ -138,31 +132,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     drawBitmapToContext(*platformContext(), pixelData, IntSize(dstRect.x(), dstRect.height() + dstRect.y()));
 
     ::DeleteDC(hdc);
-}
-
-#if PLATFORM(WIN)
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(cairo_t* cr)
-{
-    if (!cr)
-       return;
-
-    cairo_surface_t* surface = cairo_get_target(cr);
-    m_hdc = cairo_win32_surface_get_dc(surface);   
-
-    SetGraphicsMode(m_hdc, GM_ADVANCED); // We need this call for themes to honor world transforms.
-}
-
-void GraphicsContextPlatformPrivate::flush()
-{
-    cairo_surface_t* surface = cairo_win32_surface_create(m_hdc);
-    cairo_surface_flush(surface);
-    cairo_surface_destroy(surface);
-}
-#endif
-
-GraphicsContextPlatformPrivate* GraphicsContextCairo::deprecatedPrivateContext() const
-{
-    return m_private.get();
 }
 
 }

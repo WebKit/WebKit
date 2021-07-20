@@ -38,7 +38,6 @@
 #include "GraphicsContextCairo.h"
 #include "ImageBufferUtilitiesCairo.h"
 #include "MIMETypeRegistry.h"
-#include "PlatformContextCairo.h"
 #include <cairo.h>
 #include <wtf/text/Base64.h>
 

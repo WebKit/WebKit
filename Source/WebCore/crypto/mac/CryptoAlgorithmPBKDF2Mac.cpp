@@ -58,8 +58,9 @@ static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifi
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(const CryptoAlgorithmPbkdf2Params& parameters, const CryptoKeyRaw& key, size_t length)
 {
     Vector<uint8_t> result(length / 8);
-    // <rdar://problem/32439955> Currently, CCKeyDerivationPBKDF bails out when an empty password/salt is provided.
-    if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(key.key().data()), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), CryptoAlgorithmPBKDF2MacInternal::commonCryptoHMACAlgorithm(parameters.hashIdentifier), parameters.iterations, result.data(), length / 8))
+    // CCKeyDerivationPBKDF returns an error if the key pointer is null, even if the key length is 0. For this reason, we need to make sure we pass the empty string
+    // instead of a null pointer in this case.
+    if (CCKeyDerivationPBKDF(kCCPBKDF2, key.key().data() ? reinterpret_cast<const char *>(key.key().data()) : "", key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), CryptoAlgorithmPBKDF2MacInternal::commonCryptoHMACAlgorithm(parameters.hashIdentifier), parameters.iterations, result.data(), length / 8))
         return Exception { OperationError };
     return WTFMove(result);
 }

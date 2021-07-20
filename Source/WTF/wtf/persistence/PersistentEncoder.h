@@ -27,6 +27,7 @@
 
 #include <wtf/EnumTraits.h>
 #include <wtf/SHA1.h>
+#include <wtf/Span.h>
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoder.h>
 
@@ -43,7 +44,7 @@ public:
     WTF_EXPORT_PRIVATE ~Encoder();
 
     WTF_EXPORT_PRIVATE void encodeChecksum();
-    WTF_EXPORT_PRIVATE void encodeFixedLengthData(const uint8_t*, size_t);
+    WTF_EXPORT_PRIVATE void encodeFixedLengthData(Span<const uint8_t>);
 
     template<typename T, std::enable_if_t<std::is_enum<T>::value>* = nullptr>
     Encoder& operator<<(const T& t)
@@ -73,7 +74,7 @@ public:
     const uint8_t* buffer() const { return m_buffer.data(); }
     size_t bufferSize() const { return m_buffer.size(); }
 
-    WTF_EXPORT_PRIVATE static void updateChecksumForData(SHA1&, const uint8_t*, size_t);
+    WTF_EXPORT_PRIVATE static void updateChecksumForData(SHA1&, Span<const uint8_t>);
     template <typename Type> static void updateChecksumForNumber(SHA1&, Type);
 
     static constexpr bool isIPCEncoder = false;

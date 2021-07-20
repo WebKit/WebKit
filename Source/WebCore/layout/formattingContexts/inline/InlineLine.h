@@ -109,7 +109,7 @@ public:
         bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespaceType == TrailingWhitespace::Collapsed; }
         TrailingWhitespace trailingWhitespaceType(const InlineTextItem&) const;
         void removeTrailingWhitespace();
-        void visuallyCollapseTrailingWhitespace();
+        InlineLayoutUnit visuallyCollapseTrailingWhitespace(InlineLayoutUnit tryCollapsingThisMuchSpace);
 
         bool hasTrailingLetterSpacing() const;
         InlineLayoutUnit trailingLetterSpacing() const;

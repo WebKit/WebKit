@@ -34,22 +34,38 @@
 #include "Scrollbar.h"
 #include "ThemeAdwaita.h"
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 namespace WebCore {
 
-static const unsigned scrollbarSize = 13;
+static const unsigned scrollbarSize = 15;
 static const unsigned hoveredScrollbarBorderSize = 1;
 static const unsigned thumbBorderSize = 1;
 static const unsigned overlayThumbSize = 5;
 static const unsigned minimumThumbSize = 40;
-static const unsigned thumbSize = 6;
+static const unsigned thumbMargin = 3;
 static const double scrollbarOpacity = 0.8;
-static constexpr auto scrollbarBackgroundColor = SRGBA<uint8_t> { 252, 252, 252 };
-static constexpr auto scrollbarBorderColor = SRGBA<uint8_t> { 220, 223, 227 };
-static constexpr auto overlayThumbBorderColor = Color::white.colorWithAlphaByte(100);
-static constexpr auto overlayThumbColor = SRGBA<uint8_t> { 46, 52, 54, 100 };
-static constexpr auto thumbHoveredColor = SRGBA<uint8_t> { 86, 91, 92 };
-static constexpr auto thumbPressedColor = SRGBA<uint8_t> { 27, 106, 203 };
-static constexpr auto thumbColor = SRGBA<uint8_t> { 126, 129, 130 };
+
+static constexpr auto scrollbarBackgroundColorLight = SRGBA<uint8_t> { 206, 206, 206 };
+static constexpr auto scrollbarBorderColorLight = SRGBA<uint8_t> { 205, 199, 194 };
+static constexpr auto overlayThumbBorderColorLight = Color::white.colorWithAlphaByte(100);
+static constexpr auto overlayThumbColorLight = SRGBA<uint8_t> { 46, 52, 54, 100 };
+static constexpr auto thumbHoveredColorLight = SRGBA<uint8_t> { 86, 91, 92 };
+static constexpr auto thumbColorLight = SRGBA<uint8_t> { 126, 129, 130 };
+
+static constexpr auto scrollbarBackgroundColorDark = SRGBA<uint8_t> { 49, 49, 49 };
+static constexpr auto scrollbarBorderColorDark = SRGBA<uint8_t> { 27, 27, 27 };
+static constexpr auto overlayThumbBorderColorDark = Color::black.colorWithAlphaByte(100);
+static constexpr auto overlayThumbColorDark = SRGBA<uint8_t> { 238, 238, 236, 100 };
+static constexpr auto thumbHoveredColorDark = SRGBA<uint8_t> { 201, 201, 199 };
+static constexpr auto thumbColorDark = SRGBA<uint8_t> { 164, 164, 163 };
+
+void ScrollbarThemeAdwaita::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
+{
+    scrollbar.invalidate();
+}
 
 bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 {
@@ -116,6 +132,29 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
     if (!opacity)
         return true;
 
+    SRGBA<uint8_t> scrollbarBackgroundColor;
+    SRGBA<uint8_t> scrollbarBorderColor;
+    SRGBA<uint8_t> overlayThumbBorderColor;
+    SRGBA<uint8_t> overlayThumbColor;
+    SRGBA<uint8_t> thumbHoveredColor;
+    SRGBA<uint8_t> thumbColor;
+
+    if (scrollbar.scrollableArea().useDarkAppearanceForScrollbars()) {
+        scrollbarBackgroundColor = scrollbarBackgroundColorDark;
+        scrollbarBorderColor = scrollbarBorderColorDark;
+        overlayThumbBorderColor = overlayThumbBorderColorDark;
+        overlayThumbColor = overlayThumbColorDark;
+        thumbHoveredColor = thumbHoveredColorDark;
+        thumbColor = thumbColorDark;
+    } else {
+        scrollbarBackgroundColor = scrollbarBackgroundColorLight;
+        scrollbarBorderColor = scrollbarBorderColorLight;
+        overlayThumbBorderColor = overlayThumbBorderColorLight;
+        overlayThumbColor = overlayThumbColorLight;
+        thumbHoveredColor = thumbHoveredColorLight;
+        thumbColor = thumbColorLight;
+    }
+
     GraphicsContextStateSaver stateSaver(graphicsContext);
     if (opacity != 1) {
         graphicsContext.clip(damageRect);
@@ -135,38 +174,45 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         graphicsContext.fillRect(frame, scrollbarBorderColor);
     }
 
+    int thumbCornerSize;
     int thumbPos = thumbPosition(scrollbar);
     int thumbLen = thumbLength(scrollbar);
     IntRect thumb = rect;
     if (scrollbar.hoveredPart() == NoPart && usesOverlayScrollbars()) {
+        int overlayThumbMargin = thumbMargin - thumbBorderSize;
+        thumbCornerSize = overlayThumbSize / 2;
+
         if (scrollbar.orientation() == VerticalScrollbar) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
-                thumb.move(hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
+                thumb.move(0, thumbPos + overlayThumbMargin);
             else
-                thumb.move(scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
+                thumb.move(scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize, thumbPos + overlayThumbMargin);
             thumb.setWidth(overlayThumbSize);
-            thumb.setHeight(thumbLen - thumbBorderSize * 2);
+            thumb.setHeight(thumbLen - overlayThumbMargin * 2);
         } else {
-            thumb.move(thumbPos + thumbBorderSize, scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize);
-            thumb.setWidth(thumbLen - thumbBorderSize * 2);
+            thumb.move(thumbPos + thumbMargin, scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize);
+            thumb.setWidth(thumbLen - overlayThumbMargin * 2);
             thumb.setHeight(overlayThumbSize);
         }
     } else {
+        int thumbSize = scrollbarSize - hoveredScrollbarBorderSize - thumbMargin * 2;
+        thumbCornerSize = thumbSize / 2;
+
         if (scrollbar.orientation() == VerticalScrollbar) {
             if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
-                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2) - hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
+                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2) - hoveredScrollbarBorderSize, thumbPos + thumbMargin);
             else
-                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2), thumbPos + thumbBorderSize);
+                thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2), thumbPos + thumbMargin);
             thumb.setWidth(thumbSize);
-            thumb.setHeight(thumbLen - thumbBorderSize * 2);
+            thumb.setHeight(thumbLen - thumbMargin * 2);
         } else {
-            thumb.move(thumbPos + thumbBorderSize, scrollbarSize - (scrollbarSize / 2 + thumbSize / 2));
-            thumb.setWidth(thumbLen - thumbBorderSize * 2);
+            thumb.move(thumbPos + thumbMargin, scrollbarSize - (scrollbarSize / 2 + thumbSize / 2));
+            thumb.setWidth(thumbLen - thumbMargin * 2);
             thumb.setHeight(thumbSize);
         }
     }
 
-    FloatSize corner(4, 4);
+    FloatSize corner(thumbCornerSize, thumbCornerSize);
     Path path;
     if (scrollbar.hoveredPart() == NoPart && usesOverlayScrollbars()) {
         path.addRoundedRect(thumb, corner);
@@ -196,15 +242,48 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
     return true;
 }
 
+void ScrollbarThemeAdwaita::paintScrollCorner(ScrollableArea& scrollableArea, GraphicsContext& graphicsContext, const IntRect& cornerRect)
+{
+    if (graphicsContext.paintingDisabled())
+        return;
+
+    SRGBA<uint8_t> scrollbarBackgroundColor;
+    SRGBA<uint8_t> scrollbarBorderColor;
+
+    if (scrollableArea.useDarkAppearanceForScrollbars()) {
+        scrollbarBackgroundColor = scrollbarBackgroundColorDark;
+        scrollbarBorderColor = scrollbarBorderColorDark;
+    } else {
+        scrollbarBackgroundColor = scrollbarBackgroundColorLight;
+        scrollbarBorderColor = scrollbarBorderColorLight;
+    }
+
+    IntRect borderRect = IntRect(cornerRect.location(), IntSize(hoveredScrollbarBorderSize, hoveredScrollbarBorderSize));
+
+    if (scrollableArea.shouldPlaceVerticalScrollbarOnLeft())
+        borderRect.move(cornerRect.width() - hoveredScrollbarBorderSize, 0);
+
+    graphicsContext.fillRect(cornerRect, scrollbarBackgroundColor);
+    graphicsContext.fillRect(borderRect, scrollbarBorderColor);
+}
+
 ScrollbarButtonPressAction ScrollbarThemeAdwaita::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
 {
+    gboolean warpSlider = FALSE;
     switch (pressedPart) {
     case BackTrackPart:
     case ForwardTrackPart:
+#if PLATFORM(GTK)
+        g_object_get(gtk_settings_get_default(),
+            "gtk-primary-button-warps-slider",
+            &warpSlider, nullptr);
+#endif
         // The shift key or middle/right button reverses the sense.
         if (event.shiftKey() || event.button() != LeftButton)
-            return ScrollbarButtonPressAction::CenterOnThumb;
-        return ScrollbarButtonPressAction::Scroll;
+            warpSlider = !warpSlider;
+        return warpSlider ?
+            ScrollbarButtonPressAction::CenterOnThumb:
+            ScrollbarButtonPressAction::Scroll;
     case ThumbPart:
         if (event.button() != RightButton)
             return ScrollbarButtonPressAction::StartDrag;

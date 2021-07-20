@@ -427,6 +427,33 @@ void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(std::optional<int
     setFrameRate(match->requestedFrameRate);
 }
 
+void RealtimeVideoCaptureSource::ensureIntrinsicSizeMaintainsAspectRatio()
+{
+    auto intrinsicSize = this->intrinsicSize();
+    auto frameSize = size();
+    if (!frameSize.height())
+        frameSize.setHeight(intrinsicSize.height());
+    if (!frameSize.width())
+        frameSize.setWidth(intrinsicSize.width());
+
+    auto maxHeight = std::min(frameSize.height(), intrinsicSize.height());
+    auto maxWidth = std::min(frameSize.width(), intrinsicSize.width());
+
+    auto heightForMaxWidth = maxWidth * intrinsicSize.height() / intrinsicSize.width();
+    auto widthForMaxHeight = maxHeight * intrinsicSize.width() / intrinsicSize.height();
+
+    if (heightForMaxWidth <= maxHeight) {
+        setSize({ maxWidth, heightForMaxWidth });
+        return;
+    }
+    if (widthForMaxHeight <= maxWidth) {
+        setSize({ widthForMaxHeight, maxHeight });
+        return;
+    }
+
+    setSize(intrinsicSize);
+}
+
 #if !RELEASE_LOG_DISABLED
 Ref<JSON::Object> SizeAndFrameRate::toJSONObject() const
 {

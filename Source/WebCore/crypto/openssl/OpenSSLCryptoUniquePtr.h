@@ -90,6 +90,27 @@ struct OpenSSLCryptoPtrDeleter<RSA> {
 using RSAPtr = OpenSSLCryptoPtr<RSA>;
 
 template <>
+struct OpenSSLCryptoPtrDeleter<EC_KEY> {
+    void operator()(EC_KEY* ptr) const
+    {
+        EC_KEY_free(ptr);
+    }
+};
+
+using ECKeyPtr = OpenSSLCryptoPtr<EC_KEY>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<EC_POINT> {
+    void operator()(EC_POINT* ptr) const
+    {
+        EC_POINT_clear_free(ptr);
+    }
+};
+
+using ECPointPtr = OpenSSLCryptoPtr<EC_POINT>;
+
+
+template <>
 struct OpenSSLCryptoPtrDeleter<PKCS8_PRIV_KEY_INFO> {
     void operator()(PKCS8_PRIV_KEY_INFO* ptr) const
     {
@@ -119,5 +140,24 @@ struct OpenSSLCryptoPtrDeleter<BN_CTX> {
 
 using BNCtxPtr = OpenSSLCryptoPtr<BN_CTX>;
 
+template <>
+struct OpenSSLCryptoPtrDeleter<ECDSA_SIG> {
+    void operator()(ECDSA_SIG* ptr) const
+    {
+        ECDSA_SIG_free(ptr);
+    }
+};
+
+using ECDSASigPtr = OpenSSLCryptoPtr<ECDSA_SIG>;
+
+template <>
+struct OpenSSLCryptoPtrDeleter<ASN1_SEQUENCE_ANY> {
+    void operator()(ASN1_SEQUENCE_ANY* ptr) const
+    {
+        sk_ASN1_TYPE_pop_free(ptr, ASN1_TYPE_free);
+    }
+};
+
+using ASN1SequencePtr = OpenSSLCryptoPtr<ASN1_SEQUENCE_ANY>;
 
 } // namespace WebCore

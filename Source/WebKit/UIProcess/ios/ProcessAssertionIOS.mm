@@ -343,10 +343,14 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
 
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
     assertionsWorkQueue().dispatch([protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
-        if (completionHandler)
-            RunLoop::main().dispatch(WTFMove(completionHandler));
+        if (completionHandler) {
+            RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler();
+            });
+        }
     });
 }
 

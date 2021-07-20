@@ -22,29 +22,31 @@ features: [error-cause]
 ---*/
 
 var message = "my-message";
+var options;
+
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#0
+options = new Proxy({}, {
+  has(target, prop) {
+    if (prop === "cause") {
+      throw new Test262Error("HasProperty");
+    }
+    return prop in target;
+  },
+});
 assert.throws(Test262Error, function () {
-  var options = new Proxy({}, {
-    has(target, prop) {
-      if (prop === "cause") {
-        throw new Test262Error("HasProperty");
-      }
-      return prop in target;
-    },
-  });
-  var error = new Error(message, options);
+  new Error(message, options);
 }, "HasProperty");
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
+options = {
+  get cause() {
+    throw new Test262Error("Get Cause");
+  },
+};
 assert.throws(Test262Error, function () {
-  var options = {
-    get cause() {
-      throw new Test262Error("Get Cause");
-    },
-  };
-  var error = new Error(message, options);
+  new Error(message, options);
 }, "Get Cause");
 //////////////////////////////////////////////////////////////////////////////

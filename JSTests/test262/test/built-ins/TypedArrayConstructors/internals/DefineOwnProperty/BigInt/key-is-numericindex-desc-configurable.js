@@ -11,9 +11,6 @@ info: |
     a. Let numericIndex be ! CanonicalNumericIndexString(P).
     b. If numericIndex is not undefined, then
       ...
-      If Desc has a [[Configurable]] field and if Desc.[[Configurable]] is false, return false.
-      ...
-
       If Desc has a [[Value]] field, then
         Let value be Desc.[[Value]].
         Return ? IntegerIndexedElementSet(O, numericIndex, value).

@@ -47,6 +47,10 @@
 #include "MockRealtimeVideoSourceMac.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "MockRealtimeVideoSourceGStreamer.h"
+#endif
+
 namespace WebCore {
 
 static inline Vector<MockMediaDevice> defaultDevices()
@@ -160,6 +164,8 @@ public:
         case CaptureDevice::DeviceType::Window:
 #if PLATFORM(MAC)
             return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
+#elif USE(GSTREAMER)
+            return MockRealtimeVideoSourceGStreamer::createMockDisplayCaptureSource(String { device.persistentId() }, String { device.label() }, String { }, constraints);
 #else
             return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, String { }, constraints);
 #endif

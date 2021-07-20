@@ -319,7 +319,7 @@ void SharedBuffer::hintMemoryNotNeededSoon() const
 
 WTF::Persistence::Decoder SharedBuffer::decoder() const
 {
-    return { reinterpret_cast<const uint8_t*>(data()), size() };
+    return {{ reinterpret_cast<const uint8_t*>(data()), size() }};
 }
 
 bool SharedBuffer::operator==(const SharedBuffer& other) const

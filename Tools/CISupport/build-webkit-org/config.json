@@ -113,6 +113,7 @@
                     { "name": "gtk-linux-bot-16", "platform": "gtk" },
                     { "name": "gtk-linux-bot-17", "platform": "gtk" },
                     { "name": "gtk-linux-bot-18", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-19", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -352,7 +353,8 @@
                       "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildAndGenerateJSCBundleFactory", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
-                                   "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests", "gtk-linux-64-release-gtk4-tests"],
+                                   "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests", "gtk-linux-64-release-gtk4-tests",
+                                   "gtk-linux-64-release-skip-failing-tests"],
                       "workernames": ["gtk-linux-bot-2"]
                     },
                     {
@@ -431,6 +433,12 @@
                       "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAllButJSCFactory", "builddir": "gtk-linux-64-release-gtk4",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "workernames": ["gtk-linux-bot-18"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Skip-Failing-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-skip-failing-tests",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--skip-failing-tests"],
+                      "workernames": ["gtk-linux-bot-19"]
                     },
                     {
                       "name": "WinCairo-64-bit-WKL-Release-Build", "factory": "BuildFactory", "builddir": "wincairo-wkl-release",
@@ -693,6 +701,9 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-wayland-tests",
                       "builderNames": ["GTK-Linux-64-bit-Release-Wayland-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-skip-failing-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Release-Skip-Failing-Tests"]
                     },
                     { "type": "Triggerable", "name": "wincairo-wkl-release-tests",
                       "builderNames": ["WinCairo-64-bit-WKL-Release-Tests"]

@@ -325,7 +325,7 @@ Total elements to be tested: 122.
 <img src="data:image/gif..." alt="x">
     exists: true
     label: x
-    role: img
+    role: image
 
 <img src="data:image/gif..." alt="">
     exists: true
@@ -336,7 +336,7 @@ Total elements to be tested: 122.
 <img src="data:image/gif...">
     exists: true
     label:
-    role: img
+    role: image
 
 <img src="./404.gif">
     exists: true
@@ -573,7 +573,7 @@ Total elements to be tested: 122.
 <div role="doc-cover">doc-cover</div>
     exists: true
     label:
-    role: img
+    role: image
     parentNodeId: exists
 
 <div role="doc-conclusion">doc-conclusion</div>

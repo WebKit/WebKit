@@ -56,8 +56,6 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
-    void setOpen(bool);
-
     String m_returnValue;
     bool m_isModal { false };
     bool m_isOpen { false };

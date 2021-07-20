@@ -365,23 +365,23 @@
 #endif
 }
 
-- (void)_lastNavigationWasAppBound:(void(^)(BOOL))completionHandler
+- (void)_lastNavigationWasAppInitiated:(void(^)(BOOL))completionHandler
 {
-    _page->lastNavigationWasAppBound([completionHandler = makeBlockPtr(completionHandler)] (bool isAppBound) {
-        completionHandler(isAppBound);
+    _page->lastNavigationWasAppInitiated([completionHandler = makeBlockPtr(completionHandler)] (bool isAppInitiated) {
+        completionHandler(isAppInitiated);
     });
 }
 
-- (void)_appBoundNavigationData:(void(^)(struct WKAppBoundNavigationTestingData data))completionHandler
+- (void)_appPrivacyReportTestingData:(void(^)(struct WKAppPrivacyReportTestingData data))completionHandler
 {
-    _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) {
-        completionHandler({ appBoundData.hasLoadedAppBoundRequestTesting, appBoundData.hasLoadedNonAppBoundRequestTesting, appBoundData.didPerformSoftUpdate });
+    _page->appPrivacyReportTestingData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appPrivacyReportTestingData) {
+        completionHandler({ appPrivacyReportTestingData.hasLoadedAppInitiatedRequestTesting, appPrivacyReportTestingData.hasLoadedNonAppInitiatedRequestTesting, appPrivacyReportTestingData.didPerformSoftUpdate });
     });
 }
 
-- (void)_clearAppBoundNavigationData:(void(^)(void))completionHandler
+- (void)_clearAppPrivacyReportTestingData:(void(^)(void))completionHandler
 {
-    _page->clearAppBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] {
+    _page->clearAppPrivacyReportTestingData([completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }

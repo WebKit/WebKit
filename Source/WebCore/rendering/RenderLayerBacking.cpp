@@ -610,7 +610,7 @@ static LayoutRect scrollContainerLayerBox(const RenderBox& renderBox)
 static LayoutRect clippingLayerBox(const RenderBox& renderBox)
 {
     LayoutRect result = LayoutRect::infiniteRect();
-    if (renderBox.hasOverflowClip())
+    if (renderBox.hasNonVisibleOverflow())
         result = renderBox.overflowClipRect({ }, 0); // FIXME: Incorrect for CSS regions.
 
     if (renderBox.hasClip())
@@ -844,7 +844,7 @@ bool RenderLayerBacking::updateCompositedBounds()
     }
 
     // If the backing provider has overflow:clip, we know all sharing layers are affected by the clip because they are containing-block descendants.
-    if (!renderer().hasOverflowClip()) {
+    if (!renderer().hasNonVisibleOverflow()) {
         for (auto& layerWeakPtr : m_backingSharingLayers) {
             auto* boundsRootLayer = &m_owningLayer;
             ASSERT(layerWeakPtr->isDescendantOf(m_owningLayer));

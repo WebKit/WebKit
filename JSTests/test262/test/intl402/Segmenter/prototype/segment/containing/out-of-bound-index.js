@@ -37,6 +37,9 @@ const index_to_out_of_bound = [
     -Infinity,
     "Infinity",
     "-Infinity",
+    { toString(){ return "-1"; } },
+    { valueOf(){ return input.length; } },
+    { [Symbol.toPrimitive](){ return -1; } },
 ];
 
 granularities.forEach(

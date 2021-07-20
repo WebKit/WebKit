@@ -1,3 +1,38 @@
+2021-07-13  Kyle Piddington  <kpiddington@apple.com>
+
+        rAF driven WebGL submits excessive amount of GPU work when frames are slow
+        https://bugs.webkit.org/show_bug.cgi?id=227059
+
+        Reviewed by Dean Jackson.
+
+        Advertise GL_ARB_sync for the Metal backend.
+    Since GL_ARB_sync is core in OpenGL ES 3.0 and the Metal backend advertises OpenGL ES 3.0,
+    the API must be working already.
+
+        Limit in-flight WebGL frames to three frames. Do not continue preparation for display
+    until the commands for the oldest frame have been executed by the GPU.
+
+        This limits the impact slow frames have, especially in the
+    case where the compositor skip frames and WebKit would issue a new slow frame
+    on top of the skipped frame.
+
+	An additional change ensures that Nvidia configs, which do not support MTLEvents
+	to a level of conformance required (See http://crbug.com/1136673), continue to run. The more powerful eGPUs will not experience throttling to the same level as integrated GPUS.
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeExtensions const):
+
+2021-07-07  Kyle Piddington  <kpiddington@apple.com>
+
+        WebGL shader link error in iOS 15 beta: "Internal error compiling shader with Metal backend"
+        https://bugs.webkit.org/show_bug.cgi?id=227723
+
+        The sequence operator can be used to combine statements. Our initial
+        logic did not account for this. 
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundExpressions.cpp:
+        (sh::Separator::isStandaloneExpr):
+
 2021-07-06  Kyle Piddington  <kpiddington@apple.com>
 
         REGRESSION (r279466):  [Big Sur] webgl/1.0.3/conformance & webgl/2.0.0/conformance are failing

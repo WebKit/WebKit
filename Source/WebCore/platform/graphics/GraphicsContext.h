@@ -54,9 +54,9 @@ class PlatformContextDirect2D;
 typedef WebCore::PlatformContextDirect2D PlatformGraphicsContext;
 #elif USE(CAIRO)
 namespace WebCore {
-class PlatformContextCairo;
+class GraphicsContextCairo;
 }
-typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
+typedef WebCore::GraphicsContextCairo PlatformGraphicsContext;
 #elif PLATFORM(HAIKU)
 class BView;
 typedef BView PlatformGraphicsContext;
@@ -537,11 +537,13 @@ public:
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
+#endif
 
+#if OS(WINDOWS) && !USE(CAIRO)
     // FIXME: This should not exist; we need a different place to
     // put code shared between Windows CG and Windows Cairo backends.
     virtual GraphicsContextPlatformPrivate* deprecatedPrivateContext() const { return nullptr; }
-#endif // OS(WINDOWS)
+#endif
 
 #if USE(DIRECT2D)
     GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.

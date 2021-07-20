@@ -214,18 +214,25 @@ RefPtr<NativeImage> SVGImage::nativeImageForCurrentFrame(const GraphicsContext* 
 
 RefPtr<NativeImage> SVGImage::nativeImage(const GraphicsContext*)
 {
+    return nativeImage(size(), FloatRect(FloatPoint(), size()));
+}
+
+RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& imageSize, const FloatRect& sourceRect)
+{
     if (!m_page)
         return nullptr;
 
-    auto imageBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(imageSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 
     ImageObserver* observer = imageObserver();
-
     setImageObserver(nullptr);
     setContainerSize(size());
 
+    auto scaleFactor = imageSize / sourceRect.size();
+    imageBuffer->context().scale(scaleFactor);
+    imageBuffer->context().translate(-sourceRect.location());
     imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
 
     setImageObserver(observer);
@@ -273,6 +280,12 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
+    if (!context.hasPlatformContext()) {
+        // Display list drawing can't handle arbitrary DOM content.
+        // FIXME https://bugs.webkit.org/show_bug.cgi?id=227748: Remove this when it can.
+        return drawAsNativeImage(context, dstRect, srcRect, options);
+    }
+
     auto view = makeRefPtr(frameView());
     ASSERT(view);
 
@@ -315,6 +328,29 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
         context.endTransparencyLayer();
 
     stateSaver.restore();
+
+    if (imageObserver())
+        imageObserver()->didDraw(*this);
+
+    return ImageDrawResult::DidDraw;
+}
+
+
+ImageDrawResult SVGImage::drawAsNativeImage(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+{
+    ASSERT(!context.hasPlatformContext());
+
+    auto rectInNativeImage = FloatRect { { }, destination.size() };
+    auto nativeImage = this->nativeImage(rectInNativeImage.size(), source);
+    if (!nativeImage)
+        return ImageDrawResult::DidNothing;
+
+    auto localImagePaintingOptions = options;
+    ImageOrientation::Orientation orientation = options.orientation();
+    if (orientation == ImageOrientation::Orientation::FromImage)
+        localImagePaintingOptions = ImagePaintingOptions(options, ImageOrientation::Orientation::None);
+
+    context.drawNativeImage(*nativeImage, rectInNativeImage.size(), destination, rectInNativeImage, localImagePaintingOptions);
 
     if (imageObserver())
         imageObserver()->didDraw(*this);

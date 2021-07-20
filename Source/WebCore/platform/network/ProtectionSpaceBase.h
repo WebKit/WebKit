@@ -53,6 +53,9 @@ enum ProtectionSpaceAuthenticationScheme {
     ProtectionSpaceAuthenticationSchemeClientCertificateRequested = 7,
     ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested = 8,
     ProtectionSpaceAuthenticationSchemeOAuth = 9,
+#if USE(GLIB)
+    ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested = 10,
+#endif
     ProtectionSpaceAuthenticationSchemeUnknown = 100
 };
   

@@ -515,7 +515,7 @@ float HTMLImageElement::effectiveImageDevicePixelRatio() const
 
     auto* image = m_imageLoader->image()->image();
 
-    if (image && image->isSVGImage())
+    if (image && image->drawsSVGImage())
         return 1.0f;
 
     return m_imageDevicePixelRatio;

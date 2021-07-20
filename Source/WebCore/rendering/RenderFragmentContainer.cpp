@@ -195,7 +195,7 @@ bool RenderFragmentContainer::isLastFragment() const
 
 bool RenderFragmentContainer::shouldClipFragmentedFlowContent() const
 {
-    return hasOverflowClip();
+    return hasNonVisibleOverflow();
 }
 
 void RenderFragmentContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -512,7 +512,7 @@ LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const
     // Only propagate interior layout overflow if we don't clip it.
     LayoutRect rect = box->borderBoxRectInFragment(this);
     rect = rectFlowPortionForBox(box, rect);
-    if (!box->hasOverflowClip())
+    if (!box->hasNonVisibleOverflow())
         rect.unite(layoutOverflowRectForBox(box));
 
     bool hasTransform = box->hasTransform();

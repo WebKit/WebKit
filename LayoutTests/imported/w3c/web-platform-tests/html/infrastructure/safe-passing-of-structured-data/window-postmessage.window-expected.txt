@@ -55,20 +55,20 @@ PASS Date 8.64e15
 PASS Array Date objects
 PASS Object Date objects
 PASS RegExp flags and lastIndex
-FAIL RegExp sticky flag assert_equals: sticky expected true but got false
-FAIL RegExp unicode flag assert_equals: unicode expected true but got false
+PASS RegExp sticky flag
+PASS RegExp unicode flag
 PASS RegExp empty
 PASS RegExp slash
 PASS RegExp new line
 PASS Array RegExp object, RegExp flags and lastIndex
-FAIL Array RegExp object, RegExp sticky flag assert_equals: sticky expected true but got false
-FAIL Array RegExp object, RegExp unicode flag assert_equals: unicode expected true but got false
+PASS Array RegExp object, RegExp sticky flag
+PASS Array RegExp object, RegExp unicode flag
 PASS Array RegExp object, RegExp empty
 PASS Array RegExp object, RegExp slash
 PASS Array RegExp object, RegExp new line
 PASS Object RegExp object, RegExp flags and lastIndex
-FAIL Object RegExp object, RegExp sticky flag assert_equals: sticky expected true but got false
-FAIL Object RegExp object, RegExp unicode flag assert_equals: unicode expected true but got false
+PASS Object RegExp object, RegExp sticky flag
+PASS Object RegExp object, RegExp unicode flag
 PASS Object RegExp object, RegExp empty
 PASS Object RegExp object, RegExp slash
 PASS Object RegExp object, RegExp new line

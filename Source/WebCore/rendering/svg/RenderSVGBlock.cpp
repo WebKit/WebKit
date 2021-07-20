@@ -40,7 +40,7 @@ void RenderSVGBlock::updateFromStyle()
 {
     RenderBlockFlow::updateFromStyle();
 
-    // RenderSVGlock, used by Render(SVGText|ForeignObject), is not allowed to call setHasOverflowClip(true).
+    // RenderSVGlock, used by Render(SVGText|ForeignObject), is not allowed to call setHasNonVisibleOverflow(true).
     // RenderBlock assumes a layer to be present when the overflow clip functionality is requested. Both
     // Render(SVGText|ForeignObject) return 'false' on 'requiresLayer'. Fine for RenderSVGText.
     //
@@ -52,7 +52,7 @@ void RenderSVGBlock::updateFromStyle()
     //
     // Note: This does NOT affect overflow handling on outer/inner <svg> elements - this is handled
     // manually by RenderSVGRoot - which owns the documents enclosing root layer and thus works fine.
-    setHasOverflowClip(false);
+    setHasNonVisibleOverflow(false);
 }
 
 void RenderSVGBlock::absoluteRects(Vector<IntRect>&, const LayoutPoint&) const

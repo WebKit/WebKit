@@ -62,6 +62,10 @@
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/WeakHashSet.h>
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <WebCore/CaptionUserPreferences.h>
+#endif
+
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -402,6 +406,16 @@ public:
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     static bool shouldEnableRemoteInspector();
+#endif
+
+#if PLATFORM(MAC)
+    void platformSuspendProcess();
+    void platformResumeProcess();
+#endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    void setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
+    void setCaptionLanguage(const String&);
 #endif
 
 protected:

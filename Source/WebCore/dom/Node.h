@@ -923,7 +923,7 @@ constexpr bool is_gteq(PartialOrdering ordering)
     return is_gt(ordering) || is_eq(ordering);
 }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const Node&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Node&);
 
 } // namespace WebCore
 

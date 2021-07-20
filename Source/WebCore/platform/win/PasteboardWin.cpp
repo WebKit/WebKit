@@ -251,7 +251,7 @@ std::optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
         if (HANDLE cbData = ::GetClipboardData(CustomDataClipboardFormat)) {
             size_t size = GlobalSize(cbData);
             auto data = static_cast<uint8_t*>(GlobalLock(cbData));
-            auto customData = PasteboardCustomData::fromPersistenceDecoder({data, size});
+            auto customData = PasteboardCustomData::fromPersistenceDecoder({{ data, size }});
 
             GlobalUnlock(cbData);
             ::CloseClipboard();

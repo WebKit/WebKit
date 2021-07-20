@@ -39,6 +39,7 @@ namespace WebCore {
 #define WEBCORE_LOG_CHANNELS(M) \
     M(Accessibility) \
     M(Animations) \
+    M(AppHighlights) \
     M(ApplePay) \
     M(Archives) \
     M(BackForwardCache) \
@@ -110,6 +111,7 @@ namespace WebCore {
     M(SQLDatabase) \
     M(Storage) \
     M(StorageAPI) \
+    M(StyleSheets) \
     M(SVG) \
     M(TextAutosizing) \
     M(Tiling) \

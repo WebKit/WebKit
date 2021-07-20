@@ -43,5 +43,5 @@
 
     readonly attribute long processIdentifier;
 
-    Promise<boolean> lastNavigationWasAppBound();
+    Promise<boolean> lastNavigationWasAppInitiated();
 };

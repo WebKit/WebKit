@@ -65,18 +65,17 @@ MediaSessionManagerCocoa::MediaSessionManagerCocoa()
 
 void MediaSessionManagerCocoa::ensureCodecsRegistered()
 {
-    static bool sInitDone = []() {
 #if ENABLE(VP9)
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         if (shouldEnableVP9Decoder())
             registerSupplementalVP9Decoder();
         if (shouldEnableVP8Decoder())
             registerWebKitVP8Decoder();
         if (shouldEnableVP9SWDecoder())
             registerWebKitVP9Decoder();
+    });
 #endif
-        return true;
-    }();
-    UNUSED_VARIABLE(sInitDone);
 }
 
 void MediaSessionManagerCocoa::updateSessionState()

@@ -1081,7 +1081,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
         updateLiveDocumentsAfterTest();
 #if PLATFORM(COCOA)
         clearApplicationBundleIdentifierTestingOverride();
-        clearAppBoundNavigationData();
+        clearAppPrivacyReportTestingData();
 #endif
         clearBundleIdentifierInNetworkProcess();
     }
@@ -2726,21 +2726,17 @@ void TestController::removeAllSessionCredentials()
 {
 }
 
-void TestController::appBoundRequestContextDataForDomain(WKStringRef)
-{
-}
-
-bool TestController::didLoadAppBoundRequest()
+bool TestController::didLoadAppInitiatedRequest()
 {
     return false;
 }
 
-bool TestController::didLoadNonAppBoundRequest()
+bool TestController::didLoadNonAppInitiatedRequest()
 {
     return false;
 }
 
-void TestController::clearAppBoundNavigationData()
+void TestController::clearAppPrivacyReportTestingData()
 {
 }
 

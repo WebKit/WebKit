@@ -49,7 +49,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
         FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms);
         m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
 
-        if (container->hasOverflowClip()) {
+        if (container->hasNonVisibleOverflow()) {
             m_clipped = true;
             auto& containerBox = downcast<RenderBox>(*container);
             m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox.cachedSizeForOverflowClip());
@@ -101,7 +101,7 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
     if (renderer.isInFlowPositioned() && renderer.hasLayer())
         m_paintOffset += renderer.layer()->offsetForInFlowPosition();
 
-    if (renderer.hasOverflowClip())
+    if (renderer.hasNonVisibleOverflow())
         m_paintOffset -= toLayoutSize(renderer.scrollPosition());
 
     m_layoutDelta = ancestor.layoutDelta();
@@ -116,7 +116,7 @@ void RenderLayoutState::computeClipRect(const RenderLayoutState& ancestor, Rende
     m_clipped = !renderer.isFixedPositioned() && ancestor.isClipped();
     if (m_clipped)
         m_clipRect = ancestor.clipRect();
-    if (!renderer.hasOverflowClip())
+    if (!renderer.hasNonVisibleOverflow())
         return;
 
     auto paintOffsetForClipRect = toLayoutPoint(m_paintOffset + toLayoutSize(renderer.scrollPosition()));

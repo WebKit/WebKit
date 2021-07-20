@@ -209,4 +209,23 @@ TEST(WKWebViewCloseAllMediaPresentations, MultipleSequentialCloseAllMediaPresent
     EXPECT_TRUE([webView _allMediaPresentationsClosed]);
 }
 
+TEST(WKWebViewCloseAllMediaPresentations, RemovedCloseAllMediaPresentationAPIs)
+{
+    // In r271970, we renamed -closeAllMediaPresentations to -closeAllMediaPresentations:completionHandler, which broke
+    // binary compatability of apps linked against older SDKs. Ensure calling the removed API does not crash.
+
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+
+    EXPECT_TRUE([webView respondsToSelector:@selector(closeAllMediaPresentations)]);
+
+    RetainPtr<NSException> exception;
+    @try {
+        [webView closeAllMediaPresentations];
+    } @catch(NSException *caught) {
+        exception = caught;
+    }
+    EXPECT_FALSE(exception);
+}
+
 #endif

@@ -1176,16 +1176,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
 - (void)configurePresentation
 {
-    if (WebKit::currentUserInterfaceIdiomIsPadOrMac()) {
-        [_navigationController setModalPresentationStyle:UIModalPresentationPopover];
-        [_navigationController setNavigationBarHidden:YES];
-        [_tableViewController setPreferredContentSize:CGSizeMake(selectPopoverLength, selectPopoverLength)];
-
-        UIPopoverPresentationController *presentationController = [_navigationController popoverPresentationController];
-        presentationController.delegate = self;
-        presentationController.sourceView = _view;
-        presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
-    } else {
+    if (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch()) {
         [[_navigationController navigationBar] setBarTintColor:UIColor.systemGroupedBackgroundColor];
 
         UIPresentationController *presentationController = [_navigationController presentationController];
@@ -1198,6 +1189,15 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
             sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
             sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
         }
+    } else {
+        [_navigationController setModalPresentationStyle:UIModalPresentationPopover];
+        [_navigationController setNavigationBarHidden:YES];
+        [_tableViewController setPreferredContentSize:CGSizeMake(selectPopoverLength, selectPopoverLength)];
+
+        UIPopoverPresentationController *presentationController = [_navigationController popoverPresentationController];
+        presentationController.delegate = self;
+        presentationController.sourceView = _view;
+        presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
     }
 }
 

@@ -95,14 +95,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestOperationConditionalPrototype, JSTestOperationConditionalPrototype::Base);
 
 using JSTestOperationConditionalDOMConstructor = JSDOMConstructorNotConstructable<JSTestOperationConditional>;
 
-template<> const unsigned JSTestOperationConditionalDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestOperationConditionalDOMConstructor::s_info = { "TestOperationConditional", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalDOMConstructor) };
 
 template<> JSValue JSTestOperationConditionalDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -118,19 +115,7 @@ template<> void JSTestOperationConditionalDOMConstructor::initializeProperties(V
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestOperationConditionalPrototypeTableIndex[8] = {
-    { -1, -1 },
-    { 0, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { -1, -1 },
-    { 2, -1 },
-    { 1, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestOperationConditionalPrototypeTableValues[] =
 {
@@ -147,8 +132,7 @@ static const HashTableValue JSTestOperationConditionalPrototypeTableValues[] =
 #endif
 };
 
-static const HashTable JSTestOperationConditionalPrototypeTable = { 3, 7, true, JSTestOperationConditional::info(), JSTestOperationConditionalPrototypeTableValues, JSTestOperationConditionalPrototypeTableIndex };
-const ClassInfo JSTestOperationConditionalPrototype::s_info = { "TestOperationConditional", &Base::s_info, &JSTestOperationConditionalPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalPrototype) };
+const ClassInfo JSTestOperationConditionalPrototype::s_info = { "TestOperationConditional", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalPrototype) };
 
 void JSTestOperationConditionalPrototype::finishCreation(VM& vm)
 {

@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 211x20
                   text run at (1,2) width 211: "text with value property changed"
               RenderTableCell {TD} at (381,0) size 273x27 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderTableCell {TD} at (655,2) size 63x23 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x20
                   text run at (1,2) width 30: "after"
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 248x20
                   text run at (1,2) width 248: "password with value property changed"
               RenderTableCell {TD} at (381,29) size 273x27 [r=1 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
                   RenderFlexibleBox {DIV} at (6,3) size 143x15
                     RenderBlock {DIV} at (0,0) size 142x14
               RenderTableCell {TD} at (655,31) size 63x23 [r=1 c=2 rs=1 cs=1]
@@ -121,7 +121,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 210x20
                   text run at (1,2) width 210: "text with value attribute changed"
               RenderTableCell {TD} at (381,186) size 273x27 [r=7 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderTableCell {TD} at (655,188) size 63x23 [r=7 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x20
                   text run at (1,2) width 30: "after"
@@ -159,7 +159,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 362: "check box with value property changed, then turned into"
                   text run at (1,21) width 24: "text"
               RenderTableCell {TD} at (381,292) size 273x28 [r=10 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderTableCell {TD} at (655,295) size 63x22 [r=10 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"
@@ -185,7 +185,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 361: "check box with value attribute changed, then turned into"
                   text run at (1,21) width 24: "text"
               RenderTableCell {TD} at (381,380) size 273x28 [r=12 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+                RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderTableCell {TD} at (655,383) size 63x22 [r=12 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 30x19
                   text run at (1,1) width 30: "after"

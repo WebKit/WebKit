@@ -89,6 +89,14 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<G
     if (certificatesDataList.isEmpty())
         return;
 
+#if GLIB_CHECK_VERSION(2, 69, 0)
+    GRefPtr<GByteArray> privateKey;
+    GUniqueOutPtr<char> privateKeyPKCS11Uri;
+    g_object_get(certificate.get(), "private-key", &privateKey.outPtr(), "private-key-pkcs11-uri", &privateKeyPKCS11Uri.outPtr(), nullptr);
+    encoder << IPC::DataReference(privateKey ? privateKey->data : nullptr, privateKey ? privateKey->len : 0);
+    encoder << CString(privateKeyPKCS11Uri.get());
+#endif
+
     // Encode starting from the root certificate.
     while (!certificatesDataList.isEmpty()) {
         auto certificateData = certificatesDataList.takeLast();
@@ -105,6 +113,21 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     if (!chainLength)
         return GRefPtr<GTlsCertificate>();
 
+#if GLIB_CHECK_VERSION(2, 69, 0)
+    IPC::DataReference privateKeyData;
+    if (!decoder.decode(privateKeyData))
+        return std::nullopt;
+    GRefPtr<GByteArray> privateKey;
+    if (privateKeyData.size()) {
+        privateKey = adoptGRef(g_byte_array_sized_new(privateKeyData.size()));
+        g_byte_array_append(privateKey.get(), privateKeyData.data(), privateKeyData.size());
+    }
+
+    CString privateKeyPKCS11Uri;
+    if (!decoder.decode(privateKeyPKCS11Uri))
+        return std::nullopt;
+#endif
+
     GType certificateType = g_tls_backend_get_certificate_type(g_tls_backend_get_default());
     GRefPtr<GTlsCertificate> certificate;
     GTlsCertificate* issuer = nullptr;
@@ -120,6 +143,10 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
             certificateType, nullptr, nullptr,
             "certificate", certificateData.get(),
             "issuer", issuer,
+#if GLIB_CHECK_VERSION(2, 69, 0)
+            "private-key", i == chainLength - 1 ? privateKey.get() : nullptr,
+            "private-key-pkcs11-uri", i == chainLength - 1 ? privateKeyPKCS11Uri.data() : nullptr,
+#endif
             nullptr)));
         issuer = certificate.get();
     }

@@ -28,6 +28,8 @@
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -235,6 +237,21 @@ TextStream& operator<<(TextStream& ts, const WeakPtr<T>& item)
         return ts << *item;
     
     return ts << "null";
+}
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const RefPtr<T>& item)
+{
+    if (item)
+        return ts << *item;
+    
+    return ts << "null";
+}
+
+template<typename T>
+TextStream& operator<<(TextStream& ts, const Ref<T>& item)
+{
+    return ts << item.get();
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>

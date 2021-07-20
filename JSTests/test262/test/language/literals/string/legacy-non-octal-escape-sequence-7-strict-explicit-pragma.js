@@ -1,7 +1,7 @@
 // Copyright (C) 2020 Rick Waldron Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: sec-additional-syntax-string-literals
+esid: sec-literals-string-literals
 description: >
   String Literals extensions disallowed in strict mode; FourToSeven 7
 info: |

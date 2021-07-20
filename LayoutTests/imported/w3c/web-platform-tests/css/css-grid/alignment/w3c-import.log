@@ -283,6 +283,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-lr.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-alignment-with-orthogonal-flows.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-auto-margins-002-expected.xht
@@ -308,8 +316,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-mixed-baseline-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-1.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-3-expected.html
@@ -320,12 +326,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-self-baseline-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-self-baseline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-place-content-001.html

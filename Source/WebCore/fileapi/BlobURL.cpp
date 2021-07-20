@@ -96,4 +96,46 @@ URL BlobURL::createBlobURL(const String& originString)
     return URL({ }, urlString);
 }
 
+URLWithBlobURLLifetimeExtension::URLWithBlobURLLifetimeExtension(const URL& url)
+    : m_url(url)
+{
+    extendBlobURLLifetimeIfNecessary();
+}
+
+URLWithBlobURLLifetimeExtension::~URLWithBlobURLLifetimeExtension()
+{
+    unregisterCurrentURLIfNecessary();
+}
+
+void URLWithBlobURLLifetimeExtension::extendBlobURLLifetimeIfNecessary()
+{
+    if (m_url.protocolIsBlob()) {
+        auto origin = SecurityOrigin::create(BlobURL::getOriginURL(m_url));
+        URL temporaryBlobURL = BlobURL::createPublicURL(origin.ptr());
+        ThreadableBlobRegistry::registerBlobURL(origin.ptr(), temporaryBlobURL, m_url);
+        m_url = WTFMove(temporaryBlobURL);
+    }
+}
+
+void URLWithBlobURLLifetimeExtension::unregisterCurrentURLIfNecessary()
+{
+    if (m_url.protocolIsBlob())
+        ThreadableBlobRegistry::unregisterBlobURL(m_url);
+}
+
+URLWithBlobURLLifetimeExtension& URLWithBlobURLLifetimeExtension::operator=(URLWithBlobURLLifetimeExtension&& other)
+{
+    unregisterCurrentURLIfNecessary();
+    m_url = std::exchange(other.m_url, { });
+    return *this;
+}
+
+URLWithBlobURLLifetimeExtension& URLWithBlobURLLifetimeExtension::operator=(URL&& url)
+{
+    unregisterCurrentURLIfNecessary();
+    m_url = WTFMove(url);
+    extendBlobURLLifetimeIfNecessary();
+    return *this;
+}
+
 } // namespace WebCore

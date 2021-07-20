@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x126
-        RenderText {#text} at (0,0) size 783x126
+        RenderText {#text} at (0,0) size 785x126
           text run at (0,0) width 519: "Here's the HTML test case, extracted from the Netcenter Address Book page. At "
-          text run at (519,0) width 235: "the top of the address book is a \"tool"
-          text run at (0,18) width 193: "bar\" with options like \"New,\" "
-          text run at (192,18) width 474: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side "
-          text run at (665,18) width 106: "image map. You"
+          text run at (519,0) width 266: "the top of the address book is a \"tool bar\""
+          text run at (0,18) width 162: "with options like \"New,\" "
+          text run at (161,18) width 474: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side "
+          text run at (634,18) width 106: "image map. You"
           text run at (0,36) width 407: "should be able to click on these areas of the map, including the "
           text run at (406,36) width 376: "areas on the right side of the map. However, in NGLayout,"
           text run at (0,54) width 129: "the right side of the "

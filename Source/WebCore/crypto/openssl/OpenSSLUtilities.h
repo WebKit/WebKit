@@ -38,6 +38,14 @@ const EVP_MD* digestAlgorithm(CryptoAlgorithmIdentifier hashFunction);
 
 std::optional<Vector<uint8_t>> calculateDigest(const EVP_MD* algorithm, const Vector<uint8_t>& message);
 
+Vector<uint8_t> convertToBytes(const BIGNUM*);
+
+Vector<uint8_t> convertToBytesExpand(const BIGNUM*, size_t bufferSize);
+
+// If a null pointer is given as the first argument, this function internally allocates a new BIGNUM
+// and returns its pointer. Otherwise this function uses the given BIGNUM and doesn't allocate a new one.
+BIGNUM* convertToBigNumber(BIGNUM*, const Vector<uint8_t>& bytes);
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_CRYPTO)

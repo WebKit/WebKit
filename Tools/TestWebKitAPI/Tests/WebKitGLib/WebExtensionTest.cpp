@@ -675,6 +675,9 @@ static void dbusConnectionCreated(GObject*, GAsyncResult* result, gpointer userD
         g_error("Failed to register object: %s\n", error->message);
 
     g_object_set_data_full(G_OBJECT(userData), "dbus-connection", connection, g_object_unref);
+    g_signal_connect_object(connection, "closed", G_CALLBACK(+[](GDBusConnection*, gboolean, GError*, gpointer userData) {
+        g_object_set_data_full(G_OBJECT(userData), "dbus-connection", nullptr, nullptr);
+    }), userData, static_cast<GConnectFlags>(0));
     while (delayedSignalsQueue.size()) {
         DelayedSignal delayedSignal = delayedSignalsQueue.takeFirst();
         switch (delayedSignal.type) {

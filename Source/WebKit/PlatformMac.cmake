@@ -217,7 +217,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     UIProcess/ViewGestureController
 
-    UIProcess/Cocoa/PlatformXRSystem
     UIProcess/Cocoa/PlaybackSessionManagerProxy
     UIProcess/Cocoa/UserMediaCaptureManagerProxy
     UIProcess/Cocoa/VideoFullscreenManagerProxy
@@ -255,7 +254,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator
 
-    WebProcess/cocoa/PlatformXRSystemProxy
     WebProcess/cocoa/PlaybackSessionManager
     WebProcess/cocoa/RemoteCaptureSampleManager
     WebProcess/cocoa/UserMediaCaptureManager

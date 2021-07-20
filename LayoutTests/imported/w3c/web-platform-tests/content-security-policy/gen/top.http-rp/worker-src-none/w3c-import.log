@@ -1,0 +1,68 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/script-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/script-tag.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/script-tag.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/script-tag.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-classic.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/sharedworker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-classic.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-import.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.http.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worker-module.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-animation-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-animation-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-animation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-animation.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-audio-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-audio-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-audio.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-layout-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-layout-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-layout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-layout.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint-import-data.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint-import-data.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint.https.html.headers

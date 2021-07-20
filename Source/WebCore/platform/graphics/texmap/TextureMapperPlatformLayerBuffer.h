@@ -48,9 +48,9 @@ public:
     };
     struct YUVTexture {
         unsigned numberOfPlanes;
-        std::array<GLuint, 3> planes;
-        std::array<unsigned, 3> yuvPlane;
-        std::array<unsigned, 3> yuvPlaneOffset;
+        std::array<GLuint, 4> planes;
+        std::array<unsigned, 4> yuvPlane;
+        std::array<unsigned, 4> yuvPlaneOffset;
         std::array<GLfloat, 9> yuvToRgbMatrix;
     };
     struct ExternalOESTexture {

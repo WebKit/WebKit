@@ -282,6 +282,7 @@ public:
     PageGroup& group();
 
     WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
+    static unsigned nonUtilityPageCount();
 
     unsigned subframeCount() const;
 

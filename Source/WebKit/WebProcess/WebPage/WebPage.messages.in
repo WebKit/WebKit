@@ -633,7 +633,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async
 
-    LastNavigationWasAppBound() -> (bool wasAppBound) Async
+    LastNavigationWasAppInitiated() -> (bool wasAppBound) Async
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     CreateMediaSessionCoordinator(String identifier) -> (bool success) Async

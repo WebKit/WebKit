@@ -28,6 +28,9 @@
 #if !USE(SYSTEM_MALLOC)
 
 #include <bmalloc/bmalloc.h>
+
+#if !BUSE(LIBPAS)
+
 #include <bmalloc/AllIsoHeapsInlines.h>
 #include <bmalloc/Environment.h>
 #include <bmalloc/IsoHeapInlines.h>
@@ -4640,5 +4643,7 @@ TEST(bmalloc, IsoHeapMultipleThreadsWhileIterating)
     for (auto& thread : threads)
         thread->waitForCompletion();
 }
+
+#endif
 
 #endif

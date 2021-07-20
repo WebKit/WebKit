@@ -29,13 +29,8 @@
 #if ENABLE(JIT)
 
 #include "GCAwareJITStubRoutine.h"
-#include <algorithm>
 
 namespace JSC {
-
-using WTF::Range;
-
-bool JITStubRoutineSet::s_mayHaveRoutinesToDelete = false;
 
 JITStubRoutineSet::JITStubRoutineSet() { }
 JITStubRoutineSet::~JITStubRoutineSet()
@@ -119,46 +114,19 @@ void JITStubRoutineSet::markSlow(uintptr_t address)
     }
 }
 
-void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines(Seconds timeSlice)
+void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
 {
-    ASSERT(s_mayHaveRoutinesToDelete);
-
-    MonotonicTime startTime = MonotonicTime::now();
-    Seconds elapsedTime;
-    constexpr unsigned maxBatchSize = 100;
-
-    unsigned endIndex = m_routines.size();
-
-    // Clear the s_mayHaveRoutinesToDelete flag before we start.
-    // Destruction of a MarkingGCAwareJITStubRoutine can trigger more routines
-    // to be deleted, and some of those may be the ones we have already iterated
-    // pass.
-    s_mayHaveRoutinesToDelete = false;
-
     unsigned srcIndex = 0;
-    while (srcIndex < endIndex) {
-        unsigned batchSize = std::min<unsigned>(maxBatchSize, endIndex - srcIndex);
-        while (batchSize--) {
-            Routine routine = m_routines[srcIndex];
-            if (!routine.routine->m_isJettisoned || routine.routine->m_mayBeExecuting) {
-                srcIndex++;
-                continue;
-            }
-            m_routines[srcIndex] = m_routines[--endIndex];
-
-            routine.routine->deleteFromGC();
+    unsigned dstIndex = srcIndex;
+    while (srcIndex < m_routines.size()) {
+        Routine routine = m_routines[srcIndex++];
+        if (!routine.routine->m_isJettisoned || routine.routine->m_mayBeExecuting) {
+            m_routines[dstIndex++] = routine;
+            continue;
         }
-
-        elapsedTime = MonotonicTime::now() - startTime;
-        if (elapsedTime > timeSlice) {
-            // We timed out. Assume there's more to do, and that we should check
-            // again next time slice.
-            s_mayHaveRoutinesToDelete = true;
-            break;
-        }
+        routine.routine->deleteFromGC();
     }
-
-    m_routines.shrinkCapacity(endIndex);
+    m_routines.shrinkCapacity(dstIndex);
 }
 
 template<typename Visitor>

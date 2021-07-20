@@ -1,0 +1,143 @@
+/*
+ * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+PAS_API extern pas_simple_large_free_heap PAS_SIMPLE_FREE_HEAP_NAME;
+PAS_API extern size_t PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes);
+PAS_API extern size_t PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes_peak);
+
+PAS_API pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_try_allocate)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+PAS_API pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_allocate)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+
+static inline void* PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_simple)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind)
+{
+    return (void*)PAS_SIMPLE_FREE_HEAP_ID(_try_allocate)(
+        size, name, allocation_kind).begin;
+}
+
+static inline void* PAS_SIMPLE_FREE_HEAP_ID(_allocate_simple)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind)
+{
+    return (void*)PAS_SIMPLE_FREE_HEAP_ID(_allocate)(
+        size, name, allocation_kind).begin;
+}
+
+PAS_API pas_allocation_result
+PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_manual_alignment)(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+
+PAS_API pas_allocation_result
+PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_alignment)(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+
+PAS_API pas_allocation_result
+PAS_SIMPLE_FREE_HEAP_ID(_allocate_with_manual_alignment)(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+
+PAS_API pas_allocation_result
+PAS_SIMPLE_FREE_HEAP_ID(_allocate_with_alignment)(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+
+PAS_API void PAS_SIMPLE_FREE_HEAP_ID(_deallocate)(
+    void* ptr,
+    size_t size,
+    pas_allocation_kind allocation_kind);
+
+PAS_API size_t PAS_SIMPLE_FREE_HEAP_ID(_get_num_free_bytes)(void);
+
+PAS_API void* PAS_SIMPLE_FREE_HEAP_ID(_hold_lock_and_allocate)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind);
+PAS_API void PAS_SIMPLE_FREE_HEAP_ID(_hold_lock_and_deallocate)(
+    void* ptr,
+    size_t size,
+    pas_allocation_kind allocation_kind);
+
+PAS_API void* PAS_SIMPLE_FREE_HEAP_ID(_hold_lock_and_allocate_for_config)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind,
+    void* arg);
+PAS_API void PAS_SIMPLE_FREE_HEAP_ID(_hold_lock_and_deallocate_for_config)(
+    void* ptr,
+    size_t size,
+    pas_allocation_kind allocation_kind,
+    void* arg);
+
+PAS_API void* PAS_SIMPLE_FREE_HEAP_ID(_allocate_simple_for_config)(
+    size_t size,
+    const char* name,
+    pas_allocation_kind allocation_kind,
+    void* arg);
+PAS_API void PAS_SIMPLE_FREE_HEAP_ID(_deallocate_for_config)(
+    void* ptr,
+    size_t size,
+    pas_allocation_kind allocation_kind,
+    void* arg);
+
+static inline void PAS_SIMPLE_FREE_HEAP_ID(_allocation_config_construct)(
+    pas_allocation_config* config,
+    pas_lock_hold_mode heap_lock_hold_mode)
+{
+    config->arg = NULL;
+
+    switch (heap_lock_hold_mode) {
+    case pas_lock_is_not_held:
+        config->allocate = PAS_SIMPLE_FREE_HEAP_ID(_hold_lock_and_allocate_for_config);
+        config->deallocate = PAS_SIMPLE_FREE_HEAP_ID(_hold_lock_and_deallocate_for_config);
+        return;
+        
+    case pas_lock_is_held:
+        config->allocate = PAS_SIMPLE_FREE_HEAP_ID(_allocate_simple_for_config);
+        config->deallocate = PAS_SIMPLE_FREE_HEAP_ID(_deallocate_for_config);
+        return;
+    }
+    
+    PAS_ASSERT(!"Should not be reached");
+}
+

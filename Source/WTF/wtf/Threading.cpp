@@ -28,6 +28,7 @@
 
 #include <cstring>
 #include <wtf/DateMath.h>
+#include <wtf/Gigacage.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadGroup.h>
@@ -376,6 +377,7 @@ void initialize()
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         setPermissionsOfConfigPage();
+        Gigacage::ensureGigacage();
         Config::AssertNotFrozenScope assertScope;
         initializeRandomNumberGenerator();
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)

@@ -39,6 +39,10 @@ class BuilderState;
 struct BlendingContext;
 class CSSPrimitiveValue;
 
+namespace Style {
+class BuilderState;
+} // namespace Style
+
 class CSSCrossfadeValue final : public CSSImageGeneratorValue {
 public:
     static Ref<CSSCrossfadeValue> create(Ref<CSSValue>&& fromValue, Ref<CSSValue>&& toValue, Ref<CSSPrimitiveValue>&& percentageValue, bool prefixed = false);

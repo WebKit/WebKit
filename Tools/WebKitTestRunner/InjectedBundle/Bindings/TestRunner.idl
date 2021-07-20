@@ -388,9 +388,8 @@ interface TestRunner {
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
     undefined setAppBoundDomains(object originsArray, object callback);
-    undefined appBoundRequestContextDataForDomain(DOMString domain, object callback);
-    boolean didLoadAppBoundRequest();
-    boolean didLoadNonAppBoundRequest();
+    boolean didLoadAppInitiatedRequest();
+    boolean didLoadNonAppInitiatedRequest();
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;

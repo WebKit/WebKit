@@ -32,7 +32,6 @@
 #include <WebCore/CairoOperations.h>
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GraphicsContextCairo.h>
-#include <WebCore/PlatformContextCairo.h>
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {

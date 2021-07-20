@@ -83,8 +83,7 @@
 
 - (void)dismissActiveMenu;
 - (void)resetInteractionCallbacks;
-- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler;
-- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler;
-- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler;
+- (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
+- (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
 
 @end

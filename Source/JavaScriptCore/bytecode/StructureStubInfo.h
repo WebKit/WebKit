@@ -84,11 +84,11 @@ public:
     StructureStubInfo(AccessType, CodeOrigin);
     ~StructureStubInfo();
 
-    void initGetByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
+    void initGetByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset, CacheableIdentifier);
     void initArrayLength(const ConcurrentJSLockerBase&);
     void initStringLength(const ConcurrentJSLockerBase&);
-    void initPutByIdReplace(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
-    void initInByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
+    void initPutByIdReplace(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset, CacheableIdentifier);
+    void initInByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset, CacheableIdentifier);
 
     AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, JSGlobalObject*, CodeBlock*, ECMAMode, CacheableIdentifier, RefPtr<AccessCase>);
 
@@ -104,7 +104,7 @@ public:
     void visitWeakReferences(const ConcurrentJSLockerBase&, CodeBlock*);
     
     // This returns true if it has marked everything that it will ever mark.
-    template<typename Visitor> bool propagateTransitions(Visitor&);
+    template<typename Visitor> void propagateTransitions(Visitor&);
         
     StubInfoSummary summary(VM&) const;
     
@@ -326,11 +326,11 @@ public:
     CodeOrigin codeOrigin;
     union {
         struct {
-            WriteBarrierBase<Structure> baseObjectStructure;
             PropertyOffset offset;
         } byIdSelf;
         PolymorphicAccess* stub;
     } u;
+    WriteBarrier<Structure> inlineAccessBaseStructure;
 private:
     CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.

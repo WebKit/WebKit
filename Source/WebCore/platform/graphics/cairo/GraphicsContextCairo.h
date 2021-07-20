@@ -29,7 +29,6 @@
 #if USE(CAIRO)
 
 #include "GraphicsContext.h"
-#include "PlatformContextCairo.h"
 
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
@@ -43,13 +42,13 @@ public:
 
 #if PLATFORM(WIN)
     GraphicsContextCairo(HDC, bool hasAlpha = false); // FIXME: To be removed.
-    explicit GraphicsContextCairo(PlatformContextCairo*);
+    explicit GraphicsContextCairo(GraphicsContextCairo*);
 #endif
 
     virtual ~GraphicsContextCairo();
 
     bool hasPlatformContext() const final;
-    PlatformContextCairo* platformContext() const final;
+    GraphicsContextCairo* platformContext() const final;
 
     void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
 
@@ -109,14 +108,19 @@ public:
 
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) final;
 
-#if OS(WINDOWS)
-    GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
-#endif
+    cairo_t* cr() const;
+    Vector<float>& layers();
+    void pushImageMask(cairo_surface_t*, const FloatRect&);
 
 private:
-    mutable PlatformContextCairo m_platformContext;
+    RefPtr<cairo_t> m_cr;
 
-    std::unique_ptr<GraphicsContextPlatformPrivate> m_private;
+    class CairoState;
+    CairoState* m_cairoState;
+    WTF::Vector<CairoState> m_cairoStateStack;
+
+    // Transparency layers.
+    Vector<float> m_layers;
 };
 
 } // namespace WebCore

@@ -254,14 +254,14 @@ bool RenderLayerScrollableArea::requestScrollPositionUpdate(const ScrollPosition
     return false;
 }
 
-void RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
+ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset, const ScrollPositionChangeOptions& options)
 {
     if (currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation)
         scrollAnimator().cancelAnimations();
 
     ScrollOffset clampedScrollOffset = options.clamping == ScrollClamping::Clamped ? clampScrollOffset(scrollOffset) : scrollOffset;
     if (clampedScrollOffset == this->scrollOffset())
-        return;
+        return clampedScrollOffset;
 
     auto previousScrollType = currentScrollType();
     setCurrentScrollType(options.type);
@@ -277,6 +277,7 @@ void RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrollOffset,
     }
 
     setCurrentScrollType(previousScrollType);
+    return snappedOffset;
 }
 
 void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
@@ -1292,7 +1293,7 @@ void RenderLayerScrollableArea::paintOverflowControls(GraphicsContext& context, 
 {
     // Don't do anything if we have no overflow.
     auto& renderer = m_layer.renderer();
-    if (!renderer.hasOverflowClip())
+    if (!renderer.hasNonVisibleOverflow())
         return;
 
     if (!showsOverflowControls())
@@ -1374,7 +1375,7 @@ void RenderLayerScrollableArea::paintScrollCorner(GraphicsContext& context, cons
     // We don't want to paint a corner if we have overlay scrollbars, since we need
     // to see what is behind it.
     if (!hasOverlayScrollbars())
-        ScrollbarTheme::theme().paintScrollCorner(context, absRect);
+        ScrollbarTheme::theme().paintScrollCorner(*this, context, absRect);
 }
 
 void RenderLayerScrollableArea::drawPlatformResizerImage(GraphicsContext& context, const LayoutRect& resizerCornerRect)
@@ -1635,7 +1636,7 @@ void RenderLayerScrollableArea::updateScrollCornerStyle()
 {
     auto& renderer = m_layer.renderer();
     RenderElement* actualRenderer = rendererForScrollbar(renderer);
-    auto corner = renderer.hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &actualRenderer->style()) : nullptr;
+    auto corner = renderer.hasNonVisibleOverflow() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &actualRenderer->style()) : nullptr;
 
     if (!corner) {
         clearScrollCorner();
@@ -1663,7 +1664,7 @@ void RenderLayerScrollableArea::updateResizerStyle()
 {
     auto& renderer = m_layer.renderer();
     RenderElement* actualRenderer = rendererForScrollbar(renderer);
-    auto resizer = renderer.hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
+    auto resizer = renderer.hasNonVisibleOverflow() ? actualRenderer->getUncachedPseudoStyle({ PseudoId::Resizer }, &actualRenderer->style()) : nullptr;
 
     if (!resizer) {
         clearResizer();
@@ -1754,8 +1755,9 @@ std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const 
     ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
     if (clampedScrollOffset != scrollOffset() || currentScrollBehaviorStatus() != ScrollBehaviorStatus::NotInAnimation) {
         ScrollOffset oldScrollOffset = scrollOffset();
-        scrollToOffset(clampedScrollOffset, options);
-        IntSize scrollOffsetDifference = clampedScrollOffset - oldScrollOffset;
+        ScrollOffset realScrollOffset = scrollToOffset(clampedScrollOffset, options);
+
+        IntSize scrollOffsetDifference = realScrollOffset - oldScrollOffset;
         auto localExposeRectScrolled = localExposeRect;
         localExposeRectScrolled.move(-scrollOffsetDifference);
         return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), UseTransforms).boundingBox());
@@ -1774,7 +1776,7 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
     if (renderer.parent())
         restrictedByLineClamp = !renderer.parent()->style().lineClamp().isNone();
 
-    if (renderer.hasOverflowClip() && !restrictedByLineClamp) {
+    if (renderer.hasNonVisibleOverflow() && !restrictedByLineClamp) {
         ScrollOffset newScrollOffset = scrollOffset() + delta;
         scrollToOffset(newScrollOffset);
         if (scrolledArea)

@@ -22,6 +22,7 @@ function mac_process_jsc_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
             plistbuddy Add :com.apple.private.verified-jit bool YES
+            plistbuddy Add :com.apple.security.cs.single-jit bool YES
         fi
     fi
 }
@@ -41,6 +42,7 @@ function mac_process_testapi_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
             plistbuddy Add :com.apple.private.verified-jit bool YES
+            plistbuddy Add :com.apple.security.cs.single-jit bool YES
         fi
     fi
 }
@@ -64,6 +66,7 @@ function maccatalyst_process_jsc_entitlements()
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
         plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :com.apple.security.cs.single-jit bool YES
     fi
 }
 
@@ -80,6 +83,7 @@ function maccatalyst_process_testapi_entitlements()
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
         plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :com.apple.security.cs.single-jit bool YES
     fi
 }
 

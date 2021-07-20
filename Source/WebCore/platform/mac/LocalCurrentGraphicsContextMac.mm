@@ -32,7 +32,8 @@ LocalCurrentGraphicsContext::LocalCurrentGraphicsContext(GraphicsContext& graphi
     m_savedGraphicsContext.save();
 
     if (!m_savedGraphicsContext.hasPlatformContext()) {
-        WTFLogAlways("LocalCurrentGraphicsContext is not setting the global context because the provided GraphicsContext does not have a platform context (likely display list recording)");
+        WTFLogAlways("LocalCurrentGraphicsContext is setting the global context to nil because the provided GraphicsContext does not have a platform context (likely display list recording)");
+        [NSGraphicsContext setCurrentContext:nil];
         return;
     }
 

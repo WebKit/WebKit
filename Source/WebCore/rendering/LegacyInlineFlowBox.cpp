@@ -646,29 +646,21 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
     }
 }
 
-void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
+static void placeChildInlineBoxesInBlockDirection(LegacyInlineFlowBox& inlineBox, LayoutUnit top, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
     LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
-    bool isRootBox = isRootInlineBox();
-    if (isRootBox) {
-        const FontMetrics& fontMetrics = lineStyle().fontMetrics();
-        // RootInlineBoxes are always placed on at pixel boundaries in their logical y direction. Not doing
-        // so results in incorrect rendering of text decorations, most notably underlines.
-        setLogicalTop(roundToInt(top + maxAscent - fontMetrics.ascent(baselineType)));
-    }
-
     LayoutUnit adjustmentForChildrenWithSameLineHeightAndBaseline;
-    if (descendantsHaveSameLineHeightAndBaseline()) {
-        adjustmentForChildrenWithSameLineHeightAndBaseline = logicalTop();
-        if (parent())
-            adjustmentForChildrenWithSameLineHeightAndBaseline += renderer().borderAndPaddingBefore();
+    if (inlineBox.descendantsHaveSameLineHeightAndBaseline()) {
+        adjustmentForChildrenWithSameLineHeightAndBaseline = inlineBox.logicalTop();
+        if (inlineBox.parent())
+            adjustmentForChildrenWithSameLineHeightAndBaseline += inlineBox.renderer().borderAndPaddingBefore();
     }
 
-    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = inlineBox.firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (descendantsHaveSameLineHeightAndBaseline()) {
+        if (inlineBox.descendantsHaveSameLineHeightAndBaseline()) {
             child->adjustBlockDirectionPosition(adjustmentForChildrenWithSameLineHeightAndBaseline);
             continue;
         }
@@ -721,7 +713,7 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
                 // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
                 // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
                 // inline-block.
-                if (renderer().style().isFlippedLinesWritingMode() == (child->renderer().style().rubyPosition() == RubyPosition::After))
+                if (inlineBox.renderer().style().isFlippedLinesWritingMode() == (child->renderer().style().rubyPosition() == RubyPosition::After))
                     hasAnnotationsBefore = true;
                 else
                     hasAnnotationsAfter = true;
@@ -730,7 +722,7 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
                 if (RenderRubyBase* rubyBase = rubyRun.rubyBase()) {
                     LayoutUnit bottomRubyBaseLeading { (child->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : 0_lu) };
                     LayoutUnit topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : 0_lu);
-                    newLogicalTop += !renderer().style().isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
+                    newLogicalTop += !inlineBox.renderer().style().isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
                     boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
                 }
             }
@@ -762,18 +754,42 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
                 lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
         }
     }
+}
+
+void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHeight, int maxAscent, bool strictMode, LayoutUnit& lineTop, LayoutUnit& lineBottom, bool& setLineTop,
+    LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
+{
+    bool isRootBox = isRootInlineBox();
+    LayoutUnit rootInlineBoxRoundedOverflow;
+    if (isRootBox) {
+        const FontMetrics& fontMetrics = lineStyle().fontMetrics();
+        // RootInlineBoxes are always placed on at pixel boundaries in their logical y direction. Not doing
+        // so results in incorrect rendering of text decorations, most notably underlines.
+        auto logicalTop = top + maxAscent - fontMetrics.ascent(baselineType);
+        // FIXME: Let's do device pixel snapping at paint time instead (webkit.org/b/227751).
+        auto adjustedLogicalTop = roundToInt(logicalTop);
+        setLogicalTop(adjustedLogicalTop);
+        rootInlineBoxRoundedOverflow = LayoutUnit { adjustedLogicalTop } - logicalTop;
+    }
+
+    placeChildInlineBoxesInBlockDirection(*this, top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop, lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 
     if (isRootBox) {
         if (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
+            // The root inlinebox is supposed to fit the [top, top + maxHeight] space. However due to the integral rounding on the root inlinebox's logical top,
+            // it may accidentally leak out of the containing block and trigger unintended layout overflow (see above).
+            // Make sure we don't stretch the line with the rounded root inlinebox.
+            auto rootInlineBoxLogicalTop = LayoutUnit { logicalTop() } - rootInlineBoxRoundedOverflow;
+            auto rootInlineBoxLogicalBottom = LayoutUnit { logicalBottom() } - rootInlineBoxRoundedOverflow;
             if (!setLineTop) {
                 setLineTop = true;
-                lineTop = logicalTop();
+                lineTop = rootInlineBoxLogicalTop;
                 lineTopIncludingMargins = lineTop;
             } else {
-                lineTop = std::min(lineTop, LayoutUnit(logicalTop()));
+                lineTop = std::min(lineTop, rootInlineBoxLogicalTop);
                 lineTopIncludingMargins = std::min(lineTop, lineTopIncludingMargins);
             }
-            lineBottom = std::max(lineBottom, LayoutUnit(logicalBottom()));
+            lineBottom = std::max(lineBottom, rootInlineBoxLogicalBottom);
             lineBottomIncludingMargins = std::max(lineBottom, lineBottomIncludingMargins);
         }
         

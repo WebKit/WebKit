@@ -500,7 +500,6 @@ bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
-bindings/js/JSAbortControllerCustom.cpp
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSAbstractRangeCustom.cpp
 bindings/js/JSAnimationEffectCustom.cpp
@@ -508,8 +507,6 @@ bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioBufferCustom.cpp
 bindings/js/JSAudioNodeCustom.cpp
-bindings/js/JSAudioTrackCustom.cpp
-bindings/js/JSAudioTrackListCustom.cpp
 bindings/js/JSAudioWorkletProcessorCustom.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp
 bindings/js/JSBaseAudioContextCustom.cpp
@@ -612,14 +609,10 @@ bindings/js/JSStaticRangeCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
 bindings/js/JSTextCustom.cpp
 bindings/js/JSTextTrackCueCustom.cpp
-bindings/js/JSTextTrackCustom.cpp
-bindings/js/JSTextTrackListCustom.cpp
 bindings/js/JSTrackCustom.cpp
 bindings/js/JSTreeWalkerCustom.cpp
 bindings/js/JSTypedOMCSSStyleValueCustom.cpp
 bindings/js/JSUndoItemCustom.cpp
-bindings/js/JSVideoTrackCustom.cpp
-bindings/js/JSVideoTrackListCustom.cpp
 bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp

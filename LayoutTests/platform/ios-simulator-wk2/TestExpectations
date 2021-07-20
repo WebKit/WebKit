@@ -174,3 +174,7 @@ webkit.org/b/225169 imported/w3c/web-platform-tests/workers/interfaces/Dedicated
 webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
 
 webkit.org/b/225830 imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html  [ Pass ImageOnlyFailure ]
+
+webkit.org/b/227755 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html  [ Pass Failure ]
+
+webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]

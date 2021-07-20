@@ -50,12 +50,16 @@ PlatformGraphicsContext* BifurcatedGraphicsContext::platformContext() const
 
 void BifurcatedGraphicsContext::save()
 {
+    // FIXME: Consider not using the BifurcatedGraphicsContext's state stack at all,
+    // and making all of the state getters and setters virtual.
+    GraphicsContext::save();
     m_primaryContext.save();
     m_secondaryContext.save();
 }
 
 void BifurcatedGraphicsContext::restore()
 {
+    GraphicsContext::restore();
     m_primaryContext.restore();
     m_secondaryContext.restore();
 }
@@ -265,6 +269,12 @@ void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const Floa
     m_secondaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
+void BifurcatedGraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
+{
+    m_primaryContext.paintFrameForMedia(player, destination);
+    m_secondaryContext.paintFrameForMedia(player, destination);
+}
+
 void BifurcatedGraphicsContext::scale(const FloatSize& scale)
 {
     m_primaryContext.scale(scale);
@@ -331,6 +341,31 @@ void BifurcatedGraphicsContext::drawFocusRing(const Vector<FloatRect>& rects, do
 }
 #endif
 
+FloatSize BifurcatedGraphicsContext::drawText(const FontCascade& cascade, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
+{
+    auto size = m_primaryContext.drawText(cascade, run, point, from, to);
+    m_secondaryContext.drawText(cascade, run, point, from, to);
+    return size;
+}
+
+void BifurcatedGraphicsContext::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+{
+    m_primaryContext.drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
+    m_secondaryContext.drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
+}
+
+void BifurcatedGraphicsContext::drawEmphasisMarks(const FontCascade& cascade, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
+{
+    m_primaryContext.drawEmphasisMarks(cascade, run, mark, point, from, to);
+    m_secondaryContext.drawEmphasisMarks(cascade, run, mark, point, from, to);
+}
+
+void BifurcatedGraphicsContext::drawBidiText(const FontCascade& cascade, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
+{
+    m_primaryContext.drawBidiText(cascade, run, point, customFontNotReadyAction);
+    m_secondaryContext.drawBidiText(cascade, run, point, customFontNotReadyAction);
+}
+
 void BifurcatedGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
     m_primaryContext.drawLinesForText(point, thickness, widths, printing, doubleLines, strokeStyle);
@@ -372,7 +407,7 @@ void BifurcatedGraphicsContext::updateState(const GraphicsContextState& state, G
     m_secondaryContext.updateState(state, flags);
 }
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !USE(CAIRO)
 GraphicsContextPlatformPrivate* BifurcatedGraphicsContext::deprecatedPrivateContext() const
 {
     return m_primaryContext.deprecatedPrivateContext();

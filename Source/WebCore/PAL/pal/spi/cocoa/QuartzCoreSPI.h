@@ -163,6 +163,12 @@ typedef enum {
 - (float)_solveForInput:(float)t;
 @end
 
+@interface CAPortalLayer : CALayer
+@property (weak) CALayer *sourceLayer;
+@property BOOL matchesPosition;
+@property BOOL matchesTransform;
+@end
+
 #endif // __OBJC__
 
 #endif

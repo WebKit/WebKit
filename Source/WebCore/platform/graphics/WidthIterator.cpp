@@ -204,6 +204,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
     auto currentCharacterIndex = textIterator.currentIndex();
     UChar32 character = 0;
+    float width = 0;
+    float previousWidth = 0;
     unsigned clusterLength = 0;
     CharactersTreatedAsSpace charactersTreatedAsSpace;
     float widthOfCurrentFontRange = 0;
@@ -234,7 +236,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         const Font* font = glyphData.font ? glyphData.font : &m_font.primaryFont();
         ASSERT(font);
 
-        float width = font->widthForGlyph(glyph);
+        previousWidth = width;
+        width = font->widthForGlyph(glyph);
 
         if (font != lastFontData) {
             commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, *lastFontData, primaryFont, character, widthOfCurrentFontRange, charactersTreatedAsSpace);
@@ -249,7 +252,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             charactersTreatedAsSpace.constructAndAppend(
                 currentCharacterIndex,
                 character == ' ',
-                glyphBuffer.size() ? WebCore::width(glyphBuffer.advanceAt(glyphBuffer.size() - 1)) : 0,
+                previousWidth,
                 width);
         }
 

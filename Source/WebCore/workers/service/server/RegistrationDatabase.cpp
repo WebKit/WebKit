@@ -517,7 +517,7 @@ String RegistrationDatabase::importRecords()
         std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
         auto contentSecurityPolicyDataSpan = sql->columnBlobAsSpan(8);
         if (contentSecurityPolicyDataSpan.size()) {
-            WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataSpan.data(), contentSecurityPolicyDataSpan.size());
+            WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataSpan);
             cspDecoder >> contentSecurityPolicy;
             if (!contentSecurityPolicy) {
                 RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode contentSecurityPolicy");
@@ -530,7 +530,7 @@ String RegistrationDatabase::importRecords()
         HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
         auto scriptResourceMapDataSpan = sql->columnBlobAsSpan(10);
         if (scriptResourceMapDataSpan.size()) {
-            WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataSpan.data(), scriptResourceMapDataSpan.size());
+            WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataSpan);
             std::optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
             scriptResourceMapDecoder >> scriptResourceMapWithoutScripts;
             if (!scriptResourceMapWithoutScripts) {
@@ -543,7 +543,7 @@ String RegistrationDatabase::importRecords()
         auto certificateInfoDataSpan = sql->columnBlobAsSpan(11);
         std::optional<CertificateInfo> certificateInfo;
 
-        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataSpan.data(), certificateInfoDataSpan.size());
+        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataSpan);
         certificateInfoDecoder >> certificateInfo;
         if (!certificateInfo) {
             RELEASE_LOG_ERROR(ServiceWorker, "RegistrationDatabase::importRecords: Failed to decode certificateInfo");
@@ -569,7 +569,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppBound::No, WTFMove(scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppInitiated::Yes, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

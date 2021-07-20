@@ -33,6 +33,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListIterator.h>
 #include <WebCore/DisplayListRecorder.h>
+#include <WebCore/FontCascade.h>
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/InMemoryDisplayList.h>
 
@@ -84,6 +85,48 @@ TEST(BifurcatedGraphicsContextTests, BasicBifurcatedContext)
 
     EXPECT_GT(displayList.sizeInBytes(), 0U);
     EXPECT_TRUE(sawFillRect);
+}
+
+TEST(BifurcatedGraphicsContextTests, TextInBifurcatedContext)
+{
+    InMemoryDisplayList primaryDisplayList;
+    Recorder primaryContext(primaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+
+    InMemoryDisplayList secondaryDisplayList;
+    Recorder secondaryContext(secondaryDisplayList, { }, FloatRect(0, 0, contextWidth, contextHeight), { });
+
+    BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
+
+    FontCascadeDescription description;
+    description.setOneFamily("Times");
+    description.setComputedSize(80);
+    FontCascade font(WTFMove(description));
+    font.update();
+
+    String string = "Hello!";
+    TextRun run(string);
+    ctx.drawText(font, run, { });
+
+    auto runTest = [&] (InMemoryDisplayList& displayList) {
+        EXPECT_FALSE(displayList.isEmpty());
+        bool sawDrawGlyphs = false;
+        for (auto displayListItem : displayList) {
+            auto handle = displayListItem->item;
+            if (handle.type() != ItemType::DrawGlyphs)
+                continue;
+
+            EXPECT_TRUE(handle.isDrawingItem());
+            EXPECT_TRUE(handle.is<DrawGlyphs>());
+            sawDrawGlyphs = true;
+        }
+
+        EXPECT_GT(displayList.sizeInBytes(), 0U);
+        EXPECT_TRUE(sawDrawGlyphs);
+    };
+
+    // Ensure that both contexts have text painting commands.
+    runTest(primaryDisplayList);
+    runTest(secondaryDisplayList);
 }
 
 } // namespace TestWebKitAPI

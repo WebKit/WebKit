@@ -26,11 +26,12 @@
 // https://wicg.github.io/IntersectionObserver/
 
 [
-    ActiveDOMObject,
     Conditional=INTERSECTION_OBSERVER,
     EnabledBySetting=IntersectionObserver,
     Exposed=Window,
     JSCustomMarkFunction,
+    CustomIsReachable,
+    ImplementationLacksVTable
 ] interface IntersectionObserver {
     [CallWith=Document] constructor(IntersectionObserverCallback callback, optional IntersectionObserverInit options);
 

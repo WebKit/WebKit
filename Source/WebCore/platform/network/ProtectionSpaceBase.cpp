@@ -109,6 +109,9 @@ bool ProtectionSpaceBase::isPasswordBased() const
     case ProtectionSpaceAuthenticationSchemeNTLM:
     case ProtectionSpaceAuthenticationSchemeNegotiate:
     case ProtectionSpaceAuthenticationSchemeOAuth:
+#if USE(GLIB)
+    case ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested:
+#endif
         return true;
     case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
     case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:

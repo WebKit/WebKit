@@ -36,7 +36,7 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
 ] interface IDBIndex {
     attribute DOMString name;
     [SameObject] readonly attribute IDBObjectStore objectStore;
-    readonly attribute IDBKeyPath? keyPath;
+    [SameObject, CachedAttribute] readonly attribute IDBKeyPath keyPath;
     readonly attribute boolean multiEntry;
     readonly attribute boolean unique;
 

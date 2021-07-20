@@ -1,3 +1,493 @@
+2021-07-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [iOS]TestWebKitAPI.InAppBrowserPrivacy.AppBoundDomainAllowsServiceWorkers is failing
+        https://bugs.webkit.org/show_bug.cgi?id=227918
+        <rdar://problem/80535625>
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm: Disabled the test for now to speed up EWS.
+
+2021-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS & Mac Big Sur Release] Two SOAuthorizationSubFrame API tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=227925
+        <rdar://problem/80543830>
+
+        Reviewed by Kate Cheney.
+
+        In Bug 227729 I added a number of extra tests that an Extensible SSO delegate method
+        was called. I did a search/paste and added them to all SSO flows without much detailed
+        analysis. Testing shows that on Simulator, these delegate are not always called, perhaps
+        because the test case involves loads to live websites that might take longer than the
+        hard-coded timeout used to move to the next step of the test.
+
+        Because these failures are slowing down our EWS, I'm removing these two checks. We
+        can consider adding them back if we need such checks in the future.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+
+2021-07-14  Kevin Neal  <kevin_neal@apple.com>
+
+        [Tools] linkify first line of commit message in tooltip
+        https://bugs.webkit.org/show_bug.cgi?id=227968
+        <rdar://problem/80596878>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale):
+
+2021-07-14  Keith Miller  <keith_miller@apple.com>
+
+        Convert small JIT pool tests into executable fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=226279
+
+        Reviewed by Michael Saboff.
+
+        Right now, we try to test our engine on a small JIT pool. This isn't a known configuration for any
+        actual ports and causes issues if we run out of JIT memory when we need to compile an OSR exit.
+        Instead of testing such a small pool we should just fuzz each executable allocation that says it
+        can fail.
+
+        The current fuzzing doesn't do a good job tracking the number of DFG/FTL compiles when allocations
+        fail, so when enabled those tests will just exit early. Also, right now we use a random seed picked
+        by the engine for these tests, which makes it hard to reproduce crashes on the bots. If we see
+        flakiness on the bots we can have the harness pass in a number so it gets logged in the repro command.
+
+        * Scripts/jsc-stress-test-helpers/js-executable-allocation-fuzz:
+        * Scripts/run-jsc-stress-tests:
+
+2021-07-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Add step name and description to InstallBuiltProduct build step
+        https://bugs.webkit.org/show_bug.cgi?id=227935
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CISupport/build-webkit-org/steps.py:
+        (InstallBuiltProduct):
+        * CISupport/ews-build/steps.py:
+        (InstallBuiltProduct):
+
+2021-07-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Handle failed `git log` process
+        https://bugs.webkit.org/show_bug.cgi?id=227709
+        <rdar://problem/80520002>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.Cache.populate): Do not populate cache if `git log` fails.
+
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        >4K Referer should have tailing /
+        https://bugs.webkit.org/show_bug.cgi?id=227795
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
+2021-07-13  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] REGRESSION(r278863): The destination rectangle is truncated when the sub-image is used
+        https://bugs.webkit.org/show_bug.cgi?id=227614
+        <rdar://79840643>
+
+        Reviewed by Simon Fraser.
+
+        Add an API test to test drawing an ImageBuffer into another and both
+        have the logicalSize scaled such that they have pixels.
+
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp:
+        (TestWebKitAPI::TEST):
+
+2021-07-13  Kevin Neal  <kevin_neal@apple.com>
+
+        [results.webkit.org] linkify urls in commit messages
+        https://bugs.webkit.org/show_bug.cgi?id=227549
+        <rdar://problem/79988762>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (thead.tbody.rows.map.):
+        (thead.tbody.rows.map):
+        (CommitTable):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/common.js:
+
+
+2021-07-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Upload layout-tests results immediately after running layout-tests
+        https://bugs.webkit.org/show_bug.cgi?id=227889
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CISupport/build-webkit-org/factories.py:
+
+2021-07-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Allow layout tests to specify app initiated loads or not
+        https://bugs.webkit.org/show_bug.cgi?id=227825
+        <rdar://problem/80355582>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test option that specifies whether the test should mark the
+        main page navigation as app-initiated or not.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::isAppInitiated const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+
+2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Expose support for client certificate auth
+        https://bugs.webkit.org/show_bug.cgi?id=200805
+
+        Reviewed by Michael Catanzaro.
+
+        Add a simple implementation in MiniBrowser using a file chooser to ask for the certificate from a file and unit
+        tests for the client certificate request. Unfortunately we can't easily test pin certificates.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (certificateDialogResponse):
+        (webViewAuthenticate):
+        (browserTabConstructed):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        (ClientSideCertificateTest::acceptCertificateCallback):
+        (ClientSideCertificateTest::requestStartedCallback):
+        (ClientSideCertificateTest::authenticateCallback):
+        (ClientSideCertificateTest::ClientSideCertificateTest):
+        (ClientSideCertificateTest::~ClientSideCertificateTest):
+        (ClientSideCertificateTest::authenticate):
+        (ClientSideCertificateTest::acceptCertificate):
+        (ClientSideCertificateTest::waitForAuthenticationRequest):
+        (testClientSideCertificate):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+        (WebKitTestServer::soupServer const):
+
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        Disable the IsoHeap tests if we're using libpas. Libpas has its own tests.
+
+        * TestWebKitAPI/Tests/WTF/bmalloc/IsoHeap.cpp:
+
+2021-07-12  Garrett Davidson  <garrett_davidson@apple.com>
+
+        _WKWebAuthenticationPanel escapes slashes in origin
+        https://bugs.webkit.org/show_bug.cgi?id=227724
+        rdar://80232742
+
+        Reviewed by Kate Cheney.
+
+        Update both the makeCredential and getAssertion tests to use an origin.
+
+        WebAuthenticationPanel.GetAssertionLA:
+        This test wasn't using an origin or RPID. Update it to use both. This means both
+        clientDataJSON and authenticatorData changed. Update both to the new expected
+        values, using as much plaintext as possible.
+
+        WebAuthenticationPanel.MakeCredentialLA:
+        This test should have caught this issue, but the origin being passed here isn't
+        valid, because it didn't have a scheme. Per the WebAuthn spec, origins used by
+        WebAuthn MUST start with "https://". Also update this test to use plaintext
+        instead of base64 for clientDataJSON.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
+2021-07-12  Tim Horton  <timothy_horton@apple.com>
+
+        BifurcatedGraphicsContext can't draw text
+        https://bugs.webkit.org/show_bug.cgi?id=227883
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test ensuring that we get DrawGlyphs commands on both contexts.
+
+2021-07-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-api-tests] Use Python 3 (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=225427
+        <rdar://problem/77584713>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunAPITests): Use Python3 to invoke run-api-tests.
+        * CISupport/ews-build/steps.py:
+        (RunAPITests): Use Python3 to invoke run-api-tests.
+        * CISupport/ews-build/steps_unittest.py:
+
+2021-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Add a new GTK layout tester bot to build.webkit.org that runs with --skip-failing-tests switch
+        https://bugs.webkit.org/show_bug.cgi?id=227744
+
+        Reviewed by Jonathan Bedard.
+
+        On the EWS the layout tests run with this switch --skip-failing-tests
+        which changes the order in which tests are run (those expected to fail
+        are not scheduled). I think this may be causing different results on
+        other tests (like unexpected failures or unexpected flakies).
+        Having a bot in build.webkit.org running with this switch will help
+        to detect and garden those cases.
+
+        * CISupport/build-webkit-org/config.json:
+
+2021-07-12  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Incorrect deprecation declaration for -[WKWebView closeAllMediaPresentations:]
+        https://bugs.webkit.org/show_bug.cgi?id=227860
+        <rdar://80376777>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCloseAllMediaPresentations.mm:
+        (TEST):
+
+2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Make a few additional adjustments to support system minimum layout margins
+        https://bugs.webkit.org/show_bug.cgi?id=227859
+        rdar://80113612
+
+        Reviewed by Tim Horton.
+
+        Add support for simulating arbitrary horizontal (trailing and leading) values for `-systemMinimumLayoutMargin`
+        in WebKitTestRunner, via a new "horizontalSystemMinimumLayoutMargin" test option. By default, this is 0.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::horizontalSystemMinimumLayoutMargin const):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[PlatformWebViewController systemMinimumLayoutMargins]):
+
+        Override this UIViewController method and replace the leading and trailing layout margin values with the values
+        from test options.
+
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Additionally make a slight adjustment here to avoid calling `-setContentInset` on the scroll view in between
+        tests if the content insets aren't changing. This is needed in order for the new layout test to work on watchOS.
+
+2021-07-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        SVGImageForContainer reports true for is<SVGImage>() but it doesn't inherit from SVGImage
+        https://bugs.webkit.org/show_bug.cgi?id=227807
+
+        Reviewed by Said Abou-Hallawa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/SVGImageCasts.cpp: Added.
+        (TestWebKitAPI::TEST):
+
+2021-07-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitcorepy] run-webkit-tests may hang with python2 after r271683
+        https://bugs.webkit.org/show_bug.cgi?id=227715
+
+        Reviewed by Philippe Normand.
+
+        When an exception is raised from a worker if the workers are terminated
+        via a SIGKILL signal that later causes the task-queue to hang at close().
+        The issue is not reproducible with python3. So keep the same behaviour for
+        python3, and for python2 just use terminate() to stop the workers.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (TaskPool.__exit__):
+
+2021-07-08  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Yijia Huang as a committer
+        https://bugs.webkit.org/show_bug.cgi?id=227814
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-07-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Expose SPI to opt out of Extensible SSO authentication
+        https://bugs.webkit.org/show_bug.cgi?id=227729
+        <rdar://problem/75647892>
+
+        Reviewed by Tim Horton.
+
+        Add a new test to confirm that Extenstible SSO authentication flows are bypassed when the new WKPreference
+        is used. Updated other tests to confirm that the SSO delegate is called when expected.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (-[TestSOAuthorizationDelegate _webView:decidePolicyForSOAuthorizationLoadWithCurrentPolicy:forExtension:completionHandler:]):
+        (resetState):
+        (TestWebKitAPI::TEST):
+
+2021-07-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clean up App Privacy Report code
+        https://bugs.webkit.org/show_bug.cgi?id=227326
+        <rdar://problem/79696849>
+
+        Reviewed by Brent Fulgham.
+
+        Delete testing functions related to attribution context. Move App
+        Privacy Report tests into their own file.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm: Added.
+        (TEST):
+        (catch):
+        (function):
+        (-[SWAppInitiatedRequestMessageHandler userContentController:didReceiveScriptMessage:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReportPlugIn.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacyPlugIn.mm.
+        (-[AppPrivacyReportPlugIn webProcessPlugInBrowserContextController:frame:willSendRequestForResource:request:redirectResponse:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (-[SWAppBoundRequestMessageHandler userContentController:didReceiveScriptMessage:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/app-privacy-report-iframe.html: Added.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::didLoadAppInitiatedRequest):
+        (WTR::TestRunner::didLoadNonAppInitiatedRequest):
+        (WTR::TestRunner::appBoundRequestContextDataForDomain): Deleted.
+        (WTR::TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback): Deleted.
+        (WTR::TestRunner::didLoadAppBoundRequest): Deleted.
+        (WTR::TestRunner::didLoadNonAppBoundRequest): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didLoadAppInitiatedRequest):
+        (WTR::TestController::didLoadNonAppInitiatedRequest):
+        (WTR::TestController::clearAppPrivacyReportTestingData):
+        (WTR::TestController::appBoundRequestContextDataForDomain): Deleted.
+        (WTR::TestController::didLoadAppBoundRequest): Deleted.
+        (WTR::TestController::didLoadNonAppBoundRequest): Deleted.
+        (WTR::TestController::clearAppBoundNavigationData): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveAppBoundRequestContextDataForDomain): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::didLoadAppInitiatedRequest):
+        (WTR::TestController::didLoadNonAppInitiatedRequest):
+        (WTR::TestController::clearAppPrivacyReportTestingData):
+        (WTR::TestController::appBoundRequestContextDataForDomain): Deleted.
+        (WTR::TestController::didLoadAppBoundRequest): Deleted.
+        (WTR::TestController::didLoadNonAppBoundRequest): Deleted.
+        (WTR::TestController::clearAppBoundNavigationData): Deleted.
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _didLoadAppInitiatedRequest:]):
+        (-[TestRunnerWKWebView _didLoadNonAppInitiatedRequest:]):
+        (-[TestRunnerWKWebView _appBoundNavigationDataForDomain:completionHandler:]): Deleted.
+        (-[TestRunnerWKWebView _didLoadAppBoundRequest:]): Deleted.
+        (-[TestRunnerWKWebView _didLoadNonAppBoundRequest:]): Deleted.
+
+2021-07-08  Garrett Davidson  <garrett_davidson@apple.com>
+
+        Update the WebAuthenticationPanel.GetAssertionLA test to expect the right value
+        https://bugs.webkit.org/show_bug.cgi?id=227726
+        rdar://80073404
+
+        Reviewed by Kate Cheney.
+
+        This test covers the changed code, but expects the wrong value. The existing
+        expectation was the base64 encoded string:
+
+        {"challenge":"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ","origin":"","type":"webauthn.create"}
+
+        The "type" field is clearly incorrect here. Update the test to expect the right
+        value, and change the expectation to a plaintext string instead of base64 encoded,
+        to make issues like this easier to spot in the future.
+
+
+        While here, also remove an outdated comment.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
+2021-07-07  John Wilander  <wilander@apple.com>
+
+        PCM: Add error logging for CryptoKit operations
+        https://bugs.webkit.org/show_bug.cgi?id=227731
+        <rdar://80221057>
+
+        Reviewed by Brent Fulgham.
+
+        Resolves three FIXMEs for error logging in PCM's CryptoKit operations.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+            Now expects an optional string instead of a bool from the function
+            calls which means EXPECT_TRUE has become EXPECT_FALSE. The optional
+            string is non-nullopt if it carries an error message.
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+            Now expects an optional string instead of a bool from the function
+            calls which means EXPECT_TRUE has become EXPECT_FALSE. The optional
+            string is non-nullopt if it carries an error message.
+
+2021-07-07  John Wilander  <wilander@apple.com>
+
+        PCM: API test PrivateClickMeasurement.ValidBlindedSecret is failing on platforms with RSABSSA
+        https://bugs.webkit.org/show_bug.cgi?id=227777
+        <rdar://80291822>
+
+        Reviewed by Kate Cheney.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm:
+        (TestWebKitAPI::TEST):
+           The test was looking for the value of JSON key "source_secret_token"
+           which should be "source_unlinkable_token". This patch fixes that and
+           renames the local variable accordingly.
+
+2021-07-07  Ling Ho  <lingho@apple.com>
+
+        Remove proxy server setting from Buildbot configuration
+        https://bugs.webkit.org/show_bug.cgi?id=227768
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/steps.py:
+        (DownloadBuiltProduct.start):
+
+2021-07-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Add unit-tests for RunWebKit1Tests
+        https://bugs.webkit.org/show_bug.cgi?id=227658
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/steps_unittest.py:
+
 2021-07-06  Harshil Ratnu  <hratnu@apple.com>
 
         Add myself (Harshil Ratnu) to contributors.json

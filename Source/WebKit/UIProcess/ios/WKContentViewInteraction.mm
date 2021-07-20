@@ -56,6 +56,8 @@
 #import "WKFormSelectControl.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHighlightLongPressGestureRecognizer.h"
+#import "WKHoverPlatter.h"
+#import "WKHoverPlatterParameters.h"
 #import "WKImageAnalysisGestureRecognizer.h"
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
@@ -128,6 +130,7 @@
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
 #import <WebCore/VisibleSelection.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/WebTextIndicatorLayer.h>
 #import <WebCore/WritingDirection.h>
@@ -136,6 +139,7 @@
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
@@ -471,7 +475,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
         [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
     else
         [[_contentView formAccessoryView] hideAutoFillButton];
-    if (WebKit::currentUserInterfaceIdiomIsPadOrMac())
+    if (!WebKit::currentUserInterfaceIdiomIsPhoneOrWatch())
         [_contentView reloadInputViews];
 }
 
@@ -894,6 +898,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setUpHoverGestureRecognizer];
 #endif
 
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+    _hoverPlatter = adoptNS([[WKHoverPlatter alloc] initWithView:self.rootContentView delegate:self]);
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
     [_lookupGestureRecognizer setDelegate:self];
@@ -1079,6 +1087,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if ENABLE(HOVER_GESTURE_RECOGNIZER)
     [_hoverGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+#endif
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [_hoverPlatter invalidate];
+    _hoverPlatter = nil;
 #endif
 
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
@@ -1537,7 +1550,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
                 if (_focusRequiresStrongPasswordAssistance)
                     return true;
 
-                if (!WebKit::currentUserInterfaceIdiomIsPadOrMac())
+                if (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch())
                     return true;
             }
 
@@ -2228,7 +2241,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         if (self._shouldUseContextMenusForFormControls)
             return NO;
 #endif
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+        return WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
     }
     default:
         return YES;
@@ -2289,7 +2302,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         fontSize:_focusedElementInformation.nodeFontSize
         minimumScale:_focusedElementInformation.minimumScaleFactor
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
-        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && !WebKit::currentUserInterfaceIdiomIsPadOrMac()
+        allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && WebKit::currentUserInterfaceIdiomIsPhoneOrWatch()
         forceScroll:[self requiresAccessoryView]];
 }
 
@@ -3306,7 +3319,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         if (self._shouldUseContextMenusForFormControls)
             return NO;
 #endif
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+        return WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
     }
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
@@ -3319,7 +3332,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::ContentEditable:
     case WebKit::InputType::TextArea:
     case WebKit::InputType::Week:
-        return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
+        return WebKit::currentUserInterfaceIdiomIsPhoneOrWatch();
     }
 }
 
@@ -4740,6 +4753,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _activeTextInteractionCount = 0;
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     [self _invalidateCurrentPositionInformation];
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+    [_hoverPlatter dismissPlatterWithAnimation:NO];
+#endif
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -4893,7 +4910,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
-    if (WebKit::currentUserInterfaceIdiomIsPadOrMac()) {
+    if (!WebKit::currentUserInterfaceIdiomIsPhoneOrWatch()) {
         [accessoryView setClearVisible:NO];
         return;
     }
@@ -6899,17 +6916,24 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     }
 
     if (auto controller = std::exchange(_presentedFullScreenInputViewController, nil)) {
-        if ([navigationController viewControllers].lastObject == controller.get())
-            [navigationController popViewControllerAnimated:animated];
-        else
-            [controller dismissViewControllerAnimated:animated completion:nil];
-
-        [[controller transitionCoordinator] animateAlongsideTransition:nil completion:[weakWebView = WeakObjCPtr<WKWebView>(_webView), controller] (id <UIViewControllerTransitionCoordinatorContext>) {
+        auto dispatchDidDismiss = makeBlockPtr([weakWebView = WeakObjCPtr<WKWebView>(_webView), controller] {
             auto strongWebView = weakWebView.get();
             id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([strongWebView UIDelegate]);
             if ([uiDelegate respondsToSelector:@selector(_webView:didDismissFocusedElementViewController:)])
                 [uiDelegate _webView:strongWebView.get() didDismissFocusedElementViewController:controller.get()];
-        }];
+        });
+
+        if ([navigationController viewControllers].lastObject == controller.get()) {
+            [navigationController popViewControllerAnimated:animated];
+            [[controller transitionCoordinator] animateAlongsideTransition:nil completion:[dispatchDidDismiss = WTFMove(dispatchDidDismiss)] (id <UIViewControllerTransitionCoordinatorContext>) {
+                dispatchDidDismiss();
+            }];
+        } else if (auto presentedViewController = retainPtr([controller presentedViewController])) {
+            [presentedViewController dismissViewControllerAnimated:animated completion:[controller, animated, dispatchDidDismiss = WTFMove(dispatchDidDismiss)] {
+                [controller dismissViewControllerAnimated:animated completion:dispatchDidDismiss.get()];
+            }];
+        } else
+            [controller dismissViewControllerAnimated:animated completion:dispatchDidDismiss.get()];
     }
 
 #if HAVE(QUICKBOARD_CONTROLLER)
@@ -7754,7 +7778,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (BOOL)_shouldUseLegacySelectPopoverDismissalBehavior
 {
-    if (!WebKit::currentUserInterfaceIdiomIsPadOrMac())
+    if (WebKit::currentUserInterfaceIdiomIsPhoneOrWatch())
         return NO;
 
     if (_focusedElementInformation.elementType != WebKit::InputType::Select)
@@ -9502,6 +9526,8 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         [self.window makeKeyWindow];
 
     _page->handleMouseEvent(*event);
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForMouse)
+        [_hoverPlatter setHoverPoint:event->position()];
 }
 
 - (void)_configureMouseGestureRecognizer
@@ -9536,9 +9562,20 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return;
 
     _page->handleMouseEvent(*event);
+    if (WKHoverPlatterDomain.rootSettings.platterEnabledForHover)
+        [_hoverPlatter setHoverPoint:event->position()];
 }
 
 #endif // ENABLE(HOVER_GESTURE_RECOGNIZER)
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT) || ENABLE(HOVER_GESTURE_RECOGNIZER)
+
+- (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler
+{
+    [self doAfterPositionInformationUpdate:completionHandler forRequest:request];
+}
+
+#endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
@@ -11032,6 +11069,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf)
                     return nil;
+
+                auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>([strongSelf webViewUIDelegate]);
+                if ([uiDelegate respondsToSelector:@selector(_webView:contextMenuContentPreviewForElement:)]) {
+                    if (UIViewController *previewViewController = [uiDelegate _webView:[strongSelf webView] contextMenuContentPreviewForElement:strongSelf->_contextMenuElementInfo.get()])
+                        return previewViewController;
+                }
 
                 return adoptNS([[WKImagePreviewViewController alloc] initWithCGImage:cgImage defaultActions:nil elementInfo:elementInfo.get()]).autorelease();
             };

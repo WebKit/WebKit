@@ -270,7 +270,7 @@ void RenderListItem::computePreferredLogicalWidths()
 
 void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!logicalHeight() && hasOverflowClip())
+    if (!logicalHeight() && hasNonVisibleOverflow())
         return;
 
     RenderBlockFlow::paint(paintInfo, paintOffset);

@@ -87,6 +87,10 @@ private:
     int sliderTickOffsetFromTrackCenter() const final;
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 #endif
+
+#if PLATFORM(GTK)
+    Seconds caretBlinkInterval() const override;
+#endif
 };
 
 } // namespace WebCore

@@ -507,10 +507,8 @@ void ResourceLoader::didBlockAuthenticationChallenge()
     m_wasAuthenticationChallengeBlocked = true;
     if (m_options.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials)
         return;
-    ASSERT(!shouldAllowResourceToAskForCredentials());
-    if (!m_frame)
-        return;
-    m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked ", m_request.url().stringCenterEllipsizedToLength(), " from asking for credentials because it is a cross-origin request."));
+    if (m_frame && !shouldAllowResourceToAskForCredentials())
+        m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked ", m_request.url().stringCenterEllipsizedToLength(), " from asking for credentials because it is a cross-origin request."));
 }
 
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHandler<void()>&& policyCompletionHandler)

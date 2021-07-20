@@ -2,12 +2,24 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-literals-string-literals
-description: >
-    LegacyOctalEscapeSequence is not enabled in strict mode code
-    (regardless of the presence of Annex B)
+description: LegacyOctalEscapeSequence is not enabled in strict mode code - 8
 info: |
-    A conforming implementation, when processing strict mode code, must not extend the
-    syntax of EscapeSequence to include LegacyOctalEscapeSequence as described in B.1.2.
+  EscapeSequence ::
+    CharacterEscapeSequence
+    LegacyOctalEscapeSequence
+    NonOctalDecimalEscapeSequence
+    HexEscapeSequence
+    UnicodeEscapeSequence
+
+  NonOctalDecimalEscapeSequence :: one of
+    8 9
+
+  ## 12.8.4.1 Static Semantics: Early Errors
+
+  EscapeSequence :: NonOctalDecimalEscapeSequence
+
+  - It is a Syntax Error if the source code matching this production is strict
+    mode code.
 flags: [onlyStrict]
 negative:
   phase: parse

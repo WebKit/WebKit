@@ -38,7 +38,6 @@ if sys.version_info < (3, 5):
     print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
     sys.exit(1)
 
-APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
 BUILD_WEBKIT_HOSTNAME = 'build.webkit.org'
 COMMITS_INFO_URL = 'https://commits.webkit.org/'
 CURRENT_HOSTNAME = socket.gethostname().strip()
@@ -325,8 +324,12 @@ class CompileJSCOnly(CompileWebKit):
 
 
 class InstallBuiltProduct(shell.ShellCommand):
+    name = 'install-built-product'
+    description = ['Installing Built Product']
+    descriptionDone = ['Installed Built Product']
     command = ["python3", "Tools/Scripts/install-built-product",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
+
 
 class ArchiveBuiltProduct(shell.ShellCommand):
     command = ["python3", "Tools/CISupport/built-product-archive",
@@ -402,8 +405,6 @@ class DownloadBuiltProduct(shell.ShellCommand):
     flunkOnFailure = False
 
     def start(self):
-        if 'apple' in self.getProperty('buildername').lower():
-            self.workerEnvironment['HTTPS_PROXY'] = APPLE_WEBKIT_AWS_PROXY  # curl env var to use a proxy
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
@@ -651,7 +652,7 @@ class RunAPITests(TestWithFailureCount):
     jsonFileName = "api_test_results.json"
     logfiles = {"json": jsonFileName}
     command = [
-        "python",
+        "python3",
         "./Tools/Scripts/run-api-tests",
         "--no-build",
         "--json-output={0}".format(jsonFileName),

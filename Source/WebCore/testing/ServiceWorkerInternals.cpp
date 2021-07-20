@@ -119,18 +119,18 @@ int ServiceWorkerInternals::processIdentifier() const
     return getCurrentProcessID();
 }
 
-void ServiceWorkerInternals::lastNavigationWasAppBound(Ref<DeferredPromise>&& promise)
+void ServiceWorkerInternals::lastNavigationWasAppInitiated(Ref<DeferredPromise>&& promise)
 {
-    ASSERT(!m_lastNavigationWasAppBoundPromise);
-    m_lastNavigationWasAppBoundPromise = WTFMove(promise);
+    ASSERT(!m_lastNavigationWasAppInitiatedPromise);
+    m_lastNavigationWasAppInitiatedPromise = WTFMove(promise);
     callOnMainThread([identifier = m_identifier, weakThis = makeWeakPtr(this)]() mutable {
         if (auto* proxy = SWContextManager::singleton().workerByID(identifier)) {
-            proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), appBound = proxy->lastNavigationWasAppBound()](auto&) {
-                if (!weakThis || !weakThis->m_lastNavigationWasAppBoundPromise)
+            proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), appInitiated = proxy->lastNavigationWasAppInitiated()](auto&) {
+                if (!weakThis || !weakThis->m_lastNavigationWasAppInitiatedPromise)
                     return;
 
-                weakThis->m_lastNavigationWasAppBoundPromise->resolve<IDLBoolean>(appBound);
-                weakThis->m_lastNavigationWasAppBoundPromise = nullptr;
+                weakThis->m_lastNavigationWasAppInitiatedPromise->resolve<IDLBoolean>(appInitiated);
+                weakThis->m_lastNavigationWasAppInitiatedPromise = nullptr;
             }, WorkerRunLoop::defaultMode());
         }
     });

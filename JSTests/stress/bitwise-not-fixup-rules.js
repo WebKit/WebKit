@@ -10,8 +10,7 @@ function foo(a) {
 }
 noInline(foo);
 
-// This can fail when we are fuzzing executable allocation.
-if (!numberOfDFGCompiles(foo)) {
+if (!jscOptions().useExecutableAllocationFuzz) {
     let c = 0;
     let o = {
         valueOf: () => {

@@ -326,8 +326,16 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
 
 void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentifier id)
 {
-    if (auto* proxy = m_proxies.get(id))
-        proxy->start();
+    auto* proxy = m_proxies.get(id);
+    if (!proxy)
+        return;
+
+    if (!m_connectionProxy->setCaptureAttributionString()) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to set capture attribution, failing capture.");
+        return;
+    }
+
+    proxy->start();
 }
 
 void UserMediaCaptureManagerProxy::stopProducingData(RealtimeMediaSourceIdentifier id)

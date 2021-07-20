@@ -86,6 +86,23 @@ function find(callback /* [, thisArg] */)
     return @undefined;
 }
 
+function findLast(callback /* [, thisArg] */)
+{
+    "use strict";
+    var length = @typedArrayLength(this);
+    var thisArg = @argument(1);
+
+    if (!@isCallable(callback))
+        @throwTypeError("TypedArray.prototype.findLast callback must be a function");
+
+    for (var i = length - 1; i >= 0; i--) {
+        var element = this[i];
+        if (callback.@call(thisArg, element, i, this))
+            return element;
+    }
+    return @undefined;
+}
+
 function findIndex(callback /* [, thisArg] */)
 {
     "use strict";
@@ -96,6 +113,22 @@ function findIndex(callback /* [, thisArg] */)
         @throwTypeError("TypedArray.prototype.findIndex callback must be a function");
 
     for (var i = 0; i < length; i++) {
+        if (callback.@call(thisArg, this[i], i, this))
+            return i;
+    }
+    return -1;
+}
+
+function findLastIndex(callback /* [, thisArg] */)
+{
+    "use strict";
+    var length = @typedArrayLength(this);
+    var thisArg = @argument(1);
+
+    if (!@isCallable(callback))
+        @throwTypeError("TypedArray.prototype.findLastIndex callback must be a function");
+
+    for (var i = length - 1; i >= 0; i--) {
         if (callback.@call(thisArg, this[i], i, this))
             return i;
     }

@@ -143,6 +143,7 @@ const TestFeatures& TestOptions::defaults()
             { "ignoreSynchronousMessagingTimeouts", false },
             { "ignoresViewportScaleLimits", false },
             { "isAppBoundWebView", false },
+            { "isAppInitiated", true },
             { "runSingly", false },
             { "shouldHandleRunOpenPanel", true },
             { "shouldPresentPopovers", true },
@@ -159,6 +160,7 @@ const TestFeatures& TestOptions::defaults()
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
+            { "horizontalSystemMinimumLayoutMargin", 0 },
             { "deviceScaleFactor", 1 },
             { "viewHeight", 600 },
             { "viewWidth", 800 },
@@ -195,6 +197,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "ignoreSynchronousMessagingTimeouts", TestHeaderKeyType::BoolTestRunner },
         { "ignoresViewportScaleLimits", TestHeaderKeyType::BoolTestRunner },
         { "isAppBoundWebView", TestHeaderKeyType::BoolTestRunner },
+        { "isAppInitiated", TestHeaderKeyType::BoolTestRunner },
         { "runSingly", TestHeaderKeyType::BoolTestRunner },
         { "shouldHandleRunOpenPanel", TestHeaderKeyType::BoolTestRunner },
         { "shouldPresentPopovers", TestHeaderKeyType::BoolTestRunner },
@@ -210,6 +213,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
+        { "horizontalSystemMinimumLayoutMargin", TestHeaderKeyType::DoubleTestRunner },
         { "deviceScaleFactor", TestHeaderKeyType::DoubleTestRunner },
         { "viewHeight", TestHeaderKeyType::DoubleTestRunner },
         { "viewWidth", TestHeaderKeyType::DoubleTestRunner },

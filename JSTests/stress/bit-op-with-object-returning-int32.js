@@ -9,8 +9,7 @@ function bitAnd(a, b) {
 }
 noInline(bitAnd);
 
-// This can fail if we are fuzzing executable allocation .
-if (numberOfDFGCompiles(bitAnd) === 0) {
+if (!jscOptions().useExecutableAllocationFuzz) {
 
     var o = { valueOf: () => 0b1101 };
 

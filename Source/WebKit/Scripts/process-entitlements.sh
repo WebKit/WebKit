@@ -146,6 +146,7 @@ function mac_process_webcontent_or_plugin_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
             plistbuddy Add :com.apple.private.verified-jit bool YES
+            plistbuddy Add :com.apple.security.cs.single-jit bool YES
         fi
 
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
@@ -191,6 +192,7 @@ function maccatalyst_process_webcontent_entitlements()
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
         plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :com.apple.security.cs.single-jit bool YES
     fi
 }
 
@@ -249,6 +251,7 @@ function maccatalyst_process_plugin_entitlements()
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
     then
         plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :com.apple.security.cs.single-jit bool YES
     fi
 }
 
@@ -309,6 +312,10 @@ function ios_family_process_gpu_entitlements()
 
     plistbuddy Add :seatbelt-profiles array
     plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.GPU
+
+    plistbuddy Add :com.apple.systemstatus.activityattribution bool YES
+    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name array
+    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.systemstatus.activityattribution
 }
 
 function ios_family_process_webauthn_entitlements()

@@ -25,6 +25,7 @@
 #define WebKitCredential_h
 
 #include <glib-object.h>
+#include <gio/gio.h>
 #include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -50,30 +51,41 @@ typedef enum {
 } WebKitCredentialPersistence;
 
 WEBKIT_API GType
-webkit_credential_get_type             (void);
+webkit_credential_get_type                (void);
 
 WEBKIT_API WebKitCredential *
-webkit_credential_new                  (const gchar                 *username,
-                                        const gchar                 *password,
-                                        WebKitCredentialPersistence  persistence);
+webkit_credential_new                     (const gchar                 *username,
+                                           const gchar                 *password,
+                                           WebKitCredentialPersistence  persistence);
 
 WEBKIT_API WebKitCredential *
-webkit_credential_copy                 (WebKitCredential            *credential);
+webkit_credential_new_for_certificate_pin (const gchar                 *pin,
+                                           WebKitCredentialPersistence  persistence);
+
+WEBKIT_API WebKitCredential *
+webkit_credential_new_for_certificate     (GTlsCertificate             *certificate,
+                                           WebKitCredentialPersistence  persistence);
+
+WEBKIT_API WebKitCredential *
+webkit_credential_copy                    (WebKitCredential            *credential);
 
 WEBKIT_API void
-webkit_credential_free                 (WebKitCredential            *credential);
+webkit_credential_free                    (WebKitCredential            *credential);
 
 WEBKIT_API const gchar *
-webkit_credential_get_username         (WebKitCredential            *credential);
+webkit_credential_get_username            (WebKitCredential            *credential);
 
 WEBKIT_API const gchar *
-webkit_credential_get_password         (WebKitCredential            *credential);
+webkit_credential_get_password            (WebKitCredential            *credential);
 
 WEBKIT_API gboolean
-webkit_credential_has_password         (WebKitCredential            *credential);
+webkit_credential_has_password            (WebKitCredential            *credential);
+
+WEBKIT_API GTlsCertificate *
+webkit_credential_get_certificate         (WebKitCredential            *credential);
 
 WEBKIT_API WebKitCredentialPersistence
-webkit_credential_get_persistence      (WebKitCredential            *credential);
+webkit_credential_get_persistence         (WebKitCredential            *credential);
 
 G_END_DECLS
 

@@ -189,11 +189,16 @@ static HashSet<Page*>& allPages()
     return set;
 }
 
-static unsigned nonUtilityPageCount { 0 };
+static unsigned gNonUtilityPageCount { 0 };
 
 static inline bool isUtilityPageChromeClient(ChromeClient& chromeClient)
 {
     return chromeClient.isEmptyChromeClient() || chromeClient.isSVGImageChromeClient();
+}
+
+unsigned Page::nonUtilityPageCount()
+{
+    return gNonUtilityPageCount;
 }
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
@@ -334,8 +339,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     allPages().add(this);
 
     if (!isUtilityPage()) {
-        ++nonUtilityPageCount;
-        MemoryPressureHandler::setPageCount(nonUtilityPageCount);
+        ++gNonUtilityPageCount;
+        MemoryPressureHandler::setPageCount(gNonUtilityPageCount);
     }
 
 #ifndef NDEBUG
@@ -375,8 +380,8 @@ Page::~Page()
     setGroupName(String());
     allPages().remove(this);
     if (!isUtilityPage()) {
-        --nonUtilityPageCount;
-        MemoryPressureHandler::setPageCount(nonUtilityPageCount);
+        --gNonUtilityPageCount;
+        MemoryPressureHandler::setPageCount(gNonUtilityPageCount);
     }
     
     m_settings->pageDestroyed();
@@ -1294,7 +1299,7 @@ void Page::didFinishLoad()
 
 bool Page::isOnlyNonUtilityPage() const
 {
-    return !isUtilityPage() && nonUtilityPageCount == 1;
+    return !isUtilityPage() && gNonUtilityPageCount == 1;
 }
 
 void Page::setLowPowerModeEnabledOverrideForTesting(std::optional<bool> isEnabled)
@@ -3630,7 +3635,7 @@ void Page::updateElementsWithTextRecognitionResults()
         if (!is<RenderImage>(renderer))
             continue;
 
-        auto newContainerRect = enclosingIntRect(downcast<RenderImage>(*renderer).replacedContentRect());
+        auto newContainerRect = protectedElement->containerRectForTextRecognition();
         if (containerRect == newContainerRect)
             continue;
 

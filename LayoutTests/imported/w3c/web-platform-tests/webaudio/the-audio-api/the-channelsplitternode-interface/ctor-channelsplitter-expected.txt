@@ -26,7 +26,7 @@ PASS < [default constructor] All assertions passed. (total 7 assertions)
 PASS > [test AudioNodeOptions]
 PASS   new ChannelSplitterNode(c, {channelCount: 6}) did not throw an exception.
 PASS   node.channelCount is equal to 6.
-PASS   new ChannelSplitterNode(c, {channelCount: 7}) threw IndexSizeError: "Channel count must be set to number of outputs.".
+PASS   new ChannelSplitterNode(c, {channelCount: 7}) threw InvalidStateError: "Channel count must be set to number of outputs.".
 PASS   (new ChannelSplitterNode(c, {channelCount: 6})).channelCount = 6 did not throw an exception.
 PASS   new ChannelSplitterNode(c, {channelCountMode: "explicit"} did not throw an exception.
 PASS   node.channelCountMode is equal to explicit.
@@ -42,7 +42,7 @@ PASS   node1.numberOfInputs is equal to 1.
 PASS   node1.numberOfOutputs is equal to 9.
 PASS   node1.channelInterpretation is equal to discrete.
 PASS   new ChannelSplitterNode(c, {"numberOfOutputs":99}) threw IndexSizeError: "Number of outputs is not in the allowed range".
-PASS   new ChannelSplitterNode(c, {"channelCount":3}) threw IndexSizeError: "Channel count must be set to number of outputs.".
+PASS   new ChannelSplitterNode(c, {"channelCount":3}) threw InvalidStateError: "Channel count must be set to number of outputs.".
 PASS   new ChannelSplitterNode(c, {"channelCountMode":"max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.".
 PASS < [constructor options] All assertions passed. (total 7 assertions)
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.

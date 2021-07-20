@@ -55,42 +55,42 @@ bool UserInputBridge::handleContextMenuEvent(const PlatformMouseEvent& mouseEven
 
 bool UserInputBridge::handleMousePressEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_page.mainFrame().eventHandler().handleMousePressEvent(mouseEvent);
+    return Ref(m_page.mainFrame())->eventHandler().handleMousePressEvent(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_page.mainFrame().eventHandler().handleMouseReleaseEvent(mouseEvent);
+    return Ref(m_page.mainFrame())->eventHandler().handleMouseReleaseEvent(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_page.mainFrame().eventHandler().mouseMoved(mouseEvent);
+    return Ref(m_page.mainFrame())->eventHandler().mouseMoved(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseMoveOnScrollbarEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_page.mainFrame().eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
+    return Ref(m_page.mainFrame())->eventHandler().passMouseMovedEventToScrollbars(mouseEvent);
 }
 
 bool UserInputBridge::handleMouseForceEvent(const PlatformMouseEvent& mouseEvent, InputSource)
 {
-    return m_page.mainFrame().eventHandler().handleMouseForceEvent(mouseEvent);
+    return Ref(m_page.mainFrame())->eventHandler().handleMouseForceEvent(mouseEvent);
 }
 
 bool UserInputBridge::handleKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource)
 {
-    return m_page.focusController().focusedOrMainFrame().eventHandler().keyEvent(keyEvent);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().keyEvent(keyEvent);
 }
 
 bool UserInputBridge::handleAccessKeyEvent(const PlatformKeyboardEvent& keyEvent, InputSource)
 {
-    return m_page.focusController().focusedOrMainFrame().eventHandler().handleAccessKey(keyEvent);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().handleAccessKey(keyEvent);
 }
 
 bool UserInputBridge::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, InputSource)
 {
-    return m_page.mainFrame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+    return Ref(m_page.mainFrame())->eventHandler().handleWheelEvent(wheelEvent, processingSteps);
 }
 
 void UserInputBridge::focusSetActive(bool active, InputSource)
@@ -105,12 +105,12 @@ void UserInputBridge::focusSetFocused(bool focused, InputSource)
 
 bool UserInputBridge::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity, InputSource)
 {
-    return m_page.focusController().focusedOrMainFrame().eventHandler().scrollRecursively(direction, granularity, nullptr);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().scrollRecursively(direction, granularity, nullptr);
 }
 
 bool UserInputBridge::logicalScrollRecursively(ScrollLogicalDirection direction, ScrollGranularity granularity, InputSource)
 {
-    return m_page.focusController().focusedOrMainFrame().eventHandler().logicalScrollRecursively(direction, granularity, nullptr);
+    return Ref(m_page.focusController().focusedOrMainFrame())->eventHandler().logicalScrollRecursively(direction, granularity, nullptr);
 }
 
 void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
@@ -118,7 +118,7 @@ void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
 #if ENABLE(WEB_AUTHN)
     m_page.authenticatorCoordinator().resetUserGestureRequirement();
 #endif
-    m_page.mainFrame().loader().load(WTFMove(request));
+    Ref(m_page.mainFrame())->loader().load(WTFMove(request));
 }
 
 void UserInputBridge::reloadFrame(Frame& frame, OptionSet<ReloadOption> options, InputSource)
@@ -136,7 +136,7 @@ void UserInputBridge::stopLoadingFrame(Frame& frame, InputSource)
 
 bool UserInputBridge::tryClosePage(InputSource)
 {
-    return m_page.mainFrame().loader().shouldClose();
+    return Ref(m_page.mainFrame())->loader().shouldClose();
 }
 
 } // namespace WebCore

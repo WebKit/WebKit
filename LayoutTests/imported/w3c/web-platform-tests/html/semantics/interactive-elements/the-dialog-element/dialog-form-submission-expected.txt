@@ -5,4 +5,5 @@ PASS no returnValue when there's no result.
 PASS input image button should return the coordinates
 PASS formmethod attribute should use dialog form submission
 PASS closing the dialog while submitting should stop the submission
+PASS calling form.submit() in click handler of submit button should start the submission synchronously
 

@@ -184,6 +184,15 @@ std::optional<WallTime> fileCreationTime(const String& path)
 #endif
 }
 
+std::optional<uint32_t> volumeFileBlockSize(const String& path)
+{
+    struct statvfs fileStat;
+    if (!statvfs(fileSystemRepresentation(path).data(), &fileStat))
+        return fileStat.f_frsize;
+
+    return std::nullopt;
+}
+
 #if !USE(CF)
 String stringFromFileSystemRepresentation(const char* path)
 {

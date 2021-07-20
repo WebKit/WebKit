@@ -1,0 +1,5 @@
+Blocked access to external URL http://www.localhost:8800/webmessaging/multi-globals/support/incumbent-document-domain.sub.html
+
+
+FAIL The incumbent page being cross-origin must not prevent the BroadcastChannel message from being seen frames[0].createBroadcastChannel is not a function. (In 'frames[0].createBroadcastChannel("incumbent")', 'frames[0].createBroadcastChannel' is undefined)
+

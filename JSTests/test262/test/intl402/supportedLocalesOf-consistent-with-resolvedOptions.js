@@ -11,9 +11,9 @@ includes: [testIntl.js]
 ---*/
 
 testWithIntlConstructors(function (Constructor) {
-    var info = getLocaleSupportInfo(Constructor);
     // this test should work equally for both matching algorithms
     ["lookup", "best fit"].forEach(function (matcher) {
+        var info = getLocaleSupportInfo(Constructor, {localeMatcher: matcher});
         var supportedByConstructor = info.supported.concat(info.byFallback);
         var supported = Constructor.supportedLocalesOf(supportedByConstructor,
             {localeMatcher: matcher});
@@ -28,6 +28,7 @@ testWithIntlConstructors(function (Constructor) {
     });
     
     // this test is only valid for lookup - best fit may find additional locales supported
+    var info = getLocaleSupportInfo(Constructor, {localeMatcher: "lookup"});
     var unsupportedByConstructor = info.unsupported;
     var supported = Constructor.supportedLocalesOf(unsupportedByConstructor,
             {localeMatcher: "lookup"});

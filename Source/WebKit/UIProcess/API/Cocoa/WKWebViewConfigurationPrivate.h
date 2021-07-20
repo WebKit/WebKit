@@ -33,6 +33,12 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
     _WKDragLiftDelayLong
 } WK_API_AVAILABLE(ios(11.0));
 
+typedef NS_ENUM(NSUInteger, _WKAttributionOverrideTesting) {
+    _WKAttributionOverrideTestingNoOverride = 0,
+    _WKAttributionOverrideTestingAppInitiated,
+    _WKAttributionOverrideTestingUserInitiated
+} WK_API_AVAILABLE(ios(15.0));
+
 @protocol _UIClickInteractionDriving;
 #endif
 
@@ -95,6 +101,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setShouldDecidePolicyBeforeLoadingQuickLookPreview:) BOOL _shouldDecidePolicyBeforeLoadingQuickLookPreview WK_API_AVAILABLE(ios(13.0));
 @property (nonatomic, setter=_setCanShowWhileLocked:) BOOL _canShowWhileLocked WK_API_AVAILABLE(ios(13.0));
 @property (nonatomic, setter=_setClickInteractionDriverForTesting:) id <_UIClickInteractionDriving> _clickInteractionDriverForTesting WK_API_AVAILABLE(ios(13.0));
+@property (nonatomic, setter=_setAppInitiatedOverrideValueForTesting:) _WKAttributionOverrideTesting _appInitiatedOverrideValueForTesting WK_API_AVAILABLE(ios(15.0));
 #else
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_API_AVAILABLE(macos(10.12));
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macos(10.12));

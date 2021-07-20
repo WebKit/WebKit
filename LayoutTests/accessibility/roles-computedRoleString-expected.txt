@@ -19,7 +19,7 @@ PASS: h4 -> heading.
 PASS: h5 -> heading.
 PASS: h5 -> heading.
 PASS: hr -> separator.
-PASS: img[alt='X'] -> img.
+PASS: img[alt='X'] -> image.
 PASS: input[type='button'] -> button.
 PASS: input[type='checkbox'] -> checkbox.
 PASS: input[type='date'] -> .
@@ -117,7 +117,7 @@ PASS: div[role="columnheader"] -> columnheader.
 PASS: div[role="gridcell"] -> gridcell.
 PASS: div[role="group"] -> group.
 PASS: div[role="heading"] -> heading.
-PASS: div[role="img"] -> img.
+PASS: div[role="img"] -> image.
 PASS: div[role="link"] -> link.
 PASS: div[role="list"] -> list.
 PASS: div[role="listitem"] -> listitem.
@@ -170,16 +170,16 @@ PASS: div[role="foo	button	bar"] -> .
 PASS: div[role="foo
 button
 bar"] -> .
-PASS: img[role="foo"] -> img.
-PASS: img[role="foo bar"] -> img.
-PASS: img[role="foo  bar"] -> img.
-PASS: img[role="foo	bar"] -> img.
+PASS: img[role="foo"] -> image.
+PASS: img[role="foo bar"] -> image.
+PASS: img[role="foo  bar"] -> image.
+PASS: img[role="foo	bar"] -> image.
 PASS: img[role="foo	
-bar"] -> img.
+bar"] -> image.
 PASS: img[role="text"] -> text.
 PASS: img[role="text img"] -> text.
-PASS: img[role="img text"] -> img.
-PASS: img[role="presentation"][aria-label] -> img.
+PASS: img[role="img text"] -> image.
+PASS: img[role="presentation"][aria-label] -> image.
 PASS: a[role="foo bar"] -> link.
 PASS successfullyParsed is true
 

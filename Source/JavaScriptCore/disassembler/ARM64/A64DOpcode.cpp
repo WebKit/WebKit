@@ -47,7 +47,7 @@ const char* const A64DOpcode::s_optionName[8] = {
 };
 
 const char* const A64DOpcode::s_shiftNames[4] = {
-    "lsl", "lsr", "asl", "ror"
+    "lsl", "lsr", "asr", "ror"
 };
 
 const char A64DOpcode::s_FPRegisterPrefix[5] = {

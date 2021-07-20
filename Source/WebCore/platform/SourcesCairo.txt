@@ -37,5 +37,4 @@ platform/graphics/cairo/IntRectCairo.cpp
 platform/graphics/cairo/NativeImageCairo.cpp
 platform/graphics/cairo/PathCairo.cpp
 platform/graphics/cairo/PatternCairo.cpp
-platform/graphics/cairo/PlatformContextCairo.cpp
 platform/graphics/cairo/RefPtrCairo.cpp

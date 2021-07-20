@@ -1,0 +1,3 @@
+
+FAIL MessageChannel/MessagePort should not work after a worker self.close() Can't find variable: Worker
+

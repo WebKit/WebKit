@@ -87,7 +87,7 @@ layer at (0,0) size 800x2286
                   text run at (249,231) width 292: "Both the content background and the padding"
                   text run at (190,251) width 177: "should be aqua (light blue)."
               RenderBlock {P} at (4,991) size 762x40 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 735x39
+                RenderText {#text} at (0,0) size 763x39
                   text run at (0,0) width 550: "This element should have no padding, since negative padding values are not allowed. "
-                  text run at (549,0) width 186: "Both the content background"
-                  text run at (0,20) width 332: "and the normal padding should be aqua (light blue)."
+                  text run at (549,0) width 214: "Both the content background and"
+                  text run at (0,20) width 304: "the normal padding should be aqua (light blue)."

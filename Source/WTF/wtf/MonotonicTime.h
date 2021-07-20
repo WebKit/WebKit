@@ -54,6 +54,7 @@ public:
 
 #if OS(DARWIN)
     WTF_EXPORT_PRIVATE static MonotonicTime fromMachAbsoluteTime(uint64_t);
+    WTF_EXPORT_PRIVATE uint64_t toMachAbsoluteTime() const;
 #endif
 
     WTF_EXPORT_PRIVATE static MonotonicTime now();

@@ -307,6 +307,11 @@ public:
     virtual void audioOutputDeviceChanged() { }
 
     virtual MediaPlayerIdentifier identifier() const { return { }; }
+
+    virtual bool supportsPlayAtHostTime() const { return false; }
+    virtual bool supportsPauseAtHostTime() const { return false; }
+    virtual bool playAtHostTime(const MonotonicTime&) { return false; }
+    virtual bool pauseAtHostTime(const MonotonicTime&) { return false; }
 };
 
 }

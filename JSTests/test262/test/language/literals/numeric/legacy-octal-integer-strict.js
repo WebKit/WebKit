@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-esid: sec-additional-syntax-numeric-literals
+esid: sec-literals-numeric-literals
 description: LegacyOctalIntegerLiteral is not enabled in strict mode code
 info: |
     NumericLiteral ::
@@ -11,9 +11,17 @@ info: |
       HexIntegerLiteral
       LegacyOctalIntegerLiteral
 
-     LegacyOctalIntegerLiteral ::
-       0 OctalDigit
-       LegacyOctalIntegerLiteral OctalDigit
+    LegacyOctalIntegerLiteral ::
+      0 OctalDigit
+      LegacyOctalIntegerLiteral OctalDigit
+
+    ## 12.8.3.1 Static Semantics: Early Errors
+
+    NumericLiteral :: LegacyOctalIntegerLiteral
+    DecimalIntegerLiteral :: NonOctalDecimalIntegerLiteral
+
+    - It is a Syntax Error if the source code matching this production is
+      strict mode code.
 flags: [onlyStrict]
 negative:
   phase: parse

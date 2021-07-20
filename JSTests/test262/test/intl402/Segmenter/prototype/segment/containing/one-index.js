@@ -36,6 +36,9 @@ const index_to_one = [
     "14.9E-1",
     "14.9e-1",
     true,
+    { toString(){ return "1"; } },
+    { valueOf(){ return 1; } },
+    { [Symbol.toPrimitive](){ return 1; } },
 ];
 
 // Except granularity: "sentence", check the result.segment is " ".

@@ -218,10 +218,14 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
-        
+
+        auto currentContentInset = scrollView.contentInset;
         auto contentInsetTop = options.contentInsetTop();
-        scrollView.contentInset = UIEdgeInsetsMake(contentInsetTop, 0, 0, 0);
-        scrollView.contentOffset = CGPointMake(0, -contentInsetTop);
+        if (currentContentInset.top != contentInsetTop) {
+            currentContentInset.top = contentInsetTop;
+            scrollView.contentInset = currentContentInset;
+            scrollView.contentOffset = CGPointMake(-currentContentInset.left, -currentContentInset.top);
+        }
 
         if (webView.interactingWithFormControl)
             shouldRestoreFirstResponder = [webView resignFirstResponder];

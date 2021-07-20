@@ -29,7 +29,7 @@ PASS < [audio-node-options] All assertions passed. (total 6 assertions)
 PASS > [channel-count]
 PASS   testNode.channelCount is equal to 17.
 PASS   Creating AudioWorkletNode with channelCount 0 threw NotSupportedError: "Channel count cannot be 0".
-PASS   Creating AudioWorkletNode with channelCount 33 threw IndexSizeError: "Channel count exceeds maximum limit".
+PASS   Creating AudioWorkletNode with channelCount 33 threw NotSupportedError: "Channel count exceeds maximum limit".
 PASS < [channel-count] All assertions passed. (total 3 assertions)
 PASS > [channel-count-mode]
 PASS   testNode.channelCountMode (set via options.max) is equal to max.

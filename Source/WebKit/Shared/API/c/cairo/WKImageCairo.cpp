@@ -30,8 +30,7 @@
 #include "ShareableBitmap.h"
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/PlatformContextCairo.h>
+#include <WebCore/GraphicsContextCairo.h>
 #include <cairo.h>
 
 cairo_surface_t* WKImageCreateCairoSurface(WKImageRef imageRef)

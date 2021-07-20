@@ -410,7 +410,7 @@ private:
     void prewarmWithDomainInformation(const WebCore::PrewarmInformation&);
 
 #if USE(OS_STATE)
-    void registerWithStateDumper();
+    RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
 #endif
 
     void markAllLayersVolatile(CompletionHandler<void()>&&);

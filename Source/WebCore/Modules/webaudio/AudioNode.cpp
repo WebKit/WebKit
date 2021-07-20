@@ -193,7 +193,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
         return Exception { IndexSizeError, "Input index exceeds number of inputs"_s };
 
     if (&context() != &destination.context())
-        return Exception { SyntaxError, "Source and destination nodes belong to different audio contexts"_s };
+        return Exception { InvalidAccessError, "Source and destination nodes belong to different audio contexts"_s };
 
     auto* input = destination.input(inputIndex);
     auto* output = this->output(outputIndex);
@@ -220,7 +220,7 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
         return Exception { IndexSizeError, "Output index exceeds number of outputs"_s };
 
     if (&context() != param.context())
-        return Exception { SyntaxError, "Node and AudioParam belong to different audio contexts"_s };
+        return Exception { InvalidAccessError, "Node and AudioParam belong to different audio contexts"_s };
 
     auto* output = this->output(outputIndex);
     param.connect(output);
@@ -385,7 +385,7 @@ ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
         return Exception { NotSupportedError, "Channel count cannot be 0"_s };
     
     if (channelCount > AudioContext::maxNumberOfChannels)
-        return Exception { IndexSizeError, "Channel count exceeds maximum limit"_s };
+        return Exception { NotSupportedError, "Channel count exceeds maximum limit"_s };
 
     if (m_channelCount == channelCount)
         return { };

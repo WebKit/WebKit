@@ -480,7 +480,7 @@ RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
         // want to return this as our container. Instead we should use the root element.
         if (candidate->isRenderView())
             break;
-        if (candidate->hasOverflowClip())
+        if (candidate->hasNonVisibleOverflow())
             return downcast<RenderBox>(candidate);
     }
 
@@ -508,7 +508,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->isSVGRoot())
         return true;
 
-    if (!object->hasOverflowClip())
+    if (!object->hasNonVisibleOverflow())
         return false;
 
     if (object->style().width().isIntrinsicOrAuto() || object->style().height().isIntrinsicOrAuto() || object->style().height().isPercentOrCalculated())
@@ -1004,7 +1004,7 @@ std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const Layo
         return rect;
 
     LayoutRect adjustedRect = rect;
-    if (parent->hasOverflowClip()) {
+    if (parent->hasNonVisibleOverflow()) {
         bool isEmpty = !downcast<RenderBox>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
@@ -1125,7 +1125,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     else
         stream << "-";
 
-    if (hasOverflowClip())
+    if (hasNonVisibleOverflow())
         stream << "O";
     else
         stream << "-";

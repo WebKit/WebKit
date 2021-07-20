@@ -1,4 +1,4 @@
 
 PASS Eval is allowed because the CSP is report-only
-PASS Violation report status OK.
+FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
 

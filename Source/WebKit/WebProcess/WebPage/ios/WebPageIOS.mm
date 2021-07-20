@@ -2823,7 +2823,7 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.isAnimatedImage = image.isAnimated();
 
     if (request.includeSnapshot || request.includeImageData)
-        info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+        info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
 
     info.imageElementContext = page.contextForElement(element);
 }
@@ -2885,7 +2885,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
                 if (auto rendererAndImage = imageRendererAndImage(element)) {
                     auto& [renderImage, image] = *rendererAndImage;
                     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
-                    info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+                    info.image = createShareableBitmap(renderImage, { screenSize() * page.corePage()->deviceScaleFactor(), AllowAnimatedImages::Yes, UseSnapshotForTransparentImages::Yes });
                 }
             }
         }

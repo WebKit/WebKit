@@ -549,6 +549,66 @@ public:
         m_assembler.extr<64>(d, n, m, lsb.m_value);
     } 
 
+    void addLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void addRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void addUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void addLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void addRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void addUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.add<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void subLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void subRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void subUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void subLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void subRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void subUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.sub<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
         if (scratchForMask == InvalidGPRReg)
@@ -710,7 +770,7 @@ public:
 
     void multiplyNeg32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
     {
-        m_assembler.msub<32>(dest, mulLeft, mulRight, ARM64Registers::zr);
+        m_assembler.mneg<32>(dest, mulLeft, mulRight);
     }
 
     void multiplyAdd64(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
@@ -723,6 +783,11 @@ public:
         m_assembler.smaddl(dest, mulLeft, mulRight, summand);
     }
 
+    void multiplyAddZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        m_assembler.umaddl(dest, mulLeft, mulRight, summand);
+    }
+
     void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
     {
         m_assembler.msub<64>(dest, mulLeft, mulRight, minuend);
@@ -733,9 +798,24 @@ public:
         m_assembler.smsubl(dest, mulLeft, mulRight, minuend);
     }
 
+    void multiplySubZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        m_assembler.umsubl(dest, mulLeft, mulRight, minuend);
+    }
+
     void multiplyNeg64(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
     {
-        m_assembler.msub<64>(dest, mulLeft, mulRight, ARM64Registers::zr);
+        m_assembler.mneg<64>(dest, mulLeft, mulRight);
+    }
+
+    void multiplyNegSignExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
+    {
+        m_assembler.smnegl(dest, mulLeft, mulRight);
+    }
+
+    void multiplyNegZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID dest)
+    {
+        m_assembler.umnegl(dest, mulLeft, mulRight);
     }
 
     void multiplySignExtend32(RegisterID left, RegisterID right, RegisterID dest)
@@ -1651,16 +1731,6 @@ public:
         m_assembler.str<64>(src, dest, simm);
     }
     
-    void storeZero64(ImplicitAddress address)
-    {
-        store64(ARM64Registers::zr, address);
-    }
-    
-    void storeZero64(BaseIndex address)
-    {
-        store64(ARM64Registers::zr, address);
-    }
-    
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
@@ -1758,16 +1828,6 @@ public:
         store32(dataTempRegister, address);
     }
 
-    void storeZero32(ImplicitAddress address)
-    {
-        store32(ARM64Registers::zr, address);
-    }
-
-    void storeZero32(BaseIndex address)
-    {
-        store32(ARM64Registers::zr, address);
-    }
-
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
@@ -1811,16 +1871,6 @@ public:
 
         moveToCachedReg(imm, dataMemoryTempRegister());
         store16(dataTempRegister, address);
-    }
-
-    void storeZero16(ImplicitAddress address)
-    {
-        store16(ARM64Registers::zr, address);
-    }
-
-    void storeZero16(BaseIndex address)
-    {
-        store16(ARM64Registers::zr, address);
     }
 
     void store8(RegisterID src, BaseIndex address)

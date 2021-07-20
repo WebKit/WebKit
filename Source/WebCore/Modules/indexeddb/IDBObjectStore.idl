@@ -35,7 +35,7 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
     Exposed=(Window,Worker)
 ] interface IDBObjectStore {
     attribute DOMString name;
-    readonly attribute IDBKeyPath? keyPath;
+    [SameObject, CachedAttribute] readonly attribute IDBKeyPath? keyPath;
     readonly attribute DOMStringList indexNames;
     [SameObject] readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;

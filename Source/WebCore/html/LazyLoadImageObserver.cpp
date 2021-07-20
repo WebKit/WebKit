@@ -95,7 +95,7 @@ IntersectionObserver* LazyLoadImageObserver::intersectionObserver(Document& docu
 
 bool LazyLoadImageObserver::isObserved(Element& element) const
 {
-    return m_observer && m_observer->observationTargets().contains(&element);
+    return m_observer && m_observer->isObserving(element);
 }
 
 }

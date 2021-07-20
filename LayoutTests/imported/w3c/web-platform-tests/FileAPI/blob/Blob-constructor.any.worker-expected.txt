@@ -20,6 +20,7 @@ PASS ToString should be called on elements of the blobParts array.
 PASS ArrayBuffer elements of the blobParts array should be supported.
 PASS Passing typed arrays as elements of the blobParts array should work.
 PASS Passing a Float64Array as element of the blobParts array should work.
+PASS Passing BigInt typed arrays as elements of the blobParts array should work.
 PASS Passing a FrozenArray as the blobParts array should work (FrozenArray<MessagePort>).
 PASS Array with two blobs
 PASS Array with two buffers

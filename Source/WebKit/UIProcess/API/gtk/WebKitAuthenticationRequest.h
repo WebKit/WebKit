@@ -68,6 +68,7 @@ struct _WebKitAuthenticationRequestClass {
  * @WEBKIT_AUTHENTICATION_SCHEME_NEGOTIATE: Negotiate (or SPNEGO) authentication scheme as defined in RFC 4559.
  * @WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED: Client Certificate Authentication (see RFC 2246).
  * @WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED: Server Trust Authentication.
+ * @WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED: Client certificate PIN required for use. Since: 2.34
  * @WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN: Authentication scheme unknown.
  *
  * Enum values representing the authentication scheme.
@@ -83,6 +84,7 @@ typedef enum {
     WEBKIT_AUTHENTICATION_SCHEME_NEGOTIATE = 6,
     WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED = 7,
     WEBKIT_AUTHENTICATION_SCHEME_SERVER_TRUST_EVALUATION_REQUESTED = 8,
+    WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_PIN_REQUESTED = 9,
     WEBKIT_AUTHENTICATION_SCHEME_UNKNOWN = 100,
 } WebKitAuthenticationScheme;
 
@@ -131,6 +133,9 @@ webkit_authentication_request_authenticate            (WebKitAuthenticationReque
 
 WEBKIT_API void
 webkit_authentication_request_cancel                  (WebKitAuthenticationRequest *request);
+
+WEBKIT_API GTlsPasswordFlags
+webkit_authentication_request_get_certificate_pin_flags (WebKitAuthenticationRequest* request);
 
 G_END_DECLS
 

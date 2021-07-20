@@ -45,6 +45,7 @@
 #import "WebFrame.h"
 #import "WebInspector.h"
 #import "WebPage.h"
+#import "WebPageGroupProxy.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessDataStoreParameters.h"
 #import "WebProcessMessages.h"
@@ -69,6 +70,7 @@
 #import <WebCore/MainThreadSharedTimer.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/NSScrollerImpDetails.h>
+#import <WebCore/PageGroup.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformMediaSessionManager.h>
@@ -148,12 +150,10 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
 
-#if USE(OS_STATE)
-#import <os/state_private.h>
-#endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <WebCore/CaptionUserPreferencesMediaAF.h>
+#import "WebCaptionPreferencesDelegate.h"
+#import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
@@ -313,7 +313,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if PLATFORM(IOS_FAMILY)
-    setCurrentUserInterfaceIdiomIsPadOrMac(parameters.currentUserInterfaceIdiomIsPad);
+    setCurrentUserInterfaceIdiomIsPhoneOrWatch(parameters.currentUserInterfaceIdiomIsPhoneOrWatch);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
     RenderThemeIOS::setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -463,6 +463,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     SystemSoundManager::singleton().setSystemSoundDelegate(makeUnique<WebSystemSoundDelegate>());
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    WebCore::CaptionUserPreferencesMediaAF::setCaptionPreferencesDelegate(makeUnique<WebCaptionPreferencesDelegate>());
+#endif
+
 #if PLATFORM(MAC)
     if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
         softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
@@ -588,86 +592,44 @@ static void registerWithAccessibility()
 }
 
 #if USE(OS_STATE)
-void WebProcess::registerWithStateDumper()
+
+RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
 {
-    os_state_add_handler(dispatch_get_main_queue(), ^(os_state_hints_t hints) {
-
-        @autoreleasepool {
-            os_state_data_t os_state = nil;
-
-            // Only gather state on faults and sysdiagnose. It's overkill for
-            // general error messages.
-            if (hints->osh_api == OS_STATE_API_ERROR)
-                return os_state;
-
-            // Create a dictionary to contain the collected state. This
-            // dictionary will be serialized and passed back to os_state.
-            auto stateDict = adoptNS([[NSMutableDictionary alloc] init]);
-
-            {
-                auto memoryUsageStats = adoptNS([[NSMutableDictionary alloc] init]);
-                for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
-                    auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
-                    [memoryUsageStats setObject:@(it.value) forKey:keyString.get()];
-                }
-                [stateDict setObject:memoryUsageStats.get() forKey:@"Memory Usage Stats"];
-            }
-
-            {
-                auto jsObjectCounts = adoptNS([[NSMutableDictionary alloc] init]);
-                for (auto& it : PerformanceLogging::javaScriptObjectCounts()) {
-                    auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
-                    [jsObjectCounts setObject:@(it.value) forKey:keyString.get()];
-                }
-                [stateDict setObject:jsObjectCounts.get() forKey:@"JavaScript Object Counts"];
-            }
-
-            auto pageLoadTimes = createNSArray(m_pageMap.values(), [] (auto& page) -> id {
-                if (page->usesEphemeralSession())
-                    return nil;
-
-                return [NSDate dateWithTimeIntervalSince1970:page->loadCommitTime().secondsSinceEpoch().seconds()];
-            });
-
-            // Adding an empty array to the process state may provide an
-            // indication of the existance of private sessions, which we'd like
-            // to hide, so don't add empty arrays.
-            if ([pageLoadTimes count])
-                [stateDict setObject:pageLoadTimes.get() forKey:@"Page Load Times"];
-
-            // --- Possibly add other state here as other entries in the dictionary. ---
-
-            // Submitting an empty process state object may provide an
-            // indication of the existance of private sessions, which we'd like
-            // to hide, so don't return empty dictionaries.
-            if (![stateDict count])
-                return os_state;
-
-            // Serialize the accumulated process state so that we can put the
-            // result in an os_state_data_t structure.
-            NSError* error = nil;
-            NSData* data = [NSPropertyListSerialization dataWithPropertyList:stateDict.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:&error];
-
-            if (!data) {
-                ASSERT(data);
-                return os_state;
-            }
-
-            size_t neededSize = OS_STATE_DATA_SIZE_NEEDED(data.length);
-            os_state = (os_state_data_t)malloc(neededSize);
-            if (os_state) {
-                memset(os_state, 0, neededSize);
-                os_state->osd_type = OS_STATE_DATA_SERIALIZED_NSCF_OBJECT;
-                os_state->osd_data_size = data.length;
-                strlcpy(os_state->osd_title, "WebContent state", sizeof(os_state->osd_title));
-                memcpy(os_state->osd_data, data.bytes, data.length);
-            }
-
-            return os_state;
+    auto stateDictionary = adoptNS([[NSMutableDictionary alloc] init]);
+    {
+        auto memoryUsageStats = adoptNS([[NSMutableDictionary alloc] init]);
+        for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
+            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
+            [memoryUsageStats setObject:@(it.value) forKey:keyString.get()];
         }
+        [stateDictionary setObject:memoryUsageStats.get() forKey:@"Memory Usage Stats"];
+    }
+    {
+        auto jsObjectCounts = adoptNS([[NSMutableDictionary alloc] init]);
+        for (auto& it : PerformanceLogging::javaScriptObjectCounts()) {
+            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
+            [jsObjectCounts setObject:@(it.value) forKey:keyString.get()];
+        }
+        [stateDictionary setObject:jsObjectCounts.get() forKey:@"JavaScript Object Counts"];
+    }
+    auto pageLoadTimes = createNSArray(m_pageMap.values(), [] (auto& page) -> id {
+        if (page->usesEphemeralSession())
+            return nil;
+
+        return [NSDate dateWithTimeIntervalSince1970:page->loadCommitTime().secondsSinceEpoch().seconds()];
     });
+
+    // Adding an empty array to the process state may provide an
+    // indication of the existance of private sessions, which we'd like
+    // to hide, so don't add empty arrays.
+    if ([pageLoadTimes count])
+        [stateDictionary setObject:pageLoadTimes.get() forKey:@"Page Load Times"];
+
+    // --- Possibly add other state here as other entries in the dictionary. ---
+    return stateDictionary;
 }
-#endif
+
+#endif // USE(OS_STATE)
 
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
@@ -699,7 +661,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
         m_processType = ProcessType::WebContent;
 
 #if USE(OS_STATE)
-    registerWithStateDumper();
+    registerWithStateDumper("WebContent state"_s);
 #endif
 
 #if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
@@ -1012,9 +974,9 @@ void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
 }
 
-void WebProcess::userInterfaceIdiomDidChange(bool isPadOrMac)
+void WebProcess::userInterfaceIdiomDidChange(bool isPhoneOrWatch)
 {
-    WebKit::setCurrentUserInterfaceIdiomIsPadOrMac(isPadOrMac);
+    WebKit::setCurrentUserInterfaceIdiomIsPhoneOrWatch(isPhoneOrWatch);
 }
 
 bool WebProcess::shouldFreezeOnSuspension() const
@@ -1118,6 +1080,11 @@ void WebProcess::setMediaAccessibilityPreferences(WebCore::CaptionUserPreference
 {
     WebCore::CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(captionDisplayMode);
     WebCore::CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(preferredLanguages);
+
+    for (auto& pageGroup : m_pageGroupMap.values()) {
+        if (auto* captionPreferences = pageGroup->corePageGroup()->captionPreferences())
+            captionPreferences->captionPreferencesChanged();
+    }
 }
 #endif
 
@@ -1164,7 +1131,7 @@ static const WTF::String& invertColorsPreferenceKey()
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if !(HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)) && PLATFORM(IOS_FAMILY)
 static const WTF::String& increaseContrastPreferenceKey()
 {
     static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));

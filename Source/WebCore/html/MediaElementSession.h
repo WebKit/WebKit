@@ -180,6 +180,8 @@ public:
     void playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
+    MediaSession* mediaSession() const;
+
 private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -195,7 +197,6 @@ private:
     bool requiresPlaybackTargetRouteMonitoring() const override;
 #endif
     void ensureIsObservingMediaSession();
-    MediaSession* mediaSession() const;
 
     bool updateIsMainContent() const;
     void mainContentCheckTimerFired();

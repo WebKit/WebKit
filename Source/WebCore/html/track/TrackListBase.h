@@ -56,6 +56,7 @@ public:
 
     virtual void clearElement();
     Element* element() const;
+    void* opaqueRoot() const;
     WeakPtr<HTMLMediaElement> mediaElement() const { return m_element; }
 
     // Needs to be public so tracks can call it

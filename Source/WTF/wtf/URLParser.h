@@ -51,6 +51,8 @@ public:
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
     constexpr static size_t hostnameBufferLength = 2048;
 
+#define URLTextEncodingSentinelAllowingC0AtEndOfHash reinterpret_cast<const URLTextEncoding*>(-1)
+
     WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
     WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);
     
@@ -58,7 +60,7 @@ public:
     WTF_EXPORT_PRIVATE static URLEncodedForm parseURLEncodedForm(StringView);
     WTF_EXPORT_PRIVATE static String serialize(const URLEncodedForm&);
 
-    WTF_EXPORT_PRIVATE static bool isSpecialScheme(const String& scheme);
+    WTF_EXPORT_PRIVATE static bool isSpecialScheme(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(StringView scheme);
 
     static const UIDNA& internationalDomainNameTranscoder();
@@ -77,10 +79,10 @@ private:
     bool m_urlIsSpecial { false };
     bool m_urlIsFile { false };
     bool m_hostHasPercentOrNonASCII { false };
+    bool m_didSeeSyntaxViolation { false };
     String m_inputString;
     const void* m_inputBegin { nullptr };
 
-    bool m_didSeeSyntaxViolation { false };
     static constexpr size_t defaultInlineBufferSize = 2048;
     using LCharBuffer = Vector<LChar, defaultInlineBufferSize>;
 

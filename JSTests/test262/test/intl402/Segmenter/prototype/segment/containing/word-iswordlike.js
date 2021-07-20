@@ -13,6 +13,7 @@ info: |
      a. Let isWordLike be a Boolean value indicating whether the segment in string is "word-like" according to locale segmenter.[[Locale]].
      b. Perform ! CreateDataPropertyOrThrow(result, "isWordLike", isWordLike).
 
+includes: [compareArray.js]
 features: [Intl.Segmenter]
 ---*/
 
@@ -48,5 +49,7 @@ inputs.forEach(function(input) {
     assert.sameValue("string", typeof result.input, msg + "input");
     assert.sameValue("boolean", typeof result.isWordLike,
         msg + "isWordLike should be boolean");
+    assert.compareArray(Object.getOwnPropertyNames(result),
+      ["segment", "index", "input", "isWordLike"]);
   }
 });

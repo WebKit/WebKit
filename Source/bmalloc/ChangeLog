@@ -1,3 +1,3331 @@
+2021-07-14  Michael Saboff  <msaboff@apple.com>
+
+        [BMalloc] Lazily allocate physical pages
+        https://bugs.webkit.org/show_bug.cgi?id=227957
+
+        Reviewed by Mark Lam.
+
+        For the Darwin platform we don't need to call madvise(..., MADV_FREE_REUSE) to commit physical
+        memory to back a range of allocated virtual memory.  Instead the kernel will commit pages
+        as they are touched.  This can reduce the footprint of a process when there is sparse access
+        of allocated memory.
+
+        Also fixed a minor bug where we allocate memory, but don't update the amount of physical memory
+        associated with it.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::tryAllocateLargeChunk):
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmAllocatePhysicalPages):
+
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        This change replaces bmalloc with libpas, by importing libpas and making it expose API that
+        looks like the current bmalloc API. Libpas replaces everything bmalloc gave us: the main
+        bmalloc API, the Gigacage API, and the IsoHeap API. Libpas also replaces the JSC
+        ExecutableAllocator (more on that in the JSC ChangeLog). I've been working on libpas for about
+        three years, and you'll be able to see the age of some of it in the copyrights.
+
+        Libpas is a totally new malloc implementation that focuses on allowing for the creation of lots
+        of isolated heaps, and making it possible for those heaps to provide certain type guarantees.
+        I'm not going to summarize everything that it does in this changelog; I'll mostly focus on
+        things that are interesting to its use in WebKit.
+
+        Libpas tries hard to make having lots of heaps cheap both by having a good isolated heap
+        implementation and by offsetting the cost by having a bunch of space saving improvements for all
+        kinds of heaps. Libpas heaps can be configured to be either very compact or very fast. In
+        WebKit, we configure libpas to be as fast as possible, except for the jit_heap, where we
+        configure it to be as compact as possible. The fast configuration relies on the segregated heap
+        for most allocations, while the compact configuration relies on bitfit for most configurations.
+        It's possible to use both in combination with any size cut-off before you switch to bitfit.
+
+        Libpas's segregated heap is competitive to bmalloc in speed. This patch is a speed-up on AS, and
+        it's only enabled on AS for now. Libpas is still a regression relative to bmalloc on some
+        devices that I have measured, so it should probably stay enabled on AS only for now. This patch
+        ought to be a 1% speed-up on Speedometer and MotionMark and be neutral elsewhere.
+
+        When it comes to memory usage, libpas's segregated heap is a 19% improvement on membuster and a
+        11% improvement on RAMification on AS, with most other devices exhibiting similar wins if you
+        enable libpas on them.
+
+        Here's the basic design:
+
+        - Libpas makes extreme use of generic programming in C, sometimes using macros, but mostly using
+          a technique where ALWAYS_INLINE functions are passed structs with function pointers to other
+          ALWAYS_INLINE functions, sometimes many layers deep. I've perfected this so that I can cause
+          outlining to happen wherever I want without losing the specialization, and I can cause
+          anything I want to become generic (i.e. it gets a pointer to that struct with function
+          pointers and it really has to call them).
+
+          This allows libpas to have many copies of the same algorithm, but configured differently.
+          That's why, for example, I was able to make libpas's bitfit obey ExecutableAllocator rules
+          like that you cannot put any metadata inside the memory you're managing. That's also how
+          libpas "scales" it's algorithm: there are the small configurations, and then with a different
+          struct, we get the medium configurations (larger overall page size, ability to decommit each
+          physical page within the logical page), and the marge configurations (optimized for even
+          bigger object sizes).
+
+        - Allocation uses thread-local caches that hold on to up to a page of memory. This is similar
+          overall to bmalloc, but rather different in the details. When allocating from that memory (see
+          bmalloc_heap_inlines.h, then pas_try_allocate_intrinsic_primitive.h, then
+          pas_try_allocate_common.h, then pas_local_allocator_inlines.h), libpas uses either bump
+          pointer or bit search. The bit search is optimized to death. Libpas does lots of clever things
+          with bits: for example, each bit represents just a "minalign" worth of memory (so like 16
+          bytes), and bits are set at the beginnings of objects. Lots of interesting bit manipulation
+          happens on the slow path to quickly turn this into a bitvector where the bits are set at
+          free object beginnings, which is what the allocator consumes (see for example
+          pas_local_allocator_scan_bits_to_set_up_free_bits() in pas_local_allocator_inlines.h). This
+          saves libpas from having to use multiplications on the allocation and deallocation paths.
+
+          Allocation fast paths are super fast and require no locks. Slow paths use fine-grained
+          locking so the likelihood of contention is very low. Each page has a lock, and they do crazy
+          things with their locks: pages will all share the same lock so long as that's efficient, but
+          will pick up different locks if that causes contention, and then they will share the same
+          lock again if contention goes away.
+
+          Allocation caches can be reclaimed by the scavenger. This is done using an
+          ask-nicely-then-more-firmly kind of mechanism: first the scavenger will just ask allocators
+          that haven't been used in a while to return their memory, and the thread will service this
+          request on the next allocation slow path for any thread-local allocator. But if the thread
+          doesn't do this, then the scavenger will eventually suspend the thread and take its caches.
+
+        - Deallocation uses a log. The log flush amortizes lock acquisition and memory access to libpas
+          metadata. This is quite a bit like bmalloc. The differences are: libpas may acquire multiple
+          locks during deallocation log flush, but because pages try to share locks, that usually
+          doesn't happen. Usually, all pages that were most recently used by some CPU will share the
+          same lock. The other difference is that the libpas scavenger can flush deallocation logs, and
+          does so on every tick.
+
+        The design described so far is for the libpas segregated heap, which is the most
+        performance-optimized heap, as well as the heap most suited for isoheaps. Segregated heap has
+        many isoheap optimizations, like allowing multiple heaps to share different slabs of the same
+        page. But libpas also has two other heap kinds:
+
+        - Bitfit. The bitfit heap uses a bit-per-minalign but uses it to implement first-fit. Allocation
+          searches for a span of set "free" bits and then clears them. Deallocation uses a second
+          bitvector, the "object ends" bits, to find the end of the object and then sets the whole range
+          of free bits. This allocator uses per-page locking and a clever short-circuiting algorithm
+          to find the first page that will have a contiguous slab of free memory big enough for the
+          size you're trying to allocate. This is much slower than the segregated heap, but also much
+          faster than the other option, which is the libpas large allocator. Bitfit is the most
+          space-efficient heap in libpas, except for super large objects. The space efficiency comes
+          from the fact that it's first-fit. It should be noted that segregated is also first-fit, but
+          within size classes, so segregated gets more external fragmentation than bitfit.
+
+          This patch causes us to use bitfit for the mini mode. We also use bitfit for marge allocations
+          (so bigger than segregated medium but too small for large) and for jit_heap.
+
+          I think the most interesting file for bitfit is pas_bitfit_page_inlines.h.
+
+        - Large. This is a first-fit allocator implemented using cartesian trees. Something special
+          about it is that it can do type-safe array allocations with complex combinations of memalign.
+          For example, you can tell it to create a heap that allocates arrays of a type whose size is
+          42, and then it will guarantee you that no matter how big or how small of an array you
+          allocate, no element of that array will ever be an "offset overlap" with a previously freed
+          element. So, it won't create any type confusions. It will guarantee this even if you did
+          memalign with any alignment (I needed to use extended GCD for this -- see pas_extended_gcd.c
+          and pas_coalign.c). The large algorithm is implemented generically
+          (pas_generic_large_free_heap.h), so it can use either cartesian trees
+          (pas_fast_large_free_heap.c) or just an array (pas_simple_large_free_heap.c). The large heap
+          is used internally in libpas a lot, for example for the bootstrap heap, which is how all of
+          libpas gets its memory. One particularly neat thing about this is that the bootstrap heap
+          allocates a freelist array inside of the memory it is managing using a kind of wild
+          metacircular design.
+
+        One of the main space saving features is that libpas has a fine-grained-locked LRU decommit
+        policy using a 10Hz scavenger thread. This scavenger incurs almost no perf cost but is able
+        to return a ton of memory. At any tick, it will decommit any totally free pages that haven't
+        been used in the last 300ms. This includes pages used for internal libpas metadata, like the
+        thread-local caches. Decommitting pages holds locks that other threads are unlikely to want to
+        grab (because of policies that actively avoid it), so decommit happens with minimal interference
+        to the running program.
+
+        Libpas is written in C and strongly assumes that the C compiler is modern enough to fixpoint
+        inlining of always-inline functions with the right other optimizations. Llvm does this, which
+        enables a wonderful style of generic programming. The fact that the same code can be used
+        for generic, specialized-and-inline, and specialized-but-out-of-line functions is great. I use
+        WebKit C++ style (so foo* p rather than foo *p) but with lower_case_identifiers for anything
+        that isn't a macro. Anything that isn't static is prefixed pas_, unless it's some specific
+        heap configuration, like the bmalloc one, which prefixes every non-static with bmalloc_.
+
+        Libpas includes a giant test suite. Lots of the heap configurations (iso_test, thingy,
+        minalign32, pagesize64k) are just for testing. The test suite has both unit tests and chaos
+        tests as well as everything in between. The test suite is written in C++.
+
+        This glues libpas into the DebugHeap mechanism in bmalloc, so Malloc=1 will give you system
+        malloc. Libpas supports libmalloc enumeration, and this patch exposes it (though you need a
+        shared cache rebuild to enjoy the benefits).
+
+        All of bmalloc's external-facing API are replaced with libpas when the BUSE(LIBPAS) flag is
+        set (so the bmalloc::XYZ functions, Gigacage::XYZ, and IsoHeap<> and friends). This also
+        exposes the jit_heap API for the ExecutableAllocator to use.
+
+        Notes for porting: this uses lots of Darwin APIs, like the APIs for getting an approximate time
+        very quickly, APIs for fast TLS, thread suspension, and probably other stuff. It'll be hard,
+        but possible, to port to Linux. It may never perform as well on Linux as it does on Darwin.
+        It's also worth noting that libpas strongly assumes 64-bit, that the CPU can do 128-bit
+        compare-and-swap, that there is no big downside to misaligned loads and stores, and that the
+        memory model is either the one in ARM64 or the one on x86_64 (or something not weaker than
+        either of them). Trying to make libpas work on 32-bit CPUs will quickly run into cases where
+        some pointer math doesn't work right because it was written strongly assuming properties
+        unique to 64-bit CPUs (like that some number of top bits are not used for the address), as well
+        as cases where lock-free algorithms are using uintptr_t for a versioning scheme (which may not
+        be as reliable as you want on 32-bit).
+
+        * CMakeLists.txt:
+        * Configurations/Base.xcconfig:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BPlatform.h:
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::tryGetSlow):
+        (pas_debug_heap_is_enabled):
+        (pas_debug_heap_malloc):
+        (pas_debug_heap_memalign):
+        (pas_debug_heap_realloc):
+        (pas_debug_heap_free):
+        * bmalloc/DebugHeap.h:
+        (bmalloc::debugHeapDisabled):
+        (bmalloc::DebugHeap::tryGet):
+        (bmalloc::DebugHeap::getExisting):
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::allocBase):
+        (Gigacage::size):
+        * bmalloc/Gigacage.h:
+        * bmalloc/GigacageConfig.h:
+        (Gigacage::Config::allocBasePtr const):
+        (Gigacage::Config::setAllocBasePtr):
+        (Gigacage::Config::allocSize const):
+        (Gigacage::Config::setAllocSize):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::gigacageSize):
+        * bmalloc/Heap.h:
+        * bmalloc/IsoHeap.cpp: Added.
+        (bmalloc::api::isoAllocate):
+        (bmalloc::api::isoTryAllocate):
+        (bmalloc::api::isoDeallocate):
+        * bmalloc/IsoHeap.h:
+        (bmalloc::api::IsoHeap::IsoHeap):
+        (bmalloc::api::IsoHeap::allocate):
+        (bmalloc::api::IsoHeap::tryAllocate):
+        (bmalloc::api::IsoHeap::deallocate):
+        (bmalloc::api::IsoHeap::scavenge):
+        (bmalloc::api::IsoHeap::initialize):
+        (bmalloc::api::IsoHeap::isInitialized):
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::IsoHeapImpl):
+        * bmalloc/IsoHeapInlines.h:
+        * bmalloc/IsoMallocFallback.cpp: Added.
+        (bmalloc::IsoMallocFallback::tryMalloc):
+        (bmalloc::IsoMallocFallback::tryFree):
+        * bmalloc/IsoMallocFallback.h: Copied from Source/bmalloc/bmalloc/DebugHeap.h.
+        (bmalloc::IsoMallocFallback::shouldTryToFallBack):
+        (bmalloc::IsoMallocFallback::MallocResult::MallocResult):
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::determineMallocFallbackState): Deleted.
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateSlow):
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThreadStorage<PerHeapKind<Cache>>::init):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::scavengeThisThread):
+        (bmalloc::api::scavenge):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        (bmalloc::api::commitAlignedPhysical):
+        (bmalloc::api::decommitAlignedPhysical):
+        (bmalloc::api::enableMiniMode):
+        (bmalloc::api::disableScavenger):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::heapForKind):
+        (bmalloc::api::tryMalloc):
+        (bmalloc::api::malloc):
+        (bmalloc::api::tryMemalign):
+        (bmalloc::api::memalign):
+        (bmalloc::api::tryRealloc):
+        (bmalloc::api::realloc):
+        (bmalloc::api::free):
+        (bmalloc::api::scavengeThisThread): Deleted.
+        * libpas/.gitignore: Added.
+        * libpas/build.sh: Added.
+        * libpas/build_and_test.sh: Added.
+        * libpas/common.sh: Added.
+        * libpas/libpas.xcodeproj/project.pbxproj: Added.
+        * libpas/scripts/tally_verifier_output: Added.
+        * libpas/src/chaos/Chaos.cpp: Added.
+        (std::Object::Object):
+        (std::Packet::~Packet):
+        (std::Locker::Locker):
+        (std::Locker::~Locker):
+        (std::threadMain):
+        (main):
+        * libpas/src/libpas/bmalloc_heap.c: Added.
+        (bmalloc_try_allocate):
+        (bmalloc_try_allocate_with_alignment):
+        (bmalloc_try_allocate_zeroed):
+        (bmalloc_allocate):
+        (bmalloc_allocate_with_alignment):
+        (bmalloc_allocate_zeroed):
+        (bmalloc_try_reallocate):
+        (bmalloc_reallocate):
+        (bmalloc_try_iso_allocate):
+        (bmalloc_iso_allocate):
+        (bmalloc_heap_ref_get_heap):
+        (bmalloc_try_allocate_auxiliary):
+        (bmalloc_allocate_auxiliary):
+        (bmalloc_try_allocate_auxiliary_zeroed):
+        (bmalloc_allocate_auxiliary_zeroed):
+        (bmalloc_try_allocate_auxiliary_with_alignment):
+        (bmalloc_allocate_auxiliary_with_alignment):
+        (bmalloc_try_reallocate_auxiliary):
+        (bmalloc_reallocate_auxiliary):
+        (bmalloc_deallocate):
+        (bmalloc_force_auxiliary_heap_into_reserved_memory):
+        * libpas/src/libpas/bmalloc_heap.h: Added.
+        * libpas/src/libpas/bmalloc_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (bmalloc_heap_config_activate):
+        * libpas/src/libpas/bmalloc_heap_config.h: Added.
+        * libpas/src/libpas/bmalloc_heap_inlines.h: Added.
+        (bmalloc_try_allocate_inline):
+        (bmalloc_try_allocate_with_alignment_inline):
+        (bmalloc_try_allocate_zeroed_inline):
+        (bmalloc_allocate_inline):
+        (bmalloc_allocate_with_alignment_inline):
+        (bmalloc_allocate_zeroed_inline):
+        (bmalloc_try_reallocate_inline):
+        (bmalloc_reallocate_inline):
+        (bmalloc_try_iso_allocate_inline):
+        (bmalloc_iso_allocate_inline):
+        (bmalloc_try_allocate_auxiliary_inline):
+        (bmalloc_allocate_auxiliary_inline):
+        (bmalloc_try_allocate_auxiliary_zeroed_inline):
+        (bmalloc_allocate_auxiliary_zeroed_inline):
+        (bmalloc_try_allocate_auxiliary_with_alignment_inline):
+        (bmalloc_allocate_auxiliary_with_alignment_inline):
+        (bmalloc_try_reallocate_auxiliary_inline):
+        (bmalloc_reallocate_auxiliary_inline):
+        (bmalloc_deallocate_inline):
+        * libpas/src/libpas/bmalloc_heap_innards.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/bmalloc_heap_ref.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/hotbit_heap.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (hotbit_try_allocate):
+        (hotbit_try_allocate_with_alignment):
+        (hotbit_try_reallocate):
+        (hotbit_deallocate):
+        * libpas/src/libpas/hotbit_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/hotbit_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (hotbit_heap_config_activate):
+        * libpas/src/libpas/hotbit_heap_config.h: Added.
+        * libpas/src/libpas/hotbit_heap_inlines.h: Added.
+        (hotbit_try_allocate_inline):
+        (hotbit_try_allocate_with_alignment_inline):
+        (hotbit_try_reallocate_inline):
+        (hotbit_deallocate_inline):
+        * libpas/src/libpas/hotbit_heap_innards.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/iso_heap.c: Added.
+        (iso_try_allocate_common_primitive):
+        (iso_try_allocate_common_primitive_with_alignment):
+        (iso_try_allocate_common_primitive_zeroed):
+        (iso_allocate_common_primitive):
+        (iso_allocate_common_primitive_with_alignment):
+        (iso_allocate_common_primitive_zeroed):
+        (iso_try_reallocate_common_primitive):
+        (iso_reallocate_common_primitive):
+        (iso_try_allocate_dynamic_primitive):
+        (iso_try_allocate_dynamic_primitive_with_alignment):
+        (iso_try_allocate_dynamic_primitive_zeroed):
+        (iso_try_reallocate_dynamic_primitive):
+        (iso_heap_ref_construct):
+        (iso_try_allocate):
+        (iso_allocate):
+        (iso_try_allocate_array):
+        (iso_allocate_array):
+        (iso_try_allocate_array_zeroed):
+        (iso_allocate_array_zeroed):
+        (iso_try_reallocate_array):
+        (iso_reallocate_array):
+        (iso_heap_ref_get_heap):
+        (iso_primitive_heap_ref_construct):
+        (iso_try_allocate_primitive):
+        (iso_allocate_primitive):
+        (iso_try_allocate_primitive_zeroed):
+        (iso_allocate_primitive_zeroed):
+        (iso_try_allocate_primitive_with_alignment):
+        (iso_allocate_primitive_with_alignment):
+        (iso_try_reallocate_primitive):
+        (iso_reallocate_primitive):
+        (iso_try_allocate_for_objc):
+        (iso_has_object):
+        (iso_get_allocation_size):
+        (iso_get_heap):
+        (iso_deallocate):
+        (iso_force_primitive_heap_into_reserved_memory):
+        * libpas/src/libpas/iso_heap.h: Added.
+        * libpas/src/libpas/iso_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/iso_heap_config.h: Added.
+        * libpas/src/libpas/iso_heap_inlines.h: Added.
+        (iso_try_allocate_common_primitive_inline):
+        (iso_try_allocate_common_primitive_with_alignment_inline):
+        (iso_try_allocate_common_primitive_zeroed_inline):
+        (iso_allocate_common_primitive_inline):
+        (iso_allocate_common_primitive_with_alignment_inline):
+        (iso_allocate_common_primitive_zeroed_inline):
+        (iso_try_reallocate_common_primitive_inline):
+        (iso_reallocate_common_primitive_inline):
+        (iso_try_allocate_inline):
+        (iso_allocate_inline):
+        (iso_try_allocate_array_inline):
+        (iso_allocate_array_inline):
+        (iso_try_allocate_array_zeroed_inline):
+        (iso_allocate_array_zeroed_inline):
+        (iso_try_reallocate_array_inline):
+        (iso_reallocate_array_inline):
+        (iso_try_allocate_primitive_inline):
+        (iso_allocate_primitive_inline):
+        (iso_try_allocate_primitive_zeroed_inline):
+        (iso_allocate_primitive_zeroed_inline):
+        (iso_try_allocate_primitive_with_alignment_inline):
+        (iso_allocate_primitive_with_alignment_inline):
+        (iso_try_reallocate_primitive_inline):
+        (iso_reallocate_primitive_inline):
+        (iso_try_allocate_for_objc_inline):
+        (iso_has_object_inline):
+        (iso_get_allocation_size_inline):
+        (iso_get_heap_inline):
+        (iso_deallocate_inline):
+        * libpas/src/libpas/iso_heap_innards.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/iso_heap_ref.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/iso_test_heap.c: Added.
+        (iso_test_allocate_common_primitive):
+        (iso_test_allocate):
+        (iso_test_allocate_array):
+        (iso_test_deallocate):
+        (iso_test_heap_ref_get_heap):
+        * libpas/src/libpas/iso_test_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/iso_test_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/iso_test_heap_config.h: Added.
+        * libpas/src/libpas/jit_heap.c: Added.
+        (jit_heap_add_fresh_memory):
+        (jit_heap_try_allocate):
+        (jit_heap_shrink):
+        (jit_heap_get_size):
+        (jit_heap_deallocate):
+        * libpas/src/libpas/jit_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/jit_heap_config.c: Added.
+        (fresh_memory_aligned_allocator):
+        (initialize_fresh_memory_config):
+        (allocate_from_fresh):
+        (page_provider):
+        (jit_page_header_for_boundary_remote):
+        (jit_small_bitfit_allocate_page):
+        (jit_small_bitfit_create_page_header):
+        (jit_small_bitfit_destroy_page_header):
+        (jit_medium_bitfit_allocate_page):
+        (jit_medium_bitfit_create_page_header):
+        (jit_medium_bitfit_destroy_page_header):
+        (jit_aligned_allocator):
+        (jit_prepare_to_enumerate):
+        (jit_heap_config_for_each_shared_page_directory):
+        (jit_heap_config_for_each_shared_page_directory_remote):
+        (jit_heap_config_add_fresh_memory):
+        * libpas/src/libpas/jit_heap_config.h: Added.
+        (jit_type_size):
+        (jit_type_alignment):
+        (jit_heap_config_fast_megapage_kind):
+        (jit_small_bitfit_page_header_for_boundary):
+        (jit_small_bitfit_boundary_for_page_header):
+        (jit_medium_bitfit_page_header_for_boundary):
+        (jit_medium_bitfit_boundary_for_page_header):
+        (jit_heap_config_page_header):
+        * libpas/src/libpas/jit_heap_config_root_data.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/minalign32_heap.c: Added.
+        (minalign32_allocate_common_primitive):
+        (minalign32_allocate):
+        (minalign32_allocate_array):
+        (minalign32_deallocate):
+        (minalign32_heap_ref_get_heap):
+        * libpas/src/libpas/minalign32_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/minalign32_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (minalign32_heap_config_activate):
+        * libpas/src/libpas/minalign32_heap_config.h: Added.
+        * libpas/src/libpas/pagesize64k_heap.c: Added.
+        (pagesize64k_allocate_common_primitive):
+        (pagesize64k_allocate):
+        (pagesize64k_allocate_array):
+        (pagesize64k_deallocate):
+        (pagesize64k_heap_ref_get_heap):
+        * libpas/src/libpas/pagesize64k_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pagesize64k_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pagesize64k_heap_config_activate):
+        * libpas/src/libpas/pagesize64k_heap_config.h: Added.
+        * libpas/src/libpas/pas_aligned_allocation_result.h: Added.
+        (pas_aligned_allocation_result_create_empty):
+        (pas_aligned_allocation_result_as_allocation_result):
+        * libpas/src/libpas/pas_aligned_allocator.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_alignment.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_alignment_dump):
+        * libpas/src/libpas/pas_alignment.h: Added.
+        (pas_alignment_create):
+        (pas_alignment_create_traditional):
+        (pas_alignment_create_trivial):
+        (pas_alignment_validate):
+        (pas_alignment_is_ptr_aligned):
+        (pas_alignment_round_up):
+        (pas_alignment_is_equal):
+        * libpas/src/libpas/pas_all_biasing_directories.c: Added.
+        (pas_all_biasing_directories_append):
+        (pas_all_biasing_directories_activate):
+        (scavenge_for_each_set_bit_bits_source):
+        (scavenge_for_each_set_bit_callback):
+        (scavenge_bitvector_word_callback):
+        (pas_all_biasing_directories_scavenge):
+        * libpas/src/libpas/pas_all_biasing_directories.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_all_heap_configs.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_all_heaps.c: Added.
+        (pas_all_heaps_add_heap):
+        (pas_all_heaps_for_each_static_heap):
+        (pas_all_heaps_for_each_dynamic_heap):
+        (pas_all_heaps_for_each_heap):
+        (pas_all_heaps_for_each_static_segregated_heap_not_part_of_a_heap):
+        (for_each_segregated_heap_callback):
+        (pas_all_heaps_for_each_static_segregated_heap):
+        (pas_all_heaps_for_each_segregated_heap):
+        (get_num_free_bytes_for_each_heap_callback):
+        (pas_all_heaps_get_num_free_bytes):
+        (reset_heap_ref_for_each_heap_callback):
+        (pas_all_heaps_reset_heap_ref):
+        (for_each_segregated_directory_global_size_directory_callback):
+        (for_each_segregated_directory_shared_page_directory_callback):
+        (for_each_segregated_directory_segregated_heap_callback):
+        (pas_all_heaps_for_each_segregated_directory):
+        (dump_directory_nicely):
+        (dump_view_nicely):
+        (verify_in_steady_state_segregated_directory_callback):
+        (pas_all_heaps_verify_in_steady_state):
+        (compute_total_non_utility_segregated_summary_directory_callback):
+        (pas_all_heaps_compute_total_non_utility_segregated_summary):
+        (compute_total_non_utility_bitfit_summary_heap_callback):
+        (pas_all_heaps_compute_total_non_utility_bitfit_summary):
+        (compute_total_non_utility_large_summary_heap_callback):
+        (pas_all_heaps_compute_total_non_utility_large_summary):
+        (pas_all_heaps_compute_total_non_utility_summary):
+        * libpas/src/libpas/pas_all_heaps.h: Added.
+        * libpas/src/libpas/pas_all_magazines.c: Added.
+        (pas_all_magazines_get_current):
+        * libpas/src/libpas/pas_all_magazines.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_all_shared_page_directories.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_all_shared_page_directories_add):
+        (pas_all_shared_page_directories_for_each):
+        * libpas/src/libpas/pas_all_shared_page_directories.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_allocation_callbacks.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_allocation_callbacks.h: Added.
+        (pas_did_allocate):
+        (pas_will_deallocate):
+        * libpas/src/libpas/pas_allocation_config.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_allocation_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_allocation_kind_get_string):
+        * libpas/src/libpas/pas_allocation_result.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_allocation_result_zero):
+        * libpas/src/libpas/pas_allocation_result.h: Added.
+        (pas_allocation_result_create_failure):
+        (pas_allocation_result_create_success_with_zero_mode):
+        (pas_allocation_result_create_success):
+        * libpas/src/libpas/pas_allocator_counts.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_allocator_index.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_allocator_scavenge_action.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_allocator_scavenge_action_get_string):
+        * libpas/src/libpas/pas_baseline_allocator.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_baseline_allocator_attach_directory):
+        (pas_baseline_allocator_detach_directory):
+        * libpas/src/libpas/pas_baseline_allocator.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_baseline_allocator_result.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_baseline_allocator_result_create_failure):
+        (pas_baseline_allocator_result_create_success):
+        * libpas/src/libpas/pas_baseline_allocator_table.c: Added.
+        (initialize):
+        (pas_baseline_allocator_table_initialize_if_necessary):
+        (pas_baseline_allocator_table_get_random_index):
+        (pas_baseline_allocator_table_for_all):
+        * libpas/src/libpas/pas_baseline_allocator_table.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_basic_heap_config_enumerator_data.c: Added.
+        (pas_basic_heap_config_enumerator_data_add_page_header_table):
+        * libpas/src/libpas/pas_basic_heap_config_enumerator_data.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_basic_heap_config_root_data.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_basic_heap_page_caches.h: Added.
+        (pas_basic_heap_page_caches_get_shared_page_directories):
+        * libpas/src/libpas/pas_basic_heap_runtime_config.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_basic_segregated_page_caches.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_biasing_directory.c: Added.
+        (pas_biasing_directory_construct):
+        (pas_biasing_directory_get_sharing_pool):
+        (pas_biasing_directory_did_create_delta):
+        (pas_biasing_directory_take_last_unused):
+        (pas_biasing_directory_did_use_index_slow):
+        (pas_biasing_directory_index_did_become_eligible):
+        * libpas/src/libpas/pas_biasing_directory.h: Added.
+        (pas_is_segregated_biasing_directory):
+        (pas_is_bitfit_biasing_directory):
+        (pas_biasing_directory_magazine_index):
+        (pas_biasing_directory_ownership_threshold):
+        (pas_biasing_directory_unused_span_size):
+        (pas_biasing_directory_did_use_index):
+        * libpas/src/libpas/pas_biasing_directory_inlines.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_unwrap_segregated_biasing_directory):
+        (pas_unwrap_bitfit_biasing_directory):
+        * libpas/src/libpas/pas_biasing_directory_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_biasing_directory_kind_get_string):
+        * libpas/src/libpas/pas_bitfield_vector.h: Added.
+        (pas_bitfield_vector_get):
+        (pas_bitfield_vector_set):
+        * libpas/src/libpas/pas_bitfit_allocation_result.h: Added.
+        (pas_bitfit_allocation_result_create_success):
+        (pas_bitfit_allocation_result_create_failure):
+        (pas_bitfit_allocation_result_create_empty):
+        (pas_bitfit_allocation_result_create_need_to_lock_commit_lock):
+        * libpas/src/libpas/pas_bitfit_allocator.c: Added.
+        (pas_bitfit_allocator_commit_view):
+        (pas_bitfit_allocator_finish_failing):
+        * libpas/src/libpas/pas_bitfit_allocator.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_bitfit_allocator_inlines.h: Added.
+        (pas_bitfit_allocator_reset):
+        (pas_bitfit_allocator_assert_reset):
+        (pas_bitfit_allocator_try_allocate):
+        * libpas/src/libpas/pas_bitfit_biasing_directory.c: Added.
+        (pas_bitfit_biasing_directory_create):
+        (pas_bitfit_biasing_directory_take_last_unused):
+        * libpas/src/libpas/pas_bitfit_biasing_directory.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_bitfit_directory.c: Added.
+        (pas_bitfit_directory_construct):
+        (pas_bitfit_directory_update_biasing_eligibility):
+        (pas_bitfit_directory_max_free_did_become_unprocessed):
+        (pas_bitfit_directory_max_free_did_become_unprocessed_unchecked):
+        (pas_bitfit_directory_max_free_did_become_empty_without_biasing_update):
+        (pas_bitfit_directory_max_free_did_become_empty):
+        (pas_bitfit_directory_get_first_free_view):
+        (pas_bitfit_directory_compute_summary):
+        (for_each_live_object_callback):
+        (pas_bitfit_directory_for_each_live_object):
+        * libpas/src/libpas/pas_bitfit_directory.h: Added.
+        (pas_bitfit_directory_size):
+        (pas_bitfit_directory_get_max_free_ptr):
+        (pas_bitfit_directory_get_max_free):
+        (pas_bitfit_directory_set_max_free_unchecked):
+        (pas_bitfit_directory_set_max_free_not_empty_impl):
+        (pas_bitfit_directory_set_processed_max_free):
+        (pas_bitfit_directory_set_unprocessed_max_free_unchecked):
+        (pas_bitfit_directory_set_empty_max_free):
+        (pas_bitfit_directory_set_unprocessed_max_free):
+        (pas_bitfit_directory_get_view_ptr):
+        (pas_bitfit_directory_get_view):
+        * libpas/src/libpas/pas_bitfit_directory_and_index.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_bitfit_directory_and_index_create):
+        * libpas/src/libpas/pas_bitfit_directory_inlines.h: Added.
+        (pas_bitfit_directory_get_global):
+        (pas_bitfit_directory_find_first_free_for_num_bits_iterate_callback):
+        (pas_bitfit_directory_find_first_free_for_num_bits):
+        (pas_bitfit_directory_find_first_free):
+        (pas_bitfit_directory_find_first_empty_iterate_callback):
+        (pas_bitfit_directory_find_first_empty):
+        * libpas/src/libpas/pas_bitfit_directory_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_bitfit_directory_kind_get_string):
+        * libpas/src/libpas/pas_bitfit_global_directory.c: Added.
+        (pas_bitfit_global_directory_construct):
+        (pas_bitfit_global_directory_does_sharing):
+        (pas_bitfit_global_directory_get_use_epoch):
+        (pas_bitfit_global_directory_get_empty_bit_at_index):
+        (pas_bitfit_global_directory_set_empty_bit_at_index):
+        (pas_bitfit_global_directory_view_did_become_empty_at_index):
+        (pas_bitfit_global_directory_view_did_become_empty):
+        (pas_bitfit_global_directory_take_last_empty):
+        (pas_bitfit_global_directory_dump_reference):
+        (pas_bitfit_global_directory_dump_for_spectrum):
+        * libpas/src/libpas/pas_bitfit_global_directory.h: Added.
+        * libpas/src/libpas/pas_bitfit_global_size_class.c: Added.
+        (pas_bitfit_global_size_class_create):
+        (pas_bitfit_global_size_class_select_for_magazine):
+        * libpas/src/libpas/pas_bitfit_global_size_class.h: Added.
+        * libpas/src/libpas/pas_bitfit_heap.c: Added.
+        (pas_bitfit_heap_create):
+        (pas_bitfit_heap_select_variant):
+        (pas_bitfit_heap_ensure_global_size_class):
+        (pas_bitfit_heap_compute_summary):
+        (for_each_live_object_callback):
+        (pas_bitfit_heap_for_each_live_object):
+        * libpas/src/libpas/pas_bitfit_heap.h: Added.
+        (pas_bitfit_heap_get_directory):
+        * libpas/src/libpas/pas_bitfit_max_free.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_bitfit_page.c: Added.
+        (pas_bitfit_page_construct):
+        (pas_bitfit_page_get_config):
+        (pas_bitfit_page_log_bits):
+        (pas_bitfit_page_deallocation_did_fail):
+        (pas_bitfit_page_for_each_live_object):
+        (verify_for_each_object_callback):
+        (pas_bitfit_page_verify):
+        * libpas/src/libpas/pas_bitfit_page.h: Added.
+        (pas_bitfit_page_header_size):
+        (pas_bitfit_page_free_bits):
+        (pas_bitfit_page_object_end_bits):
+        (pas_bitfit_page_get_granule_use_counts):
+        (pas_bitfit_page_offset_to_first_object):
+        (pas_bitfit_page_offset_to_end_of_last_object):
+        (pas_bitfit_page_payload_size):
+        (pas_bitfit_page_for_boundary):
+        (pas_bitfit_page_for_boundary_or_null):
+        (pas_bitfit_page_for_boundary_unchecked):
+        (pas_bitfit_page_boundary):
+        (pas_bitfit_page_boundary_or_null):
+        (pas_bitfit_page_for_address_and_page_config):
+        (pas_bitfit_page_testing_verify):
+        * libpas/src/libpas/pas_bitfit_page_config.h: Added.
+        (pas_bitfit_page_config_is_enabled):
+        (pas_bitfit_page_config_num_alloc_bits):
+        (pas_bitfit_page_config_num_alloc_words):
+        (pas_bitfit_page_config_num_alloc_words64):
+        (pas_bitfit_page_config_num_alloc_bit_bytes):
+        (pas_bitfit_page_config_byte_offset_for_object_bits):
+        (pas_bitfit_page_config_uses_subpages):
+        * libpas/src/libpas/pas_bitfit_page_config_inlines.h: Added.
+        * libpas/src/libpas/pas_bitfit_page_config_kind.c: Added.
+        (pas_bitfit_page_config_kind_for_each):
+        * libpas/src/libpas/pas_bitfit_page_config_kind.def: Added.
+        * libpas/src/libpas/pas_bitfit_page_config_kind.h: Added.
+        (pas_bitfit_page_config_kind_get_string):
+        (pas_bitfit_page_config_kind_get_config):
+        * libpas/src/libpas/pas_bitfit_page_config_utils.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_bitfit_page_config_utils_inlines.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_bitfit_page_config_variant.h: Added.
+        (pas_bitfit_page_config_variant_get_string):
+        (pas_bitfit_page_config_variant_get_capitalized_string):
+        * libpas/src/libpas/pas_bitfit_page_inlines.h: Added.
+        (pas_bitfit_page_compute_offset):
+        (pas_bitfit_page_allocation_satisfies_alignment):
+        (pas_bitfit_page_allocation_commit_granules_or_reloop):
+        (pas_bitfit_page_finish_allocation):
+        (pas_bitfit_page_allocate):
+        (pas_bitfit_page_deallocate_with_page_impl_mode_get_string):
+        (pas_bitfit_page_deallocate_with_page_impl):
+        (pas_bitfit_page_deallocate_with_page):
+        (pas_bitfit_page_deallocate):
+        (pas_bitfit_page_get_allocation_size_with_page):
+        (pas_bitfit_page_get_allocation_size):
+        (pas_bitfit_page_shrink_with_page):
+        (pas_bitfit_page_shrink):
+        * libpas/src/libpas/pas_bitfit_size_class.c: Added.
+        (pas_bitfit_size_class_find_insertion_point):
+        (pas_bitfit_size_class_construct):
+        (pas_bitfit_size_class_create):
+        (pas_bitfit_size_class_get_first_free_view):
+        * libpas/src/libpas/pas_bitfit_size_class.h: Added.
+        * libpas/src/libpas/pas_bitfit_view.c: Added.
+        (pas_bitfit_view_create):
+        (pas_bitfit_view_lock_ownership_lock_slow):
+        (pas_bitfit_view_note_nonemptiness):
+        (did_become_empty_for_bits):
+        (pas_bitfit_view_note_full_emptiness):
+        (pas_bitfit_view_note_partial_emptiness):
+        (pas_bitfit_view_note_max_free):
+        (compute_summary):
+        (pas_bitfit_view_compute_summary):
+        (for_each_live_object_callback):
+        (for_each_live_object):
+        (pas_bitfit_view_for_each_live_object):
+        * libpas/src/libpas/pas_bitfit_view.h: Added.
+        (pas_bitfit_view_lock_ownership_lock):
+        * libpas/src/libpas/pas_bitfit_view_and_index.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_bitfit_view_and_index_create):
+        (pas_bitfit_view_and_index_create_empty):
+        * libpas/src/libpas/pas_bitfit_view_inlines.h: Added.
+        (pas_bitfit_view_current_directory_and_index):
+        (pas_bitfit_view_current_directory):
+        (pas_bitfit_view_index_in_current):
+        (pas_bitfit_view_is_empty):
+        * libpas/src/libpas/pas_bitvector.h: Added.
+        (pas_bitvector_get_from_word):
+        (pas_bitvector_get):
+        (pas_bitvector_get_from_one_word):
+        (pas_backward_bitvector_get):
+        (pas_bitvector_set_in_word):
+        (pas_bitvector_set):
+        (pas_bitvector_set_in_one_word):
+        (pas_bitvector_set_atomic_in_word):
+        (pas_bitvector_set_atomic):
+        (pas_backward_bitvector_set):
+        (pas_bitvector_find_first_set):
+        (pas_bitvector_for_each_set_bit):
+        (pas_bitvector64_set_range):
+        * libpas/src/libpas/pas_bootstrap_free_heap.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (bootstrap_source_allocate_aligned):
+        (initialize_config):
+        * libpas/src/libpas/pas_bootstrap_free_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_bootstrap_heap_page_provider.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_bootstrap_heap_page_provider):
+        * libpas/src/libpas/pas_bootstrap_heap_page_provider.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_cares_about_size_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_cartesian_tree.h: Added.
+        (pas_cartesian_tree_node_child_ptr):
+        (pas_cartesian_tree_node_is_null_constrained):
+        (pas_cartesian_tree_node_minimum):
+        (pas_cartesian_tree_node_minimum_constrained):
+        (pas_cartesian_tree_node_maximum):
+        (pas_cartesian_tree_node_maximum_constrained):
+        (pas_cartesian_tree_node_successor):
+        (pas_cartesian_tree_node_successor_constrained):
+        (pas_cartesian_tree_node_predecessor):
+        (pas_cartesian_tree_node_predecessor_constrained):
+        (pas_cartesian_tree_node_reset):
+        (pas_cartesian_tree_construct):
+        (pas_cartesian_tree_node_find_exact):
+        (pas_cartesian_tree_find_exact):
+        (pas_cartesian_tree_node_find_least_greater_than_or_equal):
+        (pas_cartesian_tree_find_least_greater_than_or_equal):
+        (pas_cartesian_tree_node_find_least_greater_than):
+        (pas_cartesian_tree_find_least_greater_than):
+        (pas_cartesian_tree_node_find_greatest_less_than_or_equal):
+        (pas_cartesian_tree_find_greatest_less_than_or_equal):
+        (pas_cartesian_tree_node_find_greatest_less_than):
+        (pas_cartesian_tree_find_greatest_less_than):
+        (pas_cartesian_tree_minimum):
+        (pas_cartesian_tree_minimum_constrained):
+        (pas_cartesian_tree_maximum):
+        (pas_cartesian_tree_maximum_constrained):
+        (pas_cartesian_tree_is_empty):
+        (pas_cartesian_tree_insert):
+        (pas_cartesian_tree_remove):
+        (pas_cartesian_tree_validate_recurse):
+        (pas_cartesian_tree_validate):
+        (pas_cartesian_tree_size):
+        * libpas/src/libpas/pas_coalign.c: Added.
+        (formal_mod):
+        (ceiling_div):
+        (pas_coalign_one_sided):
+        (pas_coalign):
+        * libpas/src/libpas/pas_coalign.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_coalign_empty_result):
+        (pas_coalign_result_create):
+        * libpas/src/libpas/pas_commit_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_commit_mode_get_string):
+        * libpas/src/libpas/pas_commit_span.c: Added.
+        (pas_commit_span_construct):
+        (pas_commit_span_add_to_change):
+        (pas_commit_span_add_unchanged):
+        (commit):
+        (pas_commit_span_add_unchanged_and_commit):
+        (decommit):
+        (pas_commit_span_add_unchanged_and_decommit):
+        * libpas/src/libpas/pas_commit_span.h: Added.
+        * libpas/src/libpas/pas_compact_atomic_allocator_index_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_biasing_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_bitfit_biasing_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_bitfit_global_size_class_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_bitfit_heap_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_bitfit_size_class_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_bitfit_view_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_enumerable_range_list_chunk_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_page_sharing_pool_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_atomic_segregated_exclusive_view_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_segregated_global_size_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_segregated_heap_page_sharing_pools_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_segregated_partial_view_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_segregated_view.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_thread_local_cache_layout_node.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_atomic_unsigned_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_biasing_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_bitfit_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_bitfit_global_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_bitfit_view_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_bootstrap_free_heap.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (compact_bootstrap_source_allocate_aligned):
+        (initialize_config):
+        * libpas/src/libpas/pas_compact_bootstrap_free_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_cartesian_tree_node_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_heap_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_heap_reservation.c: Added.
+        (pas_compact_heap_reservation_try_allocate):
+        * libpas/src/libpas/pas_compact_heap_reservation.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_large_utility_free_heap.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_large_utility_free_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_page_granule_use_count_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_segregated_biasing_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_segregated_global_size_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_segregated_heap_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_segregated_shared_page_directory_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_segregated_shared_view_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_segregated_view.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_skip_list_node_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_skip_list_node_ptr_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_subpage_map_entry_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_tagged_atomic_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_tagged_page_granule_use_count_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_tagged_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_tagged_unsigned_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compact_unsigned_ptr.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_compute_summary_object_callbacks.c: Added.
+        (pas_compute_summary_live_object_callback):
+        (pas_compute_summary_live_object_callback_without_physical_sharing):
+        (config):
+        (pas_compute_summary_dead_object_callback):
+        (pas_compute_summary_dead_object_callback_without_physical_sharing):
+        * libpas/src/libpas/pas_compute_summary_object_callbacks.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_config.h: Added.
+        * libpas/src/libpas/pas_config_prefix.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_count_lookup_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_count_lookup_mode_get_string):
+        * libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.c: Added.
+        (pas_create_basic_heap_page_caches_with_reserved_memory):
+        * libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_deallocate.c: Added.
+        (pas_try_deallocate_known_large):
+        (pas_deallocate_known_large):
+        (pas_try_deallocate_slow):
+        (deallocate_segregated):
+        (pas_try_deallocate_slow_no_cache):
+        * libpas/src/libpas/pas_deallocate.h: Added.
+        (pas_deallocate_known_segregated_impl):
+        (pas_deallocate_known_segregated):
+        (pas_try_deallocate_not_small):
+        (pas_try_deallocate_impl):
+        (pas_try_deallocate):
+        (pas_deallocate):
+        * libpas/src/libpas/pas_deallocation_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_deallocation_mode_get_string):
+        * libpas/src/libpas/pas_deallocator.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_deallocator_scavenge_action.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_deallocator_scavenge_action_get_string):
+        * libpas/src/libpas/pas_debug_heap.h: Added.
+        (pas_debug_heap_is_enabled):
+        (pas_debug_heap_malloc):
+        (pas_debug_heap_memalign):
+        (pas_debug_heap_realloc):
+        (pas_debug_heap_free):
+        * libpas/src/libpas/pas_debug_spectrum.c: Added.
+        (pas_debug_spectrum_add):
+        (pas_debug_spectrum_dump):
+        (pas_debug_spectrum_reset):
+        * libpas/src/libpas/pas_debug_spectrum.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_deferred_decommit_log.c: Added.
+        (pas_deferred_decommit_log_construct):
+        (pas_deferred_decommit_log_destruct):
+        (already_holds_lock):
+        (pas_deferred_decommit_log_lock_for_adding):
+        (pas_deferred_decommit_log_add):
+        (pas_deferred_decommit_log_add_already_locked):
+        (pas_deferred_decommit_log_add_maybe_locked):
+        (pas_deferred_decommit_log_unlock_after_aborted_add):
+        (decommit_all):
+        (pas_deferred_decommit_log_decommit_all):
+        (pas_deferred_decommit_log_pretend_to_decommit_all):
+        * libpas/src/libpas/pas_deferred_decommit_log.h: Added.
+        * libpas/src/libpas/pas_designated_intrinsic_heap.c: Added.
+        (set_up_range):
+        (pas_designated_intrinsic_heap_initialize):
+        * libpas/src/libpas/pas_designated_intrinsic_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_designated_intrinsic_heap_inlines.h: Added.
+        (pas_designated_intrinsic_heap_num_allocator_indices):
+        (pas_designated_index_result_create_failure):
+        (pas_designated_index_result_create_success):
+        (pas_designated_intrinsic_heap_num_designated_indices):
+        (pas_designated_intrinsic_heap_designated_index):
+        * libpas/src/libpas/pas_dyld_state.c: Added.
+        (pas_dyld_is_libsystem_initialized):
+        * libpas/src/libpas/pas_dyld_state.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_dynamic_primitive_heap_map.c: Added.
+        (pas_dynamic_primitive_heap_map_find_slow):
+        * libpas/src/libpas/pas_dynamic_primitive_heap_map.h: Added.
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_entry_create_empty):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_entry_create_deleted):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_entry_is_empty_or_deleted):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_entry_is_empty):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_entry_is_deleted):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_entry_get_key):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_key_get_hash):
+        (pas_dynamic_primitive_heap_map_heaps_for_size_table_key_is_equal):
+        (pas_dynamic_primitive_heap_map_hash):
+        (pas_dynamic_primitive_heap_map_find):
+        * libpas/src/libpas/pas_ensure_heap_forced_into_reserved_memory.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_ensure_heap_forced_into_reserved_memory):
+        * libpas/src/libpas/pas_ensure_heap_forced_into_reserved_memory.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_ensure_heap_with_page_caches.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_ensure_heap_with_page_caches):
+        * libpas/src/libpas/pas_ensure_heap_with_page_caches.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerable_page_malloc.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_enumerable_page_malloc_try_allocate_without_deallocating_padding):
+        * libpas/src/libpas/pas_enumerable_page_malloc.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerable_range_list.c: Added.
+        (pas_enumerable_range_list_append):
+        (pas_enumerable_range_list_iterate):
+        (pas_enumerable_range_list_iterate_remote):
+        * libpas/src/libpas/pas_enumerable_range_list.h: Added.
+        * libpas/src/libpas/pas_enumerate_bitfit_heaps.c: Added.
+        (view_callback):
+        (enumerate_bitfit_directory):
+        (enumerate_bitfit_heap_callback):
+        (pas_enumerate_bitfit_heaps):
+        * libpas/src/libpas/pas_enumerate_bitfit_heaps.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerate_initially_unaccounted_pages.c: Added.
+        (range_list_iterate_add_unaccounted_callback):
+        (range_list_iterate_exclude_accounted_callback):
+        (pas_enumerate_initially_unaccounted_pages):
+        * libpas/src/libpas/pas_enumerate_initially_unaccounted_pages.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerate_large_heaps.c: Added.
+        (range_list_iterate_add_large_payload_callback):
+        (record_span):
+        (large_map_hashtable_entry_callback):
+        (small_large_map_hashtable_entry_callback):
+        (tiny_large_map_second_level_hashtable_entry_callback):
+        (tiny_large_map_hashtable_entry_callback):
+        (pas_enumerate_large_heaps):
+        * libpas/src/libpas/pas_enumerate_large_heaps.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c: Added.
+        (local_allocator_map_entry_create_empty):
+        (local_allocator_map_entry_create_deleted):
+        (local_allocator_map_entry_is_empty_or_deleted):
+        (local_allocator_map_entry_is_empty):
+        (local_allocator_map_entry_is_deleted):
+        (local_allocator_map_entry_get_key):
+        (local_allocator_map_key_get_hash):
+        (local_allocator_map_key_is_equal):
+        (for_each_view):
+        (collect_shared_page_directories_shared_page_directory_callback):
+        (collect_shared_page_directories_heap_callback):
+        (record_page_payload_and_meta):
+        (record_page_objects):
+        (enumerate_exclusive_view):
+        (enumerate_shared_view):
+        (enumerate_partial_view):
+        (shared_page_directory_view_callback):
+        (size_directory_view_callback):
+        (enumerate_segregated_heap_callback):
+        (consider_allocator):
+        (pas_enumerate_segregated_heaps):
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerate_unaccounted_pages_as_meta.c: Added.
+        (pas_enumerate_unaccounted_pages_as_meta):
+        * libpas/src/libpas/pas_enumerate_unaccounted_pages_as_meta.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_enumerator.c: Added.
+        (allocate):
+        (deallocate):
+        (pas_enumerator_create):
+        (pas_enumerator_destroy):
+        (pas_enumerator_allocate):
+        (pas_enumerator_read_compact):
+        (pas_enumerator_read):
+        (pas_enumerator_add_unaccounted_pages):
+        (pas_enumerator_exclude_accounted_page):
+        (pas_enumerator_exclude_accounted_pages):
+        (pas_enumerator_record):
+        (record_payload_span):
+        (pas_enumerator_record_page_payload_and_meta):
+        (pas_enumerator_for_each_heap):
+        (pas_enumerator_enumerate_all):
+        * libpas/src/libpas/pas_enumerator.h: Added.
+        (pas_enumerator_record_kind_get_string):
+        * libpas/src/libpas/pas_enumerator_internal.h: Added.
+        * libpas/src/libpas/pas_enumerator_region.c: Added.
+        (pas_enumerator_region_allocate):
+        (pas_enumerator_region_destroy):
+        * libpas/src/libpas/pas_enumerator_region.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_epoch.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_get_epoch):
+        * libpas/src/libpas/pas_epoch.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_exclusive_view_template_memo_table.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_exclusive_view_template_memo_table.h: Added.
+        (pas_exclusive_view_template_memo_key_create):
+        (pas_exclusive_view_template_memo_entry_create_empty):
+        (pas_exclusive_view_template_memo_entry_create_deleted):
+        (pas_exclusive_view_template_memo_entry_is_empty_or_deleted):
+        (pas_exclusive_view_template_memo_entry_is_empty):
+        (pas_exclusive_view_template_memo_entry_is_deleted):
+        (pas_exclusive_view_template_memo_entry_get_key):
+        (pas_exclusive_view_template_memo_key_get_hash):
+        (pas_exclusive_view_template_memo_key_is_equal):
+        * libpas/src/libpas/pas_extended_gcd.c: Added.
+        (pas_extended_gcd):
+        * libpas/src/libpas/pas_extended_gcd.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_fast_large_free_heap.c: Added.
+        (key_compare_callback):
+        (get_x_key_callback):
+        (get_y_key_callback):
+        (initialize_cartesian_config):
+        (pas_fast_large_free_heap_construct):
+        (insert_node):
+        (remove_node):
+        (dump_heap):
+        (fast_find_first):
+        (fast_find_by_end):
+        (fast_read_cursor):
+        (fast_write_cursor):
+        (fast_merge):
+        (fast_remove):
+        (fast_append):
+        (fast_commit):
+        (fast_dump):
+        (fast_add_mapped_bytes):
+        (initialize_generic_heap_config):
+        (pas_fast_large_free_heap_try_allocate):
+        (pas_fast_large_free_heap_deallocate):
+        (pas_fast_large_free_heap_for_each_free):
+        (pas_fast_large_free_heap_get_num_free_bytes):
+        (pas_fast_large_free_heap_validate):
+        (pas_fast_large_free_heap_dump_to_printf):
+        * libpas/src/libpas/pas_fast_large_free_heap.h: Added.
+        (pas_fast_large_free_heap_get_num_mapped_bytes):
+        * libpas/src/libpas/pas_fast_megapage_cache.c: Added.
+        (table_set_by_index):
+        (pas_fast_megapage_cache_try_allocate):
+        * libpas/src/libpas/pas_fast_megapage_cache.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_fast_megapage_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_fast_megapage_kind_get_string):
+        * libpas/src/libpas/pas_fast_megapage_table.c: Added.
+        (pas_fast_megapage_table_initialize_static):
+        (pas_fast_megapage_table_set_by_index):
+        * libpas/src/libpas/pas_fast_megapage_table.h: Added.
+        (pas_fast_megapage_table_get_by_index):
+        (pas_fast_megapage_table_get):
+        * libpas/src/libpas/pas_fast_path_allocation_result.h: Added.
+        (pas_fast_path_allocation_result_create):
+        (pas_fast_path_allocation_result_create_need_slow):
+        (pas_fast_path_allocation_result_create_out_of_memory):
+        (pas_fast_path_allocation_result_create_success):
+        (pas_fast_path_allocation_result_from_allocation_result):
+        (pas_fast_path_allocation_result_to_allocation_result):
+        * libpas/src/libpas/pas_fast_path_allocation_result_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_fast_path_allocation_result_kind_get_string):
+        * libpas/src/libpas/pas_fast_tls.h: Added.
+        * libpas/src/libpas/pas_fd_stream.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (fd_stream_vprintf):
+        (pas_fd_stream_vprintf):
+        * libpas/src/libpas/pas_fd_stream.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_first_level_tiny_large_map_entry.h: Added.
+        (pas_first_level_tiny_large_map_entry_create_empty):
+        (pas_first_level_tiny_large_map_entry_create_deleted):
+        (pas_first_level_tiny_large_map_entry_is_empty_or_deleted):
+        (pas_first_level_tiny_large_map_entry_is_empty):
+        (pas_first_level_tiny_large_map_entry_is_deleted):
+        (pas_first_level_tiny_large_map_entry_get_key):
+        (pas_first_level_tiny_large_map_key_get_hash):
+        (pas_first_level_tiny_large_map_key_is_equal):
+        * libpas/src/libpas/pas_found_bit_index.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_found_bit_index_create_empty):
+        (pas_found_bit_index_create):
+        * libpas/src/libpas/pas_found_index.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_found_index_create_empty):
+        (pas_found_index_create):
+        (pas_found_index_create_unsuccessful):
+        * libpas/src/libpas/pas_free_granules.c: Added.
+        (pas_free_granules_compute_and_mark_decommitted):
+        (pas_free_granules_unmark_decommitted):
+        (pas_free_granules_decommit_after_locking_range):
+        * libpas/src/libpas/pas_free_granules.h: Added.
+        (pas_free_granules_is_free):
+        * libpas/src/libpas/pas_free_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_free_range_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_free_range_kind_get_string):
+        * libpas/src/libpas/pas_full_alloc_bits.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_full_alloc_bits_create_empty):
+        (pas_full_alloc_bits_create):
+        * libpas/src/libpas/pas_full_alloc_bits_inlines.h: Added.
+        (pas_full_alloc_bits_create_for_exclusive):
+        (pas_full_alloc_bits_create_for_partial):
+        (pas_full_alloc_bits_create_for_view_and_directory):
+        (pas_full_alloc_bits_create_for_view):
+        * libpas/src/libpas/pas_generic_large_free_heap.h: Added.
+        (pas_generic_large_free_heap_merge_physical):
+        (pas_generic_large_free_heap_try_allocate_test_allocation_candidate):
+        (pas_generic_large_free_heap_try_allocate):
+        * libpas/src/libpas/pas_get_allocation_size.h: Added.
+        (pas_get_allocation_size):
+        * libpas/src/libpas/pas_get_heap.h: Added.
+        (pas_get_heap_known_segregated):
+        (pas_get_heap):
+        * libpas/src/libpas/pas_get_object_kind.h: Added.
+        (pas_get_object_kind):
+        * libpas/src/libpas/pas_get_page_base.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_get_page_base):
+        * libpas/src/libpas/pas_has_object.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_has_object):
+        * libpas/src/libpas/pas_hashtable.h: Added.
+        * libpas/src/libpas/pas_heap.c: Added.
+        (pas_heap_create):
+        (pas_heap_get_type_size):
+        (pas_heap_get_num_free_bytes):
+        (for_each_live_object_small_object_callback):
+        (for_each_live_object_large_object_callback):
+        (pas_heap_for_each_live_object):
+        (pas_heap_compute_summary):
+        (pas_heap_reset_heap_ref):
+        (pas_heap_ensure_size_directory_for_count_slow):
+        * libpas/src/libpas/pas_heap.h: Added.
+        (pas_heap_for_large_heap):
+        (pas_heap_for_segregated_heap):
+        * libpas/src/libpas/pas_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_heap_config_activate):
+        * libpas/src/libpas/pas_heap_config.h: Added.
+        (pas_heap_config_segregated_page_config_ptr_for_variant):
+        (pas_heap_config_bitfit_page_config_ptr_for_variant):
+        (pas_heap_config_segregated_page_config_for_variant):
+        (pas_heap_config_bitfit_page_config_for_variant):
+        * libpas/src/libpas/pas_heap_config_inlines.h: Added.
+        * libpas/src/libpas/pas_heap_config_kind.c: Added.
+        (pas_heap_config_kind_for_each):
+        * libpas/src/libpas/pas_heap_config_kind.def: Added.
+        * libpas/src/libpas/pas_heap_config_kind.h: Added.
+        (pas_heap_config_kind_get_string):
+        (pas_heap_config_kind_get_config):
+        (pas_heap_config_kind_is_active):
+        * libpas/src/libpas/pas_heap_config_utils.c: Added.
+        (pas_heap_config_utils_null_activate):
+        (pas_heap_config_utils_for_each_shared_page_directory):
+        (pas_heap_config_utils_for_each_shared_page_directory_remote):
+        (pas_heap_config_utils_allocate_aligned):
+        (pas_heap_config_utils_prepare_to_enumerate):
+        * libpas/src/libpas/pas_heap_config_utils.h: Added.
+        * libpas/src/libpas/pas_heap_config_utils_inlines.h: Added.
+        * libpas/src/libpas/pas_heap_for_config.c: Added.
+        (pas_heap_for_config_allocate):
+        (pas_heap_for_page_config_kind_allocate):
+        (pas_heap_for_page_config_allocate):
+        (pas_heap_for_config_allocate_with_alignment):
+        (pas_heap_for_page_config_allocate_with_alignment):
+        (pas_heap_for_config_allocate_with_manual_alignment):
+        (pas_heap_for_page_config_kind_allocate_with_manual_alignment):
+        (pas_heap_for_page_config_allocate_with_manual_alignment):
+        (pas_heap_for_config_deallocate):
+        (pas_heap_for_page_config_kind_deallocate):
+        (pas_heap_for_page_config_deallocate):
+        * libpas/src/libpas/pas_heap_for_config.h: Added.
+        * libpas/src/libpas/pas_heap_inlines.h: Added.
+        (pas_heap_ensure_size_directory_for_count):
+        * libpas/src/libpas/pas_heap_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_heap_kind_get_string):
+        * libpas/src/libpas/pas_heap_lock.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_heap_lock.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_heap_page_provider.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_heap_ref.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_ensure_heap_slow):
+        * libpas/src/libpas/pas_heap_ref.h: Added.
+        (pas_ensure_heap):
+        * libpas/src/libpas/pas_heap_ref_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_heap_ref_kind_get_string):
+        * libpas/src/libpas/pas_heap_ref_prefix.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_heap_runtime_config.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_heap_summary.c: Added.
+        (pas_heap_summary_validate):
+        (pas_heap_summary_dump):
+        * libpas/src/libpas/pas_heap_summary.h: Added.
+        (pas_heap_summary_create_empty):
+        (pas_heap_summary_is_empty):
+        (pas_heap_summary_add):
+        (pas_heap_summary_committed_objects):
+        (pas_heap_summary_total):
+        (pas_heap_summary_fragmentation):
+        * libpas/src/libpas/pas_heap_table.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_heap_table_try_allocate_index):
+        * libpas/src/libpas/pas_heap_table.h: Added.
+        (pas_heap_table_has_index):
+        (pas_heap_table_get_index):
+        * libpas/src/libpas/pas_heap_table_state.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_heap_table_state_get_string):
+        * libpas/src/libpas/pas_immortal_heap.c: Added.
+        (bump_is_ok):
+        (pas_immortal_heap_allocate_with_manual_alignment):
+        (pas_immortal_heap_allocate_with_alignment):
+        (pas_immortal_heap_allocate):
+        (pas_immortal_heap_hold_lock_and_allocate):
+        (pas_immortal_heap_allocate_with_heap_lock_hold_mode):
+        (pas_immortal_heap_allocate_with_alignment_and_heap_lock_hold_mode):
+        * libpas/src/libpas/pas_immortal_heap.h: Added.
+        * libpas/src/libpas/pas_immutable_vector.h: Added.
+        * libpas/src/libpas/pas_internal_config.h: Added.
+        * libpas/src/libpas/pas_intrinsic_allocation_result.h: Added.
+        (pas_intrinsic_allocation_result_create_empty):
+        (pas_intrinsic_allocation_result_create):
+        (pas_intrinsic_allocation_result_identity):
+        (pas_intrinsic_allocation_result_zero):
+        (pas_intrinsic_allocation_result_set_errno):
+        (pas_intrinsic_allocation_result_crash_on_error):
+        * libpas/src/libpas/pas_intrinsic_heap_support.h: Added.
+        * libpas/src/libpas/pas_large_free.h: Added.
+        (pas_large_free_create_empty):
+        (pas_large_free_is_empty):
+        (pas_large_free_size):
+        (pas_large_free_offset_in_type_at_end):
+        * libpas/src/libpas/pas_large_free_heap_config.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_large_free_heap_declarations.def: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_large_free_heap_deferred_commit_log.c: Added.
+        (pas_large_free_heap_deferred_commit_log_construct):
+        (pas_large_free_heap_deferred_commit_log_destruct):
+        (pas_large_free_heap_deferred_commit_log_add):
+        (dump_large_commit):
+        (commit):
+        (commit_all):
+        (pas_large_free_heap_deferred_commit_log_commit_all):
+        (pas_large_free_heap_deferred_commit_log_pretend_to_commit_all):
+        * libpas/src/libpas/pas_large_free_heap_deferred_commit_log.h: Added.
+        * libpas/src/libpas/pas_large_free_heap_definitions.def: Added.
+        * libpas/src/libpas/pas_large_free_heap_helpers.c: Added.
+        (large_utility_aligned_allocator):
+        (initialize_config):
+        (pas_large_free_heap_helpers_try_allocate_with_alignment):
+        (pas_large_free_heap_helpers_deallocate):
+        (pas_large_free_heap_helpers_compute_summary):
+        * libpas/src/libpas/pas_large_free_heap_helpers.h: Added.
+        * libpas/src/libpas/pas_large_free_inlines.h: Added.
+        (pas_large_free_create_merged):
+        (pas_large_free_split):
+        (pas_large_free_allocation_candidate):
+        (pas_large_free_usable_space):
+        (pas_large_allocation_result_create_empty):
+        (pas_large_free_allocate):
+        (pas_large_free_create_merged_for_sure):
+        (pas_large_free_can_merge):
+        (pas_large_allocation_result_as_allocation_result):
+        * libpas/src/libpas/pas_large_free_visitor.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_large_heap.c: Added.
+        (pas_large_heap_construct):
+        (aligned_allocator):
+        (initialize_config):
+        (pas_large_heap_try_allocate):
+        (pas_large_heap_try_deallocate):
+        (pas_large_heap_try_shrink):
+        (pas_large_heap_shove_into_free):
+        (for_each_live_object_entry_callback):
+        (pas_large_heap_for_each_live_object):
+        (pas_large_heap_for_object):
+        (pas_large_heap_get_num_free_bytes):
+        (compute_summary_live_object_callback):
+        (pas_large_heap_compute_summary):
+        * libpas/src/libpas/pas_large_heap.h: Added.
+        * libpas/src/libpas/pas_large_heap_physical_page_sharing_cache.c: Added.
+        (large_aligned_allocator):
+        (pas_large_heap_physical_page_sharing_cache_construct):
+        (pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment):
+        * libpas/src/libpas/pas_large_heap_physical_page_sharing_cache.h: Added.
+        * libpas/src/libpas/pas_large_map.c: Added.
+        (pas_large_map_find):
+        (pas_large_map_add):
+        (pas_large_map_take):
+        (pas_large_map_for_each_entry):
+        * libpas/src/libpas/pas_large_map.h: Added.
+        * libpas/src/libpas/pas_large_map_entry.h: Added.
+        (pas_large_map_entry_create_empty):
+        (pas_large_map_entry_create_deleted):
+        (pas_large_map_entry_is_empty_or_deleted):
+        (pas_large_map_entry_is_empty):
+        (pas_large_map_entry_is_deleted):
+        (pas_large_map_entry_get_key):
+        (pas_large_map_key_get_hash):
+        (pas_large_map_key_is_equal):
+        * libpas/src/libpas/pas_large_sharing_pool.c: Added.
+        (node_compare_callback):
+        (inner_key_compare_callback):
+        (update_min_epoch):
+        (validate_min_heap):
+        (validate_node):
+        (validate_node_if_asserting_aggressively):
+        (create_node):
+        (create_and_insert):
+        (boot_tree):
+        (destroy_node):
+        (remove_from_min_heap):
+        (remove_and_destroy):
+        (predecessor):
+        (successor):
+        (states_match):
+        (is_eligible):
+        (belongs_in_min_heap):
+        (update_min_heap):
+        (split_node_and_get_right_impl):
+        (split_node_and_get_right):
+        (split_node_and_get_left):
+        (merge_if_possible):
+        (node_containing):
+        (min_node_for_range):
+        (max_node_for_range):
+        (splat_live_bytes):
+        (should_do_commit_stuff_to):
+        (splat_command_get_string):
+        (splat_command_get_free_mode):
+        (dump_large_commit):
+        (try_splat_impl):
+        (try_splat):
+        (splat):
+        (pas_large_sharing_pool_boot_free):
+        (pas_large_sharing_pool_free):
+        (pas_large_sharing_pool_allocate_and_commit):
+        (pas_large_sharing_pool_decommit_least_recently_used):
+        (pas_large_sharing_pool_validate):
+        (pas_large_sharing_pool_compute_summary):
+        (pas_large_sharing_pool_for_each):
+        * libpas/src/libpas/pas_large_sharing_pool.h: Added.
+        (pas_large_sharing_node_heap_compare):
+        (pas_large_sharing_node_heap_get_index):
+        (pas_large_sharing_node_heap_set_index):
+        * libpas/src/libpas/pas_large_sharing_pool_epoch_update_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_large_sharing_pool_epoch_update_mode_get_string):
+        * libpas/src/libpas/pas_large_utility_free_heap.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_large_utility_free_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_line_word_config.h: Added.
+        (pas_line_word_config_count_low_zeroes_8_bit):
+        (pas_line_word_config_count_high_zeroes_8_bit):
+        (pas_line_word_config_count_low_zeroes_16_bit):
+        (pas_line_word_config_count_high_zeroes_16_bit):
+        (pas_line_word_config_count_low_zeroes_32_bit):
+        (pas_line_word_config_count_high_zeroes_32_bit):
+        (pas_line_word_config_count_low_zeroes_64_bit):
+        (pas_line_word_config_count_high_zeroes_64_bit):
+        (pas_line_word_config_construct):
+        * libpas/src/libpas/pas_list_direction.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_list_direction_get_string):
+        (pas_list_direction_invert):
+        * libpas/src/libpas/pas_local_allocator.c: Added.
+        (pas_local_allocator_construct):
+        (pas_local_allocator_destruct):
+        (pas_local_allocator_reset):
+        (pas_local_allocator_move):
+        (pas_local_allocator_refill_with_bitfit):
+        (pas_local_allocator_finish_refill_with_bitfit):
+        (stop_impl):
+        (pas_local_allocator_stop):
+        (pas_local_allocator_scavenge):
+        * libpas/src/libpas/pas_local_allocator.h: Added.
+        (pas_local_allocator_is_null):
+        (pas_local_allocator_is_active):
+        (pas_local_allocator_has_bitfit):
+        (pas_local_allocator_get_bitfit):
+        (pas_local_allocator_page_boundary):
+        (pas_local_allocator_alignment):
+        * libpas/src/libpas/pas_local_allocator_config_kind.h: Added.
+        (pas_local_allocator_config_kind_is_primordial_partial):
+        (pas_local_allocator_config_kind_is_bitfit):
+        (pas_local_allocator_config_kind_create_normal):
+        (pas_local_allocator_config_kind_create_primordial_partial):
+        (pas_local_allocator_config_kind_create_bitfit):
+        (pas_local_allocator_config_kind_get_segregated_page_config_kind):
+        (pas_local_allocator_config_kind_get_bitfit_page_config_kind):
+        (pas_local_allocator_config_kind_get_string):
+        * libpas/src/libpas/pas_local_allocator_inlines.h: Added.
+        (pas_local_allocator_reset_impl):
+        (pas_local_allocator_set_up_bump):
+        (pas_local_allocator_scan_bits_to_set_up_use_counts_bits_source):
+        (pas_local_allocator_scan_bits_to_set_up_use_counts_bit_callback):
+        (pas_local_allocator_scan_bits_to_set_up_free_bits):
+        (pas_local_allocator_set_up_free_bits):
+        (pas_local_allocator_make_bump):
+        (pas_local_allocator_prepare_to_allocate):
+        (pas_local_allocator_set_up_primordial_bump):
+        (pas_local_allocator_start_allocating_in_primordial_partial_view):
+        (pas_local_allocator_bless_primordial_partial_view_before_stopping):
+        (pas_local_allocator_try_allocate_in_primordial_partial_view):
+        (pas_local_allocator_refill_with_known_config):
+        (pas_local_allocator_return_memory_to_page_bits_source):
+        (pas_local_allocator_return_memory_to_page_set_bit_callback):
+        (pas_local_allocator_return_memory_to_page):
+        (pas_local_allocator_try_allocate_with_free_bits):
+        (pas_local_allocator_try_allocate_inline_cases):
+        (pas_local_allocator_try_allocate_small_segregated_slow_impl):
+        (pas_local_allocator_try_allocate_small_segregated_slow):
+        (pas_local_allocator_try_allocate_out_of_line_cases):
+        (pas_local_allocator_try_allocate_slow_impl):
+        (pas_local_allocator_try_allocate_slow):
+        (pas_local_allocator_try_allocate):
+        * libpas/src/libpas/pas_local_allocator_line.h: Added.
+        (pas_local_allocator_line_fits_without_shift):
+        (pas_local_allocator_line_decode):
+        (pas_local_allocator_line_encode):
+        (pas_local_allocator_line_remaining):
+        (pas_local_allocator_line_set_remaining):
+        (pas_local_allocator_line_payload_end_delta):
+        (pas_local_allocator_line_set_payload_end_delta):
+        * libpas/src/libpas/pas_local_allocator_refill_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_local_allocator_result.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_local_allocator_result_create_failure):
+        (pas_local_allocator_result_create_success):
+        * libpas/src/libpas/pas_lock.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_lock_lock_slow):
+        * libpas/src/libpas/pas_lock.h: Added.
+        (pas_lock_construct):
+        (pas_lock_construct_disabled):
+        (pas_lock_lock):
+        (pas_lock_try_lock):
+        (pas_lock_unlock):
+        (pas_lock_assert_held):
+        (pas_lock_testing_assert_held):
+        (pas_lock_lock_with_mode):
+        (pas_lock_switch_with_mode):
+        (pas_lock_switch):
+        (pas_lock_lock_conditionally):
+        (pas_lock_unlock_conditionally):
+        (pas_lock_for_switch_conditionally):
+        (pas_lock_switch_conditionally):
+        * libpas/src/libpas/pas_lock_free_read_hashtable.h: Added.
+        (if):
+        * libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.c: Added.
+        (pas_lock_free_read_ptr_ptr_hashtable_set):
+        * libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.h: Added.
+        (pas_lock_free_read_ptr_ptr_hashtable_find):
+        (pas_lock_free_read_ptr_ptr_hashtable_size):
+        * libpas/src/libpas/pas_log.c: Added.
+        (pas_vlog_fd):
+        (pas_log_fd):
+        (pas_vlog):
+        (pas_log):
+        (pas_start_crash_logging):
+        * libpas/src/libpas/pas_log.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_magazine.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_magazine_create):
+        * libpas/src/libpas/pas_magazine.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_medium_megapage_cache.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_medium_megapage_cache_try_allocate):
+        * libpas/src/libpas/pas_medium_megapage_cache.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_megapage_cache.c: Added.
+        (megapage_cache_allocate_aligned):
+        (pas_megapage_cache_construct):
+        (pas_megapage_cache_try_allocate):
+        * libpas/src/libpas/pas_megapage_cache.h: Added.
+        * libpas/src/libpas/pas_min_heap.h: Added.
+        * libpas/src/libpas/pas_monotonic_time.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (get_timebase_info):
+        (pas_get_current_monotonic_time_nanoseconds):
+        * libpas/src/libpas/pas_monotonic_time.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_mutation_count.h: Added.
+        (pas_mutation_count_start_mutating):
+        (pas_mutation_count_stop_mutating):
+        (pas_mutation_count_is_mutating):
+        (pas_mutation_count_matches):
+        (pas_mutation_count_depend):
+        * libpas/src/libpas/pas_object_kind.h: Added.
+        (pas_object_kind_get_string):
+        (pas_object_kind_for_segregated_variant):
+        (pas_object_kind_for_bitfit_variant):
+        * libpas/src/libpas/pas_object_size_mode.h: Added.
+        (pas_object_size_mode_get_string):
+        * libpas/src/libpas/pas_page_base.c: Added.
+        (pas_page_base_get_config):
+        (pas_page_base_get_granule_use_counts):
+        (pas_page_base_compute_committed_when_owned):
+        (pas_page_base_is_empty):
+        (pas_page_base_add_free_range):
+        * libpas/src/libpas/pas_page_base.h: Added.
+        (pas_page_base_construct):
+        (pas_page_base_get_kind):
+        (pas_page_base_get_config_kind):
+        (pas_page_base_is_segregated):
+        (pas_page_base_get_segregated):
+        (pas_page_base_is_bitfit):
+        (pas_page_base_get_bitfit):
+        (pas_page_base_index_of_object_at_offset_from_page_boundary):
+        (pas_page_base_object_offset_from_page_boundary_at_index):
+        (pas_page_base_boundary):
+        (pas_page_base_boundary_or_null):
+        (pas_page_base_for_boundary):
+        (pas_page_base_for_boundary_or_null):
+        (pas_page_base_boundary_for_address_and_page_config):
+        (pas_page_base_for_address_and_page_config):
+        * libpas/src/libpas/pas_page_base_config.h: Added.
+        (pas_page_base_config_min_align):
+        (pas_page_base_config_object_payload_end_offset_from_boundary):
+        (pas_page_base_config_num_granule_bytes):
+        (pas_page_base_config_get_config_kind):
+        (pas_page_base_config_is_segregated):
+        (pas_page_base_config_is_bitfit):
+        (pas_page_base_config_get_segregated):
+        (pas_page_base_config_get_bitfit):
+        * libpas/src/libpas/pas_page_base_config_inlines.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_page_base_config_is_utility):
+        * libpas/src/libpas/pas_page_base_config_utils.h: Added.
+        * libpas/src/libpas/pas_page_base_config_utils_inlines.h: Added.
+        * libpas/src/libpas/pas_page_base_inlines.h: Added.
+        (pas_page_base_free_granule_uses_in_range_action):
+        (pas_page_base_free_granule_uses_in_range):
+        * libpas/src/libpas/pas_page_config_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_page_config_kind_get_string):
+        * libpas/src/libpas/pas_page_granule_use_count.h: Added.
+        (pas_page_granule_get_indices):
+        (pas_page_granule_for_each_use_in_range):
+        (pas_page_granule_use_count_increment):
+        (pas_page_granule_increment_uses_for_range):
+        * libpas/src/libpas/pas_page_header_placement_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_page_header_placement_mode_get_string):
+        * libpas/src/libpas/pas_page_header_table.c: Added.
+        (pas_page_header_table_add):
+        (pas_page_header_table_remove):
+        * libpas/src/libpas/pas_page_header_table.h: Added.
+        (pas_page_header_table_hash):
+        (pas_page_header_table_get_boundary_ptr):
+        (pas_page_header_table_get_boundary):
+        (pas_page_header_table_get_for_boundary):
+        (pas_page_header_table_get_for_address):
+        * libpas/src/libpas/pas_page_kind.h: Added.
+        (pas_page_kind_get_string):
+        (pas_page_kind_get_config_kind):
+        (pas_page_kind_get_segregated_variant):
+        (pas_page_kind_get_bitfit_variant):
+        * libpas/src/libpas/pas_page_malloc.c: Added.
+        (pas_page_malloc_alignment_slow):
+        (pas_page_malloc_alignment_shift_slow):
+        (pas_page_malloc_try_allocate_without_deallocating_padding):
+        (pas_page_malloc_commit):
+        (pas_page_malloc_decommit):
+        (pas_page_malloc_deallocate):
+        * libpas/src/libpas/pas_page_malloc.h: Added.
+        (pas_page_malloc_alignment):
+        (pas_page_malloc_alignment_shift):
+        * libpas/src/libpas/pas_page_sharing_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_page_sharing_mode_does_sharing):
+        (pas_page_sharing_mode_get_string):
+        * libpas/src/libpas/pas_page_sharing_participant.c: Added.
+        (pas_page_sharing_participant_create):
+        (pas_page_sharing_participant_get_payload):
+        (pas_page_sharing_participant_payload_construct):
+        (pas_page_sharing_participant_payload_with_use_epoch_construct):
+        (pas_page_sharing_participant_get_use_epoch):
+        (pas_page_sharing_participant_set_parent_pool):
+        (pas_page_sharing_participant_get_parent_pool):
+        (pas_page_sharing_participant_is_eligible):
+        (pas_page_sharing_participant_take_least_recently_used):
+        * libpas/src/libpas/pas_page_sharing_participant.h: Added.
+        (pas_page_sharing_participant_get_ptr):
+        (pas_page_sharing_participant_get_kind):
+        * libpas/src/libpas/pas_page_sharing_participant_kind.h: Added.
+        (pas_page_sharing_participant_kind_select_for_segregated_directory):
+        (pas_page_sharing_participant_kind_get_string):
+        * libpas/src/libpas/pas_page_sharing_pool.c: Added.
+        (verify_participants):
+        (verify_min_heap):
+        (dump_min_heap):
+        (pas_page_sharing_pool_construct):
+        (pas_page_sharing_pool_add_at_index):
+        (pas_page_sharing_pool_add):
+        (get_current_participant):
+        (take_from):
+        (pas_page_sharing_pool_take_least_recently_used):
+        (atomic_add_balance):
+        (pas_physical_page_sharing_pool_take):
+        (pas_physical_page_sharing_pool_scavenge):
+        (pas_physical_page_sharing_pool_take_later):
+        (pas_physical_page_sharing_pool_give_back):
+        (pas_physical_page_sharing_pool_take_for_page_config):
+        (pas_bias_page_sharing_pool_take):
+        (pas_page_sharing_pool_did_create_delta):
+        (pas_page_sharing_pool_verify):
+        (pas_page_sharing_pool_has_delta):
+        (pas_page_sharing_pool_has_current_participant):
+        * libpas/src/libpas/pas_page_sharing_pool.h: Added.
+        (pas_page_sharing_participant_compare):
+        (pas_page_sharing_participant_get_index):
+        (pas_page_sharing_participant_set_index):
+        (pas_page_sharing_pool_num_participants):
+        (pas_page_sharing_pool_get_participant):
+        * libpas/src/libpas/pas_page_sharing_pool_take_result.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_page_sharing_pool_take_result_get_string):
+        * libpas/src/libpas/pas_payload_reservation_page_list.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_payload_reservation_page_list_append):
+        * libpas/src/libpas/pas_payload_reservation_page_list.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_physical_memory_synchronization_style.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_physical_memory_synchronization_style_get_string):
+        * libpas/src/libpas/pas_physical_memory_transaction.c: Added.
+        (pas_physical_memory_transaction_construct):
+        (pas_physical_memory_transaction_begin):
+        (pas_physical_memory_transaction_end):
+        (pas_physical_memory_transaction_did_fail_to_acquire_lock):
+        * libpas/src/libpas/pas_physical_memory_transaction.h: Added.
+        * libpas/src/libpas/pas_primitive_heap_ref.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_primitive_heap_ref.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_promote_intrinsic_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_ptr_hash_map.h: Added.
+        (pas_ptr_hash_map_entry_create_empty):
+        (pas_ptr_hash_map_entry_create_deleted):
+        (pas_ptr_hash_map_entry_is_empty_or_deleted):
+        (pas_ptr_hash_map_entry_is_empty):
+        (pas_ptr_hash_map_entry_is_deleted):
+        (pas_ptr_hash_map_entry_get_key):
+        (pas_ptr_hash_map_key_get_hash):
+        (pas_ptr_hash_map_key_is_equal):
+        * libpas/src/libpas/pas_ptr_hash_set.h: Added.
+        (pas_ptr_hash_set_entry_create_empty):
+        (pas_ptr_hash_set_entry_create_deleted):
+        (pas_ptr_hash_set_entry_is_empty_or_deleted):
+        (pas_ptr_hash_set_entry_is_empty):
+        (pas_ptr_hash_set_entry_is_deleted):
+        (pas_ptr_hash_set_entry_get_key):
+        (pas_ptr_hash_set_key_get_hash):
+        (pas_ptr_hash_set_key_is_equal):
+        * libpas/src/libpas/pas_ptr_min_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_ptr_min_heap_compare):
+        (pas_ptr_min_heap_get_index):
+        (pas_ptr_min_heap_set_index):
+        * libpas/src/libpas/pas_ptr_worklist.c: Added.
+        (pas_ptr_worklist_construct):
+        (pas_ptr_worklist_destruct):
+        (pas_ptr_worklist_push):
+        (pas_ptr_worklist_pop):
+        * libpas/src/libpas/pas_ptr_worklist.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_race_test_hooks.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_race_test_hooks.h: Added.
+        (pas_race_test_hook_kind_get_string):
+        (pas_race_test_hook):
+        (pas_race_test_will_lock):
+        (pas_race_test_did_lock):
+        (pas_race_test_did_try_lock):
+        (pas_race_test_will_unlock):
+        * libpas/src/libpas/pas_random.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_random.h: Added.
+        (pas_get_random):
+        * libpas/src/libpas/pas_range.h: Added.
+        (pas_range_create):
+        (pas_range_create_empty):
+        (pas_range_create_forgiving):
+        (pas_range_is_empty):
+        (pas_range_size):
+        (pas_range_contains):
+        (pas_range_subsumes):
+        (pas_range_overlaps):
+        (pas_range_create_intersection):
+        (pas_range_compare):
+        * libpas/src/libpas/pas_range16.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_range16_create):
+        * libpas/src/libpas/pas_range_begin_min_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_range_begin_min_heap_compare):
+        (pas_range_begin_min_heap_get_index):
+        (pas_range_begin_min_heap_set_index):
+        * libpas/src/libpas/pas_range_locked_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_range_locked_mode_get_string):
+        * libpas/src/libpas/pas_range_min_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_range_compare_begin):
+        (pas_range_get_index):
+        (pas_range_set_index):
+        * libpas/src/libpas/pas_reallocate_free_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_reallocate_heap_teleport_rule.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_red_black_tree.c: Added.
+        (tree_insert):
+        (left_rotate):
+        (right_rotate):
+        (remove_fixup):
+        (pas_red_black_tree_insert):
+        (pas_red_black_tree_remove):
+        (pas_red_black_tree_size):
+        * libpas/src/libpas/pas_red_black_tree.h: Added.
+        (pas_red_black_tree_validate_enumerable):
+        (pas_red_black_tree_get_root):
+        (pas_red_black_tree_node_get_left):
+        (pas_red_black_tree_node_get_right):
+        (pas_red_black_tree_node_get_parent):
+        (pas_red_black_tree_node_get_color):
+        (pas_red_black_tree_set_root):
+        (pas_red_black_tree_node_set_left):
+        (pas_red_black_tree_node_set_right):
+        (pas_red_black_tree_node_set_parent):
+        (pas_red_black_tree_node_set_color):
+        (pas_red_black_tree_node_minimum):
+        (pas_red_black_tree_node_maximum):
+        (pas_red_black_tree_node_successor):
+        (pas_red_black_tree_node_predecessor):
+        (pas_red_black_tree_node_reset):
+        (pas_red_black_tree_construct):
+        (pas_red_black_tree_node_find_exact):
+        (pas_red_black_tree_find_exact):
+        (pas_red_black_tree_node_find_least_greater_than_or_equal):
+        (pas_red_black_tree_find_least_greater_than_or_equal):
+        (pas_red_black_tree_node_find_least_greater_than):
+        (pas_red_black_tree_find_least_greater_than):
+        (pas_red_black_tree_node_find_greatest_less_than_or_equal):
+        (pas_red_black_tree_find_greatest_less_than_or_equal):
+        (pas_red_black_tree_node_find_greatest_less_than):
+        (pas_red_black_tree_find_greatest_less_than):
+        (pas_red_black_tree_minimum):
+        (pas_red_black_tree_maximum):
+        (pas_red_black_tree_is_empty):
+        * libpas/src/libpas/pas_redundant_local_allocator_node.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_redundant_local_allocator_node_create):
+        * libpas/src/libpas/pas_redundant_local_allocator_node.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_reserved_memory_provider.c: Added.
+        (null_aligned_allocator):
+        (initialize_config):
+        (pas_reserved_memory_provider_construct):
+        (pas_reserved_memory_provider_try_allocate):
+        * libpas/src/libpas/pas_reserved_memory_provider.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_root.c: Added.
+        (count_static_heaps_callback):
+        (collect_static_heaps_callback):
+        (pas_root_construct):
+        (pas_root_create):
+        (default_reader):
+        (enumerator_reader):
+        (enumerator_recorder):
+        (pas_root_enumerate_for_libmalloc):
+        (pas_root_enumerate_for_libmalloc_with_root_after_zone):
+        (malloc_introspect_good_size):
+        (malloc_introspect_check):
+        (malloc_introspect_print):
+        (malloc_introspect_log):
+        (malloc_introspect_force_lock):
+        (malloc_introspect_force_unlock):
+        (malloc_introspect_statistics):
+        (pas_root_ensure_for_libmalloc_enumeration):
+        * libpas/src/libpas/pas_root.h: Added.
+        * libpas/src/libpas/pas_scavenger.c: Added.
+        (ensure_data_instance):
+        (get_time_in_milliseconds):
+        (timed_wait):
+        (scavenger_thread_main):
+        (pas_scavenger_did_create_eligible):
+        (pas_scavenger_notify_eligibility_if_needed):
+        (pas_scavenger_suspend):
+        (pas_scavenger_resume):
+        (pas_scavenger_clear_all_non_tlc_caches):
+        (pas_scavenger_clear_all_caches_except_remote_tlcs):
+        (pas_scavenger_clear_all_caches):
+        (pas_scavenger_decommit_free_memory):
+        (pas_scavenger_run_synchronously_now):
+        (pas_scavenger_perform_synchronous_operation):
+        * libpas/src/libpas/pas_scavenger.h: Added.
+        * libpas/src/libpas/pas_segmented_vector.h: Added.
+        * libpas/src/libpas/pas_segregated_biasing_directory.c: Added.
+        (pas_segregated_biasing_directory_create):
+        (take_first_eligible_loop_head_callback):
+        (take_first_eligible_create_new_view_callback):
+        (pas_segregated_biasing_directory_take_first_eligible):
+        (pas_segregated_biasing_directory_take_last_unused):
+        * libpas/src/libpas/pas_segregated_biasing_directory.h: Added.
+        (pas_segregated_biasing_directory_magazine_index):
+        * libpas/src/libpas/pas_segregated_biasing_view.c: Added.
+        (pas_segregated_biasing_view_create):
+        (pas_segregated_biasing_view_is_owned):
+        (pas_segregated_biasing_view_lock_ownership_lock):
+        (pas_segregated_biasing_view_should_table):
+        (pas_segregated_biasing_view_note_eligibility):
+        (pas_segregated_biasing_view_note_emptiness):
+        (pas_segregated_biasing_view_compute_summary):
+        (pas_segregated_biasing_view_is_eligible):
+        (pas_segregated_biasing_view_is_empty):
+        * libpas/src/libpas/pas_segregated_biasing_view.h: Added.
+        (pas_segregated_biasing_view_as_view):
+        (pas_segregated_biasing_view_as_ineligible_view):
+        (pas_segregated_biasing_view_as_view_non_null):
+        (pas_segregated_biasing_view_as_ineligible_view_non_null):
+        * libpas/src/libpas/pas_segregated_directory.c: Added.
+        (pas_segregated_directory_construct):
+        (pas_segregated_directory_get_data_slow):
+        (pas_segregated_directory_get_use_epoch):
+        (pas_segregated_directory_get_sharing_payload):
+        (pas_segregated_directory_minimize_first_eligible):
+        (pas_segregated_directory_update_first_eligible_after_search):
+        (pas_segregated_directory_view_did_become_eligible_at_index_without_biasing_update):
+        (pas_segregated_directory_view_did_become_eligible_at_index):
+        (pas_segregated_directory_view_did_become_eligible_without_biasing_update):
+        (pas_segregated_directory_view_did_become_eligible):
+        (maximize_last_empty):
+        (pas_segregated_directory_view_did_become_empty_at_index):
+        (pas_segregated_directory_view_did_become_empty):
+        (pas_segregated_directory_is_committed):
+        (pas_segregated_directory_num_committed_views):
+        (num_empty_views_should_consider_view_parallel):
+        (pas_segregated_directory_num_empty_views):
+        (pas_segregated_directory_update_last_empty_plus_one_after_search):
+        (pas_segregated_directory_append):
+        (pas_segregated_directory_compute_summary):
+        (pas_segregated_directory_num_empty_granules):
+        * libpas/src/libpas/pas_segregated_directory.h: Added.
+        (pas_segregated_directory_size):
+        (pas_segregated_directory_bits_get_by_mask):
+        (pas_segregated_directory_bits_set_by_mask):
+        (pas_segregated_directory_get_misc_bit):
+        (pas_segregated_directory_set_misc_bit):
+        (pas_segregated_directory_get_other_misc_bit):
+        (pas_segregated_directory_set_other_misc_bit):
+        (pas_segregated_directory_spoof_inline_segment):
+        (pas_segregated_directory_get_empty_bit):
+        (pas_segregated_directory_set_empty_bit):
+        (pas_segregated_directory_get_data):
+        (pas_segregated_directory_can_do_sharing):
+        (pas_segregated_directory_is_doing_sharing):
+        (pas_segregated_directory_data_try_get_sharing_payload):
+        (pas_segregated_directory_start_sharing_if_necessary):
+        (pas_segregated_directory_data_get_first_eligible_ptr):
+        (pas_segregated_directory_is_eligible):
+        (pas_segregated_directory_is_empty):
+        (pas_segregated_directory_is_tabled):
+        (pas_segregated_directory_get_first_eligible_impl):
+        (pas_segregated_directory_get_first_eligible):
+        (pas_segregated_directory_get_first_eligible_torn):
+        (pas_segregated_directory_watch_first_eligible):
+        (pas_segregated_directory_get_last_empty_plus_one_impl):
+        (pas_segregated_directory_get_last_empty_plus_one):
+        (pas_segregated_directory_get_last_empty_plus_one_value):
+        (pas_segregated_directory_watch_last_empty_plus_one):
+        (pas_segregated_directory_last_empty_plus_one):
+        (pas_segregated_directory_get):
+        * libpas/src/libpas/pas_segregated_directory_bit_reference.h: Added.
+        (pas_segregated_directory_bit_reference_create_null):
+        (pas_segregated_directory_bit_reference_create_inline):
+        (pas_segregated_directory_bit_reference_create_out_of_line):
+        (pas_segregated_directory_bit_reference_is_null):
+        (pas_segregated_directory_bit_reference_is_inline):
+        (pas_segregated_directory_bit_reference_is_out_of_line):
+        * libpas/src/libpas/pas_segregated_directory_first_eligible_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_segregated_directory_find_eligible_kind_get_string):
+        * libpas/src/libpas/pas_segregated_directory_inlines.h: Added.
+        (pas_segregated_directory_iterate_iterate_callback):
+        (pas_segregated_directory_iterate_forward_iterate_callback):
+        (pas_segregated_directory_iterate_forward):
+        (pas_segregated_directory_iterate_backward_iterate_callback):
+        (pas_segregated_directory_iterate_backward):
+        (pas_segregated_directory_iterate_forward_to_take_first_eligible):
+        (pas_segregated_directory_iterate_backward_to_take_last_empty):
+        * libpas/src/libpas/pas_segregated_directory_kind.h: Added.
+        (pas_segregated_directory_kind_get_string):
+        * libpas/src/libpas/pas_segregated_exclusive_view.c: Added.
+        (pas_segregated_exclusive_view_create):
+        (pas_segregated_exclusive_view_should_table):
+        (pas_segregated_exclusive_ish_view_note_eligibility_impl):
+        (pas_segregated_exclusive_view_note_eligibility):
+        (pas_segregated_exclusive_view_note_emptiness):
+        (pas_segregated_exclusive_ish_view_compute_summary_impl):
+        (pas_segregated_exclusive_view_compute_summary):
+        (pas_segregated_exclusive_view_install_full_use_counts):
+        (pas_segregated_exclusive_view_is_eligible):
+        (pas_segregated_exclusive_view_is_empty):
+        * libpas/src/libpas/pas_segregated_exclusive_view.h: Added.
+        (pas_segregated_exclusive_view_as_view):
+        (pas_segregated_exclusive_view_as_ineligible_view):
+        (pas_segregated_exclusive_view_as_view_non_null):
+        (pas_segregated_exclusive_view_as_ineligible_view_non_null):
+        * libpas/src/libpas/pas_segregated_exclusive_view_inlines.h: Added.
+        (pas_segregated_exclusive_ish_view_did_start_allocating):
+        * libpas/src/libpas/pas_segregated_exclusive_view_ownership_kind.h: Added.
+        (pas_segregated_exclusive_view_ownership_kind_is_owned):
+        (pas_segregated_exclusive_view_ownership_kind_is_biased):
+        (pas_segregated_exclusive_view_ownership_kind_with_owned):
+        (pas_segregated_exclusive_view_ownership_kind_with_biased):
+        (pas_segregated_exclusive_view_ownership_kind_get_string):
+        * libpas/src/libpas/pas_segregated_global_size_directory.c: Added.
+        (pas_segregated_global_size_directory_create):
+        (pas_segregated_global_size_directory_ensure_data):
+        (pas_segregated_global_size_directory_get_extended_data):
+        (pas_segregated_global_size_directory_create_tlc_allocator):
+        (pas_segregated_global_size_directory_enable_exclusive_views):
+        (pas_segregated_global_size_directory_explode):
+        (pas_segregated_global_size_directory_select_allocator_slow):
+        (take_first_eligible_direct_loop_head_callback):
+        (take_first_eligible_direct_create_new_view_callback):
+        (pas_segregated_global_size_directory_take_first_eligible_direct):
+        (pas_segregated_global_size_directory_take_first_eligible):
+        (take_last_empty_should_consider_view_parallel):
+        (take_last_empty_consider_view):
+        (pas_segregated_global_size_directory_take_last_empty):
+        (pas_segregated_global_size_directory_for_object):
+        (pas_segregated_global_size_directory_get_allocator_from_tlc):
+        (pas_segregated_global_size_directory_compute_summary_for_unowned_exclusive):
+        (for_each_live_object_callback):
+        (pas_segregated_global_size_directory_for_each_live_object):
+        (pas_segregated_global_size_directory_local_allocator_size):
+        (pas_segregated_global_size_directory_num_allocator_indices):
+        (pas_segregated_global_size_directory_dump_reference):
+        (pas_segregated_global_size_directory_dump_for_spectrum):
+        * libpas/src/libpas/pas_segregated_global_size_directory.h: Added.
+        (pas_segregated_global_size_directory_as_view):
+        (pas_segregated_global_size_directory_alignment):
+        (pas_segregated_global_size_directory_contention_did_trigger_explosion):
+        (pas_segregated_global_size_directory_set_contention_did_trigger_explosion):
+        (pas_segregated_global_size_directory_has_tlc_allocator):
+        (pas_segregated_global_size_directory_are_exclusive_views_enabled):
+        (pas_segregated_global_size_directory_bias_sharing_pool):
+        * libpas/src/libpas/pas_segregated_global_size_directory_inlines.h: Added.
+        (pas_segregated_global_size_directory_select_allocator):
+        (pas_segregated_global_size_directory_local_allocator_size_for_null_config):
+        (pas_segregated_global_size_directory_local_allocator_size_for_config):
+        (pas_segregated_global_size_directory_num_allocator_indices_for_allocator_size):
+        (pas_segregated_global_size_directory_num_allocator_indices_for_config):
+        * libpas/src/libpas/pas_segregated_heap.c: Added.
+        (min_object_size_for_heap_config):
+        (max_count_for_page_config):
+        (max_object_size_for_page_config):
+        (max_small_count_for_heap_config):
+        (max_segregated_count_for_heap_config):
+        (max_bitfit_count_for_heap_config):
+        (max_count_for_heap_config):
+        (max_bitfit_object_size_for_heap_config):
+        (max_object_size_for_heap_config):
+        (pas_segregated_heap_construct):
+        (pas_segregated_heap_get_bitfit):
+        (medium_directory_tuple_for_index_impl):
+        (medium_directory_tuple_for_index_with_lock):
+        (pas_segregated_heap_medium_directory_tuple_for_index):
+        (pas_segregated_heap_medium_allocator_index_for_index):
+        (pas_segregated_heap_medium_size_directory_for_index):
+        (compute_small_index_upper_bound):
+        (ensure_count_lookup):
+        (pas_segregated_heap_ensure_allocator_index):
+        (compute_ideal_object_size):
+        (check_medium_directories):
+        (check_part_of_all_heaps_callback):
+        (check_part_of_all_segregated_heaps_callback):
+        (ensure_count_lookup_if_necessary):
+        (pas_segregated_heap_ensure_size_directory_for_count):
+        (pas_segregated_heap_get_num_free_bytes):
+        (pas_segregated_heap_for_each_global_size_directory):
+        (for_each_committed_size_directory_callback):
+        (pas_segregated_heap_for_each_committed_view):
+        (for_each_view_index_directory_callback):
+        (pas_segregated_heap_for_each_view_index):
+        (for_each_live_object_object_callback):
+        (for_each_live_object_directory_callback):
+        (for_each_live_object_bitfit_callback):
+        (pas_segregated_heap_for_each_live_object):
+        (num_committed_views_directory_callback):
+        (pas_segregated_heap_num_committed_views):
+        (num_empty_views_directory_callback):
+        (pas_segregated_heap_num_empty_views):
+        (num_empty_granules_directory_callback):
+        (pas_segregated_heap_num_empty_granules):
+        (num_views_directory_callback):
+        (pas_segregated_heap_num_views):
+        (compute_summary_directory_callback):
+        (pas_segregated_heap_compute_summary):
+        * libpas/src/libpas/pas_segregated_heap.h: Added.
+        (pas_segregated_heap_index_for_primitive_count):
+        (pas_segregated_heap_primitive_count_for_index):
+        (pas_segregated_heap_index_for_count):
+        (pas_segregated_heap_count_for_index):
+        (pas_segregated_heap_allocator_index_for_index):
+        (pas_segregated_heap_allocator_index_for_count_not_primitive):
+        * libpas/src/libpas/pas_segregated_heap_inlines.h: Added.
+        (pas_segregated_heap_size_directory_for_index):
+        (pas_segregated_heap_size_directory_for_count):
+        * libpas/src/libpas/pas_segregated_heap_lookup_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_segregated_heap_page_sharing_mode.h: Added.
+        (pas_segregated_heap_page_sharing_mode_does_any_sharing):
+        (pas_segregated_heap_page_sharing_mode_does_virtual_sharing):
+        (pas_segregated_heap_page_sharing_mode_does_physical_sharing):
+        (pas_segregated_heap_page_sharing_mode_get_string):
+        * libpas/src/libpas/pas_segregated_page.c: Added.
+        (pas_segregated_page_switch_lock_slow):
+        (pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_impl):
+        (pas_segregated_page_construct):
+        (pas_segregated_page_note_emptiness):
+        (commit_lock_for):
+        (pas_segregated_page_take_empty_granules):
+        (pas_segregated_page_take_physically):
+        (pas_segregated_page_commit_fully):
+        (verify_granules_live_object_callback):
+        (pas_segregated_page_verify_granules):
+        (pas_segregated_page_deallocation_did_fail):
+        (pas_segregated_page_get_num_empty_granules):
+        (pas_segregated_page_get_num_committed_granules):
+        (pas_segregated_page_get_config):
+        (pas_segregated_page_add_commit_range):
+        (pas_segregated_page_and_config_for_address_and_heap_config):
+        (pas_segregated_page_verify_num_non_empty_words):
+        * libpas/src/libpas/pas_segregated_page.h: Added.
+        (pas_segregated_page_header_size):
+        (pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode):
+        (pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_mode):
+        (pas_segregated_page_useful_object_payload_size_for_hugging_mode):
+        (pas_segregated_page_best_hugging_mode):
+        (pas_segregated_page_offset_from_page_boundary_to_first_object_exclusive):
+        (pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_exclusive):
+        (pas_segregated_page_useful_object_payload_size):
+        (pas_segregated_page_number_of_objects):
+        (pas_segregated_page_bytes_dirtied_per_object):
+        (pas_segregated_page_get_granule_use_counts):
+        (pas_segregated_page_for_boundary):
+        (pas_segregated_page_for_boundary_or_null):
+        (pas_segregated_page_for_boundary_unchecked):
+        (pas_segregated_page_boundary):
+        (pas_segregated_page_boundary_or_null):
+        (pas_segregated_page_for_address_and_page_config):
+        (pas_segregated_page_is_allocated_with_page):
+        (pas_segregated_page_is_allocated):
+        (pas_segregated_page_for_address_and_heap_config):
+        * libpas/src/libpas/pas_segregated_page_and_config.h: Added.
+        (pas_segregated_page_and_config_create):
+        (pas_segregated_page_and_config_create_empty):
+        (pas_segregated_page_and_config_is_empty):
+        * libpas/src/libpas/pas_segregated_page_config.c: Added.
+        (pas_segregated_page_config_validate):
+        * libpas/src/libpas/pas_segregated_page_config.h: Added.
+        (pas_segregated_page_config_is_enabled):
+        (pas_segregated_page_config_min_align):
+        (pas_segregated_page_config_object_payload_end_offset_from_boundary):
+        (pas_segregated_page_config_num_alloc_words):
+        (pas_segregated_page_config_num_alloc_bytes):
+        (pas_segregated_page_config_get_kind):
+        (pas_segregated_page_config_kind_is_utility):
+        (pas_segregated_page_config_is_utility):
+        (pas_segregated_page_config_kind_heap_lock_hold_mode):
+        (pas_segregated_page_config_heap_lock_hold_mode):
+        * libpas/src/libpas/pas_segregated_page_config_inlines.h: Added.
+        * libpas/src/libpas/pas_segregated_page_config_kind.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_segregated_page_config_kind_for_each):
+        * libpas/src/libpas/pas_segregated_page_config_kind.def: Added.
+        * libpas/src/libpas/pas_segregated_page_config_kind.h: Added.
+        (pas_segregated_page_config_kind_get_string):
+        (pas_segregated_page_config_kind_get_config):
+        * libpas/src/libpas/pas_segregated_page_config_utils.h: Added.
+        (pas_segregated_page_config_verify_dealloc):
+        * libpas/src/libpas/pas_segregated_page_config_utils_inlines.h: Added.
+        * libpas/src/libpas/pas_segregated_page_config_variant.h: Added.
+        (pas_segregated_page_config_variant_get_string):
+        * libpas/src/libpas/pas_segregated_page_emptiness_kind.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_page_emptiness_kind_get_inverted):
+        (pas_page_emptiness_kind_get_string):
+        * libpas/src/libpas/pas_segregated_page_granule_use_count.h: Added.
+        (pas_segregated_page_granule_use_count_increment):
+        (pas_segregated_page_granule_for_each_use_in_range):
+        (pas_segregated_page_granule_increment_uses_for_range):
+        * libpas/src/libpas/pas_segregated_page_header_placement_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_segregated_page_header_placement_mode_get_string):
+        * libpas/src/libpas/pas_segregated_page_inlines.h: Added.
+        (pas_segregated_page_offset_from_page_boundary_to_first_object):
+        (pas_segregated_page_initialize_full_use_counts):
+        (pas_segregated_page_lock_with_unbias_not_utility):
+        (pas_segregated_page_lock_with_unbias):
+        (pas_segregated_page_lock):
+        (pas_segregated_page_unlock):
+        (pas_segregated_page_switch_lock_with_mode):
+        (pas_segregated_page_switch_lock):
+        (pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible):
+        (pas_segregated_page_deallocate_with_page):
+        (pas_segregated_page_deallocate):
+        (pas_segregated_page_qualifies_for_decommit):
+        (pas_segregated_page_get_directory_for_address_in_page):
+        (pas_segregated_page_get_directory_for_address_and_page_config):
+        (pas_segregated_page_get_object_size_for_address_in_page):
+        (pas_segregated_page_get_object_size_for_address_and_page_config):
+        * libpas/src/libpas/pas_segregated_partial_view.c: Added.
+        (pas_segregated_partial_view_create):
+        (pas_segregated_partial_view_note_eligibility):
+        (pas_segregated_partial_view_set_is_in_use_for_allocation):
+        (pas_segregated_partial_view_should_table):
+        (compute_summary):
+        (pas_segregated_partial_view_compute_summary):
+        (pas_segregated_partial_view_is_eligible):
+        * libpas/src/libpas/pas_segregated_partial_view.h: Added.
+        (pas_segregated_partial_view_as_view):
+        (pas_segregated_partial_view_as_view_non_null):
+        * libpas/src/libpas/pas_segregated_partial_view_inlines.h: Added.
+        (pas_segregated_partial_view_tell_shared_handle_for_word_general_case_source):
+        (pas_segregated_partial_view_tell_shared_handle_for_word_general_case_callback):
+        (pas_segregated_partial_view_tell_shared_handle_for_word_general_case):
+        (pas_segregated_partial_view_did_start_allocating):
+        * libpas/src/libpas/pas_segregated_shared_handle.c: Added.
+        (pas_segregated_shared_handle_create):
+        (pas_segregated_shared_handle_destroy):
+        (pas_segregated_shared_handle_note_emptiness):
+        * libpas/src/libpas/pas_segregated_shared_handle.h: Added.
+        (pas_segregated_shared_handle_num_views):
+        (pas_segregated_shared_handle_size):
+        (pas_segregated_shared_handle_as_view):
+        (pas_segregated_shared_handle_as_view_non_null):
+        * libpas/src/libpas/pas_segregated_shared_handle_inlines.h: Added.
+        (pas_segregated_shared_handle_partial_view_ptr_for_index):
+        (pas_segregated_shared_handle_partial_view_for_index):
+        (pas_segregated_shared_handle_partial_view_for_object):
+        * libpas/src/libpas/pas_segregated_shared_page_directory.c: Added.
+        (find_first_eligible_should_consider_view_parallel):
+        (find_first_eligible_consider_view):
+        (pas_segregated_shared_page_directory_find_first_eligible):
+        (take_last_empty_should_consider_view_parallel):
+        (switch_to_ownership):
+        (take_last_empty_consider_view):
+        (pas_segregated_shared_page_directory_take_last_empty):
+        (pas_segregated_shared_page_directory_dump_reference):
+        (pas_segregated_shared_page_directory_dump_for_spectrum):
+        * libpas/src/libpas/pas_segregated_shared_page_directory.h: Added.
+        * libpas/src/libpas/pas_segregated_shared_view.c: Added.
+        (pas_segregated_shared_view_create):
+        (pas_segregated_shared_view_commit_page):
+        (compute_summary_for_each_live_object_callback):
+        (compute_summary):
+        (pas_segregated_shared_view_compute_summary):
+        (pas_segregated_shared_view_is_empty):
+        * libpas/src/libpas/pas_segregated_shared_view.h: Added.
+        (pas_segregated_shared_view_as_view):
+        (pas_segregated_shared_view_as_view_non_null):
+        (pas_shared_view_computed_bump_result_create_empty):
+        (pas_segregated_shared_view_compute_initial_new_bump):
+        (pas_segregated_shared_view_can_bump):
+        (pas_segregated_shared_view_compute_new_bump):
+        (pas_segregated_shared_view_bump):
+        * libpas/src/libpas/pas_segregated_shared_view_inlines.h: Added.
+        (pas_segregated_shared_view_commit_page_if_necessary):
+        * libpas/src/libpas/pas_segregated_size_directory.c: Added.
+        (pas_segregated_size_directory_construct):
+        (for_each_live_object_object_callback):
+        (pas_segregated_size_directory_for_each_live_object):
+        (pas_segregated_size_directory_for_object):
+        * libpas/src/libpas/pas_segregated_size_directory.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_segregated_size_directory_inlines.h: Added.
+        (pas_segregated_size_directory_take_first_eligible_impl_should_consider_view_not_tabled_parallel):
+        (pas_segregated_size_directory_take_first_eligible_impl_should_consider_view_tabled_parallel):
+        (pas_segregated_size_directory_take_first_eligible_impl):
+        (pas_segregated_size_directory_get_global):
+        * libpas/src/libpas/pas_segregated_view.c: Added.
+        (pas_segregated_view_get_size_directory_slow):
+        (pas_segregated_view_get_global_size_directory_slow):
+        (pas_segregated_view_get_page_config_kind):
+        (pas_segregated_view_get_page_config):
+        (pas_segregated_view_get_index):
+        (pas_segregated_view_get_page_boundary):
+        (pas_segregated_view_get_page):
+        (pas_segregated_view_should_restart):
+        (pas_segregated_view_could_bump):
+        (pas_segregated_view_get_commit_lock):
+        (pas_segregated_view_get_ownership_lock):
+        (pas_segregated_view_is_owned):
+        (pas_segregated_view_should_table):
+        (pas_segregated_view_is_biased_exclusive):
+        (pas_segregated_view_lock_ownership_lock):
+        (pas_segregated_view_lock_ownership_lock_conditionally):
+        (pas_segregated_view_lock_ownership_lock_if_owned):
+        (pas_segregated_view_lock_ownership_lock_if_owned_conditionally):
+        (pas_segregated_view_unlock_ownership_lock):
+        (pas_segregated_view_unlock_ownership_lock_conditionally):
+        (pas_segregated_view_is_primordial_partial):
+        (pas_segregated_view_note_eligibility):
+        (pas_segregated_view_note_emptiness):
+        (for_each_live_object):
+        (pas_segregated_view_for_each_live_object):
+        (should_be_eligible):
+        (pas_segregated_view_should_be_eligible):
+        (pas_segregated_view_for_object):
+        (pas_segregated_view_compute_summary):
+        (pas_segregated_view_is_eligible):
+        (pas_segregated_view_is_eligible_or_biased):
+        (is_payload_empty_callback):
+        (pas_segregated_view_is_payload_empty):
+        (pas_segregated_view_is_empty):
+        (pas_segregated_view_is_empty_or_biased):
+        * libpas/src/libpas/pas_segregated_view.h: Added.
+        (pas_segregated_view_create):
+        (pas_segregated_view_create_non_null):
+        (pas_segregated_view_get_ptr):
+        (pas_segregated_view_get_kind):
+        (pas_segregated_view_is_null):
+        (pas_segregated_view_is_exclusive):
+        (pas_segregated_view_is_ineligible_exclusive):
+        (pas_segregated_view_is_some_exclusive):
+        (pas_segregated_view_is_exclusive_ish):
+        (pas_segregated_view_is_biasing):
+        (pas_segregated_view_is_ineligible_biasing):
+        (pas_segregated_view_is_some_biasing):
+        (pas_segregated_view_get_biasing):
+        (pas_segregated_view_is_eligible_kind):
+        (pas_segregated_view_is_ineligible_kind):
+        (pas_segregated_view_as_ineligible):
+        (pas_segregated_view_as_eligible):
+        (pas_segregated_view_is_shared):
+        (pas_segregated_view_get_shared):
+        (pas_segregated_view_is_shared_handle):
+        (pas_segregated_view_get_shared_handle):
+        (pas_segregated_view_is_partial):
+        (pas_segregated_view_get_partial):
+        (pas_segregated_view_is_global_size_directory):
+        (pas_segregated_view_get_size_directory):
+        (pas_segregated_view_get_global_size_directory):
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h: Added.
+        (pas_segregated_view_will_start_allocating):
+        (pas_segregated_view_did_stop_allocating):
+        * libpas/src/libpas/pas_segregated_view_inlines.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_segregated_view_get_exclusive):
+        * libpas/src/libpas/pas_segregated_view_kind.h: Added.
+        (pas_segregated_view_kind_get_character_code):
+        (pas_segregated_view_kind_get_string):
+        (pas_segregated_view_kind_is_eligible):
+        (pas_segregated_view_kind_is_exclusive_ish):
+        (pas_segregated_view_kind_is_ineligible):
+        (pas_segregated_view_kind_can_become_empty):
+        * libpas/src/libpas/pas_shared_handle_or_page.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_wrap_page):
+        (pas_is_wrapped_shared_handle):
+        (pas_is_wrapped_page):
+        (pas_unwrap_page):
+        * libpas/src/libpas/pas_shared_handle_or_page_boundary.h: Added.
+        (pas_wrap_page_boundary):
+        (pas_is_wrapped_shared_handle):
+        (pas_is_wrapped_page_boundary):
+        (pas_unwrap_page_boundary):
+        * libpas/src/libpas/pas_shared_handle_or_page_boundary_inlines.h: Added.
+        (pas_wrap_shared_handle):
+        (pas_unwrap_shared_handle_no_liveness_checks):
+        (pas_unwrap_shared_handle):
+        (pas_shared_handle_or_page_boundary_get_page_boundary_no_liveness_checks):
+        (pas_shared_handle_or_page_boundary_get_page_boundary):
+        * libpas/src/libpas/pas_shared_handle_or_page_inlines.h: Added.
+        (pas_wrap_shared_handle):
+        (pas_unwrap_shared_handle_no_liveness_checks):
+        (pas_unwrap_shared_handle):
+        (pas_shared_handle_or_page_get_page_no_liveness_checks):
+        (pas_shared_handle_or_page_get_page):
+        * libpas/src/libpas/pas_shared_page_directory_by_size.c: Added.
+        (pas_shared_page_directory_by_size_get):
+        (pas_shared_page_directory_by_size_for_each):
+        (pas_shared_page_directory_by_size_for_each_remote):
+        * libpas/src/libpas/pas_shared_page_directory_by_size.h: Added.
+        * libpas/src/libpas/pas_simple_free_heap_declarations.def: Added.
+        * libpas/src/libpas/pas_simple_free_heap_definitions.def: Added.
+        * libpas/src/libpas/pas_simple_free_heap_helpers.c: Added.
+        (pas_simple_free_heap_helpers_try_allocate_with_manual_alignment):
+        (pas_simple_free_heap_helpers_deallocate):
+        * libpas/src/libpas/pas_simple_free_heap_helpers.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_simple_large_free_heap.c: Added.
+        (free_list_entry):
+        (pas_simple_large_free_heap_construct):
+        (dump_free_list):
+        (consider_expanding):
+        (append):
+        (merge):
+        (remove_entry):
+        (index_to_cursor):
+        (cursor_to_index):
+        (simple_find_first):
+        (simple_find_by_end):
+        (simple_read_cursor):
+        (simple_write_cursor):
+        (simple_merge):
+        (simple_remove):
+        (simple_append):
+        (simple_commit):
+        (simple_dump):
+        (simple_add_mapped_bytes):
+        (initialize_generic_heap_config):
+        (merge_physical):
+        (try_allocate_without_fixing):
+        (fix_free_list_if_necessary):
+        (pas_simple_large_free_heap_try_allocate):
+        (pas_simple_large_free_heap_deallocate):
+        (pas_simple_large_free_heap_for_each_free):
+        (pas_simple_large_free_heap_get_num_free_bytes):
+        (pas_simple_large_free_heap_dump_to_printf):
+        * libpas/src/libpas/pas_simple_large_free_heap.h: Added.
+        * libpas/src/libpas/pas_simple_type.h: Added.
+        (pas_simple_type_has_key):
+        (pas_simple_type_get_key_data):
+        (pas_simple_type_unwrap):
+        (pas_simple_type_size):
+        (pas_simple_type_alignment):
+        (pas_simple_type_key):
+        (pas_simple_type_create):
+        (pas_simple_type_create_with_key_data):
+        (pas_simple_type_as_heap_type_get_type_size):
+        (pas_simple_type_as_heap_type_get_type_alignment):
+        * libpas/src/libpas/pas_size_thunk.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_trivial_size_thunk):
+        * libpas/src/libpas/pas_skip_list.c: Added.
+        (pas_skip_list_construct):
+        (pas_skip_list_node_allocate_with_height):
+        (pas_skip_list_node_allocate):
+        (pas_skip_list_node_deallocate):
+        (pas_skip_list_remove):
+        (pas_skip_list_size):
+        (validate_other_node):
+        (pas_skip_list_validate):
+        * libpas/src/libpas/pas_skip_list.h: Added.
+        (pas_skip_list_node_prev):
+        (pas_skip_list_node_next):
+        (pas_skip_list_head):
+        (pas_skip_list_is_empty):
+        * libpas/src/libpas/pas_skip_list_inlines.h: Added.
+        (pas_skip_list_find_result_create_exact):
+        (pas_skip_list_find_result_create_inexact):
+        (pas_skip_list_level_get_direction):
+        (pas_skip_list_find_impl):
+        (pas_skip_list_find_ignore_head_attachment):
+        (pas_skip_list_find_ignore_pole_attachment):
+        (pas_skip_list_find):
+        (pas_skip_list_insert_after_note_head_attachment):
+        (pas_skip_list_insert_after_note_pole_attachment):
+        (pas_skip_list_insert):
+        * libpas/src/libpas/pas_slow_path_mode.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_slow_path_mode_prefix.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_small_large_map_entry.h: Added.
+        (pas_small_large_map_entry_create_empty):
+        (pas_small_large_map_entry_create_deleted):
+        (pas_small_large_map_entry_is_empty_or_deleted):
+        (pas_small_large_map_entry_is_empty):
+        (pas_small_large_map_entry_is_deleted):
+        (pas_small_large_map_entry_create):
+        (pas_small_large_map_entry_begin):
+        (pas_small_large_map_entry_get_key):
+        (pas_small_large_map_entry_end):
+        (pas_small_large_map_entry_heap):
+        (pas_small_large_map_entry_get_entry):
+        (pas_small_large_map_entry_can_create):
+        * libpas/src/libpas/pas_snprintf.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_status_reporter.c: Added.
+        (dump_ratio_initial):
+        (dump_occupancy_initial):
+        (dump_arrow):
+        (report_bitfit_directory_contents):
+        (pas_status_reporter_dump_bitfit_biasing_directory):
+        (pas_status_reporter_dump_bitfit_global_directory):
+        (report_segregated_directory_contents):
+        (pas_status_reporter_dump_segregated_biasing_directory):
+        (pas_status_reporter_dump_segregated_global_size_directory):
+        (pas_status_reporter_dump_segregated_shared_page_directory):
+        (pas_status_reporter_dump_large_heap):
+        (pas_status_reporter_dump_large_map):
+        (pas_status_reporter_dump_heap_table):
+        (pas_status_reporter_dump_immortal_heap):
+        (pas_status_reporter_dump_compact_large_utility_free_heap):
+        (pas_status_reporter_dump_large_utility_free_heap):
+        (pas_status_reporter_dump_compact_bootstrap_free_heap):
+        (pas_status_reporter_dump_bootstrap_free_heap):
+        (dump_segregated_heap_directory_callback):
+        (pas_status_reporter_dump_bitfit_heap):
+        (pas_status_reporter_dump_segregated_heap):
+        (pas_status_reporter_dump_heap):
+        (dump_all_heaps_heap_callback):
+        (pas_status_reporter_dump_all_heaps):
+        (dump_all_shared_page_directories_directory_callback):
+        (pas_status_reporter_dump_all_shared_page_directories):
+        (pas_status_reporter_dump_all_heaps_non_utility_summaries):
+        (pas_status_reporter_dump_utility_heap):
+        (add_to_size_histogram):
+        (dump_histogram):
+        (total_fragmentation_global_size_directory_callback):
+        (total_fragmentation_heap_callback):
+        (total_fragmentation_shared_page_directory_callback):
+        (pas_status_reporter_dump_total_fragmentation):
+        (tier_up_rate_global_size_directory_callback):
+        (tier_up_rate_heap_callback):
+        (dump_directory_tier_up_rate):
+        (pas_status_reporter_dump_tier_up_rates):
+        (allocator_state):
+        (pas_status_reporter_dump_baseline_allocators):
+        (pas_status_reporter_dump_thread_local_caches):
+        (pas_status_reporter_dump_configuration):
+        (pas_status_reporter_dump_everything):
+        (status_reporter_thread_main):
+        (start_reporter):
+        (pas_status_reporter_start_if_necessary):
+        * libpas/src/libpas/pas_status_reporter.h: Added.
+        * libpas/src/libpas/pas_stream.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_stream_vprintf):
+        (pas_stream_printf):
+        * libpas/src/libpas/pas_stream.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_stream_print_comma):
+        * libpas/src/libpas/pas_string_stream.c: Added.
+        (string_stream_vprintf):
+        (pas_string_stream_destruct):
+        (pas_string_stream_reset):
+        (pas_string_stream_vprintf):
+        * libpas/src/libpas/pas_string_stream.h: Added.
+        (pas_string_stream_get_string):
+        (pas_string_stream_get_string_length):
+        * libpas/src/libpas/pas_subpage_map.c: Added.
+        (pas_subpage_map_add):
+        (pas_subpage_map_get):
+        (pas_subpage_map_get_full_base):
+        * libpas/src/libpas/pas_subpage_map.h: Added.
+        (pas_subpage_map_hashtable_entry_create_empty):
+        (pas_subpage_map_hashtable_entry_create_deleted):
+        (pas_subpage_map_hashtable_entry_is_empty_or_deleted):
+        (pas_subpage_map_hashtable_entry_is_empty):
+        (pas_subpage_map_hashtable_entry_is_deleted):
+        (pas_subpage_map_hashtable_entry_get_key):
+        (pas_subpage_map_hashtable_key_get_hash):
+        (pas_subpage_map_hashtable_key_is_equal):
+        * libpas/src/libpas/pas_subpage_map_entry.c: Added.
+        (set_packed_value):
+        (pas_subpage_map_entry_create):
+        (prepare_indices):
+        (pas_subpage_map_assert_commit_state):
+        (set_bits):
+        (pas_subpage_map_entry_commit):
+        (pas_subpage_map_entry_decommit):
+        * libpas/src/libpas/pas_subpage_map_entry.h: Added.
+        (pas_subpage_map_entry_full_base):
+        (pas_subpage_map_entry_bits):
+        * libpas/src/libpas/pas_thread_local_cache.c: Added.
+        (pas_thread_local_cache_size_for_allocator_index_capacity):
+        (deallocate):
+        (destroy):
+        (destructor):
+        (allocate_cache):
+        (dump_thread_diagnostics):
+        (pas_thread_local_cache_create):
+        (pas_thread_local_cache_destroy):
+        (pas_thread_local_cache_get_slow):
+        (pas_thread_local_cache_get_local_allocator_slow):
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow):
+        (pas_thread_local_cache_stop_local_allocators):
+        (stop_local_allocators_if_necessary_set_bit_source):
+        (stop_local_allocators_if_necessary_set_bit_callback):
+        (pas_thread_local_cache_stop_local_allocators_if_necessary):
+        (process_deallocation_log_with_config):
+        (flush_deallocation_log):
+        (pas_thread_local_cache_flush_deallocation_log):
+        (suspend):
+        (resume):
+        (pas_thread_local_cache_for_all):
+        (pas_thread_local_cache_append_deallocation_slow):
+        (pas_thread_local_cache_shrink):
+        * libpas/src/libpas/pas_thread_local_cache.h: Added.
+        (pas_thread_local_cache_try_get):
+        (pas_thread_local_cache_is_guaranteed_to_destruct):
+        (pas_thread_local_cache_can_set):
+        (pas_thread_local_cache_set_impl):
+        (pas_thread_local_cache_get_already_initialized):
+        (pas_thread_local_cache_get_with_heap_lock_hold_mode):
+        (pas_thread_local_cache_get):
+        (pas_thread_local_cache_get_holding_heap_lock):
+        (pas_thread_local_cache_get_local_allocator_impl):
+        (pas_thread_local_cache_get_local_allocator):
+        (pas_thread_local_cache_try_get_local_allocator):
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache):
+        (pas_thread_local_cache_encode_object):
+        (pas_thread_local_cache_append_deallocation):
+        (pas_thread_local_cache_append_deallocation_with_size):
+        * libpas/src/libpas/pas_thread_local_cache_layout.c: Added.
+        (pas_thread_local_cache_layout_add_node):
+        (pas_thread_local_cache_layout_add):
+        (pas_thread_local_cache_layout_duplicate):
+        * libpas/src/libpas/pas_thread_local_cache_layout.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.c: Added.
+        (pas_thread_local_cache_layout_node_get_directory):
+        (allocator_index_ptr):
+        (pas_thread_local_cache_layout_node_get_allocator_index):
+        (pas_thread_local_cache_layout_node_set_allocator_index):
+        (next_ptr):
+        (pas_thread_local_cache_layout_node_get_next):
+        (pas_thread_local_cache_layout_node_set_next):
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.h: Added.
+        (pas_wrap_segregated_global_size_directory):
+        (pas_wrap_redundant_local_allocator_node):
+        (pas_is_wrapped_segregated_global_size_directory):
+        (pas_is_wrapped_redundant_local_allocator_node):
+        (pas_unwrap_segregated_global_size_directory):
+        (pas_unwrap_redundant_local_allocator_node):
+        * libpas/src/libpas/pas_thread_local_cache_node.c: Added.
+        (pas_thread_local_cache_node_allocate):
+        (pas_thread_local_cache_node_deallocate):
+        * libpas/src/libpas/pas_thread_local_cache_node.h: Added.
+        * libpas/src/libpas/pas_tiny_large_map_entry.h: Added.
+        (pas_tiny_large_map_entry_base):
+        (pas_tiny_large_map_entry_create):
+        (pas_tiny_large_map_entry_begin):
+        (pas_tiny_large_map_entry_end):
+        (pas_tiny_large_map_entry_heap):
+        (pas_tiny_large_map_entry_get_entry):
+        (pas_tiny_large_map_entry_can_create):
+        (pas_tiny_large_map_entry_create_empty):
+        (pas_tiny_large_map_entry_create_deleted):
+        (pas_tiny_large_map_entry_is_empty_or_deleted):
+        (pas_tiny_large_map_entry_is_empty):
+        (pas_tiny_large_map_entry_is_deleted):
+        (pas_tiny_large_map_entry_get_key):
+        (pas_tiny_large_map_key_get_hash):
+        (pas_tiny_large_map_key_is_equal):
+        * libpas/src/libpas/pas_tree_direction.h: Added.
+        (pas_tree_direction_get_string):
+        (pas_tree_direction_invert):
+        (pas_tree_direction_invert_comparison_result_if_right):
+        * libpas/src/libpas/pas_tri_state.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_tri_state_get_string):
+        (pas_tri_state_equals_boolean):
+        * libpas/src/libpas/pas_try_allocate.h: Added.
+        (pas_try_allocate_impl_size_thunk):
+        (pas_try_allocate_impl):
+        * libpas/src/libpas/pas_try_allocate_array.h: Added.
+        (pas_try_allocate_array_impl):
+        * libpas/src/libpas/pas_try_allocate_common.h: Added.
+        (pas_try_allocate_common_can_go_fast):
+        (pas_try_allocate_common_impl_fast):
+        (pas_try_allocate_common_impl_slow):
+        (pas_try_allocate_common_impl):
+        * libpas/src/libpas/pas_try_allocate_intrinsic_primitive.h: Added.
+        (pas_try_allocate_intrinsic_primitive_impl_medium_slow_case):
+        (pas_try_allocate_intrinsic_primitive_impl):
+        * libpas/src/libpas/pas_try_allocate_primitive.h: Added.
+        (pas_try_allocate_primitive_impl):
+        * libpas/src/libpas/pas_try_reallocate.h: Added.
+        (pas_try_allocate_for_reallocate_and_copy):
+        (pas_try_reallocate_table_segregated_case):
+        (pas_try_reallocate_table_bitfit_case):
+        (pas_try_reallocate):
+        (pas_try_reallocate_intrinsic_primitive_allocate_callback):
+        (pas_try_reallocate_intrinsic_primitive):
+        (pas_try_reallocate_single_allocate_callback):
+        (pas_try_reallocate_single):
+        (pas_try_reallocate_array_allocate_callback):
+        (pas_try_reallocate_array):
+        (pas_try_reallocate_primitive_allocate_callback):
+        (pas_try_reallocate_primitive):
+        * libpas/src/libpas/pas_try_shrink.h: Added.
+        (pas_try_shrink):
+        * libpas/src/libpas/pas_typed_allocation_result.h: Added.
+        (pas_typed_allocation_result_create_empty):
+        (pas_typed_allocation_result_create):
+        (pas_typed_allocation_result_as_intrinsic_allocation_result):
+        (pas_typed_allocation_result_create_with_intrinsic_allocation_result):
+        (pas_typed_allocation_result_zero):
+        (pas_typed_allocation_result_set_errno):
+        (pas_typed_allocation_result_crash_on_error):
+        * libpas/src/libpas/pas_utility_heap.c: Added.
+        (pas_utility_heap_allocate_with_alignment):
+        (pas_utility_heap_try_allocate):
+        (pas_utility_heap_allocate):
+        (pas_utility_heap_deallocate):
+        (pas_utility_heap_get_num_free_bytes):
+        (for_each_live_object_small_object_callback):
+        (pas_utility_heap_for_each_live_object):
+        (pas_utility_heap_for_all_allocators):
+        * libpas/src/libpas/pas_utility_heap.h: Added.
+        (pas_utility_heap_allocate_with_asserted_kind):
+        (pas_utility_heap_deallocate_with_ignored_size_and_asserted_kind):
+        * libpas/src/libpas/pas_utility_heap_config.c: Added.
+        (pas_utility_heap_allocate_page):
+        (pas_utility_heap_config_for_each_shared_page_directory):
+        * libpas/src/libpas/pas_utility_heap_config.h: Added.
+        (pas_utility_heap_page_header_for_boundary):
+        (pas_utility_heap_boundary_for_page_header):
+        (pas_utility_heap_shared_page_directory_selector):
+        (pas_utility_heap_create_page_header):
+        (pas_utility_heap_destroy_page_header):
+        (pas_heap_config_is_utility):
+        (pas_heap_config_heap_lock_hold_mode):
+        * libpas/src/libpas/pas_utility_heap_support.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_utils.c: Added.
+        (pas_panic):
+        (pas_assertion_failed):
+        (pas_deallocation_did_fail):
+        (pas_set_deallocation_did_fail_callback):
+        (pas_reallocation_did_fail):
+        (pas_set_reallocation_did_fail_callback):
+        * libpas/src/libpas/pas_utils.h: Added.
+        (pas_is_power_of_2):
+        (pas_round_down_to_power_of_2):
+        (pas_round_down):
+        (pas_round_up_to_power_of_2):
+        (pas_round_up):
+        (pas_modulo_power_of_2):
+        (pas_is_aligned):
+        (pas_reverse):
+        (pas_reverse64):
+        (pas_make_mask64):
+        (pas_compare_and_swap_uintptr_weak):
+        (pas_compare_and_swap_uintptr_strong):
+        (pas_compare_and_swap_bool_weak):
+        (pas_compare_and_swap_bool_strong):
+        (pas_compare_and_swap_uint16_weak):
+        (pas_compare_and_swap_uint32_weak):
+        (pas_compare_and_swap_uint32_strong):
+        (pas_compare_and_swap_uint64_weak):
+        (pas_compare_and_swap_uint64_strong):
+        (pas_compare_and_swap_ptr_weak):
+        (pas_compare_and_swap_ptr_strong):
+        (pas_fence_after_load):
+        (pas_store_store_fence):
+        (pas_opaque):
+        (pas_pair_create):
+        (pas_compare_and_swap_pair_weak):
+        (pas_compare_and_swap_pair_strong):
+        (pas_atomic_load_pair):
+        (pas_atomic_store_pair):
+        (pas_hash32):
+        (pas_hash64):
+        (pas_hash_intptr):
+        (pas_hash_ptr):
+        (pas_log2):
+        (pas_log2_rounded_up):
+        (pas_log2_rounded_up_safe):
+        (pas_non_empty_ranges_overlap):
+        (pas_ranges_overlap):
+        (pas_xorshift32):
+        (pas_large_object_hash):
+        (pas_is_divisible_by):
+        * libpas/src/libpas/pas_utils_prefix.h: Added.
+        (__pas_round_up_to_power_of_2):
+        (__pas_compiler_fence):
+        (__pas_fence):
+        (__pas_depend_impl):
+        (__pas_depend):
+        (__pas_depend_cpu_only):
+        (__pas_memcpy):
+        * libpas/src/libpas/pas_versioned_field.c: Added.
+        (pas_versioned_field_minimize):
+        (pas_versioned_field_maximize):
+        (pas_versioned_field_minimize_watched):
+        (pas_versioned_field_maximize_watched):
+        * libpas/src/libpas/pas_versioned_field.h: Added.
+        (pas_versioned_field_construct):
+        (pas_versioned_field_create):
+        (pas_versioned_field_create_with_invalid_version):
+        (pas_versioned_field_create_empty):
+        (pas_versioned_field_with_version):
+        (pas_versioned_field_with_value):
+        (pas_versioned_field_as_pair):
+        (pas_versioned_field_from_pair):
+        (pas_versioned_field_equals):
+        (pas_versioned_field_read_torn):
+        (pas_versioned_field_read):
+        (pas_versioned_field_weak_cas):
+        (pas_versioned_field_strong_cas):
+        (pas_versioned_field_read_to_watch):
+        (pas_versioned_field_try_write):
+        (pas_versioned_field_try_write_watched):
+        (pas_versioned_field_write):
+        * libpas/src/libpas/pas_virtual_range.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/pas_virtual_range.h: Added.
+        (pas_virtual_range_create):
+        (pas_virtual_range_create_empty):
+        (pas_virtual_range_get_range):
+        (pas_virtual_range_is_empty):
+        (pas_virtual_range_size):
+        (pas_virtual_range_overlaps):
+        * libpas/src/libpas/pas_virtual_range_min_heap.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (pas_virtual_range_compare_begin):
+        (pas_virtual_range_get_index):
+        (pas_virtual_range_set_index):
+        * libpas/src/libpas/pas_zero_mode.h: Added.
+        (pas_zero_mode_get_string):
+        (pas_zero_mode_validate):
+        (pas_zero_mode_merge):
+        * libpas/src/libpas/thingy_heap.c: Added.
+        (thingy_try_allocate_primitive):
+        (thingy_try_allocate_primitive_zeroed):
+        (thingy_try_allocate_primitive_with_alignment):
+        (thingy_try_reallocate_primitive):
+        (thingy_try_allocate):
+        (thingy_try_allocate_zeroed):
+        (thingy_try_allocate_array):
+        (thingy_try_allocate_zeroed_array):
+        (thingy_get_allocation_size):
+        (thingy_try_reallocate_array):
+        (thingy_deallocate):
+        (thingy_heap_ref_get_heap):
+        (thingy_utility_heap_allocate):
+        * libpas/src/libpas/thingy_heap.h: Added.
+        * libpas/src/libpas/thingy_heap_config.c: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/libpas/thingy_heap_config.h: Added.
+        * libpas/src/libpas/thingy_heap_prefix.h: Added.
+        * libpas/src/mbmalloc/mbmalloc_bmalloc.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (mbmalloc):
+        (mbmemalign):
+        (mbrealloc):
+        (mbfree):
+        (mbscavenge):
+        * libpas/src/mbmalloc/mbmalloc_hotbit.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (mbmalloc):
+        (mbmemalign):
+        (mbrealloc):
+        (mbfree):
+        (mbscavenge):
+        * libpas/src/mbmalloc/mbmalloc_iso_common_primitive.c: Added.
+        (install_verifier_if_necessary):
+        (mbmalloc):
+        (mbmemalign):
+        (mbrealloc):
+        (mbfree):
+        (dump_summary):
+        (mbscavenge):
+        * libpas/src/mbmalloc/mbmalloc_lineref.c: Copied from Source/WTF/wtf/FastTLS.h.
+        (mbmalloc):
+        (mbmemalign):
+        (mbrealloc):
+        (mbfree):
+        (mbscavenge):
+        * libpas/src/test/BitfieldVectorTests.cpp: Added.
+        (std::testBitfieldNumWords):
+        (std::testBitfieldNumFields):
+        (std::testBitfieldWordIndex):
+        (std::testBitfieldFieldIndex):
+        (std::testBitfieldFieldShift):
+        (std::BitfieldVector::BitfieldVector):
+        (std::BitfieldVector::get const):
+        (std::BitfieldVector::set):
+        (std::testBitfieldVectorForward):
+        (std::testBitfieldVectorBackward):
+        (addBitfieldVectorTests):
+        * libpas/src/test/BitvectorTests.cpp: Added.
+        (std::testFindFirst):
+        (addBitvectorTests):
+        * libpas/src/test/CartesianTreeTests.cpp: Added.
+        (std::TestNode::TestNode):
+        (std::TestNode::compare):
+        (std::TestNode::getXKey):
+        (std::TestNode::getYKey):
+        (std::Pair::Pair):
+        (std::Pair::operator== const):
+        (std::Pair::operator< const):
+        (std::findExact):
+        (std::remove):
+        (std::findLeastGreaterThanOrEqual):
+        (std::assertFoundAndRemove):
+        (std::assertEqual):
+        (std::assertSameValuesForKey):
+        (std::cartesianTreePrintWidth):
+        (std::printSpaces):
+        (std::dumpCartesianTree):
+        (std::dumpVector):
+        (std::testDriver):
+        (std::randomTestDriver):
+        (addCartesianTreeTests):
+        * libpas/src/test/CoalignTests.cpp: Added.
+        (std::testCoalignOneSided):
+        (std::testCoalignOneSidedError):
+        (std::testCoalign):
+        (addCoalignTests):
+        * libpas/src/test/ExtendedGCDTests.cpp: Copied from Source/WTF/wtf/FastTLS.h.
+        (std::testExtendedGCD):
+        (addExtendedGCDTests):
+        * libpas/src/test/HashtableTests.cpp: Added.
+        (std::hashtableForEachEntryCallback):
+        (std::hashtableForEachEntry):
+        (std::Key::Key):
+        (std::CollidingEntry_create_empty):
+        (std::CollidingEntry_create_deleted):
+        (std::CollidingEntry_is_empty_or_deleted):
+        (std::CollidingEntry_is_empty):
+        (std::CollidingEntry_is_deleted):
+        (std::CollidingEntry_get_key):
+        (std::CollidingKey_get_hash):
+        (std::CollidingKey_is_equal):
+        (std::testEmptyCollidingHashtable):
+        (std::testCollidingHashtableAddFindTakeImpl):
+        (std::testCollidingHashtableAddFindTake):
+        (std::testCollidingHashtableAddAddTakeSet):
+        (std::testCollidingHashtableAddAddAddTakeTakeSet):
+        (std::testCollidingHashtableAddAddAddTakeTakeAddSet):
+        (std::OutOfLineEntry_create_empty):
+        (std::OutOfLineEntry_create_deleted):
+        (std::OutOfLineEntry_is_empty_or_deleted):
+        (std::OutOfLineEntry_is_empty):
+        (std::OutOfLineEntry_is_deleted):
+        (std::OutOfLineEntry_get_key):
+        (std::OutOfLineKey_get_hash):
+        (std::OutOfLineKey_is_equal):
+        (std::testOutOfLineHashtable):
+        (addHashtableTests):
+        * libpas/src/test/HeapLocker.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (HeapLocker::HeapLocker):
+        (HeapLocker::~HeapLocker):
+        * libpas/src/test/IsoDynamicPrimitiveHeapTests.cpp: Added.
+        (std::allocate42):
+        (std::allocate42WithAlignment):
+        (std::allocate42Zeroed):
+        (std::reallocate42):
+        (std::testManySizesAndKeys):
+        (std::testManySizesAndKeysInTandem):
+        (addIsoDynamicPrimitiveHeapTests):
+        * libpas/src/test/IsoHeapChaosTests.cpp: Added.
+        (std::flushDeallocationLogAndStopAllocators):
+        (std::verifyObjectSet):
+        (std::scavengerDidStart):
+        (std::scavengerWillShutDown):
+        (std::PageRange::PageRange):
+        (std::PageRange::operator< const):
+        (std::PageRange::end const):
+        (std::addPageRange):
+        (std::addPageRangeCallback):
+        (std::RecordedRange::RecordedRange):
+        (std::RecordedRange::operator< const):
+        (std::RecordedRange::end const):
+        (std::ReaderRange::ReaderRange):
+        (std::ReaderRange::operator< const):
+        (std::enumeratorReader):
+        (std::enumeratorRecorder):
+        (std::testAllocationChaos):
+        (std::addTheTests):
+        (std::addSpotTests):
+        (addIsoHeapChaosTests):
+        * libpas/src/test/IsoHeapPageSharingTests.cpp: Added.
+        (std::testTakePages):
+        (std::testTakePagesFromCorrectHeap):
+        (std::testLargeHeapTakesPagesFromCorrectSmallHeap):
+        (std::testLargeHeapTakesPagesFromCorrectSmallHeapAllocateAfterFree):
+        (std::testLargeHeapTakesPagesFromCorrectSmallHeapWithFancyOrder):
+        (std::testLargeHeapTakesPagesFromCorrectLargeHeap):
+        (std::testLargeHeapTakesPagesFromCorrectLargeHeapAllocateAfterFreeOnSmallHeap):
+        (std::testLargeHeapTakesPagesFromCorrectLargeHeapAllocateAfterFreeOnAnotherLargeHeap):
+        (std::testLargeHeapTakesPagesFromCorrectLargeHeapWithFancyOrder):
+        (std::testSmallHeapTakesPagesFromCorrectLargeHeap):
+        (std::testSmallHeapTakesPagesFromCorrectLargeHeapWithFancyOrder):
+        (std::testSmallHeapTakesPagesFromCorrectLargeHeapAllocateAfterFreeOnSmallHeap):
+        (std::testSmallHeapTakesPagesFromCorrectLargeHeapAllocateAfterFreeOnAnotherLargeHeap):
+        (std::thingyName):
+        (std::forEachThingyKind):
+        (std::setupThingy):
+        (std::cleanThingy):
+        (std::checkThingy):
+        (std::addObject):
+        (std::deleteThingy):
+        (std::allocationKindName):
+        (std::allocateThingiesImpl):
+        (std::allocateThingies):
+        (std::heapSummaryFor):
+        (std::assertOnlyDecommitted):
+        (std::testFullVdirToVdirObvious):
+        (std::testFullVdirToVdirObviousBackwards):
+        (std::testFullVdirToVdirOpportunistic):
+        (std::testFullVdirToVdirOpportunisticBackwards):
+        (std::testFullVdirToVdirNewAllocation):
+        (std::testFullVdirToVdirNewLateAllocation):
+        (std::testFullVdirToVdirNewDirAllocation):
+        (std::testFullVdirToVdirNewLateDirAllocation):
+        (std::testFullVdirToVdirNewLargeAllocation):
+        (std::testFullVdirToVdirNewLateLargeAllocation):
+        (std::testFullVdirToDir):
+        (std::testFullVdirToDirBackwardsTarget):
+        (std::testFullVdirToDirBackwardsSource):
+        (std::testFullVdirToDirNewAllocation):
+        (std::testFullVdirToDirNewLateAllocation):
+        (std::testFullVdirToDirNewDirAllocation):
+        (std::testFullVdirToDirNewLateDirAllocation):
+        (std::testFullVdirToDirNewLargeAllocation):
+        (std::testFullNotVdirButLargeToDirNewLargeAllocation):
+        (std::testFullVdirToDirNewLateLargeAllocation):
+        (std::testFullVdirToDirNewAllocationAlsoPhysical):
+        (std::testFullVdirToDirNewLateAllocationAlsoPhysical):
+        (std::testFullVdirToLarge):
+        (std::testFullVdirToLargeBackwardsTarget):
+        (std::testFullVdirToLargeBackwardsSource):
+        (std::testFullVdirToLargeNewAllocation):
+        (std::testFullVdirToLargeNewLateAllocation):
+        (std::testFullVdirToLargeNewDirAllocation):
+        (std::testFullVdirToLargeNewLateDirAllocation):
+        (std::testFullVdirToLargeNewLargeAllocation):
+        (std::testFullNotVdirButLargeToLargeNewLargeAllocation):
+        (std::testFullVdirToLargeNewLateLargeAllocation):
+        (std::testFullVdirToLargeNewAllocationAlsoPhysical):
+        (std::testFullVdirToLargeNewLateAllocationAlsoPhysical):
+        (std::testFullDirToVdir):
+        (std::testFullDirToVdirBackwards):
+        (std::testFullDirToVdirNewAllocation):
+        (std::testFullDirToVdirNewLateAllocation):
+        (std::testFullDirToDir):
+        (std::testFullDirToDirBackwards):
+        (std::testFullDirToDirWithThree):
+        (std::testFullDirToDirWithThreeBackwards):
+        (std::testFullDirToDirWithThreeNewAllocation):
+        (std::testFullDirToDirWithThreeNewLateAllocation):
+        (std::testFullDirToDirWithThreeNewVdirAllocation):
+        (std::testFullDirToDirWithThreeNewLateVdirAllocation):
+        (std::testFullDirToLarge):
+        (std::testFullDirToLargeNewAllocation):
+        (std::testFullDirToLargeNewLateAllocation):
+        (std::testFullDirToLargeNewVdirAllocation):
+        (std::testFullDirToLargeNewLateVdirAllocation):
+        (std::testFullLargeToVdirForwardMinEpoch):
+        (std::testFullNotLargeButDirToVdirCombinedUseEpoch):
+        (std::testFullLargeToVdirCombinedUseEpoch):
+        (std::testFullLargeToVdirBackwards):
+        (std::testFullLargeToVdirNewAllocation):
+        (std::testFullLargeToVdirNewLateAllocation):
+        (std::testFullLargeToVdirNewDirAllocationForwardMinEpoch):
+        (std::testFullLargeToVdirNewDirAllocationCombinedUseEpoch):
+        (std::testFullLargeToVdirNewLateDirAllocationForwardMinEpoch):
+        (std::testFullLargeToVdirNewLateDirAllocationCombinedUseEpoch):
+        (std::testFullLargeToDirForwardMinEpoch):
+        (std::testFullLargeToDirCombinedUseEpoch):
+        (std::testFullLargeToDirBackwardsSource):
+        (std::testFullLargeToDirBackwardsTarget):
+        (std::testFullLargeToDirBackwardsSourceAndTarget):
+        (std::testFullLargeToDirNewAllocation):
+        (std::testFullLargeToDirNewLateAllocation):
+        (std::testFullLargeToDirNewVdirAllocationForwardMinEpoch):
+        (std::testFullLargeToDirNewVdirAllocationCombinedUseEpoch):
+        (std::testFullLargeToDirNewLateVdirAllocationForwardMinEpoch):
+        (std::testFullLargeToDirNewLateVdirAllocationCombinedUseEpoch):
+        (std::testFullLargeToDirNewDirAllocationForwardMinEpoch):
+        (std::testFullLargeToDirNewDirAllocationCombinedUseEpoch):
+        (std::testFullLargeToDirNewLateDirAllocationForwardMinEpoch):
+        (std::testFullLargeToDirNewLateDirAllocationCombinedUseEpoch):
+        (std::testFullLargeToLargeForwardMinEpoch):
+        (std::testFullLargeToLargeCombinedUseEpoch):
+        (std::testFullLargeToLargeReverse):
+        (std::testFullLargeToLargeNewAllocation):
+        (std::testFullLargeToLargeNewLateAllocation):
+        (std::testFullLargeToLargeNewVdirAllocation):
+        (std::testFullLargeToLargeNewLateVdirAllocation):
+        (std::testFullLargeToLargeNewDirAllocation):
+        (std::testFullLargeToLargeNewLateDirAllocation):
+        (std::testNewEligibleHasOlderEpoch):
+        (std::scavengerCompletionCallback):
+        (std::testScavengerEventuallyReturnsMemory):
+        (std::testScavengerEventuallyReturnsMemoryEvenWithoutManualShrink):
+        (std::scavengerShutDownCallback):
+        (std::testScavengerShutsDownEventually):
+        (std::addAllTests):
+        (addIsoHeapPageSharingTests):
+        * libpas/src/test/IsoHeapPartialAndBaselineTests.cpp: Added.
+        (std::FreeOrder::setCount const):
+        (std::FreeOrder::didSetCount const):
+        (std::forEachSharedPageDirectoryCallbackAdaptor):
+        (std::forEachSharedPageDirectory):
+        (std::numSharedPages):
+        (std::numCommittedSharedPages):
+        (std::testSimplePartialAllocations):
+        (std::testFreeAroundPrimordialStop):
+        (std::testFreeInterleavedAroundPrimordialStop):
+        (std::PartialProgram::PartialProgram):
+        (std::testMultiplePartialsFromDifferentHeapsPerShared):
+        (std::addMultiplePartialsFromDifferentHeapsPerSharedTests):
+        (std::testMultiplePartialsFromDifferentThreadsPerShared):
+        (std::incrementalRandom):
+        (std::zeroRandom):
+        (std::testTwoBaselinesEvictions):
+        (std::addScavengerDependentTests):
+        (addIsoHeapPartialAndBaselineTests):
+        * libpas/src/test/IsoHeapReservedMemoryTests.cpp: Added.
+        (std::testSizeProgression):
+        (addIsoHeapReservedMemoryTests):
+        * libpas/src/test/IsoHeapTablingTests.cpp: Added.
+        (std::testTabling):
+        (std::testUntabling):
+        (std::addTablingTests):
+        (addIsoHeapTablingTests):
+        * libpas/src/test/JITHeapTests.cpp: Added.
+        (std::testAllocateShrinkAndAllocate):
+        (addJITHeapTests):
+        * libpas/src/test/LargeFreeHeapTests.cpp: Added.
+        (std::alignSimple):
+        (std::trappingAllocator):
+        (std::trappingDeallocator):
+        (std::failingAllocator):
+        (std::Action::allocate):
+        (std::Action::deallocate):
+        (std::Free::Free):
+        (std::Free::operator== const):
+        (std::Free::operator< const):
+        (std::Allocation::Allocation):
+        (std::function<pas_aligned_allocation_result):
+        (std::function<void):
+        (std::operator<<):
+        (std::allocatorAdapter):
+        (std::deallocatorAdapter):
+        (std::iterateAdapter):
+        (std::iterateHeap):
+        (std::testLargeFreeHeapImpl):
+        (std::testSimpleLargeFreeHeap):
+        (std::testFastLargeFreeHeap):
+        (std::testBootstrapHeap):
+        (std::freeListSize):
+        (addLargeFreeHeapTests):
+        * libpas/src/test/LargeSharingPoolDump.cpp: Copied from Source/WTF/wtf/FastTLS.h.
+        (std::forEachAdapter):
+        (forEachLargeSharingPoolNode):
+        (dumpLargeSharingPool):
+        * libpas/src/test/LargeSharingPoolDump.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/src/test/LargeSharingPoolTests.cpp: Added.
+        (std::Range::Range):
+        (std::assertState):
+        (std::testBadCoalesceEpochUpdate):
+        (addLargeSharingPoolTests):
+        * libpas/src/test/LockFreeReadPtrPtrHashtableTests.cpp: Added.
+        (std::hashFunction):
+        (std::testChaos):
+        (addLockFreeReadPtrPtrHashtableTests):
+        * libpas/src/test/MinHeapTests.cpp: Added.
+        (std::Element::Element):
+        (std::asChar):
+        (std::compare):
+        (std::getIndex):
+        (std::setIndex):
+        (std::dumpHeap):
+        (std::testMinHeap):
+        (std::minHeapChaos):
+        (std::testMinHeapChaos):
+        (std::makeBootstrapAllocationConfig):
+        (std::testBootstrapMinHeapChaos):
+        (addMinHeapTests):
+        * libpas/src/test/RaceTests.cpp: Added.
+        (std::hookCallbackAdapter):
+        (std::willLockCallback):
+        (std::recordLockAcquisition):
+        (std::didLockCallback):
+        (std::didTryLockCallback):
+        (std::willUnlockCallback):
+        (std::isHoldingContendedLocks):
+        (std::InstallRaceHooks::InstallRaceHooks):
+        (std::testLocalAllocatorStopRace):
+        (std::testLocalAllocatorStopRaceAgainstScavenge):
+        (addRaceTests):
+        * libpas/src/test/RedBlackTreeTests.cpp: Added.
+        (std::TestNode::TestNode):
+        (std::TestNode::compare):
+        (std::TestNode::compareKey):
+        (std::Pair::Pair):
+        (std::Pair::operator== const):
+        (std::Pair::operator< const):
+        (std::findExact):
+        (std::remove):
+        (std::findLeastGreaterThanOrEqual):
+        (std::assertFoundAndRemove):
+        (std::assertEqual):
+        (std::assertSameValuesForKey):
+        (std::push):
+        (std::validateEnumerable):
+        (std::testDriver):
+        (std::randomTestDriver):
+        (addRedBlackTreeTests):
+        * libpas/src/test/SkipListTests.cpp: Added.
+        (std::TestNode::TestNode):
+        (std::TestNode::fromSkipListNode):
+        (std::TestNode::compareKey):
+        (std::TestNode::compareKeyLeastGreaterThanOrEqual):
+        (std::TestNode::compareKeyForInsert):
+        (std::TestNode::compare):
+        (std::Pair::Pair):
+        (std::Pair::operator== const):
+        (std::Pair::operator< const):
+        (std::findExact):
+        (std::remove):
+        (std::findLeastGreaterThanOrEqual):
+        (std::assertFoundAndRemove):
+        (std::assertEqual):
+        (std::assertSameValuesForKey):
+        (std::dumpSkipList):
+        (std::dumpVector):
+        (std::testDriver):
+        (std::randomTestDriver):
+        (addSkipListTests):
+        * libpas/src/test/SuspendScavenger.h: Copied from Source/WTF/wtf/FastTLS.h.
+        (SuspendScavenger::SuspendScavenger):
+        (SuspendScavenger::~SuspendScavenger):
+        * libpas/src/test/TSDTests.cpp: Added.
+        (std::destructor):
+        (std::testTSD):
+        (addTSDTests):
+        * libpas/src/test/TestHarness.cpp: Added.
+        (allocationConfigAllocate):
+        (allocationConfigDeallocate):
+        (TestScopeImpl::TestScopeImpl):
+        (RuntimeConfigTestScope::RuntimeConfigTestScope):
+        (ForceExclusives::ForceExclusives):
+        (ForceTLAs::ForceTLAs):
+        (ForceBitfit::ForceBitfit):
+        (DisableBitfit::DisableBitfit):
+        (ForcePartials::ForcePartials):
+        (ForceBaselines::ForceBaselines):
+        (RunScavengerFully::RunScavengerFully):
+        (RunScavengerOnNonRemoteCaches::RunScavengerOnNonRemoteCaches):
+        (SuspendScavengerScope::SuspendScavengerScope):
+        (VerifyGranules::VerifyGranules):
+        (InstallVerifier::InstallVerifier):
+        (DisableExplosion::DisableExplosion):
+        (ForceExplosion::ForceExplosion):
+        (ForceOneMagazine::ForceOneMagazine):
+        (EpochIsCounter::EpochIsCounter):
+        (BootJITHeap::BootJITHeap):
+        (testSucceeded):
+        (deterministicRandomNumber):
+        (addTest):
+        (TestScope::TestScope):
+        (TestScope::~TestScope):
+        (hasScope):
+        (dumpObjectSet):
+        (dumpObjectsInHeap):
+        (dumpObjectsInHeaps):
+        (forEachLiveObject):
+        (verifyMinimumObjectDistance):
+        (verifyExactObjectDistance):
+        (runOneTest):
+        (runForkedTest):
+        (runTests):
+        (runFilteredTests):
+        (main):
+        (scavenge):
+        (printStatusReport):
+        * libpas/src/test/TestHarness.h: Added.
+        (stringStreamConstruct):
+        (dumpToString):
+        (operator<<):
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp: Added.
+        (std::flushDeallocationLog):
+        (std::flushDeallocationLogAndStopAllocators):
+        (std::sizeClassFor):
+        (std::isLarge):
+        (std::forEachLiveUtilityObjectAdapter):
+        (std::forEachLiveUtilityObject):
+        (std::forEachCommittedViewAdapter):
+        (std::forEachCommittedView):
+        (std::numCommittedViews):
+        (std::numViews):
+        (std::verifyMinimumObjectDistance):
+        (std::verifyObjectSet):
+        (std::verifyUtilityObjectSet):
+        (std::verifyHeapEmpty):
+        (std::PrimitiveAllocator::PrimitiveAllocator):
+        (std::PrimitiveReallocAllocator::PrimitiveReallocAllocator):
+        (std::AlignedPrimitiveAllocator::AlignedPrimitiveAllocator):
+        (std::createIsolatedHeapRef):
+        (std::IsolatedHeapAllocator::IsolatedHeapAllocator):
+        (std::IsolatedHeapArrayAllocator::IsolatedHeapArrayAllocator):
+        (std::CounterScope::CounterScope):
+        (std::CounterScope::~CounterScope):
+        (std::testDeallocateNull):
+        (std::deallocationFailureCallback):
+        (std::DeallocationShouldFail::DeallocationShouldFail):
+        (std::DeallocationShouldFail::~DeallocationShouldFail):
+        (std::testDeallocateMalloc):
+        (std::testDeallocateStack):
+        (std::testSimpleAllocation):
+        (std::testSmallOrMediumAllocation):
+        (std::testSmallAllocation):
+        (std::testLargeAllocation):
+        (std::testAllocationWithInterleavedFragmentation):
+        (std::testFreeListRefillSpans):
+        (std::testInternalScavenge):
+        (std::testInternalScavengeFromCorrectDirectory):
+        (std::SizeClassProgram::SizeClassProgram):
+        (std::testSizeClassCreationImpl):
+        (std::testSizeClassCreation):
+        (std::testSpuriousEligibility):
+        (std::testBasicSizeClassNotSet):
+        (std::testSmallDoubleFree):
+        (std::testSmallFreeInner):
+        (std::testSmallFreeNextWithShrink):
+        (std::testSmallFreeNextWithoutShrink):
+        (std::testSmallFreeNextBeforeShrink):
+        (std::AllocationProgram::allocate):
+        (std::AllocationProgram::free):
+        (std::AllocationProgram::kind const):
+        (std::AllocationProgram::key const):
+        (std::AllocationProgram::isAllocate const):
+        (std::AllocationProgram::count const):
+        (std::AllocationProgram::alignment const):
+        (std::AllocationProgram::isFree const):
+        (std::IsolatedComplexAllocator::IsolatedComplexAllocator):
+        (std::IsolatedUnitComplexAllocator::IsolatedUnitComplexAllocator):
+        (std::checkObjectDistances):
+        (std::checkObjectBeginnings):
+        (std::addObjectAllocation):
+        (std::ExpectedBytes::exact):
+        (std::ExpectedBytes::upperBound):
+        (std::ExpectedBytes::check):
+        (std::testComplexLargeAllocationImpl):
+        (std::testComplexLargeAllocation):
+        (std::testAllocationCountProgression):
+        (std::testAllocationChaos):
+        (std::testUtilityAllocationChaos):
+        (std::testCombinedAllocationChaos):
+        (std::testLargeDoubleFree):
+        (std::testLargeOffsetFree):
+        (std::addDeallocationTests):
+        (std::testReallocatePrimitive):
+        (std::testReallocateArray):
+        (std::addSmallHeapTests):
+        (std::addLargeHeapTests):
+        (std::addMediumHeapTests):
+        (std::addLargerThanMediumHeapTests):
+        (std::addMargeBitfitTests):
+        (std::addLargerThanMargeBitfitTests):
+        (std::addCombinedHeapTests):
+        (std::addAllTestsImpl):
+        (std::addAllTests):
+        (addThingyAndUtilityHeapAllocationTests):
+        * libpas/src/test/UtilsTests.cpp: Added.
+        (std::testIsDivisibleBy3):
+        (addUtilsTests):
+        * libpas/src/toys/QuadraticSizeClass.cpp: Added.
+        (std::printSizeCell):
+        (std::printProgression):
+        (main):
+        * libpas/src/verifier/Verifier.cpp: Added.
+        (std::Locker::Locker):
+        (std::Locker::~Locker):
+        (std::Allocation::Allocation):
+        (std::allocationCallback):
+        (std::deallocationCallback):
+        (std::dumpStateForHeapKind):
+        (std::dumpStateHoldingLock):
+        (std::uninstall):
+        (pas_install_verifier):
+        (pas_dump_state):
+        * libpas/src/verifier/Verifier.h: Copied from Source/WTF/wtf/FastTLS.h.
+        * libpas/test-impl.sh: Added.
+        * libpas/test.sh: Added.
+
+2021-07-06  Michael Saboff  <msaboff@apple.com>
+
+        [bmalloc] Make adaptive scavenging more precise
+        https://bugs.webkit.org/show_bug.cgi?id=226237
+
+        Reviewed by Geoffrey Garen.
+
+        Reland the adaptive scavenger change for macOS with fix.
+
+        The bug happens when decommitting large ranges that don't have physical pages.
+        We'd call Heap::decommitLargeRange(), but would only add the range to the
+        decommitter list if there were physical pages associated with the range.
+        We would still perform all the other processing of a decommitted range,
+        including setting the range as not elgible for allocation or merging.
+        Had the range been added to the decommitter list, we would have set the
+        range as elgible after the physical pages were released to the OS.
+        The result is that the range could never be allocated, either by itself or as a
+        larger range merged with adjacent ranges.
+
+        The fix is to only perform decommit processing of large ranges if they have
+        physical pages.  We now check for physical pages before calling Heap::decommitLargeRange().
+        For ranges that don't have physical pages, they can stay on the free list as
+        elgible without having to round trip through decommit processing.
+
+        Made a minor change to the calculation of the physical end of the LargeRange created
+        and added to the free list in Heap::deallocateSmallChunk.  If the last page in the chunk
+        has a physical page, we set the physical end of the range to the end of the chunk.
+        This is for the case where there is an unusable partial small page at the end of the chunk.
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::deallocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::tryAllocateLargeChunk):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::scavengeToHighWatermark): Deleted.
+        * bmalloc/Heap.h:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark): Deleted.
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark): Deleted.
+        * bmalloc/IsoSharedHeapInlines.h:
+        (bmalloc::IsoSharedHeap::allocateSlow):
+        * bmalloc/LargeMap.cpp:
+        (bmalloc::LargeMap::add):
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::LargeRange):
+        (bmalloc::LargeRange::physicalEnd const):
+        (bmalloc::LargeRange::setPhysicalEnd):
+        (bmalloc::LargeRange::clearPhysicalEnd):
+        (bmalloc::LargeRange::setUsedSinceLastScavenge):
+        (bmalloc::merge):
+        (bmalloc::LargeRange::split const):
+        (): Deleted.
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::threadRunLoop):
+        (bmalloc::Scavenger::didStartGrowing): Deleted.
+        (bmalloc::Scavenger::timeSinceLastPartialScavenge): Deleted.
+        (bmalloc::Scavenger::partialScavenge): Deleted.
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::setUsedSinceLastScavenge):
+
 2021-06-23  Mark Lam  <mark.lam@apple.com>
 
         Base Options::useWebAssemblyFastMemory's default value on Gigacage::hasCapacityToUseLargeGigacage.

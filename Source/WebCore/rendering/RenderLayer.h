@@ -157,7 +157,7 @@ public:
     friend class RenderLayerScrollableArea;
 
     explicit RenderLayer(RenderLayerModelObject&);
-    virtual ~RenderLayer();
+    ~RenderLayer();
 
     WEBCORE_EXPORT RenderLayerScrollableArea* scrollableArea() const;
     WEBCORE_EXPORT RenderLayerScrollableArea* ensureLayerScrollableArea();

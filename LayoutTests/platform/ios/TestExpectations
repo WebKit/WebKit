@@ -3358,6 +3358,9 @@ fast/text/system-font-width-7.html [ ImageOnlyFailure ]
 fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
+# rdar://80345578 ([ Mac iOS Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html is flaky crashing)
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure Crash ]
+
 webkit.org/b/225606 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-001.html [ ImageOnlyFailure ]
 webkit.org/b/225606 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
 

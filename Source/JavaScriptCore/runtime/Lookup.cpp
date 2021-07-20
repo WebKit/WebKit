@@ -43,21 +43,34 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     thisObject.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }
 
-void setUpStaticPropertySlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
+bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    ASSERT(entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant);
     ASSERT(thisObject->globalObject(vm));
-    ASSERT(!thisObject->staticPropertiesReified(vm));
-    ASSERT(!thisObject->getDirect(vm, propertyName));
-
-    reifyStaticProperty(vm, classInfo, propertyName, *entry, *thisObject);
-
-    Structure* structure = thisObject->structure(vm);
+    ASSERT(entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyProperty);
     unsigned attributes;
-    PropertyOffset offset = structure->get(vm, propertyName, attributes);
-    ASSERT_WITH_MESSAGE(isValidOffset(offset), "Static hashtable initialiation for '%s' did not produce a property.\n", propertyName.uid()->characters8());
+    bool isAccessor = entry->attributes() & PropertyAttribute::Accessor;
+    PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
 
-    thisObject->fillStructurePropertySlot(vm, structure, offset, attributes, slot);    
+    if (!isValidOffset(offset)) {
+        // If a property is ever deleted from an object with a static table, then we reify
+        // all static functions at that time - after this we shouldn't be re-adding anything.
+        if (thisObject->staticPropertiesReified(vm))
+            return false;
+
+        reifyStaticProperty(vm, classInfo, propertyName, *entry, *thisObject);
+
+        offset = thisObject->getDirectOffset(vm, propertyName, attributes);
+        if (!isValidOffset(offset)) {
+            dataLog("Static hashtable initialiation for ", propertyName, " did not produce a property.\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    if (isAccessor)
+        slot.setCacheableGetterSlot(thisObject, attributes, jsCast<GetterSetter*>(thisObject->getDirect(offset)), offset);
+    else
+        slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
+    return true;
 }
 
 } // namespace JSC

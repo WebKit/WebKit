@@ -1,3 +1,48 @@
+2021-07-15  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, CMake fix-up after r279940
+
+        * Source/cmake/FindLIBPORTAL.cmake: Fix libportal detection.
+
+2021-07-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Pipewire] Implement getDisplayMedia() backend
+        https://bugs.webkit.org/show_bug.cgi?id=210926
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/cmake/FindLIBPORTAL.cmake: Added.
+        * Source/cmake/GStreamerChecks.cmake: Enable Pipewire support if libportal was found.
+
+2021-07-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Remove USE_64KB_PAGE_BLOCK
+        https://bugs.webkit.org/show_bug.cgi?id=227905
+
+        Reviewed by Yusuke Suzuki.
+
+        I added the USE_64KB_PAGE_BLOCK build option in bug #217989 for use by RHEL. But going
+        forward, I don't need it anymore, and can maintain it downstream where it is needed. (This
+        option might also be useful to SUSE, but they already don't use it, so won't miss it.)
+
+        I've seen users who don't understand the consequences of this option enabling it on x86_64,
+        even though there are serious negative consequences and zero benefits to using it. So let's
+        get rid of it.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Expose support for client certificate auth
+        https://bugs.webkit.org/show_bug.cgi?id=200805
+
+        Reviewed by Michael Catanzaro.
+
+        Bump libsoup3 required version.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-06-24  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r236846): WPE shouldn't depend on OpenGL ES 3

@@ -139,6 +139,10 @@
 #include "LocalAudioSessionRoutingArbitrator.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include <WebCore/SecurityOrigin.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -178,9 +182,15 @@ private:
             return m_process.allowsDisplayCapture();
         }
     }
+    
+    bool setCaptureAttributionString() final
+    {
+        return m_process.setCaptureAttributionString();
+    }
 
     GPUConnectionToWebProcess& m_process;
 };
+
 #endif
 
 Ref<GPUConnectionToWebProcess> GPUConnectionToWebProcess::create(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, IPC::Connection::Identifier connectionIdentifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters)
@@ -202,6 +212,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
+#endif
+#if ENABLE(MEDIA_STREAM)
+    , m_captureOrigin(SecurityOrigin::createUnique())
 #endif
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
@@ -820,7 +833,18 @@ void GPUConnectionToWebProcess::updateCaptureAccess(bool allowAudioCapture, bool
     m_allowsVideoCapture |= allowVideoCapture;
     m_allowsDisplayCapture |= allowDisplayCapture;
 }
+
+void GPUConnectionToWebProcess::updateCaptureOrigin(const WebCore::SecurityOriginData& originData)
+{
+    m_captureOrigin = originData.securityOrigin();
+}
+
+#if !PLATFORM(COCOA)
+bool GPUConnectionToWebProcess::setCaptureAttributionString() const
+{
+}
 #endif
+#endif // ENABLE(MEDIA_STREAM)
 
 #if PLATFORM(MAC)
 void GPUConnectionToWebProcess::displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags flags)

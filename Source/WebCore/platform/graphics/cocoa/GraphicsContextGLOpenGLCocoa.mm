@@ -116,13 +116,11 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
         displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE);
         displayAttributes.append(EGL_TRUE);
     }
-    bool canUseMetal = platformSupportsMetal();
-    if (attrs.useMetal && canUseMetal) {
+    if (attrs.useMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
-
-    LOG(WebGL, "Attempting to use ANGLE's %s backend.\n", attrs.useMetal && canUseMetal ? "Metal" : "OpenGL");
+    LOG(WebGL, "Attempting to use ANGLE's %s backend.\n", attrs.useMetal ? "Metal" : "OpenGL");
     if (attrs.powerPreference != GraphicsContextGLAttributes::PowerPreference::Default) {
         displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
         if (attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower)
@@ -132,7 +130,6 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
         }
     }
-
     displayAttributes.append(EGL_NONE);
     display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
 
@@ -210,6 +207,10 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     : GraphicsContextGL(attrs, sharedContext)
 {
     m_isForWebGL2 = attrs.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+    if (attrs.useMetal && !platformSupportsMetal()) {
+        attrs.useMetal = false;
+        setContextAttributes(attrs);
+    }
 
     m_displayObj = InitializeEGLDisplay(attrs);
     if (!m_displayObj)
@@ -267,10 +268,13 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         // context.
         eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
         eglContextAttributes.append(EGL_TRUE);
+        // WebGL requires that all resources are cleared at creation.
+        // FIXME: performing robust resource initialization in the VideoTextureCopier adds a large amount of overhead
+        // so it would be nice to avoid that there (we should always be touching every pixel as we copy).
+        eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+        eglContextAttributes.append(EGL_TRUE);
     }
-    // WebGL requires that all resources are cleared at creation.
-    eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
-    eglContextAttributes.append(EGL_TRUE);
+
     // WebGL doesn't allow client arrays.
     eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
     eglContextAttributes.append(EGL_FALSE);
@@ -303,8 +307,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
         // For creating the EGL surface from an IOSurface.
         requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
-            }
-
+    }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
     ExtensionsGL& extensions = getExtensions();
     for (auto& extension : requiredExtensions) {
@@ -313,6 +316,15 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
             return;
         }
         extensions.ensureEnabled(extension);
+    }
+    if (contextAttributes().useMetal) {
+        // The implementation uses GLsync objects. Enable the functionality for WebGL 1.0 contexts
+        // that use OpenGL ES 2.0.
+        if (extensions.supports("GL_ARB_sync"_s)) {
+            attrs.hasFenceSync = true;
+            extensions.ensureEnabled("GL_ARB_sync"_s);
+            setContextAttributes(attrs);
+        }
     }
     validateAttributes();
     attrs = contextAttributes(); // They may have changed during validation.
@@ -395,6 +407,12 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
             gl::DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
             gl::DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
+        // If fences are not enabled, this loop will not execute.
+        for (auto& fence : m_frameCompletionFences)
+            fence.reset();
+    } else {
+        for (auto& fence : m_frameCompletionFences)
+            fence.abandon();
     }
     if (m_displayBufferPbuffer) {
         EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
@@ -779,6 +797,13 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
         allocateAndBindDisplayBufferBacking();
 
     markLayerComposited();
+
+    if (contextAttributes().useMetal && contextAttributes().hasFenceSync) {
+        // OpenGL sync objects are not signaling upon completion on Catalina-era drivers.
+        // OpenGL drivers typically implement some sort of internal throttling.
+        bool success = waitAndUpdateOldestFrame();
+        UNUSED_VARIABLE(success); // FIXME: implement context lost.
+    }
 }
 
 std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()

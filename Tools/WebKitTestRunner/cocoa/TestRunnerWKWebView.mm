@@ -607,19 +607,14 @@ static bool isQuickboardViewController(UIViewController *viewController)
         self.didHideContactPickerCallback();
 }
 
-- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler
+- (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler
 {
-    [super _appBoundNavigationDataForDomain:domain completionHandler:completionHandler];
+    [super _didLoadAppInitiatedRequest:completionHandler];
 }
 
-- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler
+- (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler
 {
-    [super _didLoadAppBoundRequest:completionHandler];
-}
-
-- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler
-{
-    [super _didLoadNonAppBoundRequest:completionHandler];
+    [super _didLoadNonAppInitiatedRequest:completionHandler];
 }
 
 @end

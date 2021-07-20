@@ -30,7 +30,8 @@ compareArray.format = function(array) {
   return `[${array.map(String).join(', ')}]`;
 };
 
-assert.compareArray = function(actual, expected, message = '') {
+assert.compareArray = function(actual, expected, message) {
+  message  = message === undefined ? '' : message;
   assert(actual != null, `First argument shouldn't be nullish. ${message}`);
   assert(expected != null, `Second argument shouldn't be nullish. ${message}`);
   var format = compareArray.format;

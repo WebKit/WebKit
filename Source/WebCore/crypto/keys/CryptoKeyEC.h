@@ -51,8 +51,9 @@ typedef std::unique_ptr<typename std::remove_pointer<gcry_sexp_t>::type, PAL::GC
 #endif
 
 #if USE(OPENSSL)
-typedef void* PlatformECKey;
-typedef std::unique_ptr<PlatformECKey> PlatformECKeyContainer;
+#include "crypto/openssl/OpenSSLCryptoUniquePtr.h"
+typedef EVP_PKEY* PlatformECKey;
+typedef WebCore::EvpPKeyPtr PlatformECKeyContainer;
 #endif
 
 namespace WebCore {
@@ -85,6 +86,7 @@ public:
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
     size_t keySizeInBits() const;
+    size_t keySizeInBytes() const { return std::ceil(keySizeInBits() / 8.); }
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
     PlatformECKey platformKey() const { return m_platformKey.get(); }

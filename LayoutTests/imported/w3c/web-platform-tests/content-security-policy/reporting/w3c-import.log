@@ -29,6 +29,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-clips-sample.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors-with-x-frame-options.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html

@@ -633,9 +633,16 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
         return _obscuredInsets;
 
     UIEdgeInsets insets = [_scrollView contentInset];
-
-    if (self._safeAreaShouldAffectObscuredInsets)
-        insets = UIEdgeInsetsAdd(insets, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
+    if (self._safeAreaShouldAffectObscuredInsets) {
+#if PLATFORM(WATCHOS)
+        // On watchOS, PepperUICore swizzles -[UIScrollView contentInset], such that it includes -_contentScrollInset as well.
+        // To avoid double-counting -_contentScrollInset when determining the total content inset, we only apply safe area insets here.
+        auto additionalScrollViewContentInset = self.safeAreaInsets;
+#else
+        auto additionalScrollViewContentInset = self._scrollViewSystemContentInset;
+#endif
+        insets = UIEdgeInsetsAdd(insets, additionalScrollViewContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
+    }
 
     return insets;
 }

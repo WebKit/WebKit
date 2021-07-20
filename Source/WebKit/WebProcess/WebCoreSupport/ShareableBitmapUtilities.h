@@ -36,7 +36,15 @@ namespace WebKit {
 
 class ShareableBitmap;
 
+enum class UseSnapshotForTransparentImages : bool { No, Yes };
 enum class AllowAnimatedImages : bool { No, Yes };
-RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, std::optional<WebCore::FloatSize> screenSizeInPixels = std::nullopt, AllowAnimatedImages = AllowAnimatedImages::Yes);
+
+struct CreateShareableBitmapFromImageOptions {
+    std::optional<WebCore::FloatSize> screenSizeInPixels;
+    AllowAnimatedImages allowAnimatedImages { AllowAnimatedImages::Yes };
+    UseSnapshotForTransparentImages useSnapshotForTransparentImages { UseSnapshotForTransparentImages::No };
+};
+
+RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, CreateShareableBitmapFromImageOptions&& = { });
 
 };

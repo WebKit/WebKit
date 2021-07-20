@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 32x494 [border: (1px solid #FF0000)]
-        RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
-        RenderTextControl {INPUT} at (3,28) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #C6C6C8)]
+        RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderTextControl {INPUT} at (3,28) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (0,0) size 0x0
         RenderImage {IMG} at (1,51) size 27x27 [border: (1px solid #000000)]
         RenderImage {IMG} at (1,78) size 27x27 [border: (1px solid #000000)]

@@ -31,7 +31,7 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     Conditional=VIDEO,
     ExportToWrappedFunction,
     GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction,
+    GenerateAddOpaqueRoot,
     SkipVTableValidation,
     Exposed=Window
 ] interface TextTrack : EventTarget {

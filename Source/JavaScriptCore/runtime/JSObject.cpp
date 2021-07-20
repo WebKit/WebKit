@@ -760,56 +760,6 @@ bool JSObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prop
     return putInlineForJSObject(cell, globalObject, propertyName, value, slot);
 }
 
-struct PropertyForPut {
-    const unsigned attributes;
-    const PropertyOffset offset;
-    const PutValueFunc customSetter;
-};
-
-static ALWAYS_INLINE std::optional<PropertyForPut> lookupPropertyForPut(VM& vm, JSObject* object, Structure* structure, PropertyName propertyName, PutPropertySlot& slot)
-{
-    PutValueFunc customSetter = nullptr;
-    auto getFromStructure = [&] (Structure* structure) -> std::optional<PropertyForPut> {
-        unsigned attributes;
-        PropertyOffset offset = structure->get(vm, propertyName, attributes);
-        if (!isValidOffset(offset))
-            return std::nullopt;
-        if (attributes & PropertyAttribute::CustomAccessorOrValue)
-            customSetter = jsCast<CustomGetterSetter*>(object->getDirect(offset))->setter();
-        return PropertyForPut { attributes, offset, customSetter };
-    };
-
-    if (auto property = getFromStructure(structure))
-        return property;
-
-    if (structure->hasNonReifiedStaticProperties()) {
-        if (auto entry = structure->findPropertyHashEntry(propertyName)) {
-            unsigned attributes = entry->value->attributes();
-
-            if (attributes & PropertyAttribute::PropertyCallback) {
-                slot.disableCaching();
-                if (!entry->value->isLazyPropertyEnabled(object->globalObject(vm)))
-                    return std::nullopt;
-                reifyStaticProperty(vm, entry->table->classForThis, propertyName, *entry->value, *object);
-                return getFromStructure(object->structure(vm));
-            }
-
-            // FIXME: create_hash_table should set ReadOnly attribute for setter-less accessors.
-            // https://bugs.webkit.org/show_bug.cgi?id=225997
-            if (attributes & PropertyAttribute::Accessor)
-                attributes |= PropertyAttribute::ReadOnly;
-            // FIXME: Remove this after we stop defaulting to CustomValue in static hash tables.
-            if (!(attributes & (PropertyAttribute::CustomAccessor | PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)))
-                attributes |= PropertyAttribute::CustomValue;
-            if (attributes & PropertyAttribute::CustomAccessorOrValue)
-                customSetter = entry->value->propertyPutter();
-            return PropertyForPut { attributes, invalidOffset, customSetter };
-        }
-    }
-
-    return std::nullopt;
-}
-
 bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!parseIndex(propertyName));
@@ -828,12 +778,35 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
         if (obj != this && structure->typeInfo().overridesPut())
             RELEASE_AND_RETURN(scope, obj->methodTable(vm)->put(obj, globalObject, propertyName, value, slot));
 
-        if (auto property = lookupPropertyForPut(vm, obj, structure, propertyName, slot)) {
-            unsigned attributes = property->attributes;
+        bool hasProperty = false;
+        unsigned attributes;
+        PutPropertySlot::PutValueFunc customSetter = nullptr;
+        PropertyOffset offset = structure->get(vm, propertyName, attributes);
+        if (isValidOffset(offset)) {
+            hasProperty = true;
+            if (attributes & PropertyAttribute::CustomAccessorOrValue)
+                customSetter = jsCast<CustomGetterSetter*>(obj->getDirect(offset))->setter();
+        } else if (structure->hasNonReifiedStaticProperties()) {
+            if (auto entry = structure->findPropertyHashEntry(propertyName)) {
+                hasProperty = true;
+                attributes = entry->value->attributes();
+
+                // FIXME: Remove this after writable accessors are introduced to static hash tables.
+                if (attributes & PropertyAttribute::Accessor)
+                    attributes |= PropertyAttribute::ReadOnly;
+                // FIXME: Remove this after we stop defaulting to CustomValue in static hash tables.
+                if (!(attributes & (PropertyAttribute::CustomAccessor | PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)))
+                    attributes |= PropertyAttribute::CustomValue;
+
+                if (attributes & PropertyAttribute::CustomAccessorOrValue)
+                    customSetter = entry->value->propertyPutter();
+            }
+        }
+
+        if (hasProperty) {
             if (attributes & PropertyAttribute::ReadOnly)
                 return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
             if (attributes & PropertyAttribute::Accessor) {
-                PropertyOffset offset = property->offset;
                 ASSERT(isValidOffset(offset));
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
                 if (!this->structure(vm)->isUncacheableDictionary())
@@ -841,7 +814,9 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(obj->getDirect(offset))->callSetter(globalObject, slot.thisValue(), value, slot.isStrictMode()));
             }
             if (attributes & PropertyAttribute::CustomAccessor) {
-                PutValueFunc customSetter = property->customSetter;
+                // FIXME: Remove this after WebIDL generator is fixed to set ReadOnly for [RuntimeConditionallyReadWrite] attributes.
+                if (!customSetter)
+                    return false;
                 ASSERT(customSetter);
                 // FIXME: We should only be caching these if we're not an uncacheable dictionary:
                 // https://bugs.webkit.org/show_bug.cgi?id=215347
@@ -851,7 +826,6 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 return true;
             }
             if (attributes & PropertyAttribute::CustomValue) {
-                PutValueFunc customSetter = property->customSetter;
                 // FIXME: Once legacy RegExp features are implemented, there would be no use case for calling CustomValue setter if receiver is altered.
                 if (customSetter && !(isThisValueAltered(slot, obj) && slot.context() == PutPropertySlot::ReflectSet)) {
                     // FIXME: We should only be caching these if we're not an uncacheable dictionary:
@@ -2654,16 +2628,12 @@ void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
     if (!structure(vm)->isDictionary())
         setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure(vm)));
 
-    JSGlobalObject* thisGlobalObject = this->globalObject(vm);
-
     for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
         const HashTable* hashTable = info->staticPropHashTable;
         if (!hashTable)
             continue;
 
         for (auto& value : *hashTable) {
-            if ((value.attributes() & PropertyAttribute::PropertyCallback) && !value.isLazyPropertyEnabled(thisGlobalObject))
-                continue;
             unsigned attributes;
             auto key = Identifier::fromString(vm, value.m_key);
             PropertyOffset offset = getDirectOffset(vm, key, attributes);

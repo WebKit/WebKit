@@ -180,10 +180,6 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=Condition4, JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
 
     // Private extended attribute
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] attribute long enabledAtRuntimePrivateAttr;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] readonly attribute DOMString enabledAtRuntimePrivateReadOnlyAttr;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] static readonly attribute TestObj enabledAtRuntimePrivateStaticReadOnlyAttr;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature, PrivateIdentifier] static boolean enabledAtRuntimePrivateStaticMethod(long longArg);
     [PrivateIdentifier] DOMString privateMethod(DOMString argument);
     [PrivateIdentifier, PublicIdentifier] DOMString publicAndPrivateMethod(DOMString argument);
 
@@ -457,6 +453,10 @@ enum TestConfidence { "high", "kinda-low" };
     undefined trailing_underscore_function_();
 
     boolean encodeInto([AllowShared] Uint8Array destination);
+    boolean bigInt64(BigInt64Array destination);
+    boolean bigUint64(BigUint64Array destination);
+    boolean bigInt64AllowShared([AllowShared] BigInt64Array destination);
+    boolean bigUint64AllowShared([AllowShared] BigUint64Array destination);
 };
 
 // The following comments should not generate any code.

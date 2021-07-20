@@ -261,6 +261,7 @@
 (shared-preferences-read
     ".GlobalPreferences"
     "com.apple.ATS"
+    "com.apple.Accessibility"
     "com.apple.Bluetooth"
     "com.apple.CoreGraphics"
     "com.apple.HIToolbox"

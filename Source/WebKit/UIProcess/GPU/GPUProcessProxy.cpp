@@ -170,10 +170,7 @@ GPUProcessProxy::GPUProcessProxy()
         parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), std::nullopt);
 #endif
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    parameters.webCoreLoggingChannels = WebCore::logLevelString();
-    parameters.webKitLoggingChannels = WebKit::logLevelString();
-#endif
+    platformInitializeGPUProcessParameters(parameters);
 
     // Initialize the GPU process.
     send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
@@ -283,6 +280,10 @@ void GPUProcessProxy::updateCaptureAccess(bool allowAudioCapture, bool allowVide
     sendWithAsyncReply(Messages::GPUProcess::UpdateCaptureAccess { allowAudioCapture, allowVideoCapture, allowDisplayCapture, processID }, WTFMove(completionHandler));
 }
 
+void GPUProcessProxy::updateCaptureOrigin(const WebCore::SecurityOriginData& originData, WebCore::ProcessIdentifier processID)
+{
+    send(Messages::GPUProcess::UpdateCaptureOrigin { originData, processID }, 0);
+}
 
 void GPUProcessProxy::addMockMediaDevice(const WebCore::MockMediaDevice& device)
 {
@@ -603,6 +604,16 @@ void GPUProcessProxy::didBecomeUnresponsive()
     terminate();
     gpuProcessExited(GPUProcessTerminationReason::Unresponsive);
 }
+
+#if !PLATFORM(COCOA)
+void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
+{
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    parameters.webCoreLoggingChannels = WebCore::logLevelString();
+    parameters.webKitLoggingChannels = WebKit::logLevelString();
+#endif
+}
+#endif
 
 } // namespace WebKit
 

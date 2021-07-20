@@ -36,6 +36,7 @@
 #include <libxml/uri.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HexNumber.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
@@ -315,6 +316,11 @@ void XSLStyleSheet::markAsProcessed()
     ASSERT(!m_stylesheetDocTaken);
     m_processed = true;
     m_stylesheetDocTaken = true;
+}
+
+String XSLStyleSheet::debugDescription() const
+{
+    return makeString("XSLStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }
 
 } // namespace WebCore

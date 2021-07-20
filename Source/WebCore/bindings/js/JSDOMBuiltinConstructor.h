@@ -28,7 +28,6 @@ namespace WebCore {
 template<typename JSClass> class JSDOMBuiltinConstructor final : public JSDOMBuiltinConstructorBase {
 public:
     using Base = JSDOMBuiltinConstructorBase;
-    static const unsigned StructureFlags;
 
     static JSDOMBuiltinConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);

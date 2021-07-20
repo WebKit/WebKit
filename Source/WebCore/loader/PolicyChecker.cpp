@@ -104,21 +104,17 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& newRequ
     checkNavigationPolicy(WTFMove(newRequest), redirectResponse, m_frame.loader().activeDocumentLoader(), { }, WTFMove(function));
 }
 
-CompletionHandlerCallingScope FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary(ResourceRequest& request, DocumentLoader* loader) const
+URLWithBlobURLLifetimeExtension FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary(ResourceRequest& request, DocumentLoader* loader, PolicyDecisionMode mode) const
 {
-    if (!request.url().protocolIsBlob())
+    if (mode != PolicyDecisionMode::Asynchronous || !request.url().protocolIsBlob())
         return { };
 
-    // Create a new temporary blobURL in case this one gets revoked during the asynchronous navigation policy decision.
-    auto origin = SecurityOrigin::create(BlobURL::getOriginURL(request.url()));
-    URL temporaryBlobURL = BlobURL::createPublicURL(origin.ptr());
-    ThreadableBlobRegistry::registerBlobURL(origin.ptr(), temporaryBlobURL, request.url());
-    request.setURL(temporaryBlobURL);
+    URLWithBlobURLLifetimeExtension urlWithLifetimeExtension(request.url());
+    request.setURL(urlWithLifetimeExtension);
     if (loader)
-        loader->request().setURL(temporaryBlobURL);
-    return CompletionHandler<void()>([temporaryBlobURL = WTFMove(temporaryBlobURL)] {
-        ThreadableBlobRegistry::unregisterBlobURL(temporaryBlobURL);
-    });
+        loader->request().setURL(urlWithLifetimeExtension);
+
+    return urlWithLifetimeExtension;
 }
 
 void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<FormState>&& formState, NavigationPolicyDecisionFunction&& function, PolicyDecisionMode policyDecisionMode)
@@ -201,7 +197,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
 
     m_frame.loader().clearProvisionalLoadForPolicyCheck();
 
-    auto blobURLLifetimeExtension = policyDecisionMode == PolicyDecisionMode::Asynchronous ? extendBlobURLLifetimeIfNecessary(request, loader) : CompletionHandlerCallingScope { };
+    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, loader, policyDecisionMode);
 
     bool isInitialEmptyDocumentLoad = !m_frame.loader().stateMachine().committedFirstRealDocumentLoad() && request.url().protocolIsAbout() && !substituteData.isValid();
     auto requestIdentifier = PolicyCheckIdentifier::create();

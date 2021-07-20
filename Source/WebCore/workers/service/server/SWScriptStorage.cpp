@@ -86,9 +86,9 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     auto scriptPath = this->scriptPath(registrationKey, scriptURL);
     FileSystem::makeAllDirectories(FileSystem::parentPath(scriptPath));
 
-    auto iterateOverBufferAndWriteData = [&](const Function<bool(const uint8_t*, size_t)>& writeData) {
-        for (auto it = script.buffer()->begin(); it != script.buffer()->end(); ++it)
-            writeData(it->segment->data(), it->segment->size());
+    auto iterateOverBufferAndWriteData = [&](const Function<bool(Span<const uint8_t>)>& writeData) {
+        for (auto& entry : *script.buffer())
+            writeData({ entry.segment->data(), entry.segment->size() });
     };
 
     if (!shouldUseFileMapping(script.buffer()->size())) {
@@ -97,8 +97,8 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
             RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::store: Failure to store %s, FileSystem::openFile() failed", scriptPath.utf8().data());
             return { };
         }
-        iterateOverBufferAndWriteData([&](const uint8_t* data, size_t size) {
-            FileSystem::writeToFile(handle, data, size);
+        iterateOverBufferAndWriteData([&](Span<const uint8_t> span) {
+            FileSystem::writeToFile(handle, span.data(), span.size());
             return true;
         });
         FileSystem::closeFile(handle);

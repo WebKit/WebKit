@@ -38,6 +38,7 @@ void nw_parameters_set_account_id(nw_parameters_t, const char * account_id);
 #if HAVE(NWPARAMETERS_TRACKER_API)
 void nw_parameters_set_is_third_party_web_content(nw_parameters_t, bool is_third_party_web_content);
 void nw_parameters_set_is_known_tracker(nw_parameters_t, bool is_known_tracker);
+void nw_parameters_allow_sharing_port_with_listener(nw_parameters_t, nw_listener_t);
 #endif // HAVE(NWPARAMETERS_TRACKER_API)
 
 WTF_EXTERN_C_END

@@ -76,7 +76,7 @@ TEST(WebKit, HTTPReferer)
     NSString *shorterPath = [NSString stringWithFormat:@"http://webkit.org/%s?asdf", a3k.data()];
     NSString *longHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a5k.data()];
     NSString *shorterHost = [NSString stringWithFormat:@"http://webkit.org%s/path", a3k.data()];
-    checkReferer([NSURL URLWithString:longPath], "http://webkit.org");
+    checkReferer([NSURL URLWithString:longPath], "http://webkit.org/");
     checkReferer([NSURL URLWithString:shorterPath], shorterPath.UTF8String);
     checkReferer([NSURL URLWithString:longHost], nullptr);
     checkReferer([NSURL URLWithString:shorterHost], shorterHost.UTF8String);

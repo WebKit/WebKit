@@ -1003,6 +1003,9 @@
     )
 )
 
+(allow mach-lookup
+    (global-name "com.apple.systemstatus.activityattribution")
+)
 
 (allow mach-lookup
     (require-all

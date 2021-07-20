@@ -31,6 +31,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     Conditional=WEB_CRYPTO,
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
+    SecureContext,
 ] interface SubtleCrypto {
     [CallWith=GlobalObject] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
     [CallWith=GlobalObject] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);

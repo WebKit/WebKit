@@ -97,7 +97,7 @@ FloatSize ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDel
 {
     double multiplier = isTouchEvent(event) ? Scrollbar::pixelsPerLineStep() : gtkScrollDeltaMultiplier;
     // GTK deltas are inverted compared to NSEvent, so invert them again
-    return -FloatSize(event->delta, 0) * multiplier;
+    return -event->delta * multiplier;
 }
 
 bool ViewGestureController::handleScrollWheelEvent(PlatformGtkScrollData* event)
@@ -176,13 +176,12 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(PlatformGtkScrollD
 
     if (isEventStop(event)) {
         startAnimation();
-        return false;
+        return true;
     }
 
     uint32_t eventTime = event->eventTime;
-    double eventDeltaX = event->delta;
 
-    double deltaX = -eventDeltaX;
+    double deltaX = -event->delta.width();
     if (isTouchEvent(event)) {
         m_distance = m_webPageProxy.viewSize().width();
         deltaX *= static_cast<double>(Scrollbar::pixelsPerLineStep()) / m_distance;
@@ -638,11 +637,12 @@ bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirect
     if (!canSwipeInDirection(direction))
         return false;
 
-    double delta = swipeTouchpadBaseWidth / gtkScrollDeltaMultiplier * 0.75;
+    double deltaX = swipeTouchpadBaseWidth / gtkScrollDeltaMultiplier * 0.75;
 
     if (isPhysicallySwipingLeft(direction))
-        delta = -delta;
+        deltaX = -deltaX;
 
+    FloatSize delta(deltaX, 0);
     PlatformGtkScrollData scrollData = { .delta = delta, .eventTime = GDK_CURRENT_TIME, .source = GDK_SOURCE_TOUCHPAD, .isEnd = false };
     handleScrollWheelEvent(&scrollData);
 
@@ -651,7 +651,7 @@ bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirect
 
 bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
 {
-    PlatformGtkScrollData scrollData = { .delta = 0, .eventTime = GDK_CURRENT_TIME, .source = GDK_SOURCE_TOUCHPAD, .isEnd = true };
+    PlatformGtkScrollData scrollData = { .delta = FloatSize(), .eventTime = GDK_CURRENT_TIME, .source = GDK_SOURCE_TOUCHPAD, .isEnd = true };
     handleScrollWheelEvent(&scrollData);
 
     return true;

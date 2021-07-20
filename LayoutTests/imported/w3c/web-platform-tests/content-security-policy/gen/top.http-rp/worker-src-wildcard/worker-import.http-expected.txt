@@ -1,0 +1,20 @@
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=5ed34dd8-c8f6-438a-8cbe-b7142e6112c4&path=/mixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=fee54686-8721-4e96-a54d-74c020041bb6&path=/mixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=12c65f78-8cbb-48ea-a7e7-2c44694b2d5d&path=/mixed-content
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/worker.py?action=purge&key=9bc65b6e-4ba9-4b42-918c-5a69e07243ac&path=%2Fmixed-content
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Content Security Policy: Expects allowed for worker-import to cross-http origin and keep-origin redirection from http context. promise_test: Unhandled rejection with value: object "[object ErrorEvent]"
+PASS Content Security Policy: Expects allowed for worker-import to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worker-import to cross-http origin and no-redirect redirection from http context. promise_test: Unhandled rejection with value: object "[object ErrorEvent]"
+PASS Content Security Policy: Expects allowed for worker-import to cross-http origin and no-redirect redirection from http context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worker-import to cross-http origin and swap-origin redirection from http context. promise_test: Unhandled rejection with value: object "[object ErrorEvent]"
+PASS Content Security Policy: Expects allowed for worker-import to cross-http origin and swap-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for worker-import to same-http origin and keep-origin redirection from http context.
+PASS Content Security Policy: Expects allowed for worker-import to same-http origin and keep-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for worker-import to same-http origin and no-redirect redirection from http context.
+PASS Content Security Policy: Expects allowed for worker-import to same-http origin and no-redirect redirection from http context.: securitypolicyviolation
+TIMEOUT Content Security Policy: Expects allowed for worker-import to same-http origin and swap-origin redirection from http context. Test timed out
+NOTRUN Content Security Policy: Expects allowed for worker-import to same-http origin and swap-origin redirection from http context.: securitypolicyviolation
+

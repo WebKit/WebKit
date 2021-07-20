@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-service-worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/inside-shared-worker.html
@@ -29,6 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image-from-script.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-blob-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-data-scheme.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample-no-opt-in.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/targeting.html

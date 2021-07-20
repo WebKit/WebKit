@@ -88,8 +88,11 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
                 attribution.setSourceUnlinkableTokenValue(m_fraudPreventionValuesForTesting->unlinkableToken);
 #if PLATFORM(COCOA)
             else {
-                if (!attribution.calculateAndUpdateSourceUnlinkableToken(publicKeyBase64URL))
+                if (auto errorMessage = attribution.calculateAndUpdateSourceUnlinkableToken(publicKeyBase64URL)) {
+                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceUnlinkableToken(): '%{public}s", errorMessage->utf8().data());
+                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
                     return;
+                }
             }
 #endif
 
@@ -221,8 +224,11 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
             attribution.setSourceSecretToken({ m_fraudPreventionValuesForTesting->secretToken, m_fraudPreventionValuesForTesting->signature, m_fraudPreventionValuesForTesting->keyID });
 #if PLATFORM(COCOA)
         else {
-            if (!attribution.calculateAndUpdateSourceSecretToken(signatureBase64URL))
+            if (auto errorMessage = attribution.calculateAndUpdateSourceSecretToken(signatureBase64URL)) {
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%{public}s", errorMessage->utf8().data());
+                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
                 return;
+            }
         }
 #endif
 

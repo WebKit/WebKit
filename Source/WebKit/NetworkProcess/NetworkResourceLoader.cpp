@@ -882,7 +882,7 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
 void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, std::optional<PrivateClickMeasurement::AttributionTriggerData>&& privateClickMeasurementAttributionTriggerData)
 {
-    redirectRequest.setIsAppBound(request.isAppBound());
+    redirectRequest.setIsAppInitiated(request.isAppInitiated());
 
     LOADER_RELEASE_LOG("continueWillSendRedirectedRequest: (m_isKeptAlive=%d, hasAdClickConversion=%d)", m_isKeptAlive, !!privateClickMeasurementAttributionTriggerData);
     ASSERT(!isSynchronous());
@@ -1504,9 +1504,9 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
 }
 #endif
 
-bool NetworkResourceLoader::isAppBound()
+bool NetworkResourceLoader::isAppInitiated()
 {
-    return m_parameters.request.isAppBound();
+    return m_parameters.request.isAppInitiated();
 }
 
 } // namespace WebKit

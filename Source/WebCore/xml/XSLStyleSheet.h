@@ -100,6 +100,7 @@ private:
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL);
 
     bool isXSLStyleSheet() const override { return true; }
+    String debugDescription() const final;
 
     void clearXSLStylesheetDocument();
 

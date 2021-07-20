@@ -55,7 +55,8 @@ public:
 
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT void captionPreferencesChanged();
-    WEBCORE_EXPORT CaptionUserPreferences& captionPreferences();
+    WEBCORE_EXPORT CaptionUserPreferences& ensureCaptionPreferences();
+    CaptionUserPreferences* captionPreferences() const { return m_captionPreferences.get(); }
 #endif
 
 private:

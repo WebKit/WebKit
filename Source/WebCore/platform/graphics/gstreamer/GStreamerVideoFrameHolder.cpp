@@ -182,7 +182,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> GstVideoFrameHolder::platformL
         return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::RGBTexture { m_textureID } }, m_size, m_flags, GL_RGBA);
 
     if (GST_VIDEO_INFO_IS_YUV(&m_videoFrame.info)) {
-        if (GST_VIDEO_INFO_N_COMPONENTS(&m_videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) > 3)
+        if (GST_VIDEO_INFO_N_COMPONENTS(&m_videoFrame.info) < 3 || GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) > 4)
             return nullptr;
 
         if (m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::ImxVPU) {
@@ -193,12 +193,12 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> GstVideoFrameHolder::platformL
         }
 
         unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info);
-        std::array<GLuint, 3> planes;
-        std::array<unsigned, 3> yuvPlane;
-        std::array<unsigned, 3> yuvPlaneOffset;
+        std::array<GLuint, 4> planes;
+        std::array<unsigned, 4> yuvPlane;
+        std::array<unsigned, 4> yuvPlaneOffset;
         for (unsigned i = 0; i < numberOfPlanes; ++i)
             planes[i] = *static_cast<GLuint*>(m_videoFrame.data[i]);
-        for (unsigned i = 0; i < 3; ++i) {
+        for (unsigned i = 0; i < numberOfPlanes; ++i) {
             yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(&m_videoFrame.info, i);
             yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&m_videoFrame.info, i);
         }
@@ -219,7 +219,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> GstVideoFrameHolder::platformL
             };
         }
 
-        return makeUnique<Buffer>( Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } }, m_size, m_flags, GL_RGBA);
+        return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::YUVTexture { numberOfPlanes, planes, yuvPlane, yuvPlaneOffset, yuvToRgb } }, m_size, m_flags, GL_RGBA);
     }
 
     return nullptr;

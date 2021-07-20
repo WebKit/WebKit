@@ -33,14 +33,19 @@ namespace WebCore {
 class GStreamerVideoCapturer final : public GStreamerCapturer {
 public:
     GStreamerVideoCapturer(GStreamerCaptureDevice);
-    GStreamerVideoCapturer(const char* source_factory);
+    GStreamerVideoCapturer(const char* source_factory, CaptureDevice::DeviceType);
 
+    GstElement* createSource() final;
     GstElement* createConverter() final;
     const char* name() final { return "Video"; }
 
     bool setSize(int width, int height);
     bool setFrameRate(double);
     GstVideoInfo getBestFormat();
+
+    void setPipewireFD(int);
+private:
+    std::optional<int> m_fd;
 };
 
 } // namespace WebCore

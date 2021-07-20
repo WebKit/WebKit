@@ -150,7 +150,6 @@ private:
 
     // SourceBufferPrivate overrides
     void append(Vector<unsigned char>&&) final;
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;
@@ -191,7 +190,7 @@ private:
     WeakPtrFactory<SourceBufferPrivateAVFObjC> m_appendWeakFactory;
 
     Ref<SourceBufferParser> m_parser;
-    bool m_initializationSegmentIsHandled { false };
+    bool m_processingInitializationSegment { false };
     bool m_hasPendingAppendCompletedCallback { false };
     Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
 
@@ -227,7 +226,7 @@ private:
     uint64_t m_enabledVideoTrackID { notFound };
     uint64_t m_protectedTrackID { notFound };
     uint64_t m_mapID;
-    bool m_abortCalled { false };
+    uint32_t m_abortCalled { 0 };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

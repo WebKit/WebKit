@@ -1267,7 +1267,7 @@ static bool desktopClassBrowsingSupported()
     static bool supportsDesktopClassBrowsing = false;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        supportsDesktopClassBrowsing = currentUserInterfaceIdiomIsPadOrMac();
+        supportsDesktopClassBrowsing = !currentUserInterfaceIdiomIsPhoneOrWatch();
     });
     return supportsDesktopClassBrowsing;
 }

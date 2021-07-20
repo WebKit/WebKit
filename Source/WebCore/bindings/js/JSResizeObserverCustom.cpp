@@ -27,6 +27,8 @@
 #include "config.h"
 #include "JSResizeObserver.h"
 
+#include "Element.h"
+#include "JSNodeCustom.h"
 #include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
@@ -40,5 +42,15 @@ void JSResizeObserver::visitAdditionalChildren(Visitor& visitor)
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSResizeObserver);
+
+bool JSResizeObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char**reason)
+{
+    if (JSC::jsCast<JSResizeObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
+        if (UNLIKELY(reason))
+            *reason = "Reachable from observed nodes";
+        return true;
+    }
+    return false;
+}
 
 } // namespace WebCore

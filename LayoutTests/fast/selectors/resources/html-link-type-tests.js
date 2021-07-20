@@ -40,7 +40,7 @@ htmlTags = ['a', 'abbr', 'acronym', 'address', 'applet', 'area', 'article', 'asi
 function testHTMLTagsForLink(selector) {
     for (var i = 0; i < htmlTags.length; ++i) {
         var tag = htmlTags[i];
-        var shouldMatch = tag === 'a' || tag === 'area' || tag === 'link';
+        var shouldMatch = tag === 'a' || tag === 'area';
         testHTMLElement(tag, selector, shouldMatch);
     }
 }

@@ -406,9 +406,6 @@ public:
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
-    static bool mayHaveJITStubRoutinesToDelete();
-    void deleteDeadJITStubRoutines(Seconds timeSlice);
-
 private:
     friend class AllocatingScope;
     friend class CodeBlock;

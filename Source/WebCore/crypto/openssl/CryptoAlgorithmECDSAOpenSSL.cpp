@@ -30,20 +30,69 @@
 
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
-#include "NotImplemented.h"
+#include "OpenSSLUtilities.h"
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams&, const CryptoKeyEC&, const Vector<uint8_t>&)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    size_t keySizeInBytes = (key.keySizeInBits() + 7) / 8;
+
+    const EVP_MD* md = digestAlgorithm(parameters.hashIdentifier);
+    if (!md)
+        return Exception { NotSupportedError };
+
+    std::optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    if (!digest)
+        return Exception { OperationError };
+
+    EC_KEY* ecKey = EVP_PKEY_get0_EC_KEY(key.platformKey());
+    if (!ecKey)
+        return Exception { OperationError };
+
+    // We use ECDSA_do_sign rather than EVP API because the latter handles ECDSA signature in DER format
+    // while this function is supposed to return simply concatinated "r" and "s".
+    auto sig = ECDSASigPtr(ECDSA_do_sign(digest->data(), digest->size(), ecKey));
+    if (!sig)
+        return Exception { OperationError };
+
+    const BIGNUM* r;
+    const BIGNUM* s;
+    ECDSA_SIG_get0(sig.get(), &r, &s);
+
+    // Concatenate r and s, expanding r and s to keySizeInBytes.
+    Vector<uint8_t> signature = convertToBytesExpand(r, keySizeInBytes);
+    signature.appendVector(convertToBytesExpand(s, keySizeInBytes));
+
+    return signature;
 }
 
-ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams&, const CryptoKeyEC&, const Vector<uint8_t>&, const Vector<uint8_t>&)
+ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    notImplemented();
-    return Exception { NotSupportedError };
+    size_t keySizeInBytes = (key.keySizeInBits() + 7) / 8;
+
+    // Bail if the signature size isn't double the key size (i.e. concatenated r and s components).
+    if (signature.size() != keySizeInBytes * 2)
+        return false;
+    
+    auto sig = ECDSASigPtr(ECDSA_SIG_new());
+    sig->r = BN_bin2bn(signature.data(), keySizeInBytes, sig->r);
+    sig->s = BN_bin2bn(signature.data() + keySizeInBytes, keySizeInBytes, sig->s);
+
+    const EVP_MD* md = digestAlgorithm(parameters.hashIdentifier);
+    if (!md)
+        return Exception { NotSupportedError };
+
+    std::optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    if (!digest)
+        return Exception { OperationError };
+
+    EC_KEY* ecKey = EVP_PKEY_get0_EC_KEY(key.platformKey());
+    if (!ecKey)
+        return Exception { OperationError };
+
+    int ret = ECDSA_do_verify(digest->data(), digest->size(), sig.get(), ecKey);
+    return ret == 1;
 }
 
 } // namespace WebCore

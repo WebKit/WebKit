@@ -26,7 +26,7 @@
 [
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
-    JSCustomMarkFunction
+    GenerateAddOpaqueRoot=signal
 ] interface AbortController {
     [CallWith=ScriptExecutionContext] constructor();
 

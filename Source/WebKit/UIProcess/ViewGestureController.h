@@ -30,6 +30,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -80,7 +81,7 @@ class Navigation;
 typedef NSEvent* PlatformScrollEvent;
 #elif PLATFORM(GTK)
 typedef struct {
-    double delta;
+    WebCore::FloatSize delta;
     int32_t eventTime;
     GdkInputSource source;
     bool isEnd;

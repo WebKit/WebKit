@@ -341,9 +341,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
 
 #if ENABLE(APP_PRIVACY_REPORT)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    mutableRequest.get()._isNonAppInitiated = !request.isAppBound();
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
 
     if (parameters.pcmDataCarried)
@@ -351,7 +349,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     nsRequest = mutableRequest;
 
-    m_session->appBoundNavigationTestingData().updateAppBoundNavigationTestingData(request, request.firstPartyForCookies().isEmpty() ? WebCore::RegistrableDomain(request.url()) : WebCore::RegistrableDomain(request.firstPartyForCookies()));
+#if ENABLE(APP_PRIVACY_REPORT)
+    m_session->appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
+#endif
 
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, parameters.contentSniffingPolicy == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), parameters.contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Sniff);
 

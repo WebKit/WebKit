@@ -37,7 +37,6 @@
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Pasteboard.h>
-#include <WebCore/PlatformContextCairo.h>
 #include <WebCore/SelectionData.h>
 #include <cairo.h>
 

@@ -51,6 +51,7 @@ class Frame;
 class NavigationAction;
 class ResourceError;
 class ResourceResponse;
+class URLWithBlobURLLifetimeExtension;
 
 enum class NavigationPolicyDecision : uint8_t {
     ContinueLoad,
@@ -89,7 +90,7 @@ public:
 
 private:
     void handleUnimplementablePolicy(const ResourceError&);
-    WTF::CompletionHandlerCallingScope extendBlobURLLifetimeIfNecessary(ResourceRequest&, DocumentLoader*) const;
+    URLWithBlobURLLifetimeExtension extendBlobURLLifetimeIfNecessary(ResourceRequest&, DocumentLoader*, PolicyDecisionMode = PolicyDecisionMode::Asynchronous) const;
 
     Frame& m_frame;
 

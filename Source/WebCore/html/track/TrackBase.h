@@ -49,9 +49,10 @@ public:
     enum Type { BaseTrack, TextTrack, AudioTrack, VideoTrack };
     Type type() const { return m_type; }
 
+    virtual Element* element();
+    void* opaqueRoot();
     virtual void setMediaElement(WeakPtr<HTMLMediaElement>);
     WeakPtr<HTMLMediaElement> mediaElement() { return m_mediaElement; }
-    virtual Element* element();
 
     virtual AtomString id() const { return m_id; }
     virtual void setId(const AtomString& id) { m_id = id; }

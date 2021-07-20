@@ -406,9 +406,8 @@ for this property.
 */
 - (void)_switchFromStaticFontRegistryToUserFontRegistry WK_API_AVAILABLE(macos(12.0));
 
-- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
-- (void)_didLoadAppBoundRequest:(void (^)(BOOL result))completionHandler;
-- (void)_didLoadNonAppBoundRequest:(void (^)(BOOL result))completionHandler;
+- (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
+- (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
 
 - (void)_suspendPage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_resumePage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));

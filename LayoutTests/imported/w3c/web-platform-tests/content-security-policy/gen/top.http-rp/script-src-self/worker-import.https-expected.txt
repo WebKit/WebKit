@@ -1,0 +1,20 @@
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=a69152ff-73b7-4e29-bbbc-7dc40f73355d&path=/mixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=6febc1aa-14dc-4494-a0d8-1ed1ca341345&path=/mixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=4ec80cf4-81d1-4ed4-a147-cc96d422a64e&path=/mixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=824f75df-eb47-4a3f-8839-f120c2c2f294&path=%2Fmixed-content
+
+Harness Error (TIMEOUT), message = null
+
+PASS Content Security Policy: Expects allowed for worker-import to same-https origin and keep-origin redirection from https context.
+PASS Content Security Policy: Expects allowed for worker-import to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for worker-import to same-https origin and no-redirect redirection from https context.
+PASS Content Security Policy: Expects allowed for worker-import to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects blocked for worker-import to cross-https origin and keep-origin redirection from https context.
+FAIL Content Security Policy: Expects blocked for worker-import to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+PASS Content Security Policy: Expects blocked for worker-import to cross-https origin and no-redirect redirection from https context.
+FAIL Content Security Policy: Expects blocked for worker-import to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+PASS Content Security Policy: Expects blocked for worker-import to cross-https origin and swap-origin redirection from https context.
+FAIL Content Security Policy: Expects blocked for worker-import to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
+TIMEOUT Content Security Policy: Expects blocked for worker-import to same-https origin and swap-origin redirection from https context. Test timed out
+NOTRUN Content Security Policy: Expects blocked for worker-import to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
+

@@ -1694,7 +1694,10 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
 
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     RetainPtr<NSURLSessionWebSocketTask> task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
-    task.get().maximumMessageSize = 0;
+    
+    // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1
+    task.get().maximumMessageSize = 0x7FFFFFFFFFFFFFFFull;
+
     return makeUnique<WebSocketTask>(channel, webPageProxyID, makeWeakPtr(sessionSet), request, WTFMove(task));
 }
 

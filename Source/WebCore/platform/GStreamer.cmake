@@ -151,6 +151,10 @@ if (ENABLE_VIDEO)
                 ${GSTREAMER_CODECPARSERS_LIBRARIES}
             )
         endif ()
+
+        if (USE_PIPEWIRE)
+            list(APPEND WebCore_LIBRARIES LIBPORTAL::LIBPORTAL)
+        endif ()
     endif ()
 endif ()
 

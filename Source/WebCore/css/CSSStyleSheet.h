@@ -129,6 +129,8 @@ public:
 
     bool canAccessRules() const;
 
+    String debugDescription() const final;
+
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet);

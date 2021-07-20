@@ -921,6 +921,7 @@
     (home-literal
         "/Library/Preferences/com.apple.WebKit.WebContent.plist"
         "/Library/Preferences/com.apple.CFNetwork.plist"
+        "/Library/Preferences/com.apple.AppSupport.plist"
     )
 )
 

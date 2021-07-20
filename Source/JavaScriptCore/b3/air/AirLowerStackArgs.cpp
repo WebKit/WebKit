@@ -157,9 +157,20 @@ void lowerStackArgs(Code& code)
                             RELEASE_ASSERT(slot->byteSize() == 8);
                             RELEASE_ASSERT(width == Width32);
 
-                            RELEASE_ASSERT(isValidForm(StoreZero32, Arg::Stack));
+#if CPU(ARM64)
+                            Air::Opcode storeOpcode = Store32;
+                            Air::Arg::Kind operandKind = Arg::ZeroReg;
+                            Air::Arg operand = Arg::zeroReg();
+#elif CPU(X86_64)
+                            Air::Opcode storeOpcode = Move32;
+                            Air::Arg::Kind operandKind = Arg::Imm;
+                            Air::Arg operand = Arg::imm(0);
+#else
+#error Unhandled architecture.
+#endif
+                            RELEASE_ASSERT(isValidForm(storeOpcode, operandKind, Arg::Stack));
                             insertionSet.insert(
-                                instIndex + 1, StoreZero32, inst.origin,
+                                instIndex + 1, storeOpcode, inst.origin, operand,
                                 stackAddr(arg.offset() + 4 + slot->offsetFromFP()));
                         }
                         arg = stackAddr(arg.offset() + slot->offsetFromFP());

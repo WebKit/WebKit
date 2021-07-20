@@ -310,10 +310,20 @@ size_t Storage::approximateSize() const
     return m_approximateRecordsSize + m_blobStorage.approximateSize();
 }
 
-static size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount)
+uint32_t Storage::volumeBlockSize() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (!m_volumeBlockSize)
+        m_volumeBlockSize = FileSystem::volumeFileBlockSize(m_basePath).value_or(4 * KB);
+
+    return *m_volumeBlockSize;
+}
+
+size_t Storage::estimateRecordsSize(unsigned recordCount, unsigned blobCount) const
 {
     auto inlineBodyCount = recordCount - std::min(blobCount, recordCount);
-    auto headerSizes = recordCount * 4096;
+    auto headerSizes = recordCount * volumeBlockSize();
     auto inlineBodySizes = (maximumInlineBodySize() / 2) * inlineBodyCount;
     return headerSizes + inlineBodySizes;
 }
@@ -454,8 +464,8 @@ struct RecordMetaData {
 static WARN_UNUSED_RETURN bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
 {
     bool success = false;
-    fileData.apply([&metaData, &success](const uint8_t* data, size_t size) {
-        WTF::Persistence::Decoder decoder(data, size);
+    fileData.apply([&metaData, &success](Span<const uint8_t> span) {
+        WTF::Persistence::Decoder decoder(span);
         
         std::optional<unsigned> cacheStorageVersion;
         decoder >> cacheStorageVersion;

@@ -91,7 +91,7 @@ public:
             return;
 
         Structure* structure = object->structure(vm);
-        if (!(structure->typeInfo().prohibitsPropertyCaching() || slot.isTaintedByOpaqueObject())
+        if (!structure->typeInfo().prohibitsPropertyCaching()
             && structure->propertyAccessesAreCacheable()
             && (!slot.isUnset() || structure->propertyAccessesAreCacheableForAbsence())) {
             if (structure->isDictionary()) {

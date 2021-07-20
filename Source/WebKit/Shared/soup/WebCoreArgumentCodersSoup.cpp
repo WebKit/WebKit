@@ -31,6 +31,7 @@
 #include "ArgumentCodersGLib.h"
 #include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/Credential.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontAttributes.h>
@@ -181,15 +182,26 @@ bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder&, ProtectionSpac
     return false;
 }
 
-void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)
+void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Credential& credential)
 {
-    ASSERT_NOT_REACHED();
+    GRefPtr<GTlsCertificate> certificate = credential.certificate();
+    encoder << certificate;
+    encoder << credential.persistence();
 }
 
-bool ArgumentCoder<Credential>::decodePlatformData(Decoder&, Credential&)
+bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential& credential)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    std::optional<GRefPtr<GTlsCertificate>> certificate;
+    decoder >> certificate;
+    if (!certificate)
+        return false;
+
+    CredentialPersistence persistence;
+    if (!decoder.decode(persistence))
+        return false;
+
+    credential = Credential(certificate->get(), persistence);
+    return true;
 }
 
 void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttributes&)

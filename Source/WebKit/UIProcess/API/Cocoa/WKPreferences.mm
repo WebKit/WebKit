@@ -1491,6 +1491,22 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setMediaSessionEnabled(mediaSessionEnabled);
 }
 
+- (BOOL)_isExtensibleSSOEnabled
+{
+#if HAVE(APP_SSO)
+    return _preferences->isExtensibleSSOEnabled();
+#else
+    return false;
+#endif
+}
+
+- (void)_setExtensibleSSOEnabled:(BOOL)extensibleSSOEnabled
+{
+#if HAVE(APP_SSO)
+    _preferences->setExtensibleSSOEnabled(extensibleSSOEnabled);
+#endif
+}
+
 @end
 
 

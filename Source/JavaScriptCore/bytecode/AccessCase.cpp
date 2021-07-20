@@ -155,15 +155,15 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
     switch (stubInfo.cacheType()) {
     case CacheType::GetByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
+        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.u.byIdSelf.offset, stubInfo.inlineAccessBaseStructure.get());
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
+        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.u.byIdSelf.offset, stubInfo.inlineAccessBaseStructure.get());
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.u.byIdSelf.offset, stubInfo.u.byIdSelf.baseObjectStructure.get());
+        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.u.byIdSelf.offset, stubInfo.inlineAccessBaseStructure.get());
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
@@ -758,16 +758,14 @@ bool AccessCase::visitWeak(VM& vm) const
 }
 
 template<typename Visitor>
-bool AccessCase::propagateTransitions(Visitor& visitor) const
+void AccessCase::propagateTransitions(Visitor& visitor) const
 {
-    bool result = true;
-
     if (m_structure)
-        result &= m_structure->markIfCheap(visitor);
+        m_structure->markIfCheap(visitor);
 
     if (m_polyProtoAccessChain) {
         for (StructureID structureID : m_polyProtoAccessChain->chain())
-            result &= visitor.vm().getStructure(structureID)->markIfCheap(visitor);
+            visitor.vm().getStructure(structureID)->markIfCheap(visitor);
     }
 
     switch (m_type) {
@@ -775,18 +773,14 @@ bool AccessCase::propagateTransitions(Visitor& visitor) const
     case Delete:
         if (visitor.isMarked(m_structure->previousID()))
             visitor.appendUnbarriered(m_structure.get());
-        else
-            result = false;
         break;
     default:
         break;
     }
-
-    return result;
 }
 
-template bool AccessCase::propagateTransitions(AbstractSlotVisitor&) const;
-template bool AccessCase::propagateTransitions(SlotVisitor&) const;
+template void AccessCase::propagateTransitions(AbstractSlotVisitor&) const;
+template void AccessCase::propagateTransitions(SlotVisitor&) const;
 
 
 template<typename Visitor>

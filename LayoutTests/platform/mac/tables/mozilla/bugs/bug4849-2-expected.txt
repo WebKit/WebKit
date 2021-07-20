@@ -25,9 +25,9 @@ layer at (0,0) size 800x600
                           RenderText {#text} at (0,0) size 160x18
                             text run at (0,0) width 160: "IMPROVE YOUR SITE"
                           RenderBR {BR} at (159,0) size 1x18
-                          RenderText {#text} at (0,18) size 425x36
-                            text run at (0,18) width 425: "In this week's Home Improvements you can find an article on how"
-                            text run at (0,36) width 277: "to spice up your page by using imagemaps."
+                          RenderText {#text} at (0,18) size 442x36
+                            text run at (0,18) width 442: "In this week's Home Improvements you can find an article on how to"
+                            text run at (0,36) width 260: "spice up your page by using imagemaps."
                         RenderBlock {P} at (2,72) size 441x0
                 RenderTable {TABLE} at (0,62) size 449x28
                   RenderTableSection {TBODY} at (0,0) size 449x28

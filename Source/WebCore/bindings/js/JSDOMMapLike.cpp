@@ -40,7 +40,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlob
     if (!backingMap.isUndefined())
         return { false, *JSC::asObject(backingMap) };
 
-    JSC::DeferTermination deferScope(vm);
+    JSC::DeferTerminationForAWhile deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     backingMap = JSC::JSMap::create(&lexicalGlobalObject, vm, lexicalGlobalObject.mapStructure());

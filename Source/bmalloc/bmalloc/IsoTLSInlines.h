@@ -27,6 +27,7 @@
 
 #include "Environment.h"
 #include "IsoHeapImpl.h"
+#include "IsoMallocFallback.h"
 #include "IsoTLS.h"
 #include "bmalloc.h"
 
@@ -86,24 +87,16 @@ void* IsoTLS::allocateFast(api::IsoHeap<Type>& handle, unsigned offset, bool abo
 template<typename Config, typename Type>
 BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFailure)
 {
-    for (;;) {
-        switch (s_mallocFallbackState) {
-        case MallocFallbackState::Undecided:
-            determineMallocFallbackState();
-            continue;
-        case MallocFallbackState::FallBackToMalloc:
+    IsoMallocFallback::MallocResult fallbackResult = IsoMallocFallback::tryMalloc(
+        Config::objectSize
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
-            return malloc_zone_malloc(handle.m_zone, Config::objectSize);
-#else
-            return api::tryMalloc(Config::objectSize);
+        , handle.m_zone
 #endif
-        case MallocFallbackState::DoNotFallBack:
-            break;
-        }
-        break;
-    }
+        );
+    if (fallbackResult.didFallBack)
+        return fallbackResult.ptr;
     
-    // If debug heap is enabled, s_mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
+    // If debug heap is enabled, IsoMallocFallback::mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
     BASSERT(!Environment::get()->isDebugHeapEnabled());
     
     IsoTLS* tls = ensureHeapAndEntries(handle);
@@ -133,24 +126,16 @@ void IsoTLS::deallocateFast(api::IsoHeap<Type>& handle, unsigned offset, void* p
 template<typename Config, typename Type>
 BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeap<Type>& handle, void* p)
 {
-    for (;;) {
-        switch (s_mallocFallbackState) {
-        case MallocFallbackState::Undecided:
-            determineMallocFallbackState();
-            continue;
-        case MallocFallbackState::FallBackToMalloc:
+    bool result = IsoMallocFallback::tryFree(
+        p
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
-            return malloc_zone_free(handle.m_zone, p);
-#else
-            return api::free(p);
+        , handle.m_zone
 #endif
-        case MallocFallbackState::DoNotFallBack:
-            break;
-        }
-        break;
-    }
+        );
+    if (result)
+        return;
     
-    // If debug heap is enabled, s_mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
+    // If debug heap is enabled, IsoMallocFallback::mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
     BASSERT(!Environment::get()->isDebugHeapEnabled());
     
     RELEASE_BASSERT(handle.isInitialized());

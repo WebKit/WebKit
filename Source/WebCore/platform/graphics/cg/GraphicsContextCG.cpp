@@ -297,7 +297,9 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
             // interpolation smoothes sharp edges, causing pixels from outside the source rect to bleed
             // into the destination rect. See <rdar://problem/6112909>.
             subImage = getSubimage(subImage.get(), imageSize, subimageRect, options);
-            adjustedDestRect = enclosingIntRect(adjustedDestRect);
+
+            auto subPixelPadding = normalizedSrcRect.location() - subimageRect.location();
+            adjustedDestRect = { adjustedDestRect.location() - subPixelPadding * scale, subimageRect.size() * scale };
 
             // If the image is only partially loaded, then shrink the destination rect that we're drawing
             // into accordingly.

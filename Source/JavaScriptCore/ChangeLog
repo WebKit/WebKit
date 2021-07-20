@@ -1,3 +1,874 @@
+2021-07-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid-July 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=227981
+
+        Unreviewed non-unified build fixes.
+
+        * ftl/FTLState.cpp: Add missing B3ValueInlines.h header.
+        * runtime/TemporalNow.cpp: Add missing JSCJSValueInlines.h and JSObjectInlines.h headers.
+        * runtime/TemporalObject.cpp: Ditto.
+
+2021-07-14  Devin Rousso  <drousso@apple.com>
+
+        Implement Array.prototype.findLast and Array.prototype.findLastIndex
+        https://bugs.webkit.org/show_bug.cgi?id=227939
+
+        Reviewed by Yusuke Suzuki.
+
+        * builtins/ArrayPrototype.js:
+        (findLast): Added.
+        (findLastIndex): Added.
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+
+        * builtins/TypedArrayPrototype.js:
+        (findLast): Added.
+        (findLastIndex): Added.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+
+        * runtime/OptionsList.h:
+
+2021-07-14  Michael Saboff  <msaboff@apple.com>
+
+        [macOS] Add new entitlement to limit process to a single JIT region
+        https://bugs.webkit.org/show_bug.cgi?id=227956
+
+        Reviewed by Mark Lam.
+
+        This macOS entitlement limits a process to a single JIT region.
+        This matches the behavior on iOS.
+
+        * Scripts/process-entitlements.sh:
+        * entitlements.plist:
+
+2021-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Speculative fix for failed scope.releaseAssertNoException() after calls to JSMap::create().
+        https://bugs.webkit.org/show_bug.cgi?id=227964
+        rdar://78013960
+
+        Reviewed by Yusuke Suzuki.
+
+        There have been reports of flaky failures on the scope.releaseAssertNoException()
+        after the call to JSMap::create() in JSModuleLoader::finishCreation().
+
+        The scope.releaseAssertNoException() says that we don't expect the JSMap::create()
+        to ever throw an exception.  If the assertion is true, the only way that we can
+        see an exception there is if we're throwing an asynchronous TerminationException.
+
+        Since JSModuleLoader::finishCreation() does not have any long running loops, we can
+        just DeferTerminationForAWhile and let the next exception check site throw the
+        asynchronous TerminationException.  We don't want to just use DeferTermination
+        because it will throw the TerminationException right at the end of
+        JSModuleLoader::finishCreation(), and the caller of JSModuleLoader::finishCreation()
+        may be similarly not expecting an exception to be thrown there.
+
+        Also apply the same treatment to AbstractModuleRecord::finishCreation(), and
+        getBackingMap() in WebCore for the same reason.  Other than those, other sites that
+        call JSMap::create() already check for exceptions.  So, those sites do not need to
+        DeferTerminationForAWhile.
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::finishCreation):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::finishCreation):
+
+2021-07-14  Keith Miller  <keith_miller@apple.com>
+
+        Convert small JIT pool tests into executable fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=226279
+
+        Right now, we try to test our engine on a small JIT pool. This isn't a known configuration for any
+        actual ports and causes issues if we run out of JIT memory when we need to compile an OSR exit.
+        Instead of testing such a small pool we should just fuzz each executable allocation that says it
+        can fail.
+
+        The current fuzzing doesn't do a good job tracking the number of DFG/FTL compiles when allocations
+        fail, so when enabled those tests will just exit early. Also, right now we use a random seed picked
+        by the engine for these tests, which makes it hard to reproduce crashes on the bots. If we see
+        flakiness on the bots we can have the harness pass in a number so it gets logged in the repro command.
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::numberOfDFGCompiles):
+        * jit/ExecutableAllocationFuzz.cpp:
+        (JSC::doExecutableAllocationFuzzing):
+        * jsc.cpp:
+        (runJSC):
+
+2021-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Check for out of memory in JSC::globalFuncEscape() and JSC::globalFuncUnescape().
+        https://bugs.webkit.org/show_bug.cgi?id=227962
+        rdar://78392251
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-07-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        libpas executable-allocator should reserve more than 256KB for non-fail region at least
+        https://bugs.webkit.org/show_bug.cgi?id=227927
+
+        Reviewed by Keith Miller.
+
+        libpas jit_heap has mediam allocator which allocates 128KB pages at once. However, our JSC stress tests are setting 100KB
+        for small executable memory tests. As a result, under this configuration, we fail immediately after using medium allocator.
+
+        But this test's "total size of executable memory is 100KB" is unrealistic: it is possible that only 100KB memory remains,
+        but it is impossible that we reserve only 25KB for non-fail reservation. In production, we are always reserving 128MB. So
+        this configuration is not realistic actually.
+
+        So, this patch changes,
+
+            1. If non-fail region is less than 256KB, then we add 256KB and keep this 256KB as non-fail executable allocation. If not,
+                use 0.25 ratio as we are doing. This means that Options::jitMemoryReservationSize configures failable region of
+                executable memory.
+            2. We also revive bytesReserved and bytesAllocated to make memoryPressureMultiplier and early-fail allocation (when there is
+                not enough memory and allocation can fail, then we should fail).
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableMemoryHandle::createImpl):
+        (JSC::ExecutableMemoryHandle::~ExecutableMemoryHandle):
+        (JSC::ExecutableMemoryHandle::shrink):
+        (JSC::ExecutableMemoryHandle::sizeInBytes const): Deleted.
+        * jit/ExecutableMemoryHandle.h:
+        (JSC::ExecutableMemoryHandle::sizeInBytes const):
+        (JSC::ExecutableMemoryHandle::ExecutableMemoryHandle):
+
+2021-07-14  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception checker validation in operationObjectAssignUntyped.
+        https://bugs.webkit.org/show_bug.cgi?id=227955
+        rdar://80503746
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+
+2021-07-13  Robin Morisset  <rmorisset@apple.com>
+
+        Invalid machine code emitted by SpeculativeJIT::emitObjectOrOtherBranch
+        https://bugs.webkit.org/show_bug.cgi?id=227869
+        <rdar://problem/80457566>
+
+        Reviewed by Mark Lam.
+
+        SpeculativeJIT::emitObjectOrOtherBranch used to check the validity of the masqueradesAsUndefined watchpoint twice, and assumed that it could not change in between.
+        That is clearly incorrect as the main thread is running concurrently with it, and so the watchpoint could fire at any time.
+        The fix is trivial: just check the validity once, and store the result in a boolean.
+        If the watchpoint triggers later that is fine: we'll notice and cancel the compilation (see WatchpointCollectionPhase, Plan::isStillValid() and Plan::finalize()).
+        The change only protects us from rare and hard-to-reproduce crashes on debug builds caused by an ASSERT firing.
+
+        I did not add a testcase, as I can only reproduce the bug by adding an extra wait in the middle of emitObjectOrOtherBranch.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+
+2021-07-13  Yijia Huang  <yijia_huang@apple.com>
+
+        Add a new Air::Arg kind ZeroReg to let AIR recognise the new instructions/forms accepting zero register in ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227510
+
+        Reviewed by Saam Barati.
+
+        B3 is designed to be portable to many kinds of CPUs. However, to effectively 
+        compile code to different CPUs, the compiler must eventually make explicit 
+        instruction set details. Then, Air is introduced, and it is designed to target 
+        individual CPU architectures and generate instructions specific to those CPUs. 
+
+        Previously, Air don't recognize the zero register. This problem has been pointed 
+        out in #174821, which was trying to introduce the new opcodes to handle the zero 
+        register. 
+
+        To solve this problem in a modular reasoning approach, a new Air operand ZeroReg 
+        should be introduced. Its goal is to closely match the CPU instructions 
+        accepting the zero register in ARM64. Another reason is that the new overloads 
+        of the instructions taking the zero register can benefit instruction selection 
+        with this implementation. 
+
+        Here, the ZeroReg is added as a new kind for Air::Arg, which acts as a "high 
+        level" operand to be emitted with the associative opcodes. In ARM64, the ZeroReg 
+        would be emitted as a zero register.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::storeZero64): Deleted.
+        (JSC::MacroAssemblerARM64::storeZero32): Deleted.
+        (JSC::MacroAssemblerARM64::storeZero16): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::storeZero32): Deleted.
+        (JSC::MacroAssemblerX86Common::storeZero16): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storeZero64): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::jsHash const):
+        (JSC::B3::Air::Arg::dump const):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::zeroReg):
+        (JSC::B3::Air::Arg::isZeroReg const):
+        (JSC::B3::Air::Arg::isGP const):
+        (JSC::B3::Air::Arg::isFP const):
+        (JSC::B3::Air::Arg::isValidForm const):
+        (JSC::B3::Air::Arg::asZeroReg const):
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_3.cpp:
+        (testStoreZeroReg):
+
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        Switch the ExecutableAllocator to the libpas jit_heap. The libpas jit_heap uses two size
+        categories of bitfit and a large heap, and is happy to do its approximate first-fit in any
+        ranges of memory you give it. Jit_heap never allocates metadata inside the memory it manages.
+        Allocations and deallocations take a constant-bounded amount of time except for unusual
+        situations, and are protected by fine-grained locking in most cases. Decommit follows libpas
+        scavenging policy. This alone is a speed-up on Speedometer (probably about 1% or more).
+
+        Also expose some libpas introspection via $vm.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerCodeRef.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableMemoryHandle::createImpl):
+        (JSC::ExecutableMemoryHandle::~ExecutableMemoryHandle):
+        (JSC::ExecutableMemoryHandle::sizeInBytes const):
+        (JSC::ExecutableMemoryHandle::shrink):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableMemoryHandle.h: Added.
+        (JSC::ExecutableMemoryHandle::start const):
+        (JSC::ExecutableMemoryHandle::end const):
+        (JSC::ExecutableMemoryHandle::startAsInteger const):
+        (JSC::ExecutableMemoryHandle::endAsInteger const):
+        (JSC::ExecutableMemoryHandle::containsIntegerAddress const):
+        (JSC::ExecutableMemoryHandle::contains const):
+        (JSC::ExecutableMemoryHandle::key const):
+        (JSC::ExecutableMemoryHandle::dump const):
+        (JSC::ExecutableMemoryHandle::ExecutableMemoryHandle):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
+2021-07-12  Mark Lam  <mark.lam@apple.com>
+
+        Revert r277027: breaks GC.
+        https://bugs.webkit.org/show_bug.cgi?id=227888
+
+        Reviewed by Saam Barati.
+
+        The patch in r277027 to make deletion of GCAwareJITStubRoutines incremental has a
+        bug: the routine may not be deleted yet by the incremental sweeper before the next
+        GC cycle, and the GC will not be happy visiting dead cell pointers in that routine.
+        There is also another bug with the triggering of sweeping.
+
+        For now, we're reverting the patch, and will revisit this at a later time.
+
+        * CMakeLists.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepSynchronously):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::mayHaveJITStubRoutinesToDelete): Deleted.
+        (JSC::Heap::deleteDeadJITStubRoutines): Deleted.
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        (JSC::JITStubRoutineSet::traceMarkedStubRoutines):
+        (JSC::JITStubRoutineSet::mayHaveRoutinesToDelete): Deleted.
+        (JSC::JITStubRoutineSet::notifyHaveRoutinesToDelete): Deleted.
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::createSelfManagedRoutine):
+
+2021-07-12  Yijia Huang  <yijia_huang@apple.com>
+
+        Add SMNEGL, UMNEGL, UMADDL, and UMSUBL for ARM64 and select this instruction in Air
+        https://bugs.webkit.org/show_bug.cgi?id=227857
+
+        Reviewed by Robin Morisset.
+
+        The previous patches have already added MNEG, MADD, MSUB, SMADDL, and SMSUBL. 
+        This patch completes the corresponding signed or unsigned variants (SMNEGL, 
+        UMNEGL, UMADDL, and UMSUBL) of them. In addition, this patch refactors 
+        the implementation and the associative test cases of MADD, MSUB, and MNEG 
+        to be more readable and maintainable w.r.t their variants.
+
+        ------------------------------
+        ### SMNEGL/UMNEGL Xd Wn Wm ###
+        ------------------------------
+        Signed/Unsigned Multiply-Negate Long multiplies two 32-bit register values, 
+        negates the product, and writes the result to the 64-bit destination register. 
+        The equivalent patterns are 
+
+        d = -(SExt32(n) * SExt32(m)) and d = -(ZExt32(n) * ZExt32(m)) respectively.
+
+        Given B3 IR:
+        Int @0 = S/ZExt32(Trunc(ArgumentReg(%x0)))
+        Int @1 = S/ZExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = Mul(@0, @1)
+        Int @3 = Neg(@2)
+        Void@4 = Return(@3, Terminal)
+
+        // Old optimized AIR
+        Move32      %x0, %x0,      @0
+        Move32      %x1, %x1,      @1
+        MultiplyNeg %x0, %x1, %x0, @3
+        Ret         %x0,           @4
+
+        // New optimized AIR
+        MultiplyNegSign/ZeroExtend  %x0, %x1, %x0, @3
+        Ret                         %x0,           @4
+
+        --------------------------
+        ### UMADDL Xd Wn Wm Xa ###
+        --------------------------
+        Unsigned Multiply-Add Long multiplies two 32-bit register values, adds a 64-bit 
+        register value, and writes the result to the 64-bit destination register. The 
+        equivalent patterns are 
+
+        d = ZExt32(n) * ZExt32(m) + a or d = a + ZExt32(n) * ZExt32(m)
+
+        Given B3 IR:
+        Int @0 = ZExt32(Trunc(ArgumentReg(%x0)))
+        Int @1 = ZExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = ArgumentReg(%x2)
+        Int @3 = Mul(@0, @1)
+        Int @4 = Add(@3, @2)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Move32        %x0, %x0,           @1
+        Move32        %x1, %x1,           @2
+        MultiplyAdd   %x0, %x1, %x2, %x0, @4
+        Ret64         %x0,                @5
+
+        // New optimized AIR
+        MultiplyAddZeroExtend %x0, %x1, %x2, %x0, @8
+        Ret                   %x0,                @9
+
+        --------------------------
+        ### UMSUBL Xd Wn Wm Xa ###
+        --------------------------
+        Unsigned Multiply-Subtract Long multiplies two 32-bit register values, subtracts 
+        the product from a 64-bit register value, and writes the result to the 64-bit 
+        destination register. The equivalent patterns are 
+
+        d = a - ZExt32(n) * ZExt32(m)
+
+        Given B3 IR:
+        Int @0 = ZExt32(Trunc(ArgumentReg(%x0)))
+        Int @1 = ZExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = ArgumentReg(%x2)
+        Int @3 = Mul(@0, @1)
+        Int @4 = Sub(@2, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Move32        %x0, %x0,           @1
+        Move32        %x1, %x1,           @2
+        MultiplySub   %x0, %x1, %x2, %x0, @4
+        Ret64         %x0,                @5
+
+        // New optimized AIR
+        MultiplySubZeroExtend %x0, %x1, %x2, %x0, @8
+        Ret                   %x0,                @9
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::multiplyNeg32):
+        (JSC::MacroAssemblerARM64::multiplyAddZeroExtend32):
+        (JSC::MacroAssemblerARM64::multiplySubZeroExtend32):
+        (JSC::MacroAssemblerARM64::multiplyNeg64):
+        (JSC::MacroAssemblerARM64::multiplyNegSignExtend32):
+        (JSC::MacroAssemblerARM64::multiplyNegZeroExtend32):
+        * assembler/testmasm.cpp:
+        (JSC::testMultiplyAddSignExtend32):
+        (JSC::testMultiplyAddZeroExtend32):
+        (JSC::testMultiplySubSignExtend32):
+        (JSC::testMultiplySubZeroExtend32):
+        (JSC::testMultiplyNegSignExtend32):
+        (JSC::testMultiplyNegZeroExtend32):
+        (JSC::testMultiplyAddSignExtend32Left): Deleted.
+        (JSC::testMultiplyAddSignExtend32Right): Deleted.
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testMulAddArgsLeft):
+        (testMulAddArgsRight):
+        (testMulAddSignExtend32ArgsLeft):
+        (testMulAddZeroExtend32ArgsLeft):
+        (testMulAddZeroExtend32ArgsRight):
+        (testMulSubArgsLeft):
+        (testMulSubArgsRight):
+        (testMulSubArgsRight32):
+        (testMulSubSignExtend32):
+        (testMulSubZeroExtend32):
+        (testMulNegArgArg):
+        (testMulNegArgs):
+        (testMulNegArgs32):
+        (testMulNegSignExtend32):
+        (testMulNegZeroExtend32):
+        (testMulSubSignExtend32Args): Deleted.
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
+2021-07-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JITCage already includes guard pages
+        https://bugs.webkit.org/show_bug.cgi?id=227867
+
+        Reviewed by Mark Lam.
+
+        Since JITCage already includes guard pages, we do not need to allocate that additionally.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+
+2021-07-10  Saam Barati  <sbarati@apple.com>
+
+        Continue to consult InlineAccess's Structure even after switching to a stub IC
+        https://bugs.webkit.org/show_bug.cgi?id=227785
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes a crash in: stress/class-subclassing-function.js
+        
+        The bug is this:
+        1. We initialize a StructureStubInfo to be an inline self access doing a load based on structure S.
+        2. We transition to being a PolymorphicAccess based StructureStubInfo. But, we haven't
+        generated code yet. We're in the buffered state. So we are still running the inline access
+        from (1).  But the StructureStubInfo thinks it's a "Stub".
+        3. S is collected
+        4. We continue to run code from (1), because when we finalize the IC during GC, it
+        doesn't think it's an inline access.
+        
+        The fix is to always track the structure S that we used when generating the inline
+        access, and to only stop tracking it once we've generated code for the Stub.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::propagateTransitions const):
+        * bytecode/AccessCase.h:
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InByStatus.cpp:
+        (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::propagateTransitions const):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        * bytecode/StructureStubInfo.h:
+
+2021-07-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Workaround test262.report bug by making $ properties enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=227855
+
+        Reviewed by Alexey Shvayka.
+
+        test262.report's harness has a bug and it reports incorrect results for JSC on tests using $262 properties.
+        This patch introduces a workaround which makes properties of $ enumerable.
+
+        * jsc.cpp:
+
+2021-07-08  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Air opcode add/sub-and-shift for ARM64 and select this instruction in Air
+        https://bugs.webkit.org/show_bug.cgi?id=227509
+
+        Reviewed by Saam Barati.
+
+        This patch includes two modifications:
+            1. Add add/sub-with-shift to Air opcode and the corresponding pattern match for 
+               instruction selection.
+            2. Minor fix in disassembler.
+
+        Given the operation:
+
+            add/sub Rd, Rn, Rm, ShiftType, amount
+
+        ADD/SUB (shifted register), adds/subs a register value Rn and an optionally-shifted register 
+        value Rm, and writes the result to the destination register Rd. The instruction selector 
+        can utilize this to lowering certain patterns in B3 IR before further Air optimization. 
+
+        The equivalent pattern would be:
+
+            d = n +/- (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = amount
+        Int @3 = ZShr(@1, @2)
+        Int @4 = Add/Sub(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Shift   %x1, amount, %x1, @3
+        Add/Sub %x0,    %x1, %x0, @4
+        Ret     %x0,              @5
+
+        // New optimized AIR
+        Add(Sub)Shift %x0, %x1, amount, %x0, @4
+        Ret           %x0,                   @5
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::addLeftShift32):
+        (JSC::MacroAssemblerARM64::addRightShift32):
+        (JSC::MacroAssemblerARM64::addUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::addLeftShift64):
+        (JSC::MacroAssemblerARM64::addRightShift64):
+        (JSC::MacroAssemblerARM64::addUnsignedRightShift64):
+        (JSC::MacroAssemblerARM64::subLeftShift32):
+        (JSC::MacroAssemblerARM64::subRightShift32):
+        (JSC::MacroAssemblerARM64::subUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::subLeftShift64):
+        (JSC::MacroAssemblerARM64::subRightShift64):
+        (JSC::MacroAssemblerARM64::subUnsignedRightShift64):
+        * assembler/testmasm.cpp:
+        (JSC::testAddWithLeftShift32):
+        (JSC::testAddWithRightShift32):
+        (JSC::testAddWithUnsignedRightShift32):
+        (JSC::testAddWithLeftShift64):
+        (JSC::testAddWithRightShift64):
+        (JSC::testAddWithUnsignedRightShift64):
+        (JSC::testSubWithLeftShift32):
+        (JSC::testSubWithRightShift32):
+        (JSC::testSubWithUnsignedRightShift32):
+        (JSC::testSubWithLeftShift64):
+        (JSC::testSubWithRightShift64):
+        (JSC::testSubWithUnsignedRightShift64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        (checkUsesInstruction):
+        * b3/testb3_2.cpp:
+        (testAddWithLeftShift32):
+        (testAddWithRightShift32):
+        (testAddWithUnsignedRightShift32):
+        (testAddWithLeftShift64):
+        (testAddWithRightShift64):
+        (testAddWithUnsignedRightShift64):
+        (testSubWithLeftShift32):
+        (testSubWithRightShift32):
+        (testSubWithUnsignedRightShift32):
+        (testSubWithLeftShift64):
+        (testSubWithRightShift64):
+        (testSubWithUnsignedRightShift64):
+        (addBitTests):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        * disassembler/ARM64/A64DOpcode.h:
+        (JSC::ARM64Disassembler::A64DOpcodeAddSubtractShiftedRegister::immediate6):
+        (JSC::ARM64Disassembler::A64DOpcodeLogicalShiftedRegister::immediate6):
+
+2021-07-08  Keith Miller  <keith_miller@apple.com>
+
+        display-profiler-output should be able to print disassembly for the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=227798
+
+        Reviewed by Saam Barati.
+
+        Right now running JSC with the bytecode profiler will not print
+        disassembly for FTL code. This patch adds this support. In order to get
+        execution counts there is a callback at the transition between each
+        DFG node in the Air disassembler. Since B3 code move parts of
+        DFG nodes to different basic blocks we don't include execution
+        counts in the dump. However, the DFG-only graph printed before
+        the disassembly will still have the counts.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::dumpDisassembly):
+        * ftl/FTLState.h:
+        (JSC::FTL::State::dumpDisassembly):
+
+2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use JSC::Yarr::flagsString to get string representation of RegExp flags
+        https://bugs.webkit.org/show_bug.cgi?id=227790
+
+        Reviewed by Keith Miller.
+
+        * yarr/YarrFlags.h:
+
+2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up RegExp flag code
+        https://bugs.webkit.org/show_bug.cgi?id=227786
+
+        Reviewed by Filip Pizlo.
+
+        I found a bug in regexpToSourceString (used for RegExp's dump code), and it motivates me to clean up
+        all RegExp flag handling code. We define RegExp flags as a macro and updating that macro updates all
+        RegExp flag handling code too.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        (JSC::regexpToSourceString):
+        * runtime/RegExp.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::flagsString):
+        * yarr/YarrFlags.cpp:
+        (JSC::Yarr::parseFlags):
+        (JSC::Yarr::flagsString):
+        * yarr/YarrFlags.h:
+
+2021-07-07  Saam Barati  <sbarati@apple.com>
+
+        JSArrayBufferView::byteOffsetConcurrently has a race when using PAC
+        https://bugs.webkit.org/show_bug.cgi?id=227765
+
+        Reviewed by Mark Lam.
+
+        We were calling JSArrayBufferView::vector(), which does PAC validation
+        using the length() of the array. However, this can race with JSArrayBufferView::detach,
+        which sets the length to zero, leading to sadness on the compiler thread.
+
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::vectorWithoutPACValidation const):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffsetImpl):
+
+2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix Object.assign fast path to accept undefined/null
+        https://bugs.webkit.org/show_bug.cgi?id=227769
+        rdar://80264271
+
+        Reviewed by Saam Barati.
+
+        Object.assign can accept undefined or null as a second (or latter) parameters.
+        If it is passed, the parameter is just ignored. Previous DFG / FTL optimization patch
+        does not handle this case.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectAssign):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectAssign):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectConstructorInlines.h:
+        (JSC::objectAssignFast):
+
+2021-07-07  Mark Lam  <mark.lam@apple.com>
+
+        Heap::waitForCollector() needs to set m_mutatorDidRun.
+        https://bugs.webkit.org/show_bug.cgi?id=227782
+        rdar://78326474
+
+        Reviewed by Saam Barati.
+
+        Heap::waitForCollector() is one of 2 clients of Heap::stopIfNecessarySlow(unsigned oldState).
+        The other client, Heap::stopIfNecessarySlow() sets m_mutatorDidRun to true after
+        calling Heap::stopIfNecessarySlow(unsigned oldState).  Heap::waitForCollector()
+        needs to do the same.  Constraint solvers rely on this.
+
+        Without this, one fall out we've seen is that DOMGCOutputConstraint fails to
+        visitOutputConstraints, and as a result, opaqueRoots may not get updated.  This
+        issue was caught by the GC verifier.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::waitForCollector):
+
+2021-07-07  Michael Saboff  <msaboff@apple.com>
+
+        fitcored crashes at JavaScriptCore: JSC::Heap::releaseAccessSlow
+        https://bugs.webkit.org/show_bug.cgi?id=227767
+
+        Reviewed by Geoffrey Garen.
+
+        Speculative fix for this crash.  We are crashing while destroying the VM as we are about to
+        release the JSLock.  In JSLock::willReleaseLock(), we release heap access.  Therefore we don't
+        need to release it again when undertaking the various shutdown steps in the VM destructor.
+
+        Added a new scope class that will only release and then acquire heap access if the caller
+        currently has heap access.
+
+        * heap/ReleaseHeapAccessScope.h:
+        (JSC::ReleaseHeapAccessIfNeededScope::ReleaseHeapAccessIfNeededScope):
+        (JSC::ReleaseHeapAccessIfNeededScope::~ReleaseHeapAccessIfNeededScope):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::waitUntilAllPlansForVMAreReady):
+
+2021-07-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not allocate JITWorklist if JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=227734
+
+        Reviewed by Mark Lam.
+
+        Previously, this code was doing,
+
+            if (Options::useJIT())
+                DFG::iterateCodeBlocksForGC(visitor, m_vm, func);
+
+        But r278082 changed it to
+
+            JITWorklist::ensureGlobalWorklist().iterateCodeBlocksForGC(visitor, m_vm, func);
+
+        As a result, we are always allocating JITWorklist even JIT is not enabled.
+        This patch fixes the behavior not to allocate JITWorklist.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+
+2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        r270214 broke testb3 on arm64e
+        https://bugs.webkit.org/show_bug.cgi?id=227713
+
+        Reviewed by Saam Barati.
+
+        ARM64E CAS lacks isBranch case. This patch adds isBranch implementation.
+        We also adjust disasm scanning test to support CAS in ARM64E.
+
+        * assembler/testmasm.cpp:
+        (JSC::testAtomicStrongCASFill8):
+        (JSC::testAtomicStrongCASFill16):
+        * b3/B3LowerToAir.cpp:
+        * b3/testb3_8.cpp:
+        (testAtomicWeakCAS):
+        (testAtomicStrongCAS):
+        (testAtomicXchg):
+
+2021-07-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix after r279630
+        https://bugs.webkit.org/show_bug.cgi?id=223166
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
+2021-07-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279546, r279554, r279558 and r279567.
+        https://bugs.webkit.org/show_bug.cgi?id=227732
+
+        Speedometer/jQuery-TodoMVC 2-3% regression
+
+        Reverted changesets:
+
+        "[WebIDL] Rework runtime enabled properties leveraging
+        PropertyCallback"
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+        https://commits.webkit.org/r279546
+
+        "[WebIDL] Generate constructor's hash table in
+        GenerateConstructorHelperMethods"
+        https://bugs.webkit.org/show_bug.cgi?id=227668
+        https://commits.webkit.org/r279554
+
+        "[WebIDL] Simplify generation of runtime conditionally read-
+        write attributes"
+        https://bugs.webkit.org/show_bug.cgi?id=227672
+        https://commits.webkit.org/r279558
+
+        "Use AbortSignal's [PrivateIdentifier] whenSignalAborted()
+        static method"
+        https://bugs.webkit.org/show_bug.cgi?id=227673
+        https://commits.webkit.org/r279567
+
+2021-07-06  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Implement Temporal
+        https://bugs.webkit.org/show_bug.cgi?id=223166
+
+        Reviewed by Yusuke Suzuki.
+
+        Intended to be the first patch in a stack. Adds boilerplate for
+        Temporal in order to unblock further parallelizable work on this bug.
+
+        This patch adds a feature flag for Temporal, and a toplevel Temporal
+        global containing only Temporal.now, which is itself an empty object.
+        These objects will be further populated in later patches.
+
+        * CMakeLists.txt: Add TemporalObject and TemporalNow. Property lookup
+          table in TemporalObject.
+        * DerivedSources.make: Add TemporalObject property lookup table header.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add new files.
+        * Sources.txt: Add TemporalObject and TemporalNow.
+        * runtime/CommonIdentifiers.h: Add 'Temporal' property key.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Create the Temporal global if the feature
+          flag is enabled.
+        * runtime/OptionsList.h: Add useTemporal feature flag.
+        * runtime/TemporalNow.cpp: Added.
+        (JSC::TemporalNow::TemporalNow):
+        (JSC::TemporalNow::create):
+        (JSC::TemporalNow::createStructure):
+        (JSC::TemporalNow::finishCreation):
+        * runtime/TemporalNow.h: Added.
+        * runtime/TemporalObject.cpp: Added.
+        (JSC::createNowObject):
+        (JSC::TemporalObject::TemporalObject):
+        (JSC::TemporalObject::create):
+        (JSC::TemporalObject::createStructure):
+        (JSC::TemporalObject::finishCreation):
+        * runtime/TemporalObject.h: Added.
+
+2021-07-06  Yijia Huang  <yijia_huang@apple.com>
+
+        Fix type error in testb3
+        https://bugs.webkit.org/show_bug.cgi?id=227722
+
+        Reviewed by Mark Lam.
+
+        Fix type error in testb3. Shift amount should be 32-bit constant.
+
+        * b3/testb3_3.cpp:
+        (testInsertSignedBitfieldInZero64):
+        (testExtractSignedBitfield64):
+
 2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize Object.assign and putDirectInternal

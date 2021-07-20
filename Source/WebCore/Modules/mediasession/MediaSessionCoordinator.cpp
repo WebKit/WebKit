@@ -376,20 +376,9 @@ void MediaSessionCoordinator::playSession(std::optional<double> atTime, std::opt
     if (atTime && !currentPositionApproximatelyEqualTo(*atTime))
         m_session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = *atTime });
 
-    if (!std::isfinite(delta) || delta <= 0_s) {
-        m_session->callActionHandler({ .action = MediaSessionAction::Play });
-        completionHandler(true);
-        return;
-    }
-
-    RunLoop::main().dispatchAfter(delta, [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)] () mutable {
-        if (!weakThis || !weakThis->m_session) {
-            completionHandler(false);
-            return;
-        }
-        weakThis->m_session->callActionHandler({ .action = MediaSessionAction::Play });
-        completionHandler(true);
-    });
+    m_currentPlaySessionCommand = { atTime, hostTime };
+    m_session->callActionHandler({ .action = MediaSessionAction::Play });
+    completionHandler(true);
 }
 
 void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& completionHandler)

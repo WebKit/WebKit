@@ -1,0 +1,19 @@
+Tests document.readyState() for documents created by JavaScript
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+htmlDocument = document.implementation.createHTMLDocument()
+PASS htmlDocument.readyState is "loading"
+htmlDocument.close()
+PASS htmlDocument.readyState is "complete"
+xhtmlDocument = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null)
+PASS xhtmlDocument.readyState is "complete"
+svgDocument = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', null)
+PASS svgDocument.readyState is "complete"
+xmlDocument = (new DOMParser()).parseFromString('', 'text/xml')
+PASS xmlDocument.readyState is "complete"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

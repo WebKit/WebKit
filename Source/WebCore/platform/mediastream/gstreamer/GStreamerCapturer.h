@@ -28,15 +28,29 @@
 #include "GStreamerCommon.h"
 
 #include <gst/gst.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
-class GStreamerCapturer {
-    WTF_MAKE_FAST_ALLOCATED;
+class GStreamerCapturer
+    : public ThreadSafeRefCounted<GStreamerCapturer, WTF::DestructionThread::MainRunLoop> {
+
 public:
+    class Observer : public CanMakeWeakPtr<Observer> {
+    public:
+        virtual ~Observer();
+
+        virtual void sourceCapsChanged(const GstCaps*) { }
+    };
+
     GStreamerCapturer(GStreamerCaptureDevice, GRefPtr<GstCaps>);
-    GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>);
-    ~GStreamerCapturer();
+    GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>, CaptureDevice::DeviceType);
+    virtual ~GStreamerCapturer();
+
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
+    void forEachObserver(const Function<void(Observer&)>&);
 
     void setupPipeline();
     void play();
@@ -57,6 +71,8 @@ public:
     bool isInterrupted() const;
     void setInterrupted(bool);
 
+    CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
+
 protected:
     GRefPtr<GstElement> m_sink;
     GRefPtr<GstElement> m_src;
@@ -66,10 +82,11 @@ protected:
     GRefPtr<GstDevice> m_device;
     GRefPtr<GstCaps> m_caps;
     GRefPtr<GstElement> m_pipeline;
-
-private:
     const char* m_sourceFactory;
 
+private:
+    CaptureDevice::DeviceType m_deviceType;
+    WeakHashSet<Observer> m_observers;
 };
 
 } // namespace WebCore

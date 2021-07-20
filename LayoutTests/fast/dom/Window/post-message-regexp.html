@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests that our structured clone algorithm properly encodes all JS RegExp flags.");
+jsTestIsAsync = true;
+
+var tests = [
+  new RegExp(),
+  /abc/,
+  /abc/g,
+  /abc/i,
+  /abc/gi,
+  /abc/m,
+  /abc/mg,
+  /abc/mi,
+  /abc/mgi,
+  /abc/s,
+  /abc/u,
+  /abc/y,
+  /abc/d,
+  /abc/gimsuy,
+  /abc/gimsuyd,
+];
+
+let currentTest = 0;
+onmessage = (_event) => {
+    event = _event;
+    shouldBeEqualToString("event.data.toString()", "" + tests[currentTest++].toString());
+    if (currentTest >= tests.length)
+        finishJSTest();
+};
+
+for (let test of tests)
+    postMessage(test);
+</script>
+</body>
+</html>

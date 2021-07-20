@@ -1554,7 +1554,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
 
     ImageObserver* observer = image->imageObserver();
 
-    if (image->isSVGImage()) {
+    if (image->drawsSVGImage()) {
         image->setImageObserver(nullptr);
         image->setContainerSize(imageRect.size());
     }
@@ -1589,7 +1589,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     else
         didDraw(normalizedDstRect);
 
-    if (image->isSVGImage())
+    if (image->drawsSVGImage())
         image->setImageObserver(observer);
 
     return { };
@@ -1977,7 +1977,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     //      the origin is clean.
     //   2) Dynamically verify the origin checks at draw time, and dirty the canvas accordingly.
     // To be on the safe side, taint the origin for all patterns containing SVG images for now.
-    if (cachedImage->image()->isSVGImage())
+    if (cachedImage->image()->drawsSVGImage())
         originClean = false;
 
     auto* image = cachedImage->imageForRenderer(imageElement.renderer());

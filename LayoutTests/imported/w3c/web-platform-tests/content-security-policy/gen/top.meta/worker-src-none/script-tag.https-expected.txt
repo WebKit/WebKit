@@ -1,0 +1,18 @@
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=f1b26f2e-c9df-4ae6-b2c5-6dfa8eeffe5b&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=713a1f7a-ed61-47be-961a-9ba3df857ca0&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=50ea7b42-3b0c-49ee-8057-658bcbb3244e&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?action=purge&key=93f2ab81-cd57-47a7-95a9-b70c16d28b01&path=%2Fmixed-content
+
+FAIL Content Security Policy: Expects allowed for script-tag to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for script-tag to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for script-tag to cross-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for script-tag to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for script-tag to cross-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for script-tag to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for script-tag to same-https origin and keep-origin redirection from https context.
+PASS Content Security Policy: Expects allowed for script-tag to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for script-tag to same-https origin and no-redirect redirection from https context.
+PASS Content Security Policy: Expects allowed for script-tag to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for script-tag to same-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS Content Security Policy: Expects allowed for script-tag to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
+

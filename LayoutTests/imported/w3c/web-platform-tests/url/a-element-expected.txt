@@ -26,7 +26,7 @@ PASS Parsing: <http://f:
 PASS Parsing: <http://f:fifty-two/c> against <http://example.org/foo/bar>
 PASS Parsing: <http://f:999999/c> against <http://example.org/foo/bar>
 PASS Parsing: <non-special://f:999999/c> against <http://example.org/foo/bar>
-FAIL Parsing: <http://f: 21 / b ? d # e > against <http://example.org/foo/bar> assert_equals: failure should set href to input expected "http://f: 21 / b ? d # e " but got "http://f: 21 / b ? d # e"
+PASS Parsing: <http://f: 21 / b ? d # e > against <http://example.org/foo/bar>
 PASS Parsing: <> against <http://example.org/foo/bar>
 PASS Parsing: <  	> against <http://example.org/foo/bar>
 PASS Parsing: <:foo.com/> against <http://example.org/foo/bar>

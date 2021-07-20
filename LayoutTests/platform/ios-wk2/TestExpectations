@@ -1059,6 +1059,8 @@ webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.py 
 # Uses WK1 TestRunner.setUseDeferredFramLoading
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
 
+webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout ]
+
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
 
 webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
@@ -1815,17 +1817,6 @@ webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ 
 
 http/tests/in-app-browser-privacy/ [ Pass ]
 
-# Some In-App Browser Privacy tests rely on functions in WebKitAdditions.
-http/tests/in-app-browser-privacy/context-string-for-subframe.html [ Skip ]
-http/tests/in-app-browser-privacy/context-string-preconnect.html [ Skip ]
-http/tests/in-app-browser-privacy/context-string-preflight.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-preflight-async.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-preflight-sync.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-speculative-revalidation.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-load-url.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-ping-load.html [ Skip ]
-http/tests/in-app-browser-privacy/app-bound-attribution-post-request.html [ Skip ]
-
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
 webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
@@ -1856,8 +1847,6 @@ webkit.org/b/215350 http/tests/xmlhttprequest/overridemimetype-headers-received-
 
 webkit.org/b/215351 http/wpt/service-workers/module-meta-url-fragment.https.html [ Pass Failure ]
 
-webkit.org/b/208832 imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_Blob.htm [ Pass Failure ]
-
 webkit.org/b/215398 [ Release ] imported/w3c/web-platform-tests/css/css-images/idlharness.html [ Pass Timeout ]
 
 webkit.org/b/215403 imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-and-intrinsic-sizes-001.html [ Pass Timeout ]
@@ -1875,7 +1864,7 @@ webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-001.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-002.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/aspect-ratio-003.html [ ImageOnlyFailure ]
-webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-011.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-012.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-013.html [ ImageOnlyFailure ]
@@ -1950,3 +1939,14 @@ webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-s
 webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
 
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/227881 fast/canvas/canvas-overloads-strokeText.html [ Pass Crash ]
+
+webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
+
+webkit.org/b/227931 imported/w3c/web-platform-tests/css/conditional/idlharness.html [ Pass Failure ]
+
+webkit.org/b/207844 storage/indexeddb/detached-iframe.html [ Pass Failure ]
+
+webkit.org/b/227890 fast/canvas/canvas-path-addPath.html [ Pass Timeout ]
+

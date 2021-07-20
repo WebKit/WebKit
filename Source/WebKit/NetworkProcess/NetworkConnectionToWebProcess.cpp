@@ -1240,11 +1240,6 @@ void NetworkConnectionToWebProcess::prioritizeResourceLoads(Vector<ResourceLoadI
     session->networkLoadScheduler().prioritizeLoads(loads);
 }
 
-void NetworkConnectionToWebProcess::addIDBConnection()
-{
-    m_networkProcess->webIDBServer(m_sessionID).addConnection(m_connection.get(), m_webProcessIdentifier);
-}
-
 } // namespace WebKit
 
 #undef CONNECTION_RELEASE_LOG

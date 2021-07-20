@@ -169,6 +169,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
     if (options.isAppBoundWebView())
         [copiedConfiguration setLimitsNavigationsToAppBoundDomains:YES];
+
+    [copiedConfiguration _setAppInitiatedOverrideValueForTesting:options.isAppInitiated() ? _WKAttributionOverrideTestingAppInitiated : _WKAttributionOverrideTestingUserInitiated];
 #endif
 
     if (options.enableAttachmentElement())
@@ -384,23 +386,7 @@ void TestController::clearLoadedSubresourceDomains()
     [[globalWebViewConfiguration() websiteDataStore] _clearLoadedSubresourceDomainsFor:parentView->platformView()];
 }
 
-void TestController::appBoundRequestContextDataForDomain(WKStringRef domain)
-{
-    auto* parentView = mainWebView();
-    if (!parentView)
-        return;
-
-    [m_mainWebView->platformView() _appBoundNavigationDataForDomain:toWTFString(domain) completionHandler:^(NSString *context) {
-        if (!context) {
-            m_currentInvocation->didReceiveAppBoundRequestContextDataForDomain({ });
-            return;
-        }
-
-        m_currentInvocation->didReceiveAppBoundRequestContextDataForDomain(String(context));
-    }];
-}
-
-bool TestController::didLoadAppBoundRequest()
+bool TestController::didLoadAppInitiatedRequest()
 {
     auto* parentView = mainWebView();
     if (!parentView)
@@ -408,7 +394,7 @@ bool TestController::didLoadAppBoundRequest()
 
     __block bool isDone = false;
     __block bool didLoadResult = false;
-    [m_mainWebView->platformView() _didLoadAppBoundRequest:^(BOOL result) {
+    [m_mainWebView->platformView() _didLoadAppInitiatedRequest:^(BOOL result) {
         didLoadResult = result;
         isDone = true;
     }];
@@ -416,7 +402,7 @@ bool TestController::didLoadAppBoundRequest()
     return didLoadResult;
 }
 
-bool TestController::didLoadNonAppBoundRequest()
+bool TestController::didLoadNonAppInitiatedRequest()
 {
     auto* parentView = mainWebView();
     if (!parentView)
@@ -424,7 +410,7 @@ bool TestController::didLoadNonAppBoundRequest()
 
     __block bool isDone = false;
     __block bool didLoadResult = false;
-    [m_mainWebView->platformView() _didLoadNonAppBoundRequest:^(BOOL result) {
+    [m_mainWebView->platformView() _didLoadNonAppInitiatedRequest:^(BOOL result) {
         didLoadResult = result;
         isDone = true;
     }];
@@ -432,14 +418,14 @@ bool TestController::didLoadNonAppBoundRequest()
     return didLoadResult;
 }
 
-void TestController::clearAppBoundNavigationData()
+void TestController::clearAppPrivacyReportTestingData()
 {
     auto* parentView = mainWebView();
     if (!parentView)
         return;
 
     __block bool doneClearing = false;
-    [m_mainWebView->platformView() _clearAppBoundNavigationData:^{
+    [m_mainWebView->platformView() _clearAppPrivacyReportTestingData:^{
         doneClearing = true;
     }];
     platformRunUntil(doneClearing, noTimeout);

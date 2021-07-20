@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "HTMLBodyElement.h"
+#include "Logging.h"
 #include "Node.h"
 #include "RenderedDocumentMarker.h"
 #include "SharedBuffer.h"
@@ -120,6 +121,7 @@ template<class Decoder> std::optional<AppHighlightRangeData> AppHighlightRangeDa
         if (!decoder.rewind(sizeof(highlightFileSignature)))
             return std::nullopt;
         version = 0;
+        RELEASE_LOG(AppHighlights, "Decoded legacy (v0) highlight.");
     }
     
     std::optional<String> identifier;

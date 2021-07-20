@@ -3,7 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test"
 PASS Audit report
 PASS > [test] Basic ScriptProcessorNode properties
-PASS   createScriptProcessor(512, 0, 0) threw NotSupportedError: "numberOfInputChannels and numberOfOutputChannels cannot both be 0".
+PASS   createScriptProcessor(512, 0, 0) threw IndexSizeError: "numberOfInputChannels and numberOfOutputChannels cannot both be 0".
 PASS   context.createScriptProcessor(512, 1, 0) did not throw an exception.
 PASS   context.createScriptProcessor(512, 2, 0) did not throw an exception.
 PASS   context.createScriptProcessor(512, 0, 1) did not throw an exception.

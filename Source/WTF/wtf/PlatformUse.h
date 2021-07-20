@@ -235,7 +235,7 @@
 #define USE_OS_LOG 1
 #endif
 
-#if PLATFORM(COCOA) && USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(COCOA)
 #define USE_OS_STATE 1
 #endif
 
@@ -336,3 +336,13 @@
 #if PLATFORM(IOS_FAMILY)
 #define USE_SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS 1
 #endif
+
+#if !defined(USE_LIBPAS_JIT_HEAP) && !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+#if BENABLE(LIBPAS)
+#if PLATFORM(MAC) && CPU(ARM64)
+#define USE_LIBPAS_JIT_HEAP 1
+#endif
+#endif
+#endif
+

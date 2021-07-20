@@ -34,9 +34,9 @@ typedef enum {
     WKWebViewAudioRoutingArbitrationStatusActive,
 } WKWebViewAudioRoutingArbitrationStatus;
 
-struct WKAppBoundNavigationTestingData {
-    BOOL hasLoadedAppBoundRequestTesting;
-    BOOL hasLoadedNonAppBoundRequestTesting;
+struct WKAppPrivacyReportTestingData {
+    BOOL hasLoadedAppInitiatedRequestTesting;
+    BOOL hasLoadedNonAppInitiatedRequestTesting;
     BOOL didPerformSoftUpdate;
 };
 
@@ -102,9 +102,9 @@ struct WKAppBoundNavigationTestingData {
 - (void)_setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
-- (void)_lastNavigationWasAppBound:(void(^)(BOOL))completionHandler;
-- (void)_appBoundNavigationData:(void(^)(struct WKAppBoundNavigationTestingData data))completionHandler;
-- (void)_clearAppBoundNavigationData:(void(^)(void))completionHandler;
+- (void)_lastNavigationWasAppInitiated:(void(^)(BOOL))completionHandler;
+- (void)_appPrivacyReportTestingData:(void(^)(struct WKAppPrivacyReportTestingData data))completionHandler;
+- (void)_clearAppPrivacyReportTestingData:(void(^)(void))completionHandler;
 
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler;
 

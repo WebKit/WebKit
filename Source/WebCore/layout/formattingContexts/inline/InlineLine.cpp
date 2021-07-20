@@ -144,22 +144,21 @@ void Line::visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizont
         return;
     // Let's just find the trailing pre-wrap whitespace content for now (e.g check if there are multiple trailing runs with
     // different set of white-space values and decide if the in-between pre-wrap content should be collapsed as well.)
-    InlineLayoutUnit trimmedContentWidth = 0;
+    auto trimmedContentWidth = InlineLayoutUnit { };
     for (auto& run : WTF::makeReversedRange(m_runs)) {
         if (run.style().whiteSpace() != WhiteSpace::PreWrap) {
             // We are only interested in pre-wrap trailing content.
             break;
         }
-        auto preWrapVisuallyCollapsibleInlineItem = run.isInlineBoxStart() || run.isInlineBoxEnd() || run.hasTrailingWhitespace();
-        if (!preWrapVisuallyCollapsibleInlineItem)
+        auto visuallyCollapsibleInlineItem = run.isInlineBoxStart() || run.isInlineBoxEnd() || run.hasTrailingWhitespace();
+        if (!visuallyCollapsibleInlineItem)
             break;
         ASSERT(!run.hasCollapsibleTrailingWhitespace());
-        InlineLayoutUnit trimmableWidth = { };
+        auto trimmableWidth = InlineLayoutUnit { };
         if (run.isText()) {
             // FIXME: We should always collapse the run at a glyph boundary as the spec indicates: "collapse the character advance widths of any that would otherwise overflow"
             // and the trimmed width should be capped at std::min(run.trailingWhitespaceWidth(), overflowWidth) for text runs. Both FF and Chrome agree.
-            trimmableWidth = run.trailingWhitespaceWidth();
-            run.visuallyCollapseTrailingWhitespace();
+            trimmableWidth = run.visuallyCollapseTrailingWhitespace(overflowWidth);
         } else {
             trimmableWidth = run.logicalWidth();
             run.shrinkHorizontally(trimmableWidth);
@@ -497,21 +496,27 @@ void Line::Run::removeTrailingWhitespace()
     ASSERT(m_textContent->length());
     constexpr size_t trailingTrimmableContentLength = 1;
     m_textContent->shrink(trailingTrimmableContentLength);
-    visuallyCollapseTrailingWhitespace();
+    visuallyCollapseTrailingWhitespace(m_trailingWhitespaceWidth);
 }
 
-void Line::Run::visuallyCollapseTrailingWhitespace()
+InlineLayoutUnit Line::Run::visuallyCollapseTrailingWhitespace(InlineLayoutUnit tryCollapsingThisMuchSpace)
 {
+    ASSERT(hasTrailingWhitespace());
     // This is just a visual adjustment, the text length should remain the same.
-    shrinkHorizontally(m_trailingWhitespaceWidth);
-    m_trailingWhitespaceWidth = { };
-    m_trailingWhitespaceType = TrailingWhitespace::None;
+    auto trimmedWidth = std::min(tryCollapsingThisMuchSpace, m_trailingWhitespaceWidth);
+    shrinkHorizontally(trimmedWidth);
+    m_trailingWhitespaceWidth -= trimmedWidth;
+    if (!m_trailingWhitespaceWidth) {
+        // We trimmed the trailing whitespace completely.
+        m_trailingWhitespaceType = TrailingWhitespace::None;
 
-    if (m_whitespaceIsExpansionOpportunity) {
-        ASSERT(m_expansionOpportunityCount);
-        m_expansionOpportunityCount--;
+        if (m_whitespaceIsExpansionOpportunity) {
+            ASSERT(m_expansionOpportunityCount);
+            m_expansionOpportunityCount--;
+        }
+        setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
     }
-    setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
+    return trimmedWidth;
 }
 
 void Line::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)

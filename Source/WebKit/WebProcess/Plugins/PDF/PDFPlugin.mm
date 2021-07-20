@@ -1953,7 +1953,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     if (layer == m_scrollCornerLayer) {
         IntRect scrollCornerRect = this->scrollCornerRect();
         graphicsContext.translate(-scrollCornerRect.x(), -scrollCornerRect.y());
-        ScrollbarTheme::theme().paintScrollCorner(graphicsContext, scrollCornerRect);
+        ScrollbarTheme::theme().paintScrollCorner(*this, graphicsContext, scrollCornerRect);
         return;
     }
 

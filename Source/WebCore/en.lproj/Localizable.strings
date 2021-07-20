@@ -1636,3 +1636,5 @@
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
 
+/* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
+"“%@” in “%%@”" = "“%@” in “%%@”";

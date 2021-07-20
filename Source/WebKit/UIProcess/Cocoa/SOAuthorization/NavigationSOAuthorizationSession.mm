@@ -57,6 +57,7 @@ void NavigationSOAuthorizationSession::shouldStartInternal()
     ASSERT(page);
     beforeStart();
     if (!page->isInWindow()) {
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldStartInternal: Starting Extensible SSO authentication for a web view that is not attached to a window. Loading will pause until a window is attached.");
         setState(State::Waiting);
         page->addObserver(*this);
         ASSERT(page->mainFrame());

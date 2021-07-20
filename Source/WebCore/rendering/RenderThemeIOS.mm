@@ -2026,17 +2026,30 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 constexpr auto nativeControlBorderWidth = 1.0f;
 
+constexpr auto checkboxRadioBorderWidth = 1.5f;
+constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
+
+Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
+{
+    auto defaultBorderColor = systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
+
+    if (!states.contains(ControlStates::States::Enabled))
+        return defaultBorderColor.colorWithAlphaMultipliedBy(checkboxRadioBorderDisabledOpacity);
+
+    if (states.contains(ControlStates::States::Pressed))
+        return defaultBorderColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
+
+    return defaultBorderColor;
+}
+
 Color RenderThemeIOS::checkboxRadioBackgroundColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
 {
+    bool empty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+
     if (!states.contains(ControlStates::States::Enabled))
-        return systemColor(CSSValueAppleSystemOpaqueSecondaryFillDisabled, styleColorOptions);
+        return systemColor(empty ? CSSValueWebkitControlBackground : CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions);
 
-    Color enabledBackgroundColor;
-    if (states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate }))
-        enabledBackgroundColor = systemColor(CSSValueAppleSystemBlue, styleColorOptions);
-    else
-        enabledBackgroundColor = systemColor(CSSValueAppleSystemOpaqueSecondaryFill, styleColorOptions);
-
+    auto enabledBackgroundColor = systemColor(empty ? CSSValueWebkitControlBackground : CSSValueAppleSystemBlue, styleColorOptions);
     if (states.contains(ControlStates::States::Pressed))
         return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
@@ -2071,20 +2084,25 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    context.fillRoundedRect(checkboxRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
-
-    FloatRoundedRect checkboxInnerRoundedRect(checkboxRect);
-    checkboxInnerRoundedRect.inflateWithRadii(-nativeControlBorderWidth);
-
-    context.fillRoundedRect(checkboxInnerRoundedRect, checkboxRadioBackgroundColor(controlStates, styleColorOptions));
-
-    FloatRect checkboxInnerRect(checkboxInnerRoundedRect.rect());
+    auto backgroundColor = checkboxRadioBackgroundColor(controlStates, styleColorOptions);
 
     bool checked = controlStates.contains(ControlStates::States::Checked);
     bool indeterminate = controlStates.contains(ControlStates::States::Indeterminate);
+    bool empty = !checked && !indeterminate;
 
-    if (!checked && !indeterminate)
+    if (empty) {
+        Path path;
+        path.addRoundedRect(checkboxRect);
+        context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
+        context.setStrokeThickness(checkboxRadioBorderWidth * 2);
+        context.setStrokeStyle(SolidStroke);
+        context.setFillColor(backgroundColor);
+        context.clipPath(path);
+        context.drawPath(path);
         return false;
+    }
+
+    context.fillRoundedRect(checkboxRect, backgroundColor);
 
     Path path;
     if (checked) {
@@ -2103,18 +2121,18 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
         path.addBezierCurveTo({ 23.536f, 67.675f }, { 25.536f, 68.652f }, { 28.174f, 68.652f });
 
         const FloatSize checkmarkSize(72.0f, 69.0f);
-        float scale = (0.65f * checkboxInnerRect.width()) / checkmarkSize.width();
+        float scale = (0.65f * rect.width()) / checkmarkSize.width();
 
         AffineTransform transform;
-        transform.translate(checkboxInnerRect.center() - (checkmarkSize * scale * 0.5f));
+        transform.translate(rect.center() - (checkmarkSize * scale * 0.5f));
         transform.scale(scale);
         path.transform(transform);
     } else {
         const FloatSize indeterminateBarRoundingRadii(1.25f, 1.25f);
         constexpr float indeterminateBarPadding = 2.5f;
-        float height = 0.12f * checkboxInnerRect.height();
+        float height = 0.12f * rect.height();
 
-        FloatRect indeterminateBarRect(checkboxInnerRect.x() + indeterminateBarPadding, checkboxInnerRect.center().y() - height / 2.0f, checkboxInnerRect.width() - indeterminateBarPadding * 2, height);
+        FloatRect indeterminateBarRect(rect.x() + indeterminateBarPadding, rect.center().y() - height / 2.0f, rect.width() - indeterminateBarPadding * 2, height);
         path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
     }
 
@@ -2135,26 +2153,31 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    context.setFillColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));
-    context.fillEllipse(rect);
-
-    FloatRect radioRect(rect);
-    radioRect.inflate(-nativeControlBorderWidth);
-
-    context.setFillColor(checkboxRadioBackgroundColor(controlStates, styleColorOptions));
-    context.fillEllipse(radioRect);
+    auto backgroundColor = checkboxRadioBackgroundColor(controlStates, styleColorOptions);
 
     if (controlStates.contains(ControlStates::States::Checked)) {
+        context.setFillColor(backgroundColor);
+        context.fillEllipse(rect);
+
         // The inner circle is 6 / 14 the size of the surrounding circle,
         // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
         constexpr float innerInverseRatio = 2 / 7.0f;
 
-        FloatRect innerCircleRect(radioRect);
+        FloatRect innerCircleRect(rect);
         innerCircleRect.inflateX(-innerCircleRect.width() * innerInverseRatio);
         innerCircleRect.inflateY(-innerCircleRect.height() * innerInverseRatio);
 
         context.setFillColor(checkboxRadioIndicatorColor(controlStates, styleColorOptions));
         context.fillEllipse(innerCircleRect);
+    } else {
+        Path path;
+        path.addEllipse(rect);
+        context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
+        context.setStrokeThickness(checkboxRadioBorderWidth * 2);
+        context.setStrokeStyle(SolidStroke);
+        context.setFillColor(backgroundColor);
+        context.clipPath(path);
+        context.drawPath(path);
     }
 
     return false;

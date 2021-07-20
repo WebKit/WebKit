@@ -246,6 +246,11 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
     return g_file_info_get_attribute_uint32(fileInfo.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE);
 }
 
+std::optional<uint32_t> volumeFileBlockSize(const String&)
+{
+    return std::nullopt;
+}
+
 #if USE(FILE_LOCK)
 bool lockFile(PlatformFileHandle handle, OptionSet<FileLockMode> lockMode)
 {

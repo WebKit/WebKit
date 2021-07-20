@@ -1,3 +1,638 @@
+2021-07-15  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=227986
+
+        Unreviewed.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/10a8411ba8ed0012da5ecefc6eba9956a13b2c21
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open.html:
+
+2021-07-15  Ziran Sun  <zsun@igalia.com>
+
+        Resync web-platform-tests/css/css-grid tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227901
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-align-self-vertWM-004-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-003-expected.html:
+        * web-platform-tests/css/css-grid/abspos/grid-abspos-staticpos-justify-self-vertWM-004-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7-expected.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-7.html.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-10-expected.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-4.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-5.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-6.html:
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8-expected.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-8.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9-expected.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/grid-item-no-aspect-ratio-stretch-9.html: Removed.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-001-expected.html: Removed.
+        * web-platform-tests/css/css-grid/grid-item-percentage-quirk-002-expected.html: Removed.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative.html.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.tentative.html.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-contribution-negative-margins-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/grid-items/grid-items-contribution-negative-margins.html: Added.
+        * web-platform-tests/css/css-grid/grid-items/w3c-import.log:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-004.html:
+        * web-platform-tests/css/css-grid/grid-model/grid-areas-overflowing-grid-container-005.html:
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-restart-algorithm-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-002.tentative-expected.xht.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-restart-algorithm.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+        * web-platform-tests/css/css-grid/w3c-import.log:
+
+2021-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Fix type of exceptions thrown in the WebAudio API
+        https://bugs.webkit.org/show_bug.cgi?id=227959
+
+        Reviewed by Yusuke Suzuki.
+
+        Resync WebAudio WPT tests from upstream 04ab41dced1f354873cab0 to gain test coverage and
+        rebaseline those tests.
+
+        * web-platform-tests/webaudio/resources/audit.js:
+        (Should.prototype.throw):
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/ctor-analyser-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-method-chaining-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/different-contexts-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/different-contexts.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-dynamic.https-expected.txt: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-dynamic.https.html: Added.
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-constructor-options.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/dynamic-register-processor.js: Added.
+        (ProcessorA.prototype.process):
+        (ProcessorA):
+        (ProcessorB):
+        (ProcessorB.prototype.process):
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/processors/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/w3c-import.log:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/ctor-biquadfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelsplitternode-interface/ctor-channelsplitter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelsplitternode-interface/ctor-channelsplitter.html:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/ctor-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/ctor-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiodestinationnode-interface/ctor-mediastreamaudiodestination-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/ctor-offlineaudiocontext-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/ctor-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/ctor-waveshaper-expected.txt:
+
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Update and fix URL WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=227820
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/resources/a-element-origin.js:
+        (runURLTests):
+        * web-platform-tests/url/resources/a-element.js:
+        (runURLTests):
+        * web-platform-tests/url/resources/setters_tests.json:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/url-constructor.any-expected.txt:
+        * web-platform-tests/url/url-constructor.any.js:
+        (bURL):
+        * web-platform-tests/url/url-constructor.any.worker-expected.txt:
+        * web-platform-tests/url/url-origin.any.js:
+        (bURL):
+        * web-platform-tests/url/url-setters-a-area.window-expected.txt:
+        * web-platform-tests/url/url-setters.any-expected.txt:
+        * web-platform-tests/url/url-setters.any.worker-expected.txt:
+
+2021-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Resync webmessaging WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227919
+
+        Reviewed by Geoffrey Garen.
+
+        Resync webmessaging WPT tests from upstream 42c571ee2ec9742f0c46ca.
+
+        * resources/resource-files.json:
+        * web-platform-tests/webmessaging/*: Updated.
+
+2021-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Revoking Blob URL after calling XMLHttpRequest::open() causes the XHR to fail
+        https://bugs.webkit.org/show_bug.cgi?id=227821
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/FileAPI/url/url-with-xhr.any-expected.txt:
+        * web-platform-tests/FileAPI/url/url-with-xhr.any.worker-expected.txt:
+
+2021-07-13  Martin Robinson  <mrobinson@igalia.com>
+
+        RenderLayerScrollableArea::updateScrollPosition assumes that it can scroll to the targeted scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=227803
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps-expected.txt: Update test result to reflect newly passing test.
+
+2021-07-12  Chris Dumez  <cdumez@apple.com>
+
+        Resync content-security-policy web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227651
+
+        Reviewed by Sam Weinig.
+
+        Resync content-security-policy web-platform-tests from upstream 2c19d6ee62676ac90146.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/content-security-policy/*: Updated.
+        * web-platform-tests/reporting/*: Imported.
+
+2021-07-12  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-overflow from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=227849
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import based on 1d6a9a37bc.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-overflow/clip-001.html:
+        * web-platform-tests/css/css-overflow/clip-002-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-002.html: Added.
+        * web-platform-tests/css/css-overflow/clip-003-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-003.html: Added.
+        * web-platform-tests/css/css-overflow/clip-004-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-004.html: Added.
+        * web-platform-tests/css/css-overflow/clip-005-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-005.html: Added.
+        * web-platform-tests/css/css-overflow/clip-006-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-006.html: Added.
+        * web-platform-tests/css/css-overflow/clip-007-expected.html: Added.
+        * web-platform-tests/css/css-overflow/clip-007.html: Added.
+        * web-platform-tests/css/css-overflow/dynamic-visible-to-clip-001.html:
+        * web-platform-tests/css/css-overflow/incremental-scroll-expected.html: Added.
+        * web-platform-tests/css/css-overflow/incremental-scroll.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl-2-expected.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl-2.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl-expected.html: Added.
+        * web-platform-tests/css/css-overflow/no-scrollable-overflow-vertical-rl.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-007-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-007.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-008-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-008.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-009-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-009.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-010-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-010.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-011-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-body-propagation-011.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-001-crash.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-002-crash.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-cant-scroll-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-cant-scroll.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-content-visual-overflow-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-content-visual-overflow.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-hit-testing.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-001-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-001.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-002-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-002.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-003-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-003.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-004-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-004.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-005-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-005.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-006-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-006.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-007-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-007.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-intersection-observer.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-invalidation-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-margin-invalidation.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-clip-scroll-size.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-empty-child-box-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/overflow-empty-child-box.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-hidden-resize-with-stacking-context-child-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-hidden-resize-with-stacking-context-child.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin-dynamic-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin-dynamic.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-negative-margin.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-no-frameset-propagation-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-no-frameset-propagation.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-padding.html:
+        * web-platform-tests/css/css-overflow/overflow-replaced-element-001-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/overflow-replaced-element-001.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-scroll-resize-visibility-hidden-expected.html: Added.
+        * web-platform-tests/css/css-overflow/overflow-scroll-resize-visibility-hidden.html: Added.
+        * web-platform-tests/css/css-overflow/parsing/overflow-computed-expected.txt:
+        * web-platform-tests/css/css-overflow/parsing/overflow-computed.html:
+        * web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-invalid.html:
+        * web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-valid.html:
+        * web-platform-tests/css/css-overflow/scrollable-overflow-float-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-float.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-self-collapsing-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-self-collapsing.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-textarea-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-textarea.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-001-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-002-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-002.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-003-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-003.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-001-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-002-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-002.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-003-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-003.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-004-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-004.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-005-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-005.html: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-006-expected.txt: Added.
+        * web-platform-tests/css/css-overflow/scrollable-overflow-transform-dynamic-006.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-002.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-003.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-004.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-005.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-006.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-007.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-rtl-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-001.html: Added.
+        * web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-001.html: Added.
+        * web-platform-tests/css/css-overflow/w3c-import.log:
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-036-expected.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-036.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-037-expected.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-037.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-overflow/webkit-line-clamp-dynamic-001.html: Added.
+
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
+        :link and :visited pseudo-class selectors should not match <link> elements
+        https://bugs.webkit.org/show_bug.cgi?id=227847
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/link-expected.txt:
+
+2021-07-11  Chris Dumez  <cdumez@apple.com>
+
+        XMLSerializer.serializeToString() doesn't properly escape \n, \n and \t
+        https://bugs.webkit.org/show_bug.cgi?id=227844
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that one more subtest is passing.
+
+        * web-platform-tests/domparsing/XMLSerializer-serializeToString-expected.txt:
+
+2021-07-10  Chris Dumez  <cdumez@apple.com>
+
+        document.readyState should be "complete" after calling DOMParser.parseFromString()
+        https://bugs.webkit.org/show_bug.cgi?id=227846
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/domparsing/xmldomparser-expected.txt:
+
+2021-07-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279803.
+        https://bugs.webkit.org/show_bug.cgi?id=227850
+
+        Introduce many crashes on AS-mac Debug bot
+
+        Reverted changeset:
+
+        "document.readyState should be "complete" after calling
+        DOMParser.parseFromString()"
+        https://bugs.webkit.org/show_bug.cgi?id=227846
+        https://commits.webkit.org/r279803
+
+2021-07-09  Chris Dumez  <cdumez@apple.com>
+
+        document.readyState should be "complete" after calling DOMParser.parseFromString()
+        https://bugs.webkit.org/show_bug.cgi?id=227846
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/domparsing/xmldomparser-expected.txt:
+
+2021-07-09  Chris Dumez  <cdumez@apple.com>
+
+        [WebCrypto] deriveBits() incorrectly throws for PBKDF2 algorithm when the password is empty
+        https://bugs.webkit.org/show_bug.cgi?id=227810
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker-expected.txt:
+
+2021-07-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add BigInt64Array and BigUint64Array support to crypto.getRandomValues
+        https://bugs.webkit.org/show_bug.cgi?id=227611
+
+        Reviewed by Chris Dumez.
+
+        Resync web-platform-tests/WebCryptoAPI/ directory.
+
+        * web-platform-tests/WebCryptoAPI/digest/test_digest-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_gcm-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.html: Added.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.js: Added.
+        (const.array.of.arrays.test):
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker.html: Added.
+        * web-platform-tests/WebCryptoAPI/import_export/test_ec_importKey-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/import_export/test_symmetric_importKey-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_ecdsa-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/sign_verify/test_hmac-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/w3c-import.log:
+
+2021-07-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix StructuredClone for streams to handle BigInt64Array / BigUint64Array
+        https://bugs.webkit.org/show_bug.cgi?id=227571
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/FileAPI/blob/Blob-constructor.any-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-constructor.any.js:
+        (test_blob):
+        * web-platform-tests/FileAPI/blob/Blob-constructor.any.worker-expected.txt:
+        * web-platform-tests/encoding/encodeInto.any-expected.txt:
+        * web-platform-tests/encoding/encodeInto.any.js:
+        (string_appeared_here.forEach.type.string_appeared_here.forEach):
+        (Float64Array.forEach.view.string_appeared_here.forEach): Deleted.
+        * web-platform-tests/encoding/encodeInto.any.worker-expected.txt:
+        * web-platform-tests/encoding/w3c-import.log:
+        * web-platform-tests/fetch/api/response/response-clone.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-clone.any.js:
+        * web-platform-tests/fetch/api/response/response-clone.any.worker-expected.txt:
+
+2021-07-08  Chris Dumez  <cdumez@apple.com>
+
+        [IndexedDB] KeyPath validity checks should happen on the cloned value, not the original one
+        https://bugs.webkit.org/show_bug.cgi?id=227813
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/IndexedDB/clone-before-keypath-eval-expected.txt:
+
+2021-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some whitespace handling issues in URL setters
+        https://bugs.webkit.org/show_bug.cgi?id=227806
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-setters-stripping.any-expected.txt:
+        * web-platform-tests/url/url-setters-stripping.any.worker-expected.txt:
+
+2021-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused URL test expectation files.
+
+        * web-platform-tests/url/historical-expected.txt: Removed.
+        * web-platform-tests/url/url-setters-expected.txt: Removed.
+
+2021-07-08  Chris Dumez  <cdumez@apple.com>
+
+        [WebCrypto] deriveBits() fails if length is not a multiple of 8 for ECDH algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=227796
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker-expected.txt:
+
+2021-07-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Canvas image rendering can render arbitrary DOM content in the GPU process, which is against policy (for now)
+        https://bugs.webkit.org/show_bug.cgi?id=227519
+        <rdar://problem/76678163>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt:
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        Our structured cloning implementation does not encode all of RegExp's flags
+        https://bugs.webkit.org/show_bug.cgi?id=227779
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebaseline WPT test.
+
+        * web-platform-tests/IndexedDB/structured-clone.any-expected.txt:
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        [WebCrypto] Support Elliptic Curve P-521 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=216755
+        <rdar://problem/69667220>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test now that a lot more checks are passing.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.any.worker-expected.txt:
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        [IndexedDB] Transaction should be inactive during structured clone
+        https://bugs.webkit.org/show_bug.cgi?id=227773
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/IndexedDB/structured-clone-transaction-state.any-expected.txt:
+        * web-platform-tests/IndexedDB/structured-clone-transaction-state.any.worker-expected.txt:
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        IDBObjectStore.keyPath should keep returning the same object
+        https://bugs.webkit.org/show_bug.cgi?id=227770
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/IndexedDB/idbobjectstore_keyPath.any-expected.txt:
+        * web-platform-tests/IndexedDB/idbobjectstore_keyPath.any.worker-expected.txt:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        DOMURL's href setter should use empty URL as base URL
+        https://bugs.webkit.org/show_bug.cgi?id=227772
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/url/historical.any-expected.txt:
+        * web-platform-tests/url/historical.any.worker-expected.txt:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        URL host setter should pass host to URLParser instead of trying to encode it itself
+        https://bugs.webkit.org/show_bug.cgi?id=227749
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/url-setters-a-area.window-expected.txt:
+        * web-platform-tests/url/url-setters.any-expected.txt:
+        * web-platform-tests/url/url-setters.any.worker-expected.txt:
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        IDBIndex.keyPath should keep returning the same object
+        https://bugs.webkit.org/show_bug.cgi?id=227758
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/IndexedDB/idbindex_keyPath.any-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_keyPath.any.worker-expected.txt:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Allow setting empty hosts of URLs with non-special schemes
+        https://bugs.webkit.org/show_bug.cgi?id=227752
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/url-setters-a-area.window-expected.txt:
+        * web-platform-tests/url/url-setters.any-expected.txt:
+        * web-platform-tests/url/url-setters.any.worker-expected.txt:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        URL path setter should add "./" before non-empty path and after empty host for URLs with non-special schemes
+        https://bugs.webkit.org/show_bug.cgi?id=227750
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/url/url-setters-a-area.window-expected.txt:
+        * web-platform-tests/url/url-setters.any-expected.txt:
+        * web-platform-tests/url/url-setters.any.worker-expected.txt:
+
+2021-07-07  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r279427): [ Mac wk2 ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=227730
+        <rdar://problem/80240658>
+
+        Unreviewed, address flakiness of test by silencing console logging.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic-expected.txt:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Update URL test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=172337
+
+        * web-platform-tests/url/failure-expected.txt:
+
+2021-07-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279546, r279554, r279558 and r279567.
+        https://bugs.webkit.org/show_bug.cgi?id=227732
+
+        Speedometer/jQuery-TodoMVC 2-3% regression
+
+        Reverted changesets:
+
+        "[WebIDL] Rework runtime enabled properties leveraging
+        PropertyCallback"
+        https://bugs.webkit.org/show_bug.cgi?id=227275
+        https://commits.webkit.org/r279546
+
+        "[WebIDL] Generate constructor's hash table in
+        GenerateConstructorHelperMethods"
+        https://bugs.webkit.org/show_bug.cgi?id=227668
+        https://commits.webkit.org/r279554
+
+        "[WebIDL] Simplify generation of runtime conditionally read-
+        write attributes"
+        https://bugs.webkit.org/show_bug.cgi?id=227672
+        https://commits.webkit.org/r279558
+
+        "Use AbortSignal's [PrivateIdentifier] whenSignalAborted()
+        static method"
+        https://bugs.webkit.org/show_bug.cgi?id=227673
+        https://commits.webkit.org/r279567
+
 2021-07-06  Youenn Fablet  <youenn@apple.com>
 
         Unable to use 'data:application/javascript' url for Worker

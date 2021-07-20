@@ -131,7 +131,7 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     m_networkLoad->start();
 
 #if PLATFORM(COCOA)
-    session.appBoundNavigationTestingData().setDidPerformSoftUpdate();
+    session.appPrivacyReportTestingData().setDidPerformSoftUpdate();
 #endif
 }
 

@@ -74,7 +74,7 @@ void HTMLDialogElement::show()
     if (isOpen())
         return;
     
-    setOpen(true);
+    setBooleanAttribute(openAttr, true);
 }
 
 ExceptionOr<void> HTMLDialogElement::showModal()
@@ -87,7 +87,9 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (!isConnected())
         return Exception { InvalidStateError };
 
-    setOpen(true);
+    setBooleanAttribute(openAttr, true);
+
+    document().addToTopLayer(*this);
     m_isModal = true;
 
     return { };
@@ -98,7 +100,8 @@ void HTMLDialogElement::close(const String& returnValue)
     if (!isOpen())
         return;
     
-    setOpen(false);
+    setBooleanAttribute(openAttr, false);
+
     if (!returnValue.isNull())
         m_returnValue = returnValue;
 }
@@ -111,13 +114,17 @@ void HTMLDialogElement::dispatchPendingEvent(DialogEventSender* eventSender)
 
 void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == HTMLNames::openAttr) {
+    if (name == openAttr) {
         bool oldValue = m_isOpen;
         m_isOpen = !value.isNull();
 
         // Emit close event
         if (oldValue != m_isOpen && !m_isOpen) {
-            m_isModal = false;
+            if (m_isModal) {
+                document().removeFromTopLayer(*this);
+                m_isModal = false;
+            }
+
             dialogCloseEventSender().cancelEvent(*this);
             dialogCloseEventSender().dispatchEventSoon(*this);
         }
@@ -125,11 +132,6 @@ void HTMLDialogElement::parseAttribute(const QualifiedName& name, const AtomStri
     }
     
     HTMLElement::parseAttribute(name, value);
-}
-
-void HTMLDialogElement::setOpen(bool value)
-{
-    setAttributeWithoutSynchronization(HTMLNames::openAttr, value ? emptyAtom() : nullAtom());
 }
 
 bool HTMLDialogElement::isModal() const

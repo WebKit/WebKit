@@ -97,7 +97,6 @@ public:
     void didRemoveAllSessionCredentials();
 
     void didSetAppBoundDomains();
-    void didReceiveAppBoundRequestContextDataForDomain(String&&);
 
     void dumpResourceLoadStatistics();
 

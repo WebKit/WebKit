@@ -38,6 +38,7 @@
 #include "WebInspectorUIProxy.h"
 #include "WebKitInputMethodContext.h"
 #include "WebKitWebViewBase.h"
+#include "WebKitWebViewBaseInternal.h"
 #include "WebPageProxy.h"
 #include <WebCore/DragActions.h>
 #include <WebCore/SelectionData.h>
@@ -113,6 +114,7 @@ void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase*);
 void webkitWebViewBaseSetInputMethodContext(WebKitWebViewBase*, WebKitInputMethodContext*);
 WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBase*);
 void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase*, const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<WebKit::EditingRange>&&);
+void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, const GdkEvent*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase);
 
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase*, bool);
 void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase*);

@@ -363,6 +363,15 @@ String createTemporaryDirectory()
     });
 }
 
+std::optional<uint32_t> volumeFileBlockSize(const String& path)
+{
+    DWORD sectorsPerCluster, bytesPerSector, freeClusters, totalClusters;
+    if (!GetDiskFreeSpaceW(path.wideCharacters().data(), &sectorsPerCluster, &bytesPerSector, &freeClusters, &totalClusters))
+        return std::nullopt;
+
+    return sectorsPerCluster * bytesPerSector;
+}
+
 MappedFileData::~MappedFileData()
 {
     if (m_fileData)

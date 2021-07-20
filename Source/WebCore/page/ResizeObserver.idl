@@ -26,11 +26,12 @@
 // https://wicg.github.io/ResizeObserver/
 
 [
-    ActiveDOMObject,
     Conditional=RESIZE_OBSERVER,
     EnabledBySetting=ResizeObserver,
     Exposed=Window,
     JSCustomMarkFunction,
+    CustomIsReachable,
+    ImplementationLacksVTable
 ] interface ResizeObserver {
     [CallWith=Document] constructor(ResizeObserverCallback callback);
 

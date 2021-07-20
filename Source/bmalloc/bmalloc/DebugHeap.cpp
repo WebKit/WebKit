@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,10 @@
 #include "VMAllocate.h"
 #include <cstdlib>
 #include <thread>
+
+#if BENABLE(LIBPAS)
+#include "pas_debug_heap.h"
+#endif
 
 namespace bmalloc {
 
@@ -163,4 +167,64 @@ void DebugHeap::freeLarge(void* base)
     vmDeallocate(base, size);
 }
 
+DebugHeap* DebugHeap::tryGetSlow()
+{
+    DebugHeap* result;
+    if (Environment::get()->isDebugHeapEnabled()) {
+        debugHeapCache = DebugHeap::get();
+        result = debugHeapCache;
+    } else {
+        debugHeapCache = debugHeapDisabled();
+        result = nullptr;
+    }
+    RELEASE_BASSERT(debugHeapCache);
+    return result;
+}
+
 } // namespace bmalloc
+
+#if BENABLE(LIBPAS)
+
+// FIXME: Currently, we only use libpas for executable allocator. Thus libpas allocator is always enabled even when Malloc=1 is specified.
+// To make it work, we disable debug heap for libpas completely. We need additional code to enable libpas only for executable allocator when
+// Malloc=1 is specified when bmalloc is replaced with libpas.
+
+bool pas_debug_heap_is_enabled(void)
+{
+    return false;
+}
+
+void* pas_debug_heap_malloc(size_t size)
+{
+    BUNUSED_PARAM(size);
+    RELEASE_BASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void* pas_debug_heap_memalign(size_t alignment, size_t size)
+{
+    BUNUSED_PARAM(size);
+    BUNUSED_PARAM(alignment);
+    RELEASE_BASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void* pas_debug_heap_realloc(void* ptr, size_t size)
+{
+    BUNUSED_PARAM(ptr);
+    BUNUSED_PARAM(size);
+    RELEASE_BASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+void pas_debug_heap_free(void* ptr)
+{
+    BUNUSED_PARAM(ptr);
+    RELEASE_BASSERT_NOT_REACHED();
+}
+#pragma clang diagnostic pop
+
+#endif // BENABLE(LIBPAS)
+

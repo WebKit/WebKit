@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// localhost is secure by default.
+internals.markContextAsInsecure();
+
+test(() => {
+  assert_equals(self.crypto.subtle, undefined);
+  assert_false("subtle" in self.crypto);
+}, "Non-secure context window does not have access to crypto.subtle");
+</script>
+</body>
+</html>

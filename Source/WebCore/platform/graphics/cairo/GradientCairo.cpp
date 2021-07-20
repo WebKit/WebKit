@@ -34,8 +34,7 @@
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
 #include "ColorBlending.h"
-#include "GraphicsContext.h"
-#include "PlatformContextCairo.h"
+#include "GraphicsContextCairo.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -247,9 +246,9 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
     ASSERT(context.hasPlatformContext());
     auto& platformContext = *context.platformContext();
 
-    Cairo::save(platformContext);
+    platformContext.save();
     Cairo::fillRect(platformContext, rect, pattern.get());
-    Cairo::restore(platformContext);
+    platformContext.restore();
 }
 
 } // namespace WebCore

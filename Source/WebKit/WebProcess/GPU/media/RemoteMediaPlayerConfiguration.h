@@ -40,6 +40,8 @@ struct RemoteMediaPlayerConfiguration {
     bool supportsFullscreen { false };
     bool supportsPictureInPicture { false };
     bool supportsAcceleratedRendering { false };
+    bool supportsPlayAtHostTime { false };
+    bool supportsPauseAtHostTime { false };
     bool canPlayToWirelessPlaybackTarget { false };
     bool shouldIgnoreIntrinsicSize { false };
 
@@ -52,6 +54,8 @@ struct RemoteMediaPlayerConfiguration {
         encoder << supportsFullscreen;
         encoder << supportsPictureInPicture;
         encoder << supportsAcceleratedRendering;
+        encoder << supportsPlayAtHostTime;
+        encoder << supportsPauseAtHostTime;
         encoder << canPlayToWirelessPlaybackTarget;
         encoder << shouldIgnoreIntrinsicSize;
     }
@@ -89,6 +93,16 @@ struct RemoteMediaPlayerConfiguration {
         if (!supportsAcceleratedRendering)
             return std::nullopt;
 
+        std::optional<bool> supportsPlayAtHostTime;
+        decoder >> supportsPlayAtHostTime;
+        if (!supportsPlayAtHostTime)
+            return std::nullopt;
+
+        std::optional<bool> supportsPauseAtHostTime;
+        decoder >> supportsPauseAtHostTime;
+        if (!supportsPauseAtHostTime)
+            return std::nullopt;
+
         std::optional<bool> canPlayToWirelessPlaybackTarget;
         decoder >> canPlayToWirelessPlaybackTarget;
         if (!canPlayToWirelessPlaybackTarget)
@@ -106,6 +120,8 @@ struct RemoteMediaPlayerConfiguration {
             *supportsFullscreen,
             *supportsPictureInPicture,
             *supportsAcceleratedRendering,
+            *supportsPlayAtHostTime,
+            *supportsPauseAtHostTime,
             *canPlayToWirelessPlaybackTarget,
             *shouldIgnoreIntrinsicSize,
         }};

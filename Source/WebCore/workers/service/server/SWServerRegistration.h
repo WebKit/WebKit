@@ -47,7 +47,7 @@ struct ExceptionData;
 struct ServiceWorkerContextData;
 struct ServiceWorkerFetchResult;
 
-enum class IsAppBound : bool { No, Yes };
+enum class IsAppInitiated : bool { No, Yes };
 
 class SWServerRegistration : public CanMakeWeakPtr<SWServerRegistration> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -101,13 +101,13 @@ public:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
     WEBCORE_EXPORT bool shouldSoftUpdate(const FetchOptions&) const;
-    WEBCORE_EXPORT void scheduleSoftUpdate(IsAppBound);
+    WEBCORE_EXPORT void scheduleSoftUpdate(IsAppInitiated);
     static constexpr Seconds softUpdateDelay { 1_s };
 
     URL scopeURLWithoutFragment() const { return m_scopeURL; }
     URL scriptURL() const { return m_scriptURL; }
 
-    bool isAppBound() { return m_isAppBound; }
+    bool isAppInitiated() const { return m_isAppInitiated; }
 
 private:
     void activate();
@@ -135,7 +135,7 @@ private:
 
     WebCore::Timer m_softUpdateTimer;
     
-    bool m_isAppBound { false };
+    bool m_isAppInitiated { true };
 };
 
 } // namespace WebCore

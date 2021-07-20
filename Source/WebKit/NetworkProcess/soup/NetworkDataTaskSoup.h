@@ -102,6 +102,8 @@ private:
 #endif
     void authenticate(WebCore::AuthenticationChallenge&&);
     void continueAuthenticate(WebCore::AuthenticationChallenge&&);
+    void completeAuthentication(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    void cancelAuthentication(const WebCore::AuthenticationChallenge&);
 
     static void skipInputStreamForRedirectionCallback(GInputStream*, GAsyncResult*, NetworkDataTaskSoup*);
     void skipInputStreamForRedirection();
@@ -133,6 +135,8 @@ private:
     static void wroteHeadersCallback(SoupMessage*, NetworkDataTaskSoup*);
     static void wroteBodyCallback(SoupMessage*, NetworkDataTaskSoup*);
     static void gotBodyCallback(SoupMessage*, NetworkDataTaskSoup*);
+    static gboolean requestCertificateCallback(SoupMessage*, GTlsClientConnection*, NetworkDataTaskSoup*);
+    static gboolean requestCertificatePasswordCallback(SoupMessage*, GTlsPassword*, NetworkDataTaskSoup*);
 #endif
 
     void download();

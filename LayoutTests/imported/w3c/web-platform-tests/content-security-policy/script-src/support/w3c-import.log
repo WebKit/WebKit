@@ -24,7 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-eval.js.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-function-function.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-function-function.js.sub.headers
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-importscripts.js
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-importscripts.js.sub.headers
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-set-timeout.js
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-set-timeout.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-importscripts.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-importscripts.js.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-set-timeout.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/support/worker-with-script-src-none-set-timeout.js.sub.headers

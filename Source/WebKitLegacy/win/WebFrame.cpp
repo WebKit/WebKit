@@ -107,7 +107,7 @@
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #elif USE(CAIRO)
-#include <WebCore/PlatformContextCairo.h>
+#include <WebCore/GraphicsContextCairo.h>
 #include <cairo-win32.h>
 #endif
 
@@ -1756,7 +1756,7 @@ HRESULT WebFrame::spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ct
         return E_FAIL;
     }
 
-    PlatformContextCairo platformContext(cr);
+    GraphicsContextCairo platformContext(cr);
     PlatformGraphicsContext* pctx = &platformContext;
     cairo_destroy(cr);
 

@@ -145,7 +145,7 @@ typedef struct _AtkObject AtkObject;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
 #include "PlatformXRSystemProxy.h"
 #endif
 
@@ -1453,8 +1453,8 @@ public:
     void invalidateMediaSessionCoordinator();
 #endif
 
-    void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
-    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
+    void setLastNavigationWasAppInitiated(bool wasAppBound) { m_lastNavigationWasAppInitiated = wasAppBound; }
+    void lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&);
 
     bool isParentProcessAWebBrowser() const;
 
@@ -1462,7 +1462,7 @@ public:
     void textAutosizingUsesIdempotentModeChanged();
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
 
@@ -2335,7 +2335,7 @@ private:
     bool m_navigationHasOccured { false };
 #endif
 
-    bool m_lastNavigationWasAppBound { false };
+    bool m_lastNavigationWasAppInitiated { true };
 
     bool m_canUseCredentialStorage { true };
 
@@ -2363,7 +2363,7 @@ private:
     Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingTextRecognition;
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     std::unique_ptr<PlatformXRSystemProxy> m_xrSystemProxy;
 #endif
     

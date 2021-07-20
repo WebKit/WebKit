@@ -1,0 +1,14 @@
+
+FAIL Content Security Policy: Expects allowed for worklet-paint to cross-https origin and keep-origin redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-paint to cross-https origin and no-redirect redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-paint to cross-https origin and swap-origin redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-paint to same-https origin and keep-origin redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-paint to same-https origin and no-redirect redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-paint to same-https origin and swap-origin redirection from https context. assert_equals: The resource request should be 'allowed'. expected "allowed" but got "blocked"
+PASS Content Security Policy: Expects allowed for worklet-paint to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
+

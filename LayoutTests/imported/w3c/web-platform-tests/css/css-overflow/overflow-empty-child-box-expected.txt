@@ -1,0 +1,8 @@
+You should see no scrollbars in these container because an empty child box shouldn't contribute to its parents scrollable overflow area.
+
+
+PASS .container 1
+PASS .container 2
+PASS .container 3
+PASS .container 4
+

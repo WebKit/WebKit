@@ -64,7 +64,9 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
     // convert the DER binary into r + s
     Vector<uint8_t> newSignature;
     newSignature.reserveCapacity(keyLengthInBytes * 2);
-    size_t offset = 3; // skip tag, length, tag
+    size_t offset = 1; // skip tag
+    offset += bytesUsedToEncodedLength(signature[offset]); // skip length
+    ++offset; // skip tag
 
     // If r < keyLengthInBytes, fill the head of r with 0s.
     size_t bytesToCopy = keyLengthInBytes;
@@ -88,7 +90,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSA(CryptoAlgorithmIdentifier hash, co
         bytesToCopy = signature[offset];
     } else if (signature[offset] > keyLengthInBytes) // Otherwise skip the leading 0s of s.
         offset += signature[offset] - keyLengthInBytes;
-    offset++; // skip length
+    ++offset; // skip length
     ASSERT_WITH_SECURITY_IMPLICATION(signature.size() >= offset + bytesToCopy);
     newSignature.append(signature.data() + offset, bytesToCopy);
 
@@ -148,19 +150,21 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
 
     uint32_t valid;
     CCCryptorStatus status = CCECCryptorVerifyHash(key, digestData.data(), digestData.size(), newSignature.data(), newSignature.size(), &valid);
-    if (status)
-        return Exception { OperationError };
+    if (status) {
+        WTFLogAlways("ERROR: CCECCryptorVerifyHash() returns error=%d", status);
+        return false;
+    }
     return valid;
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
-    return signECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBits() / 8, data);
+    return signECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBytes(), data);
 }
 
 ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    return verifyECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBits() / 8, signature, data);
+    return verifyECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBytes(), signature, data);
 }
 
 } // namespace WebCore

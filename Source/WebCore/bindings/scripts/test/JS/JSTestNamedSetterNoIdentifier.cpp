@@ -79,14 +79,11 @@ private:
     }
 
     void finishCreation(JSC::VM&);
-public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterNoIdentifierPrototype, JSTestNamedSetterNoIdentifierPrototype::Base);
 
 using JSTestNamedSetterNoIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterNoIdentifier>;
 
-template<> const unsigned JSTestNamedSetterNoIdentifierDOMConstructor::StructureFlags = Base::StructureFlags;
 template<> const ClassInfo JSTestNamedSetterNoIdentifierDOMConstructor::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierDOMConstructor) };
 
 template<> JSValue JSTestNamedSetterNoIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -102,21 +99,14 @@ template<> void JSTestNamedSetterNoIdentifierDOMConstructor::initializePropertie
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
-/* Hash table for Prototype */
-
-static const struct CompactHashIndex JSTestNamedSetterNoIdentifierPrototypeTableIndex[2] = {
-    { -1, -1 },
-    { 0, -1 },
-};
-
+/* Hash table for prototype */
 
 static const HashTableValue JSTestNamedSetterNoIdentifierPrototypeTableValues[] =
 {
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-static const HashTable JSTestNamedSetterNoIdentifierPrototypeTable = { 1, 1, true, JSTestNamedSetterNoIdentifier::info(), JSTestNamedSetterNoIdentifierPrototypeTableValues, JSTestNamedSetterNoIdentifierPrototypeTableIndex };
-const ClassInfo JSTestNamedSetterNoIdentifierPrototype::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, &JSTestNamedSetterNoIdentifierPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierPrototype) };
+const ClassInfo JSTestNamedSetterNoIdentifierPrototype::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierPrototype) };
 
 void JSTestNamedSetterNoIdentifierPrototype::finishCreation(VM& vm)
 {

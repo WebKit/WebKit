@@ -75,7 +75,7 @@
     if (!is<WebCore::RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
 
-    if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasOverflowClip())
+    if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasNonVisibleOverflow())
         return 0;
 
     auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
@@ -96,7 +96,7 @@
 
     if (!is<WebCore::RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
-    if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasOverflowClip())
+    if (!is<WebCore::RenderBox>(*renderer) || !renderer->hasNonVisibleOverflow())
         return 0;
 
     auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();
@@ -122,7 +122,7 @@
 
     if (!is<WebCore::RenderBlockFlow>(*renderer))
         renderer = renderer->containingBlock();
-    if (!renderer->hasOverflowClip() || !is<WebCore::RenderBox>(*renderer))
+    if (!renderer->hasNonVisibleOverflow() || !is<WebCore::RenderBox>(*renderer))
         return;
 
     auto* layer = downcast<WebCore::RenderBox>(*renderer).layer();

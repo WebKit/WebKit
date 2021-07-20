@@ -135,9 +135,18 @@ static CGRect viewRectForWindowRect(CGRect, PlatformWebView::WebViewSizingMode);
 } // namespace WTR
 
 @interface PlatformWebViewController : UIViewController
+@property (nonatomic) CGFloat horizontalSystemMinimumLayoutMargin;
 @end
 
 @implementation PlatformWebViewController
+
+- (NSDirectionalEdgeInsets)systemMinimumLayoutMargins
+{
+    auto layoutMargins = [super systemMinimumLayoutMargins];
+    layoutMargins.leading = self.horizontalSystemMinimumLayoutMargin;
+    layoutMargins.trailing = self.horizontalSystemMinimumLayoutMargin;
+    return layoutMargins;
+}
 
 - (void)viewWillTransitionToSize:(CGSize)toSize withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
@@ -204,7 +213,9 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     m_window.backgroundColor = [UIColor lightGrayColor];
     m_window.platformWebView = this;
 
-    [m_window setRootViewController:adoptNS([[PlatformWebViewController alloc] init]).get()];
+    auto webViewController = adoptNS([[PlatformWebViewController alloc] init]);
+    [webViewController setHorizontalSystemMinimumLayoutMargin:options.horizontalSystemMinimumLayoutMargin()];
+    [m_window setRootViewController:webViewController.get()];
 
     m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:configuration];
 

@@ -27,6 +27,7 @@
 
 #if HAVE(CONTACTSUI)
 
+#include <optional>
 #include <wtf/Forward.h>
 
 @class WKWebView;

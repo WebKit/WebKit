@@ -90,9 +90,53 @@ AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupA
 {
 }
 
+static ProtectionSpace protectionSpaceForClientCertificate(const URL& url)
+{
+    auto port = url.port();
+    if (!port)
+        port = defaultPortForProtocol(url.protocol());
+    return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), protectionSpaceServerTypeFromURL(url, false), { },
+        ProtectionSpaceAuthenticationSchemeClientCertificateRequested);
+}
+
+AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsClientConnection*)
+    : AuthenticationChallengeBase(protectionSpaceForClientCertificate(soupURIToURL(soup_message_get_uri(soupMessage)))
+        , Credential() // proposedCredentials
+        , 0 // previousFailureCount
+        , soupMessage // failureResponse
+        , ResourceError::authenticationError(soupMessage))
+{
+}
+
+static ProtectionSpace protectionSpaceForClientCertificatePassword(GTlsPassword* tlsPassword, const URL& url)
+{
+    auto port = url.port();
+    if (!port)
+        port = defaultPortForProtocol(url.protocol());
+    return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), protectionSpaceServerTypeFromURL(url, false),
+        String::fromUTF8(g_tls_password_get_description(tlsPassword)), ProtectionSpaceAuthenticationSchemeClientCertificatePINRequested);
+}
+
+AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, GTlsPassword* tlsPassword)
+    : AuthenticationChallengeBase(protectionSpaceForClientCertificatePassword(tlsPassword, soupURIToURL(soup_message_get_uri(soupMessage)))
+        , Credential() // proposedCredentials
+        , g_tls_password_get_flags(tlsPassword) & G_TLS_PASSWORD_RETRY ? 1 : 0 // previousFailureCount
+        , soupMessage // failureResponse
+        , ResourceError::authenticationError(soupMessage))
+    , m_tlsPassword(tlsPassword)
+    , m_tlsPasswordFlags(tlsPassword ? g_tls_password_get_flags(tlsPassword) : G_TLS_PASSWORD_NONE)
+{
+}
+
 bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
 {
     if (a.soupAuth() != b.soupAuth())
+        return false;
+
+    if (a.tlsPassword() != b.tlsPassword())
+        return false;
+
+    if (a.tlsPasswordFlags() != b.tlsPasswordFlags())
         return false;
 
 #if USE(SOUP2)

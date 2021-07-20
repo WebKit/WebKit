@@ -60,6 +60,9 @@ static const EntityDescription entitySubstitutionList[] = {
     { "&gt;", 4, EntityGt },
     { "&quot;", 6, EntityQuot },
     { "&nbsp;", 6, EntityNbsp },
+    { "&#9;", 4, EntityTab },
+    { "&#10;", 5, EntityLineFeed },
+    { "&#13;", 5, EntityCarriageReturn },
 };
 
 enum EntitySubstitutionIndex {
@@ -69,11 +72,19 @@ enum EntitySubstitutionIndex {
     EntitySubstitutionGtIndex = 3,
     EntitySubstitutionQuotIndex = 4,
     EntitySubstitutionNbspIndex = 5,
+    EntitySubstitutionTabIndex = 6,
+    EntitySubstitutionLineFeedIndex = 7,
+    EntitySubstitutionCarriageReturnIndex = 8,
 };
 
 static const unsigned maximumEscapedentityCharacter = noBreakSpace;
 static const uint8_t entityMap[maximumEscapedentityCharacter + 1] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    EntitySubstitutionTabIndex, // '\t'.
+    EntitySubstitutionLineFeedIndex, // '\n'.
+    0, 0,
+    EntitySubstitutionCarriageReturnIndex, // '\r'.
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     EntitySubstitutionQuotIndex, // '"'.
     0, 0, 0,
     EntitySubstitutionAmpIndex, // '&'.

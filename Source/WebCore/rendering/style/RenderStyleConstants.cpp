@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderStyleConstants.h"
 
+#include "CSSPrimitiveValueMappings.h"
 #include "TabSize.h"
 #include <wtf/text/TextStream.h>
 

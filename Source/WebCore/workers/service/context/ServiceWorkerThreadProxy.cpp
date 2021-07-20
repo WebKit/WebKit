@@ -117,8 +117,8 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     m_remoteDebuggable->init();
 #endif
 
-    if (data.lastNavigationWasAppBound)
-        setLastNavigationWasAppBound(data.lastNavigationWasAppBound == LastNavigationWasAppBound::Yes);
+    if (data.lastNavigationWasAppInitiated)
+        setLastNavigationWasAppInitiated(data.lastNavigationWasAppInitiated == LastNavigationWasAppInitiated::Yes);
 }
 
 ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
@@ -127,15 +127,15 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
     allServiceWorkerThreadProxies().remove(this);
 }
 
-void ServiceWorkerThreadProxy::setLastNavigationWasAppBound(bool wasAppBound)
+void ServiceWorkerThreadProxy::setLastNavigationWasAppInitiated(bool wasAppInitiated)
 {
     if (m_document->loader())
-        m_document->loader()->setLastNavigationWasAppBound(wasAppBound);
+        m_document->loader()->setLastNavigationWasAppInitiated(wasAppInitiated);
 }
 
-bool ServiceWorkerThreadProxy::lastNavigationWasAppBound()
+bool ServiceWorkerThreadProxy::lastNavigationWasAppInitiated()
 {
-    return m_document->loader() ? m_document->loader()->lastNavigationWasAppBound() : false;
+    return m_document->loader() ? m_document->loader()->lastNavigationWasAppInitiated() : true;
 }
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)

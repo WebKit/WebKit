@@ -162,6 +162,9 @@ private:
 
     static bool isHigherPriority(const std::unique_ptr<ReadOperation>&, const std::unique_ptr<ReadOperation>&);
 
+    size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount) const;
+    uint32_t volumeBlockSize() const;
+
     const String m_basePath;
     const String m_recordsPath;
     
@@ -170,6 +173,7 @@ private:
 
     size_t m_capacity { std::numeric_limits<size_t>::max() };
     size_t m_approximateRecordsSize { 0 };
+    mutable std::optional<uint32_t> m_volumeBlockSize;
 
     // 2^18 bit filter can support up to 26000 entries with false positive rate < 1%.
     using ContentsFilter = BloomFilter<18>;

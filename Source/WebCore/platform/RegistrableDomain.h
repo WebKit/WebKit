@@ -164,4 +164,12 @@ inline bool areRegistrableDomainsEqual(const URL& a, const URL& b)
 namespace WTF {
 template<> struct DefaultHash<WebCore::RegistrableDomain> : WebCore::RegistrableDomain::RegistrableDomainHash { };
 template<> struct HashTraits<WebCore::RegistrableDomain> : SimpleClassHashTraits<WebCore::RegistrableDomain> { };
-}
+
+template<> class StringTypeAdapter<WebCore::RegistrableDomain, void> : public StringTypeAdapter<String, void> {
+public:
+    StringTypeAdapter(const WebCore::RegistrableDomain& domain)
+        : StringTypeAdapter<String, void>(domain.string())
+    { }
+};
+
+} // namespace WTF

@@ -1,3 +1,3 @@
 
-FAIL All the scrollers affected by scrollIntoView should land on a snap position if one exists. Otherwise, land according to the specified alignment assert_equals: ScrollIntoView ends with the specified alignment if no snap position is specified. expected 1185 but got 1000
+PASS All the scrollers affected by scrollIntoView should land on a snap position if one exists. Otherwise, land according to the specified alignment
 

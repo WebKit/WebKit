@@ -118,7 +118,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    UserInterfaceIdiomDidChange(bool isPadOrMac)
+    UserInterfaceIdiomDidChange(bool isPhoneOrWatch)
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

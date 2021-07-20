@@ -40,6 +40,7 @@ namespace WebKit {
 
 Seconds WebProcessCache::cachedProcessLifetime { 30_min };
 Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive { 5_min };
+static constexpr Seconds cachedProcessSuspensionDelay { 30_s };
 
 static uint64_t generateAddRequestIdentifier()
 {
@@ -259,11 +260,17 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
 WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process)
     : m_process(WTFMove(process))
     , m_evictionTimer(RunLoop::main(), this, &CachedProcess::evictionTimerFired)
+#if PLATFORM(MAC)
+    , m_suspensionTimer(RunLoop::main(), this, &CachedProcess::suspensionTimerFired)
+#endif
 {
     RELEASE_ASSERT(!m_process->pageCount());
     RELEASE_ASSERT_WITH_MESSAGE(!m_process->websiteDataStore().processes().contains(*m_process), "Only processes with pages should be registered with the data store");
     m_process->setIsInProcessCache(true);
     m_evictionTimer.startOneShot(cachedProcessLifetime);
+#if PLATFORM(MAC)
+    m_suspensionTimer.startOneShot(cachedProcessSuspensionDelay);
+#endif
 }
 
 WebProcessCache::CachedProcess::~CachedProcess()
@@ -275,6 +282,10 @@ WebProcessCache::CachedProcess::~CachedProcess()
     ASSERT(!m_process->provisionalPageCount());
     ASSERT(!m_process->suspendedPageCount());
 
+#if PLATFORM(MAC)
+    if (isSuspended())
+        m_process->platformResumeProcess();
+#endif
     m_process->setIsInProcessCache(false);
     m_process->shutDown();
 }
@@ -283,6 +294,12 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
 {
     ASSERT(m_process);
     m_evictionTimer.stop();
+#if PLATFORM(MAC)
+    if (isSuspended())
+        m_process->platformResumeProcess();
+    else
+        m_suspensionTimer.stop();
+#endif
     m_process->setIsInProcessCache(false);
     return m_process.releaseNonNull();
 }
@@ -292,6 +309,14 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
     ASSERT(m_process);
     m_process->processPool().webProcessCache().removeProcess(*m_process, ShouldShutDownProcess::Yes);
 }
+
+#if PLATFORM(MAC)
+void WebProcessCache::CachedProcess::suspensionTimerFired()
+{
+    ASSERT(m_process);
+    m_process->platformSuspendProcess();
+}
+#endif
 
 #if !PLATFORM(COCOA)
 void WebProcessCache::platformInitialize()

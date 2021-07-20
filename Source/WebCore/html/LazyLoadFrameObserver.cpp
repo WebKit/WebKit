@@ -103,7 +103,7 @@ IntersectionObserver* LazyLoadFrameObserver::intersectionObserver(Document& docu
 
 bool LazyLoadFrameObserver::isObserved(Element& element) const
 {
-    return m_observer && m_observer->observationTargets().contains(&element);
+    return m_observer && m_observer->isObserving(element);
 }
 
 }

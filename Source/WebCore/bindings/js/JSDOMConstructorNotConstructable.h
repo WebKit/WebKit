@@ -26,7 +26,6 @@ namespace WebCore {
 template<typename JSClass> class JSDOMConstructorNotConstructable final : public JSDOMConstructorBase {
 public:
     using Base = JSDOMConstructorBase;
-    static const unsigned StructureFlags;
 
     static JSDOMConstructorNotConstructable* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);

@@ -93,8 +93,11 @@ public:
     virtual bool isNamedImageGeneratedImage() const { return false; }
     virtual bool isGradientImage() const { return false; }
     virtual bool isSVGImage() const { return false; }
+    virtual bool isSVGImageForContainer() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool isCustomPaintImage() const { return false; }
+
+    bool drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
 
     virtual bool currentFrameKnownToBeOpaque() const = 0;
     virtual bool isAnimated() const { return false; }
@@ -188,7 +191,7 @@ public:
     virtual void dump(WTF::TextStream&) const;
 
 protected:
-    Image(ImageObserver* = nullptr);
+    WEBCORE_EXPORT Image(ImageObserver* = nullptr);
 
     static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 

@@ -30,6 +30,7 @@
 #include "LayoutSize.h"
 
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,7 +39,7 @@ class Element;
 class ResizeObservation : public RefCounted<ResizeObservation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ResizeObservation> create(Element* target);
+    static Ref<ResizeObservation> create(Element& target);
 
     ~ResizeObservation();
 
@@ -48,13 +49,13 @@ public:
     FloatRect computeContentRect() const;
 
     bool elementSizeChanged(LayoutSize&) const;
-    Element* target() const { return m_target; }
+    Element* target() const { return m_target.get(); }
     size_t targetElementDepth() const;
 
 private:
-    ResizeObservation(Element* target);
+    ResizeObservation(Element& target);
 
-    Element* m_target;
+    WeakPtr<Element> m_target;
     LayoutSize m_lastObservationSize;
 };
 

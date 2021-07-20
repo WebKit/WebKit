@@ -1,0 +1,6 @@
+
+FAIL Content Security Policy: Expects allowed for sharedworker-module to same-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+PASS Content Security Policy: Expects allowed for sharedworker-module to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for sharedworker-module to same-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+PASS Content Security Policy: Expects allowed for sharedworker-module to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+

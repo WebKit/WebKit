@@ -30,6 +30,8 @@
 
 #if PLATFORM(COCOA)
 #include "CredentialCocoa.h"
+#elif USE(SOUP)
+#include "CredentialSoup.h"
 #else
 
 #include "CredentialBase.h"

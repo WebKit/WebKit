@@ -107,7 +107,7 @@ void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, Res
     if (resource.type() != CachedResource::Type::MainResource || !frame.isMainFrame()) {
         if (auto* document = frame.mainFrame().document()) {
             if (document && document->loader())
-                request.setIsAppBound(document->loader()->lastNavigationWasAppBound());
+                request.setIsAppInitiated(document->loader()->lastNavigationWasAppInitiated());
         }
     }
 
@@ -767,7 +767,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     if (auto* document = webPage.mainFrame()->document()) {
         request.setFirstPartyForCookies(document->firstPartyForCookies());
         if (auto* loader = document->loader())
-            request.setIsAppBound(loader->lastNavigationWasAppBound());
+            request.setIsAppInitiated(loader->lastNavigationWasAppInitiated());
     }
 
     std::optional<uint64_t> preconnectionIdentifier;

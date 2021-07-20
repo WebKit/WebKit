@@ -114,6 +114,7 @@ private:
     void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
     Color checkboxRadioBackgroundColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
     Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
 

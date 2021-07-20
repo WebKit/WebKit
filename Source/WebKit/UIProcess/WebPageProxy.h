@@ -185,7 +185,7 @@ interface ID3D11Device1;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
 #include "PlatformXRSystem.h"
 #endif
 
@@ -377,7 +377,7 @@ class WebWheelEvent;
 class WebWheelEventCoalescer;
 class WebsiteDataStore;
 
-struct AppBoundNavigationTestingData;
+struct AppPrivacyReportTestingData;
 struct DataDetectionResult;
 struct DocumentEditingContext;
 struct DocumentEditingContextRequest;
@@ -1778,7 +1778,6 @@ public:
     void webViewDidMoveToWindow();
 
 #if HAVE(APP_SSO)
-    void setShouldSuppressSOAuthorizationInAllNavigationPolicyDecision() { m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision = true; }
     void setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision() { m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true; }
     void decidePolicyForSOAuthorizationLoad(const String&, CompletionHandler<void(SOAuthorizationLoadPolicy)>&&);
 #endif
@@ -1942,10 +1941,10 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void setLastNavigationWasAppBound(WebCore::ResourceRequest&);
-    void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
-    void appBoundNavigationData(CompletionHandler<void(const AppBoundNavigationTestingData&)>&&);
-    void clearAppBoundNavigationData(CompletionHandler<void()>&&);
+    void setLastNavigationWasAppInitiated(WebCore::ResourceRequest&);
+    void lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&);
+    void appPrivacyReportTestingData(CompletionHandler<void(const AppPrivacyReportTestingData&)>&&);
+    void clearAppPrivacyReportTestingData(CompletionHandler<void()>&&);
 
     NSDictionary *contentsOfUserInterfaceItem(NSString *userInterfaceItem);
 
@@ -2732,7 +2731,6 @@ private:
 
 #if HAVE(APP_SSO)
     bool m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision { false };
-    bool m_shouldSuppressSOAuthorizationInAllNavigationPolicyDecision { false };
 #endif
 
     std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
@@ -3056,13 +3054,13 @@ private:
 
     size_t m_suspendMediaPlaybackCounter { 0 };
 
-    bool m_lastNavigationWasAppBound { false };
+    bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
 
     std::optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#if ENABLE(WEBXR) && !USE(OPENXR)
     std::unique_ptr<PlatformXRSystem> m_xrSystem;
 #endif
 

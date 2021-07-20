@@ -85,7 +85,10 @@ public:
         DoubleCond,
         StatusCond,
         Special,
-        WidthArg
+        WidthArg,
+
+        // ZeroReg is interpreted as a zero register in ARM64
+        ZeroReg
     };
     
     enum Temperature : int8_t {
@@ -693,6 +696,14 @@ public:
         return result;
     }
 
+    static Arg zeroReg()
+    {
+        Arg result;
+        result.m_kind = ZeroReg;
+        result.m_offset = 0;
+        return result;
+    }
+
     bool operator==(const Arg& other) const
     {
         return m_offset == other.m_offset
@@ -737,6 +748,11 @@ public:
     bool isBitImm64() const
     {
         return kind() == BitImm64;
+    }
+
+    bool isZeroReg() const
+    {
+        return kind() == ZeroReg;
     }
 
     bool isSomeImm() const
@@ -1022,6 +1038,7 @@ public:
         case BigImm:
         case BitImm:
         case BitImm64:
+        case ZeroReg:
         case SimpleAddr:
         case Addr:
         case ExtendedOffsetAddr:
@@ -1057,6 +1074,7 @@ public:
         case Special:
         case WidthArg:
         case Invalid:
+        case ZeroReg:
             return false;
         case SimpleAddr:
         case Addr:
@@ -1236,6 +1254,7 @@ public:
             return isValidBitImmForm(value());
         case BitImm64:
             return isValidBitImm64Form(value());
+        case ZeroReg:
         case SimpleAddr:
         case ExtendedOffsetAddr:
             return true;
@@ -1328,6 +1347,13 @@ public:
     {
         ASSERT(isBigImm() || isBitImm64());
         return MacroAssembler::TrustedImm64(value());
+    }
+#endif
+
+#if CPU(ARM64)
+    MacroAssembler::RegisterID asZeroReg() const
+    {
+        return ARM64Registers::zr;
     }
 #endif
 

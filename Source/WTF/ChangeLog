@@ -1,3 +1,215 @@
+2021-07-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Pipewire] Implement getDisplayMedia() backend
+        https://bugs.webkit.org/show_bug.cgi?id=210926
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable screen-capture if libportal
+        was found.
+
+2021-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r279912 (239661@main); Add a HAVE(SYSTEM_STATUS) macro.
+
+        * wtf/PlatformHave.h:
+
+2021-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Update and fix URL WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=227820
+
+        Reviewed by Chris Dumez.
+
+        There was an edge case where if we set a path to an empty string, it would add a slash.  No more.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setPath):
+
+2021-07-13  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Remove USE_64KB_PAGE_BLOCK
+        https://bugs.webkit.org/show_bug.cgi?id=227905
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PageBlock.h:
+
+2021-07-12  Filip Pizlo  <fpizlo@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
+
+        New malloc algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=226404
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduce flags for using libpas as the ExecutableAllocator.
+
+        Explicitly ask for gigacage initialization, since libpas prefers it this way right now.
+
+        * wtf/FastTLS.h:
+        * wtf/PlatformUse.h:
+        * wtf/Threading.cpp:
+        (WTF::initialize):
+
+2021-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Turn on `USE(OS_STATE)` when building with a non-Apple-internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=227884
+
+        Reviewed by Tim Horton.
+
+        Enable the compile-time flag for all Cocoa builds.
+
+        * wtf/PlatformUse.h:
+
+2021-07-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Make WebKit observe spatial audio accessibility settings
+        https://bugs.webkit.org/show_bug.cgi?id=227848
+
+        Reviewed by Sam Weinig.
+
+        This flag was using the wrong format for a HAVE setting, so the code wasn't being compiled in.
+
+        * wtf/PlatformHave.h:
+
+2021-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a StyleSheets log channel and some logging
+        https://bugs.webkit.org/show_bug.cgi?id=227880
+
+        Reviewed by Alan Bujtas.
+
+        Make it possible to feed Ref<> and RefPtr<> into TextStream.
+
+        * wtf/text/TextStream.h:
+        (WTF::operator<<):
+
+2021-07-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make Coordinator playback commands more precise
+        https://bugs.webkit.org/show_bug.cgi?id=227756
+
+        Reviewed by Eric Carlson.
+
+        Add a method to convert from a MonotonicTime to a MachAbsoluteTime.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::machTimebaseInfo):
+        (WTF::MonotonicTime::fromMachAbsoluteTime):
+        (WTF::MonotonicTime::toMachAbsoluteTime const):
+        * wtf/MonotonicTime.h:
+        * wtf/PlatformHave.h:
+
+2021-07-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix some whitespace handling issues in URL setters
+        https://bugs.webkit.org/show_bug.cgi?id=227806
+
+        Reviewed by Chris Dumez.
+
+        Setters should ignore tabs and newlines like the main parser does.
+        The protocol setter is problematic, which I reported in https://github.com/whatwg/url/issues/620
+
+        * wtf/URL.cpp:
+        (WTF::URL::setFragmentIdentifier):
+        * wtf/URLParser.cpp:
+        (WTF::URLParser::isSpecialScheme):
+        (WTF::URLParser::parse):
+        * wtf/URLParser.h:
+        The URL.hash setter should allow trailing C0 and control characters, which we would otherwise trim.
+        Rather than introduce a new parameter, use a sentinel value for when we need to do this.
+
+2021-07-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Expose SPI to opt out of Extensible SSO authentication
+        https://bugs.webkit.org/show_bug.cgi?id=227729
+        <rdar://problem/75647892>
+
+        Reviewed by Tim Horton.
+
+        Create new WKPreference to allow WebKit clients to opt out of Extensible SSO authentication.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        URL host setter should pass host to URLParser instead of trying to encode it itself
+        https://bugs.webkit.org/show_bug.cgi?id=227749
+
+        Reviewed by Chris Dumez.
+
+        For non-special schemes, the host is percent-encoded instead of punycode-encoded.
+        Allowing the URL parser to handle all input directly does the right thing for non-special schemes.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setHost):
+        (WTF::URL::setHostAndPort):
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        URL path setter should add "./" before non-empty path and after empty host for URLs with non-special schemes
+        https://bugs.webkit.org/show_bug.cgi?id=227750
+
+        Reviewed by Chris Dumez.
+
+        This is related to r267837 but in the path setter, too.
+        This helps preserve idempotence in parsed URLs.
+        This is an edge case that will rarely be hit in practice, but now the path setter matches the parser.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setPath):
+
+2021-07-07  Christopher Reid  <chris.reid@sony.com>
+
+        [PlayStation] Don't assume 4KB block size when estimating Network Cache disk usage
+        https://bugs.webkit.org/show_bug.cgi?id=227502
+
+        Reviewed by Chris Dumez.
+
+        Add getVolumeFileBlockSize to fetch the block size from the filesystem.
+        Currently only implemented for Windows and POSIX filesystems.
+
+        * wtf/FileSystem.cpp:
+        * wtf/FileSystem.h:
+        * wtf/playstation/FileSystemPlayStation.cpp:
+
+2021-07-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use more Span
+        https://bugs.webkit.org/show_bug.cgi?id=227606
+
+        Reviewed by Darin Adler.
+
+        New is always better, right?
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::mapToFile):
+        * wtf/FileSystem.h:
+        * wtf/persistence/PersistentCoders.cpp:
+        (WTF::Persistence::Coder<CString>::encode):
+        (WTF::Persistence::Coder<CString>::decode):
+        (WTF::Persistence::Coder<String>::encode):
+        (WTF::Persistence::decodeStringText):
+        (WTF::Persistence::Coder<SHA1::Digest>::encode):
+        (WTF::Persistence::Coder<SHA1::Digest>::decode):
+        * wtf/persistence/PersistentCoders.h:
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::Decoder):
+        (WTF::Persistence::Decoder::bufferIsLargeEnoughToContain const):
+        (WTF::Persistence::Decoder::bufferPointerForDirectRead):
+        (WTF::Persistence::Decoder::decodeFixedLengthData):
+        (WTF::Persistence::Decoder::decodeNumber):
+        (WTF::Persistence::Decoder::verifyChecksum):
+        * wtf/persistence/PersistentDecoder.h:
+        (WTF::Persistence::Decoder::length const):
+        (WTF::Persistence::Decoder::currentOffset const):
+        * wtf/persistence/PersistentEncoder.cpp:
+        (WTF::Persistence::Encoder::updateChecksumForData):
+        (WTF::Persistence::Encoder::encodeFixedLengthData):
+        (WTF::Persistence::Encoder::encodeChecksum):
+        * wtf/persistence/PersistentEncoder.h:
+
 2021-07-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize Object.assign and putDirectInternal

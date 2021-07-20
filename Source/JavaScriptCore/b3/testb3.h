@@ -71,6 +71,7 @@
 #include "LinkBuffer.h"
 #include "PureNaN.h"
 #include <cmath>
+#include <regex>
 #include <string>
 #include <wtf/FastTLS.h>
 #include <wtf/IndexSet.h>
@@ -244,11 +245,13 @@ void checkDisassembly(Compilation& compilation, const Func& func, const CString&
     CRASH();
 }
 
-inline void checkUsesInstruction(Compilation& compilation, const char* text)
+inline void checkUsesInstruction(Compilation& compilation, const char* text, bool regex = false)
 {
     checkDisassembly(
         compilation,
         [&] (const char* disassembly) -> bool {
+            if (regex)
+                return std::regex_match(disassembly, std::regex(text, std::regex::extended));
             return strstr(disassembly, text);
         },
         toCString("Expected to find ", text, " but didnt!"));
@@ -448,6 +451,18 @@ void testBitAndZeroShiftRightArgImmMask32();
 void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();
 void testSelectTest();
+void testAddWithLeftShift32();
+void testAddWithRightShift32();
+void testAddWithUnsignedRightShift32();
+void testAddWithLeftShift64();
+void testAddWithRightShift64();
+void testAddWithUnsignedRightShift64();
+void testSubWithLeftShift32();
+void testSubWithRightShift32();
+void testSubWithUnsignedRightShift32();
+void testSubWithLeftShift64();
+void testSubWithRightShift64();
+void testSubWithUnsignedRightShift64();
 void testSelectCompareDouble();
 void testSelectCompareFloat(float, float);
 void testSelectCompareFloatToDouble(float, float);
@@ -666,6 +681,7 @@ void testIToD32Imm(int32_t value);
 void testIToF32Imm(int32_t value);
 void testIToDReducedToIToF64Arg();
 void testIToDReducedToIToF32Arg();
+void testStoreZeroReg();
 void testStore32(int value);
 void testStoreConstant(int value);
 void testStoreConstantPtr(intptr_t value);
@@ -898,13 +914,18 @@ void testMulAddArgsLeft32();
 void testMulAddArgsRight32();
 void testMulAddSignExtend32ArgsLeft();
 void testMulAddSignExtend32ArgsRight();
+void testMulAddZeroExtend32ArgsLeft();
+void testMulAddZeroExtend32ArgsRight();
 void testMulSubArgsLeft();
 void testMulSubArgsRight();
 void testMulSubArgsLeft32();
 void testMulSubArgsRight32();
-void testMulSubSignExtend32Args();
+void testMulSubSignExtend32();
+void testMulSubZeroExtend32();
 void testMulNegArgs();
 void testMulNegArgs32();
+void testMulNegSignExtend32();
+void testMulNegZeroExtend32();
 void testMulArgDouble(double);
 void testMulArgsDouble(double, double);
 void testCallSimpleDouble(double, double);

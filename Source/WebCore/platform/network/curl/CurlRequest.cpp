@@ -46,7 +46,7 @@ CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* clien
     : m_client(client)
     , m_messageQueue(WTFMove(messageQueue))
     , m_request(request.isolatedCopy())
-    , m_shouldSuspend(shouldSuspend == ShouldSuspend::Yes)
+    , m_startState(shouldSuspend == ShouldSuspend::Yes ? StartState::StartSuspended : StartState::WaitingForStart)
     , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
     , m_formDataStream(m_request.httpBody())
     , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
@@ -110,6 +110,16 @@ void CurlRequest::start()
 
     ASSERT(isMainThread());
 
+    switch (m_startState) {
+    case StartState::DidStart:
+        ASSERT(false);
+        [[fallthrough]];
+    case StartState::StartSuspended:
+        return;
+    }
+
+    m_startState = StartState::DidStart;
+
     if (m_request.url().isLocalFile())
         invokeDidReceiveResponseForFile(m_request.url());
     else
@@ -141,7 +151,7 @@ void CurlRequest::cancel()
         runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
             didCancelTransfer();
         });
-    } else
+    } else if (m_startState == StartState::DidStart)
         scheduler.cancel(this);
 
     invalidateClient();
@@ -163,14 +173,35 @@ void CurlRequest::suspend()
 {
     ASSERT(isMainThread());
 
-    setRequestPaused(true);
+    switch (m_startState) {
+    case StartState::StartSuspended:
+        ASSERT(false);
+        [[fallthrough]];
+    case StartState::WaitingForStart:
+        m_startState = StartState::StartSuspended;
+        break;
+    case StartState::DidStart:
+        setRequestPaused(true);
+        break;
+    }
 }
 
 void CurlRequest::resume()
 {
     ASSERT(isMainThread());
 
-    setRequestPaused(false);
+    switch (m_startState) {
+    case StartState::WaitingForStart:
+        ASSERT(false);
+        [[fallthrough]];
+    case StartState::StartSuspended:
+        m_startState = StartState::WaitingForStart;
+        start();
+        break;
+    case StartState::DidStart:
+        setRequestPaused(false);
+        break;
+    }
 }
 
 /* `this` is protected inside this method. */
@@ -237,9 +268,6 @@ CURL* CurlRequest::setupTransfer()
         m_curlHandle->setDebugCallbackFunction(didReceiveDebugInfoCallback, this);
 
     m_curlHandle->setTimeout(timeoutInterval());
-
-    if (m_shouldSuspend)
-        setRequestPaused(true);
 
     m_performStartTime = MonotonicTime::now();
 
@@ -643,7 +671,7 @@ void CurlRequest::setRequestPaused(bool paused)
         Locker locker { m_pauseStateMutex };
 
         auto savedState = shouldBePaused();
-        m_shouldSuspend = m_isPausedOfRequest = paused;
+        m_isPausedOfRequest = paused;
         if (shouldBePaused() == savedState)
             return;
     }

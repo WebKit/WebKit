@@ -199,6 +199,16 @@ static LayoutUnit computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUni
     }
 }
 
+static std::pair<bool, bool> axesFlippedForWritingModeAndDirection(WritingMode writingMode, TextDirection textDirection)
+{
+    // text-direction flips the inline axis and writing-mode can flip the block axis. Whether or
+    // not the writing-mode is vertical determines the physical orientation of the block and inline axes.
+    bool hasVerticalWritingMode = isVerticalWritingMode(writingMode);
+    bool blockAxisFlipped = isFlippedWritingMode(writingMode);
+    bool inlineAxisFlipped = textDirection == TextDirection::RTL;
+    return std::make_pair(hasVerticalWritingMode ? blockAxisFlipped : inlineAxisFlipped, hasVerticalWritingMode ? inlineAxisFlipped : blockAxisFlipped);
+}
+
 void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode writingMode, TextDirection textDirection)
 {
     auto scrollSnapType = scrollingElementStyle.scrollSnapType();
@@ -223,14 +233,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     auto maxScrollOffset = scrollableArea.maximumScrollOffset();
     auto scrollPosition = LayoutPoint { scrollableArea.scrollPosition() };
 
-    // text-direction flips the inline axis and writing-mode can flip the block axis. Whether or
-    // not the writing-mode is vertical determines the physical orientation of the block and inline axes.
+    auto [scrollerXAxisFlipped, scrollerYAxisFlipped] = axesFlippedForWritingModeAndDirection(writingMode, textDirection);
     bool scrollerHasVerticalWritingMode = isVerticalWritingMode(writingMode);
-    bool blockAxisFlipped = isFlippedWritingMode(writingMode);
-    bool inlineAxisFlipped = textDirection == TextDirection::RTL;
-    bool xAxisFlipped = scrollerHasVerticalWritingMode ? blockAxisFlipped : inlineAxisFlipped;
-    bool yAxisFlipped = scrollerHasVerticalWritingMode ? inlineAxisFlipped : blockAxisFlipped;
-
     bool hasHorizontalSnapOffsets = scrollSnapType.axis == ScrollSnapAxis::Both || scrollSnapType.axis == ScrollSnapAxis::XAxis;
     bool hasVerticalSnapOffsets = scrollSnapType.axis == ScrollSnapAxis::Both || scrollSnapType.axis == ScrollSnapAxis::YAxis;
     if (scrollSnapType.axis == ScrollSnapAxis::Block) {
@@ -263,6 +267,16 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         auto alignment = child->style().scrollSnapAlign();
         auto stop = child->style().scrollSnapStop();
 
+        // From https://drafts.csswg.org/css-scroll-snap-1/#scroll-snap-align:
+        // "Start and end alignments are resolved with respect to the writing mode of the snap container unless the
+        // scroll snap area is larger than the snapport, in which case they are resolved with respect to the writing
+        // mode of the box itself."
+        bool areaXAxisFlipped = scrollerXAxisFlipped;
+        bool areaYAxisFlipped = scrollerYAxisFlipped;
+        bool areaHasVerticalWritingMode = isVerticalWritingMode(child->style().writingMode());
+        if ((areaHasVerticalWritingMode && scrollSnapArea.height() > scrollSnapPort.height()) || (!areaHasVerticalWritingMode && scrollSnapArea.width() > scrollSnapPort.width()))
+            std::tie(areaXAxisFlipped, areaYAxisFlipped) = axesFlippedForWritingModeAndDirection(child->style().writingMode(), child->style().direction());
+
         ScrollSnapAxisAlignType xAlign = scrollerHasVerticalWritingMode ? alignment.blockAlign : alignment.inlineAlign;
         ScrollSnapAxisAlignType yAlign = scrollerHasVerticalWritingMode ? alignment.inlineAlign : alignment.blockAlign;
         bool snapsHorizontally = hasHorizontalSnapOffsets && xAlign != ScrollSnapAxisAlignType::None;
@@ -270,19 +284,18 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
 
         if (!snapsHorizontally && !snapsVertically)
             continue;
-
         // The scroll snap area is defined via its scroll position, so convert the snap area rectangle to be relative to scroll offsets.
         auto snapAreaOriginRelativeToBorderEdge = scrollSnapArea.location() - scrollSnapPort.location();
         LayoutRect scrollSnapAreaAsOffsets(scrollableArea.scrollOffsetFromPosition(roundedIntPoint(snapAreaOriginRelativeToBorderEdge)), scrollSnapArea.size());
         snapAreas.append(scrollSnapAreaAsOffsets);
 
         if (snapsHorizontally) {
-            auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, xAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, xAxisFlipped);
+            auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
             addOrUpdateStopForSnapOffset(horizontalSnapOffsetsMap, { absoluteScrollOffset, stop, snapAreas.size() - 1 });
         }
         if (snapsVertically) {
-            auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.maxY(), yAlign, yAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.maxY(), yAlign, yAxisFlipped);
+            auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.maxY(), yAlign, areaYAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.maxY(), yAlign, areaYAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ 0, roundToInt(absoluteScrollYPosition) }).y(), 0, maxScrollOffset.y());
             addOrUpdateStopForSnapOffset(verticalSnapOffsetsMap, { absoluteScrollOffset, stop, snapAreas.size() - 1 });
         }
