@@ -1,3 +1,14 @@
+2021-07-20  Kyle Piddington  <kpiddington@apple.com>
+
+        REGRESSION(ANGLE+METAL): WebGL2 content low frame rate
+        https://bugs.webkit.org/show_bug.cgi?id=228012
+
+        Reviewed by Dean Jackson.
+        
+        Add Additional rules, allowing shared events to work in Webkit
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-07-20  Sihui Liu  <sihui_liu@apple.com>
 
         Completion handler of NetworkProcess::prepareToSuspend may not be invoked promptly
