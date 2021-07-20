@@ -1,3 +1,62 @@
+2021-07-20  Sam Sneddon  <gsnedders@apple.com>
+
+        Change referrer-policy default to strict-origin-when-cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=218909
+
+        Reviewed by Chris Dumez.
+
+        This matches the behavior of other browsers.
+        Covered by existing tests and web platform tests we haven't imported yet.
+
+        * http/tests/media/media-stream/enumerate-devices-source-id.html:
+        * http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http-http.html:
+        * http/tests/resourceLoadStatistics/downgraded-referrer-for-navigation-with-link-query-from-prevalent-resource.html:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.py:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py:
+        * http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative.py:
+        * http/tests/security/referrer-policy-header-expected.txt:
+        * http/tests/security/referrer-policy-header-multipart-expected.txt:
+        * http/tests/security/referrer-policy-header-test.js:
+        * http/wpt/beacon/cors/cors-preflight-blob-failure.html:
+        * http/wpt/beacon/cors/cors-preflight-blob-success.html:
+        * http/wpt/beacon/cors/cors-preflight-redirect-from-crossorigin-to-sameorigin.html:
+        * http/wpt/html/browsers/windows/browsing-context.html:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer.any-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-referrer.any.worker-expected.txt: Added.
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-main-frame-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-main-frame-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-iframe-expected.txt:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame-expected.txt:
+
 2021-07-20  Ziran Sun  <zsun@igalia.com>
 
         Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height

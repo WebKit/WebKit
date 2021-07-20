@@ -9,6 +9,7 @@ sys.stdout.write(
 
 print('''<!DOCTYPE html>
 <html>
+<meta name="referrer" content="unsafe-url">
 <body>
 <script>
     // Normal browsing mode

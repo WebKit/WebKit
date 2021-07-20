@@ -1,3 +1,18 @@
+2021-07-20  Sam Sneddon  <gsnedders@apple.com>
+
+        Change referrer-policy default to strict-origin-when-cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=218909
+
+        Reviewed by Chris Dumez.
+
+        This matches the behavior of other browsers. Update all our tests to deal with the origin now being shorter.
+
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.worker-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-src-about-blank-expected.txt:
+        * web-platform-tests/html/browsers/windows/browsing-context-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+
 2021-07-20  Ziran Sun  <zsun@igalia.com>
 
         Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height

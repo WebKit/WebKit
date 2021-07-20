@@ -8,6 +8,7 @@ sys.stdout.write(
     '<!-- webkit-test-runner [ useEphemeralSession=true ] -->\n'
     '<!DOCTYPE html>\n'
     '<html>\n'
+    '<meta name="referrer" content="unsafe-url">\n'
     '<body>\n'
     '<script>\n'
     'if (window.testRunner) {\n'

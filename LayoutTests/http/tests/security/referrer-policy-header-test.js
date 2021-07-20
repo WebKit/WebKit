@@ -29,10 +29,10 @@ let tests = [
     ["origin-when-cross-origin", sourceOrigin, crossOrigin],
     ["origin-when-cross-origin", fullSourceURL, sourceOrigin],
     ["origin-when-cross-origin", sourceOrigin, downgradedOrigin],
-    ["invalid", fullSourceURL, crossOrigin],
+    ["invalid", sourceOrigin, crossOrigin],
     ["invalid", fullSourceURL, sourceOrigin],
     ["invalid", "", downgradedOrigin],
-    ["", fullSourceURL, crossOrigin],
+    ["", sourceOrigin, crossOrigin],
     ["", fullSourceURL, sourceOrigin],
     ["", "", downgradedOrigin],
 ];

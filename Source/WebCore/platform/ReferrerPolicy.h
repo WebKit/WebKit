@@ -46,7 +46,8 @@ enum class ReferrerPolicy : uint8_t {
     StrictOrigin,
     OriginWhenCrossOrigin,
     StrictOriginWhenCrossOrigin,
-    UnsafeUrl
+    UnsafeUrl,
+    Default = StrictOriginWhenCrossOrigin
 };
 
 enum class ReferrerPolicySource : uint8_t { MetaTag, HTTPHeader, ReferrerPolicyAttribute };

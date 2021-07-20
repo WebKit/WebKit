@@ -1,8 +1,8 @@
 
 PASS Referrer policy: no-referrer and referrer: default
 PASS Referrer policy: no-referrer and referrer: 'myreferrer'
-FAIL Referrer policy: "" and referrer: default assert_equals: Preflight's referrer is correct expected "http://localhost:8800/" but got "http://localhost:8800/fetch/api/cors/cors-preflight-referrer.any.worker.js"
-FAIL Referrer policy: "" and referrer: 'myreferrer' assert_equals: Preflight's referrer is correct expected "http://localhost:8800/" but got "http://localhost:8800/fetch/api/cors/myreferrer"
+PASS Referrer policy: "" and referrer: default
+PASS Referrer policy: "" and referrer: 'myreferrer'
 PASS Referrer policy: no-referrer-when-downgrade and referrer: default
 PASS Referrer policy: no-referrer-when-downgrade and referrer: 'myreferrer'
 PASS Referrer policy: origin and referrer: default

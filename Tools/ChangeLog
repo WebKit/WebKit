@@ -1,3 +1,16 @@
+2021-07-20  Sam Sneddon  <gsnedders@apple.com>
+
+        Change referrer-policy default to strict-origin-when-cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=218909
+
+        Reviewed by Chris Dumez.
+
+        This matches the behavior of other browsers.
+        Covered by existing tests and web platform tests we haven't imported yet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
 2021-07-20  Aakash Jain  <aakash_jain@apple.com>
 
         EWS should send email notification when a bot goes out of disk space

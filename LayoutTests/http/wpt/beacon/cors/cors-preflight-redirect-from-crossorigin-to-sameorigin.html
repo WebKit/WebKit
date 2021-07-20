@@ -38,7 +38,7 @@ function testCORSPreflightRedirectSuccess(what) {
     assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
     return pollResult(test, id) .then(result => {
       assert_equals(result['preflight'], 1, "Received preflight")
-      assert_equals(result['preflight_referer'], document.URL, "Preflight referer header")
+      assert_equals(result['preflight_referer'], window.origin + "/", "Preflight referer header")
       assert_equals(result['preflight_requested_method'], "POST", "Preflight requested method")
       assert_equals(result['preflight_origin'], "null", "Received beacon")
       assert_equals(result['beacon'], 1, "Received beacon")
