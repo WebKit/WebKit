@@ -1,3 +1,17 @@
+2021-07-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Silence telemetry on MSC_mach_wait_until
+        https://bugs.webkit.org/show_bug.cgi?id=228112
+        <rdar://problem/78965631>
+
+        Reviewed by Per Arne Vollan.
+
+        We are processing a lot of telemetry for MSC_mach_wait_until in cases where a block with failure is the correct behavior.
+        Silencing the warning to reduce CPU and network traffic related to generating and de-duping telemetry on this call.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-07-20  Kate Cheney  <katherine_cheney@apple.com>
 
         IBeam cursor is horizontal in Mail compose window

@@ -2151,6 +2151,11 @@
 )
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
+    (deny syscall-mach
+        (machtrap-number
+            MSC_mach_wait_until
+        )
+    )
     (deny syscall-mach (with telemetry))
 )
 

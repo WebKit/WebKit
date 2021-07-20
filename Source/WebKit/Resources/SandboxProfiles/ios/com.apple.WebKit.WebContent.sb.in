@@ -1520,6 +1520,9 @@
 )
 
 (when (defined? 'syscall-mach)
+    (deny syscall-mach
+        (machtrap-number MSC_mach_wait_until)
+    )
     (deny syscall-mach (with telemetry))
     (allow syscall-mach
         (machtrap-number MSC__kernelrpc_mach_port_allocate_trap)
