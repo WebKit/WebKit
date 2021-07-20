@@ -1,3 +1,15 @@
+2021-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] invalidParameterInstanceofSourceAppender should care direct call of Symbol.hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=228075
+        rdar://80762879
+
+        Reviewed by Frédéric Wang.
+
+        * stress/symbol-hasinstance-error.js: Added.
+        (shouldThrow):
+        (let.a):
+
 2021-07-19  Mark Lam  <mark.lam@apple.com>
 
         DFG's parseIntResult() should check for negative zero.

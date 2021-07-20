@@ -219,7 +219,10 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
     auto instanceofIndex = sourceText.reverseFind("instanceof");
-    RELEASE_ASSERT(instanceofIndex != notFound);
+    // This can happen when Symbol.hasInstance function is directly called.
+    if (instanceofIndex == notFound)
+        return originalMessage;
+
     if (sourceText.find("instanceof") != instanceofIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
