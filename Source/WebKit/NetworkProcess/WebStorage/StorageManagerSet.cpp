@@ -177,17 +177,12 @@ void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
-    Locker stateLocker { m_stateLock };
-    if (m_state != State::Running)
-        return;
-    m_state = State::WillSuspend;
+    Locker suspensionLocker { m_suspensionLock };
+    m_shouldSuspend = true;
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = completionHandlerCaller.release()] () mutable {
-        Locker stateLocker { m_stateLock };
-        ASSERT(m_state != State::Suspended);
-
-        if (m_state != State::WillSuspend) {
+    m_queue->dispatch([this, protectedThis = makeRef(*this), suspensionIdentifier = ++m_suspensionIdentifier, completionHandler = WTFMove(completionHandler)] () mutable {
+        Locker suspensionLocker { m_suspensionLock };
+        if (!m_shouldSuspend || suspensionIdentifier != m_suspensionIdentifier) {
             RunLoop::main().dispatch(WTFMove(completionHandler));
             return;
         }
@@ -196,12 +191,10 @@ void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
         // SQL transaction has been committed.
         flushLocalStorage();
 
-        m_state = State::Suspended;
         RunLoop::main().dispatch(WTFMove(completionHandler));
 
-        while (m_state == State::Suspended)
-            m_stateChangeCondition.wait(m_stateLock);
-        ASSERT(m_state == State::Running);
+        while (m_shouldSuspend)
+            m_suspensionCondition.wait(m_suspensionLock);
     });
 }
 
@@ -209,11 +202,9 @@ void StorageManagerSet::resume()
 {
     ASSERT(RunLoop::isMain());
 
-    Locker stateLocker { m_stateLock };
-    auto previousState = m_state;
-    m_state = State::Running;
-    if (previousState == State::Suspended)
-        m_stateChangeCondition.notifyOne();
+    Locker suspensionLocker { m_suspensionLock };
+    m_shouldSuspend = false;
+    m_suspensionCondition.notifyOne();
 }
 
 void StorageManagerSet::getSessionStorageOrigins(PAL::SessionID sessionID, GetOriginsCallback&& completionHandler)

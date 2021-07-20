@@ -1,3 +1,36 @@
+2021-07-20  Sihui Liu  <sihui_liu@apple.com>
+
+        Completion handler of NetworkProcess::prepareToSuspend may not be invoked promptly
+        https://bugs.webkit.org/show_bug.cgi?id=228119
+
+        Reviewed by Chris Dumez.
+
+        WebResourceLoadStatisticsStore and StorageManagerSet dispatch task to suspend background thread on suspension.
+        When the task is finished on background thread, it dispatches a reply task to main thread. When all replies are
+        received, network process replies prepareToSuspend message. With our current implementation, if network process
+        receives messages in order { PrepareToSuspend, ProcessDidResume, PrepareToSuspend }, 
+        WebResourceLoadStatisticsStore and StorageManagerSet may dispatch two suspend tasks to background thread and
+        get suspended in the first task. In this case, the second PrepareToSuspend message will not be replied, and
+        UI process will be waiting on reply for the latest PrepareToSuspend message to release assertion. To solve this,
+        background thread should only execute latest suspend task by checking task identifier.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WTF_GUARDED_BY_LOCK):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+        (WebKit::WebResourceLoadStatisticsStore::resume):
+        (): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::suspendIDBServers):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::suspend):
+        (WebKit::StorageManagerSet::resume):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        (WebKit::StorageManagerSet::WTF_GUARDED_BY_LOCK):
+        (): Deleted.
+
 2021-07-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Silence telemetry on MSC_mach_wait_until

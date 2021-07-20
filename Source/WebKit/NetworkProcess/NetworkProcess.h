@@ -585,6 +585,7 @@ private:
     HashMap<PAL::SessionID, String> m_idbDatabasePaths;
     HashMap<PAL::SessionID, RefPtr<WebIDBServer>> m_webIDBServers;
     bool m_shouldSuspendIDBServers { false };
+    uint64_t m_suspensionIdentifier { 0 };
     
 #if ENABLE(SERVICE_WORKER)
     struct ServiceWorkerInfo {

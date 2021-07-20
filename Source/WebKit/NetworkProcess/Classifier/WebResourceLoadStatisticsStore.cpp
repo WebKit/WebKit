@@ -59,9 +59,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebResourceLoadStatisticsStore::State WebResourceLoadStatisticsStore::suspendedState { WebResourceLoadStatisticsStore::State::Running };
-Lock WebResourceLoadStatisticsStore::suspendedStateLock;
-Condition WebResourceLoadStatisticsStore::suspendedStateChangeCondition;
+static Lock globalSuspensionLock;
+static Condition globalSuspensionCondition;
+static bool globalShouldSuspend WTF_GUARDED_BY_LOCK(globalSuspensionLock) { false };
+static uint64_t globalSuspensionIdentifier WTF_GUARDED_BY_LOCK(globalSuspensionLock) { 0 };
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {
@@ -353,13 +354,6 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
             postTaskReply(WTFMove(completionHandler));
             return;
         }
-
-#if ASSERT_ENABLED
-        {
-            Locker stateLocker { suspendedStateLock };
-            ASSERT(suspendedState != State::Suspended);
-        }
-#endif
 
         m_statisticsStore->mergeStatistics(WTFMove(statistics));
         postTaskReply(WTFMove(completionHandler));
@@ -1454,17 +1448,12 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 
 void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& completionHandler)
 {
-    CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
-    Locker stateLocker { suspendedStateLock };
-    if (suspendedState != State::Running)
-        return;
-    suspendedState = State::WillSuspend;
+    Locker suspensionLocker { globalSuspensionLock };
+    globalShouldSuspend = true;
 
-    sharedStatisticsQueue()->dispatch([completionHandler = completionHandlerCaller.release()] () mutable {
-        Locker stateLocker { suspendedStateLock };
-        ASSERT(suspendedState != State::Suspended);
-
-        if (suspendedState != State::WillSuspend) {
+    sharedStatisticsQueue()->dispatch([suspensionIdentifier = ++globalSuspensionIdentifier, completionHandler = WTFMove(completionHandler)] () mutable {
+        Locker suspensionLocker { globalSuspensionLock };
+        if (!globalShouldSuspend || suspensionIdentifier != globalSuspensionIdentifier) {
             postTaskReply(WTFMove(completionHandler));
             return;
         }
@@ -1472,22 +1461,20 @@ void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& complet
         for (auto& databaseStore : ResourceLoadStatisticsDatabaseStore::allStores())
             databaseStore->interrupt();
 
-        suspendedState = State::Suspended;
         postTaskReply(WTFMove(completionHandler));
 
-        while (suspendedState == State::Suspended)
-            suspendedStateChangeCondition.wait(suspendedStateLock);
-        ASSERT(suspendedState != State::Suspended);
+        while (globalShouldSuspend)
+            globalSuspensionCondition.wait(globalSuspensionLock);
     });
 }
 
 void WebResourceLoadStatisticsStore::resume()
 {
-    Locker stateLocker { suspendedStateLock };
-    auto previousState = suspendedState;
-    suspendedState = State::Running;
-    if (previousState == State::Suspended)
-        suspendedStateChangeCondition.notifyOne();
+    ASSERT(RunLoop::isMain());
+
+    Locker suspensionLocker { globalSuspensionLock };
+    globalShouldSuspend = false;
+    globalSuspensionCondition.notifyOne();
 }
 
 void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)

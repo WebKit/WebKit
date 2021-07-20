@@ -2214,6 +2214,7 @@ void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandle
 void NetworkProcess::suspendIDBServers(bool isSuspensionImminent)
 {
     m_shouldSuspendIDBServers = true;
+    ++m_suspensionIdentifier;
 
     bool allSuspended = true;
     auto condition = isSuspensionImminent ? WebIDBServer::SuspensionCondition::Always : WebIDBServer::SuspensionCondition::IfIdle;
@@ -2223,13 +2224,13 @@ void NetworkProcess::suspendIDBServers(bool isSuspensionImminent)
     if (allSuspended)
         return;
 
-    RunLoop::main().dispatchAfter(5_s, [this, weakThis = makeWeakPtr(*this)] {
+    RunLoop::main().dispatchAfter(5_s, [this, weakThis = makeWeakPtr(*this), suspensionIdentifier = m_suspensionIdentifier] {
         if (!weakThis)
             return;
 
-        if (!m_shouldSuspendIDBServers)
+        if (!m_shouldSuspendIDBServers || suspensionIdentifier != m_suspensionIdentifier)
             return;
-        
+
         for (auto& server : m_webIDBServers.values())
             server->suspend(WebIDBServer::SuspensionCondition::Always);
     });
