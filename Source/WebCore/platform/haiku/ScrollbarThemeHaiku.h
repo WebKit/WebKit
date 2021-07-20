@@ -51,7 +51,7 @@ public:
     void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
     void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
 
-    void paintScrollCorner(GraphicsContext&, const IntRect&t) override;
+    void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect&t) override;
 
 private:
     bool m_drawOuterFrame;

@@ -126,23 +126,25 @@ IntRect ScrollbarThemeHaiku::trackRect(Scrollbar& scrollbar, bool)
     return IntRect(scrollbar.x(), scrollbar.y() + thickness, thickness, scrollbar.height() - 2 * thickness - 1);
 }
 
-void ScrollbarThemeHaiku::paintScrollCorner(GraphicsContext& context, const IntRect& rect)
+void ScrollbarThemeHaiku::paintScrollCorner(ScrollableArea&, GraphicsContext& context, const IntRect& rect)
 {
-	if (rect.width() == 0 || rect.height() == 0)
-		return;
+    if (rect.width() == 0 || rect.height() == 0)
+        return;
 
     BRect drawRect = BRect(rect);
     BView* view = context.platformContext();
+    view->PushState();
     rgb_color base = ui_color(B_PANEL_BACKGROUND_COLOR);
     if (!m_drawOuterFrame) {
-    	view->SetHighColor(tint_color(base, B_DARKEN_2_TINT));
-    	view->StrokeLine(drawRect.LeftBottom(), drawRect.LeftTop());
-    	drawRect.left++;
-    	view->StrokeLine(drawRect.LeftTop(), drawRect.RightTop());
-    	drawRect.top++;
+        view->SetHighColor(tint_color(base, B_DARKEN_2_TINT));
+        view->StrokeLine(drawRect.LeftBottom(), drawRect.LeftTop());
+        drawRect.left++;
+        view->StrokeLine(drawRect.LeftTop(), drawRect.RightTop());
+        drawRect.top++;
     }
     view->SetHighColor(base);
     view->FillRect(drawRect);
+    view->PopState();
 }
 
 
