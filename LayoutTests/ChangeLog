@@ -1,3 +1,16 @@
+2021-07-20  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r278702): Cannot login to appaloosa-store.com/users/sign_in
+        https://bugs.webkit.org/show_bug.cgi?id=228096
+        <rdar://80596391>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/tests/fetch/response-clone-blob-expected.txt: Added.
+        * http/tests/fetch/response-clone-blob.html: Added.
+
 2021-07-20  Chris Lord  <clord@igalia.com>
 
         Canvas and OffscreenCanvas getContext should check if argument is an object before trying to convert it to a dictionary

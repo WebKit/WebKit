@@ -351,7 +351,15 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context)
     if (!m_buffer)
         return Blob::create(context, Vector<uint8_t>(), Blob::normalizedContentType(m_contentType));
 
-    auto data = std::exchange(m_buffer, nullptr)->takeData();
+    Vector<uint8_t> data;
+    auto buffer = std::exchange(m_buffer, nullptr);
+    if (buffer->hasOneRef())
+        data = buffer->takeData(); // Avoid copying the data in the case where the buffer isn't shared.
+    else {
+        buffer->forEachSegment([&data](auto& span) {
+            data.append(span);
+        });
+    }
     return blobFromData(context, WTFMove(data), m_contentType);
 }
 
