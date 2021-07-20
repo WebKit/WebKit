@@ -2325,5 +2325,7 @@ webkit.org/b/227877 imported/w3c/web-platform-tests/navigation-timing/test_timin
 
 webkit.org/b/228011 inspector/canvas/setRecordingAutoCaptureFrameCount.html [ Pass Failure ]
 
+webkit.org/b/214574 svg/animations/smil-leak-list-property-instances.svg [ Pass Failure ]
+
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
 
