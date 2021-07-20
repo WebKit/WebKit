@@ -1350,3 +1350,5 @@ webkit.org/b/225495 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-s
 webkit.org/b/225490 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-containing-block-002.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/225470 [ BigSur Release ] svg/filters/feDiffuseLighting-bottomRightPixel.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/225420 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-017.html [ Pass ImageOnlyFailure ]
