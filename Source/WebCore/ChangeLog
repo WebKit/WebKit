@@ -1,3 +1,22 @@
+2021-07-20  Ziran Sun  <zsun@igalia.com>
+
+        Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height
+        https://bugs.webkit.org/show_bug.cgi?id=228022
+
+        Reviewed by Javier Fernandez.
+
+        When computing the logical height using an intrinsic aspect ratio, RenderReplaced should use the
+        overridingLogicalWidth whenever defined just as how it does for flex items. This change is to
+        replace the use of intrinsic (non-stretched) logical width in current code with the overridingLogicalWidth.
+
+        The current code doesn't set overringLogicalWidth while the width changes while stretches along Row Axis.
+        This change adds the logic in.
+                
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight const):
+
 2021-07-20  Rob Buis  <rbuis@igalia.com>
 
         Fix grid aspect-ratio tests

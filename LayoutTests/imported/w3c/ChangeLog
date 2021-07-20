@@ -1,3 +1,18 @@
+2021-07-20  Ziran Sun  <zsun@igalia.com>
+
+        Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height
+        https://bugs.webkit.org/show_bug.cgi?id=228022
+
+        Reviewed by Javier Fernandez.
+
+        Update test expectations as the sub-tests are now passing.
+
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036-expected.txt:
+
 2021-07-20  Rob Buis  <rbuis@igalia.com>
 
         Fix grid aspect-ratio tests

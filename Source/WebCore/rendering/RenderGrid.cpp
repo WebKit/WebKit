@@ -1149,12 +1149,15 @@ bool RenderGrid::aspectRatioPrefersInline(const RenderBox& child, bool blockFlow
 void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 {
     ASSERT(child.overridingContainingBlockContentLogicalHeight());
+    ASSERT(child.overridingContainingBlockContentLogicalWidth());
 
-    // We clear height override values because we will decide now whether it's allowed or
+    // We clear height and width override values because we will decide now whether it's allowed or
     // not, evaluating the conditions which might have changed since the old values were set.
     child.clearOverridingLogicalHeight();
+    child.clearOverridingLogicalWidth();
 
     GridTrackSizingDirection childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
+    GridTrackSizingDirection childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForColumns);
     bool blockFlowIsColumnAxis = childBlockDirection == ForRows;
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize && !aspectRatioPrefersInline(child, blockFlowIsColumnAxis)) {
@@ -1170,7 +1173,15 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
             child.setLogicalHeight(0_lu);
             child.setNeedsLayout(MarkOnlyThis);
         }
-    }
+    } else if (!allowedToStretchChildBlockSize && allowedToStretchChildAlongRowAxis(child)) {
+        LayoutUnit stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child);
+        LayoutUnit desiredLogicalWidth = constrainLogicalWidthInFragmentByMinMax(stretchedLogicalWidth, contentWidth(), *this, nullptr);
+        child.setOverridingLogicalWidth(desiredLogicalWidth);
+        if (desiredLogicalWidth != child.logicalWidth()) {
+            child.setLogicalWidth(0_lu);
+            child.setNeedsLayout(MarkOnlyThis);
+        }
+    } 
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
