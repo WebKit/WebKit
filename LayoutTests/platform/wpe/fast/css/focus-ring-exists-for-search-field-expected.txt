@@ -12,8 +12,9 @@ layer at (0,0) size 800x600
           RenderFlexibleBox {DIV} at (3,3) size 183x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 167x18
-            RenderImage {DIV} at (167,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
 layer at (13,65) size 167x18
   RenderBlock {DIV} at (0,0) size 167x18
+layer at (180,66) size 16x16
+  RenderBlock {DIV} at (167,1) size 16x16 [bgcolor=#000000]
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

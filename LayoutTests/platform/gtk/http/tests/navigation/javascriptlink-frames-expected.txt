@@ -22,12 +22,12 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,222) size 0x36
               RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
               RenderBlock {FORM} at (0,293) size 769x510
-                RenderButton {INPUT} at (2,2) size 147x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderButton {INPUT} at (2,2) size 147x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 131x18
                     RenderText at (0,0) size 131x17
                       text run at (0,0) width 131: "Submit with POST"
                 RenderBR {BR} at (151,-9) size 0x36
-                RenderButton {INPUT} at (2,33) size 302x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                RenderButton {INPUT} at (2,33) size 302x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 286x18
                     RenderText at (0,0) size 286x17
                       text run at (0,0) width 286: "Submit with POST followed by a redirect"

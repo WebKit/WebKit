@@ -17,7 +17,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 183x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 167x18
-            RenderImage {DIV} at (167,1) size 16x16
         RenderText {#text} at (374,23) size 4x17
           text run at (374,23) width 4: " "
         RenderTextControl {INPUT} at (380,20) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -27,7 +26,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 183x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 167x18
-            RenderImage {DIV} at (167,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,48) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 167x18
@@ -40,7 +38,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 182x18
             RenderBlock {DIV} at (182,9) size 0x0
             RenderBlock {DIV} at (16,0) size 166x18
-            RenderImage {DIV} at (0,1) size 16x16
         RenderText {#text} at (372,79) size 4x17
           text run at (372,79) width 4: " "
         RenderTextControl {INPUT} at (378,76) size 172x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -50,7 +47,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 182x18
             RenderBlock {DIV} at (182,9) size 0x0
             RenderBlock {DIV} at (16,0) size 166x18
-            RenderImage {DIV} at (0,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,104) size 172x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 166x18
@@ -67,7 +63,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 183x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 167x18
-            RenderImage {DIV} at (167,1) size 16x16
         RenderText {#text} at (374,23) size 4x17
           text run at (374,23) width 4: " "
         RenderTextControl {INPUT} at (380,20) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -77,7 +72,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 183x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 167x18
-            RenderImage {DIV} at (167,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,48) size 173x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 167x18
@@ -90,7 +84,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 182x18
             RenderBlock {DIV} at (182,9) size 0x0
             RenderBlock {DIV} at (16,0) size 166x18
-            RenderImage {DIV} at (0,1) size 16x16
         RenderText {#text} at (372,79) size 4x17
           text run at (372,79) width 4: " "
         RenderTextControl {INPUT} at (378,76) size 172x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -100,7 +93,6 @@ layer at (0,0) size 800x432
           RenderFlexibleBox {DIV} at (3,3) size 182x18
             RenderBlock {DIV} at (182,9) size 0x0
             RenderBlock {DIV} at (16,0) size 166x18
-            RenderImage {DIV} at (0,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,104) size 172x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 166x18
@@ -244,3 +236,19 @@ layer at (456,393) size 167x18 scrollWidth 344
   RenderBlock {DIV} at (3,3) size 167x18
     RenderText {#text} at (0,0) size 343x17
       text run at (0,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+layer at (361,74) size 16x16
+  RenderBlock {DIV} at (167,1) size 16x16 [bgcolor=#000000]
+layer at (739,74) size 16x16
+  RenderBlock {DIV} at (167,1) size 16x16 [bgcolor=#000000]
+layer at (193,130) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (569,130) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (361,220) size 16x16
+  RenderBlock {DIV} at (167,1) size 16x16 [bgcolor=#000000]
+layer at (739,220) size 16x16
+  RenderBlock {DIV} at (167,1) size 16x16 [bgcolor=#000000]
+layer at (193,276) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (569,276) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]

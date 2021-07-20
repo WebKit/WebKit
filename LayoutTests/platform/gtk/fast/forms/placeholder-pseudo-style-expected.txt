@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
         RenderFlexibleBox {DIV} at (3,3) size 202x18
           RenderBlock {DIV} at (0,9) size 0x0
           RenderBlock {DIV} at (0,0) size 186x18
-          RenderImage {DIV} at (186,1) size 16x16
       RenderText {#text} at (412,23) size 4x17
         text run at (412,23) width 4: " "
       RenderTextControl {INPUT} at (418,20) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]

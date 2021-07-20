@@ -16,9 +16,10 @@ layer at (0,0) size 800x600
           RenderFlexibleBox {DIV} at (3,3) size 202x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 186x18
-            RenderImage {DIV} at (186,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
 layer at (13,47) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
     RenderText {#text} at (0,0) size 68x17
       text run at (0,0) width 68: "some text"
+layer at (199,48) size 16x16
+  RenderBlock {DIV} at (186,1) size 16x16 [bgcolor=#000000]
