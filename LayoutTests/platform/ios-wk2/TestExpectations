@@ -1918,7 +1918,7 @@ webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
 
-imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Pass Failure ]
 
 # @counter-style WPT failures specific to ios-wk2
