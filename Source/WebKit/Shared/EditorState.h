@@ -81,6 +81,7 @@ struct EditorState {
     bool isInPasswordField { false };
     bool isInPlugin { false };
     bool hasComposition { false };
+    bool triggeredByAccessibilitySelectionChange { false };
     bool isMissingPostLayoutData { true };
 
     struct PostLayoutData {

@@ -191,6 +191,9 @@ private:
     bool shouldSuppressPasswordEcho() const final;
 #endif
 
+    void willChangeSelectionForAccessibility() final;
+    void didChangeSelectionForAccessibility() final;
+
     bool performTwoStepDrop(WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool isMove) final;
     bool supportsGlobalSelection() final;
 

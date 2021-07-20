@@ -587,6 +587,16 @@ void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, cons
     m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request.data(), insertionPointFromCurrentSelection(currentSelection)));
 }
 
+void WebEditorClient::willChangeSelectionForAccessibility()
+{
+    m_page->willChangeSelectionForAccessibility();
+}
+
+void WebEditorClient::didChangeSelectionForAccessibility()
+{
+    m_page->didChangeSelectionForAccessibility();
+}
+
 void WebEditorClient::willSetInputMethodState()
 {
 }

@@ -1,5 +1,204 @@
 2021-07-19  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280019. rdar://problem/80788628
+
+    [iOS] [AX] Keyboard text candidates don't update when changing selection using Switch Control
+    https://bugs.webkit.org/show_bug.cgi?id=228051
+    rdar://79944295
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    See WebKit ChangeLog for more details.
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+    (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+    
+    Call the new EditorClient methods added below. Additionally, drive-by fix `setSelectedVisiblePositionRange` so
+    that it also performs a user-triggered selection change in the case where the range is not collapsed; this
+    matches the behavior of `setSelectedTextRange` as well.
+    
+    * page/EditorClient.h:
+    (WebCore::EditorClient::willChangeSelectionForAccessibility):
+    (WebCore::EditorClient::didChangeSelectionForAccessibility):
+    
+    Add new EditorClient hooks, `(will|did)ChangeSelectionForAccessibility`, that accessibility code can call before
+    and after it triggers a selection change; we use these two codepaths above when using the "Previous/Next
+    Character", "Previous/Next Word", and "Previous/Next Line" Switch Control menu actions.
+    
+    Source/WebKit:
+    
+    Add support for updating text candidates by calling into UIKeyboardImpl when changing the selection via
+    accessibility UI (e.g. when using Switch Control). To achieve this, we add a new EditorState flag that indicates
+    whether or not the EditorState change was triggered by accessibility; in WKContentView, we then consult this
+    flag and call `-beginSelectionChange/-endSelectionChange` in the case where the updated editor state change was
+    triggered by accessibility and we're also not already in the scope of another selection change or gesture-based
+    selection change.
+    
+    Note that the latter part of the check is critical in order to avoid deadlocks in UIKeyboardTaskQueue; see
+    r246013, r246425 and r246665, which introduced and later reverted a similar mechanism for updating
+    UIKeyboardImpl, but after every selection change.
+    
+    * Shared/EditorState.cpp:
+    (WebKit::EditorState::encode const):
+    (WebKit::EditorState::decode):
+    (WebKit::operator<<):
+    * Shared/EditorState.h:
+    
+    Add the new boolean flag, `triggeredByAccessibilitySelectionChange`.
+    
+    * UIProcess/WebPageProxy.cpp:
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView beginSelectionChange]):
+    (-[WKContentView endSelectionChange]):
+    
+    Add a new `unsigned` flag, `_selectionChangeNestingLevel`, that lets us know if we're expecting an eventual call
+    to `-endSelectionChange`. See `-_selectionChanged` below for more details. Note that we don't need to reset
+    `_selectionChangeNestingLevel` to 0 when cleaning up the interaction after web process termination, because
+    the completion handlers that contain all the balanced calls to `-endSelectionChange` should be invoked after
+    such an event anyways.
+    
+    (-[WKContentView _selectionChanged]):
+    
+    If the `triggeredByAccessibilitySelectionChange` bit is set on the incoming (post layout data) EditorState and:
+    (1) UIKit isn't in the middle of handling a gesture that modifies the selection, and...
+    (2) We aren't expecting a call to `-endSelectionChange`.
+    
+    ...then we force UIKeyboardImpl to reload its UI (text suggestions, B/I/U state, etc.) using the incoming
+    EditorState. This allows accessibility-driven selection changes using Switch Control to behave like gesture-
+    based selection changes.
+    
+    * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+    (WebKit::WebEditorClient::willChangeSelectionForAccessibility):
+    (WebKit::WebEditorClient::didChangeSelectionForAccessibility):
+    
+    Implement a couple of client hooks in WebKit2 so that we set a boolean flag on WebPage,
+    `m_isChangingSelectionForAccessibility`, to `true` over the scope of an AX-driven selection change. See related
+    AX changes in WebCore for more details.
+    
+    * WebProcess/WebCoreSupport/WebEditorClient.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::hasPendingEditorStateUpdate const):
+    
+    Add a helper method so that we can conveniently check whether we have a pending editor state update to flush,
+    since the previous boolean flag is now a tri-state enum (`m_pendingEditorStateUpdateStatus`).
+    
+    (WebKit::WebPage::editorState const):
+    (WebKit::WebPage::willCommitLayerTree):
+    (WebKit::WebPage::sendEditorStateUpdate):
+    (WebKit::WebPage::scheduleFullEditorStateUpdate):
+    
+    If we're in the scope of an accessibility selection change, transition `m_pendingEditorStateUpdateStatus` to
+    `ScheduledDuringAccessibilitySelectionChange`; otherwise, just use `Scheduled`.
+    
+    (WebKit::WebPage::flushPendingEditorStateUpdate):
+    
+    Refactor `m_hasPendingEditorStateUpdate` so that it now captures three states:
+    (1) We haven't scheduled an editor state update yet.
+    (2) We've scheduled an editor state update that was not triggered by accessibility.
+    (3) We've scheduled an editor state update that was triggered by accessibility.
+    
+    The distinction between (2) and (3) allows us to populate EditorState's new
+    `triggeredByAccessibilitySelectionChange` flag.
+    
+    * WebProcess/WebPage/WebPage.h:
+    (WebKit::WebPage::willChangeSelectionForAccessibility):
+    (WebKit::WebPage::didChangeSelectionForAccessibility):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280019 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] [AX] Keyboard text candidates don't update when changing selection using Switch Control
+            https://bugs.webkit.org/show_bug.cgi?id=228051
+            rdar://79944295
+
+            Reviewed by Tim Horton.
+
+            Add support for updating text candidates by calling into UIKeyboardImpl when changing the selection via
+            accessibility UI (e.g. when using Switch Control). To achieve this, we add a new EditorState flag that indicates
+            whether or not the EditorState change was triggered by accessibility; in WKContentView, we then consult this
+            flag and call `-beginSelectionChange/-endSelectionChange` in the case where the updated editor state change was
+            triggered by accessibility and we're also not already in the scope of another selection change or gesture-based
+            selection change.
+
+            Note that the latter part of the check is critical in order to avoid deadlocks in UIKeyboardTaskQueue; see
+            r246013, r246425 and r246665, which introduced and later reverted a similar mechanism for updating
+            UIKeyboardImpl, but after every selection change.
+
+            * Shared/EditorState.cpp:
+            (WebKit::EditorState::encode const):
+            (WebKit::EditorState::decode):
+            (WebKit::operator<<):
+            * Shared/EditorState.h:
+
+            Add the new boolean flag, `triggeredByAccessibilitySelectionChange`.
+
+            * UIProcess/WebPageProxy.cpp:
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView beginSelectionChange]):
+            (-[WKContentView endSelectionChange]):
+
+            Add a new `unsigned` flag, `_selectionChangeNestingLevel`, that lets us know if we're expecting an eventual call
+            to `-endSelectionChange`. See `-_selectionChanged` below for more details. Note that we don't need to reset
+            `_selectionChangeNestingLevel` to 0 when cleaning up the interaction after web process termination, because
+            the completion handlers that contain all the balanced calls to `-endSelectionChange` should be invoked after
+            such an event anyways.
+
+            (-[WKContentView _selectionChanged]):
+
+            If the `triggeredByAccessibilitySelectionChange` bit is set on the incoming (post layout data) EditorState and:
+            (1) UIKit isn't in the middle of handling a gesture that modifies the selection, and...
+            (2) We aren't expecting a call to `-endSelectionChange`.
+
+            ...then we force UIKeyboardImpl to reload its UI (text suggestions, B/I/U state, etc.) using the incoming
+            EditorState. This allows accessibility-driven selection changes using Switch Control to behave like gesture-
+            based selection changes.
+
+            * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+            (WebKit::WebEditorClient::willChangeSelectionForAccessibility):
+            (WebKit::WebEditorClient::didChangeSelectionForAccessibility):
+
+            Implement a couple of client hooks in WebKit2 so that we set a boolean flag on WebPage,
+            `m_isChangingSelectionForAccessibility`, to `true` over the scope of an AX-driven selection change. See related
+            AX changes in WebCore for more details.
+
+            * WebProcess/WebCoreSupport/WebEditorClient.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::hasPendingEditorStateUpdate const):
+
+            Add a helper method so that we can conveniently check whether we have a pending editor state update to flush,
+            since the previous boolean flag is now a tri-state enum (`m_pendingEditorStateUpdateStatus`).
+
+            (WebKit::WebPage::editorState const):
+            (WebKit::WebPage::willCommitLayerTree):
+            (WebKit::WebPage::sendEditorStateUpdate):
+            (WebKit::WebPage::scheduleFullEditorStateUpdate):
+
+            If we're in the scope of an accessibility selection change, transition `m_pendingEditorStateUpdateStatus` to
+            `ScheduledDuringAccessibilitySelectionChange`; otherwise, just use `Scheduled`.
+
+            (WebKit::WebPage::flushPendingEditorStateUpdate):
+
+            Refactor `m_hasPendingEditorStateUpdate` so that it now captures three states:
+            (1) We haven't scheduled an editor state update yet.
+            (2) We've scheduled an editor state update that was not triggered by accessibility.
+            (3) We've scheduled an editor state update that was triggered by accessibility.
+
+            The distinction between (2) and (3) allows us to populate EditorState's new
+            `triggeredByAccessibilitySelectionChange` flag.
+
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::willChangeSelectionForAccessibility):
+            (WebKit::WebPage::didChangeSelectionForAccessibility):
+
+2021-07-19  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r279975. rdar://problem/80788597
 
     [iOS] WKMouseGestureRecognizer should not have failure requirements on WKDeferringGestureRecognizer

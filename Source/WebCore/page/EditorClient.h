@@ -192,6 +192,9 @@ public:
     virtual bool canShowFontPanel() const = 0;
 
     virtual bool shouldAllowSingleClickToChangeSelection(Node&, const VisibleSelection&) const { return true; }
+
+    virtual void willChangeSelectionForAccessibility() { }
+    virtual void didChangeSelectionForAccessibility() { }
 };
 
 }
