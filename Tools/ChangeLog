@@ -1,3 +1,12 @@
+2021-07-21  Alexey Proskuryakov  <ap@apple.com>
+
+        MiniBrowser xcconfig should include ccache.xcconfig conditionally
+        https://bugs.webkit.org/show_bug.cgi?id=228126
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+
 2021-07-21  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
