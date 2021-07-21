@@ -1,3 +1,17 @@
+2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        r280103 is not necessary on all operating systems
+        https://bugs.webkit.org/show_bug.cgi?id=228136
+
+        Reviewed by Alan Bujtas.
+
+        r280103 is not necessary on all operating systems.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+
 2021-07-20  Said Abou-Hallawa  <said@apple.com>
 
         Make the 'targetElement' argument of the SVG animators to be a reference

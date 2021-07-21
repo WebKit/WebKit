@@ -1,3 +1,12 @@
+2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        r280103 is not necessary on all operating systems
+        https://bugs.webkit.org/show_bug.cgi?id=228136
+
+        Reviewed by Alan Bujtas.
+
+        * wtf/PlatformUse.h:
+
 2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Support color-schemes CSS property

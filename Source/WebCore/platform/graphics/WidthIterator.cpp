@@ -107,10 +107,10 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
 
     font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font.fontDescription().computedLocale(), m_run.text(), m_run.direction());
 
+#if USE(CTFONTSHAPEGLYPHS_WORKAROUND)
     // <rdar://problem/80798113>: If a character is not in BMP, and we don't have a glyph for it,
     // we'll end up with two 0 glyphs in a row for the two surrogates of the character.
     // We need to make sure that, after shaping, these double-0-glyphs aren't preserved.
-    // FIXME: Delete this when rdar://80818297 is fixed everywhere.
     if (&font == &m_font.primaryFont() && !m_run.text().is8Bit()) {
         for (unsigned i = 0; i < glyphBuffer.size() - 1; ++i) {
             if (!glyphBuffer.glyphAt(i) && !glyphBuffer.glyphAt(i + 1)) {
@@ -125,6 +125,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
             }
         }
     }
+#endif
 
     glyphBufferSize = glyphBuffer.size();
     advances = glyphBuffer.advances(0);
