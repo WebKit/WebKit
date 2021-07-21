@@ -64,6 +64,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << persistentCredentialStorageEnabled;
     encoder << ignoreTLSErrors;
     encoder << proxySettings;
+    encoder << cookieAcceptPolicy;
 #endif
 #if USE(CURL)
     encoder << cookiePersistentStorageFile;
@@ -188,6 +189,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     std::optional<WebCore::SoupNetworkProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
+        return std::nullopt;
+
+    std::optional<WebCore::HTTPCookieAcceptPolicy> cookieAcceptPolicy;
+    decoder >> cookieAcceptPolicy;
+    if (!cookieAcceptPolicy)
         return std::nullopt;
 #endif
 
@@ -318,6 +324,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*persistentCredentialStorageEnabled)
         , WTFMove(*ignoreTLSErrors)
         , WTFMove(*proxySettings)
+        , WTFMove(*cookieAcceptPolicy)
 #endif
 #if USE(CURL)
         , WTFMove(*cookiePersistentStorageFile)

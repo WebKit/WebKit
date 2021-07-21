@@ -47,6 +47,8 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSe
     auto* storageSession = networkStorageSession();
     ASSERT(storageSession);
 
+    storageSession->setCookieAcceptPolicy(parameters.cookieAcceptPolicy);
+
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
 
     if (parameters.proxySettings.mode != SoupNetworkProxySettings::Mode::Default)
