@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
@@ -82,9 +82,9 @@ bool SVGAnimateElementBase::isDiscreteAnimator() const
     return animator && animator->isDiscrete();
 }
 
-void SVGAnimateElementBase::setTargetElement(SVGElement* target)
+void SVGAnimateElementBase::setTargetElement(SVGElement* targetElement)
 {
-    SVGAnimationElement::setTargetElement(target);
+    SVGAnimationElement::setTargetElement(targetElement);
     resetAnimation();
 }
 
@@ -107,7 +107,7 @@ bool SVGAnimateElementBase::calculateFromAndToValues(const String& fromString, c
         return false;
 
     if (auto* animator = this->animator()) {
-        animator->setFromAndToValues(targetElement(), animateRangeString(fromString), animateRangeString(toString));
+        animator->setFromAndToValues(*targetElement(), animateRangeString(fromString), animateRangeString(toString));
         return true;
     }
     return false;
@@ -115,7 +115,7 @@ bool SVGAnimateElementBase::calculateFromAndToValues(const String& fromString, c
 
 bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, const String& byString)
 {
-    if (!this->targetElement())
+    if (!targetElement())
         return false;
 
     if (animationMode() == AnimationMode::By && (!isAdditive() || isDiscreteAnimator()))
@@ -125,7 +125,7 @@ bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, c
         return false;
 
     if (auto* animator = this->animator()) {
-        animator->setFromAndByValues(targetElement(), animateRangeString(fromString), animateRangeString(byString));
+        animator->setFromAndByValues(*targetElement(), animateRangeString(fromString), animateRangeString(byString));
         return true;
     }
     return false;
@@ -152,7 +152,7 @@ void SVGAnimateElementBase::startAnimation()
         return;
 
     if (auto protectedAnimator = makeRefPtr(this->animator()))
-        protectedAnimator->start(targetElement());
+        protectedAnimator->start(*targetElement());
 }
 
 void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repeatCount)
@@ -168,7 +168,7 @@ void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repe
         progress = progress < 0.5 ? 0 : 1;
 
     if (auto protectedAnimator = makeRefPtr(this->animator()))
-        protectedAnimator->animate(targetElement(), progress, repeatCount);
+        protectedAnimator->animate(*targetElement(), progress, repeatCount);
 }
 
 void SVGAnimateElementBase::applyResultsToTarget()
@@ -177,7 +177,7 @@ void SVGAnimateElementBase::applyResultsToTarget()
         return;
 
     if (auto* animator = this->animator())
-        animator->apply(targetElement());
+        animator->apply(*targetElement());
 }
 
 void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
@@ -186,7 +186,7 @@ void SVGAnimateElementBase::stopAnimation(SVGElement* targetElement)
         return;
 
     if (auto* animator = this->animatorIfExists())
-        animator->stop(targetElement);
+        animator->stop(*targetElement);
 }
 
 std::optional<float> SVGAnimateElementBase::calculateDistance(const String& fromString, const String& toString)
@@ -196,7 +196,7 @@ std::optional<float> SVGAnimateElementBase::calculateDistance(const String& from
         return { };
 
     if (auto* animator = this->animator())
-        return animator->calculateDistance(targetElement(), fromString, toString);
+        return animator->calculateDistance(*targetElement(), fromString, toString);
 
     return { };
 }

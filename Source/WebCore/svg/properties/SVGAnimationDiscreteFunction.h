@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,12 +42,12 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    void setFromAndByValues(SVGElement*, const String&, const String&) override
+    void setFromAndByValues(SVGElement&, const String&, const String&) override
     {
         ASSERT_NOT_REACHED();
     }
 
-    void animate(SVGElement*, float progress, unsigned, ValueType& animated)
+    void animate(SVGElement&, float progress, unsigned, ValueType& animated)
     {
         if ((m_animationMode == AnimationMode::FromTo && progress > 0.5) || m_animationMode == AnimationMode::To || progress == 1)
             animated = m_to;
@@ -60,4 +60,4 @@ protected:
     ValueType m_to;
 };
 
-}
+} // namespace WebCore

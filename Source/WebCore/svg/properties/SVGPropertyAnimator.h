@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,12 +37,12 @@ class SVGPropertyAnimator : public SVGAttributeAnimator {
 public:
     bool isDiscrete() const override { return m_function.isDiscrete(); }
 
-    void setFromAndToValues(SVGElement* targetElement, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
     {
         m_function.setFromAndToValues(targetElement, adjustForInheritance(targetElement, from), adjustForInheritance(targetElement, to));
     }
 
-    void setFromAndByValues(SVGElement* targetElement, const String& from, const String& by) override
+    void setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
     {
         m_function.setFromAndByValues(targetElement, from, by);
     }
@@ -60,17 +60,17 @@ protected:
     {
     }
 
-    void stop(SVGElement* targetElement) override
+    void stop(SVGElement& targetElement) override
     {
         removeAnimatedStyleProperty(targetElement);
     }
 
-    std::optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement& targetElement, const String& from, const String& to) const override
     {
         return m_function.calculateDistance(targetElement, from, to);
     }
 
-    String adjustForInheritance(SVGElement* targetElement, const String& value) const
+    String adjustForInheritance(SVGElement& targetElement, const String& value) const
     {
         static MainThreadNeverDestroyed<const AtomString> inherit("inherit", AtomString::ConstructFromLiteral);
         return value == inherit ? computeInheritedCSSPropertyValue(targetElement) : value;
@@ -87,10 +87,9 @@ protected:
         return value ? value->cssText() : String();
     }
 
-    String computeInheritedCSSPropertyValue(SVGElement* targetElement) const
+    String computeInheritedCSSPropertyValue(SVGElement& targetElement) const
     {
-        ASSERT(targetElement);
-        auto parent = makeRefPtr(targetElement->parentElement());
+        auto parent = makeRefPtr(targetElement.parentElement());
         if (!parent || !parent->isSVGElement())
             return emptyString();
         
@@ -101,4 +100,4 @@ protected:
     AnimationFunction m_function;
 };
     
-}
+} // namespace WebCore

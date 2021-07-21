@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
     {
     }
 
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from->parse(from);
         m_to->parse(to);
@@ -56,7 +56,7 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount, RefPtr<SVGLengthList>& animated)
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount, RefPtr<SVGLengthList>& animated)
     {
         if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
@@ -67,7 +67,7 @@ public:
         Vector<Ref<SVGLength>>& animatedItems = animated->items();
         SVGLengthMode lengthMode = animated->lengthMode();
 
-        SVGLengthContext lengthContext(targetElement);
+        SVGLengthContext lengthContext(&targetElement);
         for (unsigned i = 0; i < toItems.size(); ++i) {
             SVGLengthType lengthType = (i < fromItems.size() && progress < 0.5 ? fromItems : toItems)[i]->value().lengthType();
 
@@ -82,7 +82,7 @@ public:
     }
 
 private:
-    void addFromAndToValues(SVGElement* targetElement) override
+    void addFromAndToValues(SVGElement& targetElement) override
     {
         const Vector<Ref<SVGLength>>& fromItems = m_from->items();
         const Vector<Ref<SVGLength>>& toItems = m_to->items();
@@ -90,7 +90,7 @@ private:
         if (!fromItems.size() || fromItems.size() != toItems.size())
             return;
 
-        SVGLengthContext lengthContext(targetElement);
+        SVGLengthContext lengthContext(&targetElement);
         for (unsigned i = 0; i < fromItems.size(); ++i) {
             const SVGLengthValue& fromValue = fromItems[i]->value();
             SVGLengthValue& toValue = toItems[i]->value();
@@ -104,7 +104,7 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGNumberList>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from->parse(from);
         m_to->parse(to);
@@ -115,7 +115,7 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement*, float progress, unsigned repeatCount, RefPtr<SVGNumberList>& animated)
+    void animate(SVGElement&, float progress, unsigned repeatCount, RefPtr<SVGNumberList>& animated)
     {
         if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
@@ -136,7 +136,7 @@ public:
     }
 
 private:
-    void addFromAndToValues(SVGElement*) override
+    void addFromAndToValues(SVGElement&) override
     {
         const Vector<Ref<SVGNumber>>& fromItems = m_from->items();
         Vector<Ref<SVGNumber>>& toItems = m_to->items();
@@ -154,7 +154,7 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGPointList>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from->parse(from);
         m_to->parse(to);
@@ -165,7 +165,7 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement*, float progress, unsigned repeatCount, RefPtr<SVGPointList>& animated)
+    void animate(SVGElement&, float progress, unsigned repeatCount, RefPtr<SVGPointList>& animated)
     {
         if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
@@ -189,7 +189,7 @@ public:
     }
 
 private:
-    void addFromAndToValues(SVGElement*) override
+    void addFromAndToValues(SVGElement&) override
     {
         const Vector<Ref<SVGPoint>>& fromItems = m_from->items();
         Vector<Ref<SVGPoint>>& toItems = m_to->items();
@@ -207,7 +207,7 @@ public:
     using Base = SVGAnimationAdditiveListFunction<SVGTransformList>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from->parse(from);
         m_to->parse(to);
@@ -218,7 +218,7 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void animate(SVGElement*, float progress, unsigned repeatCount, RefPtr<SVGTransformList>& animated)
+    void animate(SVGElement&, float progress, unsigned repeatCount, RefPtr<SVGTransformList>& animated)
     {
         // Pass false to 'resizeAnimatedIfNeeded', as the special post-multiplication behavior of <animateTransform> needs to be respected below.
         if (!adjustAnimatedList(m_animationMode, progress, animated, false))
@@ -255,7 +255,7 @@ public:
     }
 
 private:
-    void addFromAndToValues(SVGElement*) override
+    void addFromAndToValues(SVGElement&) override
     {
         const Vector<Ref<SVGTransform>>& fromItems = m_from->items();
         Vector<Ref<SVGTransform>>& toItems = m_to->items();
@@ -271,4 +271,4 @@ private:
     }
 };
 
-}
+} // namespace WebCore

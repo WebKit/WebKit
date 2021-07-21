@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,19 +54,19 @@ public:
     {
     }
 
-    void start(SVGElement* targetElement) override
+    void start(SVGElement& targetElement) override
     {
-        String baseValue = computeCSSPropertyValue(*targetElement, cssPropertyID(m_attributeName.localName()));
+        String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
         m_property->setValue(SVGPropertyTraits<PropertyType>::fromString(baseValue));
     }
 
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) override
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) override
     {
         PropertyType& animated = m_property->value();
         m_function.animate(targetElement, progress, repeatCount, animated);
     }
 
-    void apply(SVGElement* targetElement) override
+    void apply(SVGElement& targetElement) override
     {
         applyAnimatedStylePropertyChange(targetElement, SVGPropertyTraits<PropertyType>::toString(m_property->value()));
     }
@@ -75,4 +75,4 @@ protected:
     Ref<ValuePropertyType> m_property;
 };
     
-}
+} // namespace WebCore

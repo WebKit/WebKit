@@ -202,7 +202,7 @@ public:
         return attributeName;
     }
 
-    void setAnimatedPropertDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
+    void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
     {
         enumerateRecursively([&](const auto& entry) -> bool {
             if (!entry.key.matches(attributeName))
