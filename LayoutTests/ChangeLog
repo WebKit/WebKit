@@ -1,3 +1,12 @@
+2021-07-21  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [iOS] http/wpt/webrtc/transfer-datachannel-service-worker.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228165
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-07-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Update test expectations after r279987 and r280077.
