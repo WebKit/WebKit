@@ -1,3 +1,13 @@
+2021-07-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add linkedOnOrAfter check for r269162
+        https://bugs.webkit.org/show_bug.cgi?id=228154
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+
 2021-07-21  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r278916): Hitting ASSERT(!m_db.m_transactionInProgress) in SQLiteTransaction::begin()

@@ -48,6 +48,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
@@ -1099,7 +1100,13 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
 #endif
     } else
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    configuration._shouldSkipPreferredClientCertificateLookup = YES;
+
+#if PLATFORM(MAC)
+    bool preventCFNetworkClientCertificateLookup = linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutClientCertificateLookup) || session.isEphemeral();
+#else
+    bool preventCFNetworkClientCertificateLookup = true;
+#endif
+    configuration._shouldSkipPreferredClientCertificateLookup = preventCFNetworkClientCertificateLookup;
 
 #if HAVE(LOGGING_PRIVACY_LEVEL)
     auto setLoggingPrivacyLevel = NSSelectorFromString(@"set_loggingPrivacyLevel:");

@@ -1,3 +1,17 @@
+2021-07-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add linkedOnOrAfter check for r269162
+        https://bugs.webkit.org/show_bug.cgi?id=228154
+        <rdar://78575888>
+
+        Reviewed by Geoffrey Garen.
+
+        That revision broke some programs, but only on macOS.
+        On iOS, we needed SecKeyProxy and WKNavigationDelegate to get client certificates to send.
+        Add a linkedOnOrAfter check until they update to use WKNavigationDelegate instead of default keychain behavior.
+
+        * platform/cocoa/VersionChecks.h:
+
 2021-07-21  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process

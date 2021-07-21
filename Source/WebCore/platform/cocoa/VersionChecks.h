@@ -96,6 +96,7 @@ enum class SDKVersion : uint32_t {
     FirstWithNullOriginForNonSpecialSchemedURLs = DYLD_MACOSX_VERSION_12_00,
     FirstWithDOMWindowReuseRestriction = DYLD_MACOSX_VERSION_11_3,
     FirstWithBlankViewOnJSPrompt = DYLD_MACOSX_VERSION_11_3,
+    FirstWithoutClientCertificateLookup = DYLD_MACOSX_VERSION_11_3,
     FirstWithApplicationCacheDisabledByDefault = DYLD_MACOSX_VERSION_12_00,
     FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_MACOSX_VERSION_12_00,
 #endif
