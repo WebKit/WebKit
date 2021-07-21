@@ -1400,6 +1400,8 @@ webkit.org/b/228082 fast/canvas/getPutImageDataPairTest.html [ Pass Timeout ]
 
 webkit.org/b/227881 inspector/canvas/requestClientNodes-css.html [ Pass Timeout ]
 
+webkit.org/b/227881 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
+
 webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]
 
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure ]
