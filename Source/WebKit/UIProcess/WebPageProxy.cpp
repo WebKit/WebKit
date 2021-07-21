@@ -968,6 +968,11 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     if (!accessibilityToken.isEmpty())
         registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
 #endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    auto accessibilityPlugID = provisionalPage->accessibilityPlugID();
+    if (!accessibilityPlugID.isEmpty())
+        bindAccessibilityTree(accessibilityPlugID);
+#endif
 }
 
 void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
