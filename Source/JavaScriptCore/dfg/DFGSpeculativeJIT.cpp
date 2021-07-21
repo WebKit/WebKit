@@ -11788,8 +11788,8 @@ void SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString(Edge edge, JSV
     if (mayNotBeCell)
         done.append(m_jit.branchIfNotCell(regs));
 
-    DFG_TYPE_CHECK(regs, edge, ~SpecString, m_jit.branchIfString(regs.payloadGPR()));
-    DFG_TYPE_CHECK(regs, edge, ~SpecHeapBigInt, m_jit.branchIfHeapBigInt(regs.payloadGPR()));
+    static_assert(StringType + 1 == HeapBigIntType);
+    DFG_TYPE_CHECK(regs, edge, ~(SpecString | SpecHeapBigInt), m_jit.branchIfType(regs.payloadGPR(), JSTypeRange { StringType, HeapBigIntType }));
 
     if (mayBeInt32 || mayNotBeCell)
         done.link(&m_jit);

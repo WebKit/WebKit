@@ -1,3 +1,19 @@
+2021-07-21  Keith Miller  <keith_miller@apple.com>
+
+        speculateNeitherDoubleNorStringNorHeapBigInt should only have a single JSType branch
+        https://bugs.webkit.org/show_bug.cgi?id=228146
+
+        Reviewed by Robin Morisset.
+
+        Since StringType and HeapBigIntType are adjacent JSTypes
+        we can do an integer range check rather than two separate
+        JSType checks.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2021-07-20  Yijia Huang  <yijia_huang@apple.com>
 
         Add ARM64 EON opcode and select it in AIR
