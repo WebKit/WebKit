@@ -1,3 +1,30 @@
+2021-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r267763): [SOUP] After network process crash, all cookies are lost until browser is restarted
+        https://bugs.webkit.org/show_bug.cgi?id=228128
+
+        Reviewed by Adrian Perez de Castro.
+
+        Cookies configuration is no longer stored to be sent again to the new network process after a crash.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const): Encode cookieAcceptPolicy.
+        (WebKit::NetworkSessionCreationParameters::decode): Decode cookieAcceptPolicy.
+        * NetworkProcess/NetworkSessionCreationParameters.h: Add cookieAcceptPolicy.
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup): Set cookie accept policy on NetworkStorageSession.
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_set_persistent_storage): Use WebsiteDataStore API to cache the given values.
+        (webkit_cookie_manager_set_accept_policy): Ditto.
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters): Set cached cookie settings to network session parameters.
+        (WebKit::WebsiteDataStore::setCookiePersistentStorage): Cache the given value and notify the cookie manager.
+        (WebKit::WebsiteDataStore::setHTTPCookieAcceptPolicy): Ditto.
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::getCookiePersistentStorage const): Deleted.
+
 2021-07-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK][WPE] Fix compilation when ATK is not used

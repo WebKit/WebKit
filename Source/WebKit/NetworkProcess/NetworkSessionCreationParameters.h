@@ -33,6 +33,7 @@
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/SoupNetworkProxySettings.h>
 #endif
 
@@ -77,6 +78,7 @@ struct NetworkSessionCreationParameters {
     bool persistentCredentialStorageEnabled { true };
     bool ignoreTLSErrors { false };
     WebCore::SoupNetworkProxySettings proxySettings;
+    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain };
 #endif
 #if USE(CURL)
     String cookiePersistentStorageFile;

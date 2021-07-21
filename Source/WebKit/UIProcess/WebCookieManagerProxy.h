@@ -91,7 +91,6 @@ public:
 
 #if USE(SOUP)
     void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, SoupCookiePersistentStorageType);
-    void getCookiePersistentStorage(PAL::SessionID, String& storagePath, SoupCookiePersistentStorageType&) const;
 #endif
 
     using API::Object::ref;
@@ -114,11 +113,6 @@ private:
 
     WeakPtr<NetworkProcessProxy> m_networkProcess;
     WebCookieManagerProxyClient m_client;
-
-#if USE(SOUP)
-    using CookiePersistentStorageMap = HashMap<PAL::SessionID, std::pair<String, SoupCookiePersistentStorageType>>;
-    CookiePersistentStorageMap m_cookiePersistentStorageMap;
-#endif
 };
 
 } // namespace WebKit
