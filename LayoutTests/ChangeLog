@@ -1,5 +1,14 @@
 2021-07-21  Eric Hutchison  <ehutchison@apple.com>
 
+        Grouped/organized expectations for 227881.
+        https://bugs.webkit.org/show_bug.cgi?id=227728.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-07-21  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for inspector/canvas/recording-2d-full.html and inspector/canvas/recording-2d-full.html .
         https://bugs.webkit.org/show_bug.cgi?id=227881.
 
