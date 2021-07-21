@@ -1,3 +1,12 @@
+2021-07-21  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur Release wk2 arm64 & iOS] http/tests/appcache/fail-on-update-2.html (layout-test) is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=225665
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-07-21  Rob Buis  <rbuis@igalia.com>
 
         [AspectRatio] Fix select-element-001.html
