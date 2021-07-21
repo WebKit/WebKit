@@ -2126,8 +2126,11 @@ private:
     void getEditorCommandsForKeyEvent(const AtomString&, Vector<String>&);
 #endif
 
-#if USE(ATK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     void bindAccessibilityTree(const String&);
+#endif
+
+#if PLATFORM(GTK)
     void showEmojiPicker(const WebCore::IntRect&, CompletionHandler<void(String)>&&);
 #endif
 

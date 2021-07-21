@@ -1,3 +1,21 @@
+2021-07-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK][WPE] Fix compilation when ATK is not used
+        https://bugs.webkit.org/show_bug.cgi?id=228077
+
+        Reviewed by Carlos Garcia Campos.
+
+        Guard ATK only inside implementations, so the code is more readable.
+
+        Also changed guard from ATK to GTK platform showEmojiPicker().
+
+        No new tests needed.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+
 2021-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] PSON: accessibility doesn't work after a cross site navigation

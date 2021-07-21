@@ -181,12 +181,10 @@ messages -> WebPageProxy {
     PluginScaleFactorDidChange(double zoomFactor)
     PluginZoomFactorDidChange(double zoomFactor)
 
-#if USE(ATK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     # Support for connecting the Accessibility worlds of the UI and the Web processes
     BindAccessibilityTree(String plugID)
-#endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
     SetInputMethodState(Optional<WebKit::InputMethodState> state);
 #endif
 
