@@ -1,3 +1,26 @@
+2021-07-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        Crash in -[WKWebView takeSnapshotWithConfiguration:completionHandler:] when taking empty snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=228134
+        rdar://80146087
+
+        Reviewed by Chris Dumez.
+
+        r279006 made it so that taking empty snapshots would no longer crash due
+        to division by zero, or assertions on the size of the returned image.
+
+        However, the change introduced a new crash, as a result of a deallocated
+        completionHandler. r279006 move-captured the completion handler. However,
+        since completionHandler is an Objective-C block, and WebKit is built
+        without ARC, the move does not retain the block. Consequently, the
+        method can call a deallocated completion handler.
+
+        To fix, capture the local handler variable already available in the
+        method, which retains the completion handler using makeBlockPtr.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+
 2021-07-21  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Theme scrollbar css is no longer respected
