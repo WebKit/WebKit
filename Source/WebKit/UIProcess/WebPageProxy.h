@@ -1958,6 +1958,9 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
+    bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
+    void setNeedsSiteSpecificQuirks(bool value) { m_needsSiteSpecificQuirks = value; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -3071,6 +3074,8 @@ private:
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
     RetainPtr<WKQuickLookPreviewController> m_quickLookPreviewController;
 #endif
+
+    bool m_needsSiteSpecificQuirks { true };
 };
 
 #ifdef __OBJC__
