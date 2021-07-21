@@ -3360,6 +3360,12 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
 #if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
+    const char* disableGLSink = g_getenv("WEBKIT_GST_DISABLE_GL_SINK");
+    if (disableGLSink && equal(disableGLSink, "1")) {
+        GST_INFO("Disabling hardware-accelerated rendering per user request.");
+        return nullptr;
+    }
+
     if (!webKitGLVideoSinkProbePlatform()) {
         g_warning("WebKit wasn't able to find the GL video sink dependencies. Hardware-accelerated zero-copy video rendering can't be enabled without this plugin.");
         return nullptr;
