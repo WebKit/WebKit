@@ -1284,11 +1284,6 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/fon
 # Flaky Unhandled promise rejection messages
 webkit.org/b/171094 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.pattern.paint.repeat.coord1.html [ Pass Failure ]
 
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-change-checkbox.html [ Pass ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-alpha.html [ Pass ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque.html [ Pass ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ Pass ]
-
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ Pass ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ Pass ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Pass ]
@@ -2325,6 +2320,9 @@ webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.docu
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.https.html [ Failure ]
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.html [ Failure ]
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/document-cookie.non-secure.html [ Failure ]
+
+webkit.org/b/228160 fast/selectors/input-with-selection-pseudo-element.html [ ImageOnlyFailure ]
+webkit.org/b/228160 imported/blink/fast/table/whitespace-between-elements-with-table-cell-display-3.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 
