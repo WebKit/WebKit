@@ -1,3 +1,14 @@
+2021-07-21  David Kilzer  <ddkilzer@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/PlatformHave.h:
+        - Add HAVE(SPEECHSYNTHESIS_MONTEREY_SPI).
+
 2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         r280103 is not necessary on all operating systems

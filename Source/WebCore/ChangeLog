@@ -1,3 +1,23 @@
+2021-07-21  David Kilzer  <ddkilzer@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale):
+        - Switch to use
+          CopyIdentifierStringForPreferredVoiceInListWithLocale()
+          in Monterey.
+        - Change to return RetainPtr<> to handle lifetime of
+          object returned from new function.
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        - Change varible type to 'auto' since return type of
+          speechSynthesisGetDefaultVoiceIdentifierForLocale()
+          changed.
+
 2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         r280103 is not necessary on all operating systems

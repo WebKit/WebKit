@@ -1,3 +1,17 @@
+2021-07-21  David Kilzer  <ddkilzer@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * pal/spi/mac/SpeechSynthesisSPI.h:
+        (CopyIdentifierStringForPreferredVoiceInListWithLocale): Add.
+        - Define replacement function for
+          GetIdentifierStringForPreferredVoiceInListWithLocale()
+          in Monterey.
+
 2021-07-16  Alex Christensen  <achristensen@webkit.org>
 
         Prevent HSTS tracking mitigation for top level navigation requests
