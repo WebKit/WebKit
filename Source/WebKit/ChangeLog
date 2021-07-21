@@ -1,3 +1,25 @@
+2021-07-21  Chris Dumez  <cdumez@apple.com>
+
+        RunningBoard kills the network process if it is still holding the "holding locked file" assertion upon suspension
+        https://bugs.webkit.org/show_bug.cgi?id=228148
+
+        Reviewed by Sihui Liu.
+
+        RunningBoard kills the network process if it is still holding the "holding locked file" assertion upon suspension
+        because our assertion type is "uninterruptible" and we don't release it when it gets invalidated. To address the
+        issue, we now use an "interruptible" assertion instead when holding locked files.
+
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::setIsHoldingLockedFiles):
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::assertionName const):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionType):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::runningBoardNameForAssertionType):
+        (WebKit::runningBoardDomainForAssertionType):
+
 2021-07-21  Alex Christensen  <achristensen@webkit.org>
 
         Add linkedOnOrAfter check for r269162

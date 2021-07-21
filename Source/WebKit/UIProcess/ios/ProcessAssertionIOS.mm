@@ -305,8 +305,8 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
         return @"Foreground";
     case ProcessAssertionType::MediaPlayback:
         return @"MediaPlayback";
-    case ProcessAssertionType::FinishTaskUninterruptable:
-        return @"FinishTaskUninterruptable";
+    case ProcessAssertionType::FinishTaskInterruptable:
+        return @"FinishTaskInterruptable";
     }
 }
 
@@ -319,7 +319,7 @@ static NSString *runningBoardDomainForAssertionType(ProcessAssertionType asserti
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
         return @"com.apple.webkit";
-    case ProcessAssertionType::FinishTaskUninterruptable:
+    case ProcessAssertionType::FinishTaskInterruptable:
         return @"com.apple.common";
     }
 }

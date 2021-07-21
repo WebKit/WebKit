@@ -51,7 +51,7 @@ enum class ProcessAssertionType {
     UnboundedNetworking,
     Foreground,
     MediaPlayback,
-    FinishTaskUninterruptable,
+    FinishTaskInterruptable,
 };
 
 class ProcessAssertion : public ThreadSafeRefCounted<ProcessAssertion>, public CanMakeWeakPtr<ProcessAssertion, WeakPtrFactoryInitialization::Eager> {
