@@ -1,3 +1,65 @@
+2021-07-21  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r278916): Hitting ASSERT(!m_db.m_transactionInProgress) in SQLiteTransaction::begin()
+        https://bugs.webkit.org/show_bug.cgi?id=228151
+        <rdar://80231894>
+
+        Reviewed by Geoffrey Garen.
+
+        Because it is hard to keep track of whether or not a transaction has already been started in
+        ResourceLoadStatisticsDatabaseStore code and because passing a transaction as parameter adds
+        a lot of function overloads, I decided to switch to another approach. I added a
+        beginTransactionIfNecessary() member function that begins a transaction if there isn't one
+        already going on. This way, we can safely ask to begin a transaction within the scope of
+        a function (if we're about to do several write statements), without having to worry about
+        whether or not our caller already started a transaction.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::merge):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistic):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::reclassifyResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setGrandfathered):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToDeleteOrRestrictWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setLastSeen):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::beginTransactionIfNecessary):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+
 2021-07-21  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
