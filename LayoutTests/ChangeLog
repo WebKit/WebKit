@@ -1,3 +1,14 @@
+2021-07-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [iOS] http/tests/appcache/fail-on-update.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=227891
+
+        Updated test expectations from [Pass Timeouts] to [ DumpJSConsoleLogInStdErr Slow ].
+        
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-07-20  Eric Hutchison  <ehutchison@apple.com>
 
         [ Mac wk2 ]inspector/canvas/recording-bitmaprenderer-full.html is a flaky failure and timeout.
