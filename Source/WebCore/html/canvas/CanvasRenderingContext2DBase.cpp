@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -61,6 +61,7 @@
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
+#include "ScriptDisallowedScope.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StrokeStyleApplier.h"
@@ -2438,10 +2439,13 @@ void CanvasRenderingContext2DBase::setDirection(Direction direction)
 
 bool CanvasRenderingContext2DBase::canDrawTextWithParams(float x, float y, bool fill, Optional<float> maxWidth)
 {
+    if (!fontProxy()->realized())
+        return false;
+
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     auto* c = drawingContext();
     if (!c)
-        return false;
-    if (!this->fontProxy()->realized())
         return false;
     if (!state().hasInvertibleTransform)
         return false;
