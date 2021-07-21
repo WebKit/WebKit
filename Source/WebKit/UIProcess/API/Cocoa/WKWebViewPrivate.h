@@ -412,6 +412,8 @@ for this property.
 - (void)_suspendPage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_resumePage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
+@property (nonatomic, readonly) BOOL _needsSiteSpecificQuirks WK_API_AVAILABLE(macos(12.0), ios(15.0));
+
 @end
 
 #if TARGET_OS_IPHONE

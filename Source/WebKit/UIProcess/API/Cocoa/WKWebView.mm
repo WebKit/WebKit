@@ -2518,6 +2518,11 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     return true;
 }
 
+- (BOOL)_needsSiteSpecificQuirks
+{
+    return _page && _page->needsSiteSpecificQuirks();
+}
+
 - (pid_t)_webProcessIdentifier
 {
     if (![self _isValid])

@@ -2378,6 +2378,8 @@ private:
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { false };
 #endif
+
+    bool m_needsSiteSpecificQuirks { true };
 };
 
 #if !PLATFORM(IOS_FAMILY)
