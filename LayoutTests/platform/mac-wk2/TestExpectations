@@ -1402,6 +1402,10 @@ webkit.org/b/227881 inspector/canvas/requestClientNodes-css.html [ Pass Timeout 
 
 webkit.org/b/227881 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
 
+webkit.org/b/227881 inspector/canvas/recording-2d-memoryLimit.html [ Skip ]
+
+webkit.org/b/227881 inspector/canvas/recording-2d-full.html [ Skip ]
+
 webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]
 
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure ]
