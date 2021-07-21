@@ -1,3 +1,16 @@
+2021-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r280129.
+
+        Broke the internal Monterey build bots
+
+        Reverted changeset:
+
+        "GetIdentifierStringForPreferredVoiceInListWithLocale() is
+        deprecated in Monterey"
+        https://bugs.webkit.org/show_bug.cgi?id=228066
+        https://commits.webkit.org/r280129
+
 2021-07-21  David Kilzer  <ddkilzer@apple.com>
 
         GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey

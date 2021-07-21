@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,16 +222,15 @@ static RetainPtr<CFArrayRef> speechSynthesisGetVoiceIdentifiers()
     return adoptCF(CopySpeechSynthesisVoicesForMode((__bridge CFArrayRef)@[ @"VoiceGroupDefault", @"VoiceGroupCompact" ]));
 }
 
-static RetainPtr<CFStringRef> speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *userLocale)
+static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *userLocale)
 {
     if (!userLocale)
         return nil;
 
-#if HAVE(SPEECHSYNTHESIS_MONTEREY_SPI)
-    return adoptCF(CopyIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale));
-#else
-    return GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale);
-#endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return (__bridge NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale);
+#pragma clang diagnostic pop
 }
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
@@ -245,12 +244,12 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         NSString *voiceURI = [attributes objectForKey:NSVoiceIdentifier];
         NSString *name = [attributes objectForKey:NSVoiceName];
         NSString *language = [attributes objectForKey:NSVoiceLocaleIdentifier];
-        auto defaultVoiceURI = speechSynthesisGetDefaultVoiceIdentifierForLocale(adoptNS([[NSLocale alloc] initWithLocaleIdentifier:language]).get());
+        NSString *defaultVoiceURI = speechSynthesisGetDefaultVoiceIdentifierForLocale(adoptNS([[NSLocale alloc] initWithLocaleIdentifier:language]).get());
 
         // Change to BCP-47 format as defined by spec.
         language = [language stringByReplacingOccurrencesOfString:@"_" withString:@"-"];
 
-        bool isDefault = [(__bridge NSString *)defaultVoiceURI.get() isEqualToString:voiceURI];
+        bool isDefault = [defaultVoiceURI isEqualToString:voiceURI];
 
         m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
     }
