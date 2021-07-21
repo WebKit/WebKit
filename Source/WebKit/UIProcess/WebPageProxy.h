@@ -1958,8 +1958,8 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
-    void setNeedsSiteSpecificQuirks(bool value) { m_needsSiteSpecificQuirks = value; }
+    bool needsSiteSpecificViewportQuirks() const { return m_needsSiteSpecificViewportQuirks; }
+    void setNeedsSiteSpecificViewportQuirks(bool value) { m_needsSiteSpecificViewportQuirks = value; }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -3075,7 +3075,7 @@ private:
     RetainPtr<WKQuickLookPreviewController> m_quickLookPreviewController;
 #endif
 
-    bool m_needsSiteSpecificQuirks { true };
+    bool m_needsSiteSpecificViewportQuirks { true };
 };
 
 #ifdef __OBJC__

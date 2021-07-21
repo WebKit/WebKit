@@ -2383,7 +2383,7 @@ private:
     WebCore::HighlightVisibility m_appHighlightsVisible { false };
 #endif
 
-    bool m_needsSiteSpecificQuirks { true };
+    bool m_needsSiteSpecificViewportQuirks { true };
 };
 
 #if !PLATFORM(IOS_FAMILY)

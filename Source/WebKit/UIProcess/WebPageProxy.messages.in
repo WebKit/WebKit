@@ -415,7 +415,7 @@ messages -> WebPageProxy {
     ShowDataDetectorsUIForPositionInformation(struct WebKit::InteractionInformationAtPosition information)
 #endif
 
-    SetNeedsSiteSpecificQuirks(bool needsSiteSpecificQuirks)
+    SetNeedsSiteSpecificViewportQuirks(bool value)
 
     DidChangeInspectorFrontendCount(uint64_t count)
 

@@ -7628,7 +7628,7 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
             automationSession->terminate();
     }
 
-    m_needsSiteSpecificQuirks = true;
+    m_needsSiteSpecificViewportQuirks = true;
 }
 
 void WebPageProxy::provisionalProcessDidTerminate()

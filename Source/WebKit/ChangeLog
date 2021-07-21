@@ -1,5 +1,64 @@
 2021-07-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r280122. rdar://problem/80902802
+
+    [iOS] Add SPI for internal clients to consult whether or not viewport quirks should be enabled
+    https://bugs.webkit.org/show_bug.cgi?id=228123
+    rdar://80397679
+    
+    Reviewed by Dan Bernstein.
+    
+    Rename the SPI added in r280119 from `-_needsSiteSpecificQuirks` to `-_needsSiteSpecificViewportQuirks`, to
+    clarify its intent (and importantly, to differentiate it from the existing WKPreferences SPI of the same name).
+    
+    This distinction is important because this readonly property acts as a hint for WebKit clients to augment
+    certain viewport behaviors, whereas the readwrite WKPreferences property is a way for clients to indicate that
+    WebKit should opt in or out of site-specific quirks (unless overridden by Web Inspector).
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _needsSiteSpecificViewportQuirks]):
+    (-[WKWebView _needsSiteSpecificQuirks]): Deleted.
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::didCommitLoad):
+    * WebProcess/WebPage/WebPage.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280122 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Add SPI for internal clients to consult whether or not viewport quirks should be enabled
+            https://bugs.webkit.org/show_bug.cgi?id=228123
+            rdar://80397679
+
+            Reviewed by Dan Bernstein.
+
+            Rename the SPI added in r280119 from `-_needsSiteSpecificQuirks` to `-_needsSiteSpecificViewportQuirks`, to
+            clarify its intent (and importantly, to differentiate it from the existing WKPreferences SPI of the same name).
+
+            This distinction is important because this readonly property acts as a hint for WebKit clients to augment
+            certain viewport behaviors, whereas the readwrite WKPreferences property is a way for clients to indicate that
+            WebKit should opt in or out of site-specific quirks (unless overridden by Web Inspector).
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _needsSiteSpecificViewportQuirks]):
+            (-[WKWebView _needsSiteSpecificQuirks]): Deleted.
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didCommitLoad):
+            * WebProcess/WebPage/WebPage.h:
+
+2021-07-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r280119. rdar://problem/80902802
 
     [iOS] Add SPI for internal clients to consult whether or not viewport quirks should be enabled
