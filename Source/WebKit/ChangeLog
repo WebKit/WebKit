@@ -1,3 +1,59 @@
+2021-07-21  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
+        https://bugs.webkit.org/show_bug.cgi?id=222738
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new API type WebKitMemoryPressureSettings that can be used to configure the behavior
+        of the MemoryPressureHandler. Add a property to WebKitWebContext that can be used to pass
+        new settings to it, and store them inside its API::ProcessPoolConfiguration. Those settings
+        will be set to new web processes during the platform initialization stage.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/glib/WebKitMemoryPressureSettings.cpp: Added.
+        (webkit_memory_pressure_settings_new):
+        (webkit_memory_pressure_settings_copy):
+        (webkit_memory_pressure_settings_free):
+        (webkit_memory_pressure_settings_set_memory_limit):
+        (webkit_memory_pressure_settings_get_memory_limit):
+        (webkit_memory_pressure_settings_set_conservative_threshold):
+        (webkit_memory_pressure_settings_get_conservative_threshold):
+        (webkit_memory_pressure_settings_set_strict_threshold):
+        (webkit_memory_pressure_settings_get_strict_threshold):
+        (webkit_memory_pressure_settings_set_kill_threshold):
+        (webkit_memory_pressure_settings_get_kill_threshold):
+        (webkit_memory_pressure_settings_set_poll_interval):
+        (webkit_memory_pressure_settings_get_poll_interval):
+        (webkitMemoryPressureSettingsGetMemoryPressureHandlerConfiguration):
+        * UIProcess/API/glib/WebKitMemoryPressureSettingsPrivate.h: Added.
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+        * UIProcess/API/gtk/WebKitMemoryPressureSettings.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/WebKitAutocleanups.h:
+        * UIProcess/API/wpe/WebKitMemoryPressureSettings.h: Added.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+        * UIProcess/API/wpe/webkit.h:
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-07-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Crash in -[WKWebView takeSnapshotWithConfiguration:completionHandler:] when taking empty snapshots

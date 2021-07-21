@@ -208,6 +208,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
     encoder << accessibilityPreferences;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    encoder << memoryPressureHandlerConfiguration;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -568,6 +572,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!accessibilityPreferences)
         return false;
     parameters.accessibilityPreferences = WTFMove(*accessibilityPreferences);
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    std::optional<std::optional<MemoryPressureHandler::Configuration>> memoryPressureHandlerConfiguration;
+    decoder >> memoryPressureHandlerConfiguration;
+    if (!memoryPressureHandlerConfiguration)
+        return false;
+    parameters.memoryPressureHandlerConfiguration = WTFMove(*memoryPressureHandlerConfiguration);
+#endif
 
     return true;
 }

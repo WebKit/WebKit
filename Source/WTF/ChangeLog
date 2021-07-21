@@ -1,3 +1,25 @@
+2021-07-21  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
+        https://bugs.webkit.org/show_bug.cgi?id=222738
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a configuration structure to MemoryPressureHandler, with the methods to encode/decode it. Also
+        add a method to set a configuration structure to a MemoryPressureHandler instance, and modify the
+        behavior so the the configuration is used when checking the memory used by the process.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::thresholdForPolicy):
+        (WTF::MemoryPressureHandler::policyForFootprint):
+        (WTF::MemoryPressureHandler::Configuration::Configuration):
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::Configuration::encode const):
+        (WTF::MemoryPressureHandler::Configuration::decode):
+        (WTF::MemoryPressureHandler::setConfiguration):
+
 2021-07-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r280129.

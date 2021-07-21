@@ -770,6 +770,106 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
 #endif
 }
 
+class MemoryPressureTest : public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(MemoryPressureTest, setup, teardown);
+
+    static void setup()
+    {
+        Test::s_memoryPressureSettings = webkit_memory_pressure_settings_new();
+        webkit_memory_pressure_settings_set_memory_limit(Test::s_memoryPressureSettings, 20);
+        webkit_memory_pressure_settings_set_poll_interval(Test::s_memoryPressureSettings, 0.5);
+        webkit_memory_pressure_settings_set_kill_threshold(Test::s_memoryPressureSettings, 1);
+        webkit_memory_pressure_settings_set_strict_threshold(Test::s_memoryPressureSettings, 0.75);
+        webkit_memory_pressure_settings_set_conservative_threshold(Test::s_memoryPressureSettings, 0.5);
+    }
+
+    static void teardown()
+    {
+        webkit_memory_pressure_settings_free(Test::s_memoryPressureSettings);
+        Test::s_memoryPressureSettings = nullptr;
+    }
+
+    static void webProcessTerminatedCallback(WebKitWebView* webView, WebKitWebProcessTerminationReason reason, MemoryPressureTest* test)
+    {
+        test->m_terminationReason = reason;
+        g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(webProcessTerminatedCallback), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilWebProcessTerminated()
+    {
+        g_signal_connect_after(m_webView, "web-process-terminated", G_CALLBACK(MemoryPressureTest::webProcessTerminatedCallback), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    WebKitWebProcessTerminationReason m_terminationReason { WEBKIT_WEB_PROCESS_CRASHED };
+};
+
+static void testMemoryPressureSettings(MemoryPressureTest* test, gconstpointer)
+{
+    // Before testing the settings that have been set to the context, use a new instance
+    // of WebKitMemoryPressureSettings to test the default values, getters and setters.
+    WebKitMemoryPressureSettings* settings = webkit_memory_pressure_settings_new();
+
+    // We can't exactly know the default value for the memory limit, as it depends on
+    // the hardware of the machine, so just ensure that it's something > 0 and <= 3GB.
+    guint limit = webkit_memory_pressure_settings_get_memory_limit(settings);
+    g_assert_cmpuint(limit, >, 0);
+    g_assert_cmpuint(limit * MB, <=, 3 * GB);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_conservative_threshold(settings), ==, 0.33);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_strict_threshold(settings), ==, 0.5);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_kill_threshold(settings), ==, 0);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_poll_interval(settings), ==, 30);
+
+    // Test setting and getting values.
+    webkit_memory_pressure_settings_set_memory_limit(settings, 20);
+    g_assert_cmpuint(webkit_memory_pressure_settings_get_memory_limit(settings), ==, 20);
+
+    webkit_memory_pressure_settings_set_conservative_threshold(settings, 0.4);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_conservative_threshold(settings), ==, 0.4);
+
+    webkit_memory_pressure_settings_set_strict_threshold(settings, 0.6);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_strict_threshold(settings), ==, 0.6);
+
+    webkit_memory_pressure_settings_set_kill_threshold(settings, 1.1);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_kill_threshold(settings), ==, 1.1);
+
+    webkit_memory_pressure_settings_set_poll_interval(settings, 5);
+    g_assert_cmpfloat(webkit_memory_pressure_settings_get_poll_interval(settings), ==, 5);
+
+    webkit_memory_pressure_settings_free(settings);
+
+    // An empty view uses around 7MB of memory. We're setting a maximum of 20MB here, polling every 0.5 seconds,
+    // and the kill fraction is 1, so the web process will be killed when it exceeds 20MB.
+    // The test html will allocate a canvas of 3000x3000, which requires around 36MB of memory, so once it gets
+    // created, the MemoryPressureHandler will detect that the memory usage is too high and kill the web process.
+    // This triggers the web-process-terminated signal in the view with WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT
+    // as the termination reason.
+
+    static const char* html =
+        "<html>"
+        "  <body>"
+        "    <script>"
+        "      setTimeout(function() {"
+        "        var canvas = document.getElementById('canvas');"
+        "        canvas.width = 3000;"
+        "        canvas.height = 3000;"
+        "        var context = canvas.getContext('2d');"
+        "        context.fillStyle = 'green';"
+        "        context.fillRect(0, 0, 3000, 3000);"
+        "      }, 0);"
+        "    </script>"
+        "    <canvas id='canvas'></canvas>"
+        "  </body>"
+        "</html>";
+
+    test->m_expectedWebProcessCrash = true;
+    test->loadHtml(html, nullptr);
+    test->waitUntilWebProcessTerminated();
+    g_assert_cmpuint(test->m_terminationReason, ==, WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -786,6 +886,7 @@ void beforeAll()
     SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
     WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
     ProxyTest::add("WebKitWebContext", "proxy", testWebContextProxySettings);
+    MemoryPressureTest::add("WebKitWebContext", "memory-pressure", testMemoryPressureSettings);
 }
 
 void afterAll()

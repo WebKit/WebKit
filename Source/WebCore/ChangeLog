@@ -1,3 +1,16 @@
+2021-07-21  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
+        https://bugs.webkit.org/show_bug.cgi?id=222738
+
+        Reviewed by Carlos Garcia Campos.
+
+        MemoryPressureHandler::currentMemoryUsagePolicy() is now an instance method and not a class one,
+        so update the call in RenderLayerCompositor to use the singleton instance.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingPolicy):
+
 2021-07-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r280129.

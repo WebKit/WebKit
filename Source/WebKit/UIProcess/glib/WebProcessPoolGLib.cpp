@@ -107,6 +107,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(GTK) && !USE(GTK4)
     parameters.useSystemAppearanceForScrollbars = m_configuration->useSystemAppearanceForScrollbars();
 #endif
+
+    parameters.memoryPressureHandlerConfiguration = m_configuration->memoryPressureHandlerConfiguration();
 }
 
 void WebProcessPool::platformInvalidateContext()
