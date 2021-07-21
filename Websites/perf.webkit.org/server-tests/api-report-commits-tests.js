@@ -812,6 +812,27 @@ describe("/api/report-commits/ with insert=true", function () {
         });
     });
 
+    const commitWithHugeOrder = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 2147483648
+            }
+        ]
+    }
+
+    it("should accept interting one commit with a huge commit order", async () => {
+        await addWorkerForReport(commitWithHugeOrder);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', commitWithHugeOrder);
+        assert.strictEqual(response['status'], 'OK');
+        const commits = await TestServer.database().selectAll('commits');
+        assert.strictEqual(commits.length, 1);
+        assert.strictEqual(parseInt(commits[0].order), 2147483648);
+    });
+
     const systemVersionCommitAndOwnedCommitWithTimestamp = {
         "workerName": "someWorker",
         "workerPassword": "somePassword",

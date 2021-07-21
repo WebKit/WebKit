@@ -13,6 +13,10 @@ ALTER TABLE analysis_test_groups ADD COLUMN IF NOT EXISTS testgroup_repetition_t
 ALTER TABLE commits DROP CONSTRAINT IF EXISTS commit_string_identifier_in_repository_must_be_unique;
 ALTER TABLE commits ADD CONSTRAINT commit_string_identifier_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision_identifier);
 
+IF EXISTS (SELECT NULL FROM information_schema.columns WHERE TABLE_NAME = 'commits' AND COLUMN_NAME = 'commit_order' AND DATA_TYPE = 'integer') THEN
+    ALTER TABLE commits ALTER commit_order TYPE bigint;
+END IF;
+
 CREATE TABLE IF NOT EXISTS platform_groups (
     platformgroup_id serial PRIMARY KEY,
     platformgroup_name varchar(64) NOT NULL,
