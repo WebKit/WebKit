@@ -1,3 +1,16 @@
+2021-07-21  Rob Buis  <rbuis@igalia.com>
+
+        [AspectRatio] Fix select-element-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=228144
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import fixed select-element-001.html based on SHA c2ddbb6.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001-expected.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-07-20  Chris Lord  <clord@igalia.com>
 
         Canvas and OffscreenCanvas getContext should check if argument is an object before trying to convert it to a dictionary

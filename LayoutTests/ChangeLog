@@ -1,3 +1,14 @@
+2021-07-21  Rob Buis  <rbuis@igalia.com>
+
+        [AspectRatio] Fix select-element-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=228144
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Now select-element-001.html passes.
+
+        * TestExpectations:
+
 2021-07-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [iOS] http/tests/appcache/fail-on-update.html is a flaky timeout
