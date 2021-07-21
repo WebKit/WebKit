@@ -1,3 +1,23 @@
+2021-07-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Missing layouts when using simplified layout with OOF positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=226008
+
+        Reviewed by Alan Bujtas.
+
+        There are some situations that allow us to do simplified layouts like when there is a positioned child
+        that needs to be laid out and neither the parent nor any other normal children needs it. In those cases
+        we just pick the list of positioned objects and invoke layoutPositionedObjects(). However that list
+        might not be properly updated since it's only done during the layout in RenderBlock::layoutBlockChildren().
+
+        This is causing that we miss layouts in cases where a renderer has the posChildNeedsLayout() bit set
+        (due to some style change for example) but no descendants in the positionedDescendantsMap() because
+        it has not been laid out yet. In those cases we simply bail out the simplified layout and proceed as in
+        the normal layout process.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedLayout):
+
 2021-07-21  David Kilzer  <ddkilzer@apple.com>
 
         GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
