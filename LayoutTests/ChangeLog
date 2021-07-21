@@ -1,5 +1,14 @@
 2021-07-21  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [iOS Debug] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=228164
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-21  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [iOS] http/wpt/webrtc/transfer-datachannel-service-worker.https.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=228165
 
