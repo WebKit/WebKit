@@ -53,7 +53,7 @@ void GtkSettingsManagerProxy::settingsDidChange(GtkSettingsState&& state)
 void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 {
     if (state.themeName) {
-        g_object_set(m_settings, "gtk-theme-name", state.fontName->utf8().data(), nullptr);
+        g_object_set(m_settings, "gtk-theme-name", state.themeName->utf8().data(), nullptr);
         RenderTheme::singleton().platformColorsDidChange();
         Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     }

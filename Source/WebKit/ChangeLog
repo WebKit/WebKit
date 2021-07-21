@@ -1,3 +1,15 @@
+2021-07-21  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Theme scrollbar css is no longer respected
+        https://bugs.webkit.org/show_bug.cgi?id=228145
+
+        Reviewed by Michael Catanzaro.
+
+        Fix a fontName -> themeName typo.
+
+        * WebProcess/gtk/GtkSettingsManagerProxy.cpp:
+        (WebKit::GtkSettingsManagerProxy::applySettings):
+
 2021-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r267763): [SOUP] After network process crash, all cookies are lost until browser is restarted
