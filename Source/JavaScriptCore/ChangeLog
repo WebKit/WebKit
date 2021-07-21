@@ -1,3 +1,15 @@
+2021-07-21  Yijia Huang  <yijia_huang@apple.com>
+
+        Fix type check error in testb3
+        https://bugs.webkit.org/show_bug.cgi?id=228166
+
+        Reviewed by Saam Barati.
+
+        * b3/testb3_2.cpp:
+        (testXorNotWithLeftShift32):
+        (testXorNotWithRightShift32):
+        (testXorNotWithUnsignedRightShift32):
+
 2021-07-21  Keith Miller  <keith_miller@apple.com>
 
         speculateNeitherDoubleNorStringNorHeapBigInt should only have a single JSType branch

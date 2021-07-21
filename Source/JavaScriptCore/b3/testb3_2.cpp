@@ -4511,7 +4511,7 @@ void testXorNotWithLeftShift32()
             proc, Trunc, Origin(), 
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
         Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
-        Value* minusOneValue = root->appendNew<Const64Value>(proc, Origin(), -1);
+        Value* minusOneValue = root->appendNew<Const32Value>(proc, Origin(), -1);
 
         Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
         Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), shiftValue, minusOneValue);
@@ -4558,7 +4558,7 @@ void testXorNotWithRightShift32()
             proc, Trunc, Origin(), 
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
         Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
-        Value* minusOneValue = root->appendNew<Const64Value>(proc, Origin(), -1);
+        Value* minusOneValue = root->appendNew<Const32Value>(proc, Origin(), -1);
 
         Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
         Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), shiftValue, minusOneValue);
@@ -4605,7 +4605,7 @@ void testXorNotWithUnsignedRightShift32()
             proc, Trunc, Origin(), 
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
         Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
-        Value* minusOneValue = root->appendNew<Const64Value>(proc, Origin(), -1);
+        Value* minusOneValue = root->appendNew<Const32Value>(proc, Origin(), -1);
 
         Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
         Value* xorValue = root->appendNew<Value>(proc, BitXor, Origin(), shiftValue, minusOneValue);
