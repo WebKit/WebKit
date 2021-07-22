@@ -1,3 +1,23 @@
+2021-07-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Avoid Quick Note overlay when scrolling to show a highlight
+        https://bugs.webkit.org/show_bug.cgi?id=228172
+
+        Reviewed by Wenson Hsieh and Tim Horton.
+
+        When scrolling to show the selected highlight after clicking on one in the QuickNote overlay,
+        make sure to avoid the Quick Note overlay, so that the user can actually see the highlight. 
+        This required calculating more information about the selection rect for iOS, and also piping through
+        information to have the selection rect be the entire rect, rather that just the caret and the end of selection.
+
+        * Platform/spi/Cocoa/SynapseSPI.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView adjustScrollRect:]):
+        (-[WKWebView _scrollToRect:origin:minimumScrollDistance:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::appHighlightsNoteOverlayRect):
+        * UIProcess/WebPageProxy.h:
+
 2021-07-22  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Expose API to access/modify capture devices states

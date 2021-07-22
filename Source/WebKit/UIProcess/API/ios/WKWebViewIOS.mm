@@ -83,6 +83,7 @@
 
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 static const Seconds delayBeforeNoCommitsLogging = 5_s;
+static const unsigned highlightMargin = 5;
 
 static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
 {
@@ -1153,6 +1154,39 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     }
 }
 
+- (float)_adjustScrollRectToAvoidHighlightOverlay:(WebCore::FloatRect)targetRect
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    WebCore::FloatRect overlayRect = [self convertRect:_page->appHighlightsOverlayRect() fromCoordinateSpace:self.window.screen.coordinateSpace];
+    
+    if (CGRectIsNull(overlayRect))
+        return 0;
+        
+    overlayRect.expand(highlightMargin, highlightMargin);
+    
+    if (!targetRect.intersects(overlayRect))
+        return 0;
+    
+    float topGap = overlayRect.y() - [self bounds].origin.y;
+    float bottomGap = (self.bounds.size.height + self.bounds.origin.y) - overlayRect.maxY();
+    
+    float midScreen = self.center.y;
+
+    if (topGap > bottomGap) {
+        auto midGap = topGap / 2 + self.bounds.origin.y;
+        auto diff = midScreen - midGap;
+        return diff;
+    }
+    
+    auto midGap = bottomGap / 2 + self.bounds.origin.y;
+    auto diff = midGap - midScreen;
+    return diff;
+#else
+    return 0;
+#endif
+}
+
+
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
 {
     if (![_scrollView isScrollEnabled])
@@ -1187,6 +1221,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     scrollViewOffsetDelta.scale(contentZoomScale(self));
 
     float scrollDistance = scrollViewOffsetDelta.diagonalLength();
+    
+    WebCore::FloatRect startRect = targetRect;
+    WebCore::FloatRect convertedStartRect = [self convertRect:startRect fromView:self._currentContentView];
+    convertedStartRect.move(-scrollViewOffsetDelta);
+
+    float additionalOffset = [self _adjustScrollRectToAvoidHighlightOverlay:convertedStartRect];
+
+    scrollViewOffsetDelta += WebCore::FloatSize(0, additionalOffset);
+    
     if (scrollDistance < minimumScrollDistance)
         return NO;
 

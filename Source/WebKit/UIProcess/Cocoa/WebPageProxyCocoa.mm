@@ -603,6 +603,13 @@ bool WebPageProxy::appHighlightsVisibility()
     return [m_appHighlightsObserver isVisible];
 }
 
+CGRect WebPageProxy::appHighlightsOverlayRect()
+{
+    if (!m_appHighlightsObserver)
+        setUpHighlightsObserver();
+    return [m_appHighlightsObserver visibleFrame];
+}
+
 void WebPageProxy::setUpHighlightsObserver()
 {
     if (m_appHighlightsObserver)
