@@ -1,3 +1,16 @@
+2021-07-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Update LayoutTests/TestExpectations for imported w3c IndexedDB tests
+        https://bugs.webkit.org/show_bug.cgi?id=228169
+
+        Reviewed by Chris Dumez.
+
+        Update LayoutTests/TestExpectations based on latest test results as we have fixed some existing issues, and we
+        no longer expect these tests to fail.
+
+        * TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-07-21  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [iOS Debug] media/media-usage-state-private-browsing.html is crashing.
