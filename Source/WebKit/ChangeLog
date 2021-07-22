@@ -1,3 +1,15 @@
+2021-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r277873, r280105): [macOS] Correct two sandbox typos (228201)
+        https://bugs.webkit.org/show_bug.cgi?id=228201
+        <rdar://problem/80983916>
+
+        Reviewed by Per Arne Vollan.
+
+        Correct two typos in the macOS Sandbox (WebContent process).
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-07-22  Brady Eidson  <beidson@apple.com>
 
         Revert part of r279089 that was done a little bit too early.

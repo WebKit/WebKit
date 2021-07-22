@@ -1057,7 +1057,7 @@
     (home-subpath "/Library/Preferences/com.apple.universalaccess.plist")
     (home-subpath "/Library/Preferences/edu.mit.Kerberos.plist")
     (home-subpath "/Library/Preferences/pbs.plist")
-    (home-regex "/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
+    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
 )
 #endif
 
@@ -2150,7 +2150,7 @@
     )
 )
 
-(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
+(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach
         (machtrap-number
             MSC_mach_wait_until
