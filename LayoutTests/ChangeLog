@@ -1,3 +1,192 @@
+2021-07-22  Truitt Savell  <tsavell@apple.com>
+
+        Migrate Monterey expectations to OpenSource and bump version numbers
+        https://bugs.webkit.org/show_bug.cgi?id=228090
+
+        Reviewed by Ryan Haddad.
+
+        * TestExpectations:
+        * media/media-source/content/test-vp8-malformed-header-manifest.json: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header-manifest.json.
+        * media/media-source/content/test-vp8-malformed-header.webm: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/content/test-vp8-malformed-header.webm.
+        * media/media-source/media-source-webm-vp8-malformed-header-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header-expected.txt.
+        * media/media-source/media-source-webm-vp8-malformed-header.html: Renamed from LayoutTests/platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html.
+        * media/media-webm-no-duration-expected.txt: Renamed from LayoutTests/platform/mac-bigsur/media/media-webm-no-duration-expected.txt.
+        * media/media-webm-no-duration.html: Renamed from LayoutTests/platform/mac-bigsur/media/media-webm-no-duration.html.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/anchor-element-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/anchor-element-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attrib-string-colors-with-color-filter-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attrib-string-colors-with-color-filter-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attribute-string-for-copy-with-color-filter-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attribute-string-for-copy-with-color-filter-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-for-typing-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-for-typing-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/basic-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/basic-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/comment-cdata-section-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/comment-cdata-section-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/font-size-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/font-size-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/font-weight-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/font-weight-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/letter-spacing-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/text-decorations-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/text-decorations-expected.txt.
+        * platform/mac-bigsur-wk1/editing/mac/attributed-string/vertical-align-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/vertical-align-expected.txt.
+        * platform/mac-bigsur-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt: Copied from LayoutTests/platform/mac-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt.
+        * platform/mac-bigsur-wk2/fast/events/contextmenu-lookup-action-for-image-expected.txt: Added.
+        * platform/mac-bigsur-wk2/http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt: Added.
+        * platform/mac-bigsur-wk2/http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/basic-auth.any-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/basic-auth.any.worker-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt: Added.
+        * platform/mac-bigsur-wk2/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-sizes-expected.txt.
+        * platform/mac-bigsur/fast/forms/input-appearance-spinbutton-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-spinbutton-expected.txt.
+        * platform/mac-bigsur/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/mac-bigsur/fast/forms/select/optgroup-rendering-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select/optgroup-rendering-expected.txt.
+        * platform/mac-bigsur/fast/text/basic/014-expected.txt: Copied from LayoutTests/platform/mac/fast/text/basic/014-expected.txt.
+        * platform/mac-bigsur/fast/text/capitalize-boundaries-expected.txt: Copied from LayoutTests/platform/mac/fast/text/capitalize-boundaries-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphenate-avoid-orphaned-word-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-avoid-orphaned-word-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphenate-character-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-character-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphenate-first-word-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-first-word-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphenate-limit-before-after-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-limit-before-after-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphenate-limit-lines-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-limit-lines-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphenate-locale-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-locale-expected.txt.
+        * platform/mac-bigsur/fast/text/hyphens-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphens-expected.txt.
+        * platform/mac-bigsur/fast/text/midword-break-after-breakable-char-expected.txt: Copied from LayoutTests/platform/mac/fast/text/midword-break-after-breakable-char-expected.txt.
+        * platform/mac-bigsur/inspector/css/get-system-fonts-expected.txt: Added.
+        * platform/mac-bigsur/media/media-source/mediasource-addsourcebuffer-expected.txt: Added.
+        * platform/mac-bigsur/media/media-source/mediasource-invalid-codec-expected.txt: Added.
+        * platform/mac-bigsur/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Added.
+        * platform/mac-bigsur/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Added.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/anchor-element-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/anchor-element-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attrib-string-colors-with-color-filter-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attrib-string-colors-with-color-filter-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attribute-string-for-copy-with-color-filter-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attribute-string-for-copy-with-color-filter-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-for-typing-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-for-typing-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/basic-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/basic-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/comment-cdata-section-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/comment-cdata-section-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/font-size-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/font-size-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/font-weight-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/font-weight-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/letter-spacing-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/text-decorations-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/text-decorations-expected.txt.
+        * platform/mac-catalina-wk1/editing/mac/attributed-string/vertical-align-expected.txt: Copied from LayoutTests/platform/mac-wk1/editing/mac/attributed-string/vertical-align-expected.txt.
+        * platform/mac-catalina-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt: Copied from LayoutTests/platform/mac-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt.
+        * platform/mac-catalina-wk2/fast/events/contextmenu-lookup-action-for-image-expected.txt: Added.
+        * platform/mac-catalina-wk2/http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt: Added.
+        * platform/mac-catalina-wk2/http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/basic-auth.any-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/basic-auth.any.worker-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt: Added.
+        * platform/mac-catalina-wk2/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window-expected.txt: Added.
+        * platform/mac-catalina/fast/text/basic/014-expected.txt: Copied from LayoutTests/platform/mac/fast/text/basic/014-expected.txt.
+        * platform/mac-catalina/fast/text/capitalize-boundaries-expected.txt: Copied from LayoutTests/platform/mac/fast/text/capitalize-boundaries-expected.txt.
+        * platform/mac-catalina/fast/text/hyphenate-avoid-orphaned-word-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-avoid-orphaned-word-expected.txt.
+        * platform/mac-catalina/fast/text/hyphenate-character-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-character-expected.txt.
+        * platform/mac-catalina/fast/text/hyphenate-first-word-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-first-word-expected.txt.
+        * platform/mac-catalina/fast/text/hyphenate-limit-before-after-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-limit-before-after-expected.txt.
+        * platform/mac-catalina/fast/text/hyphenate-limit-lines-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-limit-lines-expected.txt.
+        * platform/mac-catalina/fast/text/hyphenate-locale-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-locale-expected.txt.
+        * platform/mac-catalina/fast/text/hyphens-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphens-expected.txt.
+        * platform/mac-catalina/fast/text/midword-break-after-breakable-char-expected.txt: Copied from LayoutTests/platform/mac/fast/text/midword-break-after-breakable-char-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-expected.txt: Added.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec-expected.txt: Added.
+        * platform/mac-catalina/inspector/css/get-system-fonts-expected.txt: Added.
+        * platform/mac-catalina/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Added.
+        * platform/mac-catalina/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/editing/mac/attributed-string/anchor-element-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attrib-string-colors-with-color-filter-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attribute-string-for-copy-with-color-filter-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-for-typing-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/attributed-string-for-typing-with-color-filter-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/basic-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/comment-cdata-section-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/font-size-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/font-weight-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/letter-spacing-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/text-decorations-expected.txt:
+        * platform/mac-wk1/editing/mac/attributed-string/vertical-align-expected.txt:
+        * platform/mac-wk1/fast/scrolling/latching/iframe-latch-small-deltas-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/fast/events/contextmenu-lookup-action-for-image-expected.txt: Added.
+        * platform/mac-wk2/http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt: Added.
+        * platform/mac-wk2/http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/Send-65K-data.any-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/Send-data.any-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/basic-auth.any-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/basic-auth.any.worker-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-getting-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-large-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-unicode-expected.txt: Added.
+        * platform/mac-wk2/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/mac/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/mac/fast/text/basic/014-expected.txt:
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac/fast/text/hyphenate-avoid-orphaned-word-expected.txt:
+        * platform/mac/fast/text/hyphenate-character-expected.txt:
+        * platform/mac/fast/text/hyphenate-first-word-expected.txt:
+        * platform/mac/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/mac/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/mac/fast/text/hyphenate-locale-expected.txt:
+        * platform/mac/fast/text/hyphens-expected.txt:
+        * platform/mac/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/mac/inspector/css/get-system-fonts-expected.txt: Added.
+        * platform/mac/media/media-source/media-source-webm-vp8-malformed-header-expected.png: Added.
+        * platform/mac/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Added.
+
 2021-07-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         REGRESSION: [iOS] ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::RemoteAudioHardwareListener::~RemoteAudioHardwareListener().

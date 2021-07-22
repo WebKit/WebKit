@@ -7,12 +7,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS iframeTarget.contentWindow.pageYOffset is 0
 PASS window.pageYOffset is 200
 After scroll
-FAIL iframeTarget.contentWindow.pageYOffset should be 400. Was 205.
+FAIL iframeTarget.contentWindow.pageYOffset should be 400. Was 410.
 PASS window.pageYOffset is 200
 After wait
-FAIL iframeTarget.contentWindow.pageYOffset should be 400. Was 205.
+FAIL iframeTarget.contentWindow.pageYOffset should be 400. Was 410.
 PASS window.pageYOffset is 200
-FAIL iframeTarget.contentWindow.pageYOffset should be 380. Was 200.
+FAIL iframeTarget.contentWindow.pageYOffset should be 380. Was 400.
 PASS window.pageYOffset is 200
 PASS successfullyParsed is true
 

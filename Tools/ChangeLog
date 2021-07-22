@@ -1,3 +1,16 @@
+2021-07-22  Truitt Savell  <tsavell@apple.com>
+
+        Migrate Monterey expectations to OpenSource and bump version numbers
+        https://bugs.webkit.org/show_bug.cgi?id=228090
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_monterey_baseline_search_path):
+        (MacTest.test_big_sur_baseline_search_path): Deleted.
+
 2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Micro-optimize innerHTML

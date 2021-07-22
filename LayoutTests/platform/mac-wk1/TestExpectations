@@ -1222,7 +1222,7 @@ webkit.org/b/221717 [ BigSur+ ] http/tests/security/http-0.9/default-port-script
 
 webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/222493 [ BigSur ] platform/mac-bigsur/media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
+webkit.org/b/222493 [ BigSur+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
 
 webkit.org/b/221819 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
 
@@ -1264,6 +1264,38 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] transforms/2d/perspective-not-fixed-container.html [ Pass ImageOnlyFailure ]
 [ BigSur ] transforms/2d/rotate-change-composited.html [ Pass ImageOnlyFailure ]
 [ BigSur ] transforms/2d/rotate-composited.html [ Pass ImageOnlyFailure ]
+
+# rdar://79973810 5 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap* tests are consistently timing out.
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html [ Timeout ]
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Timeout ]
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html [ Timeout ]
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Timeout ]
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer.html [ Timeout ]
+
+# rdar://80334322 (REGRESSION: [ Monterey wk1 ] fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html and fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html are constant failures)
+[ Monterey ] fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
+[ Monterey ] fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
+
+# rdar://80332264 ([ Monterey wk1 ] compositing/fixed-with-main-thread-scrolling.html has multiple failures)
+[ Monterey ] compositing/fixed-with-main-thread-scrolling.html [ Skip ]
+
+# rdar://80332615 ([Monterey Wk1 Debug] compositing/clipping/border-radius-on-webgl.html is a constant failure)
+[ Monterey Debug ] compositing/clipping/border-radius-on-webgl.html [ Pass ImageOnlyFailure ]
+
+# rdar://80343834 ([ Monterey wk1 Debug ] http/tests/xmlhttprequest/interactive-state.html is a flaky failure)
+[ Monterey Debug ] http/tests/xmlhttprequest/interactive-state.html [ Pass Failure ]
+
+# rdar://80346720 ([Monterey Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure)
+[ Monterey ] media/media-source/media-webm-opus-partial.html [ Failure ]
+
+# rdar://80340735 ([ Monterey wk1 arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html is a flaky image only failure)
+[ Monterey arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass Timeout ]
+
+#nrdar://80343068 ([ Monterey wk1 arm64] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html is a flaky image only failure)
+[ Monterey arm64 ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
+
+# rdar://80342885 ([ Monterey wk1 arm64 ] webanimations/accelerated-transition-by-removing-property.html is a flaky image only failure)
+[ Monterey arm64 ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
 

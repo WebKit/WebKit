@@ -22,7 +22,8 @@ Alignment 4
     BaseWritingDirection: 0
     HyphenationFactor: 0
     TighteningForTruncation: YES
-    HeaderLevel: 0 LineBreakStrategy 0
+    HeaderLevel: 0 LineBreakStrategy 0 PresentationIntents (
+) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''
 [webkit.org]
     NSColor: #0000ee (sRGB)
     NSFont: Times-Roman 16.00 pt.

@@ -35,7 +35,8 @@ Alignment 4
     BaseWritingDirection: -1
     HyphenationFactor: 0
     TighteningForTruncation: YES
-    HeaderLevel: 0 LineBreakStrategy 0
+    HeaderLevel: 0 LineBreakStrategy 0 PresentationIntents (
+) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''
 [ ]
     NSBackgroundColor: #5c5c5c (sRGB)
     NSColor: rgba(239, 239, 239, 0.4) (sRGB)

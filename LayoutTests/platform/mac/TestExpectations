@@ -1521,7 +1521,10 @@ webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 # <rdar://problem/48781098>
 [ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
 [ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]
-[ BigSur+ ] fast/images/heic-as-background-image.html [ Pass ]
+[ BigSur ] fast/images/heic-as-background-image.html [ Pass ]
+
+# rdar://80334724 ([ Monterey ] fast/images/heic-as-background-image.html is a constant failure)
+[ Monterey ] fast/images/heic-as-background-image.html [ ImageOnlyFailure ]
 
 # <rdar://problem/40172428>
 webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailure ]
@@ -1968,6 +1971,8 @@ webkit.org/b/228094 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 # <rdar://problem/64043254> REGRESSION(20A279-20A301a): platform/mac/fast/text/ligature-subdivision.html is a constant failure
 [ BigSur+ ] platform/mac/fast/text/ligature-subdivision.html [ Pass Failure ]
 
+[ BigSur+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Pass ]
+
 # rdar://66641405 (REGRESSION (20A2327-20A2348b?): 7 http/tests/media/hls/ tests are timing out)
 [ BigSur+ ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
 [ BigSur+ ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
@@ -2140,7 +2145,7 @@ webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/221973 [ BigSur ] platform/mac-bigsur/media/media-webm-no-duration.html [ Failure ]
+webkit.org/b/221973 [ BigSur+ ] media/media-webm-no-duration.html [ Failure ]
 
 webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]
 
@@ -2302,6 +2307,34 @@ webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
 
 webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html [ Pass Failure ]
+
+# rdar://77527575 (REGRESSION: [ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html is a constant text failure 77527575)
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html [ Pass Failure ]
+
+# rdar://78477744 (REGRESSION: [ Monterey ] 3 imported/w3c/web-platform-tests/css/css-text-decor (layout-tests) are constant ImageOnlyFailures)
+[ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-variable.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-from-font-variable.html [ Pass ImageOnlyFailure ]
+
+# rdar://80333758 (REGRESSION: [ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html is a constant timeout)
+[ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Timeout ]
+
+# rdar://80340581 ([ Monterey ] http/tests/preload/onload_event.html is a flaky failure)
+[ Monterey ] http/tests/preload/onload_event.html [ Pass Failure ]
+
+# rdar://80340280 ([ Monterey Debug ] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html is a flaky timeout)
+[ Monterey Debug ] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Pass Timeout ]
+
+#rdar://80344478 ([ Monterey ] 3 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap* tests timing out)
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html [ Timeout ]
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Timeout ]
+[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Timeout ]
+
+# rdar://80344665 ([ Monterey ] webaudio/codec-tests/mp3/128kbps-44khz.html is a constant audio failure)
+[ Monterey ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
+
+# rdar://80347712 ([ Monterey ] media/video-src-blob-replay.html is a flaky timeout)
+[ Monterey ] media/video-src-blob-replay.html [ Timeout ]
 
 webkit.org/b/226520 media/video-played-collapse.html [ Pass Timeout Failure ]
 
