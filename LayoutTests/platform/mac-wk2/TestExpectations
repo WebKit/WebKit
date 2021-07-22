@@ -1599,5 +1599,7 @@ webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Fai
 
 webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
 
+webkit.org/b/228197 [ arm64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html [ Pass Failure ]
+
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure ]
  

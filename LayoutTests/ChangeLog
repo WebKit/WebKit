@@ -1,3 +1,12 @@
+2021-07-22  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur wk2 arm64] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228197.
+
+        Unreviewwed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-22  Truitt Savell  <tsavell@apple.com>
 
         Migrate Monterey expectations to OpenSource and bump version numbers
