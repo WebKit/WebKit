@@ -186,6 +186,22 @@ typedef enum {
 typedef void (* WebKitFrameDisplayedCallback) (WebKitWebView *web_view,
                                                gpointer       user_data);
 
+/**
+ * WebKitMediaCaptureState:
+ * @WEBKIT_MEDIA_CAPTURE_STATE_NONE: Media capture is disabled.
+ * @WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE: Media capture is active.
+ * @WEBKIT_MEDIA_CAPTURE_STATE_MUTED: Media capture is muted.
+ *
+ * Enum values used to specify the capture state of a media device.
+ *
+ * Since: 2.34
+ */
+typedef enum {
+    WEBKIT_MEDIA_CAPTURE_STATE_NONE,
+    WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE,
+    WEBKIT_MEDIA_CAPTURE_STATE_MUTED,
+} WebKitMediaCaptureState;
+
 struct _WebKitWebView {
     GObject parent;
 
@@ -576,6 +592,27 @@ webkit_web_view_terminate_web_process                (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_set_cors_allowlist                   (WebKitWebView             *web_view,
                                                       const gchar * const       *allowlist);
+
+WEBKIT_API WebKitMediaCaptureState
+webkit_web_view_get_camera_capture_state             (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_camera_capture_state             (WebKitWebView             *web_view,
+                                                      WebKitMediaCaptureState    state);
+
+WEBKIT_API WebKitMediaCaptureState
+webkit_web_view_get_microphone_capture_state         (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_microphone_capture_state         (WebKitWebView             *web_view,
+                                                      WebKitMediaCaptureState    state);
+
+WEBKIT_API WebKitMediaCaptureState
+webkit_web_view_get_display_capture_state            (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_display_capture_state            (WebKitWebView             *web_view,
+                                                      WebKitMediaCaptureState    state);
 
 G_END_DECLS
 

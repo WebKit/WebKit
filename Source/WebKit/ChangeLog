@@ -1,3 +1,48 @@
+2021-07-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Expose API to access/modify capture devices states
+        https://bugs.webkit.org/show_bug.cgi?id=227902
+
+        Reviewed by Carlos Garcia Campos.
+
+        Introduce new GLib API (and corresponding GObject properties):
+
+        webkit_web_view_get_camera_capture_state
+        webkit_web_view_get_microphone_capture_state
+        webkit_web_view_set_camera_capture_state
+        webkit_web_view_set_microphone_capture_state
+        webkit_web_view_get_display_capture_state
+        webkit_web_view_set_display_capture_state
+        webkit_user_media_permission_is_for_display_device
+
+        This can be useful in Web browsers willing to indicate the status of the capture devices
+        currently in use by the WebView.
+
+        Covered by API tests.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:
+        (webkit_user_media_permission_is_for_display_device):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewMediaCaptureStateDidChange):
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkit_web_view_class_init):
+        (webkitWebViewConfigureMediaCapture):
+        (webkit_web_view_get_camera_capture_state):
+        (webkit_web_view_set_camera_capture_state):
+        (webkit_web_view_get_microphone_capture_state):
+        (webkit_web_view_set_microphone_capture_state):
+        (webkit_web_view_get_display_capture_state):
+        (webkit_web_view_set_display_capture_state):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitUserMediaPermissionRequest.h:
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2021-07-22  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Pass the full target point when selecting a snap offset

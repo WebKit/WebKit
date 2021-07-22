@@ -1,3 +1,35 @@
+2021-07-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Expose API to access/modify capture devices states
+        https://bugs.webkit.org/show_bug.cgi?id=227902
+
+        Reviewed by Carlos Garcia Campos.
+
+        The GTK MiniBrowser is now able to show media capture indicators, through the URI entry. A
+        new API test was added, checking support for getDisplayMedia().
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (decidePermissionRequest):
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewMediaCaptureStateChanged):
+        (webViewUriEntryIconPressed):
+        (browserWindowSwitchTab):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewUserMediaPermissionRequests):
+        (testWebViewAudioOnlyUserMediaPermissionRequests):
+        (testWebViewDisplayUserMediaPermissionRequests):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (displayCaptureChanged):
+        (WebViewTest::waitUntilDisplayCaptureStateChangedTo):
+        (microphoneCaptureChanged):
+        (WebViewTest::waitUntilMicrophoneCaptureStateChangedTo):
+        (cameraCaptureChanged):
+        (WebViewTest::waitUntilCameraCaptureStateChangedTo):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2021-07-21  Alexey Proskuryakov  <ap@apple.com>
 
         MiniBrowser xcconfig should include ccache.xcconfig conditionally

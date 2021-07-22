@@ -240,6 +240,7 @@ public:
             WebKitUserMediaPermissionRequest* userMediaRequest = WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request);
             g_assert_true(webkit_user_media_permission_is_for_audio_device(userMediaRequest) == test->m_expectedAudioMedia);
             g_assert_true(webkit_user_media_permission_is_for_video_device(userMediaRequest) == test->m_expectedVideoMedia);
+            g_assert_true(webkit_user_media_permission_is_for_display_device(userMediaRequest) == test->m_expectedDisplayMedia);
         }
 
         if (test->m_allowPermissionRequests)
@@ -256,6 +257,61 @@ public:
         g_main_loop_quit(test->m_mainLoop);
     }
 
+
+    static void displayCaptureChanged(WebKitWebView* webView, GParamSpec*, UIClientTest* test)
+    {
+        if (test->m_expectedDisplayCaptureState && *test->m_expectedDisplayCaptureState != webkit_web_view_get_display_capture_state(webView))
+            return;
+
+        g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(displayCaptureChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilDisplayCaptureStateChangedTo(WebKitMediaCaptureState expectedCaptureState)
+    {
+        *m_expectedDisplayCaptureState = expectedCaptureState;
+        g_signal_connect(m_webView, "notify::display-capture-state", G_CALLBACK(displayCaptureChanged), this);
+        g_main_loop_run(m_mainLoop);
+        g_assert_cmpuint(webkit_web_view_get_display_capture_state(m_webView), ==, expectedCaptureState);
+        m_expectedDisplayCaptureState.reset();
+    }
+
+    static void microphoneCaptureChanged(WebKitWebView* webView, GParamSpec*, UIClientTest* test)
+    {
+        if (test->m_expectedMicrophoneCaptureState && *test->m_expectedMicrophoneCaptureState != webkit_web_view_get_microphone_capture_state(webView))
+            return;
+
+        g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(microphoneCaptureChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilMicrophoneCaptureStateChangedTo(WebKitMediaCaptureState expectedCaptureState)
+    {
+        *m_expectedMicrophoneCaptureState = expectedCaptureState;
+        g_signal_connect(m_webView, "notify::microphone-capture-state", G_CALLBACK(microphoneCaptureChanged), this);
+        g_main_loop_run(m_mainLoop);
+        g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(m_webView), ==, expectedCaptureState);
+        m_expectedMicrophoneCaptureState.reset();
+    }
+
+    static void cameraCaptureChanged(WebKitWebView* webView, GParamSpec*, UIClientTest* test)
+    {
+        if (test->m_expectedCameraCaptureState && *test->m_expectedCameraCaptureState != webkit_web_view_get_camera_capture_state(webView))
+            return;
+
+        g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(cameraCaptureChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilCameraCaptureStateChangedTo(WebKitMediaCaptureState expectedCaptureState)
+    {
+        *m_expectedCameraCaptureState = expectedCaptureState;
+        g_signal_connect(m_webView, "notify::camera-capture-state", G_CALLBACK(cameraCaptureChanged), this);
+        g_main_loop_run(m_mainLoop);
+        g_assert_cmpuint(webkit_web_view_get_camera_capture_state(m_webView), ==, expectedCaptureState);
+        m_expectedCameraCaptureState.reset();
+    }
+
     UIClientTest()
         : m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
         , m_scriptDialogConfirmed(true)
@@ -263,6 +319,7 @@ public:
         , m_verifyMediaTypes(false)
         , m_expectedAudioMedia(false)
         , m_expectedVideoMedia(false)
+        , m_expectedDisplayMedia(false)
         , m_mouseTargetModifiers(0)
     {
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
@@ -415,6 +472,7 @@ public:
     gboolean m_verifyMediaTypes;
     gboolean m_expectedAudioMedia;
     gboolean m_expectedVideoMedia;
+    gboolean m_expectedDisplayMedia;
     WindowProperties m_windowProperties;
     HashSet<WTF::String> m_windowPropertiesChanged;
     GRefPtr<WebKitHitTestResult> m_mouseTargetHitTestResult;
@@ -426,6 +484,10 @@ public:
     bool m_shouldCreateWebViewsInNewWindowsAutomatically { false };
     cairo_rectangle_int_t m_defaultGeometryNewWindows;
 #endif
+
+    std::optional<WebKitMediaCaptureState> m_expectedCameraCaptureState;
+    std::optional<WebKitMediaCaptureState> m_expectedDisplayCaptureState;
+    std::optional<WebKitMediaCaptureState> m_expectedMicrophoneCaptureState;
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -1001,16 +1063,44 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     test->m_verifyMediaTypes = TRUE;
     test->m_expectedAudioMedia = TRUE;
     test->m_expectedVideoMedia = TRUE;
+    test->m_expectedDisplayMedia = FALSE;
 
     // Test denying a permission request.
     test->m_allowPermissionRequests = false;
     test->loadHtml(userMediaRequestHTML, nullptr);
     test->waitUntilTitleChangedTo("NotAllowedError");
+    g_assert_cmpuint(webkit_web_view_get_display_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_camera_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
 
     // Test allowing a permission request.
     test->m_allowPermissionRequests = true;
     test->loadHtml(userMediaRequestHTML, nullptr);
     test->waitUntilTitleChangedTo("OK");
+    g_assert_cmpuint(webkit_web_view_get_display_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    g_assert_cmpuint(webkit_web_view_get_camera_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+
+    webkit_web_view_set_microphone_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_MUTED);
+    test->waitUntilMicrophoneCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_MUTED);
+
+    webkit_web_view_set_microphone_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    test->waitUntilMicrophoneCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+
+    webkit_web_view_set_camera_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_MUTED);
+    test->waitUntilCameraCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_MUTED);
+
+    webkit_web_view_set_camera_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    test->waitUntilCameraCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+
+    webkit_web_view_set_camera_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    test->waitUntilCameraCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+
+    // A de-activated capture device cannot be re-activated.
+    webkit_web_view_set_camera_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    g_assert_cmpuint(webkit_web_view_get_camera_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+
+    g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
 
     webkit_settings_set_enable_media_stream(settings, enabled);
     webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
@@ -1041,11 +1131,81 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     test->m_verifyMediaTypes = TRUE;
     test->m_expectedAudioMedia = TRUE;
     test->m_expectedVideoMedia = FALSE;
+    test->m_expectedDisplayMedia = FALSE;
 
     // Test denying a permission request.
     test->m_allowPermissionRequests = false;
     test->loadHtml(userMediaRequestHTML, nullptr);
     test->waitUntilTitleChangedTo("NotAllowedError");
+    g_assert_cmpuint(webkit_web_view_get_display_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_camera_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+
+    webkit_settings_set_enable_media_stream(settings, enabled);
+    webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, TRUE);
+}
+
+static void testWebViewDisplayUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
+{
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    gboolean enabled = webkit_settings_get_enable_media_stream(settings);
+    webkit_settings_set_enable_media_stream(settings, TRUE);
+    webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
+    webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
+
+    test->showInWindow();
+    static const char* displayMediaRequestHTML = "<html>"
+        "  <script>"
+        "  function runTest()"
+        "  {"
+        "      navigator.mediaDevices.getDisplayMedia()"
+        "        .then((stream) => { document.title = \"OK\"; })"
+        "        .catch((e) => { document.title = e.name; });"
+        "  }"
+        "  </script>"
+        "  <body>"
+        "  <input style=\"position:absolute; left:0; top:0; margin:0; padding:0\" type=\"button\" value=\"click me\" onclick=\"runTest();\"/>"
+        "  </body>"
+        "</html>";
+
+    test->m_verifyMediaTypes = TRUE;
+    test->m_expectedAudioMedia = FALSE;
+    test->m_expectedVideoMedia = FALSE;
+    test->m_expectedDisplayMedia = TRUE;
+
+    // Test denying a permission request.
+    test->m_allowPermissionRequests = false;
+    test->loadHtml(displayMediaRequestHTML, nullptr);
+    test->waitUntilLoadFinished();
+    test->clickMouseButton(5, 5);
+    test->waitUntilTitleChangedTo("NotAllowedError");
+    g_assert_cmpuint(webkit_web_view_get_display_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_camera_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+
+    // Test allowing a permission request.
+    test->m_allowPermissionRequests = true;
+    test->loadHtml(displayMediaRequestHTML, nullptr);
+    test->waitUntilLoadFinished();
+    test->clickMouseButton(5, 5);
+    test->waitUntilTitleChangedTo("OK");
+    g_assert_cmpuint(webkit_web_view_get_display_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    g_assert_cmpuint(webkit_web_view_get_camera_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+
+    webkit_web_view_set_display_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_MUTED);
+    test->waitUntilDisplayCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_MUTED);
+
+    webkit_web_view_set_display_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    test->waitUntilDisplayCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+
+    webkit_web_view_set_display_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+    test->waitUntilDisplayCaptureStateChangedTo(WEBKIT_MEDIA_CAPTURE_STATE_NONE);
+
+    // A de-activated capture device cannot be re-activated.
+    webkit_web_view_set_display_capture_state(test->m_webView, WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE);
+    g_assert_cmpuint(webkit_web_view_get_display_capture_state(test->m_webView), ==, WEBKIT_MEDIA_CAPTURE_STATE_NONE);
 
     webkit_settings_set_enable_media_stream(settings, enabled);
     webkit_settings_set_enable_mock_capture_devices(settings, FALSE);
@@ -1343,6 +1503,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "usermedia-enumeratedevices-permission-check", testWebViewUserMediaEnumerateDevicesPermissionCheck);
     UIClientTest::add("WebKitWebView", "usermedia-permission-requests", testWebViewUserMediaPermissionRequests);
     UIClientTest::add("WebKitWebView", "audio-usermedia-permission-request", testWebViewAudioOnlyUserMediaPermissionRequests);
+    UIClientTest::add("WebKitWebView", "display-usermedia-permission-request", testWebViewDisplayUserMediaPermissionRequests);
 #endif
     // FIXME: Implement mouse click in WPE.
 #if PLATFORM(GTK)

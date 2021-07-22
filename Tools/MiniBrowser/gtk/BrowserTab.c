@@ -307,16 +307,20 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
         text = g_strdup("Allow notifications request?");
     } else if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request)) {
         title = "UserMedia request";
-        gboolean is_for_audio_device = webkit_user_media_permission_is_for_audio_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
-        gboolean is_for_video_device = webkit_user_media_permission_is_for_video_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
+        gboolean isForAudioDevice = webkit_user_media_permission_is_for_audio_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
+        gboolean isForVideoDevice = webkit_user_media_permission_is_for_video_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
+        gboolean isForDisplayDevice = webkit_user_media_permission_is_for_display_device(WEBKIT_USER_MEDIA_PERMISSION_REQUEST(request));
+
         const char *mediaType = NULL;
-        if (is_for_audio_device) {
-            if (is_for_video_device)
+        if (isForAudioDevice) {
+            if (isForVideoDevice)
                 mediaType = "audio/video";
             else
                 mediaType = "audio";
-        } else if (is_for_video_device)
+        } else if (isForVideoDevice)
             mediaType = "video";
+        else if (isForDisplayDevice)
+            mediaType = "display";
         text = g_strdup_printf("Allow access to %s device?", mediaType);
     } else if (WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)) {
         title = "Media plugin missing request";
