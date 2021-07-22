@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner, DrawGlyphsDeconstruction
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    m_owner.append<DrawGlyphs>(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+    m_owner.appendDrawGlyphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
 } // namespace DisplayList
