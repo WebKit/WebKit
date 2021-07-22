@@ -1,3 +1,20 @@
+2021-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename EventHandler::m_textRecognitionHoverTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=228183
+        rdar://78933684
+
+        Reviewed by Tim Horton.
+
+        When upstreaming support for Live Text in WebKit, I accidentally renamed the method
+        `imageExtractionTimerFired()` to `m_textRecognitionHoverTimerFired()`.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::textRecognitionHoverTimerFired):
+        (WebCore::EventHandler::m_textRecognitionHoverTimerFired): Deleted.
+        * page/EventHandler.h:
+
 2021-07-22  Alex Christensen  <achristensen@webkit.org>
 
         XHR.send(Document) should replace mismatched surrogates with replacement character before sending

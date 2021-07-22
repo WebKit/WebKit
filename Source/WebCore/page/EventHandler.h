@@ -393,7 +393,7 @@ private:
     void hoverTimerFired();
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void m_textRecognitionHoverTimerFired();
+    void textRecognitionHoverTimerFired();
 #endif
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
