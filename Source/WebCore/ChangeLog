@@ -1,3 +1,22 @@
+2021-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] ".SF Arabic" should not be able to be looked up by name (because it is dot-prefixed)
+        https://bugs.webkit.org/show_bug.cgi?id=228018
+        <rdar://problem/80691654>
+
+        Reviewed by Simon Fraser.
+
+        Dot-prefixed font names are not supported. The supported way of using SF Arabic is to use
+        system-ui with Arabic text. It will fall back to SF Arabic.
+
+        Test: fast/text/sf-arabic-lookup-by-name.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::platformFontLookupWithFamily): Special case this font name, similar to how
+        we have other special cases for other dot-prefixed fonts. Ideally we would change this
+        check to just if the leading character is a dot, but that change would be too scary at
+        this point in the release cycle.
+
 2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Rename AtomicHTMLToken to AtomHTMLToken
