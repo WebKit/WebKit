@@ -799,7 +799,7 @@ VisiblePositionRange makeVisiblePositionRange(const std::optional<SimpleRange>& 
 PartialOrdering documentOrder(const VisiblePosition& a, const VisiblePosition& b)
 {
     // FIXME: Should two positions with different affinity be considered equivalent or not?
-    return documentOrder(a.deepEquivalent(), b.deepEquivalent());
+    return treeOrder<ComposedTree>(a.deepEquivalent(), b.deepEquivalent());
 }
 
 bool intersects(const VisiblePositionRange& a, const VisiblePositionRange& b)

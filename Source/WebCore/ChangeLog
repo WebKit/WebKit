@@ -1,3 +1,32 @@
+2021-07-22  Frédéric Wang  <fwang@igalia.com>
+
+        nullptr crash in ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=223974
+
+        Reviewed by Darin Adler.
+
+        WebCore::documentOrder does not handle well elements like <summary> that contains a
+        shadow substree. This is causing assertion failures in debug build when setting start/end
+        selection and nullptr crashes in release build when trying to browse selection between these
+        start and end nodes. This patch fixes that issue by switching to shadow including tree order
+        for these particular cases. It introduces a generic treeOrder<TreeType>(a, b) function that
+        can be used for TreeType = ShadowIncludingTree as well as by WebCore::documentOrder.
+
+        * dom/Node.cpp: Explicitly instantiate commonInclusiveAncestor<ShadowIncludingTree> so that it can be used
+        by WebCore::treeOrder.
+        * dom/Position.cpp: Explicitly instantiate templates.
+        (WebCore::treeOrder): Convert documentOrder to a template parametrized by TreeType.
+        (WebCore::documentOrder): Implement it with treeOrder<ComposedTree>.
+        * dom/Position.h: Delcare new template.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::updateStartEnd): Use treeOrder<ShadowIncludingTree>.
+        (WebCore::ApplyStyleCommand::removeInlineStyle): Ditto.
+        * editing/VisiblePosition.cpp:
+        (WebCore::documentOrder): Use treeOrder<ShadowIncludingTree>.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setBaseAndExtentToDeepEquivalents): Use treeOrder<ShadowIncludingTree>.
+        (WebCore::VisibleSelection::setWithoutValidation): Ditto.
+
 2021-07-22  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Pass the full target point when selecting a snap offset

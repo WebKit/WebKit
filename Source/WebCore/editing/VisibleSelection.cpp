@@ -251,7 +251,7 @@ void VisibleSelection::setBaseAndExtentToDeepEquivalents()
     if (m_focus.isNull())
         m_focus = m_anchor;
 
-    m_anchorIsFirst = m_anchor <= m_focus;
+    m_anchorIsFirst = is_lteq(treeOrder<ShadowIncludingTree>(m_anchor, m_focus));
 
     m_base = VisiblePosition(m_anchor, m_affinity).deepEquivalent();
     if (m_anchor == m_focus)
@@ -461,7 +461,7 @@ void VisibleSelection::setWithoutValidation(const Position& anchor, const Positi
     ASSERT(m_affinity == Affinity::Downstream);
     m_anchor = anchor;
     m_focus = focus;
-    m_anchorIsFirst = m_anchor <= m_focus;
+    m_anchorIsFirst = is_lteq(treeOrder<ShadowIncludingTree>(m_anchor, m_focus));
     m_base = anchor;
     m_extent = focus;
     m_start = m_anchorIsFirst ? anchor : focus;
