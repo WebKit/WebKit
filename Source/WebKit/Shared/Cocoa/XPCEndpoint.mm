@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,9 +30,7 @@
 
 #if PLATFORM(MAC)
 #import "CodeSigning.h"
-#import <Kernel/kern/cs_blobs.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/WTFString.h>
 #endif
 
@@ -55,10 +53,7 @@ XPCEndpoint::XPCEndpoint()
             if (pid != getpid() && !WTF::hasEntitlement(connection.get(), "com.apple.private.webkit.use-xpc-endpoint")) {
                 WTFLogAlways("Audit token does not have required entitlement com.apple.private.webkit.use-xpc-endpoint");
 #if PLATFORM(MAC)
-                audit_token_t auditToken;
-                xpc_connection_get_audit_token(connection.get(), &auditToken);
-                bool isPlatformBinary = SecTaskGetCodeSignStatus(adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, auditToken)).get()) & CS_PLATFORM_BINARY;
-                auto signingIdentifier = codeSigningIdentifier(connection.get());
+                auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection.get());
 
                 if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent")) {
                     WTFLogAlways("XPC endpoint denied to connect with unknown client");

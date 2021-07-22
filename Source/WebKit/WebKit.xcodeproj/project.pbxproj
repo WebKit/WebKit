@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -5998,7 +5998,6 @@
 		F40BBB40257FF46E0067463A /* GPUProcessWakeupMessageArguments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessWakeupMessageArguments.h; sourceTree = "<group>"; };
 		F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionContext.h; path = ios/WebAutocorrectionContext.h; sourceTree = "<group>"; };
 		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
-		F414CE2A269DDED100BD216A /* GPUProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUProcessCocoa.mm; path = cocoa/GPUProcessCocoa.mm; sourceTree = "<group>"; };
 		F414CE2C269DE6EA00BD216A /* RemoteRenderingBackendState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRenderingBackendState.h; sourceTree = "<group>"; };
 		F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionData.h; path = ios/WebAutocorrectionData.h; sourceTree = "<group>"; };
 		F42D634022A0EFD300D2FB3A /* WebAutocorrectionData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebAutocorrectionData.mm; path = ios/WebAutocorrectionData.mm; sourceTree = "<group>"; };
@@ -8357,6 +8356,8 @@
 				A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */,
 				A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */,
 				1A698F171E4910220064E881 /* AuxiliaryProcessCocoa.mm */,
+				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
+				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
 				1C739E872347BD0F00C621EC /* CoreTextHelpers.h */,
@@ -10530,8 +10531,6 @@
 			children = (
 				A15799AC2584433100528236 /* MediaFormatReader */,
 				9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */,
-				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
-				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
 				1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */,
 				2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
@@ -11710,14 +11709,6 @@
 				AAB145E4223F931200E489D8 /* PrefetchCache.h */,
 			);
 			path = cache;
-			sourceTree = "<group>";
-		};
-		F414CE27269DDE8000BD216A /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				F414CE2A269DDED100BD216A /* GPUProcessCocoa.mm */,
-			);
-			name = cocoa;
 			sourceTree = "<group>";
 		};
 		F638955A133BF57D008941D5 /* mac */ = {
