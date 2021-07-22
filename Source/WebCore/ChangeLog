@@ -1,5 +1,112 @@
 2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Rename AtomicHTMLToken to AtomHTMLToken
+        https://bugs.webkit.org/show_bug.cgi?id=228196
+
+        Reviewed by Geoffrey Garen.
+
+        We should rename AtomicHTMLToken to AtomHTMLToken as we did for AtomString (AtomicString => AtomString).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/AtomHTMLToken.h: Renamed from Source/WebCore/html/parser/AtomicHTMLToken.h.
+        (WebCore::AtomHTMLToken::AtomHTMLToken):
+        (WebCore::AtomHTMLToken::type const):
+        (WebCore::AtomHTMLToken::name const):
+        (WebCore::AtomHTMLToken::setName):
+        (WebCore::AtomHTMLToken::selfClosing const):
+        (WebCore::AtomHTMLToken::attributes):
+        (WebCore::AtomHTMLToken::attributes const):
+        (WebCore::AtomHTMLToken::characters const):
+        (WebCore::AtomHTMLToken::charactersLength const):
+        (WebCore::AtomHTMLToken::charactersIsAll8BitData const):
+        (WebCore::AtomHTMLToken::comment const):
+        (WebCore::AtomHTMLToken::forceQuirks const):
+        (WebCore::AtomHTMLToken::publicIdentifier const):
+        (WebCore::AtomHTMLToken::systemIdentifier const):
+        (WebCore::AtomHTMLToken::initializeAttributes):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::setAttributes):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertDoctype):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertFormattingElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        (WebCore::HTMLConstructionSite::createElementFromSavedToken):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::constructTreeFromHTMLToken):
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::HTMLStackItem):
+        (WebCore::HTMLStackItem::create):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        (WebCore::HTMLTreeBuilder::constructTree):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processFakeStartTag):
+        (WebCore::HTMLTreeBuilder::processFakeEndTag):
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInButtonScope):
+        (WebCore::shouldClose):
+        (WebCore::adjustSVGTagNameCase):
+        (WebCore::adjustAttributes):
+        (WebCore::adjustSVGAttributes):
+        (WebCore::adjustMathMLAttributes):
+        (WebCore::adjustForeignAttributes):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::insertGenericHTMLElement):
+        (WebCore::HTMLTreeBuilder::processTemplateStartTag):
+        (WebCore::HTMLTreeBuilder::processTemplateEndTag):
+        (WebCore::HTMLTreeBuilder::processEndOfFileForInTemplateContents):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHeadNoscript):
+        (WebCore::HTMLTreeBuilder::defaultForAfterHead):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        (WebCore::HTMLTreeBuilder::shouldProcessTokenInForeignContent):
+        (WebCore::hasAttribute):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+        (WebCore::HTMLTreeBuilder::parseError):
+        * html/parser/HTMLTreeBuilder.h:
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Micro-optimize innerHTML
         https://bugs.webkit.org/show_bug.cgi?id=228142
 

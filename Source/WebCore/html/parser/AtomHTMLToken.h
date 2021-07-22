@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-class AtomicHTMLToken {
+class AtomHTMLToken {
 public:
-    explicit AtomicHTMLToken(HTMLToken&);
-    AtomicHTMLToken(HTMLToken::Type, const AtomString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
+    explicit AtomHTMLToken(HTMLToken&);
+    AtomHTMLToken(HTMLToken::Type, const AtomString& name, Vector<Attribute>&& = { }); // Only StartTag or EndTag.
 
-    AtomicHTMLToken(const AtomicHTMLToken&) = delete;
-    AtomicHTMLToken(AtomicHTMLToken&&) = default;
+    AtomHTMLToken(const AtomHTMLToken&) = delete;
+    AtomHTMLToken(AtomHTMLToken&&) = default;
 
     HTMLToken::Type type() const;
 
@@ -94,71 +94,71 @@ private:
 const Attribute* findAttribute(const Vector<Attribute>&, const QualifiedName&);
 bool hasAttribute(const Vector<Attribute>&, const AtomString& localName);
 
-inline HTMLToken::Type AtomicHTMLToken::type() const
+inline HTMLToken::Type AtomHTMLToken::type() const
 {
     return m_type;
 }
 
-inline const AtomString& AtomicHTMLToken::name() const
+inline const AtomString& AtomHTMLToken::name() const
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
     return m_name;
 }
 
-inline void AtomicHTMLToken::setName(const AtomString& name)
+inline void AtomHTMLToken::setName(const AtomString& name)
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
     m_name = name;
 }
 
-inline bool AtomicHTMLToken::selfClosing() const
+inline bool AtomHTMLToken::selfClosing() const
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
     return m_selfClosing;
 }
 
-inline Vector<Attribute>& AtomicHTMLToken::attributes()
+inline Vector<Attribute>& AtomHTMLToken::attributes()
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
     return m_attributes;
 }
 
-inline const Vector<Attribute>& AtomicHTMLToken::attributes() const
+inline const Vector<Attribute>& AtomHTMLToken::attributes() const
 {
     ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
     return m_attributes;
 }
 
-inline const UChar* AtomicHTMLToken::characters() const
+inline const UChar* AtomHTMLToken::characters() const
 {
     ASSERT(m_type == HTMLToken::Character);
     return m_externalCharacters;
 }
 
-inline unsigned AtomicHTMLToken::charactersLength() const
+inline unsigned AtomHTMLToken::charactersLength() const
 {
     ASSERT(m_type == HTMLToken::Character);
     return m_externalCharactersLength;
 }
 
-inline bool AtomicHTMLToken::charactersIsAll8BitData() const
+inline bool AtomHTMLToken::charactersIsAll8BitData() const
 {
     return m_externalCharactersIsAll8BitData;
 }
 
-inline const String& AtomicHTMLToken::comment() const
+inline const String& AtomHTMLToken::comment() const
 {
     ASSERT(m_type == HTMLToken::Comment);
     return m_data;
 }
 
-inline bool AtomicHTMLToken::forceQuirks() const
+inline bool AtomHTMLToken::forceQuirks() const
 {
     ASSERT(m_type == HTMLToken::DOCTYPE);
     return m_doctypeData->forceQuirks;
 }
 
-inline String AtomicHTMLToken::publicIdentifier() const
+inline String AtomHTMLToken::publicIdentifier() const
 {
     ASSERT(m_type == HTMLToken::DOCTYPE);
     if (!m_doctypeData->hasPublicIdentifier)
@@ -166,7 +166,7 @@ inline String AtomicHTMLToken::publicIdentifier() const
     return StringImpl::create8BitIfPossible(m_doctypeData->publicIdentifier);
 }
 
-inline String AtomicHTMLToken::systemIdentifier() const
+inline String AtomHTMLToken::systemIdentifier() const
 {
     if (!m_doctypeData->hasSystemIdentifier)
         return String();
@@ -191,7 +191,7 @@ inline bool hasAttribute(const Vector<Attribute>& attributes, const AtomString& 
     return false;
 }
 
-inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList& attributes)
+inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& attributes)
 {
     unsigned size = attributes.size();
     if (!size)
@@ -210,7 +210,7 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
     }
 }
 
-inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken& token)
+inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
     : m_type(token.type())
 {
     switch (m_type) {
@@ -244,7 +244,7 @@ inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken& token)
     ASSERT_NOT_REACHED();
 }
 
-inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken::Type type, const AtomString& name, Vector<Attribute>&& attributes)
+inline AtomHTMLToken::AtomHTMLToken(HTMLToken::Type type, const AtomString& name, Vector<Attribute>&& attributes)
     : m_type(type)
     , m_name(name)
     , m_selfClosing(false)

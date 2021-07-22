@@ -353,11 +353,11 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
 void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr& rawToken)
 {
-    AtomicHTMLToken token(*rawToken);
+    AtomHTMLToken token(*rawToken);
 
     // We clear the rawToken in case constructTree
     // synchronously re-enters the parser. We don't clear the token immedately
-    // for Character tokens because the AtomicHTMLToken avoids copying the
+    // for Character tokens because the AtomHTMLToken avoids copying the
     // characters by keeping a pointer to the underlying buffer in the
     // HTMLToken. Fortunately, Character tokens can't cause us to re-enter
     // the parser.
