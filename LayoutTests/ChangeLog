@@ -1,3 +1,14 @@
+2021-07-22  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r269745) Google Developers maps does not fully load
+        https://bugs.webkit.org/show_bug.cgi?id=228182
+        <rdar://79787819>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/incorrect-sizing-with-calc-expected.html: Added.
+        * fast/inline/incorrect-sizing-with-calc.html: Added.
+
 2021-07-21  Sihui Liu  <sihui_liu@apple.com>
 
         Update LayoutTests/TestExpectations for imported w3c IndexedDB tests
