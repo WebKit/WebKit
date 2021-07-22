@@ -64,7 +64,6 @@
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 
 #if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
 #import <Symptoms/SymptomAnalytics.h>
@@ -83,7 +82,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationLite, kSymptomAnalyticsServiceEnd
 #endif
 
 #else
-#define NETWORK_SESSION_COCOA_ADDITIONS_1
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
@@ -1185,9 +1183,14 @@ static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& 
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
-#if PLATFORM(IOS_FAMILY)
-    NETWORK_SESSION_COCOA_ADDITIONS_1
+
+    auto isFullBrowser = isParentProcessAFullWebBrowser(networkSession.networkProcess());
+#if PLATFORM(MAC)
+    isFullBrowser = WebCore::MacApplication::isSafari();
 #endif
+    if (!configuration._sourceApplicationSecondaryIdentifier && isFullBrowser)
+        configuration._sourceApplicationSecondaryIdentifier = @"com.apple.WebKit.InAppBrowser";
+
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
