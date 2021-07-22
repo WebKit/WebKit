@@ -373,8 +373,8 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
         return nullptr;
     structure = vm.getStructure(structureID);
     maxOffset = structure->maxOffset();
-    IndexingType indexingMode = structure->indexingMode();
-    Dependency indexingModeDependency = Dependency::fence(indexingMode);
+    IndexingType indexingMode;
+    Dependency indexingModeDependency = structure->fencedIndexingMode(indexingMode);
     Locker<JSCellLock> locker(NoLockingNecessary);
     switch (indexingMode) {
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
@@ -389,8 +389,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
     default:
         break;
     }
-    butterfly = indexingModeDependency.consume(this)->butterfly();
-    Dependency butterflyDependency = Dependency::fence(butterfly);
+    Dependency butterflyDependency = indexingModeDependency.consume(this)->fencedButterfly(butterfly);
     if (!butterfly)
         return structure;
     if (butterflyDependency.consume(this)->structureID() != structureID)

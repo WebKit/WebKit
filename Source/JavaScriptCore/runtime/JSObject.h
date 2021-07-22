@@ -748,6 +748,10 @@ public:
         
     const Butterfly* butterfly() const { return m_butterfly.get(); }
     Butterfly* butterfly() { return m_butterfly.get(); }
+    Dependency fencedButterfly(Butterfly*& butterfly)
+    {
+        return Dependency::loadAndFence(static_cast<Butterfly**>(butterflyAddress()), butterfly);
+    }
     
     ConstPropertyStorage outOfLineStorage() const { return m_butterfly->propertyStorage(); }
     PropertyStorage outOfLineStorage() { return m_butterfly->propertyStorage(); }

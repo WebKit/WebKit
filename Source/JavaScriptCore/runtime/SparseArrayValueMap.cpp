@@ -174,8 +174,8 @@ JSValue SparseArrayEntry::getConcurrently() const
     // By emitting store-store-fence and load-load-fence between value setting and attributes setting,
     // we can ensure that the value is what we want once the attributes get ReadOnly & DontDelete:
     // once attributes get this state, the value should not be changed.
-    unsigned attributes = m_attributes;
-    Dependency attributesDependency = Dependency::fence(attributes);
+    unsigned attributes;
+    Dependency attributesDependency = Dependency::loadAndFence(&m_attributes, attributes);
     if (attributes & PropertyAttribute::Accessor)
         return JSValue();
 

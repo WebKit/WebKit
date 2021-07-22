@@ -1,3 +1,15 @@
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        Fix uses of Dependency::fence with respect to the compiler outsmarting us
+        https://bugs.webkit.org/show_bug.cgi?id=227757
+        <rdar://problem/80280931>
+
+        Reviewed by Robin Morisset.
+
+        * wtf/Atomics.h:
+        (WTF::opaque):
+        (WTF::Dependency::loadAndFence):
+
 2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r280193

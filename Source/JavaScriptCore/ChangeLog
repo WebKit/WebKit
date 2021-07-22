@@ -1,3 +1,58 @@
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        Fix uses of Dependency::fence with respect to the compiler outsmarting us
+        https://bugs.webkit.org/show_bug.cgi?id=227757
+        <rdar://problem/80280931>
+
+        Reviewed by Robin Morisset.
+
+        We were running into issues on arm64 with respect to the memory model
+        ordering of loads, and how the compiler optimized code around Dependency::fence.
+        The issue manifested as calls to isMarked incorrectly returning true.
+        
+        To see the issue, let's consider a program like this:
+        a = load(p1)
+        b = load(p2)
+        if (a != b) return;
+        d = Dependency::fence(b)
+        
+        At the point of defining the dependency, the compiler has proven
+        a == b. So, instead of building the dependency on the register used
+        for b, we end up using the register for a. So the actual compiled
+        code ends up with a dependency on load(p1), not load(p2).
+        
+        To fix this, we end up adding a new API, Dependency::loadEndFence(pointer,
+        result), which is defined as:
+        
+        template<typename T>
+        static Dependency loadAndFence(T* pointer, T& output)
+        {
+            T value = *opaque(pointer);
+            Dependency dependency = Dependency::fence(value);
+            output = opaque(value);
+            return dependency;
+        }
+        
+        The reason for this is that it split "b" in the above program into two values,
+        and the "b" the program compares against is not known to the compiler to be
+        the same value that we build a dependency on.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::aboutToMark):
+        (JSC::MarkedBlock::isMarked):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSObject.h:
+        (JSC::JSObject::fencedButterfly):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::getConcurrently):
+        (JSC::SparseArrayEntry::getConcurrently const): Deleted.
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.h:
+        (JSC::Structure::fencedIndexingMode):
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::fencedIndexingModeIncludingHistory):
+
 2021-07-22  Keith Miller  <keith_miller@apple.com>
 
         useProfiler option should automatically disable concurrent JIT

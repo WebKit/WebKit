@@ -567,10 +567,11 @@ inline bool MarkedBlock::areMarksStale(HeapVersion markingVersion)
 
 inline Dependency MarkedBlock::aboutToMark(HeapVersion markingVersion)
 {
-    HeapVersion version = footer().m_markingVersion;
+    HeapVersion version;
+    Dependency dependency = Dependency::loadAndFence(&footer().m_markingVersion, version);
     if (UNLIKELY(version != markingVersion))
         aboutToMarkSlow(markingVersion);
-    return Dependency::fence(version);
+    return dependency;
 }
 
 inline void MarkedBlock::Handle::assertMarksNotStale()
@@ -585,10 +586,11 @@ inline bool MarkedBlock::isMarkedRaw(const void* p)
 
 inline bool MarkedBlock::isMarked(HeapVersion markingVersion, const void* p)
 {
-    HeapVersion version = footer().m_markingVersion;
+    HeapVersion version;
+    Dependency dependency = Dependency::loadAndFence(&footer().m_markingVersion, version);
     if (UNLIKELY(version != markingVersion))
         return false;
-    return footer().m_marks.get(atomNumber(p), Dependency::fence(version));
+    return footer().m_marks.get(atomNumber(p), dependency);
 }
 
 inline bool MarkedBlock::isMarked(const void* p, Dependency dependency)
