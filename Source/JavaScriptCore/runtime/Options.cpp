@@ -508,6 +508,9 @@ void Options::recomputeDependentOptions()
         Options::useConcurrentJIT() = false;
     }
 
+    if (Options::useProfiler())
+        Options::useConcurrentJIT() = false;
+
     if (Options::alwaysUseShadowChicken())
         Options::maximumInliningDepth() = 1;
 
@@ -1036,6 +1039,10 @@ void Options::ensureOptionsAreCoherent()
     if (useWebAssembly() && !(useWasmLLInt() || useBBQJIT())) {
         coherent = false;
         dataLog("INCOHERENT OPTIONS: at least one of useWasmLLInt or useBBQJIT must be true\n");
+    }
+    if (useProfiler() && useConcurrentJIT()) {
+        coherent = false;
+        dataLogLn("Bytecode profiler is not concurrent JIT safe.");
     }
     if (!coherent)
         CRASH();

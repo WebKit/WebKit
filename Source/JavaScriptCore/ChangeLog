@@ -1,3 +1,24 @@
+2021-07-22  Keith Miller  <keith_miller@apple.com>
+
+        useProfiler option should automatically disable concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=228152
+
+        Reviewed by Saam Barati.
+
+        The bytecode profiler is not thread safe so we should have
+        recomputeDependentOptions() disable concurrent JIT. Also, fix the
+        jsc CLI to set the useProfiler option rather than have its own
+        state. Note, we call Options::setOption() rather than setting the
+        Options::useProfiler() option directly as setOption calls
+        recomputeDependentOptions() for us.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        (runJSC):
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        (JSC::Options::ensureOptionsAreCoherent):
+
 2021-07-21  Yijia Huang  <yijia_huang@apple.com>
 
         Fix type check error in testb3
