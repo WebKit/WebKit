@@ -1406,6 +1406,8 @@ webkit.org/b/228038 [ Debug ] media/media-can-play-av1.html  [ Pass Crash ]
 webkit.org/b/228038 [ Debug ] media/modern-media-controls/mute-button/mute-button.html  [ Pass Crash ] 
 webkit.org/b/228038 [ Debug ] fast/mediastream/audio-bad-sampleRate.html  [ Pass Crash ] 
 
+webkit.org/b/228204 media/video-presentation-mode.html [ Pass Timeout ] 
+
 webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 webkit.org/b/208662 http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html [ Pass Failure ]
