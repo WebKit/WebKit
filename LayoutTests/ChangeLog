@@ -1,3 +1,34 @@
+2021-07-22  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS Debug] Layout Test imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=172044
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-open-success-expected.txt:
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-open-success-private-expected.txt:
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange-expected.txt:
+        * storage/indexeddb/delete-in-upgradeneeded-close-in-versionchange-private-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-private-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers-expected.txt:
+        * storage/indexeddb/intversion-long-queue-expected.txt:
+        * storage/indexeddb/intversion-long-queue-private-expected.txt:
+        * storage/indexeddb/modern/deletedatabase-2-private.html: Removed. This test checks if a delete request is
+        started when there are ongoing open requests. We are removing this behavior to match spec so we don't need to
+        keep the test.
+        * storage/indexeddb/modern/deletedatabase-2.html: Removed. Ditto.
+        * storage/indexeddb/modern/resources/deletedatabase-2.js: Removed. Ditto.
+        * storage/indexeddb/resources/delete-in-upgradeneeded-close-in-open-success.js:
+        (versionChangeCallback):
+        (deleteBlockedCallback):
+        * storage/indexeddb/resources/delete-in-upgradeneeded-close-in-versionchange.js:
+        (initiallyDeleted):
+        * storage/indexeddb/resources/deletedatabase-delayed-by-open-and-versionchange.js:
+        (onOpenSuccess):
+
 2021-07-22  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r269745) Google Developers maps does not fully load

@@ -1,3 +1,12 @@
+2021-07-22  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS Debug] Layout Test imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=172044
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/IndexedDB/open-request-queue-expected.txt:
+
 2021-07-21  Rob Buis  <rbuis@igalia.com>
 
         [AspectRatio] Fix select-element-001.html

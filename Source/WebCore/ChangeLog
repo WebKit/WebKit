@@ -1,3 +1,20 @@
+2021-07-22  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS Debug] Layout Test imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=172044
+
+        Reviewed by Chris Dumez.
+
+        We used to start handling delete request when there is still open request in flight. We should start a request
+        after previous requests are done, to match spec (https://www.w3.org/TR/IndexedDB/#delete-a-database) and other 
+        browsers' behavior.
+
+        Updated and rebaselined existing tests.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::startVersionChangeTransaction):
+
 2021-07-22  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r269745) Google Developers maps does not fully load

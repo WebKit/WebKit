@@ -45,7 +45,7 @@ function prepareDatabase(evt)
 function onOpenSuccess(evt)
 {
     preamble(evt);
-    shouldBeTrue("blockedCalled");
+    shouldBeFalse("blockedCalled");
     evalAndLog("h = event.target.result");
     evalAndLog("h.close()");
 }

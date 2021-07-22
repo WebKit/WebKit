@@ -15,16 +15,11 @@ blockedCalled = false
 indexedDB.deleteDatabase(dbname)
 h.createObjectStore('testObjectStore').put('bar', 'foo')
 
-onVersionChange():
-PASS event.target.version is 1
-PASS event.oldVersion is 1
-PASS event.newVersion is null
-
 transactionOnComplete():
 versionChangeComplete = true
 
 onOpenSuccess():
-PASS blockedCalled is true
+PASS blockedCalled is false
 h = event.target.result
 h.close()
 

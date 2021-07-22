@@ -719,8 +719,6 @@ http/tests/misc/slow-loading-animated-image.html [ Skip ]
 
 webkit.org/b/179775 imported/w3c/web-platform-tests/xhr/firing-events-http-no-content-length.html [ Pass Failure ]
 
-webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
-
 webkit.org/b/184742 accessibility/mac/async-increment-decrement-action.html [ Skip ]
 webkit.org/b/185897 accessibility/mac/set-value-editable-types.html [ Skip ]
 webkit.org/b/193414 accessibility/mac/relative-frame.html [ Skip ]

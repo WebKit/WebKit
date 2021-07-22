@@ -337,22 +337,18 @@ void UniqueIDBDatabase::handleDatabaseOperations()
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::handleDatabaseOperations - There are %u pending", m_pendingOpenDBRequests.size());
 
-    if (m_versionChangeDatabaseConnection || m_versionChangeTransaction) {
-        // We can't start any new open-database operations right now, but we might be able to start handling a delete operation.
-        if (!m_currentOpenDBRequest)
-            m_currentOpenDBRequest = takeNextRunnableRequest(RequestType::Delete);
-    } else if (!m_currentOpenDBRequest || m_currentOpenDBRequest->connection().isClosed())
+    if (!m_currentOpenDBRequest && (m_versionChangeDatabaseConnection || m_versionChangeTransaction))
+        return;
+
+    if (!m_currentOpenDBRequest || m_currentOpenDBRequest->connection().isClosed())
         m_currentOpenDBRequest = takeNextRunnableRequest();
 
     while (m_currentOpenDBRequest) {
         handleCurrentOperation();
-        if (!m_currentOpenDBRequest) {
-            if (m_versionChangeTransaction)
-                m_currentOpenDBRequest = takeNextRunnableRequest(RequestType::Delete);
-            else
-                m_currentOpenDBRequest = takeNextRunnableRequest();
-        } else // Request need multiple attempts to handle.
+        if (m_versionChangeTransaction || m_currentOpenDBRequest)
             break;
+
+        m_currentOpenDBRequest = takeNextRunnableRequest();
     }
     LOG(IndexedDB, "UniqueIDBDatabase::handleDatabaseOperations - There are %u pending after this round of handling", m_pendingOpenDBRequests.size());
 }
@@ -411,7 +407,7 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     m_inProgressTransactions.set(versionChangeTransactionInfo.identifier(), m_versionChangeTransaction);
     
     auto error = m_backingStore->beginTransaction(versionChangeTransactionInfo);
-    auto operation = WTFMove(m_currentOpenDBRequest);
+    auto operation = std::exchange(m_currentOpenDBRequest, nullptr);
     IDBResultData result;
     if (error.isNull()) {
         addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
