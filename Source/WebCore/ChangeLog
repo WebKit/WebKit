@@ -1,3 +1,22 @@
+2021-07-22  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Compilation error with gcc version 9.3.0 (Buildroot 2020.08-14-ge5a2a90)
+        https://bugs.webkit.org/show_bug.cgi?id=228184
+
+        Reviewed by Chris Dumez.
+
+        Turn destructors into virtual ones for RTCRtpReceiver and RTCRtpSender.
+
+        It seems that gcc doesn't create a virtual table for these classes, while clang does. That
+        would the cause, when compiling clang, ImplementationLacksVTable is not needed in the IDL
+        file. The approach for this fix to force the virtual table creation by turning destructors
+        into virtual.
+
+        No new tests needed.
+
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpSender.h:
+
 2021-07-22  Megan Gardner  <megan_gardner@apple.com>
 
         Avoid Quick Note overlay when scrolling to show a highlight
