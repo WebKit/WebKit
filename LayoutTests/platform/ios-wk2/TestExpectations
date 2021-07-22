@@ -1398,6 +1398,14 @@ webkit.org/b/208587 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ P
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
 
+webkit.org/b/228038 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Crash ]
+webkit.org/b/228038 [ Debug ] fast/mediastream/apply-constraints-video.html [ Pass Crash ]
+webkit.org/b/228038 media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Crash ]
+webkit.org/b/228038 [ Debug ] media/non-existent-video-playback-interrupted.html  [ Pass Crash ]
+webkit.org/b/228038 [ Debug ] media/media-can-play-av1.html  [ Pass Crash ] 
+webkit.org/b/228038 [ Debug ] media/modern-media-controls/mute-button/mute-button.html  [ Pass Crash ] 
+webkit.org/b/228038 [ Debug ] fast/mediastream/audio-bad-sampleRate.html  [ Pass Crash ] 
+
 webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 webkit.org/b/208662 http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html [ Pass Failure ]
