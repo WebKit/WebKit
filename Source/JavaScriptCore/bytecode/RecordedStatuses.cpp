@@ -107,6 +107,8 @@ void RecordedStatuses::visitAggregateImpl(Visitor& visitor)
 {
     for (auto& pair : gets)
         pair.second->visitAggregate(visitor);
+    for (auto& pair : ins)
+        pair.second->visitAggregate(visitor);
     for (auto& pair : deletes)
         pair.second->visitAggregate(visitor);
     for (auto& pair : checkPrivateBrands)
