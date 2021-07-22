@@ -426,6 +426,8 @@ WTF_EXPORT_PRIVATE std::optional<String> makeVectorElement(const String*, id);
 
 #endif
 
+WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
+
 // Definitions of string operations
 
 inline String::String(StringImpl& string)

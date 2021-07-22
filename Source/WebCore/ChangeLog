@@ -1,3 +1,23 @@
+2021-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        XHR.send(Document) should replace mismatched surrogates with replacement character before sending
+        https://bugs.webkit.org/show_bug.cgi?id=228170
+
+        Reviewed by Chris Dumez.
+
+        This matches the behavior of Chrome and Firefox.
+        Covered by a newly passing WPT test.
+
+        * bindings/js/JSDOMConvertStrings.cpp:
+        (WebCore::identifierToUSVString):
+        (WebCore::valueToUSVString):
+        (WebCore::stringToUSVString): Deleted.
+        * bindings/js/JSDOMConvertStrings.h:
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::preprocessString):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2021-07-22  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Compilation error with gcc version 9.3.0 (Buildroot 2020.08-14-ge5a2a90)
