@@ -1,3 +1,21 @@
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Micro-optimize innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::shrinkToBestFit): This shrinks the backing storage to "appropriate for the living Vector".
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::UCharBufferTranslator::equal): WTF::equal for String does not check hash. This is because computing hash is expensive
+        and we would like to avoid that if it is not necessary. But when inserting string into AtomStringTable, we can use hash value
+        since they must be already computed because of HashMap's requirement. So let's use it before calling WTF::equal.
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::BufferFromStaticDataTranslator::equal):
+        * wtf/text/StringView.h:
+        (WTF::StringView::stripLeadingMatchedCharacters): Add this and use it in HTMLTreeBuilder.
+
 2021-07-22  Alex Christensen  <achristensen@webkit.org>
 
         XHR.send(Document) should replace mismatched surrogates with replacement character before sending

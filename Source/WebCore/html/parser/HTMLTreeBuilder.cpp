@@ -226,11 +226,7 @@ private:
     template<bool characterPredicate(UChar)> void skipLeading()
     {
         ASSERT(!isEmpty());
-        while (characterPredicate(m_text[0])) {
-            m_text = m_text.substring(1);
-            if (m_text.isEmpty())
-                return;
-        }
+        m_text = m_text.stripLeadingMatchedCharacters(characterPredicate);
     }
 
     template<bool characterPredicate(UChar)> String takeLeading()
@@ -431,13 +427,6 @@ void HTMLTreeBuilder::processFakeEndTag(const QualifiedName& tagName)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     processFakeEndTag(tagName.localName());
-}
-
-void HTMLTreeBuilder::processFakeCharacters(const String& characters)
-{
-    ASSERT(!characters.isEmpty());
-    ExternalCharacterTokenBuffer buffer(characters);
-    processCharacterBuffer(buffer);
 }
 
 void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
@@ -2195,7 +2184,7 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken&& token)
 
 // FIXME: Extract the following iOS-specific code into a separate file.
 // From the string 4089961010, creates a link of the form <a href="tel:4089961010">4089961010</a> and inserts it.
-void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
+void HTMLTreeBuilder::insertPhoneNumberLink(String&& string)
 {
     Vector<Attribute> attributes;
     attributes.append(Attribute(HTMLNames::hrefAttr, makeString("tel:"_s, string)));
@@ -2206,7 +2195,7 @@ void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 
     processStartTag(WTFMove(aStartToken));
     m_tree.executeQueuedTasks();
-    m_tree.insertTextNode(string);
+    m_tree.insertTextNode(WTFMove(string));
     processEndTag(WTFMove(aEndToken));
 }
 
@@ -2215,7 +2204,7 @@ void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 // 2. Wraps the phone number in a tel: link.
 // 3. Goes back to step 1 if a phone number is found in the rest of the string.
 // 4. Appends the rest of the string as a text node.
-void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
+void HTMLTreeBuilder::linkifyPhoneNumbers(String&& string)
 {
     ASSERT(TelephoneNumberDetector::isSupported());
 
@@ -2248,10 +2237,10 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     if (scannerPosition > 0) {
         if (scannerPosition < length) {
             String after = string.substring(scannerPosition, length - scannerPosition);
-            m_tree.insertTextNode(after);
+            m_tree.insertTextNode(WTFMove(after));
         }
     } else
-        m_tree.insertTextNode(string);
+        m_tree.insertTextNode(WTFMove(string));
 }
 
 // Looks at the ancestors of the element to determine whether we're inside an element which disallows parsing phone numbers.
@@ -2324,7 +2313,7 @@ ReprocessBuffer:
     case InsertionMode::InHead: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(WTFMove(leadingWhitespace), AllWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForInHead();
@@ -2334,7 +2323,7 @@ ReprocessBuffer:
     case InsertionMode::AfterHead: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(WTFMove(leadingWhitespace), AllWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForAfterHead();
@@ -2372,7 +2361,7 @@ ReprocessBuffer:
     case InsertionMode::InColumnGroup: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(WTFMove(leadingWhitespace), AllWhitespace);
         if (buffer.isEmpty())
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
@@ -2395,7 +2384,7 @@ ReprocessBuffer:
     case InsertionMode::InHeadNoscript: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(WTFMove(leadingWhitespace), AllWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForInHeadNoscript();
@@ -2405,7 +2394,7 @@ ReprocessBuffer:
     case InsertionMode::AfterFrameset: {
         String leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(WTFMove(leadingWhitespace), AllWhitespace);
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
         break;
@@ -2418,7 +2407,7 @@ ReprocessBuffer:
         String leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty()) {
             m_tree.reconstructTheActiveFormattingElements();
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(WTFMove(leadingWhitespace), AllWhitespace);
         }
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
@@ -2431,16 +2420,16 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 {
     m_tree.reconstructTheActiveFormattingElements();
     String characters = buffer.takeRemaining();
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
-    if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
-        linkifyPhoneNumbers(characters);
-    else
-        m_tree.insertTextNode(characters);
-#else
-    m_tree.insertTextNode(characters);
-#endif
     if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
         m_framesetOk = false;
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
+    if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
+        linkifyPhoneNumbers(WTFMove(characters));
+    else
+        m_tree.insertTextNode(WTFMove(characters));
+#else
+    m_tree.insertTextNode(WTFMove(characters));
+#endif
 }
 
 void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken&& token)
@@ -2577,12 +2566,12 @@ void HTMLTreeBuilder::defaultForInTableText()
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
         m_tree.reconstructTheActiveFormattingElements();
-        m_tree.insertTextNode(characters, NotAllWhitespace);
+        m_tree.insertTextNode(WTFMove(characters), NotAllWhitespace);
         m_framesetOk = false;
         m_insertionMode = m_originalInsertionMode;
         return;
     }
-    m_tree.insertTextNode(characters);
+    m_tree.insertTextNode(WTFMove(characters));
     m_insertionMode = m_originalInsertionMode;
 }
 
@@ -2820,9 +2809,9 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken&& token)
         return;
     case HTMLToken::Character: {
         String characters = String(token.characters(), token.charactersLength());
-        m_tree.insertTextNode(characters);
         if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
             m_framesetOk = false;
+        m_tree.insertTextNode(WTFMove(characters));
         break;
     }
     case HTMLToken::EndOfFile:

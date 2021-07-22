@@ -131,6 +131,8 @@ public:
     StringView right(unsigned length) const { return substring(this->length() - length, length); }
 
     template<typename MatchedCharacterPredicate>
+    StringView stripLeadingMatchedCharacters(const MatchedCharacterPredicate&);
+    template<typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&);
 
     class SplitResult;
@@ -180,6 +182,9 @@ private:
 
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
+
+    template<typename CharacterType, typename MatchedCharacterPredicate>
+    StringView stripLeadingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&);
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&);
@@ -1027,6 +1032,32 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 inline bool StringView::SplitResult::Iterator::operator!=(const Iterator& other) const
 {
     return !(*this == other);
+}
+
+template<typename CharacterType, typename MatchedCharacterPredicate>
+inline StringView StringView::stripLeadingMatchedCharacters(const CharacterType* characters, const MatchedCharacterPredicate& predicate)
+{
+    unsigned start = 0;
+    while (start < m_length && predicate(characters[start]))
+        ++start;
+
+    if (start == m_length)
+        return StringView::empty();
+
+    if (!start)
+        return *this;
+
+    StringView result(characters + start, m_length - start);
+    result.setUnderlyingString(*this);
+    return result;
+}
+
+template<typename MatchedCharacterPredicate>
+StringView StringView::stripLeadingMatchedCharacters(const MatchedCharacterPredicate& predicate)
+{
+    if (is8Bit())
+        return stripLeadingMatchedCharacters<LChar>(characters8(), predicate);
+    return stripLeadingMatchedCharacters<UChar>(characters16(), predicate);
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>

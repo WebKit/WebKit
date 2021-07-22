@@ -68,6 +68,7 @@ public:
     HTMLToken();
 
     void clear();
+    void shrinkToBestFit();
 
     Type type() const;
 
@@ -170,8 +171,14 @@ inline HTMLToken::HTMLToken()
 inline void HTMLToken::clear()
 {
     m_type = Uninitialized;
-    m_data.clear();
+    m_data.resize(0);
     m_data8BitCheck = 0;
+}
+
+inline void HTMLToken::shrinkToBestFit()
+{
+    m_data.shrinkToBestFit();
+    m_attributes.shrinkToBestFit();
 }
 
 inline HTMLToken::Type HTMLToken::type() const
@@ -273,7 +280,7 @@ inline void HTMLToken::beginStartTag(UChar character)
     ASSERT(m_type == Uninitialized);
     m_type = StartTag;
     m_selfClosing = false;
-    m_attributes.clear();
+    m_attributes.resize(0);
 
 #if ASSERT_ENABLED
     m_currentAttribute = nullptr;
@@ -288,7 +295,7 @@ inline void HTMLToken::beginEndTag(LChar character)
     ASSERT(m_type == Uninitialized);
     m_type = EndTag;
     m_selfClosing = false;
-    m_attributes.clear();
+    m_attributes.resize(0);
 
 #if ASSERT_ENABLED
     m_currentAttribute = nullptr;
@@ -302,7 +309,7 @@ inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
     ASSERT(m_type == Uninitialized);
     m_type = EndTag;
     m_selfClosing = false;
-    m_attributes.clear();
+    m_attributes.resize(0);
 
 #if ASSERT_ENABLED
     m_currentAttribute = nullptr;

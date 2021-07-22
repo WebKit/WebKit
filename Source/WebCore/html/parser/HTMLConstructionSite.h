@@ -111,7 +111,7 @@ public:
     void insertHTMLBodyElement(AtomicHTMLToken&&);
     void insertHTMLFormElement(AtomicHTMLToken&&, bool isDemoted = false);
     void insertScriptElement(AtomicHTMLToken&&);
-    void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
+    void insertTextNode(String&&, WhitespaceMode = WhitespaceUnknown);
     void insertForeignElement(AtomicHTMLToken&&, const AtomString& namespaceURI);
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&&);

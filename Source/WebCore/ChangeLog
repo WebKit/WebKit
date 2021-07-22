@@ -1,3 +1,75 @@
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Micro-optimize innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        Reviewed by Simon Fraser.
+
+        No behavior change.
+
+        This patch does some micro optimizations revealed by the profiler when running some of Speedometer2 tests which intensively use innerHTML.
+        This offers improvement in jQuery-TodoMVC and Vanilla-ES2015-Babel-Webpack-TodoMVC since both are super innerHTML heavy benchmarks.
+
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |126.862500   |126.687500   |0.998621  | 0.673462                                         |
+        | VueJS-TodoMVC                        |27.775000    |27.645833    |0.995350  | 0.741588                                         |
+        | EmberJS-TodoMVC                      |129.350000   |129.129167   |0.998293  | 0.624196                                         |
+        | BackboneJS-TodoMVC                   |51.129167    |51.204167    |1.001467  | 0.716622                                         |
+        | Preact-TodoMVC                       |21.870833    |21.337500    |0.975614  | 0.217771                                         |
+        | AngularJS-TodoMVC                    |139.854167   |140.266667   |1.002950  | 0.489838                                         |
+        | Vanilla-ES2015-TodoMVC               |69.229167    |68.895833    |0.995185  | 0.238772                                         |
+        | Inferno-TodoMVC                      |68.391667    |68.266667    |0.998172  | 0.762281                                         |
+        | Flight-TodoMVC                       |77.979167    |78.166667    |1.002404  | 0.710324                                         |
+        | Angular2-TypeScript-TodoMVC          |39.741667    |39.966667    |1.005662  | 0.524123                                         |
+        | VanillaJS-TodoMVC                    |55.416667    |55.512500    |1.001729  | 0.781447                                         |
+        | jQuery-TodoMVC                       |268.812500   |266.966667   |0.993133  | 0.003384 (significant)                           |
+        | EmberJS-Debug-TodoMVC                |345.383333   |345.662500   |1.000808  | 0.695259                                         |
+        | React-TodoMVC                        |90.679167    |90.179167    |0.994486  | 0.067477                                         |
+        | React-Redux-TodoMVC                  |152.691667   |152.687500   |0.999973  | 0.991207                                         |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |66.487500    |65.729167    |0.988594  | 0.000118 (significant)                           |
+        ----------------------------------------------------------------------------------------------------------------------------------
+
+
+        a mean = 242.12319
+        b mean = 242.80485
+        pValue = 0.1992654128
+        (Bigger means are better.)
+        1.003 times better
+        Results ARE NOT significant
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizerLoop): We do not need to call `shrinkToBestFit` in fragment parsing case since
+        we will discard HTMLToken soon.
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::checkForMetaCharset):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLPreloadScanner::scan):
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::clear): We found that these `clear` calls cause performance problem according to the Instruments: we
+        repeatedly use this Vector, and we repeatedly allocate and deallocate this Vector unnecessarily. We use `resize(0)` instead
+        to avoid this allocation and deallocation.
+        (WebCore::HTMLToken::shrinkToBestFit): But HTMLToken is kept so long, so at some point, we would like to make backing storage
+        small. So, we add shrinkToBestFit and we call it only after finishing batching of HTMLToken processing.
+        (WebCore::HTMLToken::beginStartTag):
+        (WebCore::HTMLToken::beginEndTag):
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::shrinkToBestFit):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::characterPredicate):
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink):
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+        (WebCore::HTMLTreeBuilder::defaultForInTableText):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+        (WebCore::HTMLTreeBuilder::processFakeCharacters): Deleted. It is dead code before this patch.
+        * html/parser/HTMLTreeBuilder.h:
+
 2021-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename EventHandler::m_textRecognitionHoverTimerFired()

@@ -566,7 +566,7 @@ void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken&& token, const A
         m_openElements.push(HTMLStackItem::create(WTFMove(element), WTFMove(token), namespaceURI));
 }
 
-void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMode whitespaceMode)
+void HTMLConstructionSite::insertTextNode(String&& characters, WhitespaceMode whitespaceMode)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
     task.parent = &currentNode();
@@ -596,7 +596,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
         if (!textNode->length()) {
             String substring = characters.substring(currentPosition);
-            textNode = Text::create(task.parent->document(), shouldUseAtomString ? AtomString(substring).string() : substring);
+            textNode = Text::create(task.parent->document(), shouldUseAtomString ? AtomString(WTFMove(substring)).string() : substring);
         }
 
         currentPosition += textNode->length();

@@ -514,6 +514,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
             m_tokenizer.updateStateFor(AtomString(token->name()));
         m_scanner.scan(*token, requests, document);
     }
+    m_tokenizer.shrinkToBestFit();
 
     preloader.preload(WTFMove(requests));
 }
