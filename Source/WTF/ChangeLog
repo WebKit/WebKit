@@ -1,5 +1,17 @@
 2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up after r280193
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        I accidentally reverted auto change when switching branches.
+
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::BufferFromStaticDataTranslator::equal):
+
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Micro-optimize innerHTML
         https://bugs.webkit.org/show_bug.cgi?id=228142
 
