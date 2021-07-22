@@ -277,6 +277,14 @@
 
 #endif /* ARM */
 
+/* CPU(RISCV64) - RISC-V 64-bit */
+#if    defined(__riscv) \
+    && defined(__riscv_xlen) \
+    && (__riscv_xlen == 64)
+#define WTF_CPU_RISCV64 1
+#define WTF_CPU_KNOWN 1
+#endif
+
 #if !CPU(KNOWN)
 #define WTF_CPU_UNKNOWN 1
 #endif

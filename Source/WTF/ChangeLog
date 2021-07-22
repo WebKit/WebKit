@@ -1,3 +1,17 @@
+2021-07-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=228178
+
+        Reviewed by Adrian Perez de Castro.
+
+        Detect when compiling for the RISC-V 64-bit architecture and define
+        the WTF_CPU_RISCV64 macro under that condition, enabling use of
+        CPU(RISCV64) build guards.
+
+        * wtf/PageBlock.h: Use 4 kB as the page size ceiling for CPU(RISCV64).
+        * wtf/PlatformCPU.h:
+
 2021-07-21  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
