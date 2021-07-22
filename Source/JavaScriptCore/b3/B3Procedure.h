@@ -114,7 +114,7 @@ public:
         setBlockOrderImpl(blocks);
     }
 
-    JS_EXPORT_PRIVATE Air::StackSlot* addStackSlot(unsigned byteSize);
+    JS_EXPORT_PRIVATE Air::StackSlot* addStackSlot(uint64_t byteSize);
     JS_EXPORT_PRIVATE Variable* addVariable(Type);
 
     JS_EXPORT_PRIVATE Type addTuple(Vector<Type>&& types);

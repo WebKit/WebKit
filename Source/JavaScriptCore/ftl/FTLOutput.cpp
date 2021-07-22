@@ -91,7 +91,7 @@ LValue Output::framePointer()
     return m_block->appendNew<B3::Value>(m_proc, B3::FramePointer, origin());
 }
 
-SlotBaseValue* Output::lockedStackSlot(size_t bytes)
+SlotBaseValue* Output::lockedStackSlot(uint64_t bytes)
 {
     return m_block->appendNew<SlotBaseValue>(m_proc, origin(), m_proc.addStackSlot(bytes));
 }

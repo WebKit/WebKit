@@ -1,3 +1,13 @@
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        AirStackSlot's uint16_t byte size is too small
+        https://bugs.webkit.org/show_bug.cgi?id=228193
+        <rdar://80888059>
+
+        Reviewed by Mark Lam.
+
+        * stress/stack-slot-needs-to-use-more-than-uint16.js: Added.
+
 2021-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] invalidParameterInstanceofSourceAppender should care direct call of Symbol.hasInstance

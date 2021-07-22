@@ -54,13 +54,13 @@ void StackSlot::deepDump(PrintStream& out) const
     out.print("byteSize = ", m_byteSize, ", offsetFromFP = ", m_offsetFromFP, ", kind = ", m_kind);
 }
 
-StackSlot::StackSlot(unsigned byteSize, StackSlotKind kind, intptr_t offsetFromFP)
-    : m_byteSize(static_cast<uint16_t>(byteSize))
+StackSlot::StackSlot(uint64_t byteSize, StackSlotKind kind, intptr_t offsetFromFP)
+    : m_byteSize(static_cast<uint32_t>(byteSize))
     , m_kind(kind)
     , m_offsetFromFP(offsetFromFP)
 {
     ASSERT(byteSize);
-    RELEASE_ASSERT(byteSize <= std::numeric_limits<uint16_t>::max());
+    RELEASE_ASSERT(byteSize <= std::numeric_limits<uint32_t>::max());
 }
 
 } } } // namespace JSC::B3::Air

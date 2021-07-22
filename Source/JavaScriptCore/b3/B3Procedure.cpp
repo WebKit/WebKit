@@ -73,7 +73,7 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
-Air::StackSlot* Procedure::addStackSlot(unsigned byteSize)
+Air::StackSlot* Procedure::addStackSlot(uint64_t byteSize)
 {
     return m_code->addStackSlot(byteSize, Air::StackSlotKind::Locked);
 }
