@@ -1,3 +1,25 @@
+2021-07-22  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r279992): Crashes under RemoteLayerBackingStore::applyBackingStoreToLayer() in macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=228181
+        rdar://80923581
+
+        Reviewed by Dan Bates.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        r279992 reorganized this code to determine the contents object and then
+        set it on the layer, instead of setting it directly; this means that the
+        lifetime of the contents object must be extended.
+
+        Interestingly, the common case (the CAMachPort case), as well as the
+        case I was actually adding in r279992 both were safe, because of the use
+        of autorelease. (macCatalyst uses IOSurface as layer contents directly,
+        without CAMachPort, so uses the one path that r279992 broke).
+
+        It is unnecessary to use autorelease; instead just store the contents
+        object in a RetainPtr until it is set.
+
 2021-07-22  Megan Gardner  <megan_gardner@apple.com>
 
         Avoid Quick Note overlay when scrolling to show a highlight

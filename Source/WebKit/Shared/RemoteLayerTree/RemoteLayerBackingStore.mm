@@ -426,12 +426,12 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     ASSERT(m_bufferHandle);
     layer.contentsOpaque = m_isOpaque;
 
-    id contents = nil;
+    RetainPtr<id> contents;
     WTF::switchOn(*m_bufferHandle,
         [&] (ShareableBitmap::Handle& handle) {
             ASSERT(m_type == Type::Bitmap);
             auto bitmap = ShareableBitmap::create(handle);
-            contents = bitmap->makeCGImageCopy().bridgingAutorelease();
+            contents = bitmap->makeCGImageCopy();
         },
         [&] (MachSendRight& machSendRight) {
             ASSERT(m_type == Type::IOSurface);
@@ -442,7 +442,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
                 break;
             }
             case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
-                contents = adoptCF(CAMachPortCreate(machSendRight.leakSendRight())).bridgingAutorelease();
+                contents = adoptCF(CAMachPortCreate(machSendRight.leakSendRight()));
                 break;
             }
         }
@@ -460,12 +460,12 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             return;
         [layer setValue:@1 forKeyPath:WKCGDisplayListEnabledKey];
         auto data = WTF::get<IPC::SharedBufferCopy>(*m_displayListBufferHandle).buffer()->createCFData();
-        [(WKCompositingLayer *)layer _setWKContents:contents withDisplayList:data.get()];
+        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:data.get()];
         return;
     }
 #endif
 
-    layer.contents = contents;
+    layer.contents = contents.get();
 }
 
 Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackingStore::takePendingFlushers()
