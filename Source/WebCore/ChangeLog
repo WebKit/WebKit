@@ -1,3 +1,41 @@
+2021-07-22  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Pass the full target point when selecting a snap offset
+        https://bugs.webkit.org/show_bug.cgi?id=228023
+
+        Reviewed by Frédéric Wang.
+
+        Pass the full proposed destination scroll offset when calling closestSnapOffset. For
+        now, only the component in the scroll direction is used, but eventually the other
+        component will be used to avoid snapping to snap areas that are entirely off the screen.
+
+        No new tests. This change is simply a refactor in preparation for a behavior
+        change and shouldn't change behavior itself.
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::closestSnapOffsetWithInfoAndAxis):
+        (WebCore::LayoutScrollSnapOffsetsInfo::closestSnapOffset const):
+        (WebCore::FloatScrollSnapOffsetsInfo::closestSnapOffset const):
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp:
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollController::adjustScrollDestination):
+        (WebCore::ScrollController::updateActiveScrollSnapIndexForClientOffset):
+        (WebCore::ScrollController::resnapAfterLayout):
+        * platform/ScrollController.h:
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset const):
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::doPostThumbMoveSnapping):
+
 2021-07-21  Alex Christensen  <achristensen@webkit.org>
 
         Add linkedOnOrAfter check for r269162

@@ -563,9 +563,9 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
     auto currentOffset = scrollOffset();
     auto newOffset = currentOffset;
     if (orientation == HorizontalScrollbar)
-        newOffset.setX(scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, currentOffset.x(), ScrollSnapPointSelectionMethod::Closest));
+        newOffset.setX(scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, currentOffset, ScrollSnapPointSelectionMethod::Closest));
     else
-        newOffset.setY(scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, currentOffset.y(), ScrollSnapPointSelectionMethod::Closest));
+        newOffset.setY(scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, currentOffset, ScrollSnapPointSelectionMethod::Closest));
     if (newOffset == currentOffset)
         return;
 

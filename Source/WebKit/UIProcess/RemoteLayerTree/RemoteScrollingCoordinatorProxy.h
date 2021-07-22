@@ -118,7 +118,7 @@ private:
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&);
 
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
-    std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, float scrollDestination, float velocity) const;
+    std::pair<float, std::optional<unsigned>> closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float currentScrollOffset, WebCore::FloatPoint scrollDestination, float velocity) const;
 
     void sendUIStateChangedIfNecessary();
 

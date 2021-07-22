@@ -1,3 +1,17 @@
+2021-07-22  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Pass the full target point when selecting a snap offset
+        https://bugs.webkit.org/show_bug.cgi?id=228023
+
+        Reviewed by Frédéric Wang.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping):
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+
 2021-07-21  Chris Dumez  <cdumez@apple.com>
 
         RunningBoard kills the network process if it is still holding the "holding locked file" assertion upon suspension

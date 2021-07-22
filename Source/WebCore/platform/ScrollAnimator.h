@@ -134,7 +134,7 @@ public:
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
 
     FloatPoint adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
-    float adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis, float newOffset, ScrollSnapPointSelectionMethod);
+    float adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod);
 
     std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
 
