@@ -1,3 +1,13 @@
+2021-07-22  Robert Jenner  <Jenner@apple.com>
+
+        [ BigSur+ iOS Release wk2  ] 2 imported/w3c/web-platform-tests/webrtc are flakey text failures (223385)
+        https://bugs.webkit.org/show_bug.cgi?id=223385
+
+        Unreviewed test gardening. 
+        
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [iOS] media/video-presentation-mode.html is a flaky timeout.

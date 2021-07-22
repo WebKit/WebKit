@@ -1440,8 +1440,8 @@ webkit.org/b/223292 [ arm64 ] fast/table/multiple-captions-crash4.html [ Pass Im
 
 webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure Timeout ]
 
-# webkit.org/b/223385 Two imported webrtc tests are flakey text failing only on Apple Silicon
-[ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
+# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release for BigSur+ and iOS 14
+[ BigSur+ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
 
 webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 

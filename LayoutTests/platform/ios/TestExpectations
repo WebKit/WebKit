@@ -3391,3 +3391,7 @@ http/wpt/webxr [ Skip ]
 
 # WebM is not supported on iOS
 http/tests/media/video-webm-stall.html [ Skip ]
+
+# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release for BigSur+ and iOS 14
+[ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
