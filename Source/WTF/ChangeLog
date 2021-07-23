@@ -1,3 +1,16 @@
+2021-07-23  Chris Dumez  <cdumez@apple.com>
+
+        SharedBuffer::takeData() is a bit dangerous
+        https://bugs.webkit.org/show_bug.cgi?id=228161
+
+        Reviewed by Darin Adler.
+
+        Add Vector::uncheckedAppend() overload that takes in a Span.
+
+        * wtf/Vector.h:
+        (WTF::Vector::uncheckedAppend):
+        (WTF::Malloc>::uncheckedAppend):
+
 2021-07-23  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r280205.

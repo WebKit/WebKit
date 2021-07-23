@@ -1,3 +1,38 @@
+2021-07-23  Chris Dumez  <cdumez@apple.com>
+
+        SharedBuffer::takeData() is a bit dangerous
+        https://bugs.webkit.org/show_bug.cgi?id=228161
+
+        Reviewed by Darin Adler.
+
+        SharedBuffer::takeData() is a bit dangerous since SharedBuffer is RefCounted and several object may be sharing ownership
+        of the buffer. Having one owner call takeData() in case ownership is shared leads to bugs such as Bug 228096.
+
+        To address the issue, I made SharedBuffer::takeData() private and introduced a new SharedBuffer::extractData() member
+        function which calls takeData() only if the SharedBuffer is not shared (RefCount is 1) and falls back to calling copyData()
+        otherwise. I also optimized copyData() a bit by iterating over the segments to build the vector, instead of calling the
+        potentially very slow SharedBuffer::data().
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::takeAsBlob):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::createDataAvailableEvent):
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCore::WebCorePasteboardFileReader::readBuffer):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::WebContentReader::readImage):
+        * editing/gtk/WebContentReaderGtk.cpp:
+        (WebCore::WebContentReader::readImage):
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::updateEnclosingImageWithData):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::copyData):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::extractData):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createResponseBlob):
+
 2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Call custom accessors / values with their holder's global object

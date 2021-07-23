@@ -208,7 +208,7 @@ Ref<Blob> XMLHttpRequest::createResponseBlob()
     // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
     Vector<uint8_t> data;
     if (m_binaryResponseBuilder)
-        data = std::exchange(m_binaryResponseBuilder, nullptr)->takeData();
+        data = std::exchange(m_binaryResponseBuilder, nullptr)->extractData();
     String normalizedContentType = Blob::normalizedContentType(responseMIMEType(FinalMIMEType::Yes)); // responseMIMEType defaults to text/xml which may be incorrect.
     return Blob::create(scriptExecutionContext(), WTFMove(data), normalizedContentType);
 }

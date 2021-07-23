@@ -241,7 +241,7 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     if (!mimeTypeIsSuitableForInlineImageAttachment(mimeType))
         return;
 
-    hostElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->takeData(), mimeType)));
+    hostElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)));
 }
 
 void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)

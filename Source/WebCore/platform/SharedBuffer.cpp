@@ -122,6 +122,16 @@ const uint8_t* SharedBuffer::data() const
     return m_segments[0].segment->data();
 }
 
+Vector<uint8_t> SharedBuffer::copyData() const
+{
+    Vector<uint8_t> data;
+    data.reserveInitialCapacity(size());
+    forEachSegment([&data](auto& span) {
+        data.uncheckedAppend(span);
+    });
+    return data;
+}
+
 Vector<uint8_t> SharedBuffer::takeData()
 {
     if (m_segments.isEmpty())

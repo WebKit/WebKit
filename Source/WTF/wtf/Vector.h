@@ -790,6 +790,7 @@ public:
     template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
     template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
     template<typename U> ALWAYS_INLINE void append(Span<const U> span) { append(span.data(), span.size()); }
+    template<typename U> ALWAYS_INLINE void uncheckedAppend(Span<const U> span) { uncheckedAppend<FailureAction::Crash>(span.data(), span.size()); }
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
 
@@ -858,6 +859,7 @@ private:
 
     template<FailureAction, typename U> bool append(U&&);
     template<FailureAction, typename U> bool append(const U*, size_t);
+    template<FailureAction, typename U> bool uncheckedAppend(const U*, size_t);
 
     template<size_t position, typename U, typename... Items>
     void uncheckedInitialize(U&& item, Items&&... items)
@@ -1293,6 +1295,24 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
         else
             return false;
     }
+    asanBufferSizeWillChangeTo(newSize);
+    T* dest = end();
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
+    m_size = newSize;
+    return true;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<FailureAction action, typename U>
+ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::uncheckedAppend(const U* data, size_t dataSize)
+{
+    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
+    if (!dataSize)
+        return true;
+
+    ASSERT(size() < capacity());
+
+    size_t newSize = m_size + dataSize;
     asanBufferSizeWillChangeTo(newSize);
     T* dest = end();
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
