@@ -1,3 +1,25 @@
+2021-07-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Unable to open arxiv links on Chrome
+        https://bugs.webkit.org/show_bug.cgi?id=228205
+        rdar://78225849
+
+        Reviewed by Tim Horton.
+
+        -[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:] currently
+        expects the width to be specified in pixels. However, the PDFKit SPI
+        used to snapshot a PDF expects a width in points. This led to WebKit
+        requesting extremely large snapshots, resulting in a crash in PDFKit.
+
+        To fix, use points instead of pixels in the PDF snapshotting path.
+        Also, ensure the scale factor of the returned image matches the
+        the scale used by PDFKit (the screen scale), as opposed to WebKit's
+        own "page" device scale factor, which can be overridden.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+
 2021-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 

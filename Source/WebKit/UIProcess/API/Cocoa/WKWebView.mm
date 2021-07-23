@@ -1213,10 +1213,13 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         handler(image.get(), nil);
     });
 #else
-    CGFloat deviceScale = _page->deviceScaleFactor();
+    auto useIntrinsicDeviceScaleFactor = [[_customContentView class] web_requiresCustomSnapshotting];
+
+    CGFloat deviceScale = useIntrinsicDeviceScaleFactor ? UIScreen.mainScreen.scale : _page->deviceScaleFactor();
+    CGFloat imageWidth = useIntrinsicDeviceScaleFactor ? snapshotWidth : snapshotWidth * deviceScale;
     RetainPtr<WKWebView> strongSelf = self;
-    auto callSnapshotRect = [strongSelf, rectInViewCoordinates, snapshotWidth, deviceScale, handler] {
-        [strongSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:(snapshotWidth * deviceScale) completionHandler:[strongSelf, handler, deviceScale](CGImageRef snapshotImage) {
+    auto callSnapshotRect = [strongSelf, rectInViewCoordinates, imageWidth, deviceScale, handler] {
+        [strongSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:[strongSelf, handler, deviceScale](CGImageRef snapshotImage) {
             RetainPtr<NSError> error;
             RetainPtr<UIImage> image;
             

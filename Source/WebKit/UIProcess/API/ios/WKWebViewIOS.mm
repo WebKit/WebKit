@@ -3138,6 +3138,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView updateSoftwareKeyboardSuppressionStateFromWebView];
 }
 
+// FIXME (<rdar://problem/80986330>): This method should be updated to take an image
+// width in points (for consistency) and a completion handler with a UIImage parameter
+// (to avoid redundant copies for PDFs), once it is no longer in use by internal clients.
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
