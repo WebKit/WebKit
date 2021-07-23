@@ -1,3 +1,16 @@
+2021-04-23  Mark Lam  <mark.lam@apple.com>
+
+        Fix B3 strength reduction for shl.
+        https://bugs.webkit.org/show_bug.cgi?id=224913
+        rdar://76978874
+
+        Reviewed by Michael Saboff.
+
+        If the operation can potentially either underflow or overflow, then the result
+        can be any value.
+
+        * b3/B3ReduceStrength.cpp:
+
 2021-06-22  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Properly set numFPRs on ARM with NEON/VFP_V3_D32
