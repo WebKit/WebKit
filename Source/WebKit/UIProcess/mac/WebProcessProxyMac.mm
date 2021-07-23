@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,10 @@
 
 #if PLATFORM(MAC)
 
+#import "CodeSigning.h"
 #import "WKFullKeyboardAccessWatcher.h"
-#import <Kernel/kern/cs_blobs.h>
 #import <signal.h>
 #import <wtf/ProcessPrivilege.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WebKit {
 
@@ -52,7 +51,7 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
     if (!isSystemWebKit)
         return false;
 
-    static bool isPlatformBinary = SecTaskGetCodeSignStatus(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get()) & CS_PLATFORM_BINARY;
+    static bool isPlatformBinary = currentProcessIsPlatformBinary();
     if (isPlatformBinary)
         return false;
 

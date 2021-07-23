@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "CodeSigning.h"
+#pragma once
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-
-#import <wtf/RetainPtr.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
-#import <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
+#include <wtf/spi/darwin/XPCSPI.h>
 
 namespace WebKit {
 
-static String codeSigningIdentifier(SecTaskRef task)
-{
-    return adoptCF(SecTaskCopySigningIdentifier(task, nullptr)).get();
-}
-
-String codeSigningIdentifierForCurrentProcess()
-{
-    return codeSigningIdentifier(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get());
-}
-
-String codeSigningIdentifier(xpc_connection_t connection)
-{
-    audit_token_t auditToken;
-    xpc_connection_get_audit_token(connection, &auditToken);
-    return codeSigningIdentifier(adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, auditToken)).get());
-}
+// These functions return a null string if the process is unsigned.
+String codeSigningIdentifierForCurrentProcess();
+String codeSigningIdentifier(xpc_connection_t);
+bool currentProcessIsPlatformBinary();
+std::pair<String, bool> codeSigningIdentifierAndPlatformBinaryStatus(xpc_connection_t);
 
 } // namespace WebKit
-
-#endif // PLATFORM(MAC)
