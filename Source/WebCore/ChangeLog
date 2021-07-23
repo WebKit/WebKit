@@ -1,3 +1,20 @@
+2021-07-22  Chris Dumez  <cdumez@apple.com>
+
+        The network process fails to take a locked file assertion when executing a SQLiteStatement outside a transaction
+        https://bugs.webkit.org/show_bug.cgi?id=228194
+
+        Reviewed by Geoffrey Garen.
+
+        The network process fails to take a locked file assertion when executing a SQLiteStatement outside a transaction.
+        This means we may suspend in the middle of that statement and crash due to holding locked files.
+
+        To address this, we now make sure to bump the transaction count during the sqlite3_step() call if we're not
+        in the middle of a transaction and the current statement is not read-only (e.g. SELECT). Note that SQLite will
+        implicitly create a transaction for us in such cases.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::step):
+
 2021-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] ".SF Arabic" should not be able to be looked up by name (because it is dot-prefixed)

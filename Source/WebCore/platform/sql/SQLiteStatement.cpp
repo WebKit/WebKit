@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "SQLValue.h"
+#include "SQLiteDatabaseTracker.h"
 #include <sqlite3.h>
 #include <wtf/Assertions.h>
 #include <wtf/Variant.h>
@@ -65,6 +66,12 @@ SQLiteStatement::~SQLiteStatement()
 int SQLiteStatement::step()
 {
     Locker databaseLock { m_database.databaseMutex() };
+
+    // If we're not within a transaction and we call sqlite3_step(), SQLite will implicitly create a transaction for us.
+    // In such case, we should bump our transaction count to reflect that.
+    std::optional<SQLiteTransactionInProgressAutoCounter> transactionCounter;
+    if (!m_database.transactionInProgress() && !isReadOnly())
+        transactionCounter.emplace();
 
     int error = sqlite3_step(m_statement);
     if (error != SQLITE_DONE && error != SQLITE_ROW)
