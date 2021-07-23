@@ -1,3 +1,16 @@
+2021-07-23  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] imported/w3c/web-platform-tests/html/dom/idlharness.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=228198
+        <rdar://problem/80982016>
+
+        Unreviewed, land iPad-specific baseline instead of marking the test as failing on iOS.
+        We are merely getting different results on iPhone and iPad because MediaSource is enabled
+        on iPad but not iPhone.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ipad/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt: Added.
+
 2021-07-23  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [iOS]imported/w3c/web-platform-tests/html/dom/idlharness.https.html is failing.
