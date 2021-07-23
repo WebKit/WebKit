@@ -755,7 +755,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     if (m_codeBlock->codeType() == FunctionCode) {
         ASSERT(!m_bytecodeIndex);
         if (shouldEmitProfiling()) {
-            for (int argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
+            for (unsigned argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
                 // If this is a constructor, then we want to put in a dummy profiling site (to
                 // keep things consistent) but we don't actually want to record the dummy value.
                 if (m_codeBlock->isConstructor() && !argument)

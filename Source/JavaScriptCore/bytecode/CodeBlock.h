@@ -156,17 +156,17 @@ public:
 
     MetadataTable* metadataTable() const { return m_metadata.get(); }
 
-    int numParameters() const { return m_numParameters; }
-    void setNumParameters(int newValue);
+    unsigned numParameters() const { return m_numParameters; }
+    void setNumParameters(unsigned newValue);
 
-    int numberOfArgumentsToSkip() const { return m_numberOfArgumentsToSkip; }
+    unsigned numberOfArgumentsToSkip() const { return m_numberOfArgumentsToSkip; }
 
-    int numCalleeLocals() const { return m_numCalleeLocals; }
+    unsigned numCalleeLocals() const { return m_numCalleeLocals; }
 
-    int numVars() const { return m_numVars; }
-    int numTmps() const { return m_unlinkedCode->hasCheckpoints() * maxNumCheckpointTmps; }
+    unsigned numVars() const { return m_numVars; }
+    unsigned numTmps() const { return m_unlinkedCode->hasCheckpoints() * maxNumCheckpointTmps; }
 
-    int* addressOfNumParameters() { return &m_numParameters; }
+    unsigned* addressOfNumParameters() { return &m_numParameters; }
     static ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
 
     CodeBlock* alternative() const { return static_cast<CodeBlock*>(m_alternative.get()); }
@@ -243,7 +243,7 @@ public:
 
     ALWAYS_INLINE bool isTemporaryRegister(VirtualRegister reg)
     {
-        return reg.offset() >= m_numVars;
+        return reg.offset() >= static_cast<int>(m_numVars);
     }
 
     HandlerInfo* handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
@@ -996,10 +996,10 @@ private:
     void insertBasicBlockBoundariesForControlFlowProfiler();
     void ensureCatchLivenessIsComputedForBytecodeIndexSlow(const OpCatch&, BytecodeIndex);
 
-    int m_numCalleeLocals;
-    int m_numVars;
-    int m_numParameters;
-    int m_numberOfArgumentsToSkip { 0 };
+    unsigned m_numCalleeLocals;
+    unsigned m_numVars;
+    unsigned m_numParameters;
+    unsigned m_numberOfArgumentsToSkip { 0 };
     unsigned m_numberOfNonArgumentValueProfiles { 0 };
     union {
         unsigned m_debuggerRequests;
