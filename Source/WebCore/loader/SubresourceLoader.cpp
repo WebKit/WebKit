@@ -280,6 +280,14 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             return completionHandler(WTFMove(newRequest));
         }
 
+        if (!portAllowed(newRequest.url())) {
+            RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource load (redirect) canceled because it attempted to use a blocked port");
+            if (m_frame)
+                FrameLoader::reportBlockedLoadFailed(*m_frame, newRequest.url());
+            cancel(frameLoader()->blockedError(newRequest));
+            return completionHandler(WTFMove(newRequest));
+        }
+
         auto accessControlCheckResult = checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest);
         if (!accessControlCheckResult) {
             auto errorMessage = makeString("Cross-origin redirection to ", newRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: ", accessControlCheckResult.error());

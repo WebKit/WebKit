@@ -1,3 +1,55 @@
+2021-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Perform port blocking earlier in the load
+        https://bugs.webkit.org/show_bug.cgi?id=224525
+        <rdar://problem/75440591>
+
+        Reviewed by Darin Adler.
+
+        WebKit blocks loads to URLs with any of the prohibited ports defined in
+        the engine. This blocking happens late in the load process, allowing
+        connections to be made (and observed). Instead, we should stop the load
+        early, at the same time we perform other checks.
+
+        Note: The fact that we now block loads earlier means that we do not fire
+        'willSendRequestForFrame' for blocked ports, so WebKitTestRunner no longer
+        outputs a message to stdout. Those errors are reported in the JS console,
+        but since some test paths are specified to always output JS console messages
+        to stderrr (for example the WPT tests), we have to revise out test expectations
+        for a few cases.
+
+        * fast/loader/cancel-load-during-port-block-timer.html: Revised expectation to reflect new console error message.
+        * http/tests/cache/cancel-during-failure-crash-expected.txt: Ditto.
+        * http/tests/preload/download_resources_from_invalid_headers-expected.txt: Update to reflect a preflight is not executed
+          for a blocked port.
+        * http/tests/preload/resources/nph-invalid_resources_from_header.pl: Update to reflect that we do not preload
+          from restricted ports.
+        * http/tests/security/blocked-on-redirect-expected.txt: Revised expectation to match revised error message.
+        * http/tests/security/form-blocked-port.html: Added.
+        * http/tests/security/form-blocked-port-expected.txt: Added.
+        * http/tests/xmlhttprequest/cross-origin-redirect-responseURL-expected.txt: Revised expectation for revised error message.
+        * http/tests/xmlhttprequest/redirect-cross-origin-2-expected.txt: Ditto.
+        * http/tests/xmlhttprequest/redirect-cross-origin-expected.txt: Ditto.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events.html: Instead of using a port WebKit blocks (7), use one that
+          is not blocked but is unlikely to be active (as originally intended). This retains the expected test behavior since we now
+          block loads to restricted ports earlier in the load process.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html: Ditto.
+        * http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt: Update test output to reflect that we
+          are attempting to load from port 8 instead of port 7.
+        * http/wpt/beacon/beacon-async-error-logging-expected.txt: Ditto.
+        * http/wpt/beacon/beacon-async-error-logging.html: Update to reflect a preflight is not executed
+          for a blocked port.
+        * imported/w3c/web-platform-tests/fetch/api/request/request-bad-port.any-expected.txt: Since we block before executing the load,
+          TestRunner no longer outputs an error message to stdout. Instead, they appear in stderr (since all 'wpt' tests are marked
+          to dump console.log output to stderr).
+        * imported/w3c/web-platform-tests/fetch/api/request/request-bad-port.any.worker-expected.txt: Ditto.
+        * platform/mac-wk1/http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt: Revise to reflect change in console
+          logging (the functional test results are identical).
+        * platform/mac-wk1/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt: Ditto.
+        * platform/win/http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt: Ditto.
+        * platform/win/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt: Ditto.
+        * platform/wk2/http/tests/security/blocked-on-redirect-expected.txt: Ditto.
+
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.4

@@ -43,8 +43,7 @@ Content-Type: text/html
     shouldBeFalse("internals.isPreloaded('../resources/dummy.xml');");
     shouldBeFalse("internals.isPreloaded('../resources/dumm');");
     shouldBeFalse("internals.isPreloaded('http://localhost:8000/preload/resources/square.png');");
-    // Invalid ports get preloaded (and get terminated further down the stack).
-    shouldBeTrue("internals.isPreloaded('http://localhost:53/preload/resources/dummy.js');");
+    shouldBeFalse("internals.isPreloaded('http://localhost:53/preload/resources/dummy.js');");
     shouldBeFalse("internals.isPreloaded('#foobar');");
     shouldBeFalse("internals.isPreloaded('../resources/Ahem.ttf');");
     shouldBeFalse("internals.isPreloaded('../resources/dummy.js?invalid');");
