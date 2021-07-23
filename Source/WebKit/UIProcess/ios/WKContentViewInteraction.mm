@@ -10267,7 +10267,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         WebCore::ElementContext elementContext = *information.imageElementContext;
 
         auto requestForTextSelection = [strongSelf createImageAnalysisRequest:VKAnalysisTypeText image:image.get()];
-        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode image:image.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image.get()];
 
         auto textAnalysisStartTime = MonotonicTime::now();
         [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, requestForContextMenu, gestureDeferralToken, textAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
@@ -10320,7 +10320,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                     UNUSED_PARAM(hasTextResults);
 #endif
 #if USE(UICONTEXTMENU)
-                    strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode] ? result.mrcMenu : nil;
+                    strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
 #endif
                     [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
                 }];
@@ -10372,7 +10372,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         // making redundant image analysis requests for the same image data.
 
         auto visualSearchAnalysisStartTime = MonotonicTime::now();
-        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode image:image.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image.get()];
         [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, location, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
@@ -10388,7 +10388,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif
 
 #if USE(UICONTEXTMENU)
-            strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode] ? result.mrcMenu : nil;
+            strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
             strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
             [strongSelf->_contextMenuInteraction _presentMenuAtLocation:location];
 #else
