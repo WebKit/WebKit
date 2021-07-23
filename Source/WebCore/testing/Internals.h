@@ -898,6 +898,7 @@ public:
         ~ImageOverlayLine();
     };
     void installImageOverlay(Element&, Vector<ImageOverlayLine>&&);
+    void requestTextRecognition(Element&, RefPtr<VoidCallback>&&);
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;

@@ -1,3 +1,24 @@
+2021-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r279751): WebContent process often crashes when hovering over content on apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=228247
+        rdar://81010093
+
+        Reviewed by Tim Horton.
+
+        Add an internal testing hook that can be used to trigger text recognition for the given element. While we should
+        eventually combine this with another testing hook to simulate VisionKit text recognition results, the new test
+        using this internal hook shouldn't make its way into VisionKit anyways, so this isn't necessary for now.
+
+        See WebKit ChangeLog for more details.
+
+        Test: fast/images/text-recognition/text-recognition-in-transparent-video.html
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::requestTextRecognition):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-07-23  Chris Dumez  <cdumez@apple.com>
 
         SharedBuffer::takeData() is a bit dangerous

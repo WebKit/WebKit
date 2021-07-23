@@ -7461,7 +7461,8 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         completionHandlers.append(WTFMove(completion));
     m_elementsPendingTextRecognition.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
 
-    auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+    auto cachedImage = renderImage.cachedImage();
+    auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
     sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
         auto protectedPage = makeRefPtr(webPage.get());
         if (!protectedPage)
