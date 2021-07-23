@@ -1,3 +1,59 @@
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        Just like JS built-ins, getter / setter functions of WebIDL attributes are created in realm
+        of their holder interface [1][2], which is their _current_ realm for throwing an error [3].
+
+        With this patch, custom properties get correct global object instead of lexical, including
+        when inline cached, aligning them with functions and regular accessors.
+
+        The latter allowed switching JS built-ins to CustomAccessor (e.g. Symbol#description),
+        which is slightly more efficient to call from C++, doesn't need reification on first access,
+        and has nicer signature.
+
+        Also, renames WASM accessors to drop "func" and removes unused function length parameter.
+
+        [1]: https://heycam.github.io/webidl/#dfn-attribute-getter (step 2)
+        [2]: https://heycam.github.io/webidl/#dfn-attribute-setter (step 5)
+        [3]: https://heycam.github.io/webidl/#ecmascript-throw
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * create_hash_table:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::globalObjectOfClosestCodeBlock):
+        * interpreter/CallFrame.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter const):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue const):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * tools/JSDollarVM.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::JSC_DEFINE_HOST_FUNCTION): Deleted.
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
 2021-07-22  Saam Barati  <sbarati@apple.com>
 
         AirStackSlot's uint16_t byte size is too small

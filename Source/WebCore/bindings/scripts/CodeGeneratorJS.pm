@@ -853,7 +853,7 @@ sub GenerateNamedGetterLambda
 {
     my ($outputArray, $interface, $className, $namedGetterOperation, $namedGetterFunctionName, $IDLType) = @_;
     
-    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "        ");
+    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "", "        ");
     push(@arguments, "propertyNameToAtomString(propertyName)");
 
     push(@$outputArray, "    auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<${IDLType}, ${className}>([] (${className}& thisObject, PropertyName propertyName) -> decltype(auto) {\n");
@@ -5888,10 +5888,9 @@ sub GenerateGetCallData
 
 sub GenerateCallWithUsingReferences
 {
-    my ($callWith, $outputArray, $returnValue, $thisReference, $indent) = @_;
+    my ($callWith, $outputArray, $returnValue, $thisReference, $callFrameReference, $indent) = @_;
 
-    my $callFramePointer = "callFrame";
-    my $callFrameReference = "*callFrame";
+    my $callFramePointer = $callFrameReference && "&$callFrameReference";
     my $globalObject = "jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)";
 
     return GenerateCallWith($callWith, $outputArray, $returnValue, $returnValue, $callFramePointer, $callFrameReference, $globalObject, $globalObject, $thisReference, $indent);
@@ -5971,15 +5970,15 @@ sub GenerateCallWith
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "activeDOMWindow(*$globalObject)");
     }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentWindow")) {
+        AddToImplIncludes("DOMWindow.h");
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@callWithArgs, "incumbentDOMWindow(*$globalObject" . ($callFrameReference ? ", " . $callFrameReference : "") . ")");
+    }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow")) {
         AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "firstDOMWindow(*$globalObject)");
-    }
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentWindow")) {
-        AddToImplIncludes("DOMWindow.h");
-        AddToImplIncludes("JSDOMWindowBase.h");
-        push(@callWithArgs, "incumbentDOMWindow(*$globalObject, $callFrameReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "RuntimeFlags")) {
         push(@callWithArgs, "${globalObject}->runtimeFlags()");

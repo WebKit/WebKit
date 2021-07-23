@@ -1,3 +1,55 @@
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes cross-realm yet same-origin WebIDL attributes to throw errors in realm of
+        their accessor, while ensuring that `window.location` and `location.href` setters don't leak
+        cross-origin Object.prototype via thrown error.
+
+        Since Location setters relied on lexical global object to pass outgoing `document.referrer`,
+        they were updated to use IncumbentWindow as per spec [1]. callerGlobalObject() was reworked
+        to skip native / built-in callers and rely on VMEntryScope to accomodate top-level <script>
+        code navigating via Location setter, making the helper more versatile.
+
+        globalObjectOfClosestCodeBlock() fixed JSCustomSetterFunction instances and Location's
+        assign() / replace() methods to pass correct referrer.
+
+        Also, this change fixes static attributes like `PerformanceObserver.supportedEntryTypes`
+        to return wrappers of their realm instead of lexical.
+
+        [1] https://html.spec.whatwg.org/multipage/history.html#location-object-navigate (step 2)
+
+        Tests: imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value-cross-realm.html
+               imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/invalid-this-value-cross-realm.html
+               imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/window-location-and-location-href-cross-realm-set.html
+               imported/w3c/web-platform-tests/performance-timeline/supportedEntryTypes-cross-realm-access.html
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::callerGlobalObject): Deleted.
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::incumbentDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::put):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateNamedGetterLambda):
+        (GenerateCallWithUsingReferences):
+        (GenerateCallWith):
+        Ensure IncumbentWindow comes before FirstWindow.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        Remove attributes that relied on CallFrame since custom getters don't have it.
+
+        * page/Location.idl:
+        Remove [LegacyUnforgeable] from ancestorOrigins because it's set on the interface.
+
 2021-07-23  Richard Houle  <rhoule@apple.com>
 
         WebSocket traffic should be correctly assigned to either Developer or User.

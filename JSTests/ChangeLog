@@ -1,3 +1,13 @@
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/custom-get-set-proto-chain-put.js:
+        * stress/getter-setter-globalobject-in-ic-2.js: Added.
+
 2021-07-22  Saam Barati  <sbarati@apple.com>
 
         JSTests/stress/test-out-of-memory shouldn't assume that we always OOM

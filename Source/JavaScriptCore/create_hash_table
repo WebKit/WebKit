@@ -94,11 +94,6 @@ while (<IN>) {
         if ($att =~ m/Function/) {
             push(@values, { "type" => "PropertyAttribute::Function", "function" => $val, "params" => (length($param) ? $param : ""), "intrinsic" => (length($intrinsic) ? $intrinsic : "NoIntrinsic") });
             #printf STDERR "WARNING: Number of arguments missing for $key/$val\n" if (length($param) == 0);
-        } elsif ($att =~ m/Accessor/) {
-            my $get = $val;
-            my $put = "nullptr";
-            $hasSetter = "true";
-            push(@values, { "type" => "PropertyAttribute::Accessor", "get" => $get, "put" => $put });
         } elsif ($att =~ m/CellProperty/) {
             my $property = $val;
             push(@values, { "type" => "PropertyAttribute::CellProperty", "property" => $property });
@@ -310,11 +305,6 @@ sub output() {
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
             $intrinsic = $values[$i]{"intrinsic"};
-        } elsif ($values[$i]{"type"} eq "PropertyAttribute::Accessor") {
-            $firstCastStr = "static_cast<RawNativeFunction>";
-            $secondCastStr = "static_cast<RawNativeFunction>";
-            $firstValue = $values[$i]{"get"};
-            $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "PropertyAttribute::Property") {
             $firstCastStr = "static_cast<PropertySlot::GetValueFunc>";
             $secondCastStr = "static_cast<PutPropertySlot::PutValueFunc>";

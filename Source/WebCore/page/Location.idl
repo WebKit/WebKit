@@ -43,22 +43,22 @@
     LegacyUnforgeable,
     Exposed=Window
 ] interface Location {
-    [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
+    [SetterCallWith=IncumbentWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
-    [CallWith=ActiveWindow&FirstWindow] undefined assign(USVString url);
-    [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow] undefined replace(USVString url);
-    [CallWith=ActiveWindow] undefined reload();
+    [CallWith=IncumbentWindow&FirstWindow] undefined assign(USVString url);
+    [CallWith=IncumbentWindow&FirstWindow, DoNotCheckSecurity] undefined replace(USVString url);
+    [CallWith=IncumbentWindow] undefined reload();
 
     // URI decomposition attributes
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString protocol;
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString host;
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString hostname;
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString port;
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString pathname;
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString search;
-    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString hash;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString protocol;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString host;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString hostname;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString port;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString pathname;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString search;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString hash;
 
     readonly attribute USVString origin;
 
-    [LegacyUnforgeable, SameObject, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
+    [SameObject, CachedAttribute] readonly attribute DOMStringList ancestorOrigins;
 };

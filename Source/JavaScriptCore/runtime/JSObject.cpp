@@ -790,9 +790,6 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 hasProperty = true;
                 attributes = entry->value->attributes();
 
-                // FIXME: Remove this after writable accessors are introduced to static hash tables.
-                if (attributes & PropertyAttribute::Accessor)
-                    attributes |= PropertyAttribute::ReadOnly;
                 // FIXME: Remove this after we stop defaulting to CustomValue in static hash tables.
                 if (!(attributes & (PropertyAttribute::CustomAccessor | PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)))
                     attributes |= PropertyAttribute::CustomValue;
@@ -821,7 +818,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 // https://bugs.webkit.org/show_bug.cgi?id=215347
                 slot.setCustomAccessor(obj, customSetter);
                 scope.release();
-                customSetter(globalObject, JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
+                customSetter(obj->globalObject(vm), JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
                 return true;
             }
             if (attributes & PropertyAttribute::CustomValue) {
@@ -830,7 +827,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                     // FIXME: We should only be caching these if we're not an uncacheable dictionary:
                     // https://bugs.webkit.org/show_bug.cgi?id=215347
                     slot.setCustomValue(obj, customSetter);
-                    RELEASE_AND_RETURN(scope, customSetter(globalObject, JSValue::encode(obj), JSValue::encode(value), propertyName));
+                    RELEASE_AND_RETURN(scope, customSetter(obj->globalObject(vm), JSValue::encode(obj), JSValue::encode(value), propertyName));
                 }
                 if (!isThisValueAltered(slot, obj)) {
                     // Avoid PutModePut because it fails for non-extensible structures.

@@ -33,6 +33,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "LLIntPCRanges.h"
 #include "VMEntryRecord.h"
+#include "VMEntryScope.h"
 #include "WasmContextInlines.h"
 #include "WasmInstance.h"
 #include <wtf/StringPrintStream.h>
@@ -242,6 +243,30 @@ SourceOrigin CallFrame::callerSourceOrigin(VM& vm)
         return StackVisitor::Status::Done;
     });
     return sourceOrigin;
+}
+
+JSGlobalObject* CallFrame::globalObjectOfClosestCodeBlock(VM& vm, CallFrame* callFrame)
+{
+    JSGlobalObject* globalObject = nullptr;
+    StackVisitor::visit(callFrame, vm, [&](StackVisitor& visitor) {
+        if (visitor->isWasmFrame()) {
+            globalObject = visitor->callFrame()->lexicalGlobalObject(vm);
+            return StackVisitor::Status::Done;
+        }
+        if (auto* codeBlock = visitor->codeBlock()) {
+            if (codeBlock->codeType() == CodeType::FunctionCode && static_cast<FunctionExecutable*>(codeBlock->ownerExecutable())->isBuiltinFunction())
+                return StackVisitor::Status::Continue;
+            globalObject = codeBlock->globalObject();
+            return StackVisitor::Status::Done;
+        }
+        ASSERT(visitor->codeType() == StackVisitor::Frame::CodeType::Native);
+        return StackVisitor::Status::Continue;
+    });
+    if (globalObject)
+        return globalObject;
+    if (vm.entryScope)
+        return vm.entryScope->globalObject();
+    return nullptr;
 }
 
 String CallFrame::friendlyFunctionName()

@@ -1,3 +1,30 @@
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        * fast/dom/HTMLObjectElement/object-as-frame-expected.txt:
+        * fast/dom/HTMLObjectElement/object-as-frame.html:
+        * fast/dom/HTMLObjectElement/resources: Added.
+        * fast/dom/HTMLObjectElement/resources/dummy-frame-1.html: Added.
+        * fast/dom/HTMLObjectElement/resources/dummy-frame-2.html: Added.
+        * fast/events/attribute-listener-cloned-from-frameless-doc-context-2.html:
+        * fast/events/attribute-listener-extracted-from-frameless-doc-context-2.html:
+        These tests used to pass as is, probably, due to combination of old (incorrect) behavior and
+        some implementation details of run-webkit-tests. They fail on MiniBrowser / Chrome / Firefox
+        unless modified not to use data:// protocol, which is not system under test.
+
+        * fast/frames/sandboxed-iframe-navigation-parent-expected.txt:
+        * fast/frames/sandboxed-iframe-navigation-parent.html:
+        * http/tests/security/frameNavigation/context-for-location-assign-expected.txt:
+        Revert the changes made in r174996. Location::assign() now uses correct (incumbent) Window
+        to set outgoing referrer and perform security checks, aligning WebKit with Chrome / Firefox.
+
+        * http/tests/security/frameNavigation/context-for-location-href-gopd-expected.txt: Added.
+        * http/tests/security/frameNavigation/context-for-location-href-gopd.html: Added.
+
 2021-07-23  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for inspector/dom-debugger/event-breakpoint-with-navigation.html.

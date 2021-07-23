@@ -263,10 +263,17 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
 
     auto* thisObject = jsCast<JSDOMWindow*>(cell);
 
-    if (propertyName != static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName()) {
+    String errorMessage;
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
-        if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped(), ThrowSecurityError))
-            return false;
+        if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().locationPublicName()) {
+            auto* setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
+            scope.release();
+            setter(lexicalGlobalObject, JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
+            return true;
+        }
+        throwSecurityError(*lexicalGlobalObject, scope, errorMessage);
+        return false;
     }
 
     if (parseIndex(propertyName) && !allowsLegacyExpandoIndexedProperties())

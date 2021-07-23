@@ -37,7 +37,7 @@
 #include "StructureInlines.h"
 
 namespace JSC {
-static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncLength);
+static JSC_DECLARE_CUSTOM_GETTER(webAssemblyTableProtoGetterLength);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncGet);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncSet);
@@ -52,7 +52,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base
 
 /* Source for WebAssemblyTablePrototype.lut.h
  @begin prototypeTableWebAssemblyTable
- length webAssemblyTableProtoFuncLength Accessor 0
+ length webAssemblyTableProtoGetterLength ReadOnly|CustomAccessor
  grow   webAssemblyTableProtoFuncGrow   Function 1
  get    webAssemblyTableProtoFuncGet    Function 1
  set    webAssemblyTableProtoFuncSet    Function 2
@@ -72,12 +72,12 @@ static ALWAYS_INLINE JSWebAssemblyTable* getTable(JSGlobalObject* globalObject, 
     return result;
 }
 
-JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(webAssemblyTableProtoGetterLength, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
+    JSWebAssemblyTable* table = getTable(globalObject, vm, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(jsNumber(table->length()));
 }

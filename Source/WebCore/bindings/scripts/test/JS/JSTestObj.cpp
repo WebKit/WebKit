@@ -1765,12 +1765,8 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_withExecStateAttribute);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_withExecStateAttribute);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_withCallWithAndSetterCallWithAttribute);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_withCallWithAndSetterCallWithAttribute);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_withScriptExecutionContextAttribute);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_withScriptExecutionContextAttribute);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_withScriptExecutionContextAndExecStateAttribute);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_withScriptExecutionContextAndExecStateAttribute);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_withScriptExecutionContextAndExecStateWithSpacesAttribute);
-static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_withScriptExecutionContextAndExecStateWithSpacesAttribute);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_withSetterCallWithAttribute);
+static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_withSetterCallWithAttribute);
 #if ENABLE(Condition1)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestObj_conditionalAttr1);
 static JSC_DECLARE_CUSTOM_SETTER(setJSTestObj_conditionalAttr1);
@@ -2130,9 +2126,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "onwebkitfoo", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_onwebkitfoo), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_onwebkitfoo) } },
     { "withExecStateAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_withExecStateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_withExecStateAttribute) } },
     { "withCallWithAndSetterCallWithAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_withCallWithAndSetterCallWithAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_withCallWithAndSetterCallWithAttribute) } },
-    { "withScriptExecutionContextAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_withScriptExecutionContextAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_withScriptExecutionContextAttribute) } },
-    { "withScriptExecutionContextAndExecStateAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_withScriptExecutionContextAndExecStateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_withScriptExecutionContextAndExecStateAttribute) } },
-    { "withScriptExecutionContextAndExecStateWithSpacesAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_withScriptExecutionContextAndExecStateWithSpacesAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_withScriptExecutionContextAndExecStateWithSpacesAttribute) } },
+    { "withSetterCallWithAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_withSetterCallWithAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_withSetterCallWithAttribute) } },
 #if ENABLE(Condition1)
     { "conditionalAttr1", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObj_conditionalAttr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObj_conditionalAttr1) } },
 #else
@@ -4270,115 +4264,35 @@ JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_withCallWithAndSetterCallWithAttribute, (J
     return IDLAttribute<JSTestObj>::set<setJSTestObj_withCallWithAndSetterCallWithAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
-static inline JSValue jsTestObj_withScriptExecutionContextAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return jsUndefined();
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAttribute(*context))));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestObj_withScriptExecutionContextAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObj_withScriptExecutionContextAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestObj_withScriptExecutionContextAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+static inline JSValue jsTestObj_withSetterCallWithAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestObj>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestObject", "withScriptExecutionContextAttribute", "TestObj"); });
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.withSetterCallWithAttribute())));
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestObj_withSetterCallWithAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObj_withSetterCallWithAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline bool setJSTestObj_withSetterCallWithAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setWithScriptExecutionContextAttribute(*context, *nativeValue);
+        return impl.setWithSetterCallWithAttribute(incumbentDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), WTFMove(nativeValue));
     });
     return true;
 }
 
-JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_withScriptExecutionContextAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
+JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_withSetterCallWithAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_withScriptExecutionContextAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
-}
-
-static inline JSValue jsTestObj_withScriptExecutionContextAndExecStateAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return jsUndefined();
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndExecStateAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), *callFrame, *context))));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestObj_withScriptExecutionContextAndExecStateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObj_withScriptExecutionContextAndExecStateAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestObj_withScriptExecutionContextAndExecStateAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestObj>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestObject", "withScriptExecutionContextAndExecStateAttribute", "TestObj"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return false;
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setWithScriptExecutionContextAndExecStateAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), *callFrame, *context, *nativeValue);
-    });
-    return true;
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_withScriptExecutionContextAndExecStateAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_withScriptExecutionContextAndExecStateAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
-}
-
-static inline JSValue jsTestObj_withScriptExecutionContextAndExecStateWithSpacesAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return jsUndefined();
-    auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndExecStateWithSpacesAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), *callFrame, *context))));
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestObj_withScriptExecutionContextAndExecStateWithSpacesAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObj_withScriptExecutionContextAndExecStateWithSpacesAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
-static inline bool setJSTestObj_withScriptExecutionContextAndExecStateWithSpacesAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
-{
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestObj>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestObject", "withScriptExecutionContextAndExecStateWithSpacesAttribute", "TestObj"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return false;
-    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setWithScriptExecutionContextAndExecStateWithSpacesAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), *callFrame, *context, *nativeValue);
-    });
-    return true;
-}
-
-JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_withScriptExecutionContextAndExecStateWithSpacesAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_withScriptExecutionContextAndExecStateWithSpacesAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
+    return IDLAttribute<JSTestObj>::set<setJSTestObj_withSetterCallWithAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 #if ENABLE(Condition1)

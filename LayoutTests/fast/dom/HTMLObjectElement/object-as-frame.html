@@ -6,8 +6,8 @@
 
 jsTestIsAsync = true;
 
-var updatedFrameURL = "data:text/html,Updated contents of iframe";
-var updatedObjectURL = "data:text/html,Updated contents of object";
+var updatedFrameURL = "resources/dummy-frame-2.html";
+var updatedObjectURL = "resources/dummy-frame-1.html";
 
 function runTests()
 {
@@ -36,8 +36,8 @@ function handleLoad()
     if (numLoads < 2)
         return;
 
-    shouldBe("window.frames[0].location.toString()", '"' + updatedFrameURL + '"');
-    shouldBe("window.frames[1].location.toString()", '"' + updatedObjectURL + '"');
+    shouldBeTrue(`window.frames[0].location.href.endsWith("${updatedFrameURL}")`);
+    shouldBeTrue(`window.frames[1].location.href.endsWith("${updatedObjectURL}")`);
 
     finishJSTest();
 }
@@ -46,8 +46,8 @@ function handleLoad()
 </head>
 <body onload="runTests()">
 
-<iframe name="frame" src="data:text/html,Old contents of iframe"></iframe>
-<object name="obj" type="text/html" data="data:text/html,Old contents of object"></object>
+<iframe name="frame" src="resources/dummy-frame-1.html"></iframe>
+<object name="obj" type="text/html" data="resources/dummy-frame-2.html"></object>
 
 </body>
 </html>

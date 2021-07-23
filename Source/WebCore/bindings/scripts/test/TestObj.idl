@@ -200,9 +200,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     [CallWith=GlobalObject] attribute long withExecStateAttribute;
     [CallWith=GlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
-    [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
-    [CallWith=ScriptExecutionContext&ExecState] attribute TestObj withScriptExecutionContextAndExecStateAttribute;
-    [CallWith=  ScriptExecutionContext  &  ExecState  ] attribute TestObj withScriptExecutionContextAndExecStateWithSpacesAttribute;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute DOMString withSetterCallWithAttribute;
 
     // Optional parameters.
     undefined    methodWithOptionalArg(optional long opt);

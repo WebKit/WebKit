@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlCollatorPrototypeGetterCompare);
+static JSC_DECLARE_CUSTOM_GETTER(IntlCollatorPrototypeGetterCompare);
 static JSC_DECLARE_HOST_FUNCTION(IntlCollatorPrototypeFuncResolvedOptions);
 static JSC_DECLARE_HOST_FUNCTION(IntlCollatorFuncCompare);
 
@@ -47,7 +47,7 @@ const ClassInfo IntlCollatorPrototype::s_info = { "Intl.Collator", &Base::s_info
 
 /* Source for IntlCollatorPrototype.lut.h
 @begin collatorPrototypeTable
-  compare          IntlCollatorPrototypeGetterCompare        DontEnum|Accessor
+  compare          IntlCollatorPrototypeGetterCompare        DontEnum|ReadOnly|CustomAccessor
   resolvedOptions  IntlCollatorPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
@@ -105,14 +105,14 @@ JSC_DEFINE_HOST_FUNCTION(IntlCollatorFuncCompare, (JSGlobalObject* globalObject,
     RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(globalObject, xViewWithString.view, yViewWithString.view)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlCollatorPrototypeGetterCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlCollatorPrototypeGetterCompare, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 10.3.3 Intl.Collator.prototype.compare (ECMA-402 2.0)
     // 1. Let collator be this Collator object.
-    IntlCollator* collator = jsDynamicCast<IntlCollator*>(vm, callFrame->thisValue());
+    IntlCollator* collator = jsDynamicCast<IntlCollator*>(vm, JSValue::decode(thisValue));
     if (!collator)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.Collator.prototype.compare called on value that's not an object initialized as a Collator"_s));
 

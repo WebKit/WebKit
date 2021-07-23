@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeGetterFormat);
+static JSC_DECLARE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat);
 static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts);
 static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncResolvedOptions);
 static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatFuncFormat);
@@ -49,7 +49,7 @@ const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat", &Base
 
 /* Source for IntlNumberFormatPrototype.lut.h
 @begin numberFormatPrototypeTable
-  format           IntlNumberFormatPrototypeGetterFormat         DontEnum|Accessor
+  format           IntlNumberFormatPrototypeGetterFormat         DontEnum|ReadOnly|CustomAccessor
   formatToParts    IntlNumberFormatPrototypeFuncFormatToParts    DontEnum|Function 1
   resolvedOptions  IntlNumberFormatPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
@@ -108,14 +108,14 @@ JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatFuncFormat, (JSGlobalObject* globalObje
     return JSValue::encode(numberFormat->format(globalObject, value));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 11.3.3 Intl.NumberFormat.prototype.format (ECMA-402 2.0)
     // 1. Let nf be this NumberFormat object.
-    auto* nf = IntlNumberFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
+    auto* nf = IntlNumberFormat::unwrapForOldFunctions(globalObject, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!nf))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
