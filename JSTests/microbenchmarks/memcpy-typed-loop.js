@@ -19,7 +19,8 @@ for (let i=0; i<arr1.length; ++i) {
     arr1[i] = i
 }
 
-for (let i=0; i<10000000; ++i) doTest(arr1, arr2)
+for (let i=0; i<1e4; ++i)
+    doTest(arr1, arr2)
 
 arr2 = new Int32Array(arr1.length)
 doTest(arr1, arr2)

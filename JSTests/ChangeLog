@@ -1,3 +1,15 @@
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Reduce iteration of microbenchmarks/memcpy-typed-loop.js
+        https://bugs.webkit.org/show_bug.cgi?id=228214
+
+        Reviewed by Saam Barati.
+
+        Observing frequent timeout (e.g. https://ews-build.webkit.org/#/builders/1/builds/44698).
+        We do not need to have such a large # of iterations.
+
+        * microbenchmarks/memcpy-typed-loop.js:
+
 2021-07-22  Saam Barati  <sbarati@apple.com>
 
         AirStackSlot's uint16_t byte size is too small
