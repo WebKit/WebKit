@@ -1,3 +1,12 @@
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        JSTests/stress/test-out-of-memory shouldn't assume that we always OOM
+        https://bugs.webkit.org/show_bug.cgi?id=228213
+
+        Reviewed by Mark Lam.
+
+        * stress/test-out-of-memory.js:
+
 2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Reduce iteration of microbenchmarks/memcpy-typed-loop.js
