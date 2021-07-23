@@ -2373,3 +2373,7 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 # rdar://77527267 REGRESSION: imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html is a constant timeout and is flaky crashing and text failing
 [ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html [ Pass Failure Timeout ]
+
+# webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
+[ Monterey ] model-element/model-element-graphics-layers-opacity.html [ Pass Failure ]
+[ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]
