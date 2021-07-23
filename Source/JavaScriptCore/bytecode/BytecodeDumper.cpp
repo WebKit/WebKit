@@ -277,11 +277,29 @@ void CodeBlockBytecodeDumper<Block>::dumpGraph(Block* block, const InstructionSt
 
     out.printf("\n");
 
+    Vector<Vector<unsigned>> predecessors;
+    predecessors.resize(graph.size());
+    for (auto& block : graph) {
+        if (block.isEntryBlock() || block.isExitBlock())
+            continue;
+        for (auto successorIndex : block.successors()) {
+            if (!predecessors[successorIndex].contains(block.index()))
+                predecessors[successorIndex].append(block.index());
+        }
+    }
+
     for (BytecodeBasicBlock& block : graph) {
         if (block.isEntryBlock() || block.isExitBlock())
             continue;
 
         out.print("bb#", block.index(), "\n");
+
+        out.print("Predecessors: [");
+        for (unsigned predecessor : predecessors[block.index()]) {
+            if (!graph[predecessor].isEntryBlock())
+                out.print(" #", predecessor);
+        }
+        out.print(" ]\n");
 
         for (unsigned i = 0; i < block.totalLength(); ) {
             auto& currentInstruction = instructions.at(i + block.leaderOffset());
