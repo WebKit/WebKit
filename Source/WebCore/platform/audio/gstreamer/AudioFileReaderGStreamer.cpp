@@ -258,6 +258,10 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         [](GstAppSink* sink, gpointer userData) -> GstFlowReturn {
             return static_cast<AudioFileReader*>(userData)->handleSample(sink);
         },
+#if GST_CHECK_VERSION(1, 19, 1)
+        // new_event
+        nullptr,
+#endif
         { nullptr }
     };
     gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, nullptr);

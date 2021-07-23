@@ -1,3 +1,19 @@
+2021-07-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][1.19] Warnings due to AppSinkCallbacks struct growth
+        https://bugs.webkit.org/show_bug.cgi?id=228229
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A new callback was added, for event notifications.
+        
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::AudioFileReader::handleNewDeinterleavePad):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::handleNewDeinterleavePad):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::connectDecoderPad):
+
 2021-07-23  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] [macOS] Only show total duration when the elapsed time is visible
