@@ -1,3 +1,14 @@
+2021-07-23  Per Arne  <pvollan@apple.com>
+
+        [macOS] Reduce sandbox logging
+        https://bugs.webkit.org/show_bug.cgi?id=228236
+
+        Reviewed by Tim Horton.
+
+        To improve performance, remove some sandbox logging in the WebContent process' sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] It should be possible to select contact AutoFill text suggestions in email and username fields
