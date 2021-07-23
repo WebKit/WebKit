@@ -3509,15 +3509,15 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
     generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
 
-    RefPtr<RegisterID> result = generator.tempDestination(dst);
+    RefPtr<RegisterID> uncheckedResult = generator.newTemporary();
 
-    generator.emitGetFromScope(result.get(), scope.get(), var, ThrowIfNotFound);
-    generator.emitTDZCheckIfNecessary(var, result.get(), nullptr);
+    generator.emitGetFromScope(uncheckedResult.get(), scope.get(), var, ThrowIfNotFound);
+    generator.emitTDZCheckIfNecessary(var, uncheckedResult.get(), nullptr);
 
     Ref<Label> afterAssignment = generator.newLabel();
-    emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
+    emitShortCircuitAssignment(generator, uncheckedResult.get(), m_operator, afterAssignment.get());
 
-    generator.emitNode(result.get(), m_right); // Execute side effects first.
+    generator.emitNode(uncheckedResult.get(), m_right); // Execute side effects first.
 
     bool threwException = isReadOnly ? generator.emitReadOnlyExceptionIfNeeded(var) : false;
 
@@ -3525,12 +3525,12 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
 
     if (!isReadOnly) {
-        result = generator.emitPutToScope(scope.get(), var, result.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
-        generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
+        generator.emitPutToScope(scope.get(), var, uncheckedResult.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
+        generator.emitProfileType(uncheckedResult.get(), var, divotStart(), divotEnd());
     }
 
     generator.emitLabel(afterAssignment.get());
-    return generator.move(dst, result.get());
+    return generator.move(generator.finalDestination(dst, uncheckedResult.get()), uncheckedResult.get());
 }
 
 // ------------------------------ AssignResolveNode -----------------------------------
