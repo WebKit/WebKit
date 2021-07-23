@@ -1,3 +1,16 @@
+2021-07-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Generate simulated crash when UI process fails to get network process connection
+        https://bugs.webkit.org/show_bug.cgi?id=228203
+
+        Reviewed by Geoffrey Garen.
+
+        To help diagnose the issue that web process sometimes fails to get connection to the network process 
+        (rdar://80760179), as UI process should have more information about it than web process.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+
 2021-07-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Migrate the DisplayList::Replayer::Delegate from RemoteImageBuffer to RemoteRenderingBackend
