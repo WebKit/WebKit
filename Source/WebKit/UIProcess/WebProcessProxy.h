@@ -531,7 +531,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    bool messageSourceIsValidWebContentProcess();
+    bool hasCorrectPACEntitlement();
 #endif
 
     enum class IsWeak { No, Yes };
