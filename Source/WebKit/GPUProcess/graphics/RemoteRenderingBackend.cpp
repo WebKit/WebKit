@@ -184,16 +184,42 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
+RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend, GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+    : m_destination(destination)
+    , m_remoteRenderingBackend(remoteRenderingBackend)
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
+{
+}
+
+bool RemoteRenderingBackend::ReplayerDelegate::apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& graphicsContext)
+{
+    // FIXME: Inspect the item and record resource use here.
+
+    auto apply = [&](auto&& destination) {
+        return destination.apply(item, graphicsContext);
+    };
+
+    if (m_destination.renderingMode() == RenderingMode::Accelerated)
+        return apply(static_cast<AcceleratedRemoteImageBuffer&>(m_destination));
+    return apply(static_cast<UnacceleratedRemoteImageBuffer&>(m_destination));
+}
+
+void RemoteRenderingBackend::ReplayerDelegate::didCreateMaskImageBuffer(WebCore::ImageBuffer& imageBuffer)
+{
+    m_remoteRenderingBackend.didCreateMaskImageBuffer(imageBuffer);
+}
+
+void RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer()
+{
+    m_remoteRenderingBackend.didResetMaskImageBuffer();
+}
+
 DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
 {
     if (displayList.isEmpty())
         return { };
 
-    DisplayList::Replayer::Delegate* replayerDelegate = nullptr;
-    if (destination.renderingMode() == RenderingMode::Accelerated)
-        replayerDelegate = static_cast<AcceleratedRemoteImageBuffer*>(&destination);
-    else
-        replayerDelegate = static_cast<UnacceleratedRemoteImageBuffer*>(&destination);
+    ReplayerDelegate replayerDelegate(destination, *this, m_gpuConnectionToWebProcess);
 
     return WebCore::DisplayList::Replayer {
         destination.context(),
@@ -202,7 +228,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
         &remoteResourceCache().nativeImages(),
         &remoteResourceCache().fonts(),
         m_currentMaskImageBuffer.get(),
-        replayerDelegate
+        &replayerDelegate
     }.replay();
 }
 

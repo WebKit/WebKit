@@ -147,6 +147,20 @@ private:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
+    class ReplayerDelegate : public WebCore::DisplayList::Replayer::Delegate {
+    public:
+        ReplayerDelegate(WebCore::ImageBuffer&, RemoteRenderingBackend&, GPUConnectionToWebProcess&);
+
+    private:
+        bool apply(WebCore::DisplayList::ItemHandle, WebCore::GraphicsContext&) final;
+        void didCreateMaskImageBuffer(WebCore::ImageBuffer&) final;
+        void didResetMaskImageBuffer() final;
+
+        WebCore::ImageBuffer& m_destination;
+        RemoteRenderingBackend& m_remoteRenderingBackend;
+        Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    };
+
     struct PendingWakeupInformation {
         GPUProcessWakeupMessageArguments arguments;
         std::optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;

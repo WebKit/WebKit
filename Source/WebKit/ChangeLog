@@ -1,3 +1,43 @@
+2021-07-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Migrate the DisplayList::Replayer::Delegate from RemoteImageBuffer to RemoteRenderingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=228219
+
+        Reviewed by Wenson Hsieh.
+
+        This is part 1 of https://bugs.webkit.org/show_bug.cgi?id=228216.
+
+        For this task, we need to count resource uses:
+        1. As the recorder in the web process records DisplayList items which reference resources, those uses need to increment a counter.
+        2. As the replayer in the GPU process replays DisplayList items which reference resources, those uses need to increment a parallel counter.
+
+        The most natural place for the counters to live is in RemoteResourceCacheProxy and RemoteResourceCache, respectively. These two classes
+        are accessible from the RemoteRenderingBackendProxy and RemoteRenderingBackend, respectively. The most natural interface between the
+        DisplayList classes like DisplayList::Recorder and DisplayList::Replayer and the higher level WebKit classes is to use their delegate
+        interfaces.
+
+        For 1 above, RemoteImageBufferProxy has access to the RemoteRenderingBackendProxy and is already a DisplayList::Recorder::Delegate, so
+        there's no problem there. However, for 2, messages are delivered first to the RemoteRenderingBackend, which is the place that has access to
+        the RemoteResourceCache. Making the RemoteRenderingBackend have the DisplayList::Replayer::Delegate would be a natural place to either
+        A) call the necessary function in the RemoteImageBuffer, or B) interact with the RemoteResourceCache to increment the necessary counter.
+
+        Indeed, this makes a lot of sense because, for 2 of the 3 delegate methods, RemoteImageBuffer just immediately turns around and forwards
+        the call to the RemoteRenderingBackend anyway. So, migrating this interface to RemoteRenderingBackend actually ends up making it a bit
+        simpler.
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::apply):
+        (): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::apply):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::didCreateMaskImageBuffer):
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer):
+        (WebKit::RemoteRenderingBackend::submit):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
 2021-07-22  Devin Rousso  <drousso@apple.com>
 
         [Live Text] [iOS] Analysis should also search for any App Clip codes
