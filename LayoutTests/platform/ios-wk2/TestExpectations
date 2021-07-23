@@ -1416,6 +1416,7 @@ webkit.org/b/228038 [ Debug ] media/non-existent-video-playback-interrupted.html
 webkit.org/b/228038 [ Debug ] media/media-can-play-av1.html  [ Pass Crash ] 
 webkit.org/b/228038 [ Debug ] media/modern-media-controls/mute-button/mute-button.html  [ Pass Crash ] 
 webkit.org/b/228038 [ Debug ] fast/mediastream/audio-bad-sampleRate.html  [ Pass Crash ] 
+webkit.org/b/228038 [ Debug ] media/media-blocked-by-willsendrequest.html  [ Pass Crash ] 
 
 webkit.org/b/228204 media/video-presentation-mode.html [ Pass Timeout ] 
 
