@@ -1380,5 +1380,7 @@ webkit.org/b/225470 [ BigSur Release ] svg/filters/feDiffuseLighting-bottomRight
 
 webkit.org/b/225420 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-017.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/228238 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Pass Timeout ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
