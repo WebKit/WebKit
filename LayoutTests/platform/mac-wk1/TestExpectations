@@ -1382,5 +1382,7 @@ webkit.org/b/225420 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-s
 
 webkit.org/b/228238 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Pass Timeout ]
 
+webkit.org/b/228245 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Pass Failure ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
