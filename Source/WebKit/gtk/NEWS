@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.32.3
+================
+
+What's new in WebKitGTK 2.32.3?
+
+  - Properly set the cookies settings after a network process crash.
+  - Fix accessibility tree after a cross site navigation with PSON enabled.
+  - Ensure WebKitScriptWorld::window-object-cleared signal is always emitted.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.32.2
 ================
 
