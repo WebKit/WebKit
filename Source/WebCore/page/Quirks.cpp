@@ -1184,11 +1184,12 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
         if (isStorageAccessQuirkDomainAndElement(m_document->url(), element)) {
             return requestStorageAccessAndHandleClick([element = makeWeakPtr(element), platformEvent, eventType, detail, relatedTarget] (StorageAccessWasGranted storageAccessWasGranted) mutable {
-                if (!element)
+                RefPtr protectedElement { element.get() };
+                if (!protectedElement)
                     return;
 
                 if (storageAccessWasGranted == StorageAccessWasGranted::Yes)
-                    element->dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
+                    protectedElement->dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget);
             });
         }
 
