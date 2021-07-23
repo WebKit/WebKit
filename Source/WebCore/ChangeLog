@@ -1,3 +1,37 @@
+2021-07-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Remove libportal dependency
+        https://bugs.webkit.org/show_bug.cgi?id=228056
+
+        Reviewed by Carlos Garcia Campos.
+
+        The pure-GDBus approach allows us to request the input device (Monitor or Window) depending
+        on the CaptureDevice type and make the mouse cursor visible in the generated video stream.
+        Also requesting capture support within computeCaptureDevices() was a bad idea because this
+        being used by the enumerateMediaDevices API could potentially spam the user with permission
+        popups.
+
+        * platform/GStreamer.cmake:
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp:
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.h:
+        * platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp: Added.
+        (WebCore::GStreamerDisplayCaptureDeviceManager::singleton):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::GStreamerDisplayCaptureDeviceManager):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::~GStreamerDisplayCaptureDeviceManager):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::computeCaptureDevices):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::createDisplayCaptureSource):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::stopSource):
+        (WebCore::GStreamerDisplayCaptureDeviceManager::waitResponseSignal):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::createPipewireSource):
+        (WebCore::GStreamerVideoCaptureSource::factory):
+        (WebCore::GStreamerVideoCaptureSource::displayFactory):
+        (WebCore::GStreamerVideoCaptureSource::GStreamerVideoCaptureSource):
+        (WebCore::GStreamerVideoCaptureSource::stopProducingData):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoCapturer.h:
+
 2021-07-22  Said Abou-Hallawa  <said@apple.com>
 
         Unreviewed, reverting 280130.

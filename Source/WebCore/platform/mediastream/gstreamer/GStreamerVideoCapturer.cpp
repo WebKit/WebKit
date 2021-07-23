@@ -75,11 +75,6 @@ GstVideoInfo GStreamerVideoCapturer::getBestFormat()
     return info;
 }
 
-void GStreamerVideoCapturer::setPipewireFD(int fd)
-{
-    m_fd = fd;
-}
-
 bool GStreamerVideoCapturer::setSize(int width, int height)
 {
     if (m_fd.has_value()) {

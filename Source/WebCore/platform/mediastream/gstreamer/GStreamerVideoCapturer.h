@@ -43,7 +43,9 @@ public:
     bool setFrameRate(double);
     GstVideoInfo getBestFormat();
 
-    void setPipewireFD(int);
+    void setPipewireFD(int fd) { m_fd = fd; }
+    std::optional<int> pipewireFD() const { return m_fd; }
+
 private:
     std::optional<int> m_fd;
 };

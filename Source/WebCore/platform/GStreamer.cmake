@@ -58,6 +58,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
         platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
         platform/mediastream/gstreamer/GStreamerCapturer.cpp
+        platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp
         platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
         platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
@@ -151,10 +152,6 @@ if (ENABLE_VIDEO)
             list(APPEND WebCore_LIBRARIES
                 ${GSTREAMER_CODECPARSERS_LIBRARIES}
             )
-        endif ()
-
-        if (USE_PIPEWIRE)
-            list(APPEND WebCore_LIBRARIES LIBPORTAL::LIBPORTAL)
         endif ()
     endif ()
 endif ()

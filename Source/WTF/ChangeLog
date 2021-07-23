@@ -1,3 +1,13 @@
+2021-07-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Remove libportal dependency
+        https://bugs.webkit.org/show_bug.cgi?id=228056
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable screen capture on GStreamer
+        ports. The PIPEWIRE ifdef is redundant.
+
 2021-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 

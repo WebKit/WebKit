@@ -940,7 +940,7 @@ ScreenCaptureEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(MAC) || USE(PIPEWIRE)": true
+      "PLATFORM(MAC) || USE(GSTREAMER)": true
       default: false
     WebCore:
       default: false
