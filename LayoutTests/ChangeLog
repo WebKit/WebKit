@@ -1,3 +1,34 @@
+2021-07-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Repainting artifacts when moving input type=range slider thumb
+        https://bugs.webkit.org/show_bug.cgi?id=228135
+        rdar://76247487
+
+        Reviewed by Tim Horton.
+
+        Rebaselined tests to account for the change to the size of the slider
+        thumb.
+
+        * fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * fast/repaint/block-inputrange-repaint-expected.txt:
+        * fast/repaint/block-inputrange-repaint.html:
+        * fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/gtk/fast/repaint/block-inputrange-repaint-expected.txt:
+        * platform/mac-catalina/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Copied from LayoutTests/fast/dom/HTMLInputElement/input-slider-update-expected.txt.
+        * platform/mac-catalina/fast/forms/input-appearance-height-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-height-expected.txt.
+        * platform/mac-catalina/fast/forms/range/input-appearance-range-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range/input-appearance-range-expected.txt.
+        * platform/mac-catalina/fast/forms/range/slider-padding-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range/slider-padding-expected.txt.
+        * platform/mac-catalina/fast/forms/range/slider-thumb-shared-style-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range/slider-thumb-shared-style-expected.txt.
+        * platform/mac-catalina/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range/thumbslider-no-parent-slider-expected.txt.
+        * platform/mac-catalina/fast/repaint/block-inputrange-repaint-expected.txt: Added.
+        * platform/mac-catalina/fast/repaint/slider-thumb-drag-release-expected.txt: Copied from LayoutTests/fast/repaint/slider-thumb-drag-release-expected.txt.
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/mac/fast/forms/range/slider-padding-expected.txt:
+        * platform/mac/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/mac/fast/forms/range/thumbslider-no-parent-slider-expected.txt:
+
 2021-07-23  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] [macOS] Only show total duration when the elapsed time is visible

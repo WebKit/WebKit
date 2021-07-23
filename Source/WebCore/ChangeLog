@@ -1,3 +1,19 @@
+2021-07-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Repainting artifacts when moving input type=range slider thumb
+        https://bugs.webkit.org/show_bug.cgi?id=228135
+        rdar://76247487
+
+        Reviewed by Tim Horton.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustSliderThumbSize const):
+
+        The size of NSSliderCell's knob increased in Big Sur. Consequently, the
+        knob was being painted outside of its box. Unfortunately, there is
+        currently no way to obtain the size programmatically, so we are forced
+        to update the hardcoded size.
+
 2021-07-23  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][1.19] Warnings due to AppSinkCallbacks struct growth
