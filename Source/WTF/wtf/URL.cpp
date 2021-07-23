@@ -971,6 +971,7 @@ bool portAllowed(const URL& url)
         6669, // Alternate IRC [Apple addition]
         6679, // Alternate IRC SSL [Apple addition]
         6697, // IRC+SSL [Apple addition]
+        10080, // amanda
     };
 
     // If the port is not in the blocked port list, allow it.

@@ -1,3 +1,17 @@
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Block loading for port 10080
+        https://bugs.webkit.org/show_bug.cgi?id=224432
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-bad-port.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-bad-port.any.js:
+        * web-platform-tests/fetch/api/request/request-bad-port.any.worker-expected.txt:
+        * web-platform-tests/websockets/Create-blocked-port.any-expected.txt:
+        * web-platform-tests/websockets/Create-blocked-port.any.js:
+        * web-platform-tests/websockets/Create-blocked-port.any.worker-expected.txt:
+
 2021-02-25  Antoine Quint  <graouts@webkit.org>
 
         border-image-outset doesn't handle float values

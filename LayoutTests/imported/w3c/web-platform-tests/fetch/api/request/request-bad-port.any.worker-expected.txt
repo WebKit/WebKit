@@ -75,6 +75,7 @@ Blocked access to external URL http://example.com:6667/
 Blocked access to external URL http://example.com:6668/
 Blocked access to external URL http://example.com:6669/
 Blocked access to external URL http://example.com:6697/
+Blocked access to external URL http://example.com:10080/
 
 PASS Request on bad port 1 should throw TypeError.
 PASS Request on bad port 7 should throw TypeError.
@@ -153,4 +154,5 @@ PASS Request on bad port 6667 should throw TypeError.
 PASS Request on bad port 6668 should throw TypeError.
 PASS Request on bad port 6669 should throw TypeError.
 PASS Request on bad port 6697 should throw TypeError.
+PASS Request on bad port 10080 should throw TypeError.
 
