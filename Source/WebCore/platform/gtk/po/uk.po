@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit 1.1.22\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=WebKitGTK\n"
-"POT-Creation-Date: 2021-05-29 03:42+0000\n"
-"PO-Revision-Date: 2021-05-29 21:39+0300\n"
+"POT-Creation-Date: 2021-07-22 15:47+0000\n"
+"PO-Revision-Date: 2021-07-22 20:37+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -1022,20 +1022,16 @@ msgid "Click to Exit Full Screen"
 msgstr "Натисніть, щоб вийти з повноекранного режиму"
 
 #: ../../LocalizedStrings.cpp:1095
-#| msgctxt "Unknown filesize FTP directory listing item"
-#| msgid "Unknown"
 msgctxt "Menu item label for a audio/text track that has no other name."
 msgid "Unknown"
 msgstr "Невідомий"
 
 #: ../../LocalizedStrings.cpp:1100
-#| msgid "Off"
 msgctxt "Menu item label for the track that represents disabling closed captions."
 msgid "Off"
 msgstr "Вимкнено"
 
 #: ../../LocalizedStrings.cpp:1105
-#| msgid "Auto (Recommended)"
 msgctxt "Menu item label for automatic track selection behavior."
 msgid "Auto (Recommended)"
 msgstr "Авто (рекомендовано)"
@@ -1116,7 +1112,7 @@ msgstr "Неприйнятний сертифікат TLS"
 msgid "Continue with Touch ID."
 msgstr "Продовжити з Touch ID."
 
-#: ../../network/soup/NetworkStorageSessionSoup.cpp:237
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:239
 msgid "WebKitGTK password"
 msgstr "Пароль WebKitGTK"
 
@@ -1407,8 +1403,8 @@ msgstr "Адреса даних"
 #: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
 #: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1146
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:437
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1184
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:446
 msgid "URI"
 msgstr "URI"
 
@@ -1518,7 +1514,7 @@ msgid "Plug-in handled load"
 msgstr "Завантаження під керуванням додатка"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:90
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2320
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2372
 msgid "Load request cancelled"
 msgstr "Запит щодо завантаження скасовано"
 
@@ -1587,16 +1583,16 @@ msgstr "Атрибути введення"
 msgid "Flags with the typing attributes"
 msgstr "Прапорці із атрибутами введення"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:172
 msgid "Favicons database not initialized yet"
 msgstr "Базу даних піктограм ще не ініціалізовано"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:175
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:178
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "У сторінки %s немає піктограми"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:185
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:188
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "Невідома піктограма для сторінки %s"
@@ -1733,7 +1729,7 @@ msgid "The unique id for the notification"
 msgstr "Унікальний ідентифікатор для сповіщення"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1098
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1136
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
 msgid "Title"
 msgstr "Заголовок"
@@ -2292,11 +2288,11 @@ msgstr "Шлях до каталогу сховища"
 msgid "The directory where user content filters are stored"
 msgstr "Каталог, у якому зберігатимуться фільтри даних користувача"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
 msgid "Is for audio device"
 msgstr "Для звукового пристрою"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:170
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:184
 msgid ""
 "Whether the media device to which the permission was requested has a "
 "microphone or not."
@@ -2304,11 +2300,11 @@ msgstr ""
 "Визначає, чи має медіапристрій, для доступу до якого потрібен дозвіл, "
 "мікрофон"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:196
 msgid "Is for video device"
 msgstr "Для відеопристрою"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:197
 msgid ""
 "Whether the media device to which the permission was requested has a video "
 "capture capability or not."
@@ -2316,40 +2312,52 @@ msgstr ""
 "Визначає, чи має медіапристрій, для доступу до якого потрібен дозвіл, "
 "можливості із захоплення відео"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:481
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:496
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:304
 msgid "Local Storage Directory"
 msgstr "Каталог локального сховища"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:482
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:497
 msgid "The directory where local storage data will be saved"
 msgstr "Каталог, у якому зберігатимуться дані локального сховища даних"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:497
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:512
 msgid "Website Data Manager"
 msgstr "Керування даними сайта"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:498
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:513
 msgid "The WebKitWebsiteDataManager associated with this context"
 msgstr "WebKitWebsiteDataManager, який пов’язано із цим контекстом"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:519
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:534
 msgid "Swap Processes on Cross-Site Navigation"
 msgstr "Міняти місцями процеси при навігації між сайтами"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:520
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:535
 msgid "Whether swap Web processes on cross-site navigations is enabled"
 msgstr ""
 "Визначає, чи увімкнено зміну процесів місцями при навігації між сайтами"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:539
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:554
 msgid "Use system appearance for scrollbars"
 msgstr "Загальносистемний вигляд смужок гортання"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:540
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:555
 msgid "Whether to use system appearance for rendering scrollbars"
 msgstr ""
 "Визначає, чи слід використовувати загальносистемних вигляд смужок гортання"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:571
+msgid "Memory Pressure Settings"
+msgstr ""
+"Параметри тиску пам'яті"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:572
+msgid ""
+"The WebKitMemoryPressureSettings applied to the web processes created by "
+"this context"
+msgstr ""
+"WebKitMemoryPressureSettings, який застосовано до вебпроцесів, які створено цим контекстом"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:113
 msgid "The current active URI of the resource"
@@ -2360,9 +2368,9 @@ msgid "The response of the resource"
 msgstr "Відповідь ресурсу"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:351
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4622
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4674
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:888
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:897
 msgid "Operation was cancelled"
 msgstr "Дію було скасовано"
 
@@ -2459,31 +2467,31 @@ msgstr "Каталог, у якому зберігатиметься кеш DOM"
 msgid "Whether the WebKitWebsiteDataManager is ephemeral"
 msgstr "Визначає, чи є WebKitWebsiteDataManager тимчасовим"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:728
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:748
 msgid "Acknowledge"
 msgstr "Підтвердження"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1024
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1062
 msgid "Backend"
 msgstr "Модуль"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1025
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1063
 msgid "The backend for the web view"
 msgstr "Модуль для перегляду сторінок інтернету"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1038
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1076
 msgid "Web Context"
 msgstr "Вебконтекст"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1039
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1077
 msgid "The web context for the view"
 msgstr "Вебконтекст панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1054
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1092
 msgid "Related WebView"
 msgstr "Пов’язана вебпанель"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1055
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1093
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -2491,121 +2499,137 @@ msgstr ""
 "Пов’язаний WebKitWebView, який використовуватиметься, якщо створено панель "
 "із тим самим вебпроцесом"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1069
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1107
 msgid "WebView settings"
 msgstr "Параметри вебпанелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1070
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1108
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1084
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1122
 msgid "WebView user content manager"
 msgstr "Засіб керування даними користувача на вебпанелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1085
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1123
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1099
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1137
 msgid "Main frame document title"
 msgstr "Заголовок основного фрейма документа"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1117
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1155
 msgid "Estimated Load Progress"
 msgstr "Оцінка поступу завантаження"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1118
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1156
 msgid "An estimate of the percent completion for a document load"
 msgstr "Оцінка частки завантаження документа у відсотках"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1132
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1170
 msgid "Favicon"
 msgstr "Піктограма"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1133
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1171
 msgid "The favicon associated to the view, if any"
 msgstr "Піктограма, пов’язана із цією панеллю, якщо таку встановлено"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1147
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1185
 msgid "The current active URI of the view"
 msgstr "Поточна активна адреса панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1160
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1198
 msgid "Zoom level"
 msgstr "Масштабування"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1161
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1199
 msgid "The zoom level of the view content"
 msgstr "Масштаб вмісту панелі"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1178
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1216
 msgid "Is Loading"
 msgstr "Завантажується"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1179
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1217
 msgid "Whether the view is loading a page"
 msgstr "Визначає, чи завантажує панель сторінку"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1197
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1235
 msgid "Whether the view is playing audio"
 msgstr "Визначає, чи відтворює панель звукові дані"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1223
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1261
 msgid "Whether the web view is ephemeral"
 msgstr "Визначає, чи є панель тимчасовою"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1240
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1278
 msgid "Whether the web view is controlled by automation"
 msgstr "Визначає, чи керуватиметься панель перегляду автоматично"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1258
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1296
 msgid "The browsing context presentation type for automation"
 msgstr "Тип презентації контексту перегляду для автоматизації"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1274
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1312
 msgid "Editable"
 msgstr "Можна редагувати"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1275
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1313
 msgid "Whether the content can be modified by the user."
 msgstr "Визначає, чи може бути дані змінено користувачем."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1289
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1327
 msgid "Page Identifier"
 msgstr "Ідентифікатор сторінки"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1290
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1328
 msgid "The page identifier."
 msgstr "Ідентифікатор сторінки."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1306
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1344
 msgid "Whether the view audio is muted"
 msgstr "Визначає, чи вимкнено звук"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1320
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1358
 msgid "Default Website Policies"
 msgstr "Типові правила вебсайтів"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1321
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1359
 msgid "The default policy object for sites loaded in this view"
 msgstr ""
 "Типові правила об'єктів для сайтів, які завантажуються до цієї панелі "
 "перегляду"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1336
-#| msgid "The filter currently associated with the request"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1374
 msgid ""
 "Whether the web process currently associated to the web view is responsive"
-msgstr "Визначає, чи відповідає на запити вебпроцес, який зараз пов'язано із панеллю перегляду інтернет-даних"
+msgstr ""
+"Визначає, чи відповідає на запити вебпроцес, який зараз пов'язано із панеллю "
+"перегляду інтернет-даних"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4332
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1398
+#| msgid "The current active URI of the view"
+msgid "The capture state of the camera device"
+msgstr "Стан захоплення даних пристрою камери"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1423
+#| msgid "The current active URI of the view"
+msgid "The capture state of the microphone device"
+msgstr "Стан захоплення даних пристрою мікрофона"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1448
+#| msgid "The current active URI of the view"
+msgid "The capture state of the display device"
+msgstr "Стан захоплення даних пристрою дисплея"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4384
 msgid "There was an error creating the snapshot"
 msgstr "Під час створення знімка сталася помилка"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4628
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4680
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:293
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:894
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:903
 #, c-format
 msgid "Message %s was not handled"
 msgstr "Обробки повідомлення %s не виконано"
@@ -2854,15 +2878,15 @@ msgstr ""
 "Визначає, чи може бути долучено ревізор до того самого вікна, що містить "
 "ревізовану панель"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2279
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2293
 msgid "Website running in fullscreen mode"
 msgstr "Сайт працює у повноекранному режимі"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:91
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
 msgid "Select Files"
 msgstr "Вибір файлів"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:91
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
 msgid "Select File"
 msgstr "Вибір файла"
 
@@ -2898,7 +2922,7 @@ msgstr "Вузол"
 msgid "The WebKitDOMNode"
 msgstr "WebKitDOMNode"
 
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:438
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:447
 msgid "The current active URI of the web page"
 msgstr "Поточна активна адреса сторінки"
 
