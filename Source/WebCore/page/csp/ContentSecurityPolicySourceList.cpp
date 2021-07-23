@@ -132,7 +132,8 @@ bool ContentSecurityPolicySourceList::matches(const URL& url, bool didReceiveRed
     if (m_allowStar && isProtocolAllowedByStar(url))
         return true;
 
-    if (m_allowSelf && m_policy.urlMatchesSelf(url))
+    if (m_allowSelf && m_policy.urlMatchesSelf(url, equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::frameSrc)
+))
         return true;
 
     for (auto& entry : m_list) {
