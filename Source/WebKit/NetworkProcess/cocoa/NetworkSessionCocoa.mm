@@ -1710,6 +1710,16 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
+#if ENABLE(APP_PRIVACY_REPORT)
+    if (!request.isAppInitiated()) {
+        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+        mutableRequest.get().attribution = NSURLRequestAttributionUser;
+        nsRequest = WTFMove(mutableRequest);
+    }
+
+    appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
+#endif
+
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     RetainPtr<NSURLSessionWebSocketTask> task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     

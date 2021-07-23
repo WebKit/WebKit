@@ -1,3 +1,17 @@
+2021-07-23  Richard Houle  <rhoule@apple.com>
+
+        WebSocket traffic should be correctly assigned to either Developer or User.
+        https://bugs.webkit.org/show_bug.cgi?id=227564
+        <rdar://problem/79307301>
+
+        Reviewed by Kate Cheney.
+
+        Tests: http/tests/app-privacy-report/websocket-isappinitiated.html
+               http/tests/app-privacy-report/websocket-isnotappinitiated.html
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::webSocketConnectRequest):
+
 2021-07-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Repainting artifacts when moving input type=range slider thumb
