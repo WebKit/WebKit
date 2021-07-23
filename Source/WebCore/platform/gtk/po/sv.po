@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: webkitgtk+\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
 "product=WebKit&component=WebKitGTK\n"
-"POT-Creation-Date: 2021-05-29 03:42+0000\n"
-"PO-Revision-Date: 2021-06-03 01:05+0200\n"
+"POT-Creation-Date: 2021-07-22 15:47+0000\n"
+"PO-Revision-Date: 2021-07-23 02:38+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -1123,7 +1123,7 @@ msgstr "Oacceptabelt TLS-certifikat"
 msgid "Continue with Touch ID."
 msgstr "Fortsätt med Touch-ID."
 
-#: ../../network/soup/NetworkStorageSessionSoup.cpp:237
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:239
 msgid "WebKitGTK password"
 msgstr "WebKitGTK-lösenord"
 
@@ -1414,8 +1414,8 @@ msgstr "Media-URI:n"
 #: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
 #: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1146
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:437
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1184
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:446
 msgid "URI"
 msgstr "URI"
 
@@ -1524,7 +1524,7 @@ msgid "Plug-in handled load"
 msgstr "Insticksmodulen kommer att hantera inläsning"
 
 #: ../../../../WebKit/Shared/WebErrors.cpp:90
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2320
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2372
 msgid "Load request cancelled"
 msgstr "Inläsningsbegäran avbruten"
 
@@ -1593,16 +1593,16 @@ msgstr "Skriftattribut"
 msgid "Flags with the typing attributes"
 msgstr "Flaggor med skriftattributen"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:172
 msgid "Favicons database not initialized yet"
 msgstr "Databasen för favicons är inte initierad än"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:175
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:178
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "Sidan %s har ingen favicon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:185
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:188
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "Okänd favicon för sidan %s"
@@ -1736,7 +1736,7 @@ msgid "The unique id for the notification"
 msgstr "Den unika identifieraren för aviseringen"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1098
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1136
 #: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
 msgid "Title"
 msgstr "Titel"
@@ -2172,11 +2172,11 @@ msgstr "Huruvida MediaStream-innehåll ska hanteras"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
 msgid "Enable mock capture devices"
-msgstr "Aktivera falska infångningsenheter"
+msgstr "Aktivera falska inspelningsenheter"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1314
 msgid "Whether we expose mock capture devices or not"
-msgstr "Huruvida vi exponerar falska infångningsenheter eller ej"
+msgstr "Huruvida vi exponerar falska inspelningsenheter eller ej"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1333
 msgid "Enable Spatial Navigation"
@@ -2288,11 +2288,11 @@ msgstr "Sökväg till lagringskatalog"
 msgid "The directory where user content filters are stored"
 msgstr "Katalogen där användarinnehållsfilter lagras"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
 msgid "Is for audio device"
 msgstr "Är för ljudenhet"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:170
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:184
 msgid ""
 "Whether the media device to which the permission was requested has a "
 "microphone or not."
@@ -2300,53 +2300,65 @@ msgstr ""
 "Huruvida mediaenheten för vilken behörighet begärdes har en mikrofon eller "
 "inte."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:196
 msgid "Is for video device"
 msgstr "Är för videoenhet"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:197
 msgid ""
 "Whether the media device to which the permission was requested has a video "
 "capture capability or not."
 msgstr ""
 "Huruvida mediaenheten för vilken behörighet begärdes har "
-"videoinfångningsmöjligheter eller ej."
+"videoinspelningsmöjligheter eller ej."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:481
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:496
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:304
 msgid "Local Storage Directory"
 msgstr "Lokal lagringskatalog"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:482
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:497
 msgid "The directory where local storage data will be saved"
 msgstr "Katalogen där lokal data kommer att sparas"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:497
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:512
 msgid "Website Data Manager"
 msgstr "Datahanterare för webbplats"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:498
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:513
 msgid "The WebKitWebsiteDataManager associated with this context"
 msgstr "WebKitWebsiteDataManager associerad med detta kontext"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:519
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:534
 msgid "Swap Processes on Cross-Site Navigation"
 msgstr "Växla processer vid navigering mellan webbplatser"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:520
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:535
 msgid "Whether swap Web processes on cross-site navigations is enabled"
 msgstr ""
 "Huruvida växling mellan webbprocesser vid navigering mellan webbplatser är "
 "aktiverad"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:539
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:554
 msgid "Use system appearance for scrollbars"
 msgstr "Använd systemets utseende för rullningslister"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:540
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:555
 msgid "Whether to use system appearance for rendering scrollbars"
 msgstr ""
 "Huruvida systemets utseende ska användas för rendering av rullningslister"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:571
+msgid "Memory Pressure Settings"
+msgstr "Minnestryckinställningar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:572
+msgid ""
+"The WebKitMemoryPressureSettings applied to the web processes created by "
+"this context"
+msgstr ""
+"De WebKitMemoryPressureSettings som tillämpas på webbprocesserna som skapas "
+"av denna kontext"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:113
 msgid "The current active URI of the resource"
@@ -2357,9 +2369,9 @@ msgid "The response of the resource"
 msgstr "Resursens svar"
 
 #: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:351
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4622
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4674
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:888
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:897
 msgid "Operation was cancelled"
 msgstr "Åtgärden avbröts"
 
@@ -2456,31 +2468,31 @@ msgstr "Katalogen där DOM-cachen kommer att lagras"
 msgid "Whether the WebKitWebsiteDataManager is ephemeral"
 msgstr "Huruvida WebKitWebsiteDataManager är kortlivad"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:728
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:748
 msgid "Acknowledge"
 msgstr "Bekräfta"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1024
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1062
 msgid "Backend"
 msgstr "Server"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1025
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1063
 msgid "The backend for the web view"
 msgstr "Webbvyns servergränssnitt"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1038
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1076
 msgid "Web Context"
 msgstr "Webbkontext"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1039
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1077
 msgid "The web context for the view"
 msgstr "Webbkontexten för vyn"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1054
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1092
 msgid "Related WebView"
 msgstr "Relaterad WebView"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1055
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1093
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -2488,118 +2500,130 @@ msgstr ""
 "Den relaterade WebKitWebView som används vid skapandet av vyn för att dela "
 "samma webbprocess"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1069
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1107
 msgid "WebView settings"
 msgstr "WebView-inställningar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1070
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1108
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings för vyn"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1084
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1122
 msgid "WebView user content manager"
 msgstr "WebView hanterare för användarinnehåll"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1085
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1123
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager för vyn"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1099
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1137
 msgid "Main frame document title"
 msgstr "Dokumenttitel för huvudram"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1117
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1155
 msgid "Estimated Load Progress"
 msgstr "Förväntad inläsningsprocess"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1118
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1156
 msgid "An estimate of the percent completion for a document load"
 msgstr "Estimat av den färdiga procenten för en dokumentinläsning"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1132
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1170
 msgid "Favicon"
 msgstr "Favicon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1133
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1171
 msgid "The favicon associated to the view, if any"
 msgstr "Favicon associerad med vyn, om någon"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1147
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1185
 msgid "The current active URI of the view"
 msgstr "Aktuell aktiv URI för vyn"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1160
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1198
 msgid "Zoom level"
 msgstr "Zoomnivå"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1161
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1199
 msgid "The zoom level of the view content"
 msgstr "Zoomnivån för vyinnehållet"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1178
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1216
 msgid "Is Loading"
 msgstr "Läses in"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1179
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1217
 msgid "Whether the view is loading a page"
 msgstr "Huruvida vyn läser in en sida"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1197
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1235
 msgid "Whether the view is playing audio"
 msgstr "Huruvida vyn spelar ljud"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1223
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1261
 msgid "Whether the web view is ephemeral"
 msgstr "Huruvida webbvyn är kortlivad"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1240
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1278
 msgid "Whether the web view is controlled by automation"
 msgstr "Huruvida webbvyn kontrolleras genom automatisering"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1258
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1296
 msgid "The browsing context presentation type for automation"
 msgstr "Surfkontextens presentationstyp för automatisering"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1274
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1312
 msgid "Editable"
 msgstr "Redigerbar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1275
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1313
 msgid "Whether the content can be modified by the user."
 msgstr "Huruvida innehållet kan ändras av användaren."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1289
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1327
 msgid "Page Identifier"
 msgstr "Sididentifierare"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1290
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1328
 msgid "The page identifier."
 msgstr "Sididentifieraren."
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1306
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1344
 msgid "Whether the view audio is muted"
 msgstr "Huruvida vyns ljud är tystat"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1320
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1358
 msgid "Default Website Policies"
 msgstr "Standardpolicyer för webbplatser"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1321
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1359
 msgid "The default policy object for sites loaded in this view"
 msgstr "Standardpolicyobjektet för webbplatser som läses in i denna vy"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1336
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1374
 msgid ""
 "Whether the web process currently associated to the web view is responsive"
 msgstr "Huruvida webbprocessen för närvarande associerad med webbvyn svarar"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4332
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1398
+msgid "The capture state of the camera device"
+msgstr "Inspelningstillståndet för kameraenheten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1423
+msgid "The capture state of the microphone device"
+msgstr "Inspelningstillståndet för mikrofonenheten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1448
+msgid "The capture state of the display device"
+msgstr "Inspelningstillståndet för displayenheten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4384
 msgid "There was an error creating the snapshot"
 msgstr "Ett fel uppstod vid skapandet av ögonblicksbilden"
 
-#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4628
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4680
 #: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:293
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:894
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:903
 #, c-format
 msgid "Message %s was not handled"
 msgstr "Meddelande %s hanterades inte"
@@ -2848,15 +2872,15 @@ msgstr ""
 "Huruvida inspektören kan fästas vid samma fönster som innehåller den "
 "inspekterade vyn"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2279
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2293
 msgid "Website running in fullscreen mode"
 msgstr "Webbplats körs i helskärmsläge"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:91
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
 msgid "Select Files"
 msgstr "Välj filer"
 
-#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:91
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
 msgid "Select File"
 msgstr "Välj fil"
 
@@ -2892,7 +2916,7 @@ msgstr "Nod"
 msgid "The WebKitDOMNode"
 msgstr "WebKitDOMNode"
 
-#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:438
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:447
 msgid "The current active URI of the web page"
 msgstr "Aktuell aktiv URI för webbsidan"
 
@@ -3051,9 +3075,6 @@ msgstr "Aktuell aktiv URI för webbsidan"
 
 #~ msgid "Alternate Title"
 #~ msgstr "Alternativ titel"
-
-#~ msgid "The alternate title of the history item"
-#~ msgstr "Alternativ titel för historikobjektet"
 
 #~ msgid "The URI of the history item"
 #~ msgstr "URI:n för historikobjektet"
