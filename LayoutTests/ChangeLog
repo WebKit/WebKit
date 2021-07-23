@@ -1,3 +1,19 @@
+2021-07-23  Eleni Maria Stea  <estea@igalia.com>
+
+        Removed incorrect test from webgl tests.
+        https://bugs.webkit.org/show_bug.cgi?id=220720
+
+        Reviewed by Kenneth Russell.
+
+        The removed test was based on the incorrect assumption that
+        deleted buffer names remain valid until the object they used to
+        refer to is destroyed. According to the WebGL spec:
+        https://www.khronos.org/registry/webgl/specs/1.0.3/ section:
+        5.14.5 isBuffer "Return false if the buffer's invalidated flag
+        is set", this is not true and names become invalid immediately.
+
+        * fast/canvas/webgl/oes-vertex-array-object.html:
+
 2021-07-22  Robert Jenner  <Jenner@apple.com>
 
         Batch add test expectations for Monterey on Open Source
