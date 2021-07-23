@@ -1,3 +1,14 @@
+2021-07-23  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] [macOS] Only show total duration when the elapsed time is visible
+        https://bugs.webkit.org/show_bug.cgi?id=228191
+        <rdar://problem/80529918>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/time-control/time-control.html:
+        * media/modern-media-controls/time-control/time-control-expected.txt:
+
 2021-07-23  Eleni Maria Stea  <estea@igalia.com>
 
         Removed incorrect test from webgl tests.

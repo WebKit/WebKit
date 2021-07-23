@@ -39,9 +39,11 @@ class TimeControl extends LayoutItem
             layoutDelegate
         });
 
+        this._shouldShowDurationTimeLabel = this.layoutTraits.supportsDurationTimeLabel();
+
         this.elapsedTimeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
         this.scrubber = new Slider("scrubber", this.layoutTraits.knobStyleForScrubber());
-        if (this.layoutTraits.supportsDurationTimeLabel())
+        if (this._shouldShowDurationTimeLabel)
             this.durationTimeLabel = new TimeLabel(TimeLabel.Type.Duration);
         this.remainingTimeLabel = new TimeLabel(TimeLabel.Type.Remaining);
 
@@ -55,8 +57,7 @@ class TimeControl extends LayoutItem
         this._currentTime = 0;
         this._loading = false;
 
-        this._showDurationTimeLabel = this.layoutTraits.supportsDurationTimeLabel();
-        if (this._showDurationTimeLabel) {
+        if (this._shouldShowDurationTimeLabel) {
             this.durationTimeLabel.element.addEventListener("click", this);
             this.remainingTimeLabel.element.addEventListener("click", this);
         }
@@ -140,13 +141,15 @@ class TimeControl extends LayoutItem
         case "click":
             switch (event.target) {
             case this.durationTimeLabel.element:
-                this._showDurationTimeLabel = false;
+                this._shouldShowDurationTimeLabel = false;
                 this.needsLayout = true;
                 break;
 
             case this.remainingTimeLabel.element:
-                this._showDurationTimeLabel = true;
-                this.needsLayout = true;
+                if (this._canShowDurationTimeLabel) {
+                    this._shouldShowDurationTimeLabel = true;
+                    this.needsLayout = true;
+                }
                 break;
             }
         }
@@ -154,9 +157,14 @@ class TimeControl extends LayoutItem
 
     // Private
 
+    get _canShowDurationTimeLabel()
+    {
+        return this.elapsedTimeLabel.visible;
+    }
+
     _durationOrRemainingTimeLabel()
     {
-        return this._showDurationTimeLabel ? this.durationTimeLabel : this.remainingTimeLabel;
+        return (this._canShowDurationTimeLabel && this._shouldShowDurationTimeLabel) ? this.durationTimeLabel : this.remainingTimeLabel;
     }
 
     _performIdealLayout()
@@ -177,7 +185,7 @@ class TimeControl extends LayoutItem
                 numberOfDigitsForTimeLabels = 6;
 
             this.elapsedTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._currentTime, numberOfDigitsForTimeLabels);
-            if (this._showDurationTimeLabel)
+            if (this._canShowDurationTimeLabel && this._shouldShowDurationTimeLabel)
                 this.durationTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._duration, numberOfDigitsForTimeLabels);
             else
                 this.remainingTimeLabel.setValueWithNumberOfDigits(shouldShowZeroDurations ? 0 : this._currentTime - this._duration, numberOfDigitsForTimeLabels);

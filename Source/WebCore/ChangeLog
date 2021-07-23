@@ -1,3 +1,30 @@
+2021-07-23  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] [macOS] Only show total duration when the elapsed time is visible
+        https://bugs.webkit.org/show_bug.cgi?id=228191
+        <rdar://problem/80529918>
+
+        Reviewed by Eric Carlson.
+
+        When a `<video>` is narrow (~250px) WebKit will drop the elapsed time, meaning that only the
+        scrubber and duration are visible. It's not very helpful to show just the duration because
+        it never changes, requiring the user to do the mental math of dividing the scrubber width
+        by the total duration to figure out how much time is left (and has elapsed). Showing the
+        remaining time is better because it at least helps the user not have to figure out how much
+        longer the `<video>` will play (which is more useful/actionable than knowing the duration).
+
+        Test: media/modern-media-controls/time-control/time-control.html
+
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl):
+        (TimeControl.prototype.handleEvent):
+        (TimeControl.prototype.get _canShowDurationTimeLabel): Added.
+        (TimeControl.prototype._durationOrRemainingTimeLabel):
+        (TimeControl.prototype._performIdealLayout):
+        Rename `_showDurationTimeLabel` to `_shouldShowDurationTimeLabel` and add another private
+        getter `_canShowDurationTimeLabel` that only is true when `this.elapsedTimeLabel.visible`.
+        Use both to decide whether duration or remaining is shown/updated/etc..
+
 2021-07-23  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Remove libportal dependency
