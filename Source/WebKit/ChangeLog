@@ -1,3 +1,31 @@
+2021-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] It should be possible to select contact AutoFill text suggestions in email and username fields
+        https://bugs.webkit.org/show_bug.cgi?id=228237
+        rdar://77299680
+
+        Reviewed by Tim Horton.
+
+        After the changes in r278957, WKTextInputListViewController now presents modern Quickboard text input UI, as
+        well as contact AutoFill suggestions provided by Safari. For email and username fields (for which we currently
+        use PUICQuickboardController), this means that there's no longer any reason to prefer showing
+        PUICQuickboardController over WKTextInputListViewController, since both use modern text input UI (with support
+        for keychain AutoFill suggestions), but only the latter additionally supports contact AutoFill suggestions.
+
+        As such, we should change these to use WKTextInputListViewController instead of PUICQuickboardController. Note
+        that because contact AutoFill suggestions do not encompass passwords, it still makes more sense to pop directly
+        into PUICQuickboardController for password fields.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView createQuickboardTextInputContext]):
+
+        Drive-by fix: additionally populate the placeholder of the text field in WKTextInputListViewController with
+        the input label text of the focused element (i.e., either placeholder text, the ARIA label, title, or text
+        content of an associated label).
+
+        (canUseQuickboardControllerFor):
+
 2021-07-23  Richard Houle  <rhoule@apple.com>
 
         WebSocket traffic should be correctly assigned to either Developer or User.

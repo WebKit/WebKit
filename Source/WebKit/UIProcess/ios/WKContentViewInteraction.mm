@@ -6790,6 +6790,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 #if HAVE(QUICKBOARD_CONTROLLER)
     [context setAcceptsEmoji:YES];
     [context setShouldPresentModernTextInputUI:YES];
+    [context setPlaceholder:self.inputLabelText];
 #endif
     return context;
 }
@@ -6810,7 +6811,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 static bool canUseQuickboardControllerFor(UITextContentType type)
 {
-    return [type isEqualToString:UITextContentTypeUsername] || [type isEqualToString:UITextContentTypePassword] || [type isEqualToString:UITextContentTypeEmailAddress];
+    return [type isEqualToString:UITextContentTypePassword];
 }
 
 #endif // HAVE(QUICKBOARD_CONTROLLER)

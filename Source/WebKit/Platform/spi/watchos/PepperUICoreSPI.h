@@ -174,6 +174,7 @@ extern UIButtonType const PUICButtonTypePill;
 @property (nonatomic, strong) NSAttributedString *attributedHeaderText;
 
 #if HAVE(QUICKBOARD_CONTROLLER)
+@property (nonatomic, copy) NSString *placeholder;
 @property (nonatomic, copy, nullable) NSArray<NSString *> *suggestions;
 @property (nonatomic, readwrite) BOOL acceptsEmoji;
 @property (nonatomic, readwrite) BOOL shouldPresentModernTextInputUI;
