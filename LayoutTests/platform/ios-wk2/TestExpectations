@@ -54,6 +54,17 @@ fast/viewport/ios/viewport-fit-contain.html [ Skip ]
 fast/viewport/ios/viewport-fit-cover.html [ Skip ]
 fast/viewport/ios/viewport-fit-auto.html [ Skip ]
 
+media/modern-media-controls/overflow-support [ Pass ]
+http/tests/media/modern-media-controls/overflow-support [ Pass ]
+media/modern-media-controls/tracks-support [ Pass ]
+
+fast/images/text-recognition [ Pass ]
+fast/images/text-recognition/ios [ Pass ]
+fast/images/text-recognition/mac [ Skip ]
+
+# Accessibility text recognition support tests.
+accessibility/ios-simulator/image-overlay-elements.html [ Pass ]
+
 http/tests/ssl/applepay [ Pass ]
 webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
 

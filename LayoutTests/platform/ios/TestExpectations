@@ -3351,12 +3351,104 @@ webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-per
 
 webkit.org/b/226906 editing/deleting/smart-delete-paragraph-004.html [ Pass Failure ]
 
-# The system font does not handle all the various width values on iOS.
-fast/text/system-font-width-4.html [ ImageOnlyFailure ]
-fast/text/system-font-width-6.html [ ImageOnlyFailure ]
-fast/text/system-font-width-7.html [ ImageOnlyFailure ]
-fast/text/system-font-width-8.html [ ImageOnlyFailure ]
-fast/text/system-font-width-9.html [ ImageOnlyFailure ]
+# The system font handles all the various width values on iOS15.
+fast/text/system-font-width-4.html [ Pass ]
+fast/text/system-font-width-6.html [ Pass ]
+fast/text/system-font-width-7.html [ Pass ]
+fast/text/system-font-width-8.html [ Pass ]
+fast/text/system-font-width-9.html [ Pass ]
+
+# rdar://80344138 ([ Monterey iOS15 wk2 ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ])
+imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
+
+# rdar://80333758 (REGRESSION: [ Monterey ] crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html is a constant timeout)
+crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Timeout ]
+
+# rdar://80397467 ([ iOS15 ] imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html (layout-test) is a constant timeout)
+imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Failure Crash ]
+
+# rdar://80396559 ([ iOS15 wk2 Release ] storage/indexeddb/detached-iframe.html (layout-test) is a flaky text failure)
+storage/indexeddb/detached-iframe.html [ Pass Failure ]
+
+# rdar://80384054 ([ iOS15 ] css3/filters/filter-repaint-shadow-layer-child.html is flaky failure)
+css3/filters/filter-repaint-shadow-layer-child.html [ Pass ImageOnlyFailure ]
+
+# rdar://80384447 ([ iOS15 ] editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html is a Flaky timeout)
+editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html [ Pass Timeout ]
+
+# rdar://80384801 ([ iOS15 ] editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html is a flaky timeout)
+editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html  [ Pass Timeout ]
+
+# rdar://80392795 ([ iOS15 ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm is a flaky failure)
+http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
+
+# rdar://80393008 ([ iOS15 ] http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html is a flaky crash)
+http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html  [ Pass Crash ]
+
+# rdar://80396123 ([ iOS15 ] http/tests/websocket/tests/hybi/workers/worker-reload.html is flaky crashing)
+http/tests/websocket/tests/hybi/workers/worker-reload.html [ Pass Crash ]
+
+# rdar://80396270 ([ iOS15 ] http/tests/workers/service/service-worker-download-async-delegates.https.html is a flaky crash)
+http/tests/workers/service/service-worker-download-async-delegates.https.html [ Pass Crash ]
+
+# rdar://80396393 ([ iOS15 ] http/wpt/mediarecorder/mute-tracks.html is a flaky failure)
+http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
+
+# rdar://80396502 ([ iOS15 ] http/wpt/mediarecorder/pause-recording.html is a flaky crash)
+http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
+
+#Batch adding of test expectations group 3:
+#rdar://80384177 ([ iOS15 ] editing/selection/ios/change-selection-by-tapping-with-existing-selection.html is failing)
+editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Failure ]
+
+#rdar://80385434 ([ iOS15 ] editing/selection/ios/select-text-in-existing-selection.html [ Failure ])
+editing/selection/ios/select-text-in-existing-selection.html  [ Failure ]
+
+# rdar://80383672 ([ iOS15 ] accessibility/misspelling-range.html is failing)
+accessibility/misspelling-range.html  [ Failure ]
+
+# rdar://80386523 ([ iOS15 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html is failing)
+fast/events/touch/ios/long-press-then-drag-to-select-text.html  [ Failure ]
+
+# rdar://80386061 ([ iOS15 ] fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ])
+fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ]
+
+# rdar://80392559 ([ iOS15 ] fast/text/simple-line-layout-do-not-support-unicode-range.html is a constant failure)
+fast/text/simple-line-layout-do-not-support-unicode-range.html [ ImageOnlyFailure ]
+
+# rdar://80392665 ([ iOS15 ] fast/text/simple-line-wordspacing.html is a constant failure)
+fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
+
+# rdar://80395949 ([ iOS15 ] http/tests/websocket/tests/hybi/too-long-payload.html is a constant timeout)
+http/tests/websocket/tests/hybi/too-long-payload.html [ Timeout ]
+
+#rdar://80386326 ([ iOS15 Release ] fast/events/touch/ios/long-press-on-link.html is a constant crash)
+fast/events/touch/ios/long-press-on-link.html [ Crash ]
+
+# rdar://80392337 ([ iOS15 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html is a constant failure)
+fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
+
+#Batch adding of test expectations group 4:
+# rdar://80385777 ([ iOS15 ] fast/events/ios/key-events-comprehensive/key-events-meta-shift.html is failing)
+fast/events/ios/key-events-comprehensive/key-events-meta-shift.html [ Failure ]
+
+# rdar://80386075 ([ iOS15 ] fast/css/ios/system-color-for-css-value.html)
+fast/css/ios/system-color-for-css-value.html [ Failure ]
+
+# rdar://80385521 ([ iOS15 ] editing/selection/preserve-selection-when-clicking-button.html is a consistent failure)
+editing/selection/preserve-selection-when-clicking-button.html [ Failure ]
+
+# rdar://80393995 ([ iOS15 WK2 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout)
+http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
+
+# rdar://80384564 ([ iOS15 ] editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html is failing)
+editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Failure ]
+
+# rdar://77070325 (REGRESSION: [ iOS15 ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html is flaky failling)
+imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
+
+# rdar://79084756 ((r278618) media/modern-media-controls /overflow-support/chapters.html is timing out since introduction (226828))
+media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 
 # rdar://80345578 ([ Mac iOS Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html is flaky crashing)
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure Crash ]
@@ -3373,8 +3465,11 @@ webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-k
 
 webkit.org/b/222840 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
 
-# Not all OSes support the same set of emoji.
-fast/text/mending-heart.html [ Failure ] 
+# iOS15 supports this emoji.
+fast/text/mending-heart.html [ Pass ]
+
+# Privacy Transparency tests are iOS15 only.
+http/tests/app-privacy-report/ [ Pass ]
 
 webkit.org/b/221833 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
 
