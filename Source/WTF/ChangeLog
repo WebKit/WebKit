@@ -1,3 +1,16 @@
+2021-07-23  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r280205.
+
+        Broke multiple WebAuthn tests.
+
+        Reverted changeset:
+
+        "REGRESSION (r278877) [Cocoa] WebAuthn stopped working for
+        non-Safari browsers"
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        https://commits.webkit.org/r280205
+
 2021-07-23  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Remove libportal dependency
