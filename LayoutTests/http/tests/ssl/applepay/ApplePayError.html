@@ -36,6 +36,8 @@
         logAndShouldNotThrow("", "new ApplePayError('shippingContactInvalid')")
         logAndShouldNotThrow("", "new ApplePayError('billingContactInvalid')")
         logAndShouldNotThrow("", "new ApplePayError('addressUnserviceable')")
+        logAndShouldNotThrow("", "new ApplePayError('couponCodeInvalid')")
+        logAndShouldNotThrow("", "new ApplePayError('couponCodeExpired')")
         logAndShouldThrow("", "new ApplePayError('unknown', [])")
         logAndShouldThrow("", "new ApplePayError('unknown', '')")
         logAndShouldNotThrow("", "new ApplePayError('unknown', 'phoneNumber')")

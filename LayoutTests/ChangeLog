@@ -1,3 +1,15 @@
+2021-07-24  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] Do not add coupon code `ApplePayErrorCode` values for systems that do not support it
+        https://bugs.webkit.org/show_bug.cgi?id=228243
+
+        Reviewed by Wenson Hsieh.
+
+        * http/tests/ssl/applepay/ApplePayError.html:
+        * http/tests/ssl/applepay/ApplePayError-expected.txt:
+        * platform/ios-14-wk2/http/tests/ssl/applepay/ApplePayError-expected.txt: Added.
+        * platform/mac-bigsur-wk2/http/tests/ssl/applepay/ApplePayError-expected.txt: Added.
+
 2021-07-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Add a method to WebAccessibilityObjectWrapper so that clients can retrieve the text of each line and their corresponding bounding rectangles.

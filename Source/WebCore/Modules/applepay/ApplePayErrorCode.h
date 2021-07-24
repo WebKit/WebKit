@@ -36,8 +36,10 @@ enum class ApplePayErrorCode {
     ShippingContactInvalid,
     BillingContactInvalid,
     AddressUnserviceable,
+#if ENABLE(APPLE_PAY_COUPON_CODE)
     CouponCodeInvalid,
     CouponCodeExpired,
+#endif
 };
 
 } // namespace WebCore
@@ -50,9 +52,11 @@ template<> struct EnumTraits<WebCore::ApplePayErrorCode> {
         WebCore::ApplePayErrorCode::Unknown,
         WebCore::ApplePayErrorCode::ShippingContactInvalid,
         WebCore::ApplePayErrorCode::BillingContactInvalid,
-        WebCore::ApplePayErrorCode::AddressUnserviceable,
-        WebCore::ApplePayErrorCode::CouponCodeInvalid,
-        WebCore::ApplePayErrorCode::CouponCodeExpired
+        WebCore::ApplePayErrorCode::AddressUnserviceable
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+        , WebCore::ApplePayErrorCode::CouponCodeInvalid
+        , WebCore::ApplePayErrorCode::CouponCodeExpired
+#endif
     >;
 };
 
