@@ -753,9 +753,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     if (LIKELY(offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None)))
                         object->putDirect(vm, offset, filteredValue);
                     else {
-                        PropertyDescriptor descriptor(filteredValue, static_cast<unsigned>(PropertyAttribute::None));
                         bool shouldThrow = false;
-                        object->methodTable(vm)->defineOwnProperty(object, m_globalObject, prop, descriptor, shouldThrow);
+                        object->createDataProperty(m_globalObject, prop, filteredValue, shouldThrow);
                     }
                 }
                 RETURN_IF_EXCEPTION(scope, { });

@@ -1,3 +1,42 @@
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Properly validate and merge descriptors in [Replaceable] setter
+        https://bugs.webkit.org/show_bug.cgi?id=227662
+
+        Reviewed by Sam Weinig.
+
+        The previous implementation relied on an invariant that structure property is absent
+        when [Replaceable] setter is called, which is no longer guaranteed after the introduction
+        of Object.defineProperty.
+
+        This patch replaces putDirect() with defineOwnProperty(), fixing the compliance with
+        invariants of internal methods [1]: an accessor property once observed as non-configurable
+        can't be reconfigured to have [[Value]]. Both Chrome and Firefox properly validate descriptors.
+
+        Although [[DefineOwnProperty]] failure is silently ignored by Chrome and the spec [2], WebKit now
+        throws a TypeError, which is a desired behavior for built-ins and was proven to be web-compatible
+        by Firefox. With WebKit being the second implementation that throws, the spec can be tightened.
+
+        After r264574, attributeChangeTransition() is called during defineOwnProperty(), ensuring inline
+        caching is correct. Also, this change adjusts `window.opener` setter [3].
+
+        [1] https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods
+        [2] https://heycam.github.io/webidl/#dfn-attribute-setter (step 4.5.5)
+        [3] https://html.spec.whatwg.org/multipage/browsers.html#dom-opener
+
+        Tests: fast/dom/replaceable-setter-throws-if-defineownproperty-fails.html
+               fast/dom/window-opener-setter-throws-if-defineownproperty-fails-1.html
+               fast/dom/window-opener-setter-throws-if-defineownproperty-fails-2.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setOpener):
+        (WebCore::JSDOMWindow::setOpenDatabase):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AttributeSetterNeedsPropertyName):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateAttributeSetterTrampolineDefinition):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
 2021-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r279751): WebContent process often crashes when hovering over content on apple.com

@@ -869,16 +869,17 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
     bool hasProperty = receiver->methodTable(vm)->getOwnPropertySlot(receiver, globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
 
-    PropertyDescriptor descriptor;
     if (hasProperty) {
         // FIXME: For an accessor with setter, the error message is misleading.
         if (slot.attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
             return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
-        descriptor.setValue(value);
-    } else
-        descriptor.setDescriptor(value, static_cast<unsigned>(PropertyAttribute::None));
 
-    RELEASE_AND_RETURN(scope, receiver->methodTable(vm)->defineOwnProperty(receiver, globalObject, propertyName, descriptor, shouldThrow));
+        PropertyDescriptor descriptor;
+        descriptor.setValue(value);
+        RELEASE_AND_RETURN(scope, receiver->methodTable(vm)->defineOwnProperty(receiver, globalObject, propertyName, descriptor, shouldThrow));
+    }
+
+    RELEASE_AND_RETURN(scope, receiver->createDataProperty(globalObject, propertyName, value, shouldThrow));
 }
 
 // https://tc39.es/ecma262/#sec-ordinaryset (step 3)

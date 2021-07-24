@@ -809,6 +809,7 @@ public:
     JSFunction* putDirectBuiltinFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    bool createDataProperty(JSGlobalObject*, PropertyName, JSValue, bool shouldThrow);
 
     bool isEnvironment() const;
     bool isGlobalObject() const;

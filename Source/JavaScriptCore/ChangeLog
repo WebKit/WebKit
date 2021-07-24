@@ -1,5 +1,27 @@
 2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        [WebIDL] Properly validate and merge descriptors in [Replaceable] setter
+        https://bugs.webkit.org/show_bug.cgi?id=227662
+
+        Reviewed by Sam Weinig.
+
+        Extracts createDataProperty() method to keep WebIDL code generator as simple as possible,
+        and also to emphasize a subtle difference between
+        { [[Value]]: X } and
+        { [[Value]]: X, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true }.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::definePropertyOnReceiverSlow):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::createDataProperty):
+        * runtime/Lookup.h:
+        (JSC::replaceStaticPropertySlot): Deleted.
+
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         [JSC] Call custom accessors / values with their holder's global object
         https://bugs.webkit.org/show_bug.cgi?id=225997
 

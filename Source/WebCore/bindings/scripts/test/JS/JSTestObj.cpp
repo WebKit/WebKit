@@ -4712,16 +4712,18 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObj_replaceableAttribute, (JSGlobalObject* lexica
     return IDLAttribute<JSTestObj>::get<jsTestObj_replaceableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
-static inline bool setJSTestObj_replaceableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value)
+static inline bool setJSTestObj_replaceableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject, JSValue value, PropertyName propertyName)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    // Shadowing a built-in property.
-    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>("replaceableAttribute"), strlen("replaceableAttribute")), value);
+    UNUSED_PARAM(vm);
+    bool shouldThrow = true;
+    thisObject.createDataProperty(&lexicalGlobalObject, propertyName, value, shouldThrow);
+    return true;
 }
 
 JSC_DEFINE_CUSTOM_SETTER(setJSTestObj_replaceableAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName attributeName))
 {
-    return IDLAttribute<JSTestObj>::set<setJSTestObj_replaceableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
+    return IDLAttribute<JSTestObj>::setPassingPropertyName<setJSTestObj_replaceableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, attributeName);
 }
 
 static inline JSValue jsTestObj_nullableDoubleAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestObj& thisObject)

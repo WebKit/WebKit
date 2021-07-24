@@ -251,17 +251,6 @@ inline bool getStaticPropertySlotFromTable(VM& vm, const ClassInfo* classInfo, c
     return true;
 }
 
-inline bool replaceStaticPropertySlot(VM& vm, JSObject* thisObject, PropertyName propertyName, JSValue value)
-{
-    if (!thisObject->putDirect(vm, propertyName, value))
-        return false;
-
-    if (!thisObject->staticPropertiesReified(vm))
-        thisObject->JSObject::setStructure(vm, Structure::attributeChangeTransition(vm, thisObject->structure(vm), propertyName, 0));
-
-    return true;
-}
-
 inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const PropertyName& propertyName, const HashTableValue& value, JSObject& thisObj)
 {
     if (value.attributes() & PropertyAttribute::Builtin) {

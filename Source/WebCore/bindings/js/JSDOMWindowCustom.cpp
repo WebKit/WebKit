@@ -561,8 +561,9 @@ void JSDOMWindow::setOpener(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSVal
         wrapped().disownOpener();
         return;
     }
-    VM& vm = lexicalGlobalObject.vm();
-    replaceStaticPropertySlot(vm, this, Identifier::fromString(vm, "opener"), value);
+
+    bool shouldThrow = true;
+    createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "opener"), value, shouldThrow);
 }
 
 JSValue JSDOMWindow::self(JSC::JSGlobalObject&) const
@@ -632,8 +633,8 @@ void JSDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, wrapped(), ThrowSecurityError))
         return;
 
-    VM& vm = lexicalGlobalObject.vm();
-    replaceStaticPropertySlot(vm, this, Identifier::fromString(vm, "openDatabase"), value);
+    bool shouldThrow = true;
+    createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "openDatabase"), value, shouldThrow);
 }
 
 } // namespace WebCore
