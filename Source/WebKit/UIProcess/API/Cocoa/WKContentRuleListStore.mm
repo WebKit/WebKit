@@ -30,6 +30,7 @@
 #import "APIContentRuleListStore.h"
 #import "NetworkCacheFileSystem.h"
 #import "WKErrorInternal.h"
+#import "_WKUserContentFilterPrivate.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -170,6 +171,25 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url
 {
     return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
+}
+
+- (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
+{
+    [self compileContentRuleListForIdentifier:identifier encodedContentRuleList:encodedContentExtension completionHandler:[completionHandler = makeBlockPtr(completionHandler)] (WKContentRuleList *contentRuleList, NSError *error) {
+        completionHandler(contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]).get() : nil, error);
+    }];
+}
+
+- (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
+{
+    [self lookUpContentRuleListForIdentifier:identifier completionHandler:[completionHandler = makeBlockPtr(completionHandler)] (WKContentRuleList *contentRuleList, NSError *error) {
+        completionHandler(contentRuleList ? adoptNS([[_WKUserContentFilter alloc] _initWithWKContentRuleList:contentRuleList]).get() : nil, error);
+    }];
+}
+
+- (void)removeContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSError *))completionHandler
+{
+    [self removeContentRuleListForIdentifier:identifier completionHandler:completionHandler];
 }
 
 @end

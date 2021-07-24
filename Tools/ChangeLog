@@ -1,3 +1,13 @@
+2021-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Make WKContentRuleListStore respond to same selectors as _WKUserContentExtensionStore
+        https://bugs.webkit.org/show_bug.cgi?id=228253
+
+        Reviewed by Brian Weinstein.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentExtensionStore.mm:
+        (TEST_F):
+
 2021-07-23  Truitt Savell  <tsavell@apple.com>
 
         Migrate iOS 15 expectations to OpenSource and bump version numbers
