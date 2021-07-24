@@ -87,6 +87,7 @@ bool AccessibilityUIElement::isInDefinitionListTerm() const { return false; }
 bool AccessibilityUIElement::isTextArea() const { return false; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForElement() { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const { return { }; }
 bool AccessibilityUIElement::isInTableCell() const { return false; }
 bool AccessibilityUIElement::isInTable() const { return false; }
 bool AccessibilityUIElement::isInLandmark() const { return false; }

@@ -152,6 +152,8 @@ public:
     double y();
     double width();
     double height();
+    JSRetainPtr<JSStringRef> lineRectsAndText() const;
+
     double intValue() const;
     double minValue();
     double maxValue();
@@ -413,9 +415,11 @@ private:
 #endif
 #endif
 };
-    
+
 #ifdef __OBJC__
 inline std::optional<RefPtr<AccessibilityUIElement>> makeVectorElement(const RefPtr<AccessibilityUIElement>*, id element) { return { { AccessibilityUIElement::create(element) } }; }
+
+JSObjectRef makeJSArray(NSArray *);
 #endif
 
 template<typename T>

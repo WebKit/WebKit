@@ -71,6 +71,13 @@ static JSObjectRef makeJSArray(JSContextRef context, NSArray *array)
     return JSObjectMakeArray(context, count, arguments, nullptr);
 }
 
+JSObjectRef makeJSArray(NSArray *array)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    return makeJSArray(context, array);
+}
+
 static JSObjectRef makeJSObject(JSContextRef context, NSDictionary *dictionary)
 {
     auto object = JSObjectMake(context, nullptr, nullptr);

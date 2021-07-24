@@ -1,3 +1,19 @@
+2021-07-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add a method to WebAccessibilityObjectWrapper so that clients can retrieve the text of each line and their corresponding bounding rectangles.
+        https://bugs.webkit.org/show_bug.cgi?id=228251
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::lineRectsAndText const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::lineRectsAndText const):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityCommonMac.mm:
+        (WTR::makeJSArray):
+
 2021-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Make WKContentRuleListStore respond to same selectors as _WKUserContentExtensionStore

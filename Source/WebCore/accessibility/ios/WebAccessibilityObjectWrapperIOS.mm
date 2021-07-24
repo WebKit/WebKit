@@ -2354,55 +2354,35 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
 }
 
-
-// This method is intended to return an array of strings and accessibility elements that 
-// represent the objects on one line of rendered web content. The array of markers sent
-// in should be ordered and contain only a start and end marker.
-- (NSArray *)arrayOfTextForTextMarkers:(NSArray *)markers attributed:(BOOL)attributed
+- (NSArray *)stringsForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
 {
-    if (![self _prepareAccessibilityCall])
-        return nil;
-
-    if ([markers count] != 2)
-        return nil;
-    
-    WebAccessibilityTextMarker* startMarker = [markers objectAtIndex:0];
-    WebAccessibilityTextMarker* endMarker = [markers objectAtIndex:1];
-    if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
-        return nil;
-
-    auto range = makeSimpleRange([startMarker visiblePosition], [endMarker visiblePosition]);
-    if (!range)
-        return nil;
-
-    // iterate over the range to build the AX attributed string
     auto array = adoptNS([[NSMutableArray alloc] init]);
-    TextIterator it(*range);
+
+    // Iterate over the range to build the AX attributed string.
+    TextIterator it(range);
     for (; !it.atEnd(); it.advance()) {
         Node& node = it.range().start.container;
 
-        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-        if (it.text().length() != 0) {
+        // Non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX).
+        if (it.text().length()) {
             if (!attributed) {
                 // First check if this is represented by a link.
-                AccessibilityObject* linkObject = AccessibilityObject::anchorElementForNode(&node);
+                auto* linkObject = AccessibilityObject::anchorElementForNode(&node);
                 if ([self _addAccessibilityObject:linkObject toTextMarkerArray:array.get()])
                     continue;
 
                 // Next check if this region is represented by a heading.
-                AccessibilityObject* headingObject = AccessibilityObject::headingElementForNode(&node);
+                auto* headingObject = AccessibilityObject::headingElementForNode(&node);
                 if ([self _addAccessibilityObject:headingObject toTextMarkerArray:array.get()])
                     continue;
 
                 String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
-                
-                if (!listMarkerText.isEmpty()) 
+                if (!listMarkerText.isEmpty())
                     [array addObject:listMarkerText];
                 // There was not an element representation, so just return the text.
                 [array addObject:it.text().createNSString().get()];
             } else {
                 String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
-
                 if (!listMarkerText.isEmpty()) {
                     auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
                     AXAttributedStringAppendText(attrString.get(), &node, listMarkerText);
@@ -2414,16 +2394,35 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
                 [array addObject:attrString.get()];
             }
         } else {
-            Node* replacedNode = it.node();
-            if (replacedNode) {
-                AccessibilityObject* obj = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
-                if (obj && !obj->accessibilityIsIgnored())
-                    [self _addAccessibilityObject:obj toTextMarkerArray:array.get()];
+            if (Node* replacedNode = it.node()) {
+                auto* object = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
+                if (object && !object->accessibilityIsIgnored())
+                    [self _addAccessibilityObject:object toTextMarkerArray:array.get()];
             }
         }
     }
 
     return array.autorelease();
+}
+
+// This method is intended to return an array of strings and accessibility elements that
+// represent the objects on one line of rendered web content. The array of markers sent
+// in should be ordered and contain only a start and end marker.
+- (NSArray *)arrayOfTextForTextMarkers:(NSArray *)markers attributed:(BOOL)attributed
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    if ([markers count] != 2)
+        return nil;
+
+    WebAccessibilityTextMarker* startMarker = [markers objectAtIndex:0];
+    WebAccessibilityTextMarker* endMarker = [markers objectAtIndex:1];
+    if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
+        return nil;
+
+    auto range = makeSimpleRange([startMarker visiblePosition], [endMarker visiblePosition]);
+    return range ? [self stringsForSimpleRange:*range attributed:attributed] : nil;
 }
 
 // FIXME: No reason for this to be a method instead of a function.
@@ -2849,6 +2848,68 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text
 {
     return [self textMarkersForRange:[self rangeFromMarkers:markers withText:text]];
+}
+
+- (NSArray<NSDictionary *> *)lineRectsAndText
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    auto* backingObject = self.axBackingObject;
+
+    auto range = backingObject->elementRange();
+    if (!range || range->collapsed())
+        return nil;
+
+    Vector<std::pair<IntRect, RetainPtr<id>>> lines;
+    auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
+    auto rangeEnd = VisiblePosition { makeContainerOffsetPosition(range->end) };
+    while (!start.isNull() && start < rangeEnd) {
+        auto end = backingObject->nextLineEndPosition(start);
+        if (end <= start)
+            break;
+
+        auto rect = backingObject->boundsForVisiblePositionRange({start, end});
+        NSArray *content = [self stringsForSimpleRange:*makeSimpleRange(start, end) attributed:YES];
+        auto text = adoptNS([[NSMutableAttributedString alloc] init]);
+        for (id item in content) {
+            if ([item isKindOfClass:NSAttributedString.class])
+                [text appendAttributedString:item];
+        }
+        lines.append({rect, text});
+
+        start = end;
+        while (isEndOfLine(start))
+            start = start.next();
+    }
+
+    if (lines.isEmpty())
+        return nil;
+    return createNSArray(lines, [self] (const auto& line) {
+        return @{ @"rect": [NSValue valueWithRect:[self convertRectToSpace:FloatRect(line.first) space:AccessibilityConversionSpace::Screen]],
+                  @"text": line.second.get() };
+    }).autorelease();
+}
+
+- (NSArray *)lineRectsForTextMarkerRange:(NSArray *)markers
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    auto range = [self rangeForTextMarkers:markers];
+    if (!range || range->collapsed())
+        return nil;
+
+    auto rects = RenderObject::absoluteTextRects(*range);
+    if (rects.isEmpty())
+        return nil;
+
+    rects.removeAllMatching([] (const auto& rect) -> bool {
+        return rect.width() <= 1 || rect.height() <= 1;
+    });
+
+    return createNSArray(rects, [self] (const auto& rect) {
+        return [NSValue valueWithRect:[self convertRectToSpace:FloatRect(rect) space:AccessibilityConversionSpace::Screen]];
+    }).autorelease();
 }
 
 - (NSArray *)textRectsFromMarkers:(NSArray *)markers withText:(NSString *)text

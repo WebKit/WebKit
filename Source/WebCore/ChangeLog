@@ -1,3 +1,26 @@
+2021-07-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add a method to WebAccessibilityObjectWrapper so that clients can retrieve the text of each line and their corresponding bounding rectangles.
+        https://bugs.webkit.org/show_bug.cgi?id=228251
+        rdar://77184036
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/ios-simulator/element-line-rects-and-text.html
+
+        Accessibility clients often need to retrieve a line of text and its
+        corresponding bounding rectangle screen coordinates. There was not a
+        clear way of doing this. This patch provides lineRectsAndText as the
+        mechanism to retrieve the lines of text and their corresponding
+        rectangles for a given accessibility object. This is the iOS
+        implementation. MacOS implementation will be done in a separate patch.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper stringsForSimpleRange:attributed:]):
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        (-[WebAccessibilityObjectWrapper lineRectsAndText]):
+        (-[WebAccessibilityObjectWrapper lineRectsForTextMarkerRange:]):
+
 2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Properly validate and merge descriptors in [Replaceable] setter

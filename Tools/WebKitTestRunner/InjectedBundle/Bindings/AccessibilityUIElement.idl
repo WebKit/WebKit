@@ -118,6 +118,7 @@
     readonly attribute long height;
     readonly attribute long clickPointX;
     readonly attribute long clickPointY;
+    readonly attribute DOMString lineRectsAndText;
 
     readonly attribute object children;
     readonly attribute long childrenCount;
