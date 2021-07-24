@@ -119,8 +119,8 @@ public:
         return m_state == JITCode || m_state == ByteCode;
     }
 
-    bool hasCodeFor(Yarr::YarrCharSize);
-    bool hasMatchOnlyCodeFor(Yarr::YarrCharSize);
+    bool hasCodeFor(Yarr::CharSize);
+    bool hasMatchOnlyCodeFor(Yarr::CharSize);
 
     void deleteCode();
 
@@ -157,11 +157,11 @@ private:
 
     void byteCodeCompileIfNecessary(VM*);
 
-    void compile(VM*, Yarr::YarrCharSize);
-    void compileIfNecessary(VM&, Yarr::YarrCharSize);
+    void compile(VM*, Yarr::CharSize);
+    void compileIfNecessary(VM&, Yarr::CharSize);
 
-    void compileMatchOnly(VM*, Yarr::YarrCharSize);
-    void compileIfNecessaryMatchOnly(VM&, Yarr::YarrCharSize);
+    void compileMatchOnly(VM*, Yarr::CharSize);
+    void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize);
 
 #if ENABLE(YARR_JIT_DEBUG)
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);

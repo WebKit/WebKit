@@ -188,11 +188,11 @@ private:
     std::optional<JITFailureReason> m_failureReason;
 };
 
-enum YarrJITCompileMode {
+enum class JITCompileMode : uint8_t {
     MatchOnly,
     IncludeSubpatterns
 };
-void jitCompile(YarrPattern&, String& patternString, YarrCharSize, VM*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
+void jitCompile(YarrPattern&, String& patternString, CharSize, VM*, YarrCodeBlock& jitObject, JITCompileMode);
 
 } } // namespace JSC::Yarr
 

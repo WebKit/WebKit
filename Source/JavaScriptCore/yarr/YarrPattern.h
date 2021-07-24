@@ -122,25 +122,26 @@ public:
     bool m_anyCharacter : 1;
 };
 
-enum QuantifierType : uint8_t {
-    QuantifierFixedCount,
-    QuantifierGreedy,
-    QuantifierNonGreedy,
+enum class QuantifierType : uint8_t {
+    FixedCount,
+    Greedy,
+    NonGreedy,
 };
 
 struct PatternTerm {
-    enum Type : uint8_t {
-        TypeAssertionBOL,
-        TypeAssertionEOL,
-        TypeAssertionWordBoundary,
-        TypePatternCharacter,
-        TypeCharacterClass,
-        TypeBackReference,
-        TypeForwardReference,
-        TypeParenthesesSubpattern,
-        TypeParentheticalAssertion,
-        TypeDotStarEnclosure,
-    } type;
+    enum class Type : uint8_t {
+        AssertionBOL,
+        AssertionEOL,
+        AssertionWordBoundary,
+        PatternCharacter,
+        CharacterClass,
+        BackReference,
+        ForwardReference,
+        ParenthesesSubpattern,
+        ParentheticalAssertion,
+        DotStarEnclosure,
+    };
+    Type type;
     bool m_capture :1;
     bool m_invert :1;
     QuantifierType quantityType;
@@ -166,22 +167,22 @@ struct PatternTerm {
     unsigned frameLocation;
 
     PatternTerm(UChar32 ch)
-        : type(PatternTerm::TypePatternCharacter)
+        : type(PatternTerm::Type::PatternCharacter)
         , m_capture(false)
         , m_invert(false)
     {
         patternCharacter = ch;
-        quantityType = QuantifierFixedCount;
+        quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
 
     PatternTerm(CharacterClass* charClass, bool invert)
-        : type(PatternTerm::TypeCharacterClass)
+        : type(PatternTerm::Type::CharacterClass)
         , m_capture(false)
         , m_invert(invert)
     {
         characterClass = charClass;
-        quantityType = QuantifierFixedCount;
+        quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
 
@@ -194,7 +195,7 @@ struct PatternTerm {
         parentheses.subpatternId = subpatternId;
         parentheses.isCopy = false;
         parentheses.isTerminal = false;
-        quantityType = QuantifierFixedCount;
+        quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
     
@@ -203,49 +204,49 @@ struct PatternTerm {
         , m_capture(false)
         , m_invert(invert)
     {
-        quantityType = QuantifierFixedCount;
+        quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
 
     PatternTerm(unsigned spatternId)
-        : type(TypeBackReference)
+        : type(Type::BackReference)
         , m_capture(false)
         , m_invert(false)
     {
         backReferenceSubpatternId = spatternId;
-        quantityType = QuantifierFixedCount;
+        quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
 
     PatternTerm(bool bolAnchor, bool eolAnchor)
-        : type(TypeDotStarEnclosure)
+        : type(Type::DotStarEnclosure)
         , m_capture(false)
         , m_invert(false)
     {
         anchors.bolAnchor = bolAnchor;
         anchors.eolAnchor = eolAnchor;
-        quantityType = QuantifierFixedCount;
+        quantityType = QuantifierType::FixedCount;
         quantityMinCount = quantityMaxCount = 1;
     }
     
     static PatternTerm ForwardReference()
     {
-        return PatternTerm(TypeForwardReference);
+        return PatternTerm(Type::ForwardReference);
     }
 
     static PatternTerm BOL()
     {
-        return PatternTerm(TypeAssertionBOL);
+        return PatternTerm(Type::AssertionBOL);
     }
 
     static PatternTerm EOL()
     {
-        return PatternTerm(TypeAssertionEOL);
+        return PatternTerm(Type::AssertionEOL);
     }
 
     static PatternTerm WordBoundary(bool invert)
     {
-        return PatternTerm(TypeAssertionWordBoundary, invert);
+        return PatternTerm(Type::AssertionWordBoundary, invert);
     }
     
     bool invert() const
@@ -260,12 +261,12 @@ struct PatternTerm {
 
     bool isFixedWidthCharacterClass() const
     {
-        return type == TypeCharacterClass && characterClass->hasOneCharacterSize() && !invert();
+        return type == Type::CharacterClass && characterClass->hasOneCharacterSize() && !invert();
     }
 
     bool containsAnyCaptures()
     {
-        ASSERT(this->type == TypeParenthesesSubpattern);
+        ASSERT(this->type == Type::ParenthesesSubpattern);
         return parentheses.lastSubpatternId >= parentheses.subpatternId;
     }
 
@@ -279,7 +280,7 @@ struct PatternTerm {
     void quantify(unsigned minCount, unsigned maxCount, QuantifierType type)
     {
         // Currently only Parentheses can specify a non-zero min with a different max.
-        ASSERT(this->type == TypeParenthesesSubpattern || !minCount || minCount == maxCount);
+        ASSERT(this->type == Type::ParenthesesSubpattern || !minCount || minCount == maxCount);
         ASSERT(minCount <= maxCount);
         quantityMinCount = minCount;
         quantityMaxCount = maxCount;

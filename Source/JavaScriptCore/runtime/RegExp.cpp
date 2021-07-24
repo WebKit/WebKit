@@ -227,7 +227,7 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
 }
 
-void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
+void RegExp::compile(VM* vm, Yarr::CharSize charSize)
 {
     Locker locker { cellLock() };
     
@@ -251,7 +251,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 #endif
         ) {
         auto& jitCode = ensureRegExpJITCode();
-        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode);
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::JITCompileMode::IncludeSubpatterns);
         if (!jitCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -282,7 +282,7 @@ bool RegExp::matchConcurrently(
 {
     Locker locker { cellLock() };
 
-    if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
+    if (!hasCodeFor(s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16))
         return false;
 
     position = matchInline<Vector<int>&, Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset, ovector);
@@ -291,7 +291,7 @@ bool RegExp::matchConcurrently(
     return true;
 }
 
-void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
+void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize)
 {
     Locker locker { cellLock() };
     
@@ -315,7 +315,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 #endif
         ) {
         auto& jitCode = ensureRegExpJITCode();
-        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::MatchOnly);
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::JITCompileMode::MatchOnly);
         if (!jitCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -345,7 +345,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
 {
     Locker locker { cellLock() };
 
-    if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
+    if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16))
         return false;
 
     result = matchInline<Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset);
