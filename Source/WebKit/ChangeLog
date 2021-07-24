@@ -1,3 +1,28 @@
+2021-07-24  Devin Rousso  <drousso@apple.com>
+
+        [iOS] REGRESSION(r277505): `-[WKWebView underPageBackgroundColor]` also changes the scroll bar color
+        https://bugs.webkit.org/show_bug.cgi?id=228259
+        <rdar://problem/80116822>
+
+        Reviewed by Tim Horton.
+
+        If an application overrides the `-underPageBackgroundColor` with a dark color on a page that
+        has a light background color, the scroll bar will appear light to match the overridden value
+        of `-underPageBackgroundColor` instead of dark to match the page's background color.
+
+        Test: WKWebViewUnderPageBackgroundColor.MatchesScrollView
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (baseScrollViewBackgroundColor):
+        (scrollViewBackgroundColor):
+        (-[WKWebView _updateScrollViewBackground]):
+        Add a flag to indicate whether the `underPageBackgroundColor` (which can be overridden by
+        API) or `pageExtendedBackgroundColor` should be used when calculating the value provided to
+        `-[UIScrollView setBackgroundColor:]` and `-[UIScrollView setIndicatorStyle:]`. The former
+        uses the `underPageBackgroundColor` since that is why that API exists and the latter uses
+        the ``pageExtendedBackgroundColor` since it is based on what is shown in the page, which is
+        what the scroll bar is drawn on top of.
+
 2021-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Make WKContentRuleListStore respond to same selectors as _WKUserContentExtensionStore

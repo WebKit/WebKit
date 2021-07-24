@@ -476,7 +476,9 @@ static CGFloat contentZoomScale(WKWebView *webView)
     return scale;
 }
 
-static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
+enum class AllowPageBackgroundColorOverride : bool { No, Yes };
+
+static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView, AllowPageBackgroundColorOverride allowPageBackgroundColorOverride)
 {
     if (webView->_customContentView)
         return [webView->_customContentView backgroundColor].CGColor;
@@ -490,10 +492,10 @@ static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
     if (!webView->_page)
         return { };
 
-    return webView->_page->underPageBackgroundColor();
+    return allowPageBackgroundColorOverride == AllowPageBackgroundColorOverride::Yes ? webView->_page->underPageBackgroundColor() : webView->_page->pageExtendedBackgroundColor();
 }
 
-static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
+static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBackgroundColorOverride allowPageBackgroundColorOverride)
 {
     if (!webView.opaque)
         return WebCore::Color::transparentBlack;
@@ -502,7 +504,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     WebCore::LocalCurrentTraitCollection localTraitCollection(webView.traitCollection);
 #endif
 
-    WebCore::Color color = baseScrollViewBackgroundColor(webView);
+    WebCore::Color color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
 
     if (!color.isValid() && webView->_contentView)
         color = [webView->_contentView backgroundColor].CGColor;
@@ -528,18 +530,17 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (void)_updateScrollViewBackground
 {
-    WebCore::Color color = scrollViewBackgroundColor(self);
+    auto newScrollViewBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::Yes);
+    if (_scrollViewBackgroundColor != newScrollViewBackgroundColor) {
+        _scrollViewBackgroundColor = newScrollViewBackgroundColor;
 
-    if (_scrollViewBackgroundColor == color)
-        return;
-
-    _scrollViewBackgroundColor = color;
-
-    auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color)]);
-    [_scrollView setBackgroundColor:uiBackgroundColor.get()];
+        auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(newScrollViewBackgroundColor)]);
+        [_scrollView setBackgroundColor:uiBackgroundColor.get()];
+    }
 
     // Update the indicator style based on the lightness/darkness of the background color.
-    if (color.lightness() <= .5f && color.isVisible())
+    auto newPageBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::No);
+    if (newPageBackgroundColor.lightness() <= .5f && newPageBackgroundColor.isVisible())
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
     else
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleBlack];

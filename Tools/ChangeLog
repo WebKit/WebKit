@@ -1,3 +1,14 @@
+2021-07-24  Devin Rousso  <drousso@apple.com>
+
+        [iOS] REGRESSION(r277505): `-[WKWebView underPageBackgroundColor]` also changes the scroll bar color
+        https://bugs.webkit.org/show_bug.cgi?id=228259
+        <rdar://problem/80116822>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewUnderPageBackgroundColor.mm:
+        (TEST.WKWebViewUnderPageBackgroundColor.MatchesScrollView):
+
 2021-07-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Add a method to WebAccessibilityObjectWrapper so that clients can retrieve the text of each line and their corresponding bounding rectangles.
