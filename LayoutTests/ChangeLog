@@ -1,3 +1,23 @@
+2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Partly implement Function.prototype.{caller,arguments} reflection proposal
+        https://bugs.webkit.org/show_bug.cgi?id=158116
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * inspector/runtime/getDisplayableProperties-expected.txt:
+        * inspector/runtime/getProperties-expected.txt:
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/basic-strict-mode-expected.txt:
+        * js/kde/function_arguments-expected.txt:
+        * js/kde/script-tests/function_arguments.js:
+        * js/non-strict-function-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/basic-strict-mode.js:
+        * js/script-tests/non-strict-function-properties.js:
+        * js/script-tests/throw-type-error-is-unique.js:
+
 2021-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unified field is unselected after focusing URL bar if text was selected in a fixed position container

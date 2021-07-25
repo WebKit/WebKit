@@ -28,7 +28,7 @@ const testCases = [
   {
     name: "Function (non-strict)",
     createObject: () => function() {},
-    dontEnumKeys: ["arguments", "caller", "length", "name", "prototype"],
+    dontEnumKeys: ["length", "name", "prototype"],
   },
   {
     name: "RegExp",

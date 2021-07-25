@@ -54,8 +54,6 @@ Internal Properties:
 Evaluating expression...
 Getting own properties...
 Properties:
-    "arguments"  =>  null (object null)  [isOwn]
-    "caller"     =>  null (object null)  [isOwn]
     "length"     =>  3 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
     "prototype"  =>  "Object" (object)  [writable | isOwn]
@@ -65,8 +63,6 @@ Properties:
 Evaluating expression...
 Getting own properties...
 Properties:
-    "arguments"  =>  null (object null)  [isOwn]
-    "caller"     =>  null (object null)  [isOwn]
     "length"     =>  0 (number)  [configurable | isOwn]
     "name"       =>  "" (string)  [configurable | isOwn]
     "prototype"  =>  "Object" (object)  [writable | isOwn]

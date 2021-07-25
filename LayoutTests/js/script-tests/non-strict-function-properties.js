@@ -4,19 +4,19 @@ function foo() {
     return 1;
 }
 
-shouldBe('Object.getOwnPropertyNames(function () {}).length','5');
+shouldBe('Object.getOwnPropertyNames(function () {}).length', '3');
 
-shouldBeTrue('Object.getOwnPropertyNames(function () {}).includes("caller")');
-shouldBeTrue('Object.getOwnPropertyNames(function () {}).includes("arguments")');
+shouldBeFalse('Object.getOwnPropertyNames(function () {}).includes("caller")');
+shouldBeFalse('Object.getOwnPropertyNames(function () {}).includes("arguments")');
 
-shouldBeTrue('(function(){}).hasOwnProperty("caller")');
+shouldBeFalse('(function(){}).hasOwnProperty("caller")');
 shouldBeTrue('(function(){}).__proto__.hasOwnProperty("caller")');
 
-shouldBeTrue('(function(){}).hasOwnProperty("arguments")');
+shouldBeFalse('(function(){}).hasOwnProperty("arguments")');
 shouldBeTrue('(function(){}).__proto__.hasOwnProperty("arguments")');
 
-shouldBe('typeof Object.getOwnPropertyDescriptor(foo, "arguments")', '"object"');
-shouldBe('typeof Object.getOwnPropertyDescriptor(foo, "caller")', '"object"');
+shouldBe('typeof Object.getOwnPropertyDescriptor(foo, "arguments")', '"undefined"');
+shouldBe('typeof Object.getOwnPropertyDescriptor(foo, "caller")', '"undefined"');
 
 shouldBe('foo.caller', 'null');
 shouldBe('foo.arguments', 'null');

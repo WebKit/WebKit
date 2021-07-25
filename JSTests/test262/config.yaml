@@ -32,6 +32,11 @@ skip:
     - json-modules
   paths:
   files:
+    # https://github.com/claudepache/es-legacy-function-reflection
+    - test/built-ins/ThrowTypeError/unique-per-realm-function-proto.js
+    - test/built-ins/Function/prototype/restricted-property-arguments.js
+    - test/built-ins/Function/prototype/restricted-property-caller.js
+
     # Slightly different formatting. We should update test262 side.
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/en-US.js
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/fractionalSecondDigits.js

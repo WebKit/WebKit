@@ -60,9 +60,6 @@ testSetResult(
     false,
 );
 
-testSetResult(() => function() {}, "arguments", false);
-testSetResult(() => function() {}, "caller", false);
-
 // === harness ===
 
 function testSetResult(getTarget, key, expectedResult) {

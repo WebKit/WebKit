@@ -2000,6 +2000,22 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     return result;
 }
 
+void JSObject::putDirectCustomGetterSetterWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+{
+    ASSERT(!parseIndex(propertyName));
+    ASSERT(value.isCustomGetterSetter());
+    ASSERT(attributes & PropertyAttribute::CustomAccessorOrValue);
+
+    StructureID structureID = this->structureID();
+    Structure* structure = vm.heap.structureIDTable().get(structureID);
+    PropertyOffset offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
+    putDirect(vm, offset, value);
+
+    if (attributes & PropertyAttribute::ReadOnly)
+        structure->setContainsReadOnlyProperties();
+    structure->setHasCustomGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
+}
+
 bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, GetterSetter* accessor, unsigned attributes)
 {
     ASSERT(attributes & PropertyAttribute::Accessor);

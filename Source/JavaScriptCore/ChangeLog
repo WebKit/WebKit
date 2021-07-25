@@ -1,3 +1,91 @@
+2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Partly implement Function.prototype.{caller,arguments} reflection proposal
+        https://bugs.webkit.org/show_bug.cgi?id=158116
+
+        Reviewed by Yusuke Suzuki.
+
+        To ensure web-compatibility, only the safe subset of Function.prototype.{caller,arguments}
+        reflection proposal [1] is implemented, which is currently shipped in SpiderMonkey.
+
+        Complete list of differences from the proposed spec:
+
+          1. Cross-realm receiver function is allowed instead of throwing a TypeError.
+
+             Throwing is likely safe to ship, but #225997 needs to be fixed first for
+             custom properties to receive correct global object.
+
+          2. Cross-realm caller function is returned instead of `null`.
+
+             Hiding cross-realm caller may break things: we currently have a test for
+             the opposite behavior.
+
+          3. Defines "caller" and "arguments" setters that throw for disallowed receivers,
+             instead failing silently in sloppy mode.
+
+             This is actually more restrictive than the spec, which is preferable,
+             and aligns with V8 and SM.
+
+        Most importantly, this patch removes own "caller" and "arguments" properties from
+        sloppy mode ES5 functions. They were non-configurable, making it harder to use
+        their holder as a [[ProxyTarget]]. They were also non-writable, with a constantly
+        changing [[Value]], which violated the invariants of internal methods [2].
+
+        As a result, JSFunction methods are greatly simplified, especially defineOwnProperty()
+        and getOwnSpecialPropertyNames(). The latter is now 2.1x faster according to the
+        provided microbenchmark. Also, removes double "prototype" lookup from [[Get]],
+        which is a 10% progression.
+
+        [1]: https://github.com/claudepache/es-legacy-function-reflection
+        [2]: https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::materializeSpecials):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::isAllowedReceiverFunctionForCallerAndArguments):
+        (JSC::RetrieveArgumentsFunctor::RetrieveArgumentsFunctor):
+        (JSC::RetrieveArgumentsFunctor::result const):
+        (JSC::RetrieveArgumentsFunctor::operator() const):
+        (JSC::retrieveArguments):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor):
+        (JSC::RetrieveCallerFunctionFunctor::result const):
+        (JSC::RetrieveCallerFunctionFunctor::operator() const):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSC_DEFINE_CUSTOM_SETTER):
+        (JSC::FunctionPrototype::initRestrictedProperties): Deleted.
+        * runtime/FunctionPrototype.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnSpecialPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::RetrieveArgumentsFunctor::RetrieveArgumentsFunctor): Deleted.
+        (JSC::RetrieveArgumentsFunctor::result const): Deleted.
+        (JSC::RetrieveArgumentsFunctor::operator() const): Deleted.
+        (JSC::retrieveArguments): Deleted.
+        (JSC::JSC_DEFINE_CUSTOM_GETTER): Deleted.
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor): Deleted.
+        (JSC::RetrieveCallerFunctionFunctor::result const): Deleted.
+        (JSC::RetrieveCallerFunctionFunctor::operator() const): Deleted.
+        (JSC::retrieveCallerFunction): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        Remove unused m_throwTypeErrorGetterSetter and make [[ThrowTypeError]] lazily-created.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectCustomGetterSetterWithoutTransition):
+        * runtime/JSObject.h:
+
 2021-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Change most of enum in Yarr to enum-class

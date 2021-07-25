@@ -1,3 +1,23 @@
+2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Partly implement Function.prototype.{caller,arguments} reflection proposal
+        https://bugs.webkit.org/show_bug.cgi?id=158116
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore/test/strict/19.function.baseline:
+        * ChakraCore/test/strict/22.callerCalleeArguments.baseline-jsc:
+        * microbenchmarks/function-prototype-get.js: Added.
+        * microbenchmarks/reflect-own-keys-function.js: Added.
+        * stress/for-in-shadow-non-enumerable.js:
+        * stress/function-hidden-as-caller.js:
+        * stress/has-own-property-arguments.js:
+        * stress/object-assign-fast-path.js:
+        * stress/put-to-proto-chain-overrides-put.js:
+        * stress/reflect-set.js:
+        * test262/config.yaml: Skip 3 test cases that are now incorrect.
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2021-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add Speedometer2 jQuery-TodoMVC RegExp microbenchmark

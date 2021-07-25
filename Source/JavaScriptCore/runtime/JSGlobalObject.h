@@ -340,9 +340,8 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_numberProtoToStringFunction;
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
-    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorGetterSetter;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
-    WriteBarrier<GetterSetter> m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter;
+    LazyProperty<JSGlobalObject, GetterSetter> m_throwTypeErrorArgumentsCalleeGetterSetter;
 
     LazyProperty<JSGlobalObject, JSModuleLoader> m_moduleLoader;
 
@@ -696,10 +695,7 @@ public:
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
     GetterSetter* regExpProtoGlobalGetter() const;
     GetterSetter* regExpProtoUnicodeGetter() const;
-    GetterSetter* throwTypeErrorArgumentsCalleeAndCallerGetterSetter()
-    {
-        return m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter.get();
-    }
+    GetterSetter* throwTypeErrorArgumentsCalleeGetterSetter() const { return m_throwTypeErrorArgumentsCalleeGetterSetter.get(this); }
     
     JSModuleLoader* moduleLoader() const { return m_moduleLoader.get(this); }
 

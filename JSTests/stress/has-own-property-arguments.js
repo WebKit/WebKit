@@ -5,4 +5,4 @@ function shouldBe(actual, expected) {
 
 class A extends Function {}
 shouldBe(new A("'use strict';").hasOwnProperty('arguments'), false);
-shouldBe(new A().hasOwnProperty('arguments'), true);
+shouldBe(new A().hasOwnProperty('arguments'), false);

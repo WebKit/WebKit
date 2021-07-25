@@ -2,19 +2,19 @@
 hasOwnProperty(caller): false
 
 var foo = function(){};(function(){echo("hasOwnProperty(caller): ", foo.hasOwnProperty("caller"));})();
-hasOwnProperty(caller): true
+hasOwnProperty(caller): false
 
 var foo = function(){};(function(){"use strict";echo("hasOwnProperty(caller): ", foo.hasOwnProperty("caller"));})();
-hasOwnProperty(caller): true
+hasOwnProperty(caller): false
 
 (function(){echo("hasOwnProperty(callee): ", arguments.hasOwnProperty("callee"));})();
 hasOwnProperty(callee): true
 
 var foo = function(){};(function(){echo("hasOwnProperty(arguments): ", foo.hasOwnProperty("arguments"));})();
-hasOwnProperty(arguments): true
+hasOwnProperty(arguments): false
 
 var foo = function(){};(function(){"use strict";echo("hasOwnProperty(arguments): ", foo.hasOwnProperty("arguments"));})();
-hasOwnProperty(arguments): true
+hasOwnProperty(arguments): false
 
 (function(){arguments.caller;})();
 
@@ -33,41 +33,39 @@ var foo = function(){};(function(){"use strict";foo.arguments;})();
 var foo = function(){};(function(){foo.caller = 0;})();
 
 var foo = function(){};(function(){"use strict";foo.caller = 0;})();
-TypeError: Attempted to assign to readonly property.
 
 (function(){arguments.callee = 0;})();
 
 var foo = function(){};(function(){foo.arguments = 0;})();
 
 var foo = function(){};(function(){"use strict";foo.arguments = 0;})();
-TypeError: Attempted to assign to readonly property.
 
 (function(){Object.defineProperty(arguments, "caller", {value: 0});})();
 
 var foo = function(){};(function(){Object.defineProperty(foo, "caller", {value: 0});})();
-TypeError: Attempting to change value of a readonly property.
 
 var foo = function(){};(function(){"use strict";Object.defineProperty(foo, "caller", {value: 0});})();
-TypeError: Attempting to change value of a readonly property.
 
 (function(){Object.defineProperty(arguments, "callee", {value: 0});})();
 
 var foo = function(){};(function(){Object.defineProperty(foo, "arguments", {value: 0});})();
-TypeError: Attempting to change value of a readonly property.
 
 var foo = function(){};(function(){"use strict";Object.defineProperty(foo, "arguments", {value: 0});})();
-TypeError: Attempting to change value of a readonly property.
 
 (function(){var descriptor = Object.getOwnPropertyDescriptor(arguments, "caller");if(descriptor.hasOwnProperty("get")) safeCall(descriptor.get);if(descriptor.hasOwnProperty("set")) safeCall(descriptor.set);})();
 TypeError: undefined is not an object (evaluating 'descriptor.hasOwnProperty')
 
 var foo = function(){};(function(){var descriptor = Object.getOwnPropertyDescriptor(foo, "caller");if(descriptor.hasOwnProperty("get")) safeCall(descriptor.get);if(descriptor.hasOwnProperty("set")) safeCall(descriptor.set);})();
+TypeError: undefined is not an object (evaluating 'descriptor.hasOwnProperty')
 
 var foo = function(){};(function(){"use strict";var descriptor = Object.getOwnPropertyDescriptor(foo, "caller");if(descriptor.hasOwnProperty("get")) safeCall(descriptor.get);if(descriptor.hasOwnProperty("set")) safeCall(descriptor.set);})();
+TypeError: undefined is not an object (evaluating 'descriptor.hasOwnProperty')
 
 (function(){var descriptor = Object.getOwnPropertyDescriptor(arguments, "callee");if(descriptor.hasOwnProperty("get")) safeCall(descriptor.get);if(descriptor.hasOwnProperty("set")) safeCall(descriptor.set);})();
 
 var foo = function(){};(function(){var descriptor = Object.getOwnPropertyDescriptor(foo, "arguments");if(descriptor.hasOwnProperty("get")) safeCall(descriptor.get);if(descriptor.hasOwnProperty("set")) safeCall(descriptor.set);})();
+TypeError: undefined is not an object (evaluating 'descriptor.hasOwnProperty')
 
 var foo = function(){};(function(){"use strict";var descriptor = Object.getOwnPropertyDescriptor(foo, "arguments");if(descriptor.hasOwnProperty("get")) safeCall(descriptor.get);if(descriptor.hasOwnProperty("set")) safeCall(descriptor.set);})();
+TypeError: undefined is not an object (evaluating 'descriptor.hasOwnProperty')
 
