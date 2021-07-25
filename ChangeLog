@@ -1,3 +1,18 @@
+2021-07-25  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] USE_OPENGL_OR_ES should not be an automagic feature
+        https://bugs.webkit.org/show_bug.cgi?id=228266
+
+        Reviewed by Fujii Hironori.
+
+        The USE_OPENGL_OR_ES feature flag added in r271220 is currently automagic: that is, if
+        neither OpenGL nor OpenGL ES is available at build time, it gets silently disabled. This is
+        not OK because it makes it easy for distributors to accidentally fail to enable OpenGL
+        support. We should require manually disabling the feature with -DUSE_OPENGL_OR_ES=OFF in
+        order to build with OpenGL disabled.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-07-23  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Remove libportal dependency
