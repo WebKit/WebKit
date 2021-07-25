@@ -1150,6 +1150,22 @@ void TestRunner::removeChromeInputField()
     fprintf(testResult, "ERROR: TestRunner::removeChromeInputField() not implemented\n");
 }
 
+void TestRunner::setTextInChromeInputField(const String&)
+{
+    fprintf(testResult, "ERROR: TestRunner::setTextInChromeInputField() not implemented\n");
+}
+
+void TestRunner::selectChromeInputField()
+{
+    fprintf(testResult, "ERROR: TestRunner::selectChromeInputField() not implemented\n");
+}
+
+String TestRunner::getSelectedTextInChromeInputField()
+{
+    fprintf(testResult, "ERROR: TestRunner::getSelectedTextInChromeInputField() not implemented\n");
+    return { };
+}
+
 void TestRunner::focusWebView()
 {
     fprintf(testResult, "ERROR: TestRunner::focusWebView() not implemented\n");

@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;
@@ -165,6 +166,19 @@ void PlatformWebView::removeChromeInputField()
         [textField removeFromSuperview];
         makeWebViewFirstResponder();
     }
+}
+
+void PlatformWebView::setTextInChromeInputField(const String&)
+{
+}
+
+void PlatformWebView::selectChromeInputField()
+{
+}
+
+String PlatformWebView::getSelectedTextInChromeInputField()
+{
+    return { };
 }
 
 void PlatformWebView::addToWindow()

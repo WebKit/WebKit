@@ -1592,6 +1592,31 @@ window.UIHelper = class UIHelper {
        const script = `(() => uiController.dismissContactPickerWithContacts(${JSON.stringify(contacts)}))()`;
        return new Promise(resolve => testRunner.runUIScript(script, resolve));
     }
+
+    static addChromeInputField()
+    {
+        return new Promise(resolve => testRunner.addChromeInputField(resolve));
+    }
+
+    static removeChromeInputField()
+    {
+        return new Promise(resolve => testRunner.removeChromeInputField(resolve));
+    }
+
+    static setTextInChromeInputField(text)
+    {
+        return new Promise(resolve => testRunner.setTextInChromeInputField(text, resolve));
+    }
+
+    static selectChromeInputField()
+    {
+        return new Promise(resolve => testRunner.selectChromeInputField(resolve));
+    }
+
+    static getSelectedTextInChromeInputField()
+    {
+        return new Promise(resolve => testRunner.getSelectedTextInChromeInputField(resolve));
+    }
 }
 
 UIHelper.EventStreamBuilder = class {

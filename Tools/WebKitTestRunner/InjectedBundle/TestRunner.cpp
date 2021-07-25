@@ -608,6 +608,9 @@ static CallbackMap& callbackMap()
 enum {
     AddChromeInputFieldCallbackID = 1,
     RemoveChromeInputFieldCallbackID,
+    SetTextInChromeInputFieldCallbackID,
+    SelectChromeInputFieldCallbackID,
+    GetSelectedTextInChromeInputFieldCallbackID,
     FocusWebViewCallbackID,
     SetBackingScaleFactorCallbackID,
     DidBeginSwipeCallbackID,
@@ -700,6 +703,24 @@ void TestRunner::removeChromeInputField(JSValueRef callback)
     InjectedBundle::singleton().postRemoveChromeInputField();
 }
 
+void TestRunner::setTextInChromeInputField(JSStringRef text, JSValueRef callback)
+{
+    cacheTestRunnerCallback(SetTextInChromeInputFieldCallbackID, callback);
+    InjectedBundle::singleton().postSetTextInChromeInputField(toWTFString(text));
+}
+
+void TestRunner::selectChromeInputField(JSValueRef callback)
+{
+    cacheTestRunnerCallback(SelectChromeInputFieldCallbackID, callback);
+    InjectedBundle::singleton().postSelectChromeInputField();
+}
+
+void TestRunner::getSelectedTextInChromeInputField(JSValueRef callback)
+{
+    cacheTestRunnerCallback(GetSelectedTextInChromeInputFieldCallbackID, callback);
+    InjectedBundle::singleton().postGetSelectedTextInChromeInputField();
+}
+
 void TestRunner::focusWebView(JSValueRef callback)
 {
     cacheTestRunnerCallback(FocusWebViewCallbackID, callback);
@@ -730,6 +751,22 @@ void TestRunner::callAddChromeInputFieldCallback()
 void TestRunner::callRemoveChromeInputFieldCallback()
 {
     callTestRunnerCallback(RemoveChromeInputFieldCallbackID);
+}
+
+void TestRunner::callSetTextInChromeInputFieldCallback()
+{
+    callTestRunnerCallback(SetTextInChromeInputFieldCallbackID);
+}
+
+void TestRunner::callSelectChromeInputFieldCallback()
+{
+    callTestRunnerCallback(SelectChromeInputFieldCallbackID);
+}
+
+void TestRunner::callGetSelectedTextInChromeInputFieldCallback(JSStringRef text)
+{
+    auto textValue = JSValueMakeString(mainFrameJSContext(), text);
+    callTestRunnerCallback(GetSelectedTextInChromeInputFieldCallbackID, 1, &textValue);
 }
 
 void TestRunner::callFocusWebViewCallback()

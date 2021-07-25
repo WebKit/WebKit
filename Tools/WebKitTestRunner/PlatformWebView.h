@@ -27,6 +27,7 @@
 
 #include "TestOptions.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) && !defined(BUILDING_GTK__)
 #include <WebKit/WKFoundation.h>
@@ -106,6 +107,10 @@ public:
     void makeWebViewFirstResponder();
     void setWindowIsKey(bool);
     bool windowIsKey() const { return m_windowIsKey; }
+
+    void setTextInChromeInputField(const String&);
+    void selectChromeInputField();
+    String getSelectedTextInChromeInputField();
 
     bool drawsBackground() const;
     void setDrawsBackground(bool);

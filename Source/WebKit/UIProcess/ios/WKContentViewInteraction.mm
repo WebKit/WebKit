@@ -1424,7 +1424,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         return _focusedElementInformation.insideFixedPosition;
 
     auto& editorState = _page->editorState();
-    return !editorState.isMissingPostLayoutData && editorState.postLayoutData().insideFixedPosition;
+    return !editorState.isMissingPostLayoutData && editorState.selectionIsRange && editorState.postLayoutData().insideFixedPosition;
 }
 
 - (BOOL)isEditable
@@ -5616,11 +5616,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _textInteractionAssistant.get();
 }
 
-- (id<UISelectionInteractionAssistant>)selectionInteractionAssistant
-{
-    return nil;
-}
-
 // NSRange support.  Would like to deprecate to the extent possible, although some support
 // (i.e. selectionRange) has shipped as API.
 - (NSRange)selectionRange
@@ -7269,9 +7264,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     }
 
     if (postLayoutData.isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
-        [[self selectionInteractionAssistant] showSelectionCommands];
-
-        if (!_suppressSelectionAssistantReasons)
+        auto firstResponder = self.firstResponder;
+        if ((!firstResponder || self == firstResponder) && !_suppressSelectionAssistantReasons)
             [_textInteractionAssistant activateSelection];
 
         [_textInteractionAssistant didEndScrollingOverflow];

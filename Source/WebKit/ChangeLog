@@ -1,3 +1,41 @@
+2021-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unified field is unselected after focusing URL bar if text was selected in a fixed position container
+        https://bugs.webkit.org/show_bug.cgi?id=228269
+        rdar://80556392
+
+        Reviewed by Tim Horton.
+
+        In Safari on iOS 15, if the selection (either ranged or caret) is inside a fixed position container when the
+        user taps on the unified field, we'll immediately clear the text selection inside the unified field upon
+        bringing up the keyboard. This happens because the tab pill in iOS 15 is lowered as the URL bar is focused,
+        which causes the web view to scroll slightly. This, in turn, induces a brief unstable scrolling tree state,
+        which then causes us to temporarily hide and show selection views while scrolling in unstable state (see
+        r209931) by calling `-deactivateSelection` and then `-activateSelection` on the text interaction assistant.
+        Calling `-[UIWKTextInteractionAssistant activateSelection]` then causes UIKit to dispatch a
+        UITextSelectionViewActivatedNotification; In the unified field, which is a UITextField subclass, UIKit code then
+        listens for this notification and responds to it by clearing the selection if the newly activated selection's
+        host view (WKContentView) is different than itself, thereby causing the bug.
+
+        To fix this, we simply make two (minor) adjustments to the logic for temporarily hiding and showing the
+        selection while performing an unstable scroll. See below for more details.
+
+        Test: editing/selection/ios/scrolling-with-fixed-selection-does-not-unselect-native-text-field.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldHideSelectionWhenScrolling]):
+
+        Only hide and (later) restore the selection in non-editable text if the selection is ranged. This is because
+        caret selections in non-editable content are not user-visible anyways, so there's no need to temporarily
+        suppress the selection.
+
+        (-[WKContentView _updateChangedSelection:]):
+
+        Only attempt to show the selection views again if doing so doesn't cause us to steal first responder status away
+        from the existing first responder; otherwise, we'll wait until we `-becomeFirstResponder` to `-activateSelection`.
+
+        (-[WKContentView selectionInteractionAssistant]): Deleted.
+
 2021-07-24  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] Do not add coupon code `ApplePayErrorCode` values for systems that do not support it

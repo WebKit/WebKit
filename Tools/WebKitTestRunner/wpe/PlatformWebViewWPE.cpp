@@ -32,6 +32,7 @@
 #include <cstdio>
 #include <glib.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTR {
 
@@ -80,6 +81,19 @@ void PlatformWebView::addChromeInputField()
 
 void PlatformWebView::removeChromeInputField()
 {
+}
+
+void PlatformWebView::setTextInChromeInputField(const String&)
+{
+}
+
+void PlatformWebView::selectChromeInputField()
+{
+}
+
+String PlatformWebView::getSelectedTextInChromeInputField()
+{
+    return { };
 }
 
 void PlatformWebView::addToWindow()

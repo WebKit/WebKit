@@ -1,3 +1,78 @@
+2021-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unified field is unselected after focusing URL bar if text was selected in a fixed position container
+        https://bugs.webkit.org/show_bug.cgi?id=228269
+        rdar://80556392
+
+        Reviewed by Tim Horton.
+
+        We already have some very basic support for installing and removing native text fields in the view hierarchy,
+        through `TestRunner::(add|remove)ChromeInputField()`. In order to support the new layout test, we additionally
+        implement the ability to:
+
+        - Set text inside the native chrome input field that was installed using `addChromeInputField()`.
+        - Select all text inside the chrome input field.
+        - Query the chrome input field for the currently selected text.
+
+        We only support iOS for the time being, with stubs on other platforms, since the new test that uses this
+        functionality is iOS-specific; if needed in the future for a similar test on other platforms, we can implement
+        the stubbed testing hooks on TestRunner and PlatformWebView as well.
+
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setTextInChromeInputField):
+        (TestRunner::selectChromeInputField):
+        (TestRunner::getSelectedTextInChromeInputField):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setTextInChromeInputField):
+        (TestRunner::selectChromeInputField):
+        (TestRunner::getSelectedTextInChromeInputField):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::postSetTextInChromeInputField):
+        (WTR::InjectedBundle::postSelectChromeInputField):
+        (WTR::InjectedBundle::postGetSelectedTextInChromeInputField):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setTextInChromeInputField):
+        (WTR::TestRunner::selectChromeInputField):
+        (WTR::TestRunner::getSelectedTextInChromeInputField):
+        (WTR::TestRunner::callSetTextInChromeInputFieldCallback):
+        (WTR::TestRunner::callSelectChromeInputFieldCallback):
+        (WTR::TestRunner::callGetSelectedTextInChromeInputFieldCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::setTextInChromeInputField):
+        (WTR::PlatformWebView::selectChromeInputField):
+        (WTR::PlatformWebView::getSelectedTextInChromeInputField):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::chromeInputField):
+
+        Additionally do some light refactoring by pulling out logic for grabbing the chrome input field (i.e. a view
+        with a tag of 1 under the window) out into a separate helper method. Use this helper in a few places below.
+
+        (WTR::PlatformWebView::addChromeInputField):
+        (WTR::PlatformWebView::setTextInChromeInputField):
+        (WTR::PlatformWebView::selectChromeInputField):
+        (WTR::PlatformWebView::getSelectedTextInChromeInputField):
+        (WTR::PlatformWebView::removeChromeInputField):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::setTextInChromeInputField):
+        (WTR::PlatformWebView::selectChromeInputField):
+        (WTR::PlatformWebView::getSelectedTextInChromeInputField):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::setTextInChromeInputField):
+        (WTR::PlatformWebView::selectChromeInputField):
+        (WTR::PlatformWebView::getSelectedTextInChromeInputField):
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::setTextInChromeInputField):
+        (WTR::PlatformWebView::selectChromeInputField):
+        (WTR::PlatformWebView::getSelectedTextInChromeInputField):
+
 2021-07-24  Devin Rousso  <drousso@apple.com>
 
         [iOS] REGRESSION(r277505): `-[WKWebView underPageBackgroundColor]` also changes the scroll bar color

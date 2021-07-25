@@ -87,6 +87,9 @@ public:
     void postNewBeforeUnloadReturnValue(bool);
     void postAddChromeInputField();
     void postRemoveChromeInputField();
+    void postSetTextInChromeInputField(const String&);
+    void postSelectChromeInputField();
+    void postGetSelectedTextInChromeInputField();
     void postFocusWebView();
     void postSetBackingScaleFactor(double);
     void postSetWindowIsKey(bool);

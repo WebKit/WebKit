@@ -168,6 +168,19 @@ void PlatformWebView::removeChromeInputField()
 {
 }
 
+void PlatformWebView::setTextInChromeInputField(const String&)
+{
+}
+
+void PlatformWebView::selectChromeInputField()
+{
+}
+
+String PlatformWebView::getSelectedTextInChromeInputField()
+{
+    return { };
+}
+
 void PlatformWebView::addToWindow()
 {
 }
