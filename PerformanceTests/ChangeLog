@@ -1,3 +1,17 @@
+2021-07-25  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance test][css-contain] Add test to contain: size layout
+        https://bugs.webkit.org/show_bug.cgi?id=227948
+
+        Reviewed by Ryosuke Niwa.
+
+        This test emulates the scenario that a small part of the page is changed. If it's applied contain: size layout,
+        the performance should be improved. This test is a transform of the test [1] in blink.
+
+        [1] third_party/blink/perf_tests/layout/css-contain-change-text.html
+
+        * Layout/css-contain-change-size.html: Added.
+
 2021-07-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Remove CSS Regions perf tests
