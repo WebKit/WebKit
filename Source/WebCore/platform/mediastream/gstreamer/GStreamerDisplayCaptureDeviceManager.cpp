@@ -72,7 +72,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES), nullptr,
         "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", "org.freedesktop.portal.ScreenCast", nullptr, &error.outPtr()));
     if (error) {
-        WTFLogAlways("Unable to connect to the Deskop portal: %s\n", error->message);
+        WTFLogAlways("Unable to connect to the Deskop portal: %s", error->message);
         return { };
     }
 
@@ -86,7 +86,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     auto result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "CreateSession", g_variant_new("(a{sv})", &options),
         G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
-        WTFLogAlways("Unable to create a Deskop portal session: %s\n", error->message);
+        WTFLogAlways("Unable to create a Deskop portal session: %s", error->message);
         return { };
     }
 
@@ -121,7 +121,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "SelectSources",
         g_variant_new("(oa{sv})", sessionPath.ascii().data(), &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
-        WTFLogAlways("SelectSources error: %s\n", error->message);
+        WTFLogAlways("SelectSources error: %s", error->message);
         return { };
     }
     g_variant_get(result.get(), "(o)", &objectPath.outPtr());
@@ -133,7 +133,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "Start",
         g_variant_new("(osa{sv})", sessionPath.ascii().data(), "", &options), G_DBUS_CALL_FLAGS_NONE, s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error) {
-        WTFLogAlways("Start error: %s\n", error->message);
+        WTFLogAlways("Start error: %s", error->message);
         return { };
     }
 
@@ -167,13 +167,14 @@ void GStreamerDisplayCaptureDeviceManager::stopSource(const String& persistentID
         static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS | G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES), nullptr,
         "org.freedesktop.portal.Desktop", session->path.ascii().data(), "org.freedesktop.portal.Session", nullptr, &error.outPtr()));
     if (error) {
-        WTFLogAlways("Unable to connect to the Deskop portal: %s\n", error->message);
+        WTFLogAlways("Unable to connect to the Deskop portal: %s", error->message);
         return;
     }
+    auto dbusCallTimeout = 100_ms;
     auto result = adoptGRef(g_dbus_proxy_call_sync(proxy.get(), "Close", nullptr, G_DBUS_CALL_FLAGS_NONE,
-        s_dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
+        dbusCallTimeout.millisecondsAs<int>(), nullptr, &error.outPtr()));
     if (error)
-        WTFLogAlways("Portal session could not be closed: %s\n", error->message);
+        WTFLogAlways("Portal session could not be closed: %s", error->message);
 }
 
 void GStreamerDisplayCaptureDeviceManager::waitResponseSignal(const char* objectPath)

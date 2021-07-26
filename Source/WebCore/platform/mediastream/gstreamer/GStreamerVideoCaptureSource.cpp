@@ -144,6 +144,11 @@ GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
         return;
     g_signal_handlers_disconnect_by_func(m_capturer->sink(), reinterpret_cast<gpointer>(newSampleCallback), this);
     m_capturer->stop();
+
+    if (auto fd = m_capturer->pipewireFD()) {
+        auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
+        manager.stopSource(persistentID());
+    }
 }
 
 void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
@@ -204,11 +209,6 @@ void GStreamerVideoCaptureSource::stopProducingData()
 {
     GST_INFO("Reset height and width after stopping source");
     setSize({ 0, 0 });
-
-    if (auto fd = m_capturer->pipewireFD()) {
-        auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
-        manager.stopSource(persistentID());
-    }
 }
 
 const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities()
