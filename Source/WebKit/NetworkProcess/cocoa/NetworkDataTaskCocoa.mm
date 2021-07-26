@@ -57,8 +57,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
-static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { };
-static void overrideAttributionContext(NSMutableURLRequest *) { };
+static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { }
+static void overrideAttributionContext(NSMutableURLRequest *) { }
 #endif
 
 namespace WebKit {
