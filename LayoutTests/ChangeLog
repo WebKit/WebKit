@@ -1,3 +1,15 @@
+2021-07-26  Per Arne  <pvollan@apple.com>
+
+        The layout test fast/images/heic-as-background-image.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=228195
+        <rdar://80334724>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Update test expectations.
+
+        * platform/mac/TestExpectations:
+
 2021-07-26  Frédéric Wang  <fwang@igalia.com>
 
         Crash in InsertParagraphSeparatorCommand::doApply

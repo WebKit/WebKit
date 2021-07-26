@@ -172,6 +172,11 @@ SOFT_LINK_FRAMEWORK(CoreServices)
 SOFT_LINK_CLASS(CoreServices, _LSDService)
 SOFT_LINK_CLASS(CoreServices, _LSDOpenService)
 
+#if HAVE(CMPHOTO_TILE_DECODER_AVAILABLE)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(CMPhoto)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, CMPhoto, CMPhotoIsTileDecoderAvailable, Boolean, (CMVideoCodecType decoder), (decoder))
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -377,9 +382,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         if (auto extension = SandboxExtension::create(WTFMove(*parameters.trustdAgentExtensionHandle))) {
             bool ok = extension->consume();
             // The purpose of calling this function is to initialize a static variable which needs
-            // the service com.apple.trustd.gent. And this is why we do not use its return value.
+            // the service com.apple.trustd.agent. And this is why we do not use its return value.
+#if HAVE(CMPHOTO_TILE_DECODER_AVAILABLE)
+            if (CMPhotoLibrary() && canLoad_CMPhoto_CMPhotoIsTileDecoderAvailable())
+                softLink_CMPhoto_CMPhotoIsTileDecoderAvailable('hvc1');
+#else
             if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_FigPhotoSupportsHEVCHWDecode())
                 PAL::softLinkMediaToolboxFigPhotoSupportsHEVCHWDecode();
+#endif
             ok = extension->revoke();
             ASSERT_UNUSED(ok, ok);
         }
