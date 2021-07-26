@@ -1155,3 +1155,7 @@ yarr/YarrUnicodeProperties.cpp
 
 // Derived Sources
 yarr/YarrCanonicalizeUnicode.cpp
+
+
+// Custom Fork
+ForkExtras.cpp
