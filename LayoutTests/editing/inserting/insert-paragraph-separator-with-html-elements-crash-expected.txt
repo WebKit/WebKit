@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: The test PASS if it does not crash.
+0
+

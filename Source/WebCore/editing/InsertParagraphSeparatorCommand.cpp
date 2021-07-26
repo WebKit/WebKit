@@ -187,6 +187,9 @@ void InsertParagraphSeparatorCommand::doApply()
     if (visiblePos.isNull())
         return;
 
+    if (!startBlock->contains(visiblePos.deepEquivalent().containerNode()))
+        return;
+
     calculateStyleBeforeInsertion(insertionPosition);
 
     //---------------------------------------------------------------------

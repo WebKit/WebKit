@@ -1,3 +1,23 @@
+2021-07-26  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=224977
+
+        Reviewed by Ryosuke Niwa.
+
+        Because <html> elements are handled specially in Position::isCandidate() (a) and
+        PositionIterator::isCandidate() (b), the function InsertParagraphSeparatorCommand::doApply()
+        may end up in a edge case where the startBlock is a sibling of the visible position per (a)
+        but isFirstInBlock,isLastInBlock is true,false per (b). This leads to hitting the debug
+        assertion ASSERT(startBlock->firstChild()) and dereferencing a nullptr pointer in release.
+        This patch fixes that by exiting early if the visible position is not a descendant of the
+        start block.
+
+        Test: editing/inserting/insert-paragraph-separator-with-html-elements-crash.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2021-07-26  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         FormDataEvent added, and dispatched upon creation of DOMFormData or submission of HTMLFormElement.

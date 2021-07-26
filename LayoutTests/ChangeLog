@@ -1,3 +1,15 @@
+2021-07-26  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=224977
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/inserting/insert-paragraph-separator-with-html-elements-crash-expected.txt: Added.
+        * editing/inserting/insert-paragraph-separator-with-html-elements-crash.html: Added.
+
 2021-07-26  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Added support for FormDataEvent. Rebaselined.
