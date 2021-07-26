@@ -1,3 +1,16 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Playback stalls on bilibili.com
+        https://bugs.webkit.org/show_bug.cgi?id=228239
+        <rdar://80419477>
+
+        Reviewed by Eric Carlson.
+
+        Replace rate() -> effectiveRate().
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRateChanged):
+
 2021-07-26  Chris Dumez  <cdumez@apple.com>
 
         Make sure the ProcessAssertion gets destroyed on the main thread

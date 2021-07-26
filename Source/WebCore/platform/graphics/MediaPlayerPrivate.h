@@ -124,6 +124,7 @@ public:
     virtual void setRate(float) { }
     virtual void setRateDouble(double rate) { setRate(rate); }
     virtual double rate() const { return 0; }
+    virtual double effectiveRate() const { return rate(); }
 
     virtual void setPreservesPitch(bool) { }
     virtual void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) { }

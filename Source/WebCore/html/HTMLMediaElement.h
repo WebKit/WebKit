@@ -613,6 +613,8 @@ protected:
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
 private:
+    friend class Internals;
+
     void createMediaPlayer();
 
     bool supportsFocus() const override;
@@ -645,7 +647,7 @@ private:
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
-    double effectivePlaybackRate() const;
+    WEBCORE_EXPORT double effectivePlaybackRate() const;
     double requestedPlaybackRate() const;
 
     void mediaPlayerNetworkStateChanged() final;

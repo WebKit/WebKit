@@ -5032,6 +5032,11 @@ bool Internals::isMediaElementHidden(const HTMLMediaElement& media)
 {
     return media.elementIsHidden();
 }
+
+double Internals::elementEffectivePlaybackRate(const HTMLMediaElement& media)
+{
+    return media.effectivePlaybackRate();
+}
 #endif
 
 ExceptionOr<void> Internals::setIsPlayingToBluetoothOverride(std::optional<bool> isPlaying)

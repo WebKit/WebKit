@@ -1,3 +1,14 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Playback stalls on bilibili.com
+        https://bugs.webkit.org/show_bug.cgi?id=228239
+        <rdar://80419477>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-effectiveplaybackrate-expected.txt: Added.
+        * media/media-source/media-source-effectiveplaybackrate.html: Added.
+
 2021-07-26  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Page background color does not update after UIUserInterfaceLevel change

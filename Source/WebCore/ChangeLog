@@ -1,3 +1,48 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Playback stalls on bilibili.com
+        https://bugs.webkit.org/show_bug.cgi?id=228239
+        <rdar://80419477>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-effectiveplaybackrate.html
+
+        bilibili.com will attempt to detect playback stalls by detecting when video.currentTime
+        returns the same value while video.paused is false. When the GPU process is enabled, we use
+        a heuristic to provide the answer to currentTime to avoid making synchronous calls to the
+        GPU process. This heuristic uses the reported playback rate of the MediaPlayerPrivate to
+        derive the currentTime. However, MediaPlayerPrivateAVFoundationObjC does not override the
+        default implementation of rate(), and so always returns a reported rate of zero.
+
+        To make the call less ambiguous, add a MediaPlayer and MediaPlayerPrivate effectiveRate()
+        method, which by default will just return rate(), as some ports only report the
+        requested rate and not the effective rate. Then add overrides for both rate() and
+        effectiveRate() on both MediaPlayerPrivateAVFoundationObjC and
+        MediaPlayerPrivateMediaSourceAVFObjC.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlaybackRate):
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::effectiveRate const):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::effectiveRate const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::rate const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::effectiveRate const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::rate const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::effectiveRate const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isMediaElementHidden):
+        (WebCore::Internals::elementEffectivePlaybackRate):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-07-26  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] WebXRSession::m_visibilityState is uninitialized

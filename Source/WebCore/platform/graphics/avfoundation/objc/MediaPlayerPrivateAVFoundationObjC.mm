@@ -1594,6 +1594,14 @@ double MediaPlayerPrivateAVFoundationObjC::rate() const
     if (!metaDataAvailable())
         return 0;
 
+    return m_requestedRate;
+}
+
+double MediaPlayerPrivateAVFoundationObjC::effectiveRate() const
+{
+    if (!metaDataAvailable())
+        return 0;
+
     return m_cachedRate;
 }
 
