@@ -1,3 +1,14 @@
+2021-07-26  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] WebXRSession::m_visibilityState is uninitialized
+        https://bugs.webkit.org/show_bug.cgi?id=228286
+
+        Reviewed by Tim Horton.
+
+        WebXRSession::m_visibilityState should be initialized to XRVisibilityState::Visible.
+
+        * Modules/webxr/WebXRSession.h:
+
 2021-07-26  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Page background color does not update after UIUserInterfaceLevel change

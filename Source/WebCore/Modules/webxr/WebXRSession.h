@@ -128,7 +128,7 @@ private:
 
     XREnvironmentBlendMode m_environmentBlendMode;
     XRInteractionMode m_interactionMode;
-    XRVisibilityState m_visibilityState;
+    XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     UniqueRef<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
     std::optional<EndPromise> m_endPromise;
