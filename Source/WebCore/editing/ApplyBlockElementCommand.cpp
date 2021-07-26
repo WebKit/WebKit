@@ -147,7 +147,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         }
 
         Position afterEnd = end.next();
-        Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
+        RefPtr enclosingCell = enclosingNodeOfType(start, &isTableCell);
         VisiblePosition endOfNextParagraph = endOfNextParagraphSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
 
         formatRange(start, end, m_endOfLastParagraph, blockquoteForNextIndent);
@@ -174,7 +174,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
 
 static bool isNewLineAtPosition(const Position& position)
 {
-    Node* textNode = position.containerNode();
+    RefPtr textNode = position.containerNode();
     unsigned offset = position.offsetInContainerNode();
     if (!is<Text>(textNode) || offset >= downcast<Text>(*textNode).length())
         return false;
@@ -206,25 +206,28 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
     if (auto* startStyle = renderStyleOfEnclosingTextNode(start)) {
         isStartAndEndOnSameNode = renderStyleOfEnclosingTextNode(end) && start.containerNode() == end.containerNode();
         bool isStartAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && start.containerNode() == m_endOfLastParagraph.containerNode();
+        bool preservesNewLine = startStyle->preserveNewline();
+        bool collapsesWhiteSpace = startStyle->collapseWhiteSpace();
+        startStyle = nullptr;
 
         // Avoid obtanining the start of next paragraph for start
-        if (startStyle->preserveNewline() && isNewLineAtPosition(start) && !isNewLineAtPosition(start.previous()) && start.offsetInContainerNode() > 0)
+        if (preservesNewLine && isNewLineAtPosition(start) && !isNewLineAtPosition(start.previous()) && start.offsetInContainerNode() > 0)
             start = startOfParagraph(end.previous()).deepEquivalent();
 
         // If start is in the middle of a text node, split.
-        if (!startStyle->collapseWhiteSpace() && start.offsetInContainerNode() > 0) {
+        if (!collapsesWhiteSpace && start.offsetInContainerNode() > 0) {
             int startOffset = start.offsetInContainerNode();
-            Text* startText = start.containerText();
+            RefPtr startText = start.containerText();
             ASSERT(startText);
             splitTextNode(*startText, startOffset);
-            start = firstPositionInNode(startText);
+            start = firstPositionInNode(startText.get());
             if (isStartAndEndOnSameNode) {
                 ASSERT(end.offsetInContainerNode() >= startOffset);
-                end = Position(startText, end.offsetInContainerNode() - startOffset);
+                end = Position(startText.get(), end.offsetInContainerNode() - startOffset);
             }
             if (isStartAndEndOfLastParagraphOnSameNode) {
                 ASSERT(m_endOfLastParagraph.offsetInContainerNode() >= startOffset);
-                m_endOfLastParagraph = Position(startText, m_endOfLastParagraph.offsetInContainerNode() - startOffset);
+                m_endOfLastParagraph = Position(startText.get(), m_endOfLastParagraph.offsetInContainerNode() - startOffset);
             }
         }
     }
@@ -233,7 +236,12 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         bool isEndAndEndOfLastParagraphOnSameNode = renderStyleOfEnclosingTextNode(m_endOfLastParagraph) && end.deprecatedNode() == m_endOfLastParagraph.deprecatedNode();
         // Include \n at the end of line if we're at an empty paragraph
         unsigned endOffset = end.offsetInContainerNode();
-        if (endStyle->preserveNewline() && start == end && endOffset < end.containerNode()->length()) {
+        bool preservesNewLine = endStyle->preserveNewline();
+        bool collapseWhiteSpace = endStyle->collapseWhiteSpace();
+        auto userModify = endStyle->userModify();
+        endStyle = nullptr;
+
+        if (preservesNewLine && start == end && endOffset < end.containerNode()->length()) {
             if (!isNewLineAtPosition(end.previous()) && isNewLineAtPosition(end))
                 end = Position(end.containerText(), ++endOffset);
             if (isEndAndEndOfLastParagraphOnSameNode && end.offsetInContainerNode() >= m_endOfLastParagraph.offsetInContainerNode())
@@ -241,7 +249,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
         }
 
         // If end is in the middle of a text node and the text node is editable, split.
-        if (endStyle->userModify() != UserModify::ReadOnly && !endStyle->collapseWhiteSpace() && endOffset && endOffset < end.containerNode()->length()) {
+        if (userModify != UserModify::ReadOnly && !collapseWhiteSpace && endOffset && endOffset < end.containerNode()->length()) {
             RefPtr<Text> endContainer = end.containerText();
             splitTextNode(*endContainer, endOffset);
             if (is<Text>(endContainer) && !endContainer->previousSibling()) {
@@ -266,12 +274,15 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
 {
     VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
     Position position = endOfNextParagraph.deepEquivalent();
+
     auto* style = renderStyleOfEnclosingTextNode(position);
     if (!style)
         return endOfNextParagraph;
+    bool preserveNewLine = style->preserveNewline();
+    style = nullptr;
 
     RefPtr<Text> text = position.containerText();
-    if (!style->preserveNewline() || !position.offsetInContainerNode() || !isNewLineAtPosition(firstPositionInNode(text.get())))
+    if (!preserveNewLine || !position.offsetInContainerNode() || !isNewLineAtPosition(firstPositionInNode(text.get())))
         return endOfNextParagraph;
 
     // \n at the beginning of the text node immediately following the current paragraph is trimmed by moveParagraphWithClones.

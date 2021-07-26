@@ -1,3 +1,27 @@
+2021-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy smart pointers in ApplyBlockElementCommand, IndentOutdentCommand and InsertListCommand
+        https://bugs.webkit.org/show_bug.cgi?id=228304
+
+        Reviewed by Chris Dumez.
+
+        Use RefPtr in more places instead of raw pointers.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection):
+        (WebCore::isNewLineAtPosition):
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        (WebCore::ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIfNeeded):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem):
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote):
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::mergeWithNeighboringLists):
+        (WebCore::InsertListCommand::unlistifyParagraph):
+        (WebCore::adjacentEnclosingList):
+        (WebCore::InsertListCommand::listifyParagraph):
+
 2021-07-26  Kate Cheney  <katherine_cheney@apple.com>
 
         ServiceWorkerRegistration.unregister method fails in WKWebView
