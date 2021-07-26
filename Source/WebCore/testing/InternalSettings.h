@@ -107,6 +107,7 @@ public:
     ExceptionOr<void> setEditableRegionEnabled(bool);
     ExceptionOr<void> setCanStartMedia(bool);
     ExceptionOr<void> setUseDarkAppearance(bool);
+    ExceptionOr<void> setUseElevatedUserInterfaceLevel(bool);
 
     // ScrollView
     ExceptionOr<void> setAllowUnclampedScrollPosition(bool);
@@ -125,8 +126,6 @@ private:
 
     Settings& settings() const;
     static const char* supplementName();
-
-    void setUseDarkAppearanceInternal(bool);
 
     class Backup {
     public:

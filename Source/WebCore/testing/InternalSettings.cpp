@@ -187,7 +187,7 @@ void InternalSettings::resetToConsistentState()
     m_page->setPageScaleFactor(1, { 0, 0 });
     m_page->mainFrame().setPageAndTextZoomFactors(1, 1);
     m_page->setCanStartMedia(true);
-    setUseDarkAppearanceInternal(false);
+    m_page->effectiveAppearanceDidChange(false, false);
 
     m_backup.restoreTo(settings());
     m_backup = Backup { settings() };
@@ -521,17 +521,19 @@ ExceptionOr<void> InternalSettings::setCanStartMedia(bool enabled)
     return { };
 }
 
-void InternalSettings::setUseDarkAppearanceInternal(bool useDarkAppearance)
-{
-    ASSERT(m_page);
-    m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
-}
-
 ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    setUseDarkAppearanceInternal(useDarkAppearance);
+    m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
+    return { };
+}
+
+ExceptionOr<void> InternalSettings::setUseElevatedUserInterfaceLevel(bool useElevatedUserInterfaceLevel)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    m_page->effectiveAppearanceDidChange(m_page->useDarkAppearance(), useElevatedUserInterfaceLevel);
     return { };
 }
 

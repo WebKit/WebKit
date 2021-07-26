@@ -953,7 +953,7 @@ private:
 
     bool m_isTransparent { false };
 #if ENABLE(DARK_MODE_CSS)
-    bool m_usesDarkAppearance { false };
+    OptionSet<StyleColor::Options> m_styleColorOptions;
 #endif
 
     bool m_isTrackingRepaints { false }; // Used for testing.

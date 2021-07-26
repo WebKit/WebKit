@@ -1,3 +1,50 @@
+2021-07-26  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Page background color does not update after UIUserInterfaceLevel change
+        https://bugs.webkit.org/show_bug.cgi?id=228282
+        rdar://80490391
+
+        Reviewed by Wenson Hsieh.
+
+        The default background color of the root element is a semantic color
+        that adapts to changes in user interface style (light/dark mode) and
+        user interface level (base/elevated).
+
+        Currently, the default background color is correctly recalculated
+        after a change to the user interface style. However, the existing
+        logic does not update the color unless there is a change to the user
+        interface style. This behavior is incorrect, since a change to the
+        user interface level, without a change to the user interface style,
+        is ignored.
+
+        A common scenario in which a user interface level change is not
+        accompanied by a user interface style change, is when a WKWebView is
+        created and then presented as a page sheet, form sheet, or popover.
+        In this scenario, the default background color is currently incorrect.
+
+        To fix, ensure that the background color is recalculated if any of the
+        traits that affect semantic colors is changed.
+
+        Test: fast/css/ios/update-user-interface-level.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateBaseBackgroundColor):
+
+        Recalculate the background color if any of the traits that affect
+        semantic colors is changed, not just a change in user interface
+        style (light/dark mode).
+
+        * page/FrameView.h:
+        * testing/InternalSettings.cpp:
+
+        Added a testing hook to change the current user interface level.
+
+        (WebCore::InternalSettings::resetToConsistentState):
+        (WebCore::InternalSettings::setUseDarkAppearance):
+        (WebCore::InternalSettings::setUseElevatedUserInterfaceLevel):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2021-07-26  Chris Dumez  <cdumez@apple.com>
 
         XML documents end up with a unique origin in WebKit only

@@ -377,11 +377,11 @@ void FrameView::recalculateScrollbarOverlayStyle()
 
 void FrameView::recalculateBaseBackgroundColor()
 {
-    bool usingDarkAppearance = useDarkAppearance();
-    if (m_usesDarkAppearance == usingDarkAppearance)
+    auto styleColorOptions = this->styleColorOptions();
+    if (m_styleColorOptions == styleColorOptions)
         return;
 
-    m_usesDarkAppearance = usingDarkAppearance;
+    m_styleColorOptions = styleColorOptions;
     std::optional<Color> backgroundColor;
     if (m_isTransparent)
         backgroundColor = Color(Color::transparentBlack);
