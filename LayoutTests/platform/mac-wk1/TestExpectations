@@ -1386,5 +1386,7 @@ webkit.org/b/228245 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/wor
 
 webkit.org/b/228260 [ BigSur Debug ] imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm [ Pass Timeout ]
 
+webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
