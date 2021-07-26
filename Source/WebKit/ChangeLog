@@ -1,3 +1,90 @@
+2021-07-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280271. rdar://problem/81117003
+
+    REGRESSION (r279751): WebContent process often crashes when hovering over content on apple.com
+    https://bugs.webkit.org/show_bug.cgi?id=228247
+    rdar://81010093
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Add an internal testing hook that can be used to trigger text recognition for the given element. While we should
+    eventually combine this with another testing hook to simulate VisionKit text recognition results, the new test
+    using this internal hook shouldn't make its way into VisionKit anyways, so this isn't necessary for now.
+    
+    See WebKit ChangeLog for more details.
+    
+    Test: fast/images/text-recognition/text-recognition-in-transparent-video.html
+    
+    * testing/Internals.cpp:
+    (WebCore::Internals::requestTextRecognition):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Source/WebKit:
+    
+    After r279751, the snapshot fallback codepath I added in `createShareableBitmap` to handle the edge case of
+    fully transparent images causes us to now take snapshots when hovering over fully transparent video elements,
+    and attempt to recognize text in them. This is because RenderVideo is a RenderImage subclass without a cached
+    image, so we'll end up going down the transparent renderer codepath instead of bailing with a null bitmap.
+    
+    However, since CachedImages are null for video elements, before we even get to VisionKit, we end up crashing
+    with a nullptr-deref inside `WebPage::requestTextRecognition`, which assumes that `RenderImage::cachedImage()`
+    is non-null.
+    
+    To address this, we make two minor adjustments (see below).
+    
+    * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+    (WebKit::createShareableBitmap):
+    
+    Limit the snapshotting fallback to non-media images (i.e. non-RenderMedia).
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::requestTextRecognition):
+    
+    Make this robust in the case where CachedImage is null, to avoid the possibility for similar crashes in the
+    future.
+    
+    LayoutTests:
+    
+    * fast/images/text-recognition/text-recognition-in-transparent-video-expected.txt: Added.
+    * fast/images/text-recognition/text-recognition-in-transparent-video.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280271 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (r279751): WebContent process often crashes when hovering over content on apple.com
+            https://bugs.webkit.org/show_bug.cgi?id=228247
+            rdar://81010093
+
+            Reviewed by Tim Horton.
+
+            After r279751, the snapshot fallback codepath I added in `createShareableBitmap` to handle the edge case of
+            fully transparent images causes us to now take snapshots when hovering over fully transparent video elements,
+            and attempt to recognize text in them. This is because RenderVideo is a RenderImage subclass without a cached
+            image, so we'll end up going down the transparent renderer codepath instead of bailing with a null bitmap.
+
+            However, since CachedImages are null for video elements, before we even get to VisionKit, we end up crashing
+            with a nullptr-deref inside `WebPage::requestTextRecognition`, which assumes that `RenderImage::cachedImage()`
+            is non-null.
+
+            To address this, we make two minor adjustments (see below).
+
+            * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+            (WebKit::createShareableBitmap):
+
+            Limit the snapshotting fallback to non-media images (i.e. non-RenderMedia).
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::requestTextRecognition):
+
+            Make this robust in the case where CachedImage is null, to avoid the possibility for similar crashes in the
+            future.
+
 2021-07-23  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r280183. rdar://problem/81027380

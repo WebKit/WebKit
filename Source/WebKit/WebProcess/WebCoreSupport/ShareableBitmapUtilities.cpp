@@ -44,7 +44,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
 {
     Ref frame = renderImage.frame();
     auto colorSpaceForBitmap = screenColorSpace(frame->mainFrame().view());
-    if (!renderImage.opacity() && options.useSnapshotForTransparentImages == UseSnapshotForTransparentImages::Yes) {
+    if (!renderImage.isMedia() && !renderImage.opacity() && options.useSnapshotForTransparentImages == UseSnapshotForTransparentImages::Yes) {
         auto snapshotRect = renderImage.absoluteBoundingBoxRect();
         if (snapshotRect.isEmpty())
             return { };

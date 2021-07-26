@@ -5683,6 +5683,26 @@ static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+void Internals::requestTextRecognition(Element& element, RefPtr<VoidCallback>&& callback)
+{
+    auto page = contextDocument()->page();
+    if (!page) {
+        if (callback)
+            callback->handleEvent();
+    }
+
+#if ENABLE(IMAGE_ANALYSIS)
+    page->chrome().client().requestTextRecognition(element, [callback = WTFMove(callback)] (auto&&) {
+        if (callback)
+            callback->handleEvent();
+    });
+#else
+    UNUSED_PARAM(element);
+    if (callback)
+        callback->handleEvent();
+#endif
+}
+
 void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
 {
     if (!is<HTMLElement>(element))
