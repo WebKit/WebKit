@@ -1,0 +1,10 @@
+Tests that XML documents do not end up with a unique origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS win.origin is self.origin
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

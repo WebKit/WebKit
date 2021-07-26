@@ -1,3 +1,18 @@
+2021-07-26  Chris Dumez  <cdumez@apple.com>
+
+        XML documents end up with a unique origin in WebKit only
+        https://bugs.webkit.org/show_bug.cgi?id=228254
+
+        Reviewed by Darin Adler.
+
+        XML documents end up with a unique origin in WebKit only. They have a regular origin in Blink and Firefox.
+        This patch is aligning our behavior with other browsers.
+
+        Test: http/tests/misc/xml-document-origin.html
+
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+
 2021-07-26  Jer Noble  <jer.noble@apple.com>
 
         [iOS] All home screen web apps resume when any home screen web app is foregrounded
