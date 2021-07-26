@@ -1,3 +1,15 @@
+2021-07-26  Alex Christensen  <achristensen@webkit.org>
+
+        WKUserContentController.removeAllScriptMessageHandlers() doesn't release the message handlers
+        https://bugs.webkit.org/show_bug.cgi?id=228271
+
+        Reviewed by Sihui Liu.
+
+        Covered by an API test.
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::removeAllUserMessageHandlers):
+
 2021-07-26  Per Arne  <pvollan@apple.com>
 
         The layout test fast/images/heic-as-background-image.html is a constant failure
