@@ -1577,7 +1577,7 @@ webkit.org/b/226828 [ BigSur+ ] media/modern-media-controls/overflow-support/cha
 
 webkit.org/b/227922 inspector/canvas/setShaderProgramDisabled.html [ Pass Failure Timeout ]
 
-webkit.org/b/227874 [ BigSur Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
+webkit.org/b/227874 [ Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
 
 # webkit.org/b/227881 Multiple tests failing, timing out or crashing:
 fast/canvas/canvas-overloads-strokeText.html [ Pass Crash ]
