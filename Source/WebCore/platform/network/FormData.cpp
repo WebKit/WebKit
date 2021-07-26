@@ -47,7 +47,6 @@ inline FormData::FormData(const FormData& data)
     , m_elements(data.m_elements)
     , m_identifier(data.m_identifier)
     , m_alwaysStream(false)
-    , m_containsPasswordData(data.m_containsPasswordData)
 {
 }
 
@@ -274,6 +273,11 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
 
     Vector<char> encodedData;
     for (auto& item : formData.items()) {
+        // FIXME: The expected behavior is to convert files to string for enctype "text/plain". Conversion may be added at "void DOMFormData::set(const String& name, Blob& blob, const String& filename)" or here.
+        // FIXME: Remove the following if statement when fixed.
+        if (!WTF::holds_alternative<String>(item.data))
+            continue;
+        
         ASSERT(WTF::holds_alternative<String>(item.data));
 
         auto normalizedName = normalizeStringData(encoding, item.name);

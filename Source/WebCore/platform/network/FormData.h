@@ -239,8 +239,6 @@ public:
     void setIdentifier(int64_t identifier) { m_identifier = identifier; }
     int64_t identifier() const { return m_identifier; }
 
-    bool containsPasswordData() const { return m_containsPasswordData; }
-    void setContainsPasswordData(bool containsPasswordData) { m_containsPasswordData = containsPasswordData; }
     unsigned imageOrMediaFilesCount() const;
 
     static EncodingType parseEncodingType(const String& type)
@@ -270,7 +268,6 @@ private:
     int64_t m_identifier { 0 };
     bool m_alwaysStream { false };
     Vector<char> m_boundary;
-    bool m_containsPasswordData { false };
     mutable std::optional<uint64_t> m_lengthInBytes;
 };
 
@@ -291,7 +288,6 @@ void FormData::encode(Encoder& encoder) const
     encoder << m_boundary;
     encoder << m_elements;
     encoder << m_identifier;
-    // FIXME: Does not encode m_containsPasswordData. Why is that OK?
 }
 
 template<typename Decoder>

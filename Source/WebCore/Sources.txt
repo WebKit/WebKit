@@ -950,6 +950,7 @@ dom/EventTargetConcrete.cpp
 dom/ExceptionData.cpp
 dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp
+dom/FormDataEvent.cpp
 dom/FullscreenManager.cpp
 dom/GCReachableRef.cpp
 dom/HashChangeEvent.cpp
@@ -3070,6 +3071,7 @@ JSFocusEvent.cpp
 JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
+JSFormDataEvent.cpp
 JSGPUBindGroupLayoutBinding.cpp
 JSGPUBindGroupLayoutDescriptor.cpp
 JSGPUBlendDescriptor.cpp

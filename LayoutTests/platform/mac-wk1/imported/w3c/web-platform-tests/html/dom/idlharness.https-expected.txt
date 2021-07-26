@@ -284,7 +284,7 @@ PASS HTMLElement interface: attribute onemptied
 PASS HTMLElement interface: attribute onended
 PASS HTMLElement interface: attribute onerror
 PASS HTMLElement interface: attribute onfocus
-FAIL HTMLElement interface: attribute onformdata assert_true: The prototype object must have a property "onformdata" expected true got false
+PASS HTMLElement interface: attribute onformdata
 PASS HTMLElement interface: attribute oninput
 PASS HTMLElement interface: attribute oninvalid
 PASS HTMLElement interface: attribute onkeydown
@@ -379,7 +379,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onended" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onerror" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onfocus" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onformdata" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninput" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninvalid" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeydown" with the proper type
@@ -3783,16 +3783,16 @@ PASS SubmitEvent interface: existence and properties of interface prototype obje
 PASS SubmitEvent interface: existence and properties of interface prototype object's "constructor" property
 PASS SubmitEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS SubmitEvent interface: attribute submitter
-FAIL FormDataEvent interface: existence and properties of interface object assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface object length assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface object name assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: attribute formData assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent must be primary interface of new FormDataEvent("formdata", { formData: new FormData() }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormDataEvent"
-FAIL Stringification of new FormDataEvent("formdata", { formData: new FormData() }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormDataEvent"
-FAIL FormDataEvent interface: new FormDataEvent("formdata", { formData: new FormData() }) must inherit property "formData" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormDataEvent"
+PASS FormDataEvent interface: existence and properties of interface object
+PASS FormDataEvent interface object length
+PASS FormDataEvent interface object name
+PASS FormDataEvent interface: existence and properties of interface prototype object
+PASS FormDataEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS FormDataEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS FormDataEvent interface: attribute formData
+PASS FormDataEvent must be primary interface of new FormDataEvent("formdata", { formData: new FormData() })
+PASS Stringification of new FormDataEvent("formdata", { formData: new FormData() })
+PASS FormDataEvent interface: new FormDataEvent("formdata", { formData: new FormData() }) must inherit property "formData" with the proper type
 PASS HTMLDetailsElement interface: existence and properties of interface object
 PASS HTMLDetailsElement interface object length
 PASS HTMLDetailsElement interface object name
@@ -4424,7 +4424,7 @@ PASS Window interface: attribute onemptied
 PASS Window interface: attribute onended
 PASS Window interface: attribute onerror
 PASS Window interface: attribute onfocus
-FAIL Window interface: attribute onformdata assert_own_property: The global object must have a property "onformdata" expected property "onformdata" missing
+PASS Window interface: attribute onformdata
 PASS Window interface: attribute oninput
 PASS Window interface: attribute oninvalid
 PASS Window interface: attribute onkeydown
@@ -4574,7 +4574,7 @@ PASS Window interface: window must inherit property "onemptied" with the proper 
 PASS Window interface: window must inherit property "onended" with the proper type
 PASS Window interface: window must inherit property "onerror" with the proper type
 PASS Window interface: window must inherit property "onfocus" with the proper type
-FAIL Window interface: window must inherit property "onformdata" with the proper type assert_own_property: expected property "onformdata" missing
+PASS Window interface: window must inherit property "onformdata" with the proper type
 PASS Window interface: window must inherit property "oninput" with the proper type
 PASS Window interface: window must inherit property "oninvalid" with the proper type
 PASS Window interface: window must inherit property "onkeydown" with the proper type
@@ -5289,7 +5289,7 @@ PASS SVGElement interface: attribute onemptied
 PASS SVGElement interface: attribute onended
 PASS SVGElement interface: attribute onerror
 PASS SVGElement interface: attribute onfocus
-FAIL SVGElement interface: attribute onformdata assert_true: The prototype object must have a property "onformdata" expected true got false
+PASS SVGElement interface: attribute onformdata
 PASS SVGElement interface: attribute oninput
 PASS SVGElement interface: attribute oninvalid
 PASS SVGElement interface: attribute onkeydown
@@ -5423,7 +5423,7 @@ PASS Document interface: attribute onemptied
 PASS Document interface: attribute onended
 PASS Document interface: attribute onerror
 PASS Document interface: attribute onfocus
-FAIL Document interface: attribute onformdata assert_true: The prototype object must have a property "onformdata" expected true got false
+PASS Document interface: attribute onformdata
 PASS Document interface: attribute oninput
 PASS Document interface: attribute oninvalid
 PASS Document interface: attribute onkeydown
@@ -5548,7 +5548,7 @@ PASS Document interface: iframe.contentDocument must inherit property "onemptied
 PASS Document interface: iframe.contentDocument must inherit property "onended" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onerror" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onfocus" with the proper type
-FAIL Document interface: iframe.contentDocument must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onformdata" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oninput" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oninvalid" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onkeydown" with the proper type
@@ -5673,7 +5673,7 @@ PASS Document interface: new Document() must inherit property "onemptied" with t
 PASS Document interface: new Document() must inherit property "onended" with the proper type
 PASS Document interface: new Document() must inherit property "onerror" with the proper type
 PASS Document interface: new Document() must inherit property "onfocus" with the proper type
-FAIL Document interface: new Document() must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onformdata" with the proper type
 PASS Document interface: new Document() must inherit property "oninput" with the proper type
 PASS Document interface: new Document() must inherit property "oninvalid" with the proper type
 PASS Document interface: new Document() must inherit property "onkeydown" with the proper type
@@ -5798,7 +5798,7 @@ PASS Document interface: documentWithHandlers must inherit property "onemptied" 
 PASS Document interface: documentWithHandlers must inherit property "onended" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onerror" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onfocus" with the proper type
-FAIL Document interface: documentWithHandlers must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" found on object expected in prototype chain
+PASS Document interface: documentWithHandlers must inherit property "onformdata" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oninput" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oninvalid" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onkeydown" with the proper type

@@ -211,21 +211,9 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     auto domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmissionOrURLParsing());
     StringPairVector formValues;
 
-    bool containsPasswordData = false;
-    for (auto& control : form.copyAssociatedElementsVector()) {
-        auto& element = control->asHTMLElement();
-        if (!element.isDisabledFormControl())
-            control->appendFormData(domFormData, isMultiPartForm);
-        if (is<HTMLInputElement>(element)) {
-            auto& input = downcast<HTMLInputElement>(element);
-            if (input.isTextField()) {
-                formValues.append({ input.name(), input.value() });
-                input.addSearchResult();
-            }
-            if (input.isPasswordField() && !input.value().isEmpty())
-                containsPasswordData = true;
-        }
-    }
+    auto result = form.constructEntryList(WTFMove(domFormData), &formValues, isMultiPartForm ? HTMLFormElement::IsMultipartForm::Yes : HTMLFormElement::IsMultipartForm::No);
+    RELEASE_ASSERT(result);
+    domFormData = result.releaseNonNull();
 
     RefPtr<FormData> formData;
     String boundary;
@@ -243,7 +231,6 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     }
 
     formData->setIdentifier(generateFormDataIdentifier());
-    formData->setContainsPasswordData(containsPasswordData);
 
     auto formState = FormState::create(form, WTFMove(formValues), document, trigger);
 

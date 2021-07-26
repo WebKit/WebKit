@@ -1,3 +1,46 @@
+2021-07-26  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        FormDataEvent added, and dispatched upon creation of DOMFormData or submission of HTMLFormElement.
+        https://bugs.webkit.org/show_bug.cgi?id=227718
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/FormDataEvent.cpp: Added.
+        (WebCore::FormDataEvent::create):
+        (WebCore::FormDataEvent::FormDataEvent):
+        (WebCore::FormDataEvent::eventInterface const):
+        * dom/FormDataEvent.h: Added.
+        (WebCore::FormDataEvent::formData const):
+        * dom/FormDataEvent.idl: Added.
+        * dom/GlobalEventHandlers.idl:
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::DOMFormData):
+        (WebCore::DOMFormData::create):
+        (WebCore::DOMFormData::clone):
+        * html/DOMFormData.h:
+        (WebCore::DOMFormData::create): Deleted.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitIfPossible):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::constructEntryList):
+        * html/HTMLFormElement.h:
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/FormSubmission.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendNonMultiPartKeyValuePairItems):
+
 2021-07-26  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Playback stalls on bilibili.com

@@ -255,6 +255,7 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("durationchange", "Duration Change");
         nameMap.set("focusin", "Focus In");
         nameMap.set("focusout", "Focus Out");
+        nameMap.set("formdata", "Form submission or invocation of FormData()");
         nameMap.set("gesturechange", "Gesture Change");
         nameMap.set("gestureend", "Gesture End");
         nameMap.set("gesturescrollend", "Gesture Scroll End");

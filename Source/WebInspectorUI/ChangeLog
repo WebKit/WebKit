@@ -1,3 +1,13 @@
+2021-07-26  Qiaosong Zhou  <qiaosong_zhou@apple.com>
+
+        FormDataEvent added. 
+        https://bugs.webkit.org/show_bug.cgi?id=227718
+
+        Reviewed by Chris Dumez.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.EventType.displayName):
+
 2021-07-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: REGRESSION(?): alpha slider doesn't match alpha input for `transparent` in color picker

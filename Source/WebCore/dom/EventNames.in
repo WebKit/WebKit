@@ -19,6 +19,7 @@ ExtendableMessageEvent conditional=SERVICE_WORKER
 ErrorEvent
 FetchEvent conditional=SERVICE_WORKER
 FocusEvent
+FormDataEvent
 HashChangeEvent
 InputEvent
 InputEvents interfaceName=InputEvent
