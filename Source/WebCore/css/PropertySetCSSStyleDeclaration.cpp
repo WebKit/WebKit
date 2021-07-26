@@ -364,6 +364,7 @@ Ref<MutableStyleProperties> PropertySetCSSStyleDeclaration::copyProperties() con
 StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStyleProperties& propertySet, CSSRule& parentRule)
     : PropertySetCSSStyleDeclaration(propertySet)
     , m_refCount(1)
+    , m_parentRuleType(static_cast<StyleRuleType>(parentRule.type()))
     , m_parentRule(&parentRule)
 {
     m_propertySet->ref();
@@ -418,8 +419,7 @@ CSSParserContext StyleRuleCSSStyleDeclaration::cssParserContext() const
         return PropertySetCSSStyleDeclaration::cssParserContext();
 
     auto context = styleSheet->parserContext();
-    if (m_parentRule)
-        context.enclosingRuleType = static_cast<StyleRuleType>(m_parentRule->type());
+    context.enclosingRuleType = m_parentRuleType;
     
     return context;
 }

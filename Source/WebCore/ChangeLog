@@ -1,3 +1,22 @@
+2021-07-26  Cameron McCormack  <heycam@apple.com>
+
+        Don't allow descriptors to be set to CSS-wide keywords
+        https://bugs.webkit.org/show_bug.cgi?id=228218
+        <rdar://80675715>
+
+        Reviewed by Simon Fraser.
+
+        And store the parent rule type directly on
+        StyleRuleCSSStyleDeclaration so that we can still check it after
+        m_parentRule has been cleared.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration):
+        (WebCore::StyleRuleCSSStyleDeclaration::cssParserContext const):
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseKeywordValue):
+
 2021-07-26  Chris Dumez  <cdumez@apple.com>
 
         Rename activeWindow to incumbentWindow in the Location class

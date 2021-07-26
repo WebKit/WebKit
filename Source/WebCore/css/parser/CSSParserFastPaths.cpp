@@ -1086,17 +1086,20 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
 {
     ASSERT(!string.isEmpty());
 
+    bool parsingDescriptor = context.enclosingRuleType && *context.enclosingRuleType != StyleRuleType::Style;
+    ASSERT(!CSSProperty::isDescriptorOnly(propertyId) || parsingDescriptor);
+
     if (!CSSParserFastPaths::isKeywordPropertyID(propertyId)) {
-        // All properties accept the values of "initial" and "inherit".
+        // All properties, including non-keyword properties, accept the CSS-wide keywords.
         if (!isUniversalKeyword(string))
             return nullptr;
 
-        // Parse initial/inherit shorthands using the CSSPropertyParser.
+        // Leave shorthands to parse CSS-wide keywords using CSSPropertyParser.
         if (shorthandForProperty(propertyId).length())
             return nullptr;
 
-        // Descriptors do not support css wide keywords.
-        if (CSSProperty::isDescriptorOnly(propertyId))
+        // Descriptors do not support the CSS-wide keywords.
+        if (parsingDescriptor)
             return nullptr;
     }
 
@@ -1105,14 +1108,16 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     if (!valueID)
         return nullptr;
 
-    if (valueID == CSSValueInherit)
-        return CSSValuePool::singleton().createInheritedValue();
-    if (valueID == CSSValueInitial)
-        return CSSValuePool::singleton().createExplicitInitialValue();
-    if (valueID == CSSValueUnset)
-        return CSSValuePool::singleton().createUnsetValue();
-    if (valueID == CSSValueRevert)
-        return CSSValuePool::singleton().createRevertValue();
+    if (!parsingDescriptor) {
+        if (valueID == CSSValueInherit)
+            return CSSValuePool::singleton().createInheritedValue();
+        if (valueID == CSSValueInitial)
+            return CSSValuePool::singleton().createExplicitInitialValue();
+        if (valueID == CSSValueUnset)
+            return CSSValuePool::singleton().createUnsetValue();
+        if (valueID == CSSValueRevert)
+            return CSSValuePool::singleton().createRevertValue();
+    }
     
     if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, context))
         return CSSPrimitiveValue::createIdentifier(valueID);
