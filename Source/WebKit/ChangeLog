@@ -1,3 +1,19 @@
+2021-07-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Attribution context causes some performance regressions
+        https://bugs.webkit.org/show_bug.cgi?id=228294
+        <rdar://problem/76663528>
+
+        Reviewed by Per Arne Vollan.
+
+        Attribution context is used by the networking stack for a variety of
+        purposes, but is not always needed and can negatively affect
+        performance. For these reasons, we should override it in some cases.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (overrideAttributionContext):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+
 2021-07-26  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Playback stalls on bilibili.com
