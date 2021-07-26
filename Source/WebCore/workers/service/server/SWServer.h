@@ -220,7 +220,7 @@ public:
     LastNavigationWasAppInitiated clientIsAppInitiatedForRegistrableDomain(const RegistrableDomain&);
 
 private:
-    void validateRegistrationDomain(WebCore::RegistrableDomain, CompletionHandler<void(bool)>&&);
+    void validateRegistrationDomain(WebCore::RegistrableDomain, ServiceWorkerJobType, CompletionHandler<void(bool)>&&);
 
     void scriptFetchFinished(const ServiceWorkerFetchResult&);
 

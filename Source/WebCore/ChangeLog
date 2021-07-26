@@ -1,3 +1,21 @@
+2021-07-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        ServiceWorkerRegistration.unregister method fails in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=227524
+        <rdar://problem/80264108>
+
+        Reviewed by Youenn Fablet.
+
+        We should only check the app-bound domain list when registering a new
+        worker. Unregistering or updating an existing registration is fine because
+        we know that every registration has already gone through this check.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+        (WebCore::SWServer::validateRegistrationDomain):
+        (WebCore::SWServer::scheduleJob):
+        * workers/service/server/SWServer.h:
+
 2021-07-26  Cameron McCormack  <heycam@apple.com>
 
         Don't allow descriptors to be set to CSS-wide keywords

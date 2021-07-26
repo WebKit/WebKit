@@ -158,9 +158,9 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
 {
     // Pages should not have been able to make a new registration to this key while the import was still taking place.
     ASSERT(!m_scopeToRegistrationMap.contains(data.registration.key));
-    
+
     auto registrableDomain = WebCore::RegistrableDomain(data.scriptURL);
-    validateRegistrationDomain(registrableDomain, [this, weakThis = makeWeakPtr(this), data = WTFMove(data)] (bool isValid) mutable {
+    validateRegistrationDomain(registrableDomain, ServiceWorkerJobType::Register, [this, weakThis = makeWeakPtr(this), data = WTFMove(data)] (bool isValid) mutable {
         if (!weakThis)
             return;
         if (m_hasServiceWorkerEntitlement || isValid) {
@@ -346,19 +346,19 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminati
     allServers().add(this);
 }
 
-void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, CompletionHandler<void(bool)>&& completionHandler)
+void SWServer::validateRegistrationDomain(WebCore::RegistrableDomain domain, ServiceWorkerJobType type, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_hasServiceWorkerEntitlement || m_hasReceivedAppBoundDomains) {
-        completionHandler(SecurityOrigin::isLocalHostOrLoopbackIPAddress(domain.string()) || (m_appBoundDomains.contains(domain) && m_uniqueRegistrationCount < maxRegistrationCount));
+        completionHandler(SecurityOrigin::isLocalHostOrLoopbackIPAddress(domain.string()) || type != ServiceWorkerJobType::Register || (m_appBoundDomains.contains(domain) && m_uniqueRegistrationCount < maxRegistrationCount));
         return;
     }
 
-    m_appBoundDomainsCallback([this, weakThis = makeWeakPtr(this), domain = WTFMove(domain), completionHandler = WTFMove(completionHandler)](auto&& appBoundDomains) mutable {
+    m_appBoundDomainsCallback([this, weakThis = makeWeakPtr(this), domain = WTFMove(domain), type, completionHandler = WTFMove(completionHandler)](auto&& appBoundDomains) mutable {
         if (!weakThis)
             return;
         m_hasReceivedAppBoundDomains = true;
         m_appBoundDomains = WTFMove(appBoundDomains);
-        completionHandler(SecurityOrigin::isLocalHostOrLoopbackIPAddress(domain.string()) || (m_appBoundDomains.contains(domain) && m_uniqueRegistrationCount < maxRegistrationCount));
+        completionHandler(SecurityOrigin::isLocalHostOrLoopbackIPAddress(domain.string()) || type != ServiceWorkerJobType::Register || (m_appBoundDomains.contains(domain) && m_uniqueRegistrationCount < maxRegistrationCount));
     });
 }
 
@@ -367,7 +367,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()) || jobData.connectionIdentifier() == Process::identifier());
 
-    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), [this, weakThis = makeWeakPtr(this), jobData = WTFMove(jobData)] (bool isValid) mutable {
+    validateRegistrationDomain(WebCore::RegistrableDomain(jobData.scriptURL), jobData.type, [this, weakThis = makeWeakPtr(this), jobData = WTFMove(jobData)] (bool isValid) mutable {
         if (!weakThis)
             return;
         if (m_hasServiceWorkerEntitlement || isValid) {

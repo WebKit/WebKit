@@ -1,3 +1,28 @@
+2021-07-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        ServiceWorkerRegistration.unregister method fails in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=227524
+        <rdar://problem/80264108>
+
+        Reviewed by Youenn Fablet.
+
+        API test coverage. Drive-by fix to remove unnecessary WKWebView
+        configuration flags from tests that don't need them.
+
+        Note this will also fix https://bugs.webkit.org/show_bug.cgi?id=227531
+        where updating an existing worker fails after registering 3 domains,
+        but writing a test for that would require registering service workers
+        on 3 domains that are not localhost or a loopback IP address, which
+        we currently do not have infrastructure for.
+
+        Testing unregister was only possible because the script URL passed in
+        during the unregister job is null, so it does not get caught in the
+        localhost/loopback IP address check, unlike the update case.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+        (-[SWInAppBrowserPrivacyMessageHandler userContentController:didReceiveScriptMessage:]):
+
 2021-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unified field is unselected after focusing URL bar if text was selected in a fixed position container
