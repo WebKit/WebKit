@@ -448,6 +448,16 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target",
         "description": "new.target allows you to detect if a function or constructor was instantiated with the new operator, or if instead it was called using normal function calling syntax.",
         "specification": "ES6"
+    },
+    {
+        "name": "Temporal",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://github.com/tc39/proposal-temporal",
+        "documentation-url": "https://tc39.es/proposal-temporal/docs/",
+        "description": "Temporal brings a modern date/time API to the ECMAScript language.",
+        "specification": "ESNext"
     }
     ]
 }

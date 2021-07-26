@@ -1,3 +1,12 @@
+2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add Temporal to features.json
+        https://bugs.webkit.org/show_bug.cgi?id=228292
+
+        Reviewed by Myles C. Maxfield.
+
+        * features.json:
+
 2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Partly implement Function.prototype.{caller,arguments} reflection proposal
