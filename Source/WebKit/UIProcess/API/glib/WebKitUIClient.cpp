@@ -389,3 +389,7 @@ void attachUIClientToView(WebKitWebView* webView)
     webkitWebViewGetPage(webView).setUIClient(makeUnique<UIClient>(webView));
 }
 
+void detachUIClientFromView(WebKitWebView* webView)
+{
+    webkitWebViewGetPage(webView).setUIClient(nullptr);
+}

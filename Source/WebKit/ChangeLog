@@ -1,3 +1,19 @@
+2021-07-26  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] MiniBrowser crashes when closed while capturing desktop
+        https://bugs.webkit.org/show_bug.cgi?id=228232
+
+        Reviewed by Adrian Perez de Castro.
+
+        Disconnect the WebView from the WebPageProxy just before the final GObject dispose call, in
+        order to avoid UIClient notifications on the being-disposed WebView.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (detachUIClientFromView):
+        * UIProcess/API/glib/WebKitUIClient.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewDispose):
+
 2021-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unified field is unselected after focusing URL bar if text was selected in a fixed position container
