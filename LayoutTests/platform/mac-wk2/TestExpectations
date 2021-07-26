@@ -1605,7 +1605,9 @@ webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOn
 webkit.org/b/228252 [ BigSur Release arm64 ] fast/css-grid-layout/floating-empty-grids.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/228256 [ Debug ] inspector/canvas/create-context-webgl.html [ Pass Failure ]
- 
+
+webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html [ Pass Timeout ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80640850>:
 [ Monterey ] imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub.html [ Failure ]
 
