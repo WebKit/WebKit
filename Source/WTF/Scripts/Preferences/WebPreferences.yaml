@@ -1770,6 +1770,16 @@ RequestAnimationFrameEnabled:
     WebCore:
       default: true
 
+RequiresPageVisibilityToPlayAudio:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 RequiresUserGestureForAudioPlayback:
   type: bool
   webKitLegacyPreferenceKey: WebKitAudioPlaybackRequiresUserGesture

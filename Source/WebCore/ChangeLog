@@ -1,3 +1,37 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] All home screen web apps resume when any home screen web app is foregrounded
+        https://bugs.webkit.org/show_bug.cgi?id=228246
+        <rdar://72949281>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-page-visibility-restriction.html
+
+        On iOS, home screen web apps all run from the same UIProcess, SafariViewService. So when
+        one Web App is foregrounded, the SafariViewService itself is foregrounded, and all WKWebViews
+        (one for each Web App) are foregrounded as well, allowing all Web Apps to resume audio
+        playback. This is not ideal; ideally, all Web Apps will be allowed to continue to play
+        audio in the background. But until we can fix that bug, the current behavior of pausing
+        audio from Web App A when A is backgrounded, and resuming audio from A when Web App B is
+        foregrounded feels super broken.
+
+        Add a new WKPreference/WebPreference/Setting and matching MediaElementSession restriction
+        that will block playback of audible media elements when the media element's page is not
+        visible. When adopted by SafariViewService, this would keep multiple Web Apps (and indeed
+        SafariViewController pages) from starting playback when any other is foregrounded.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::initializeMediaSession):
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::visibilityChanged):
+        (WebCore::MediaElementSession::playbackStateChangePermitted const):
+        * html/MediaElementSession.h:
+        * platform/audio/PlatformMediaSession.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementRestrictions):
+
 2021-07-26  Philippe Normand  <pnormand@igalia.com>
 
         [Pipewire] Muting the display capture closes the Portal session

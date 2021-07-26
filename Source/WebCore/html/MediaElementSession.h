@@ -129,6 +129,7 @@ public:
         RequireUserGestureToControlControlsManager = 1 << 13,
         RequirePlaybackToControlControlsManager = 1 << 14,
         RequireUserGestureForVideoDueToLowPowerMode = 1 << 15,
+        RequirePageVisibilityToPlayAudio = 1 << 16,
         AllRestrictions = ~NoRestrictions,
     };
     typedef unsigned BehaviorRestrictions;

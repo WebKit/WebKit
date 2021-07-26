@@ -93,6 +93,7 @@ public:
         InvisibleAutoplay,
         ProcessInactive,
         PlaybackSuspended,
+        PageNotVisible,
     };
     InterruptionType interruptionType() const { return m_interruptionType; }
 
@@ -367,7 +368,8 @@ template <> struct EnumTraits<WebCore::PlatformMediaSession::InterruptionType> {
     WebCore::PlatformMediaSession::InterruptionType::SuspendedUnderLock,
     WebCore::PlatformMediaSession::InterruptionType::InvisibleAutoplay,
     WebCore::PlatformMediaSession::InterruptionType::ProcessInactive,
-    WebCore::PlatformMediaSession::InterruptionType::PlaybackSuspended
+    WebCore::PlatformMediaSession::InterruptionType::PlaybackSuspended,
+    WebCore::PlatformMediaSession::InterruptionType::PageNotVisible
     >;
 };
 

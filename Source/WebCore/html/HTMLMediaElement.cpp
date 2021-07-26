@@ -474,6 +474,9 @@ void HTMLMediaElement::initializeMediaSession()
     if (document.settings().invisibleAutoplayNotPermitted())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
 
+    if (document.settings().requiresPageVisibilityToPlayAudio())
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageVisibilityToPlayAudio);
+
     if (document.ownerElement() || !document.isMediaDocument()) {
         if (m_shouldVideoPlaybackRequireUserGesture) {
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
@@ -5774,17 +5777,6 @@ void HTMLMediaElement::visibilityStateChanged()
     mediaSession().visibilityChanged();
     if (m_player)
         m_player->setVisible(!m_elementIsHidden);
-
-    bool isPlayingAudio = isPlaying() && hasAudio() && !muted() && volume();
-    if (!isPlayingAudio) {
-        if (m_elementIsHidden) {
-            ALWAYS_LOG(LOGIDENTIFIER, "Suspending playback after going to the background");
-            mediaSession().beginInterruption(PlatformMediaSession::EnteringBackground);
-        } else {
-            ALWAYS_LOG(LOGIDENTIFIER, "Resuming playback after entering foreground");
-            mediaSession().endInterruption(PlatformMediaSession::MayResumePlaying);
-        }
-    }
 }
 
 bool HTMLMediaElement::requiresTextTrackRepresentation() const

@@ -1507,6 +1507,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 #endif
 }
 
+- (BOOL)_requiresPageVisibilityToPlayAudio
+{
+    return _preferences->requiresPageVisibilityToPlayAudio();
+}
+
+- (void)_setRequiresPageVisibilityToPlayAudio:(BOOL)requires
+{
+    _preferences->setRequiresPageVisibilityToPlayAudio(requires);
+}
+
 @end
 
 

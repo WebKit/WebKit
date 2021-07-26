@@ -1,3 +1,13 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] All home screen web apps resume when any home screen web app is foregrounded
+        https://bugs.webkit.org/show_bug.cgi?id=228246
+        <rdar://72949281>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2021-07-23  Chris Dumez  <cdumez@apple.com>
 
         SharedBuffer::takeData() is a bit dangerous
