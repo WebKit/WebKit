@@ -1,3 +1,28 @@
+2021-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Rename activeWindow to incumbentWindow in the Location class
+        https://bugs.webkit.org/show_bug.cgi?id=228295
+
+        Reviewed by Darin Adler.
+
+        Rename activeWindow to incumbentWindow in the Location class, since this is the naming used
+        both in the HTML specification and Location.idl.
+
+        * page/Location.cpp:
+        (WebCore::Location::setHref):
+        (WebCore::Location::setProtocol):
+        (WebCore::Location::setHost):
+        (WebCore::Location::setHostname):
+        (WebCore::Location::setPort):
+        (WebCore::Location::setPathname):
+        (WebCore::Location::setSearch):
+        (WebCore::Location::setHash):
+        (WebCore::Location::assign):
+        (WebCore::Location::replace):
+        (WebCore::Location::reload):
+        (WebCore::Location::setLocation):
+        * page/Location.h:
+
 2021-07-26  Frédéric Wang  <fwang@igalia.com>
 
         Crash in InsertParagraphSeparatorCommand::doApply
