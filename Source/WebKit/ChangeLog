@@ -1,3 +1,17 @@
+2021-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Make sure the ProcessAssertion gets destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=228281
+        <rdar://81048308>
+
+        Reviewed by Geoffrey Garen.
+
+        Follow-up to r279877 to make sure that the ProcessAssertion gets destroyed on the main thread in
+        ProcessAssertion::acquireAsync(), even if the completionHandler is null.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::acquireAsync):
+
 2021-07-26  Jer Noble  <jer.noble@apple.com>
 
         [iOS] All home screen web apps resume when any home screen web app is foregrounded

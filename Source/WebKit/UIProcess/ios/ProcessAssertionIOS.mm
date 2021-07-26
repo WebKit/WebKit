@@ -358,11 +358,10 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
     ASSERT(isMainRunLoop());
     assertionsWorkQueue().dispatch([protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
-        if (completionHandler) {
-            RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+            if (completionHandler)
                 completionHandler();
-            });
-        }
+        });
     });
 }
 
