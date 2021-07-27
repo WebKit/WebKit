@@ -16,6 +16,10 @@
 
 #include <atomic>
 
+#if defined(ANGLE_PLATFORM_APPLE)
+#include <dispatch/dispatch.h>
+#endif
+
 namespace egl
 {
 namespace
@@ -38,13 +42,23 @@ void SetContextToAndroidOpenGLTLSSlot(gl::Context *value)
 
 Thread *AllocateCurrentThread()
 {
-    gCurrentThread = new Thread();
+    Thread *thread = new Thread();
+#if defined(ANGLE_PLATFORM_APPLE)
+    SetCurrentThreadTLS(thread);
+#else
+    gCurrentThread = thread;
+#endif
 
     // Initialize fast TLS slot
     SetContextToAndroidOpenGLTLSSlot(nullptr);
-    gl::gCurrentValidContext = nullptr;
 
-    return gCurrentThread;
+#if defined(ANGLE_PLATFORM_APPLE)
+    gl::SetCurrentValidContextTLS(nullptr);
+#else
+    gl::gCurrentValidContext = nullptr;
+#endif
+
+    return thread;
 }
 
 void AllocateDebug()
@@ -71,7 +85,39 @@ void AllocateMutex()
 
 }  // anonymous namespace
 
+#if defined(ANGLE_PLATFORM_APPLE)
+
+// NOTE: Due to a bug in Apple's dyld loader, `thread_local` will cause
+// excessive memory use. Temporarily avoid it by using pthread's thread
+// local storage instead.
+
+static TLSIndex GetCurrentThreadTLSIndex()
+{
+    static TLSIndex CurrentThreadIndex = TLS_INVALID_INDEX;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        ASSERT(CurrentThreadIndex == TLS_INVALID_INDEX);
+        CurrentThreadIndex = CreateTLSIndex();
+    });
+    return CurrentThreadIndex;
+}
+
+Thread *GetCurrentThreadTLS()
+{
+    TLSIndex CurrentThreadIndex = GetCurrentThreadTLSIndex();
+    ASSERT(CurrentThreadIndex != TLS_INVALID_INDEX);
+    return static_cast<Thread *>(GetTLSValue(CurrentThreadIndex));
+}
+
+void SetCurrentThreadTLS(Thread *thread)
+{
+    TLSIndex CurrentThreadIndex = GetCurrentThreadTLSIndex();
+    ASSERT(CurrentThreadIndex != TLS_INVALID_INDEX);
+    SetTLSValue(CurrentThreadIndex, thread);
+}
+#else
 thread_local Thread *gCurrentThread = nullptr;
+#endif
 
 angle::GlobalMutex &GetGlobalMutex()
 {
@@ -81,7 +127,11 @@ angle::GlobalMutex &GetGlobalMutex()
 
 Thread *GetCurrentThread()
 {
+#if defined(ANGLE_PLATFORM_APPLE)
+    Thread *current = GetCurrentThreadTLS();
+#else
     Thread *current = gCurrentThread;
+#endif
     return (current ? current : AllocateCurrentThread());
 }
 
@@ -93,10 +143,19 @@ Debug *GetDebug()
 
 void SetContextCurrent(Thread *thread, gl::Context *context)
 {
-    ASSERT(gCurrentThread);
-    gCurrentThread->setCurrent(context);
+#if defined(ANGLE_PLATFORM_APPLE)
+    Thread *currentThread = GetCurrentThreadTLS();
+#else
+    Thread *currentThread = gCurrentThread;
+#endif
+    ASSERT(currentThread);
+    currentThread->setCurrent(context);
     SetContextToAndroidOpenGLTLSSlot(context);
+#if defined(ANGLE_PLATFORM_APPLE)
+    gl::SetCurrentValidContextTLS(context);
+#else
     gl::gCurrentValidContext = context;
+#endif
 }
 }  // namespace egl
 

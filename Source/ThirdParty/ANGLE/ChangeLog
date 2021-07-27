@@ -1,3 +1,36 @@
+2021-07-23  Dean Jackson  <dino@apple.com>
+
+        3.5 MB system-wide footprint impact due to thread-locals in libANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=228240
+        rdar://79504783
+
+        Reviewed by Ken Russell and Geoff Garen.
+
+        Apple's dyld has a bug where thread_local variables are dirtied on
+        process launch, causing a memory regression. Work around this
+        temporarily in ANGLE by using pthread thread local storage.
+
+        I don't expect this to be upstreamed to ANGLE unless they
+        want it. If it isn't, this patch will have to be applied until
+        the dyld bug is fixed.
+
+        * src/libANGLE/Context.cpp: Implement some methods to get/set what was
+        the global variable gCurrentValidContext.
+        (gl::GetCurrentValidContextTLSIndex):
+        (gl::GetCurrentValidContextTLS):
+        (gl::SetCurrentValidContextTLS):
+        (gl::Context::setContextLost):
+        * src/libANGLE/Context.h:
+        * src/libGLESv2/global_state.cpp: Ditto, but for gCurrentThread.
+        (egl::GetCurrentThreadTLSIndex):
+        (egl::GetCurrentThreadTLS):
+        (egl::SetCurrentThreadTLS):
+        (egl::GetCurrentThread):
+        (egl::SetContextCurrent):
+        * src/libGLESv2/global_state.h:
+        (gl::GetGlobalContext):
+        (gl::GetValidGlobalContext):
+
 2021-07-16  Kyle Piddington  <kpiddington@apple.com>
 
         Build Default Metal library offline
