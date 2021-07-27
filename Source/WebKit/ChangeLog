@@ -1,3 +1,40 @@
+2021-07-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] REGRESSION: Tapping a <select> element does not show a menu on many websites
+        https://bugs.webkit.org/show_bug.cgi?id=228340
+        rdar://77137768
+
+        Reviewed by Wenson Hsieh.
+
+        Many sites add a touchend event listener to their select elements, that
+        is responsible for focusing the element. With the introduction of
+        asynchronous touch events, the single tap gesture recognizer can be
+        deferred to the point it occurs after the UIProcess is notified that an
+        element has been focused. This is problematic, since the UIProcess
+        creates and displays inputs peripherals in response to element focus,
+        but the gesture recognizer can dismiss presented peripherals via
+        `-[WKFormPeripheral endEditing]`. Consequently, many sites immediately
+        display and dismiss the input peripheral.
+
+        To fix, only call `-[WKFormPeripheral endEditing]` if the peripheral
+        was already being displayed once the tap gesture began. This ensures we
+        do not immediately display and dismiss peripherals.
+
+        Note that with the redesigned form controls, the call to `endEditing` is
+        unnecessary, as the presented views handle their own dismissal. However,
+        the logic is still needed for the old select control (using a keyboard
+        input view), to commit value changes. The old control is displayed on
+        apps linked against iOS 13 or earlier. This behavior is tested in
+        fast/forms/ios/select-picker-change-and-focus-another-select.html.
+
+        Test: fast/forms/ios/form-control-refresh/select/focus-select-in-touchend.html
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapIdentified:]):
+        (-[WKContentView _singleTapRecognized:]):
+        * UIProcess/ios/forms/WKFormPeripheral.h:
+        * UIProcess/ios/forms/WKFormPeripheralBase.h:
+
 2021-07-27  Peng Liu  <peng.liu6@apple.com>
 
         Safari hangs when entering PiP from (element) fullscreen

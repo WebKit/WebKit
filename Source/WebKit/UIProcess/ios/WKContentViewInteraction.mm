@@ -3072,6 +3072,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     ASSERT(!_potentialTapInProgress);
     [self _resetIsDoubleTapPending];
 
+    [_inputPeripheral setSingleTapShouldEndEditing:[_inputPeripheral isEditing]];
+
     bool shouldRequestMagnificationInformation = _page->preferences().fasterClicksEnabled();
     if (shouldRequestMagnificationInformation)
         RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p)", self);
@@ -3162,7 +3164,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         _hasTapHighlightForPotentialTap = NO;
     }
 
-    [_inputPeripheral endEditing];
+    if ([_inputPeripheral singleTapShouldEndEditing])
+        [_inputPeripheral endEditing];
 
     RELEASE_LOG(ViewGestures, "Single tap recognized - commit potential tap (%p)", self);
 
