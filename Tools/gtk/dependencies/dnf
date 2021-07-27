@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK.
+    alsa-lib-devel
+    atk-devel
+    autoconf
+    automake
+    bubblewrap
+    cairo-devel
+    cmake
+    enchant-devel
+    gcc-c++
+    geoclue2-devel
+    gettext-devel
+    gobject-introspection-devel
+    gperf
+    gstreamer1-devel
+    gstreamer1-plugins-bad-free-devel
+    gstreamer1-plugins-base-devel
+    gtk3-devel
+    gtk-doc
+    hyphen-devel
+    intltool
+    json-glib-devel
+    libedit-devel
+    libevent-devel
+    libffi-devel
+    libgcrypt-devel
+    libgudev1-devel
+    libjpeg-turbo-devel
+    libkate-devel
+    libmount-devel
+    libnotify-devel
+    libpng-devel
+    libseccomp-devel
+    libsecret-devel
+    libsoup-devel
+    libsrtp-devel
+    libtasn1-devel
+    libtheora-devel
+    libv4l-devel
+    libvorbis-devel
+    libvpx-devel
+    libwayland-client-devel
+    libwayland-server-devel
+    libwebp-devel
+    libxslt-devel
+    libXt-devel
+    libXtst-devel
+    mesa-libGL-devel
+    nasm
+    ninja-build
+    openjpeg2-devel
+    openssl-devel
+    opus-devel
+    patch
+    pcre-devel
+    perl-File-Copy-Recursive
+    perl-JSON-PP
+    perl-Switch
+    perl-Time-HiRes
+    perl-version
+    pulseaudio-libs-devel
+    python-devel
+    redhat-rpm-config
+    ruby
+    sqlite-devel
+    systemd-devel
+    upower-devel
+    woff2-devel
+
+    # These are dependencies necessary for running tests.
+    cups
+    curl
+    dbus-x11
+    gdb
+    httpd
+    hunspell-en
+    hunspell-en-GB
+    liberation-fonts
+    libgpg-error-devel
+    mod_ssl
+    perl-CGI
+    psmisc
+    pulseaudio-utils
+    pygobject3-base
+    python2-psutil
+    python2-yaml
+    ruby
+    rubygem-highline
+    rubygem-json
+    weston-devel
+    xorg-x11-server-Xvfb
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    flatpak
+    pipenv
+
+    # These are dependencies necessary for building the jhbuild.
+    bison
+    cups-devel
+    docbook-utils
+    expat-devel
+    fdk-aac-devel
+    flex
+    git
+    gnutls-devel
+    gobject-introspection
+    gsettings-desktop-schemas-devel
+    gyp
+    icon-naming-utils
+    itstool
+    libcroco-devel
+    libdrm-devel
+    libepoxy-devel
+    libevdev-dev
+    libgpg-error-devel
+    libinput-devel
+    libp11-devel
+    libpciaccess-devel
+    libproxy-devel
+    libpsl-devel
+    libtiff-devel
+    libunistring-devel
+    libuuid-devel
+    libxcb-devel
+    libXfont2-devel
+    libxkbcommon-x11-devel
+    libxkbfile-devel
+    mesa-libEGL-devel
+    mtdev-devel
+    orc-devel
+    perl-XML-LibXML
+    python3-setuptools
+    ragel
+    systemd-devel
+    xorg-x11-font-utils
+    xorg-x11-proto-devel
+    xorg-x11-util-macros
+    xorg-x11-xtrans-devel
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    git-svn
+    subversion
+
+    # These are GStreamer plugins needed to play different media files.
+    gstreamer1-plugins-bad-free
+    gstreamer1-plugins-bad-free-extras
+    gstreamer1-plugins-base
+    gstreamer1-plugins-good
+    gstreamer1-plugins-good-extras
+    gstreamer1-plugins-ugly-fre
+)

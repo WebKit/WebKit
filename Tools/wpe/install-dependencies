@@ -6,6 +6,8 @@ if [ $UID -ne 0 ]; then
     exit $?
 fi
 
+declare -ga PACKAGES
+
 function printNotSupportedMessageAndExit() {
     echo
     echo "Currently this script only works for distributions supporting apt-get, dnf or pacman."
@@ -14,154 +16,36 @@ function printNotSupportedMessageAndExit() {
     exit 1
 }
 
-function checkInstaller {
-    # apt-get - Debian based distributions
-    apt-get --version &> /dev/null
-    if [ $? -eq 0 ]; then
-        installDependenciesWithApt
-        exit 0
+function guessPackageManager() {
+    local ret
+
+    if apt-get --version &>/dev/null; then
+        # apt-get - Debian based distributions
+        ret="apt"
+    elif dnf --version &>/dev/null; then
+        # dnf - Fedora
+        ret="dnf"
+    elif pacman -Ss &>/dev/null; then
+        # pacman - Arch Linux
+        # pacman --version and pacman --help both return non-0
+        ret="pacman"
+    else
+        printNotSupportedMessageAndExit
     fi
 
-    # dnf - Fedora
-    dnf --version &> /dev/null
-    if [ $? -eq 0 ]; then
-        installDependenciesWithDnf
-        exit 0
-    fi
-
-    # pacman - Arch Linux
-    # pacman --version and pacman --help both return non-0
-    pacman -Ss &> /dev/null
-    if [ $? -eq 0 ]; then
-        installDependenciesWithPacman
-        exit 0
-    fi
-
-    printNotSupportedMessageAndExit
+    echo $ret
 }
 
+function installDependencies {
+    local packageManager
 
-# If the package $1 is available, prints it. Otherwise prints $2.
-# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
-function aptIfElse {
-    if apt-cache show $1 &>/dev/null; then
-        echo $1
-    else
-        echo $2
-    fi
+    packageManager=$(guessPackageManager)
+    source "$(dirname "$0")/dependencies/$packageManager"
+    installDependenciesWith${packageManager^}
 }
 
 function installDependenciesWithApt {
-    # These are dependencies necessary for building WPE.
-    packages=" \
-        autoconf \
-        automake \
-        autopoint \
-        autotools-dev \
-        bubblewrap \
-        cmake \
-        g++ \
-        gawk \
-        gcc \
-        gperf \
-        gtk-doc-tools \
-        intltool \
-        itstool \
-        libasound2-dev \
-        libevent-dev \
-        libgbm-dev \
-        libgnutls28-dev \
-        libgstreamer1.0-dev \
-        libgstreamer-plugins-bad1.0-dev \
-        libgstreamer-plugins-base1.0-dev \
-        libicu-dev \
-        libjpeg-dev \
-        libkate-dev \
-        libfile-copy-recursive-perl \
-        libopenjp2-7-dev \
-        libpng-dev \
-        libseccomp-dev \
-        libsqlite3-dev \
-        libsystemd-dev \
-        libtasn1-6-dev \
-        libtool \
-        libwebp-dev \
-        libwoff-dev \
-        libxml2-dev \
-        libxslt1-dev \
-        ninja-build \
-        patch \
-        pkg-config \
-        ruby \
-        zlib1g-dev"
-
-    # These are dependencies necessary for running tests.
-    packages="$packages \
-        apache2 \
-        curl \
-        gdb \
-        fonts-liberation \
-        libcgi-pm-perl \
-        psmisc \
-        pulseaudio-utils \
-        python-gi \
-        python3-psutil \
-        ruby \
-        ruby-highline \
-        ruby-json"
-
-    # These are dependencies necessary for building with the Flatpak SDK.
-    packages="$packages \
-        flatpak"
-
-    # These are dependencies necessary for building the jhbuild.
-    packages="$packages \
-        git \
-        gsettings-desktop-schemas-dev \
-        gyp \
-        libegl-mesa0 \
-        libegl1-mesa-dev \
-        libexpat1-dev \
-        libfdk-aac-dev \
-        libgles2-mesa-dev \
-        libluajit-5.1-dev \
-        libmount-dev \
-        libopus-dev \
-        liborc-0.4-dev \
-        libproxy-dev \
-        libpsl-dev \
-        libpulse-dev \
-        libsrtp2-dev \
-        libtheora-dev \
-        libtool-bin \
-        libvorbis-dev \
-        libvpx-dev \
-        libxcb-xkb-dev \
-        libxkbcommon-dev \
-        libxml-libxml-perl \
-        libxrandr-dev \
-        libwayland-dev \
-        luajit \
-        python3-setuptools \
-        uuid-dev \
-        yasm"
-
-    # These are dependencies necessary for using webkit-patch
-    packages="$packages \
-        git-svn \
-        subversion"
-
-    # These are GStreamer plugins needed to play different media files.
-    packages="$packages \
-        gstreamer1.0-gl \
-        gstreamer1.0-libav \
-        gstreamer1.0-plugins-bad \
-        gstreamer1.0-plugins-base \
-        gstreamer1.0-plugins-good \
-        gstreamer1.0-plugins-ugly \
-        gstreamer1.0-pulseaudio"
-
-    apt-get install -y --no-install-recommends $packages
+    apt-get install -y --no-install-recommends ${PACKAGES[@]}
 
     # Ubuntu Bionic doesn't ship pipenv. So fallback to the pip3 install path.
     if apt-cache show pipenv &>/dev/null; then
@@ -172,119 +56,14 @@ function installDependenciesWithApt {
     fi
 }
 
+function installDependenciesWithDnf {
+    dnf install ${PACKAGES[@]}
+}
+
 function installDependenciesWithPacman {
-    # These are dependencies necessary for building WPE.
-    packages=" \
-        alsa-lib \
-        autoconf \
-        automake \
-        bubblewrap \
-        cmake \
-        file \
-        findutils \
-        gawk \
-        gcc \
-        gnutls \
-        gperf \
-        gtk-doc \
-        grep \
-        groff \
-        gstreamer \
-        gst-plugins-base-libs \
-        gzip \
-        icu \
-        intltool \
-        itstool \
-        libevent \
-        libjpeg-turbo \
-        libkate \
-        libpng \
-        libseccomp \
-        libtasn1 \
-        libtool \
-        libwebp \
-        libxml2 \
-        libxslt \
-        m4 \
-        make \
-        ninja \
-        openjpeg2 \
-        patch \
-        perl-file-copy-recursive \
-        pkg-config \
-        ruby
-        sed \
-        sqlite \
-        libsystemd \
-        texinfo \
-        which \
-        zlib \
-        woff2"
+    pacman -S --needed ${PACKAGES[@]}
 
-    # These are dependencies necessary for running tests.
-    # Note: ruby-json and ruby-highline are available in the AUR
-    packages="$packages \
-        apache \
-        curl \
-        gdb \
-        perl-cgi \
-        psmisc \
-        pulseaudio \
-        python2 \
-        python2-gobject \
-        python2-lxml \
-        python2-psutil \
-        ruby \
-        ttf-liberation"
-
-    # These are dependencies necessary for building with the Flatpak SDK.
-    packages="$packages \
-        flatpak \
-        python-pipenv"
-
-    # These are dependencies necessary for building the jhbuild.
-    packages="$packages \
-        expat \
-        git \
-        gsettings-desktop-schemas \
-        gyp \
-        libfdk-aac \
-        libproxy \
-        libpsl \
-        libpulse \
-        libsrtp \
-        libtheora \
-        libvorbis \
-        libvpx \
-        libxcb \
-        libxkbcommon \
-        luajit \
-        mesa \
-        mesa-libgl \
-        opus \
-        orc \
-        perl-xml-libxml \
-        python-setuptools \
-        util-linux \
-        v4l-utils \
-        xorg-xrandr \
-        wayland \
-        yasm"
-
-    # These are dependencies necessary for using webkit-patch
-    packages="$packages \
-        svn"
-
-    # These are GStreamer plugins needed to play different media files.
-    packages="$packages \
-        gst-plugins-bad \
-        gst-plugins-base \
-        gst-plugins-good \
-        gst-plugins-ugly"
-
-    pacman -S --needed $packages
-
-	cat <<-EOF
+    cat <<-EOF
 
 The following packages are available from AUR, and needed for running tests:
 
@@ -306,114 +85,4 @@ Alternatively, you may use a Python 2.x virtualenv while hacking on WPE:
 EOF
 }
 
-function installDependenciesWithDnf {
-    # These are dependencies necessary for building WebKitWPE.
-    packages=" \
-        autoconf \
-        automake \
-        alsa-lib-devel \
-        bubblewrap \
-        cmake \
-        gcc-c++ \
-        gnutls-devel \
-        gperf \
-        gstreamer1-devel \
-        gstreamer1-plugins-bad-free-devel \
-        gstreamer1-plugins-base-devel \
-        gtk-doc \
-        intltool \
-        itstool \
-        libevent-devel \
-        libicu-devel \
-        libjpeg-turbo-devel \
-        libkate-devel \
-        libpng-devel \
-        libseccomp-devel \
-        libtasn1-devel \
-        libtool \
-        libwebp-devel \
-        libxml2-devel \
-        libxslt-devel \
-        ninja-build \
-        openjpeg2-devel \
-        patch \
-        perl-File-Copy-Recursive \
-        perl-JSON-PP \
-        perl-Time-HiRes \
-        perl-version \
-        ruby \
-        sqlite-devel \
-        systemd-devel \
-        zlib-devel"
-
-    # These are dependencies necessary for running tests.
-    packages="$packages \
-        curl \
-        gdb \
-        httpd \
-        liberation-fonts \
-        mod_ssl \
-        perl-CGI \
-        psmisc \
-        pulseaudio-utils \
-        python2-psutil \
-        python-gobject-base \
-        ruby \
-        rubygem-highline \
-        rubygem-json"
-
-    # These are dependencies necessary for building with the Flatpak SDK.
-    packages="$packages \
-        flatpak \
-        pipenv"
-
-    # These are dependencies necessary for building the jhbuild.
-    packages="$packages \
-        expat-devel \
-        fdk-aac-devel \
-        git \
-        gsettings-desktop-schemas-devel \
-        gyp \
-        libmount-devel \
-        libproxy-devel \
-        libpsl-devel \
-        libsrtp-devel \
-        libtheora-devel \
-        libuuid-devel \
-        libv4l-devel \
-        libvorbis-devel \
-        libvpx-devel \
-        libxcb-devel \
-        libxkbcommon-devel \
-        libXrandr-devel \
-        luajit \
-        luajit-devel \
-        mesa-libGLES-devel \
-        mesa-libEGL-devel \
-        opus-devel \
-        orc-devel \
-        perl-XML-LibXML \
-        pulseaudio-libs-devel \
-        python3-setuptools \
-        wayland-devel \
-        woff2-devel \
-        yasm"
-
-    # These are dependencies necessary for using webkit-patch
-    packages="$packages
-        git-svn \
-        subversion"
-
-    # These are GStreamer plugins needed to play different media files.
-    packages="$packages \
-        gstreamer1-plugins-bad-free \
-        gstreamer1-plugins-bad-free-extras \
-        gstreamer1-plugins-base \
-        gstreamer1-plugins-good \
-        gstreamer1-plugins-good-extras \
-        gstreamer1-plugins-ugly-free"
-
-    dnf install $packages
-}
-
-checkInstaller
+installDependencies

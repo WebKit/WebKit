@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK.
+    alsa-lib
+    atk
+    autoconf
+    automake
+    bubblewrap
+    cmake
+    enchant
+    faad2
+    file
+    findutils
+    gawk
+    gcc
+    geoclue2
+    gettext
+    gnome-common
+    gobject-introspection
+    gperf
+    grep
+    groff
+    gst-plugins-base-libs
+    gstreamer
+    gtk3
+    gtk-doc
+    gzip
+    hyphen
+    intltool
+    itstool
+    libedit
+    libevent
+    libffi
+    libgcrypt
+    libjpeg-turbo
+    libkate
+    libnotify
+    libpng
+    libpulse
+    librsvg
+    libseccomp
+    libsecret
+    libsoup
+    libsrtp
+    libsystemd
+    libtasn1
+    libtheora
+    libtool
+    libvorbis
+    libvpx
+    libwebp
+    libxcomposite
+    libxslt
+    libxt
+    libxtst
+    m4
+    make
+    mesa
+    mesa-libgl
+    mpg123
+    ninja
+    openjpeg2
+    opus
+    pango
+    patch
+    perl-file-copy-recursive
+    pkg-config
+    ruby
+    sed
+    sqlite
+    texinfo
+    upower
+    util-linux
+    wayland
+    which
+    woff2
+    xorg-font-utils
+
+    # These are dependencies necessary for running tests.
+    # Note: ruby-json and ruby-highline are available in the AUR.
+    apache
+    cups
+    curl
+    gdb
+    hunspell
+    hunspell-en
+    hunspell-en_GB
+    libgpg-error
+    psmisc
+    pulseaudio
+    python2-psutil
+    python2-yaml
+    python-gobject
+    ruby
+    ttf-liberation
+    weston
+    xorg-server-xvfb
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    flatpak
+    python-pipenv
+
+    # These are dependencies necessary for building the jhbuild.
+    # Note: Could not find libegl-mesa.
+    bigreqsproto
+    bison
+    compositeproto
+    expat
+    flex
+    git
+    glproto
+    gnutls
+    gobject-introspection
+    gsettings-desktop-schemas
+    gyp
+    icon-naming-utils
+    inputproto
+    libcroco
+    libcups
+    libdrm
+    libepoxy
+    libevdev
+    libfdk-aac
+    libgpg-error
+    libinput
+    libpciaccess
+    libproxy
+    libpsl
+    libtiff
+    libunistring-dev
+    libxcb
+    libxfixes
+    libxfont2
+    libxkbcommon-x11
+    libxkbfile
+    mtdev
+    orc
+    p11-kit
+    perl-xml-libxm
+    python2
+    python2-lxml
+    python-setuptools
+    ragel
+    randrproto
+    resourceproto
+    scrnsaverproto
+    videoproto
+    xcmiscproto
+    xf86driproto
+    xorg-font-utils
+    xorg-util-macros
+    xtrans
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    svn
+
+    # These are GStreamer plugins needed to play different media files.
+    gst-plugins-bad
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-ugly
+)

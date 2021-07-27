@@ -1,3 +1,33 @@
+2021-07-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Organize list of package dependencies into separated files
+        https://bugs.webkit.org/show_bug.cgi?id=228276
+
+        Reviewed by Adrian Perez de Castro.
+
+        When deploying a new bot from scratch for Ubuntu LTS, which builds
+        using system libraries, I realized the list of package dependencies
+        for WPE is not exhaustive.
+
+        This patch refactorizes the package dependencies list putting each
+        group of dependencies on its own file depending on platform (apt, dnf,
+        pacman and brew).
+
+        On a follow-up step I plan to put in common the WebKitGTK and WPE
+        dependencies plus add the missing WPE package dependencies. Also I'll
+        remove the duplicated packages that are currently happening in the
+        dependencies list of several platforms.
+
+        * gtk/dependencies/apt: Added.
+        * gtk/dependencies/brew: Added.
+        * gtk/dependencies/dnf: Added.
+        * gtk/dependencies/pacman: Added.
+        * gtk/install-dependencies:
+        * wpe/dependencies/apt: Added.
+        * wpe/dependencies/dnf: Added.
+        * wpe/dependencies/pacman: Added.
+        * wpe/install-dependencies:
+
 2021-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS Monterey] Pressing Fn+E should present the emoji picker when editing

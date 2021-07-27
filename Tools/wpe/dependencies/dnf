@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitWPE.
+    alsa-lib-devel
+    autoconf
+    automake
+    bubblewrap
+    cmake
+    gcc-c++
+    gnutls-devel
+    gperf
+    gstreamer1-devel
+    gstreamer1-plugins-bad-free-devel
+    gstreamer1-plugins-base-devel
+    gtk-doc
+    intltool
+    itstool
+    libevent-devel
+    libicu-devel
+    libjpeg-turbo-devel
+    libkate-devel
+    libpng-devel
+    libseccomp-devel
+    libtasn1-devel
+    libtool
+    libwebp-devel
+    libxml2-devel
+    libxslt-devel
+    ninja-build
+    openjpeg2-devel
+    patch
+    perl-File-Copy-Recursive
+    perl-JSON-PP
+    perl-Time-HiRes
+    perl-version
+    ruby
+    sqlite-devel
+    systemd-devel
+    zlib-devel
+
+    # These are dependencies necessary for running tests.
+    curl
+    gdb
+    httpd
+    liberation-fonts
+    mod_ssl
+    perl-CGI
+    psmisc
+    pulseaudio-utils
+    python2-psutil
+    python-gobject-base
+    ruby
+    rubygem-highline
+    rubygem-json
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    flatpak
+    pipenv
+
+    # These are dependencies necessary for building the jhbuild.
+    expat-devel
+    fdk-aac-devel
+    git
+    gsettings-desktop-schemas-devel
+    gyp
+    libmount-devel
+    libproxy-devel
+    libpsl-devel
+    libsrtp-devel
+    libtheora-devel
+    libuuid-devel
+    libv4l-devel
+    libvorbis-devel
+    libvpx-devel
+    libxcb-devel
+    libxkbcommon-devel
+    libXrandr-devel
+    luajit
+    luajit-devel
+    mesa-libEGL-devel
+    mesa-libGLES-devel
+    opus-devel
+    orc-devel
+    perl-XML-LibXML
+    pulseaudio-libs-devel
+    python3-setuptools
+    wayland-devel
+    woff2-devel
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    git-svn
+    subversion
+
+    # These are GStreamer plugins needed to play different media files.
+    gstreamer1-plugins-bad-free
+    gstreamer1-plugins-bad-free-extras
+    gstreamer1-plugins-base
+    gstreamer1-plugins-good
+    gstreamer1-plugins-good-extras
+    gstreamer1-plugins-ugly-free
+)
