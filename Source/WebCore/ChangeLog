@@ -1,3 +1,17 @@
+2021-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        document.referrer value is missing trailing slash
+        https://bugs.webkit.org/show_bug.cgi?id=215080
+
+        Reviewed by John Wilander.
+
+        This matches the behavior of Chrome and Firefox.
+        The solution is similar to that of bug 227795.
+        Covered by a few layout tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::referrer):
+
 2021-07-26  Said Abou-Hallawa  <said@apple.com>
 
         Regulate the WebPage RenderingUpdates from the WebProcess to the GPUProcess
