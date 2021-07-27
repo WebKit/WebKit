@@ -1,3 +1,22 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: [iOS] ASSERTION FAILED: !m_useCount in WebKit::SandboxExtension::~SandboxExtension()
+        https://bugs.webkit.org/show_bug.cgi?id=228171
+        <rdar://problem/80926509>
+
+        Reviewed by Eric Carlson.
+
+        SandboxExtension expects to be revoked before it is destroyed, something that is done by
+        RemoteMediaPlayerProxy::invalidate(). However, invalidate() won't be called if the 
+        RemoteMediaPlayerManagerProxy is destroyed before all its proxies are invalidated.
+
+        Ensure every RemoteMediaPlayerProxy contained by the RemoteMediaPlayerManagerProxy is
+        invalidated in RemoteMediaPlayerManagerProxy's destructor.
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+
 2021-07-26  Alex Christensen  <achristensen@webkit.org>
 
         WKUserContentController.removeAllScriptMessageHandlers() doesn't release the message handlers
