@@ -1589,6 +1589,7 @@ inspector/canvas/recording-2d-memoryLimit.html [ Pass Crash ]
 inspector/canvas/recording-2d-full.html [ Pass Crash ]
 inspector/canvas/recording-bitmaprenderer-full.html [ Pass Failure Timeout ]
 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure Timeout ]
+inspector/canvas/recording-bitmaprenderer-memoryLimit.html [ Skip ]
 
 webkit.org/b/228082 fast/canvas/getPutImageDataPairTest.html [ Pass Timeout ]
 
