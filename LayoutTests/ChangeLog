@@ -1,3 +1,12 @@
+2021-07-27  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Release ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228462
+
+        RUnreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-07-27  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur Release arm64 ] fast/speechsynthesis/speech-synthesis-speak-empty-string.html is a flaky failure.
