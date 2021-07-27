@@ -30,9 +30,7 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
 #include "File.h"
-#include "FormState.h"
 #include "TextEncoding.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
@@ -40,6 +38,7 @@
 
 namespace WebCore {
 
+template<typename> class ExceptionOr;
 class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData> {
@@ -65,7 +64,7 @@ public:
     bool has(const String& name);
     void set(const String& name, const String& value);
     void set(const String& name, Blob&, const String& filename = { });
-    Ref<DOMFormData> clone();
+    Ref<DOMFormData> clone() const;
 
     class Iterator {
     public:

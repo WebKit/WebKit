@@ -42,7 +42,7 @@ public:
     static Ref<FormDataEvent> create(const AtomString&, Init&&);
     static Ref<FormDataEvent> create(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
 
-    DOMFormData& formData() const { return m_formData.get(); }
+    const DOMFormData& formData() const { return m_formData.get(); }
     
 private:
     FormDataEvent(const AtomString&, Init&&);

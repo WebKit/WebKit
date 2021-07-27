@@ -1,3 +1,18 @@
+2021-07-26  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        This is responding to feedback on r280310.
+        https://bugs.webkit.org/show_bug.cgi?id=227718
+
+        Reviewed by Alex Christensen.
+
+        * dom/FormDataEvent.h:
+        (WebCore::FormDataEvent::formData const):
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::create):
+        (WebCore::DOMFormData::clone const):
+        (WebCore::DOMFormData::clone): Deleted.
+        * html/DOMFormData.h:
+
 2021-07-26  Jean-Yves Avenard  <jya@apple.com>
 
         Video pauses after scrubbing with Touch Bar

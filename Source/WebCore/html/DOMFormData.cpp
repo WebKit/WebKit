@@ -43,11 +43,11 @@ DOMFormData::DOMFormData(const TextEncoding& encoding)
 
 ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
 {
-    auto domFormData = adoptRef(*new DOMFormData());
+    auto formData = adoptRef(*new DOMFormData);
     if (!form)
-        return domFormData;
+        return WTFMove(formData);
     
-    auto result = form->constructEntryList(WTFMove(domFormData), nullptr, HTMLFormElement::IsMultipartForm::Yes);
+    auto result = form->constructEntryList(WTFMove(formData), nullptr, HTMLFormElement::IsMultipartForm::Yes);
     
     if (!result)
         return Exception { InvalidStateError, "Already constructing Form entry list."_s };
@@ -60,7 +60,7 @@ Ref<DOMFormData> DOMFormData::create(const TextEncoding& encoding)
     return adoptRef(*new DOMFormData(encoding));
 }
 
-Ref<DOMFormData> DOMFormData::clone()
+Ref<DOMFormData> DOMFormData::clone() const
 {
     auto newFormData = adoptRef(*new DOMFormData(this->encoding()));
     newFormData->m_items = m_items;
