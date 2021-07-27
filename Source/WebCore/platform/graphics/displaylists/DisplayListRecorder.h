@@ -67,9 +67,9 @@ public:
     public:
         virtual ~Delegate() { }
         virtual bool canAppendItemOfType(ItemType) { return false; }
-        virtual void cacheNativeImage(NativeImage&) { }
+        virtual void recordNativeImageUse(NativeImage&) { }
         virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
-        virtual void cacheFont(Font&) { }
+        virtual void recordFontUse(Font&) { }
         virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
     };
 
@@ -202,7 +202,7 @@ private:
     template<typename T>
     static constexpr bool itemNeedsState();
 
-    void cacheNativeImage(NativeImage&);
+    void recordNativeImageUse(NativeImage&);
 
     void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextStateChange&, GraphicsContextState::StateChangeFlags);

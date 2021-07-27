@@ -50,8 +50,8 @@ public:
     WebCore::ImageBuffer* cachedImageBuffer(WebCore::RenderingResourceIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
 
-    void cacheNativeImage(WebCore::NativeImage&);
-    void cacheFont(WebCore::Font&);
+    void recordNativeImageUse(WebCore::NativeImage&);
+    void recordFontUse(WebCore::Font&);
 
     void finalizeRenderingUpdate();
 

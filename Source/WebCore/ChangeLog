@@ -1,5 +1,35 @@
 2021-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [GPU Process] Code cleanup after r280356
+        https://bugs.webkit.org/show_bug.cgi?id=228495
+
+        Reviewed by Wenson Hsieh.
+
+        3 things:
+        1. Rename cacheNativeImage()/cacheFont() to recordNativeImageUse()/recordFontUse() since it does more
+               than caching now
+        2. Mark overridden functions as final in RemoteImageBufferProxy because no class inherits from it
+        3. Remove unnecessary WebCore:: where it isn't necessary
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::putPixelBuffer):
+        (WebCore::DisplayList::Recorder::recordNativeImageUse):
+        (WebCore::DisplayList::Recorder::appendStateChangeItem):
+        (WebCore::DisplayList::Recorder::appendDrawGlyphsItemWithCachedFont):
+        (WebCore::DisplayList::Recorder::drawImageBuffer):
+        (WebCore::DisplayList::Recorder::drawNativeImage):
+        (WebCore::DisplayList::Recorder::drawPattern):
+        (WebCore::DisplayList::Recorder::cacheNativeImage): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::Delegate::recordNativeImageUse):
+        (WebCore::DisplayList::Recorder::Delegate::recordFontUse):
+        (WebCore::DisplayList::Recorder::Delegate::cacheNativeImage): Deleted.
+        (WebCore::DisplayList::Recorder::Delegate::cacheFont): Deleted.
+
+2021-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [GPU Process] Start tracking resource uses for NativeImages and Fonts
         https://bugs.webkit.org/show_bug.cgi?id=228224
 

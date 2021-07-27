@@ -78,7 +78,7 @@ inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(Nativ
     return bitmap;
 }
 
-void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
+void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
     auto iterator = m_nativeImages.find(image.renderingResourceIdentifier());
     if (iterator != m_nativeImages.end()) {
@@ -105,7 +105,7 @@ void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
     m_remoteRenderingBackendProxy.cacheNativeImage(handle, image.renderingResourceIdentifier());
 }
 
-void RemoteResourceCacheProxy::cacheFont(Font& font)
+void RemoteResourceCacheProxy::recordFontUse(Font& font)
 {
     auto result = m_fonts.ensure(font.renderingResourceIdentifier(), [&] {
         return FontState { m_remoteRenderingBackendProxy.renderingUpdateID(), 1 };
