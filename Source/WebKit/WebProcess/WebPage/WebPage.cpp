@@ -4172,12 +4172,26 @@ void WebPage::didUpdateRendering()
     send(Messages::WebPageProxy::DidUpdateRenderingAfterCommittingLoad());
 }
 
+bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const
+{
+#if ENABLE(GPU_PROCESS)
+    static constexpr unsigned maxRescheduledRenderingUpdateCount = FullSpeedFramesPerSecond;
+    if (rescheduledRenderingUpdateCount >= maxRescheduledRenderingUpdateCount)
+        return true;
+
+    static constexpr unsigned maxDelayedRenderingUpdateCount = 2;
+    if (m_remoteRenderingBackendProxy && m_remoteRenderingBackendProxy->delayedRenderingUpdateCount() > maxDelayedRenderingUpdateCount)
+        return false;
+#endif
+    return true;
+}
+
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
     m_page->finalizeRenderingUpdate(flags);
 #if ENABLE(GPU_PROCESS)
     if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().didFinalizeRenderingUpdate();
+        m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
 #endif
 }
 

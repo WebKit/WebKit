@@ -1,3 +1,22 @@
+2021-07-26  Said Abou-Hallawa  <said@apple.com>
+
+        Regulate the WebPage RenderingUpdates from the WebProcess to the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=227791
+        <rdar://78430639>
+
+        Reviewed by Simon Fraser.
+
+        Make ChromeClient decide whether a RenderingUpdate can be triggered or
+        should be rescheduled. Keep track of how many times RenderingUpdate was
+        rescheduled to ensure RenderingUpdate will be triggered anyway after a
+        certain number of reschedules.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::canTriggerRenderingUpdate const):
+        * page/RenderingUpdateScheduler.cpp:
+        (WebCore::RenderingUpdateScheduler::displayRefreshFired):
+        * page/RenderingUpdateScheduler.h:
+
 2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative revert of r280193

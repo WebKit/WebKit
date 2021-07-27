@@ -977,6 +977,11 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     notImplemented();
 }
 
+bool WebChromeClient::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const
+{
+    return m_page.shouldTriggerRenderingUpdate(rescheduledRenderingUpdateCount);
+}
+
 void WebChromeClient::triggerRenderingUpdate()
 {
     if (m_page.drawingArea())

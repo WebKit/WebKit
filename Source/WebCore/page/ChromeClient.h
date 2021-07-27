@@ -364,6 +364,7 @@ public:
     // the changes appear on the screen in synchrony with updates to GraphicsLayers.
     virtual void setNeedsOneShotDrawingSynchronization() = 0;
 
+    virtual bool shouldTriggerRenderingUpdate(unsigned) const { return true; }
     // Makes a rendering update happen soon, typically in the current runloop.
     virtual void triggerRenderingUpdate() = 0;
     // Schedule a rendering update that coordinates with display refresh. Returns true if scheduled. (This is only used by SVGImageChromeClient.)

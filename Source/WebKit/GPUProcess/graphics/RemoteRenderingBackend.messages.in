@@ -37,6 +37,7 @@ messages -> RemoteRenderingBackend {
     DeleteAllFonts()
     DidCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier identifier, WebKit::SharedMemory::IPCHandle handle, WebCore::RenderingResourceIdentifier destinationBufferIdentifier)
     ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
+    FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 }
 
 #endif // ENABLE(GPU_PROCESS)

@@ -1,3 +1,109 @@
+2021-07-26  Said Abou-Hallawa  <said@apple.com>
+
+        Regulate the WebPage RenderingUpdates from the WebProcess to the GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=227791
+        <rdar://78430639>
+
+        Reviewed by Simon Fraser.
+
+        This is the workflow to regulate the WebPage RenderingUpdates:
+
+        -- WebPage::finalizeRenderingUpdate() calls RemoteRenderingBackendProxy::
+           finalizeRenderingUpdate().
+
+        -- RemoteRenderingBackendProxy::finalizeRenderingUpdate() sends its
+           renderingUpdateID to GPUPProcess and asks it to process all the
+           pending DisplayList items.
+
+        -- RemoteRenderingBackend::finalizeRenderingUpdate) processes all the
+           pending items and sends the received renderingUpdateID back to the
+           WebProcess.
+
+        -- RemoteRenderingBackendProxy::didFinalizeRenderingUpdate() stores the 
+           received didRenderingUpdateID.
+
+        -- RemoteRenderingBackendProxy::delayedRenderingUpdateCount() returns
+           'renderingUpdateID - didRenderingUpdateID' which is the number of
+           un-processed finalizeRenderingUpdate by GPUP.
+
+        -- WebPage::canTriggerRenderingUpdate() uses delayedRenderingUpdateCount()
+           to decides whether the current RenderingUpdate can be triggered or
+           should be rescheduled.
+
+        -- RenderingUpdateScheduler::displayRefreshFired() calls 
+           WebPage::canTriggerRenderingUpdate() through the page chrome client.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::submit):
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/MonotonicObjectIdentifier.h: Copied from Source/WebKit/Shared/TransactionID.h.
+        (WebKit::MonotonicObjectIdentifier::MonotonicObjectIdentifier):
+        (WebKit::MonotonicObjectIdentifier::isHashTableDeletedValue const):
+        (WebKit::MonotonicObjectIdentifier::encode const):
+        (WebKit::MonotonicObjectIdentifier::decode):
+        (WebKit::MonotonicObjectIdentifier::operator== const):
+        (WebKit::MonotonicObjectIdentifier::operator> const):
+        (WebKit::MonotonicObjectIdentifier::operator>= const):
+        (WebKit::MonotonicObjectIdentifier::operator< const):
+        (WebKit::MonotonicObjectIdentifier::operator<= const):
+        (WebKit::MonotonicObjectIdentifier::operator!= const):
+        (WebKit::MonotonicObjectIdentifier::increment):
+        (WebKit::MonotonicObjectIdentifier::next const):
+        (WebKit::MonotonicObjectIdentifier::toUInt64 const):
+        (WebKit::MonotonicObjectIdentifier::operator bool const):
+        (WebKit::MonotonicObjectIdentifier::loggingString const):
+        (WebKit::MonotonicObjectIdentifier::hashTableDeletedValue):
+        (WebKit::MonotonicObjectIdentifier::isValidIdentifier):
+        (WebKit::operator<<):
+        * Shared/RenderingUpdateID.h: Added.
+        * Shared/TransactionID.h:
+        (WebKit::MonotonicObjectIdentifier::MonotonicObjectIdentifier): Deleted.
+        (WebKit::MonotonicObjectIdentifier::isHashTableDeletedValue const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::encode const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::decode): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator== const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator> const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator>= const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator< const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator<= const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator!= const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::increment): Deleted.
+        (WebKit::MonotonicObjectIdentifier::next const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::toUInt64 const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::operator bool const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::loggingString const): Deleted.
+        (WebKit::MonotonicObjectIdentifier::hashTableDeletedValue): Deleted.
+        (WebKit::MonotonicObjectIdentifier::isValidIdentifier): Deleted.
+        (WebKit::operator<<): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRenderingBackendProxy::finalizeRenderingUpdate):
+        (WebKit::RemoteRenderingBackendProxy::didFinalizeRenderingUpdate):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        (WebKit::RemoteRenderingBackendProxy::renderingUpdateID const):
+        (WebKit::RemoteRenderingBackendProxy::delayedRenderingUpdateCount const):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::cacheFont):
+        (WebKit::RemoteResourceCacheProxy::prepareForNextRenderingUpdate):
+        (WebKit::RemoteResourceCacheProxy::clearFontMap):
+        (WebKit::RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts):
+        (WebKit::RemoteResourceCacheProxy::finalizeRenderingUpdate):
+        (WebKit::RemoteResourceCacheProxy::didFinalizeRenderingUpdate): Deleted.
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::canTriggerRenderingUpdate const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canTriggerRenderingUpdate const):
+        (WebKit::WebPage::finalizeRenderingUpdate):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS Monterey] Pressing Fn+E should present the emoji picker when editing

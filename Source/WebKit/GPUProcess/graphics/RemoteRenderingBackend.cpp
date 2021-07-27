@@ -519,6 +519,13 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
     updateRenderingResourceRequest();
 }
 
+void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
+{
+    if (m_pendingWakeupInfo && m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->arguments.destinationImageBufferIdentifier))
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+    send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
+}
+
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
 {
     ASSERT(!RunLoop::isMain());

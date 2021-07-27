@@ -399,6 +399,7 @@ public:
 
     void layoutIfNeeded();
     void updateRendering();
+    bool shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
 
     void releaseMemory(WTF::Critical);

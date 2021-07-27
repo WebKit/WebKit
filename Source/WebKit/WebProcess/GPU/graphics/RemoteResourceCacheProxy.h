@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RenderingUpdateID.h"
 #include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
@@ -52,7 +53,7 @@ public:
     void cacheNativeImage(WebCore::NativeImage&);
 
     void cacheFont(WebCore::Font&);
-    void didFinalizeRenderingUpdate();
+    void finalizeRenderingUpdate();
 
     void remoteResourceCacheWasDestroyed();
     void releaseMemory();
@@ -69,9 +70,8 @@ private:
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
 
-    HashMap<WebCore::RenderingResourceIdentifier, uint64_t> m_fontIdentifierToLastRenderingUpdateVersionMap;
+    HashMap<WebCore::RenderingResourceIdentifier, RenderingUpdateID> m_fontIdentifierToLastRenderingUpdateIDMap;
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
-    uint64_t m_currentRenderingUpdateVersion { 1 };
 
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;
 };
