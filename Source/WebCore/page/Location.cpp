@@ -275,9 +275,6 @@ ExceptionOr<void> Location::setLocation(DOMWindow& incumbentWindow, DOMWindow& f
     if (!firstFrame || !firstFrame->document())
         return { };
 
-    // FIXME: Using firstWindow to complete the URL is wrong. Per the specification, we should be using the entry window:
-    // https://html.spec.whatwg.org/#entry-settings-object
-    // Blink seems to be using v8's GetEnteredOrMicrotaskContext().
     URL completedURL = firstFrame->document()->completeURL(urlString);
 
     // FIXME: The specification says to throw a SyntaxError if the URL is not valid.

@@ -1,3 +1,30 @@
+2021-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Location.href setter uses wrong window to resolve relative URLs
+        https://bugs.webkit.org/show_bug.cgi?id=228287
+
+        Reviewed by Darin Adler.
+
+        Location::setLocation() is using "firstWindow" to resolve any input relative URL.
+        We rely on JSC::VM::deprecatedVMEntryGlobalObject() to get the first/entry window.
+        However, the test I wrote shows that we were using the wrong window as "first window"
+        in some cases (since this test would pass in other browsers but not in WebKit).
+
+        It turns out that JSEventListener::handleEvent() had a VMEntryScope internally that
+        would impact the global object being returned by JSC::VM::deprecatedVMEntryGlobalObject().
+        We were incorrectly using the scriptExecutionContext passed as parameter when constructing
+        the VMEntryScope instead of using the global object of the function we're about to call.
+        This bug addresses this.
+
+        Credits to Geoff Garen for identifying the issue in JSEventListener::handleEvent().
+
+        Test: http/tests/dom/window-location-set-href-relative-url.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * page/Location.cpp:
+        (WebCore::Location::setLocation):
+
 2021-07-26  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         This is responding to feedback on r280310.
