@@ -1,3 +1,15 @@
+2021-07-27  Peng Liu  <peng.liu6@apple.com>
+
+        The bundle path of downlevel Safari is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=228339
+
+        Reviewed by Jer Noble.
+
+        Fix the bundle path. The correct path is "/Library/Apple/System/Library/StagedFrameworks/Safari".
+
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-07-27  Saagar Jha  <saagar@saagarjha.com>
 
         Fix WebProcess sandbox profile when ENABLE_SANDBOX_MESSAGE_FILTER is disabled
