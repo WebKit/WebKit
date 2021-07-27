@@ -1,3 +1,13 @@
+2021-07-27  Kevin Neal  <kevin_neal@apple.com>
+
+        [results.webkit.org] Tooltips should remain visible when hovering over commit representations
+        https://bugs.webkit.org/show_bug.cgi?id=228330
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale):
+
 2021-07-27  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Organize list of package dependencies into separated files
