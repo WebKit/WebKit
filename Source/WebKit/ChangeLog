@@ -1,3 +1,22 @@
+2021-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Start tracking resource uses for NativeImages and Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=228224
+
+        Reviewed by Said Abou-Hallawa.
+
+        This patch extends the existing resource tracking HashMaps used in RemoteResourceCacheProxy to continue
+        to record what they were recording before, but also include this new resource use count information.
+
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::~RemoteResourceCacheProxy):
+        (WebKit::RemoteResourceCacheProxy::cacheNativeImage):
+        (WebKit::RemoteResourceCacheProxy::cacheFont):
+        (WebKit::RemoteResourceCacheProxy::releaseNativeImage):
+        (WebKit::RemoteResourceCacheProxy::clearFontMap):
+        (WebKit::RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
 2021-07-27  Peng Liu  <peng.liu6@apple.com>
 
         The bundle path of downlevel Safari is wrong

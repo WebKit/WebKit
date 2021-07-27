@@ -51,8 +51,8 @@ public:
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
 
     void cacheNativeImage(WebCore::NativeImage&);
-
     void cacheFont(WebCore::Font&);
+
     void finalizeRenderingUpdate();
 
     void remoteResourceCacheWasDestroyed();
@@ -60,7 +60,18 @@ public:
 
 private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
-    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
+
+    struct NativeImageState {
+        WeakPtr<WebCore::NativeImage> image;
+        uint64_t useCount;
+    };
+    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, NativeImageState>;
+
+    struct FontState {
+        RenderingUpdateID lastRenderingUpdateVersionUsedWithin;
+        uint64_t useCount;
+    };
+    using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, FontState>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
     void finalizeRenderingUpdateForFonts();
@@ -69,8 +80,8 @@ private:
 
     ImageBufferHashMap m_imageBuffers;
     NativeImageHashMap m_nativeImages;
+    FontHashMap m_fonts;
 
-    HashMap<WebCore::RenderingResourceIdentifier, RenderingUpdateID> m_fontIdentifierToLastRenderingUpdateIDMap;
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };
 
     RemoteRenderingBackendProxy& m_remoteRenderingBackendProxy;

@@ -41,8 +41,8 @@ RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& 
 
 RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 {
-    for (auto& image : m_nativeImages.values())
-        image->removeObserver(*this);
+    for (auto& nativeImageState : m_nativeImages.values())
+        nativeImageState.image->removeObserver(*this);
 }
 
 void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
@@ -80,8 +80,11 @@ inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(Nativ
 
 void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
 {
-    if (m_nativeImages.contains(image.renderingResourceIdentifier()))
+    auto iterator = m_nativeImages.find(image.renderingResourceIdentifier());
+    if (iterator != m_nativeImages.end()) {
+        ++iterator->value.useCount;
         return;
+    }
 
     auto bitmap = createShareableBitmapFromNativeImage(image);
     if (!bitmap)
@@ -92,7 +95,7 @@ void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
     if (handle.isNull())
         return;
 
-    m_nativeImages.add(image.renderingResourceIdentifier(), makeWeakPtr(image));
+    m_nativeImages.add(image.renderingResourceIdentifier(), NativeImageState { makeWeakPtr(image), 1 });
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()
     // gets called when NativeImage is being deleleted.
@@ -104,8 +107,8 @@ void RemoteResourceCacheProxy::cacheNativeImage(NativeImage& image)
 
 void RemoteResourceCacheProxy::cacheFont(Font& font)
 {
-    auto result = m_fontIdentifierToLastRenderingUpdateIDMap.ensure(font.renderingResourceIdentifier(), [&] {
-        return m_remoteRenderingBackendProxy.renderingUpdateID();
+    auto result = m_fonts.ensure(font.renderingResourceIdentifier(), [&] {
+        return FontState { m_remoteRenderingBackendProxy.renderingUpdateID(), 1 };
     });
 
     if (result.isNewEntry) {
@@ -114,19 +117,25 @@ void RemoteResourceCacheProxy::cacheFont(Font& font)
         return;
     }
 
-    auto& lastVersion = result.iterator->value;
-    if (lastVersion != m_remoteRenderingBackendProxy.renderingUpdateID()) {
-        lastVersion = m_remoteRenderingBackendProxy.renderingUpdateID();
+    auto& currentState = result.iterator->value;
+    if (currentState.lastRenderingUpdateVersionUsedWithin != m_remoteRenderingBackendProxy.renderingUpdateID()) {
+        currentState.lastRenderingUpdateVersionUsedWithin = m_remoteRenderingBackendProxy.renderingUpdateID();
+        ++currentState.useCount;
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
     }
 }
 
 void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    if (!m_nativeImages.remove(renderingResourceIdentifier))
-        return;
+    auto iterator = m_nativeImages.find(renderingResourceIdentifier);
+    RELEASE_ASSERT(iterator != m_nativeImages.end());
 
-    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier, 0); // FIXME: Pass the real use count here.
+    auto useCount = iterator->value.useCount;
+
+    auto success = m_nativeImages.remove(iterator);
+    ASSERT_UNUSED(success, success);
+
+    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier, useCount);
 }
 
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
@@ -136,9 +145,9 @@ void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
 
 void RemoteResourceCacheProxy::clearFontMap()
 {
-    for (auto& item : m_fontIdentifierToLastRenderingUpdateIDMap)
-        m_remoteRenderingBackendProxy.releaseRemoteResource(item.key, 0); // FIXME: Pass the real use count here.
-    m_fontIdentifierToLastRenderingUpdateIDMap.clear();
+    for (auto& fontState : m_fonts)
+        m_remoteRenderingBackendProxy.releaseRemoteResource(fontState.key, fontState.value.useCount);
+    m_fonts.clear();
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
 }
 
@@ -146,21 +155,21 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
 {
     static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 4;
 
-    unsigned totalFontCount = m_fontIdentifierToLastRenderingUpdateIDMap.size();
+    unsigned totalFontCount = m_fonts.size();
     RELEASE_ASSERT(m_numberOfFontsUsedInCurrentRenderingUpdate <= totalFontCount);
     if (totalFontCount == m_numberOfFontsUsedInCurrentRenderingUpdate)
         return;
 
     HashSet<WebCore::RenderingResourceIdentifier> toRemove;
     auto renderingUpdateID = m_remoteRenderingBackendProxy.renderingUpdateID();
-    for (auto& item : m_fontIdentifierToLastRenderingUpdateIDMap) {
-        if (renderingUpdateID - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
+    for (auto& item : m_fonts) {
+        if (renderingUpdateID - item.value.lastRenderingUpdateVersionUsedWithin >= minimumRenderingUpdateCountToKeepFontAlive) {
             toRemove.add(item.key);
-            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key, 0); // FIXME: Pass the real use count here.
+            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key, item.value.useCount);
         }
     }
 
-    m_fontIdentifierToLastRenderingUpdateIDMap.removeIf([&](const auto& bucket) {
+    m_fonts.removeIf([&](const auto& bucket) {
         return toRemove.contains(bucket.key);
     });
 }
