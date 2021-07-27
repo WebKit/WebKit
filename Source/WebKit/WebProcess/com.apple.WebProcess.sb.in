@@ -239,37 +239,31 @@
 )
 
 (define (AppleAVDUserClientMessageFilter)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (apply-message-filter
-            (allow (with telemetry) (with message "AppleAVDUserClient")
-                iokit-async-external-method
-                iokit-external-method
-                iokit-external-trap
-            )
+    (apply-message-filter
+        (allow (with telemetry) (with message "AppleAVDUserClient")
+            iokit-async-external-method
+            iokit-external-method
+            iokit-external-trap
         )
     )
 )
 
 (define (IOSurfaceAcceleratorClientMessageFilter)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (apply-message-filter
-            (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
-                iokit-async-external-method
-                iokit-external-method
-                iokit-external-trap
-            )
+    (apply-message-filter
+        (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
+            iokit-async-external-method
+            iokit-external-method
+            iokit-external-trap
         )
     )
 )
 
 (define (IOMobileFramebufferUserClientMessageFilter)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (apply-message-filter
-            (allow (with telemetry-backtrace) (with message "IOMobileFramebufferUserClient")
-                iokit-async-external-method
-                iokit-external-method
-                iokit-external-trap
-            )
+    (apply-message-filter
+        (allow (with telemetry-backtrace) (with message "IOMobileFramebufferUserClient")
+            iokit-async-external-method
+            iokit-external-method
+            iokit-external-trap
         )
     )
 )
@@ -1265,38 +1259,71 @@
 
 ;; <rdar://problem/60088861>
 (when (equal? (param "CPU") "arm64")
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class
-                "AppleAVDUserClient"
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (AppleAVDUserClientMessageFilter)
+#endif
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (AppleAVDUserClientMessageFilter)
-#endif
     )
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class
-                "IOMobileFramebufferUserClient"
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOMobileFramebufferUserClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (IOMobileFramebufferUserClientMessageFilter)
+#endif
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOMobileFramebufferUserClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (IOMobileFramebufferUserClientMessageFilter)
-#endif
     )
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class
-                "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (IOSurfaceAcceleratorClientMessageFilter)
+#endif
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (IOSurfaceAcceleratorClientMessageFilter)
-#endif
     )
 )
 
@@ -2193,27 +2220,49 @@
 )
 
 (when (equal? (param "CPU") "arm64")
-    (allow iokit-open (with report)
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-user-client-class
-                "AppleAVDUserClient"
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (AppleAVDUserClientMessageFilter)
+#endif
+        )
+        ; else
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (AppleAVDUserClientMessageFilter)
-#endif
     )
-    (allow iokit-open (with report)
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-user-client-class
-                "IOSurfaceAcceleratorClient"
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (IOSurfaceAcceleratorClientMessageFilter)
+#endif
+        )
+        ; else
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (IOSurfaceAcceleratorClientMessageFilter)
-#endif
     )
 )
 
