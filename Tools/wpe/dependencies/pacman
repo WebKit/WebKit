@@ -1,106 +1,37 @@
 #!/usr/bin/env bash
 
-PACKAGES=(
+source "$(dirname "$0")/../../glib/dependencies/pacman"
+
+PACKAGES+=(
     # These are dependencies necessary for building WPE.
-    alsa-lib
-    autoconf
-    automake
-    bubblewrap
-    cmake
-    file
-    findutils
-    gawk
-    gcc
     gnutls
-    gperf
-    grep
-    groff
-    gst-plugins-base-libs
-    gstreamer
-    gtk-doc
-    gzip
     icu
-    intltool
-    itstool
-    libevent
-    libjpeg-turbo
-    libkate
-    libpng
-    libseccomp
-    libsystemd
-    libtasn1
-    libtool
-    libwebp
     libxml2
-    libxslt
-    m4
-    make
-    ninja
-    openjpeg2
-    patch
-    perl-file-copy-recursive
-    pkg-config
     ru
-    sed
-    sqlite
-    texinfo
-    which
-    woff2
     zlib
 
     # These are dependencies necessary for running tests.
     # Note: ruby-json and ruby-highline are available in the AUR.
-    apache
-    curl
-    gdb
     perl-cgi
-    psmisc
-    pulseaudio
     python2
     python2-gobject
     python2-lxml
-    python2-psutil
     ruby
-    ttf-liberation
-
-    # These are dependencies necessary for building with the Flatpak SDK.
-    flatpak
-    python-pipenv
 
     # These are dependencies necessary for building the jhbuild.
-    expat
-    git
-    gsettings-desktop-schemas
-    gyp
-    libfdk-aac
-    libproxy
-    libpsl
     libpulse
     libsrtp
     libtheora
     libvorbis
     libvpx
-    libxcb
     libxkbcommon
     luajit
     mesa
     mesa-libgl
     opus
-    orc
     perl-xml-libxml
-    python-setuptools
     util-linux
     v4l-utils
     wayland
     xorg-xrandr
-    yasm
-
-    # These are dependencies necessary for using webkit-patch.
-    svn
-
-    # These are GStreamer plugins needed to play different media files.
-    gst-plugins-bad
-    gst-plugins-base
-    gst-plugins-good
-    gst-plugins-ugly
 )

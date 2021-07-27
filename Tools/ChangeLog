@@ -1,3 +1,28 @@
+2021-07-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Move WebKitGTK and WPE dependency packages to a common GLIB list
+        https://bugs.webkit.org/show_bug.cgi?id=228326
+
+        Reviewed by Adrian Perez de Castro.
+
+        WebKitGTK and WPE share many dependency packages. Until now each port
+        maintained its own list of dependencies. It was a common mistake to
+        add a new package dependency to one of the ports but not to the other
+        one.
+
+        This patch adds a common GLIB for dependency packages, which can help
+        prevent mistakes like the one described above.
+
+        * glib/dependencies/apt: Copied from Tools/wpe/dependencies/apt.
+        * glib/dependencies/dnf: Copied from Tools/wpe/dependencies/dnf.
+        * glib/dependencies/pacman: Copied from Tools/wpe/dependencies/pacman.
+        * gtk/dependencies/apt:
+        * gtk/dependencies/dnf:
+        * gtk/dependencies/pacman:
+        * wpe/dependencies/apt:
+        * wpe/dependencies/dnf:
+        * wpe/dependencies/pacman:
+
 2021-07-27  Kevin Neal  <kevin_neal@apple.com>
 
         [results.webkit.org] Tooltips should remain visible when hovering over commit representations
