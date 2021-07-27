@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>default-actionHandlers</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+
+    async function runTest() {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'loadeddata');
+
+        consoleWrite('Test that playback will resume following a seek through media session.');
+
+        run("video.play()");
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1})');
+        testExpected("video.currentTime", 1);
+        await waitFor(video, 'seeked');
+        testExpected("video.paused", false);
+
+        consoleWrite('Test that playback will stay paused if pause() got called before seek completed.');
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1})');
+        testExpected("video.currentTime", 1);
+        run("video.pause()");
+        await waitFor(video, 'seeked');
+        testExpected("video.paused", true);
+
+        consoleWrite('Test that playback will stay paused after a seek.');
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1})');
+        testExpected("video.currentTime", 1);
+        await waitFor(video, 'seeked');
+        testExpected("video.paused", true);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls preload='auto'></video>
+</body>
+</html>

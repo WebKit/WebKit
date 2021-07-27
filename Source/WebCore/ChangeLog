@@ -1,3 +1,31 @@
+2021-07-26  Jean-Yves Avenard  <jya@apple.com>
+
+        Video pauses after scrubbing with Touch Bar
+        https://bugs.webkit.org/show_bug.cgi?id=228277
+        rdar://80606886
+
+        Reviewed by Jer Noble.
+
+        In https://trac.webkit.org/r206487 ; in order to ensure that the playback state
+        was properly reflected following a seek using the touch bar, the element was paused.
+        It's unclear if that workaround is still required, but for now we will record if the
+        element was playing before the seek and if so, resume playback once the seek completes.
+        Now that the touch bar and Now Playing are hooked to the Media Session action handlers
+        the behaviour change will occur for all those components.
+
+        Test: media/media-session/play-after-seek.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize new member in constructor.
+        (WebCore::HTMLMediaElement::clearSeeking):
+        (WebCore::HTMLMediaElement::finishSeek): Call play() once seek completes if the element
+        was playing before.
+        (WebCore::HTMLMediaElement::pause): Ensure that if pause() is called before the seek
+        completes, the element stays paused.
+        (WebCore::HTMLMediaElement::handleSeekToPlaybackPosition): Record playing state before
+        pausing the element.
+        * html/HTMLMediaElement.h: Add new boolean member.
+
 2021-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in ApplyBlockElementCommand, IndentOutdentCommand and InsertListCommand

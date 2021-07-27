@@ -414,6 +414,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_paused(true)
     , m_seeking(false)
     , m_seekRequested(false)
+    , m_wasPlayingBeforeSeeking(false)
     , m_sentStalledEvent(false)
     , m_sentEndEvent(false)
     , m_pausedInternal(false)
@@ -3081,11 +3082,13 @@ void HTMLMediaElement::clearSeeking()
     m_seeking = false;
     m_seekRequested = false;
     m_pendingSeekType = NoSeek;
+    m_wasPlayingBeforeSeeking = false;
     invalidateCachedTime();
 }
 
 void HTMLMediaElement::finishSeek()
 {
+    bool wasPlayingBeforeSeeking = m_wasPlayingBeforeSeeking;
     // 4.8.10.9 Seeking
     // 14 - Set the seeking IDL attribute to false.
     clearSeeking();
@@ -3111,6 +3114,8 @@ void HTMLMediaElement::finishSeek()
     if (m_mediaSource)
         m_mediaSource->monitorSourceBuffers();
 #endif
+    if (wasPlayingBeforeSeeking)
+        playInternal();
 }
 
 HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
@@ -3565,6 +3570,8 @@ void HTMLMediaElement::pause()
         removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::RequireUserGestureToControlControlsManager);
 
     pauseInternal();
+    // If we have a pending seek, ensure playback doesn't resume.
+    m_wasPlayingBeforeSeeking = false;
 }
 
 void HTMLMediaElement::pauseInternal()
@@ -4854,7 +4861,7 @@ void HTMLMediaElement::handleSeekToPlaybackPosition(double position)
 
     if (!m_isScrubbingRemotely) {
         m_isScrubbingRemotely = true;
-        if (!paused())
+        if ((m_wasPlayingBeforeSeeking = !paused()))
             pauseInternal();
     }
 #else

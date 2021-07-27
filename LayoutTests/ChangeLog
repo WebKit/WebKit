@@ -1,3 +1,14 @@
+2021-07-26  Jean-Yves Avenard  <jya@apple.com>
+
+        Video pauses after scrubbing with Touch Bar
+        https://bugs.webkit.org/show_bug.cgi?id=228277
+        rdar://80606886
+
+        Reviewed by Jer Noble.
+
+        * media/media-session/play-after-seek-expected.txt: Added.
+        * media/media-session/play-after-seek.html: Added.
+
 2021-07-26  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for inspector/canvas/recording-bitmaprenderer-memoryLimit.html.
