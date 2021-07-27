@@ -1,5 +1,27 @@
 2021-07-26  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa] WebKit is making GroupActivities API calls for all WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=228299
+        <rdar://80802982>
+
+        Reviewed by Eric Carlson.
+
+        Tie registering for GroupActivities notifications to the MediaSessionCoordinatorEnabled
+        WebPreference, and make the default value for that preference depend on having the 
+        "com.apple.developer.group-session.urlactivity" entitlement. All WebKit clients with
+        that entitlement will have the preference enabled by default; all other clients will
+        have that preference disabled by default.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultMediaSessionCoordinatorEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION: [iOS] ASSERTION FAILED: !m_useCount in WebKit::SandboxExtension::~SandboxExtension()
         https://bugs.webkit.org/show_bug.cgi?id=228171
         <rdar://problem/80926509>

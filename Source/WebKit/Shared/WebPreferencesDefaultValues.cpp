@@ -35,6 +35,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#import <wtf/cocoa/Entitlements.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -329,5 +333,17 @@ bool defaultWebMParserEnabled()
 }
 
 #endif // ENABLE(MEDIA_SOURCE)
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+bool defaultMediaSessionCoordinatorEnabled()
+{
+    static dispatch_once_t onceToken;
+    static bool enabled { false };
+    dispatch_once(&onceToken, ^{
+        enabled = WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity");
+    });
+    return enabled;
+}
+#endif
 
 } // namespace WebKit

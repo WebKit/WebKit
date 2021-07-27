@@ -113,4 +113,8 @@ bool defaultVP9SWDecoderEnabledOnBattery();
 bool defaultWebMParserEnabled();
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+bool defaultMediaSessionCoordinatorEnabled();
+#endif
+
 } // namespace WebKit

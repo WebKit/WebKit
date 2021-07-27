@@ -572,7 +572,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
-    GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
+    if (m_preferences->mediaSessionCoordinatorEnabled())
+        GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
 #endif
 }
 
@@ -613,7 +614,8 @@ WebPageProxy::~WebPageProxy()
     websiteDataStore().networkProcess().send(Messages::NetworkProcess::RemoveWebPageNetworkParameters(sessionID(), m_identifier), 0);
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
-    GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
+    if (m_preferences->mediaSessionCoordinatorEnabled())
+        GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
 }
 
@@ -4944,7 +4946,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
-    if (frame->isMainFrame())
+    if (frame->isMainFrame() && m_preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().webPageURLChanged(*this);
 #endif
 }

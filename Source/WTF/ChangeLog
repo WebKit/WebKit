@@ -1,3 +1,13 @@
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] WebKit is making GroupActivities API calls for all WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=228299
+        <rdar://80802982>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-07-26  Per Arne  <pvollan@apple.com>
 
         The layout test fast/images/heic-as-background-image.html is a constant failure
