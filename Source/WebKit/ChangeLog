@@ -1,3 +1,29 @@
+2021-07-27  Peng Liu  <peng.liu6@apple.com>
+
+        Safari hangs when entering PiP from (element) fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=228332
+
+        Reviewed by Eric Carlson.
+
+        When a video element's ancestor element is in fullscreen and the video element
+        is entering picture-in-picture, `WKFullScreenWindowController` in the UI process
+        will notify the WebContent process that the ancestor element needs to exit fullscreen.
+        However, some sites call `document.webkitExitFullscreen()` to request the ancestor
+        element to exit fullscreen proactively. Both WebContent process and UI process will
+        try to do the same thing and may lead to a race condition.
+
+        That was not an issue before r274460 because `WebFullScreenManager::requestExitFullScreen()`
+        will ignore the request from the UI process if the WebContent process has already
+        started the steps to exit fullscreen.
+
+        This patch stops the UI process sending the exit fullscreen request if a WebContent
+        process has started the steps to exit fullscreen.
+
+        Manually tested.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController didEnterPictureInPicture]):
+
 2021-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Start tracking resource uses for NativeImages and Fonts
