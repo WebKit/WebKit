@@ -2004,3 +2004,4 @@ webkit.org/b/227762 [ Debug ] imported/w3c/web-platform-tests/html/interaction/f
 webkit.org/b/226789 imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Pass Failure ]
 
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Pass Failure ]
+webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Pass Failure ]
