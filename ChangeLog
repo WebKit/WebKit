@@ -1,3 +1,22 @@
+2021-07-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add WTF_CPU_RISCV64
+        https://bugs.webkit.org/show_bug.cgi?id=228322
+
+        Reviewed by Adrian Perez de Castro.
+
+        Define the WTF_CPU_RISCV64 CMake macro when the specified system
+        processor name begins with 'riscv64'. This should also cover potential
+        RISC-V processor names ingrained with specific ISA extensions that are
+        then detectable at compile-time through specified C macros.
+
+        For WTF_CPU_RISCV64, default to disabling JIT and FTL features at the
+        CMake level until they are properly supported. Defaulting to system
+        malloc can already be avoided, but CLoop is necessary for now.
+
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-07-25  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] USE_OPENGL_OR_ES should not be an automagic feature
