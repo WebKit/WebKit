@@ -108,8 +108,8 @@ private:
     bool isParsingFragmentOrTemplateContents() const;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
-    void insertPhoneNumberLink(String&&);
-    void linkifyPhoneNumbers(String&&);
+    void insertPhoneNumberLink(const String&);
+    void linkifyPhoneNumbers(const String&);
 #endif
 
     void processToken(AtomHTMLToken&&);
@@ -145,6 +145,7 @@ private:
     void processFakeStartTag(const QualifiedName&, Vector<Attribute>&& attributes = Vector<Attribute>());
     void processFakeEndTag(const QualifiedName&);
     void processFakeEndTag(const AtomString&);
+    void processFakeCharacters(const String&);
     void processFakePEndTagIfPInButtonScope();
 
     void processGenericRCDATAStartTag(AtomHTMLToken&&);

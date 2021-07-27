@@ -1,3 +1,11 @@
+2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, speculative revert of r280193
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+
 2021-07-26  Alex Christensen  <achristensen@webkit.org>
 
         WKUserContentController.removeAllScriptMessageHandlers() doesn't release the message handlers

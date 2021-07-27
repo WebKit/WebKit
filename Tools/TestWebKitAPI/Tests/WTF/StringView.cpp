@@ -959,28 +959,6 @@ TEST(WTF, StringViewReverseFindBasic)
     EXPECT_EQ(reference.reverseFind('c', 4), notFound);
 }
 
-TEST(WTF, StringViewStripLeadingMatchedCharacters)
-{
-    auto isA = [] (UChar c) {
-        return c == 'A';
-    };
-
-    EXPECT_TRUE(stringViewFromLiteral("AAABBBAAA").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("BBBAAA"));
-    EXPECT_TRUE(stringViewFromLiteral("AAABBBCCC").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("BBBCCC"));
-    EXPECT_TRUE(stringViewFromLiteral("CCCBBBAAA").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("CCCBBBAAA"));
-    EXPECT_TRUE(stringViewFromLiteral("CCCBBBCCC").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("CCCBBBCCC"));
-    EXPECT_TRUE(stringViewFromLiteral("AAAAAACCC").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("CCC"));
-    EXPECT_TRUE(stringViewFromLiteral("BBBAAAAAA").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("BBBAAAAAA"));
-    EXPECT_TRUE(stringViewFromLiteral("CCCAAABBB").stripLeadingMatchedCharacters(isA) == stringViewFromLiteral("CCCAAABBB"));
-    EXPECT_TRUE(stringViewFromLiteral("AAAAAAAAA").stripLeadingMatchedCharacters(isA) == StringView::empty());
-
-    StringView emptyView = StringView::empty();
-    EXPECT_TRUE(emptyView.stripLeadingMatchedCharacters(isA) == emptyView);
-
-    StringView nullView;
-    EXPECT_TRUE(nullView.stripLeadingMatchedCharacters(isA) == nullView);
-}
-
 TEST(WTF, StringViewStripLeadingAndTrailingMatchedCharacters)
 {
     auto isA = [] (UChar c) { 

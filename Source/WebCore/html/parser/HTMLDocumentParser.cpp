@@ -43,7 +43,7 @@
 #include "NavigationScheduler.h"
 #include "ScriptElement.h"
 #include "ThrowOnDynamicMarkupInsertionCountIncrementer.h"
-#include <wtf/Scope.h>
+
 #include <wtf/SystemTracing.h>
 
 namespace WebCore {
@@ -256,11 +256,6 @@ Document* HTMLDocumentParser::contextForParsingSession()
 
 bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFragment, PumpSession& session)
 {
-    auto scopeExit = makeScopeExit([&] {
-        if (!parsingFragment)
-            m_tokenizer.shrinkToBestFit();
-    });
-
     do {
         if (UNLIKELY(isWaitingForScripts())) {
             if (mode == AllowYield && m_parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->scriptToProcess(), session))

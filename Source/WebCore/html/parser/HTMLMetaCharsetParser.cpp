@@ -31,7 +31,6 @@
 #include "HTMLParserIdioms.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
-#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -157,10 +156,6 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
 
     bool ignoredSawErrorFlag;
     m_input.append(m_codec->decode(data, length, false, false, ignoredSawErrorFlag));
-
-    auto scopeExit = makeScopeExit([&] {
-        m_tokenizer.shrinkToBestFit();
-    });
 
     while (auto token = m_tokenizer.nextToken(m_input)) {
         bool isEnd = token->type() == HTMLToken::EndTag;

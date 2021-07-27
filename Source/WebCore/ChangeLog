@@ -1,3 +1,35 @@
+2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, speculative revert of r280193
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizerLoop):
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::checkForMetaCharset):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLPreloadScanner::scan):
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::clear):
+        (WebCore::HTMLToken::beginStartTag):
+        (WebCore::HTMLToken::beginEndTag):
+        (WebCore::HTMLToken::shrinkToBestFit): Deleted.
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::shrinkToBestFit): Deleted.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::characterPredicate):
+        (WebCore::HTMLTreeBuilder::processFakeCharacters):
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink):
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+        (WebCore::HTMLTreeBuilder::defaultForInTableText):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+        * html/parser/HTMLTreeBuilder.h:
+
 2021-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Add resource use counter infrastructure to RemoteResourceCache

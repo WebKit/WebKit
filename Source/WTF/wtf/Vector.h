@@ -768,10 +768,6 @@ public:
     void shrinkCapacity(size_t newCapacity);
     void shrinkToFit() { shrinkCapacity(size()); }
 
-    // "shrinkToBestFit()" shrinks the capacity to fix the current size, while leaving sufficient capacity for more items.
-    // The upperbound of the capacity is that which would result from calling expandCapacity() with the current size.
-    void shrinkToBestFit();
-
     void clear() { shrinkCapacity(0); }
 
     template<typename U = T> Vector<U> isolatedCopy() const &;
@@ -1261,15 +1257,6 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrinkCapa
     Base::restoreInlineBufferIfNeeded();
 
     asanSetInitialBufferSizeTo(size());
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrinkToBestFit()
-{
-    size_t currentSize = size();
-    size_t newCapacity = currentSize ? std::max<size_t>(minCapacity, currentSize + currentSize / 4 + 1) : 0;
-    ASSERT(currentSize <= newCapacity);
-    shrinkCapacity(newCapacity);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>

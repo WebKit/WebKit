@@ -1458,41 +1458,5 @@ TEST(WTF_Vector, ConstructorFromRawPointerAndSize)
     EXPECT_EQ(vector[3], 4);
     EXPECT_EQ(vector[4], 5);
 }
-
-TEST(WTF_Vector, ShrinkToBestFitClear)
-{
-    Vector<uint32_t> vector;
-    vector.append(20);
-    vector.append(20);
-    vector.append(20);
-    vector.resize(0);
-    vector.shrinkToBestFit();
-    EXPECT_EQ(vector.size(), 0U);
-    EXPECT_EQ(vector.capacity(), 0U);
-}
-
-TEST(WTF_Vector, ShrinkToBestFitDoesNotChangeIfCapacityMatches)
-{
-    Vector<uint32_t> vector;
-    vector.append(20);
-    vector.append(20);
-    vector.append(20);
-    unsigned capacity = vector.capacity();
-    vector.shrinkToBestFit();
-    EXPECT_EQ(vector.size(), 3U);
-    EXPECT_EQ(vector.capacity(), capacity);
-}
-
-TEST(WTF_Vector, ShrinkToBestFit)
-{
-    Vector<uint32_t> vector;
-    for (unsigned index = 0; index < 400; ++index)
-        vector.append(index);
-    vector.resize(100);
-    EXPECT_GE(vector.capacity(), 400U);
-    vector.shrinkToBestFit();
-    EXPECT_LE(vector.capacity(), 200U);
-    EXPECT_GE(vector.capacity(), 100U);
-}
-
+    
 } // namespace TestWebKitAPI

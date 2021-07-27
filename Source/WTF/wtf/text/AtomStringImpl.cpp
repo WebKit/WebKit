@@ -127,10 +127,7 @@ struct UCharBufferTranslator {
 
     static bool equal(PackedPtr<StringImpl> const& str, const UCharBuffer& buf)
     {
-        auto* impl = str.get();
-        if (impl->existingHash() != buf.hash)
-            return false;
-        return WTF::equal(impl, buf.characters, buf.length);
+        return WTF::equal(str.get(), buf.characters, buf.length);
     }
 
     static void translate(PackedPtr<StringImpl>& location, const UCharBuffer& buf, unsigned hash)
@@ -310,10 +307,7 @@ struct LCharBufferTranslator {
 
     static bool equal(PackedPtr<StringImpl> const& str, const LCharBuffer& buf)
     {
-        auto* impl = str.get();
-        if (impl->existingHash() != buf.hash)
-            return false;
-        return WTF::equal(impl, buf.characters, buf.length);
+        return WTF::equal(str.get(), buf.characters, buf.length);
     }
 
     static void translate(PackedPtr<StringImpl>& location, const LCharBuffer& buf, unsigned hash)
@@ -335,10 +329,7 @@ struct BufferFromStaticDataTranslator {
 
     static bool equal(PackedPtr<StringImpl> const& str, const Buffer& buf)
     {
-        auto* impl = str.get();
-        if (impl->existingHash() != buf.hash)
-            return false;
-        return WTF::equal(impl, buf.characters, buf.length);
+        return WTF::equal(str.get(), buf.characters, buf.length);
     }
 
     static void translate(PackedPtr<StringImpl>& location, const Buffer& buf, unsigned hash)

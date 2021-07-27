@@ -79,11 +79,6 @@ public:
 
     bool neverSkipNullCharacters() const;
 
-    void shrinkToBestFit()
-    {
-        m_token.shrinkToBestFit();
-    }
-
 private:
     enum State {
         DataState,
