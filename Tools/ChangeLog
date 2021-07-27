@@ -1,3 +1,23 @@
+2021-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS Monterey] Pressing Fn+E should present the emoji picker when editing
+        https://bugs.webkit.org/show_bug.cgi?id=228300
+        rdar://77558672
+
+        Reviewed by Tim Horton.
+
+        Add a new API test that simulates a keypress for "Fn+E" with a main menu that contains a system menu item for
+        that key binding; the test then verifies that text was not inserted into the page as a result.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/KeyboardEventTests.mm: Added.
+        (-[KeyboardTestMenu _containsItemMatchingEvent:includingDisabledItems:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView typeCharacter:]):
+        (-[TestWKWebView typeCharacter:modifiers:]):
+
 2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative revert of r280193

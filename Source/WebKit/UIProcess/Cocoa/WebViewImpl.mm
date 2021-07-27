@@ -125,6 +125,7 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
@@ -5044,6 +5045,13 @@ Vector<WebCore::KeypressCommand> WebViewImpl::collectKeyboardLayoutCommandsForEv
         [m_view interpretKeyEvents:@[event]];
 
     m_collectedKeypressCommands = nullptr;
+
+    if (auto menu = NSApp.mainMenu; event.modifierFlags & NSEventModifierFlagFunction
+        && [menu respondsToSelector:@selector(_containsItemMatchingEvent:includingDisabledItems:)] && [menu _containsItemMatchingEvent:event includingDisabledItems:YES]) {
+        commands.removeAllMatching([](auto& command) {
+            return command.commandName == "insertText:";
+        });
+    }
 
     return commands;
 }

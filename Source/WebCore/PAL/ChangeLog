@@ -1,3 +1,15 @@
+2021-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS Monterey] Pressing Fn+E should present the emoji picker when editing
+        https://bugs.webkit.org/show_bug.cgi?id=228300
+        rdar://77558672
+
+        Reviewed by Tim Horton.
+
+        Add a new SPI declaration on NSMenu. See WebKit and WebKitLegacy changes for more information.
+
+        * pal/spi/mac/NSMenuSPI.h:
+
 2021-07-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r280129.

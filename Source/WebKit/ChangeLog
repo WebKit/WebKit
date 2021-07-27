@@ -1,3 +1,38 @@
+2021-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS Monterey] Pressing Fn+E should present the emoji picker when editing
+        https://bugs.webkit.org/show_bug.cgi?id=228300
+        rdar://77558672
+
+        Reviewed by Tim Horton.
+
+        In macOS Monterey, the system-wide Fn+E key command presents the Emoji & Symbols UI as a popover. However, this
+        new key command currently does not work in editable contexts in both WebKit1 and WebKit2 views on macOS, where
+        we end up just inserting the character "e".
+
+        This is because, on both ports, we attempt to interpret NSEvents by calling back into AppKit to handle the
+        event, recording the selectors that *would've* been performed, and then using this information to build up a
+        list of WebCore::KeyCommand for the event (which are later converted into editing commands). In WebKit2, we
+        call into `-[NSTextInputContext handleEventByKeyboardLayout:]` to handle the event, and capture the resulting
+        calls back into `WKWebView` by storing entries in `m_collectedKeypressCommands` (something similar happens in
+        WebKit1). In the case of these new Fn commands, they are handled by the system before entering
+        NSTextInputContext, so NSTextInputContext ends up handling them as regular text insertion.
+
+        As an aside, the reason the meta (⌘) key doesn't encounter this problem is because meta, option, control and
+        shift are considered valid key bindings in NSKeyBindingManager, whereas the function key mask is specifically
+        excluded from this list for compability reasons. NSTextInputContext consults NSKeyBindingManager in order to
+        check whether the given NSEvent is a known key binding in `-handleEventByKeyboardLayout:`, so it fails to
+        acknowledge Fn+E as a key binding.
+
+        To work around this, we adopt new AppKit SPI added in rdar://81123724 to determine whether an NSEvent maps to
+        any main menu items and avoid handling "Fn-*" key events as text insertion if they already map to items in the
+        main menu.
+
+        Test: KeyboardEventTests.FunctionKeyCommand
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::collectKeyboardLayoutCommandsForEvent):
+
 2021-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Add resource use counter infrastructure to RemoteResourceCache
