@@ -1,3 +1,18 @@
+2021-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Add resource use counter infrastructure to RemoteResourceCache
+        https://bugs.webkit.org/show_bug.cgi?id=228222
+
+        Reviewed by Said Abou-Hallawa.
+
+        This is part 2 of https://bugs.webkit.org/show_bug.cgi?id=228216.
+
+        No new tests because there is no behavior change yet. This patch is just adding infrastructure. For now, all these
+        use counts sent by the web process are 0 - I'll implement that part in 3 follow-up patches.
+
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+        (WebCore::DisplayList::Replayer::Delegate::recordResourceUse):
+
 2021-07-26  Chris Dumez  <cdumez@apple.com>
 
         Location.href setter uses wrong window to resolve relative URLs

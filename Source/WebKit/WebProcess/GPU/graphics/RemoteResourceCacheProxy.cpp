@@ -121,8 +121,7 @@ void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier re
     if (!m_nativeImages.remove(renderingResourceIdentifier))
         return;
 
-    // Tell the GPU process to remove this resource.
-    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
+    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier, 0); // FIXME: Pass the real use count here.
 }
 
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
@@ -134,7 +133,7 @@ void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
 void RemoteResourceCacheProxy::clearFontMap()
 {
     for (auto& item : m_fontIdentifierToLastRenderingUpdateVersionMap)
-        m_remoteRenderingBackendProxy.releaseRemoteResource(item.key);
+        m_remoteRenderingBackendProxy.releaseRemoteResource(item.key, 0); // FIXME: Pass the real use count here.
     m_fontIdentifierToLastRenderingUpdateVersionMap.clear();
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
 }
@@ -152,7 +151,7 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
     for (auto& item : m_fontIdentifierToLastRenderingUpdateVersionMap) {
         if (m_currentRenderingUpdateVersion - item.value >= minimumRenderingUpdateCountToKeepFontAlive) {
             toRemove.add(item.key);
-            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key);
+            m_remoteRenderingBackendProxy.releaseRemoteResource(item.key, 0); // FIXME: Pass the real use count here.
         }
     }
 

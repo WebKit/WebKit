@@ -68,6 +68,7 @@ public:
         virtual bool apply(ItemHandle, GraphicsContext&) { return false; }
         virtual void didCreateMaskImageBuffer(WebCore::ImageBuffer&) { }
         virtual void didResetMaskImageBuffer() { }
+        virtual void recordResourceUse(RenderingResourceIdentifier) { }
     };
     
 private:

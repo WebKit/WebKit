@@ -104,7 +104,7 @@ public:
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&);
     void deleteAllFonts();
-    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier, uint64_t useCount);
 
     enum class DidReceiveBackendCreationResult : bool {
         ReceivedAnyResponse,

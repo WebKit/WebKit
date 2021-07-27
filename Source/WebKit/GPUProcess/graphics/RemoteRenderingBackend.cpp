@@ -184,17 +184,14 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
-RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend, GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend)
     : m_destination(destination)
     , m_remoteRenderingBackend(remoteRenderingBackend)
-    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
 {
 }
 
 bool RemoteRenderingBackend::ReplayerDelegate::apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& graphicsContext)
 {
-    // FIXME: Inspect the item and record resource use here.
-
     auto apply = [&](auto&& destination) {
         return destination.apply(item, graphicsContext);
     };
@@ -214,12 +211,17 @@ void RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer()
     m_remoteRenderingBackend.didResetMaskImageBuffer();
 }
 
+void RemoteRenderingBackend::ReplayerDelegate::recordResourceUse(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    m_remoteRenderingBackend.remoteResourceCache().recordResourceUse(renderingResourceIdentifier);
+}
+
 DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
 {
     if (displayList.isEmpty())
         return { };
 
-    ReplayerDelegate replayerDelegate(destination, *this, m_gpuConnectionToWebProcess);
+    ReplayerDelegate replayerDelegate(destination, *this);
 
     return WebCore::DisplayList::Replayer {
         destination.context(),
@@ -509,10 +511,11 @@ void RemoteRenderingBackend::deleteAllFonts()
     m_remoteResourceCache.deleteAllFonts();
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
+    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier, useCount);
+    MESSAGE_CHECK(success, "Resource is being released before being cached.");
     updateRenderingResourceRequest();
 }
 

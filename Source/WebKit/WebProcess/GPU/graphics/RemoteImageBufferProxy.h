@@ -72,7 +72,7 @@ public:
 
         flushDrawingContext();
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
-        m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
+        m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier, 0); // FIXME: Pass the real use count here.
     }
 
     ImageBufferBackendHandle createImageBufferBackendHandle()

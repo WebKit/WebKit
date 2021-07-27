@@ -1,3 +1,55 @@
+2021-07-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Add resource use counter infrastructure to RemoteResourceCache
+        https://bugs.webkit.org/show_bug.cgi?id=228222
+
+        Reviewed by Said Abou-Hallawa.
+
+        This patch adds the infrastructure for associating a counter with each resource in the RemoteResourceCache.
+        As the web process uses a resource during display list recording, it increments a counter, and as the GPU
+        process uses a resource, it increments a counter in the RemoteResourceCache. When the web process is done
+        with a resource, it sends a release message to the GPU process which crucially includes the web process's
+        counter. The GPU process has to then wait to actually delete the resource until its own use counter matches
+        the one it received from the web process. This patch implements this deferred deletion infrastructure
+        in the GPU process.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::ReplayerDelegate::recordResourceUse):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource): Pass the use count to the RemoteResourceCache.
+        * GPUProcess/graphics/RemoteRenderingBackend.h: Add the use count field.
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in: Ditto.
+        * GPUProcess/graphics/RemoteResourceCache.cpp:
+        (WebKit::RemoteResourceCache::cacheImageBuffer): It's actually okay if there's already an resource cached.
+        That just means that the web process started using a resource again before the GPU process consumed all
+        commands that used it the first time. All we need to do is increment the open count.
+        (WebKit::RemoteResourceCache::cacheNativeImage): Ditto.
+        (WebKit::RemoteResourceCache::cacheFont): Ditto.
+        (WebKit::RemoteResourceCache::ensureResourceUseCounter):
+        (WebKit::RemoteResourceCache::maybeRemoveResource): This is called whenever it's possible for us to be in
+        situation where we should be removing a resource (aka whenever the use count increments). It checks to see
+        if we can remove the resource, and if it can, does so.
+        (WebKit::RemoteResourceCache::recordResourceUse): The callback that runs for each resource use during
+        replaying. It can't actually delete any resources, so instead it just records which resources had their
+        use counts incremented, and waits for prune() to actually call maybeRemoveResource().
+        (WebKit::RemoteResourceCache::prune): After the replay is complete, call maybeRemoveResource() on all the
+        resources which had their use counters touched.
+        (WebKit::RemoteResourceCache::releaseRemoteResource): Put the relevant resource into the state where we
+        are waiting for the use counters to match before we can delete the resource. Also, call maybeRemoveResource()
+        so it can be deleted immediately if the counters already match.
+        * GPUProcess/graphics/RemoteResourceCache.h: Add a new data structure to hold the use counters. There's
+        a big comment in here that describes what these fields mean.
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy): Send a dummy use count for now. This will be
+        implemented in a follow-up patch.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource): Add the useCount parameter.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h: Ditto.
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::releaseNativeImage): Send a dummy use count for now. This will be
+        implemented in a follow-up patch.
+        (WebKit::RemoteResourceCacheProxy::clearFontMap): Ditto.
+        (WebKit::RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts): Ditto.
+
 2021-07-26  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: [iOS] ASSERTION FAILED: !m_messageReceiverMapCount under WebKit::RemoteAudioHardwareListener::~RemoteAudioHardwareListener()
