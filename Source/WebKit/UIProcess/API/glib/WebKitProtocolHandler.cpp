@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitProtocolHandler.h"
 
+#include "BuildRevision.h"
 #include "WebKitError.h"
 #include "WebKitVersion.h"
 #include "WebKitWebView.h"
@@ -202,7 +203,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         "  <td><div class=\"titlename\">WebKit version</div></td>"
         "  <td>%s %d.%d.%d (%s)</td>"
         " </tbody></tr>",
-        webkitPortName(), WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION, SVN_REVISION);
+        webkitPortName(), WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION, BUILD_REVISION);
 
 #if OS(UNIX)
     struct utsname osName;

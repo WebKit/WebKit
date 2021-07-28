@@ -2,7 +2,7 @@ prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=${prefix}/include
-revision=@SVN_REVISION@
+revision=${BUILD_REVISION}
 
 Name: WebKitGTK web process extensions
 Description: Web content engine for GTK - web process extensions

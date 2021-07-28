@@ -18,6 +18,19 @@ configure_file(wpe/wpe-web-extension.pc.in ${WPEWebExtension_PKGCONFIG_FILE} @ON
 configure_file(wpe/wpe-webkit-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}-uninstalled.pc @ONLY)
 configure_file(wpe/wpe-web-extension-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}-uninstalled.pc @ONLY)
 
+if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
+    configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h @ONLY)
+    add_custom_target(WebKit-build-revision
+        python3 "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
+        DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} VERBATIM)
+    list(APPEND WebKit_DEPENDENCIES
+        WebKit-build-revision
+    )
+else ()
+    configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h)
+endif ()
+
 add_definitions(-DWEBKIT2_COMPILATION)
 
 add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")

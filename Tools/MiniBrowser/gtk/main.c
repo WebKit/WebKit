@@ -28,6 +28,7 @@
 #include "cmakeconfig.h"
 
 #include "BrowserWindow.h"
+#include "BuildRevision.h"
 #include <errno.h>
 #include <gtk/gtk.h>
 #include <string.h>
@@ -824,8 +825,8 @@ int main(int argc, char *argv[])
             webkit_get_major_version(),
             webkit_get_minor_version(),
             webkit_get_micro_version());
-        if (g_strcmp0(SVN_REVISION, "tarball"))
-            g_print(" (%s)", SVN_REVISION);
+        if (g_strcmp0(BUILD_REVISION, "tarball"))
+            g_print(" (%s)", BUILD_REVISION);
         g_print("\n");
         g_clear_object(&webkitSettings);
 

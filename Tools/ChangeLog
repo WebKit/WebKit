@@ -1,3 +1,15 @@
+2021-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
+        https://bugs.webkit.org/show_bug.cgi?id=228290
+
+        Reviewed by Michael Catanzaro.
+
+        * MiniBrowser/gtk/main.c:
+        (main): Use generated BuildRevision.h header.
+        * glib/apply-build-revision-to-files.py: Added.
+        (main):
+
 2021-07-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Add missing required dependencies to build WPE

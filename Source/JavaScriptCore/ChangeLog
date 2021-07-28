@@ -1,3 +1,15 @@
+2021-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
+        https://bugs.webkit.org/show_bug.cgi?id=228290
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformGTK.cmake: Expand ${BUILD_REVISION} with apply-build-revision-to-files.py for
+        non-tarball builds, or let CMake do it for tarball builds.
+        * javascriptcoregtk.pc.in: Switch revision var to ${} format, so that we can choose to
+        either let CMake expand it or do it ourselves.
+
 2021-07-27  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] "RemoteInspector XPC connection to relay failed." messages are confusing in StdErr
