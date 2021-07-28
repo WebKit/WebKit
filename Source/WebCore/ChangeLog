@@ -1,6 +1,16 @@
 2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy more use of smart pointers in Document.cpp
+        ​https://bugs.webkit.org/show_bug.cgi?id=228544
+
+        A partial revert of r280390 to fix builds. AppHighlightStorage isn't really ref-counted.
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+
+2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy more use of smart pointers in Document.cpp
         https://bugs.webkit.org/show_bug.cgi?id=228544
 
         Reviewed by Darin Adler.

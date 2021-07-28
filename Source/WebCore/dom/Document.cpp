@@ -6099,7 +6099,7 @@ void Document::finishedParsing()
 #endif
     
 #if ENABLE(APP_HIGHLIGHTS)
-    if (RefPtr appHighlightStorage = appHighlightStorageIfExists())
+    if (auto* appHighlightStorage = appHighlightStorageIfExists())
         appHighlightStorage->restoreUnrestoredAppHighlights();
 #endif
 }
