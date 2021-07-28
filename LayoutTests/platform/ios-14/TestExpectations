@@ -18,7 +18,7 @@ crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Pass ]
 
 # rdar://80396559 ([ iOS15 wk2 Release ] storage/indexeddb/detached-iframe.html (layout-test) is a flaky text failure)
-storage/indexeddb/detached-iframe.html [ Pass ]
+storage/indexeddb/detached-iframe.html [ Pass Failure ]
 
 # Batch adding of test expectations group 2:
 # rdar://80391433 ([ iOS15 wk2 Release ] media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html (layout-test) is a flaky timeout)
