@@ -1,3 +1,14 @@
+2021-07-27  Robert Jenner  <jenner@apple.com>
+
+        [LayoutTests] Delete unused LayoutTests/fullscreen resources
+        https://bugs.webkit.org/show_bug.cgi?id=226831
+
+        Reviewed by Alex Christensen.
+
+        Removing un-used resoruces after php tests were converted to Python.
+
+        * fullscreen/resources/not-allowed.html: Removed.
+
 2021-07-27  Sihui Liu  <sihui_liu@apple.com>
 
         Update platform specific TestExpectations for imported IndexedDB tests
