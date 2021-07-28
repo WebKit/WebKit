@@ -1,3 +1,13 @@
+2021-07-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ProxyObject callees should be skipped during Function.prototype.caller resolution
+        https://bugs.webkit.org/show_bug.cgi?id=228341
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/caller-property-expected.txt:
+        * js/script-tests/caller-property.js:
+
 2021-07-27  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug arm64] fast/text/emoji-overlap.html is a flaky image-only failure.

@@ -18,6 +18,13 @@ PASS strictCaller(boundNonStrictCallee) is null
 PASS strictCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
 PASS strictTailCaller(boundNonStrictCallee) is null
 PASS strictTailCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS nonStrictCaller(new Proxy(nonStrictCallee, {})) is nonStrictCaller
+PASS nonStrictCaller(new Proxy(nonStrictCallee, {}).bind()) is nonStrictCaller
+PASS nonStrictCaller(new Proxy(new Proxy(nonStrictCallee, {}), {})) is nonStrictCaller
+PASS nonStrictCaller(new Proxy(boundNonStrictCallee, {})) is nonStrictCaller
+PASS nonStrictCaller(new Proxy(nonStrictCallee, Reflect)) is nonStrictCaller
+PASS nonStrictCaller(new Proxy(new Proxy(nonStrictCallee, Reflect), {})) is nonStrictCaller
+PASS nonStrictCaller(new Proxy(new Proxy(nonStrictCallee, {}), Reflect)) is null
 PASS nonStrictGetter(nonStrictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
 PASS nonStrictGetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
 PASS strictGetter(nonStrictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..

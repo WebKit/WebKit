@@ -43,6 +43,15 @@ shouldThrow("strictCaller(boundStrictCallee)");
 shouldBe("strictTailCaller(boundNonStrictCallee)", "null");
 shouldThrow("strictTailCaller(boundStrictCallee)");
 
+shouldBe("nonStrictCaller(new Proxy(nonStrictCallee, {}))", "nonStrictCaller");
+shouldBe("nonStrictCaller(new Proxy(nonStrictCallee, {}).bind())", "nonStrictCaller");
+shouldBe("nonStrictCaller(new Proxy(new Proxy(nonStrictCallee, {}), {}))", "nonStrictCaller");
+shouldBe("nonStrictCaller(new Proxy(boundNonStrictCallee, {}))", "nonStrictCaller");
+
+shouldBe("nonStrictCaller(new Proxy(nonStrictCallee, Reflect))", "nonStrictCaller"); // tail call
+shouldBe("nonStrictCaller(new Proxy(new Proxy(nonStrictCallee, Reflect), {}))", "nonStrictCaller"); // tail call
+shouldBe("nonStrictCaller(new Proxy(new Proxy(nonStrictCallee, {}), Reflect))", "null"); // no tail call in Proxy's [[Call]]
+
 // Check that .caller throws as expected, over an accessor call. (per https://tc39.github.io/ecma262/#sec-forbidden-extensions)
 function getFooGetter(x) { return Object.getOwnPropertyDescriptor(x, 'foo').get; }
 function getFooSetter(x) { return Object.getOwnPropertyDescriptor(x, 'foo').set; }

@@ -1,3 +1,25 @@
+2021-07-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ProxyObject callees should be skipped during Function.prototype.caller resolution
+        https://bugs.webkit.org/show_bug.cgi?id=228341
+
+        Reviewed by Yusuke Suzuki.
+
+        Just like a bound function, a Proxy with nullish "apply" handler merely forwards
+        [[Call]] to its target [1], without pushing onto the execution context stack.
+        This fact is also noted in Function.prototype.{caller,arguments} reflection proposal [2].
+
+        This patch aligns JSC with V8 and SpiderMonkey if Proxy's "apply" handler is userland
+        or nullish. However, since JSC implements proper tail calls, `Function.prototype.caller`
+        result is divergent from other engines if the handler is `Reflect.apply`, which performs
+        a tail call that gets optimized away [2] (unless called by another Proxy).
+
+        [1]: https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist (step 8)
+        [2]: https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller (see notes)
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::RetrieveCallerFunctionFunctor::operator() const):
+
 2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add Temporal to features.json
