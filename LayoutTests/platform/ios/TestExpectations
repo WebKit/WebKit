@@ -3278,7 +3278,7 @@ webkit.org/b/212493 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid
 
 fast/text/text-styles/-apple-system [ Pass ]
 
-webkit.org/b/214155 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]
+webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]
 
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vlr-005.xht [ ImageOnlyFailure ]
 
