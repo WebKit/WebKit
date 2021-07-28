@@ -6828,7 +6828,7 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     // can hang the page / WebDriver test. Pretend to show and immediately dismiss the context menu.
     if (auto* automationSession = process().processPool().automationSession()) {
         if (m_controlledByAutomation && automationSession->isSimulatingUserInteraction()) {
-            send(Messages::WebPage::ContextMenuHidden());
+            send(Messages::WebPage::DidShowContextMenu());
             return;
         }
     }
@@ -6842,6 +6842,21 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     m_activeContextMenu = pageClient().createContextMenuProxy(*this, WTFMove(contextMenuContextData), userData);
 
     m_activeContextMenu->show();
+}
+
+void WebPageProxy::didShowContextMenu()
+{
+    // Don't send `Messages::WebPage::DidShowContextMenu` as that should've already been eagerly
+    // sent when requesting the context menu to show, regardless of the result of that request.
+
+    pageClient().didShowContextMenu();
+}
+
+void WebPageProxy::didDismissContextMenu()
+{
+    send(Messages::WebPage::DidDismissContextMenu());
+
+    pageClient().didDismissContextMenu();
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)

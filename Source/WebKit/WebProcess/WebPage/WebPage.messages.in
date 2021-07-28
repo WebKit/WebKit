@@ -164,11 +164,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidEndDateTimePicker();
 #endif
 
-#if ENABLE(CONTEXT_MENUS)
-    ContextMenuHidden()
-    ContextMenuForKeyEvent()
-#endif
-
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
     CenterSelectionInVisibleArea()
 
@@ -345,7 +340,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(CONTEXT_MENUS)
     # Context menu.
+    DidShowContextMenu()
+    DidDismissContextMenu()
     DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem)
+    ContextMenuForKeyEvent()
 #endif
 
     # Open panel.

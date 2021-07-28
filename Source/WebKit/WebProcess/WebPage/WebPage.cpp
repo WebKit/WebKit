@@ -2857,6 +2857,20 @@ private:
     const WebEvent* m_previousCurrentEvent;
 };
 
+#if ENABLE(CONTEXT_MENUS)
+
+void WebPage::didShowContextMenu()
+{
+    m_waitingForContextMenuToShow = false;
+}
+
+void WebPage::didDismissContextMenu()
+{
+    corePage()->contextMenuController().didDismissContextMenu();
+}
+
+#endif // ENABLE(CONTEXT_MENUS)
+
 #if ENABLE(CONTEXT_MENU_EVENT)
 static bool isContextClick(const PlatformMouseEvent& event)
 {
@@ -2962,7 +2976,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<SandboxE
 
 #if ENABLE(CONTEXT_MENUS)
     // Don't try to handle any pending mouse events if a context menu is showing.
-    if (m_isShowingContextMenu)
+    if (m_waitingForContextMenuToShow)
         shouldHandleEvent = false;
 #endif
 #if ENABLE(DRAG_SUPPORT)

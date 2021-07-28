@@ -45,6 +45,7 @@ public:
     virtual ~ContextMenuProvider() { };
 
     virtual void populateContextMenu(ContextMenu*) = 0;
+    virtual void didDismissContextMenu() { }
     virtual void contextMenuItemSelected(ContextMenuAction, const String& title) = 0;
     virtual void contextMenuCleared() = 0;
     virtual ContextMenuContext::Type contextMenuContextType() { return ContextMenuContext::Type::ContextMenu; };

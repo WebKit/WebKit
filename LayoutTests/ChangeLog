@@ -1,3 +1,18 @@
+2021-07-27  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] [macOS] Overflow button still shows as `on` even after contextmenu is dismissed
+        https://bugs.webkit.org/show_bug.cgi?id=228310
+        <rdar://problem/81124786>
+
+        Reviewed by Wenson Hsieh.
+
+        * media/modern-media-controls/overflow-support/button-state.html: Added.
+        * media/modern-media-controls/overflow-support/button-state-expected.txt: Added.
+
+        * media/modern-media-controls/overflow-support/playback-speed.html:
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html:
+        Adjust how these tests wait for and dismiss the contextmenu.
+
 2021-07-27  Amir Mark Jr  <amir_mark@apple.com>
 
         [LayoutTests] Delete unused LayoutTests/inspector resources

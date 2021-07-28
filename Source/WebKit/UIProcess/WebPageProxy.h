@@ -1314,6 +1314,8 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     // Called by the WebContextMenuProxy.
+    void didShowContextMenu();
+    void didDismissContextMenu();
     void contextMenuItemSelected(const WebContextMenuItemData&);
     void handleContextMenuKeyEvent();
 #endif

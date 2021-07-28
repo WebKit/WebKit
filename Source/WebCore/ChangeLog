@@ -1,3 +1,26 @@
+2021-07-27  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] [macOS] Overflow button still shows as `on` even after contextmenu is dismissed
+        https://bugs.webkit.org/show_bug.cgi?id=228310
+        <rdar://problem/81124786>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: media/modern-media-controls/overflow-support/button-state.html
+
+        * page/ContextMenuController.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::didDismissContextMenu): Added.
+        * page/ContextMenuProvider.h:
+        (WebCore::ContextMenuProvider::didDismissContextMenu): Added.
+        Add plumbing from WebKit to the `ContextMenuProvider` for when the contextmenu is dismissed.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsContextMenuProvider::didDismissContextMenu): Added.
+        When the contextmenu is dismissed, invoke the callback provided to `MediaControlsHost::showMediaControlsContextMenu`
+        as that's the signal to the `MediaController` that the contextmenu interaction is over,
+        which adjusts the `on` state of the `Button`.
+
 2021-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         [macOS] Stop away unpaired surrogate pair in findNextWordFromIndex:forward:

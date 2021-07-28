@@ -388,6 +388,12 @@ private:
             menu->appendItem(item);
     }
 
+    void didDismissContextMenu() override
+    {
+        if (m_callback)
+            m_callback(ContextMenuItemTagNoAction);
+    }
+
     void contextMenuItemSelected(ContextMenuAction action, const String&) override
     {
         m_callback(action - ContextMenuItemBaseCustomTag);
@@ -455,14 +461,8 @@ private:
 bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String&& optionsJSONString, Ref<VoidCallback>&& callback)
 {
 #if USE(UICONTEXTMENU) || (ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS))
-    if (m_showMediaControlsContextMenuCallback) {
-#if USE(UICONTEXTMENU)
+    if (m_showMediaControlsContextMenuCallback)
         return false;
-#elif (ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS))
-        // FIXME: `contextMenuCleared` is invoked between show and item selected so we may have a pending callback.
-        std::exchange(m_showMediaControlsContextMenuCallback, nullptr)->handleEvent();
-#endif
-    }
 
     m_showMediaControlsContextMenuCallback = WTFMove(callback);
 

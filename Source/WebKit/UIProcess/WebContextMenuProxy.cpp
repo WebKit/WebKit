@@ -73,7 +73,7 @@ void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& 
     showContextMenuWithItems(WTFMove(items));
 
     // No matter the result of showContextMenuWithItems, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
-    page->send(Messages::WebPage::ContextMenuHidden());
+    page->send(Messages::WebPage::DidShowContextMenu());
 }
 
 } // namespace WebKit

@@ -1050,7 +1050,7 @@ public:
     void simulateMouseMotion(WebCore::IntPoint, WallTime);
 
 #if ENABLE(CONTEXT_MENUS)
-    void contextMenuShowing() { m_isShowingContextMenu = true; }
+    void startWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = true; }
 #endif
 
     bool wheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
@@ -1620,7 +1620,8 @@ private:
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
 
 #if ENABLE(CONTEXT_MENUS)
-    void contextMenuHidden() { m_isShowingContextMenu = false; }
+    void didShowContextMenu();
+    void didDismissContextMenu();
 #endif
 #if ENABLE(CONTEXT_MENU_EVENT)
     void contextMenuForKeyEvent();
@@ -2172,7 +2173,7 @@ private:
     OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
 
 #if ENABLE(CONTEXT_MENUS)
-    bool m_isShowingContextMenu { false };
+    bool m_waitingForContextMenuToShow { false };
 #endif
 
     RefPtr<WebCore::Element> m_focusedElement;
