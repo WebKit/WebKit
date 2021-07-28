@@ -1,3 +1,12 @@
+2021-07-28  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for inspector/canvas/recording-html-2d.html and inspector/canvas/updateShader-webgpu.html.
+        https://bugs.webkit.org/show_bug.cgi?id=227881.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] <select> picker value committed to incorrect element after programmatic focus change
