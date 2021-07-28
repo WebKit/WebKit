@@ -1,3 +1,74 @@
+2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy more use of smart pointers in Document.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=228544
+
+        Reviewed by Darin Adler.
+
+        Deployed RefPtr in more places in Document.cpp
+
+        * dom/Document.cpp:
+        (WebCore::acceptsEditingFocus):
+        (WebCore::canAccessAncestor):
+        (WebCore::createHTMLElementWithNameValidation):
+        (WebCore::Document::adoptNode):
+        (WebCore::createFallbackHTMLElement):
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::setTitle):
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        (WebCore::Document::frameDestroyed):
+        (WebCore::Document::removeAllEventListeners):
+        (WebCore::Document::setBodyOrFrameset):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking):
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::processColorScheme):
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::Document::updateViewportUnitsOnResize):
+        (WebCore::Document::runResizeSteps):
+        (WebCore::Document::runScrollSteps):
+        (WebCore::Document::invalidateScrollbars):
+        (WebCore::Document::adjustFocusedNodeOnNodeRemoval):
+        (WebCore::Document::invalidateEventRegionsForFrame):
+        (WebCore::Document::invalidateRenderingDependentRegions):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::setBackForwardCacheState):
+        (WebCore::Document::documentWillBecomeInactive):
+        (WebCore::Document::setDesignMode):
+        (WebCore::Document::finishedParsing):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::initContentSecurityPolicy):
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        (WebCore::Document::getCSSCanvasContext):
+        (WebCore::Document::loadEventDelayTimerFired):
+        (WebCore::Document::checkCompleted):
+        (WebCore::Document::wheelEventHandlersChanged):
+        (WebCore::Document::didAddWheelEventHandler):
+        (WebCore::Document::didRemoveWheelEventHandler):
+        (WebCore::Document::didAddTouchEventHandler):
+        (WebCore::Document::didRemoveTouchEventHandler):
+        (WebCore::Document::absoluteEventRegionForNode):
+        (WebCore::Document::absoluteRegionForEventTargets):
+        (WebCore::Document::updateLastHandledUserGestureTimestamp):
+        (WebCore::DocumentParserYieldToken::DocumentParserYieldToken):
+        (WebCore::DocumentParserYieldToken::~DocumentParserYieldToken):
+        (WebCore::Document::updateHoverActiveState):
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::bgColor const):
+        (WebCore::Document::setBgColor):
+        (WebCore::Document::fgColor const):
+        (WebCore::Document::setFgColor):
+        (WebCore::Document::alinkColor const):
+        (WebCore::Document::setAlinkColor):
+        (WebCore::Document::linkColorForBindings const):
+        (WebCore::Document::setLinkColorForBindings):
+        (WebCore::Document::vlinkColor const):
+        (WebCore::Document::setVlinkColor):
+        (WebCore::Document::dispatchSystemPreviewActionEvent):
+
 2021-07-28  Frédéric Wang  <fwang@igalia.com>
 
         Crash in ApplyStyleCommand::applyRelativeFontStyleChange
