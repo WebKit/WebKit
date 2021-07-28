@@ -1,3 +1,63 @@
+2021-07-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] <select> picker value committed to incorrect element after programmatic focus change
+        https://bugs.webkit.org/show_bug.cgi?id=228556
+        rdar://81222952
+
+        Reviewed by Wenson Hsieh.
+
+        The old <select> picker is a UIPickerView that only commits any value
+        changes to the WebProcess once the user dismisses the picker, or focus
+        is lost programmatically. Currently, the value change is committed by
+        sending a message to the WebProcess, telling it to update the value of
+        the currently focused element. However, when focus is changed
+        programmatically, the focused element in the WebProcess is updated
+        before the commit, and the incorrect element's value can be changed.
+
+        To fix, update all methods which commit value changes to the focused
+        element to take an ElementContext parameter representing the element
+        that needs its value modified. Then, in the WebProcess, rather than
+        commit the value change to the currently focused element, retrieve the
+        element from the ElementContext, ensuring the correct element is
+        updated.
+
+        Note that this bug only surfaces in the old <select> picker, on apps
+        linked before iOS 13, since the new picker commits value changes
+        immediately and dismisses itself.
+
+        Test: fast/forms/ios/select-picker-change-and-focus-another-select-programmatically.html
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView accessoryClear]):
+        (-[WKContentView updateFocusedElementValueAsNumber:]):
+        (-[WKContentView updateFocusedElementValue:]):
+        (-[WKContentView updateFocusedElementValueAsColor:]):
+        (-[WKContentView updateFocusedElementSelectedIndex:allowsMultipleSelection:]):
+        (-[WKContentView insertTextSuggestion:]):
+        (-[WKContentView selectMenu:didSelectItemAtIndex:]):
+        (-[WKContentView selectMenu:didCheckItemAtIndex:checked:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setFocusedElementValue):
+        (WebKit::WebPageProxy::setFocusedElementValueAsNumber):
+        (WebKit::WebPageProxy::setFocusedElementSelectedIndex):
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker reset:]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+        (-[WKSelectSinglePicker controlEndEditing]):
+        (-[WKSelectPicker didSelectOptionIndex:]):
+        (-[WKSelectPickerTableViewController tableView:didSelectRowAtIndexPath:]):
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectTableViewController tableView:didSelectRowAtIndexPath:]):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setFocusedElementValue):
+        (WebKit::WebPage::setFocusedElementValueAsNumber):
+        (WebKit::WebPage::setFocusedElementSelectedIndex):
+
 2021-07-28  Tim Horton  <timothy_horton@apple.com>
 
         iOS Simulator doesn't have any WebKit system feature flags

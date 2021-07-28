@@ -1303,23 +1303,26 @@ void WebPage::setIsShowingInputViewForFocusedElement(bool showingInputView)
     m_isShowingInputViewForFocusedElement = showingInputView;
 }
 
-void WebPage::setFocusedElementValue(const String& value)
+void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)
 {
+    RefPtr<Element> element = elementForContext(context);
     // FIXME: should also handle the case of HTMLSelectElement.
-    if (is<HTMLInputElement>(m_focusedElement.get()))
-        downcast<HTMLInputElement>(*m_focusedElement).setValue(value, DispatchInputAndChangeEvent);
+    if (is<HTMLInputElement>(element))
+        downcast<HTMLInputElement>(*element).setValue(value, DispatchInputAndChangeEvent);
 }
 
-void WebPage::setFocusedElementValueAsNumber(double value)
+void WebPage::setFocusedElementValueAsNumber(const WebCore::ElementContext& context, double value)
 {
-    if (is<HTMLInputElement>(m_focusedElement.get()))
-        downcast<HTMLInputElement>(*m_focusedElement).setValueAsNumber(value, DispatchInputAndChangeEvent);
+    RefPtr<Element> element = elementForContext(context);
+    if (is<HTMLInputElement>(element))
+        downcast<HTMLInputElement>(*element).setValueAsNumber(value, DispatchInputAndChangeEvent);
 }
 
-void WebPage::setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
+void WebPage::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
 {
-    if (is<HTMLSelectElement>(m_focusedElement.get()))
-        downcast<HTMLSelectElement>(*m_focusedElement).optionSelectedByUser(index, true, allowMultipleSelection);
+    RefPtr<Element> element = elementForContext(context);
+    if (is<HTMLSelectElement>(element))
+        downcast<HTMLSelectElement>(*element).optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
 void WebPage::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)

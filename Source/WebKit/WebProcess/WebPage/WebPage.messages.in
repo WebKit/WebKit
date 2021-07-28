@@ -93,10 +93,10 @@ messages -> WebPage LegacyReceiver {
     StopInteraction()
     PerformActionOnElement(uint32_t action)
     FocusNextFocusedElement(bool isForward) -> () Async
-    SetFocusedElementValue(String value)
     AutofillLoginCredentials(String username, String password)
-    SetFocusedElementValueAsNumber(double value)
-    SetFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
+    SetFocusedElementValue(struct WebCore::ElementContext context, String value)
+    SetFocusedElementValueAsNumber(struct WebCore::ElementContext context, double value)
+    SetFocusedElementSelectedIndex(struct WebCore::ElementContext context, uint32_t index, bool allowMultipleSelection)
     ApplicationWillResignActive()
     ApplicationDidEnterBackground(bool isSuspendedUnderLock)
     ApplicationDidFinishSnapshottingAfterEnteringBackground()

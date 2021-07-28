@@ -4814,7 +4814,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryClear
 {
-    _page->setFocusedElementValue({ });
+    _page->setFocusedElementValue(_focusedElementInformation.elementContext, { });
 }
 
 - (void)accessoryDone
@@ -4826,13 +4826,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateFocusedElementValueAsNumber:(double)value
 {
-    _page->setFocusedElementValueAsNumber(value);
+    _page->setFocusedElementValueAsNumber(_focusedElementInformation.elementContext, value);
     _focusedElementInformation.valueAsNumber = value;
 }
 
 - (void)updateFocusedElementValue:(NSString *)value
 {
-    _page->setFocusedElementValue(value);
+    _page->setFocusedElementValue(_focusedElementInformation.elementContext, value);
     _focusedElementInformation.value = value;
 }
 
@@ -4841,9 +4841,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     WebCore::Color color(value.CGColor);
     String valueAsString = WebCore::serializationForHTML(color);
 
-    _page->setFocusedElementValue(valueAsString);
+    _page->setFocusedElementValue(_focusedElementInformation.elementContext, valueAsString);
     _focusedElementInformation.value = valueAsString;
     _focusedElementInformation.colorValue = color;
+}
+
+- (void)updateFocusedElementSelectedIndex:(uint32_t)index allowsMultipleSelection:(bool)allowsMultipleSelection
+{
+    _page->setFocusedElementSelectedIndex(_focusedElementInformation.elementContext, index, allowsMultipleSelection);
 }
 
 - (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value
@@ -4978,7 +4983,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 #if ENABLE(DATALIST_ELEMENT)
     if ([textSuggestion isKindOfClass:[WKDataListTextSuggestion class]]) {
-        _page->setFocusedElementValue([textSuggestion inputText]);
+        _page->setFocusedElementValue(_focusedElementInformation.elementContext, [textSuggestion inputText]);
         return;
     }
 #endif
@@ -7062,7 +7067,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index
 {
     ASSERT(!_focusedElementInformation.isMultiSelect);
-    _page->setFocusedElementSelectedIndex(index, false);
+    [self updateFocusedElementSelectedIndex:index allowsMultipleSelection:false];
 }
 
 - (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuListViewController *)selectMenu
@@ -7095,7 +7100,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         return;
     }
 
-    _page->setFocusedElementSelectedIndex(index, true);
+    [self updateFocusedElementSelectedIndex:index allowsMultipleSelection:true];
     option.isSelected = checked;
 }
 
