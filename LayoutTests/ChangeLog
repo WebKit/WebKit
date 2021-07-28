@@ -1,3 +1,12 @@
+2021-07-27  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur wk2 Debug arm64] fast/text/emoji-overlap.html is a flaky image-only failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228528.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-27  Robert Jenner  <Jenner@apple.com>
 
         Batch add test expectations for Monterey and iOS on Open Source
