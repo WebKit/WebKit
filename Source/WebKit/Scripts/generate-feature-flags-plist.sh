@@ -25,13 +25,13 @@
 
 set -e
 
-if [[ ${WK_PLATFORM_NAME} == "appletvos" ]]; then
+if [[ ${WK_PLATFORM_NAME} == "appletvos" || ${WK_PLATFORM_NAME} == "appletvsimulator" ]]; then
     WEBKIT_PLIST_FILE_NAME="WebKit-appletvos.plist"
-elif [[ ${WK_PLATFORM_NAME} == "iphoneos" ]]; then
+elif [[ ${WK_PLATFORM_NAME} == "iphoneos" || ${WK_PLATFORM_NAME} == "iphonesimulator" ]]; then
     WEBKIT_PLIST_FILE_NAME="WebKit-ios.plist"
 elif [[ ${WK_PLATFORM_NAME} == "macosx" ]]; then
     WEBKIT_PLIST_FILE_NAME="WebKit-macos.plist"
-elif [[ ${WK_PLATFORM_NAME} == "watchos" ]]; then
+elif [[ ${WK_PLATFORM_NAME} == "watchos" || ${WK_PLATFORM_NAME} == "watchsimulator" ]]; then
     WEBKIT_PLIST_FILE_NAME="WebKit-watchos.plist"
 else
     exit 0;

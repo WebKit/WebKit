@@ -1,3 +1,15 @@
+2021-07-28  Tim Horton  <timothy_horton@apple.com>
+
+        iOS Simulator doesn't have any WebKit system feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=228557
+        rdar://80991854
+
+        Reviewed by Darin Adler.
+
+        * Scripts/generate-feature-flags-plist.sh:
+        Install iOS feature flags for the simulator (and watchOS and tvOS for their respective simulators).
+        This was causing on-by-default features like GPUP to be disabled in the simulator.
+
 2021-07-28  Alex Christensen  <achristensen@webkit.org>
 
         WebSocket: Safari on iOS 15 beta 3 is sending invalid close frame
