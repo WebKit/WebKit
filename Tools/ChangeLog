@@ -1,3 +1,14 @@
+2021-07-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Simulator temp files filling up disk
+        https://bugs.webkit.org/show_bug.cgi?id=228335
+        <rdar://problem/81171840>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/kill-old-processes:
+        (main): Delete stale simulator files.
+
 2021-07-27  Aakash Jain  <aakash_jain@apple.com>
 
         Add .gitignore file for CISupport
