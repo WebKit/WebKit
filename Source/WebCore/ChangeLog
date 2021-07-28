@@ -1,3 +1,15 @@
+2021-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [macOS] Stop away unpaired surrogate pair in findNextWordFromIndex:forward:
+        https://bugs.webkit.org/show_bug.cgi?id=228496
+
+        Reviewed by Darin Adler.
+
+        Replace unpaired surrogate pairs with the replacement character before calling findNextWordFromIndex:forward:
+
+        * platform/text/mac/TextBoundaries.mm:
+        (WebCore::findNextWordFromIndex):
+
 2021-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Code cleanup after r280356
