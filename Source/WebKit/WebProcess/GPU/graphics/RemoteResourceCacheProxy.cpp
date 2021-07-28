@@ -47,19 +47,26 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 
 void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
 {
-    auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), makeWeakPtr(imageBuffer));
+    auto addResult = m_imageBuffers.add(imageBuffer.renderingResourceIdentifier(), ImageBufferState { makeWeakPtr(imageBuffer), 0 });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 ImageBuffer* RemoteResourceCacheProxy::cachedImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    return m_imageBuffers.get(renderingResourceIdentifier).get();
+    return m_imageBuffers.get(renderingResourceIdentifier).imageBuffer.get();
 }
 
 void RemoteResourceCacheProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    bool found = m_imageBuffers.remove(renderingResourceIdentifier);
-    ASSERT_UNUSED(found, found);
+    auto iterator = m_imageBuffers.find(renderingResourceIdentifier);
+    RELEASE_ASSERT(iterator != m_imageBuffers.end());
+
+    auto useCount = iterator->value.useCount;
+
+    auto success = m_imageBuffers.remove(iterator);
+    ASSERT_UNUSED(success, success);
+
+    m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier, useCount);
 }
 
 inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(NativeImage& image)
@@ -76,6 +83,14 @@ inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(Nativ
 
     context->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize), { WebCore::CompositeOperator::Copy });
     return bitmap;
+}
+
+void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageBuffer)
+{
+    auto iterator = m_imageBuffers.find(imageBuffer.renderingResourceIdentifier());
+    ASSERT(iterator != m_imageBuffers.end());
+
+    ++iterator->value.useCount;
 }
 
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
@@ -182,11 +197,12 @@ void RemoteResourceCacheProxy::finalizeRenderingUpdate()
 
 void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
 {
-    for (auto& imageBuffer : m_imageBuffers.values()) {
-        if (!imageBuffer)
+    for (auto& item : m_imageBuffers.values()) {
+        if (!item.imageBuffer)
             continue;
-        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*imageBuffer);
-        imageBuffer->clearBackend();
+        m_remoteRenderingBackendProxy.createRemoteImageBuffer(*item.imageBuffer);
+        item.useCount = 0;
+        item.imageBuffer->clearBackend();
     }
     m_nativeImages.clear();
     clearFontMap();

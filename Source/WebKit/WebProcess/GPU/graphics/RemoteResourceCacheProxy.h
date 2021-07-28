@@ -52,6 +52,7 @@ public:
 
     void recordNativeImageUse(WebCore::NativeImage&);
     void recordFontUse(WebCore::Font&);
+    void recordImageBufferUse(WebCore::ImageBuffer&);
 
     void finalizeRenderingUpdate();
 
@@ -59,7 +60,11 @@ public:
     void releaseMemory();
 
 private:
-    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::ImageBuffer>>;
+    struct ImageBufferState {
+        WeakPtr<WebCore::ImageBuffer> imageBuffer;
+        uint64_t useCount;
+    };
+    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, ImageBufferState>;
 
     struct NativeImageState {
         WeakPtr<WebCore::NativeImage> image;

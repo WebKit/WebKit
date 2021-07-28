@@ -1,3 +1,30 @@
+2021-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Start tracking resource uses for ImageBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=228225
+
+        Reviewed by Said Abou-Hallawa.
+
+        This is part 4 of https://bugs.webkit.org/show_bug.cgi?id=228216.
+
+        This works the same way as NativeImages/Fonts (https://bugs.webkit.org/show_bug.cgi?id=228224).
+        The only real difference to how ImageBuffers work today is that RemoteImageBufferProxy's destructor
+        doesn't directly tell the RemoteRenderingBackendProxy to release its RenderingResourceIdentifier,
+        but instead this codepath goes through the RemoteResourceCacheProxy which is tracking the number of
+        uses of the resource. This is so the RemoteResourceCacheProxy can inject the use count into the
+        ReleaseRemoteResource command.
+
+        Covered by existing tests.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawImageBuffer):
+        (WebCore::DisplayList::Recorder::clipToImageBuffer):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::Delegate::recordImageBufferUse):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::applyImageBufferItem):
+        (WebCore::DisplayList::Replayer::applyItem):
+
 2021-07-28  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Ignore extra route change notifications

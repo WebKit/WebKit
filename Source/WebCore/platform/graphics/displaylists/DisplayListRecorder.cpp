@@ -204,6 +204,8 @@ void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRe
         GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
         return;
     }
+    if (m_delegate)
+        m_delegate->recordImageBufferUse(imageBuffer);
     m_displayList.cacheImageBuffer(imageBuffer);
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
@@ -465,6 +467,8 @@ IntRect Recorder::clipBounds() const
 
 void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
+    if (m_delegate)
+        m_delegate->recordImageBufferUse(imageBuffer);
     m_displayList.cacheImageBuffer(imageBuffer);
     append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect);
 }

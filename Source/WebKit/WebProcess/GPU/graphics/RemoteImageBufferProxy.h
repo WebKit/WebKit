@@ -72,7 +72,6 @@ public:
 
         flushDrawingContext();
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
-        m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier, 0); // FIXME: Pass the real use count here.
     }
 
     ImageBufferBackendHandle createImageBufferBackendHandle()
@@ -321,6 +320,12 @@ protected:
     {
         if (m_remoteRenderingBackendProxy)
             m_remoteRenderingBackendProxy->remoteResourceCacheProxy().recordFontUse(font);
+    }
+
+    void recordImageBufferUse(WebCore::ImageBuffer& imageBuffer) final
+    {
+        if (m_remoteRenderingBackendProxy)
+            m_remoteRenderingBackendProxy->remoteResourceCacheProxy().recordImageBufferUse(imageBuffer);
     }
 
     WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) final

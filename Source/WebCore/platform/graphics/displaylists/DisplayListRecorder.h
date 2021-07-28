@@ -70,6 +70,7 @@ public:
         virtual void recordNativeImageUse(NativeImage&) { }
         virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
         virtual void recordFontUse(Font&) { }
+        virtual void recordImageBufferUse(ImageBuffer&) { }
         virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
     };
 

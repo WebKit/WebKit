@@ -55,12 +55,14 @@ GraphicsContext& Replayer::context() const
 }
 
 template<class T>
-inline static std::optional<RenderingResourceIdentifier> applyImageBufferItem(GraphicsContext& context, const ImageBufferHashMap& imageBuffers, ItemHandle item)
+inline static std::optional<RenderingResourceIdentifier> applyImageBufferItem(GraphicsContext& context, const ImageBufferHashMap& imageBuffers, ItemHandle item, Replayer::Delegate* delegate)
 {
     auto& imageBufferItem = item.get<T>();
     auto resourceIdentifier = imageBufferItem.imageBufferIdentifier();
     if (auto* imageBuffer = imageBuffers.get(resourceIdentifier)) {
         imageBufferItem.apply(context, *imageBuffer);
+        if (delegate)
+            delegate->recordResourceUse(resourceIdentifier);
         return std::nullopt;
     }
     return resourceIdentifier;
@@ -133,13 +135,13 @@ std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdenti
         return { std::nullopt, std::nullopt };
 
     if (item.is<DrawImageBuffer>()) {
-        if (auto missingCachedResourceIdentifier = applyImageBufferItem<DrawImageBuffer>(context(), m_imageBuffers, item))
+        if (auto missingCachedResourceIdentifier = applyImageBufferItem<DrawImageBuffer>(context(), m_imageBuffers, item, m_delegate))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
     }
 
     if (item.is<ClipToImageBuffer>()) {
-        if (auto missingCachedResourceIdentifier = applyImageBufferItem<ClipToImageBuffer>(context(), m_imageBuffers, item))
+        if (auto missingCachedResourceIdentifier = applyImageBufferItem<ClipToImageBuffer>(context(), m_imageBuffers, item, m_delegate))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
         return { std::nullopt, std::nullopt };
     }

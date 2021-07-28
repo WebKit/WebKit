@@ -1,3 +1,20 @@
+2021-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Start tracking resource uses for ImageBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=228225
+
+        Reviewed by Said Abou-Hallawa.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::cacheImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::cachedImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::releaseImageBuffer):
+        (WebKit::RemoteResourceCacheProxy::recordImageBufferUse):
+        (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
 2021-07-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] <select> picker value committed to incorrect element after programmatic focus change
