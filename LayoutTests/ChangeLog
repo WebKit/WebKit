@@ -1,3 +1,12 @@
+2021-07-28  Eric Hutchison  <ehutchison@apple.com>
+
+        http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228561.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-07-28  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         storage/indexeddb/detached-iframe.html is flaky failing.

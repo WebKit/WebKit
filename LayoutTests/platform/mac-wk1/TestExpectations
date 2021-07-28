@@ -1380,5 +1380,7 @@ webkit.org/b/228260 [ BigSur Debug ] imported/w3c/web-platform-tests/IndexedDB/i
 
 webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
 
+webkit.org/b/228561 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Pass Timeout ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
