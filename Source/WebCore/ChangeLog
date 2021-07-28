@@ -1,3 +1,13 @@
+2021-07-27  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r280332.
+        warning: redundant move in return statement [-Wredundant-move]
+
+        No new tests, no new behaviors.
+
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::create):
+
 2021-07-27  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] [macOS] Overflow button still shows as `on` even after contextmenu is dismissed

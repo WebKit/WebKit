@@ -45,7 +45,7 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
 {
     auto formData = adoptRef(*new DOMFormData);
     if (!form)
-        return WTFMove(formData);
+        return formData;
     
     auto result = form->constructEntryList(WTFMove(formData), nullptr, HTMLFormElement::IsMultipartForm::Yes);
     
