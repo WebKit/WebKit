@@ -1,5 +1,17 @@
 2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        AppHighlightStorage should not inherit privately from RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=228562
+
+        Reviewed by Wenson Hsieh.
+
+        AppHighlightStorage is only stored with unique_ptr. There is no reason for this class
+        to *privately* inherit from RefCounted.
+
+        * Modules/highlight/AppHighlightStorage.h:
+
+2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Deploy more use of smart pointers in Document.cpp
         ​https://bugs.webkit.org/show_bug.cgi?id=228544
 
