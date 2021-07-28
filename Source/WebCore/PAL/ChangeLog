@@ -1,3 +1,37 @@
+2021-07-28  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r280384. rdar://problem/81218821
+
+    Fix build with SDKs containing new CFNetwork SPI declaration
+    https://bugs.webkit.org/show_bug.cgi?id=228553
+    <rdar://81202574>
+    
+    Reviewed by Brady Eidson.
+    
+    CFNSURLConnection.h also has "@interface NSURLSessionConfiguration ()"
+    ObjC doesn't like it if you have the exact same thing in the parentheses and a duplicate declaration.
+    I reproduced the build failure with a modified SDK and verified this fixes it.
+    
+    * pal/spi/cf/CFNetworkSPI.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280384 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-28  Alex Christensen  <achristensen@webkit.org>
+
+            Fix build with SDKs containing new CFNetwork SPI declaration
+            https://bugs.webkit.org/show_bug.cgi?id=228553
+            <rdar://81202574>
+
+            Reviewed by Brady Eidson.
+
+            CFNSURLConnection.h also has "@interface NSURLSessionConfiguration ()"
+            ObjC doesn't like it if you have the exact same thing in the parentheses and a duplicate declaration.
+            I reproduced the build failure with a modified SDK and verified this fixes it.
+
+            * pal/spi/cf/CFNetworkSPI.h:
+
 2021-07-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r280129.
