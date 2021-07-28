@@ -1755,7 +1755,7 @@ fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Crash
 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
 fast/canvas/webgl/match-page-color-space.html [ ImageOnlyFailure ]
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
-fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
+fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Skip ] # Timeout
@@ -1857,6 +1857,7 @@ fast/events/wheel/wheelevent-basic.html [ Failure ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 fast/harness/render-tree-as-text-options.html [ Failure ]
+fast/html/broadcast-channel-between-different-sessions.html [ Failure ]
 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 fast/html/details-marker-style-mixed.html [ Missing ]
 fast/html/details-writing-mode-mixed.html [ Missing ]
@@ -1942,6 +1943,7 @@ fast/text/orientation-sideways.html [ Failure ]
 fast/text/overflow-wrap-break-word-004.html [ ImageOnlyFailure ]
 fast/text/overflow-wrap-break-word-005.html [ ImageOnlyFailure ]
 fast/text/overflow-wrap-break-word-007.html [ ImageOnlyFailure ]
+fast/text/pua-charactersTreatedAsSpace.html [ ImageOnlyFailure ]
 fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]
 fast/text/shadow-no-blur.html [ Failure ]
 fast/text/shadow-translucent-fill.html [ Failure ]
@@ -2016,7 +2018,6 @@ http/tests/misc/webtiming-two-redirects.py [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
 http/tests/webgl/1.0.2/origin-clean-conformance.html [ Failure ]
 http/tests/webgl/1.0.2/readPixelsBadArgs.html [ Failure ]
-http/tests/websocket/tests/hybi/multiple-set-cookies.html [ Failure ]
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ] # Crash by assertion failure
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]
@@ -2085,4 +2086,3 @@ webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
 workers/bomb.html [ Skip ] # Timeout
-
