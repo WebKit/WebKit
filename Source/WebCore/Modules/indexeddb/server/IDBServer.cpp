@@ -508,33 +508,47 @@ void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
         m_uniqueIDBDatabaseMap.remove(uniqueIDBDatabase->identifier());
 }
 
+static void getDatabaseNameAndVersionFromOriginDirectory(const String& directory, HashSet<String>& excludedDatabasePaths, Vector<IDBDatabaseNameAndVersion>& result)
+{
+    Vector<String> databaseDirectoryNames = FileSystem::listDirectory(directory);
+    for (auto& databaseDirectoryName : databaseDirectoryNames) {
+        auto fullDatabasePath = SQLiteIDBBackingStore::fullDatabasePathForDirectory(FileSystem::pathByAppendingComponent(directory, databaseDirectoryName));
+        if (excludedDatabasePaths.contains(fullDatabasePath))
+            continue;
+
+        if (auto nameAndVersion = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(fullDatabasePath))
+            result.append(WTFMove(*nameAndVersion));
+    }
+}
+
 void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
 {
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v0");
-    Vector<String> fileNames = FileSystem::listDirectory(oldDirectory);
-    Vector<IDBDatabaseNameAndVersion> databases;
-    for (auto& fileName : fileNames) {
-        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(FileSystem::pathByAppendingComponent(oldDirectory, fileName)));
-        if (databaseTuple)
-            databases.append(WTFMove(*databaseTuple));
+    Vector<IDBDatabaseNameAndVersion> result;
+    HashSet<String> visitedDatabasePaths;
+
+    for (auto& database : m_uniqueIDBDatabaseMap.values()) {
+        auto path = database->filePath();
+        if (!path.isEmpty())
+            visitedDatabasePaths.add(path);
+
+        if (auto nameAndVersion = database->nameAndVersion())
+            result.append(WTFMove(*nameAndVersion));
     }
 
+    String oldDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v0");
+    getDatabaseNameAndVersionFromOriginDirectory(oldDirectory, visitedDatabasePaths, result);
+
     String directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, m_databaseDirectoryPath, "v1");
-    fileNames = FileSystem::listDirectory(directory);
-    for (auto& fileName : fileNames) {
-        auto databaseTuple = SQLiteIDBBackingStore::databaseNameAndVersionFromFile(SQLiteIDBBackingStore::fullDatabasePathForDirectory(FileSystem::pathByAppendingComponent(directory, fileName)));
-        if (databaseTuple)
-            databases.append(WTFMove(*databaseTuple));
-    }
+    getDatabaseNameAndVersionFromOriginDirectory(directory, visitedDatabasePaths, result);
 
     auto connection = m_connectionMap.get(serverConnectionIdentifier);
     if (!connection)
         return;
 
-    connection->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
+    connection->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(result));
 }
 
 static void collectOriginsForVersion(const String& versionPath, HashSet<WebCore::SecurityOriginData>& securityOrigins)

@@ -1,3 +1,17 @@
+2021-07-28  Sihui Liu  <sihui_liu@apple.com>
+
+        IDBFactory.databases should not return databases with invalid version
+        https://bugs.webkit.org/show_bug.cgi?id=228554
+
+        Reviewed by Chris Dumez.
+
+        * storage/indexeddb/getdatabases-expected.txt: Added.
+        * storage/indexeddb/getdatabases-private-expected.txt: Added.
+        * storage/indexeddb/getdatabases-private.html: Added.
+        * storage/indexeddb/getdatabases.html: Added.
+        * storage/indexeddb/resources/getdatabases.js: Added.
+        (test):
+
 2021-07-28  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iPad ] platform/ipad/media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html is a flaky timeout.

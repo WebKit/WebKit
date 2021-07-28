@@ -80,6 +80,7 @@ private:
 
     bool supportsSimultaneousTransactions() final { return true; }
     bool isEphemeral() final { return true; }
+    String fullDatabasePath() const final { return nullString(); }
 
     bool hasTransaction(const IDBResourceIdentifier& identifier) const final { return m_transactions.contains(identifier); }
 

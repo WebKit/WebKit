@@ -312,7 +312,7 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
 
     if (m_databaseInfo)
-        m_mostRecentDeletedDatabaseInfo = WTFMove(m_databaseInfo);
+        m_mostRecentDeletedDatabaseInfo = std::exchange(m_databaseInfo, nullptr);
 
     // If this UniqueIDBDatabase was brought into existence for the purpose of deleting the file on disk,
     // we won't have a m_mostRecentDeletedDatabaseInfo. In that case, we'll manufacture one using the
@@ -1238,6 +1238,31 @@ RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest(RequestTy
     }
 
     return nullptr;
+}
+
+String UniqueIDBDatabase::filePath() const
+{
+    return m_backingStore ? m_backingStore->fullDatabasePath() : nullString();
+}
+
+std::optional<IDBDatabaseNameAndVersion> UniqueIDBDatabase::nameAndVersion() const
+{
+    if (!m_backingStore)
+        return std::nullopt;
+
+    if (m_versionChangeTransaction) {
+        if (auto databaseInfo = m_versionChangeTransaction->originalDatabaseInfo()) {
+            // The database is newly created.
+            if (!databaseInfo->version())
+                return std::nullopt;
+
+            return IDBDatabaseNameAndVersion { databaseInfo->name(), databaseInfo->version() };
+        }
+
+        return std::nullopt;
+    }
+
+    return IDBDatabaseNameAndVersion { m_databaseInfo->name(), m_databaseInfo->version() };
 }
 
 } // namespace IDBServer

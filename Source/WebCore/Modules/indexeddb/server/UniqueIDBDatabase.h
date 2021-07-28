@@ -28,6 +28,7 @@
 #include "IDBBackingStore.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
+#include "IDBDatabaseNameAndVersion.h"
 #include "IDBGetResult.h"
 #include "ServerOpenDBRequest.h"
 #include "UniqueIDBDatabaseTransaction.h"
@@ -110,6 +111,9 @@ public:
     bool hasActiveTransactions() const;
     void abortActiveTransactions();
     bool tryClose();
+
+    String filePath() const;
+    std::optional<IDBDatabaseNameAndVersion> nameAndVersion() const;
 
 private:
     void handleDatabaseOperations();
