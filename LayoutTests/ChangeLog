@@ -1,3 +1,14 @@
+2021-07-27  Amir Mark Jr  <amir_mark@apple.com>
+
+        [LayoutTests] Delete unused LayoutTests/inspector resources
+        https://bugs.webkit.org/show_bug.cgi?id=226800
+
+        Reviewed by Jonathan Bedard.
+
+        * inspector/console/resources/errors.css: Removed.
+        * inspector/dom/resources/highlight-iframe.html: Removed.
+        * inspector/network/resources/data-intercepted.json: Removed.
+
 2021-07-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         ProxyObject callees should be skipped during Function.prototype.caller resolution
