@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$(dirname "$0")/../../glib/dependencies/pacman"
+source "$(dirname "$0")/../glib/dependencies/pacman"
 
 PACKAGES+=(
     # These are dependencies necessary for building WebKitGTK.

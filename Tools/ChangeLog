@@ -1,3 +1,16 @@
+2021-07-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Fix wrong path to GLIB dependencies introduced in r280354.
+
+        Unreviewed follow-up fix.
+
+        * gtk/dependencies/apt:
+        * gtk/dependencies/dnf:
+        * gtk/dependencies/pacman:
+        * wpe/dependencies/apt:
+        * wpe/dependencies/dnf:
+        * wpe/dependencies/pacman:
+
 2021-07-27  Jonathan Bedard  <jbedard@apple.com>
 
         [build.webkit.org] Simulator temp files filling up disk

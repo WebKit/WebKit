@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$(dirname "$0")/../../glib/dependencies/dnf"
+source "$(dirname "$0")/../glib/dependencies/dnf"
 
 PACKAGES+=(
     # These are dependencies necessary for building WebKitGTK.
