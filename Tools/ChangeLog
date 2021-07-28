@@ -1,3 +1,13 @@
+2021-07-28  Alex Christensen  <achristensen@webkit.org>
+
+        WebSocket: Safari on iOS 15 beta 3 is sending invalid close frame
+        https://bugs.webkit.org/show_bug.cgi?id=228329
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm:
+        (TestWebKitAPI::TEST):
+
 2021-07-28  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake

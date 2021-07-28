@@ -1,3 +1,26 @@
+2021-07-28  Alex Christensen  <achristensen@webkit.org>
+
+        WebSocket: Safari on iOS 15 beta 3 is sending invalid close frame
+        https://bugs.webkit.org/show_bug.cgi?id=228329
+
+        Reviewed by Youenn Fablet.
+
+        Our NSURLSession WebSocket implementation had two bugs:
+        1. It was sending 1005 as the close code if none was specified.
+           It now sends no close code, which matches Chrome and Firefox.
+        2. It was not sending a close code before the close reason when a WebSocket is closed due to navigation.
+           It now sends the close code in 2 bytes before the reason, which matches Chrome and Firefox.
+           Side note: our CFReadStream/CFWriteStream implementation sent neither the code nor the reason
+           in this case, which matches no other browser.
+
+        Covered by an API test.
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::close):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::fail):
+        (WebKit::WebSocketChannel::disconnect):
+
 2021-07-28  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
