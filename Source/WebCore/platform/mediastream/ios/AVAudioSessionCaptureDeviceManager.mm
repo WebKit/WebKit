@@ -146,6 +146,10 @@ std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::a
 
 void AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices()
 {
+    if (m_recomputeDevices)
+        return;
+
+    m_recomputeDevices = true;
     computeCaptureDevices([] { });
 }
 
@@ -176,9 +180,13 @@ void AVAudioSessionCaptureDeviceManager::computeCaptureDevices(CompletionHandler
         });
     }
 
+    if (!m_recomputeDevices)
+        return;
+
     m_dispatchQueue->dispatch([this, completion = WTFMove(completion)] () mutable {
         auto newAudioDevices = retrieveAudioSessionCaptureDevices();
         callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = WTFMove(newAudioDevices).isolatedCopy()] () mutable {
+            m_recomputeDevices = false;
             setAudioCaptureDevices(WTFMove(newAudioDevices));
             completion();
         }).get());

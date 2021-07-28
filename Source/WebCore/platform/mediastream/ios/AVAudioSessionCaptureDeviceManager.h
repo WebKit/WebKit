@@ -76,6 +76,7 @@ private:
     RetainPtr<AVAudioSession> m_audioSession;
     Ref<WorkQueue> m_dispatchQueue;
     AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
+    bool m_recomputeDevices { true };
 };
 
 } // namespace WebCore

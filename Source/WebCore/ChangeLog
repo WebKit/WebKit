@@ -1,3 +1,20 @@
+2021-07-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Ignore extra route change notifications
+        https://bugs.webkit.org/show_bug.cgi?id=228565
+
+        Reviewed by Jer Noble.
+
+        Tested manually, this only reproduces on iOS hardware.
+
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (WebCore::AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices): Do
+        nothing if m_recomputeDevices is true.
+        (WebCore::AVAudioSessionCaptureDeviceManager::computeCaptureDevices): Don't rebuilding
+        device list unless m_recomputeDevices is set. Clear m_recomputeDevices after after
+        rebuilding list.
+
 2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         AppHighlightStorage should not inherit privately from RefCounted
