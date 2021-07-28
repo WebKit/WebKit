@@ -1,3 +1,14 @@
+2021-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] macOS Monterey and parallel OSes no longer need r280103
+        https://bugs.webkit.org/show_bug.cgi?id=228539
+
+        Reviewed by Alan Bujtas.
+
+        Core Text's behavior changed on these OSes.
+
+        * wtf/PlatformUse.h:
+
 2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative revert of r280193
