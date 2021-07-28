@@ -1430,8 +1430,6 @@ webkit.org/b/208601 fast/backgrounds/hidpi-bitmap-background-on-subpixel-positio
 
 webkit.org/b/208739 http/tests/resourceLoadStatistics/third-party-cookie-blocking-ephemeral.html [ Pass Timeout ]
 
-webkit.org/b/208890 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Pass Failure ]
-
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
 
 # Newly imported WPT test that is flaky on iOS only.
@@ -1860,8 +1858,6 @@ webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animatio
 webkit.org/b/215167 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
 
 webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state.html [ Pass Failure ]
-
-webkit.org/b/215185 [ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone-transaction-state.any.worker.html [ Pass Failure ]
 
 webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
 
