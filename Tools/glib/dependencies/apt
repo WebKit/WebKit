@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# If the package $1 is available, prints it. Otherwise prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+function aptIfElse {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    else
+        echo $2
+    fi
+}
+
 PACKAGES=(
     # These are dependencies necessary for building WebKitGTK/WPE.
     autoconf
@@ -14,8 +24,11 @@ PACKAGES=(
     intltool
     itstool
     libasound2-dev
+    libatk1.0-dev
+    libepoxy-dev
     libevent-dev
     libfile-copy-recursive-perl
+    $(aptIfElse libgcrypt20-dev libgcrypt11-dev)
     libgstreamer1.0-dev
     libgstreamer-plugins-bad1.0-dev
     libgstreamer-plugins-base1.0-dev
@@ -28,6 +41,7 @@ PACKAGES=(
     libsystemd-dev
     libtasn1-6-dev
     libtool
+    libwayland-dev
     libwebp-dev
     libwoff-dev
     libxslt1-dev

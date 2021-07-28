@@ -1,3 +1,19 @@
+2021-07-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Add missing required dependencies to build WPE
+        https://bugs.webkit.org/show_bug.cgi?id=228530
+
+        Reviewed by Adrian Perez de Castro.
+
+        Script Tools/wpe/install-dependencies was not installing all the required
+        package dependencies necessary to build WPE. There were several
+        packages missing or other ones which were only present in the
+        WebKitGTK list of package dependencies (moved to GLIB).
+
+        * glib/dependencies/apt:
+        * gtk/dependencies/apt:
+        * wpe/dependencies/apt:
+
 2021-07-27  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] [macOS] Overflow button still shows as `on` even after contextmenu is dismissed

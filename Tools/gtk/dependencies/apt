@@ -2,26 +2,14 @@
 
 source "$(dirname "$0")/../glib/dependencies/apt"
 
-# If the package $1 is available, prints it. Otherwise prints $2.
-# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
-function aptIfElse {
-    if apt-cache show $1 &>/dev/null; then
-        echo $1
-    else
-        echo $2
-    fi
-}
-
 PACKAGES+=(
     # These are dependencies necessary for building WebKitGTK.
     geoclue-2.0
     gnome-common
-    libatk1.0-dev
     libedit-dev
     libenchant-dev
     libfaad-dev
     libffi-dev
-    $(aptIfElse libgcrypt20-dev libgcrypt11-dev)
     libgirepository1.0-dev
     libgl1-mesa-dev
     libgl1-mesa-glx
@@ -42,7 +30,6 @@ PACKAGES+=(
     libupower-glib-dev
     libvorbis-dev
     libvpx-dev
-    libwayland-dev
     libxcomposite-dev
     libxt-dev
     libxtst-dev
@@ -68,7 +55,6 @@ PACKAGES+=(
     libcroco3-dev
     libcups2-dev
     libdrm-dev
-    libepoxy-dev
     libevdev-dev
     libgbm-dev
     libgnutls28-dev
