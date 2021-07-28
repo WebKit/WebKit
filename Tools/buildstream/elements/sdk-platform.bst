@@ -198,6 +198,7 @@ depends:
 - freedesktop-sdk.bst:components/python3-sitecustomize.bst
 - freedesktop-sdk.bst:components/python3-six.bst
 - freedesktop-sdk.bst:components/python3-usercustomize.bst
+- freedesktop-sdk.bst:components/python3-virtualenv.bst
 - freedesktop-sdk.bst:components/python3.bst
 - freedesktop-sdk.bst:components/sdl2-image.bst
 - freedesktop-sdk.bst:components/sdl2-mixer.bst

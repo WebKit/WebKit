@@ -2,7 +2,7 @@ kind: manual
 
 depends:
 - sdk/gtk+-3.bst
-- freedesktop-sdk.bst:components/perl.bst        
+- freedesktop-sdk.bst:components/perl.bst
       # gtk3 seems to have all the so files that qtbase needs access to
       # perl is listed as a recommended dependency on packages.debian.org
       # plus, perl seems to be needed as a build-dep for almost everything that depends on qtbase
@@ -60,14 +60,13 @@ public:
         - "%{libdir}/*.so"
 
 sources:
-- kind: tar
-  url: qt:5.15/5.15.0/submodules/qtbase-everywhere-src-5.15.0.tar.xz
-  ref: 9e7af10aece15fa9500369efde69cb220eee8ec3a6818afe01ce1e7d484824c5
+- kind: git_tag
+  url: kde:qtbase
+  track: kde/5.15
+  ref: v5.15.0-870-g663d240a18f5acac82fd2bd0fd4a33c4f47b260a
 - kind: patch
   path: patches/qtbase-avoid-hardcoding-kernel-version.patch
 - kind: patch
   path: patches/qtbase-use-wayland-on-gnome.patch
 - kind: patch
-  path: patches/qtbase-revert-correct-handling-for-xdg-runtime-dir.patch
-- kind: patch
-  path: patches/qtbase-make-sure-to-correctly-construct-base-platform-theme.patch
+  path: patches/qtbase-revert-qstandardpaths-dont-change-permissions-on-xdg-runtime-dir.patch

@@ -16,4 +16,4 @@ sources:
 - kind: git_tag
   url: github_com:rr-debugger/rr
   track: master
-  ref: 5.4.0-19-g7a520b7beea74a051abb5bf020155148264857ab
+  ref: 5.4.0-293-g8a15f2acdd39d799001c98107e72c2bed4ec63e9

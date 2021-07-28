@@ -4,6 +4,7 @@ depends:
 - qt5/qtbase.bst
 
 sources:
-- kind: tar
-  url: qt:5.15/5.15.0/submodules/qtx11extras-everywhere-src-5.15.0.tar.xz
-  ref: c72b6c188284facddcf82835af048240e721dc8d6d9e8a7bd71d76fd876881a1
+- kind: git_tag
+  url: kde:qtx11extras
+  track: kde/5.15
+  ref: v5.15.0-7-g3898f5484fd4864b047729bfeda9a1222f32364f
