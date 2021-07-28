@@ -1,3 +1,21 @@
+2021-07-28  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=226926
+
+        Reviewed by Ryosuke Niwa.
+
+        In r179944 and r180050, special handling was added for display: grid/flex nodes in
+        Position::isCandidate in order to make them editable but the same logic was not added in
+        PositionIterator::isCandidate. This patch fixes that inconsistency as well as the
+        corresponding debug ASSERT and release nullptr dereference.
+
+        Tests: fast/editing/apply-relative-font-style-change-crash-001.html
+               fast/editing/apply-relative-font-style-change-crash-002.html
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate const): Handle flexbox and grid.
+
 2021-07-27  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r280332.
