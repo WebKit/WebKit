@@ -373,13 +373,10 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* relayCon
     // The XPC connection will close itself.
     m_relayConnection = nullptr;
 
-    if (!m_shouldReconnectToRelayOnFailure) {
-        WTFLogAlways("RemoteInspector XPC connection to relay failed.");
+    if (!m_shouldReconnectToRelayOnFailure)
         return;
-    }
 
     m_shouldReconnectToRelayOnFailure = false;
-    WTFLogAlways("RemoteInspector XPC connection to relay failed, reconnecting in 1 second...");
 
     // Schedule setting up a new connection, since we currently are holding a lock needed to create a new connection.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{

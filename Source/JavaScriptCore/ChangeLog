@@ -1,3 +1,16 @@
+2021-07-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] "RemoteInspector XPC connection to relay failed." messages are confusing in StdErr
+        https://bugs.webkit.org/show_bug.cgi?id=228303
+
+        Reviewed by Darin Adler.
+
+        Remove overly verbose and confusing `WTFLogAlways` messages added in r278413, which can confuse applications
+        listening to stderr of a process using JavaScriptCore.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+
 2021-07-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         ProxyObject callees should be skipped during Function.prototype.caller resolution
