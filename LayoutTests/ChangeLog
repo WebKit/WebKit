@@ -58,16 +58,6 @@
 
         * platform/mac-wk1/TestExpectations:
 
-2021-07-27  Robert Jenner  <Jenner@apple.com>
-
-        Batch add test expectations for Monterey and iOS on Open Source
-        https://bugs.webkit.org/show_bug.cgi?id=228200
-
-        Uneviewed test gardening.
-
-        * platform/ios-14-wk2/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Added.
-        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt: Added.
-
 2021-07-27  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Release ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html is a flaky failure.
