@@ -40,7 +40,7 @@ namespace WebKit {
 // Because of <rdar://problem/60608008>, WebKit has to parse the feature flags plist file
 bool isFeatureFlagEnabled(const String& featureName)
 {
-    BOOL isWebKitBundleFromStagedFramework = [[[NSBundle mainBundle] bundlePath] hasPrefix:@"/Library/Apple/System/Library/StagedFrameworks/WebKit"];
+    BOOL isWebKitBundleFromStagedFramework = [[[NSBundle mainBundle] bundlePath] hasPrefix:@"/Library/Apple/System/Library/StagedFrameworks/Safari"];
 
     if (!isWebKitBundleFromStagedFramework)
         return _os_feature_enabled_impl("WebKit", (const char*)featureName.utf8().data());

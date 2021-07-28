@@ -1,3 +1,32 @@
+2021-07-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r280351. rdar://problem/81196087
+
+    The bundle path of downlevel Safari is wrong
+    https://bugs.webkit.org/show_bug.cgi?id=228339
+    
+    Reviewed by Jer Noble.
+    
+    Fix the bundle path. The correct path is "/Library/Apple/System/Library/StagedFrameworks/Safari".
+    
+    * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+    (WebKit::isFeatureFlagEnabled):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280351 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-27  Peng Liu  <peng.liu6@apple.com>
+
+            The bundle path of downlevel Safari is wrong
+            https://bugs.webkit.org/show_bug.cgi?id=228339
+
+            Reviewed by Jer Noble.
+
+            Fix the bundle path. The correct path is "/Library/Apple/System/Library/StagedFrameworks/Safari".
+
+            * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+            (WebKit::isFeatureFlagEnabled):
+
 2021-07-23  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r280274. rdar://problem/81044139
