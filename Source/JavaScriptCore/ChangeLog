@@ -1,3 +1,34 @@
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] load/store with BaseIndex is inefficient in ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228543
+
+        Reviewed by Mark Lam.
+
+        While we are frequently using load + BaseIndex (with offset) in RegExp code,
+        we emit 3 instructions in ARM64. This can be represented in 2 instructions.
+        This patch adds that path to make generated code tight in ARM64 RegExp.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        (JSC::MacroAssemblerARM64::tryFoldBaseAndOffsetPart):
+        * assembler/testmasm.cpp:
+        (JSC::testLoadBaseIndex):
+        (JSC::testStoreBaseIndex):
+
 2021-07-28  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake

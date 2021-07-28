@@ -1430,9 +1430,11 @@ public:
 
     void load64(BaseIndex address, RegisterID dest)
     {
-        if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.ldr<64>(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesEight) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldr<64>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1529,9 +1531,11 @@ public:
 
     void load32(BaseIndex address, RegisterID dest)
     {
-        if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.ldr<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesFour) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldr<32>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1576,9 +1580,11 @@ public:
     
     void load16(BaseIndex address, RegisterID dest)
     {
-        if (!address.offset && (!address.scale || address.scale == 1)) {
-            m_assembler.ldrh(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesTwo) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldrh(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1620,9 +1626,11 @@ public:
 
     void load16SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
-        if (!address.offset && (!address.scale || address.scale == 1)) {
-            m_assembler.ldrsh<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesTwo) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldrsh<32>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1651,9 +1659,11 @@ public:
 
     void load8(BaseIndex address, RegisterID dest)
     {
-        if (!address.offset && !address.scale) {
-            m_assembler.ldrb(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldrb(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1685,9 +1695,11 @@ public:
 
     void load8SignedExtendTo32(BaseIndex address, RegisterID dest)
     {
-        if (!address.offset && !address.scale) {
-            m_assembler.ldrsb<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldrsb<32>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1724,9 +1736,11 @@ public:
 
     void store64(RegisterID src, BaseIndex address)
     {
-        if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.str<64>(src, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesEight) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.str<64>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1831,9 +1845,11 @@ public:
 
     void store32(RegisterID src, BaseIndex address)
     {
-        if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.str<32>(src, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesFour) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.str<32>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1898,9 +1914,11 @@ public:
 
     void store16(RegisterID src, BaseIndex address)
     {
-        if (!address.offset && (!address.scale || address.scale == 1)) {
-            m_assembler.strh(src, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesTwo) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.strh(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -1926,9 +1944,11 @@ public:
 
     void store8(RegisterID src, BaseIndex address)
     {
-        if (!address.offset && !address.scale) {
-            m_assembler.strb(src, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.strb(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -2239,9 +2259,11 @@ public:
 
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
-        if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.ldr<64>(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesEight) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldr<64>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -2266,9 +2288,11 @@ public:
 
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
-        if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.ldr<32>(dest, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesFour) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.ldr<32>(dest, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -2523,9 +2547,11 @@ public:
 
     void storeDouble(FPRegisterID src, BaseIndex address)
     {
-        if (!address.offset && (!address.scale || address.scale == 3)) {
-            m_assembler.str<64>(src, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesEight) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.str<64>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -2544,9 +2570,11 @@ public:
     
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
-        if (!address.offset && (!address.scale || address.scale == 2)) {
-            m_assembler.str<32>(src, address.base, address.index, indexExtendType(address), address.scale);
-            return;
+        if (address.scale == TimesOne || address.scale == TimesFour) {
+            if (auto baseGPR = tryFoldBaseAndOffsetPart(address)) {
+                m_assembler.str<32>(src, baseGPR.value(), address.index, indexExtendType(address), address.scale);
+                return;
+            }
         }
 
         signExtend32ToPtr(TrustedImm32(address.offset), getCachedMemoryTempRegisterIDAndInvalidate());
@@ -4798,6 +4826,21 @@ protected:
             return true;
         }
         return false;
+    }
+
+    std::optional<RegisterID> tryFoldBaseAndOffsetPart(BaseIndex address)
+    {
+        if (!address.offset)
+            return address.base;
+        if (isUInt12(address.offset)) {
+            m_assembler.add<64>(getCachedMemoryTempRegisterIDAndInvalidate(), address.base, UInt12(address.offset));
+            return memoryTempRegister;
+        }
+        if (isUInt12(-address.offset)) {
+            m_assembler.sub<64>(getCachedMemoryTempRegisterIDAndInvalidate(), address.base, UInt12(-address.offset));
+            return memoryTempRegister;
+        }
+        return std::nullopt;
     }
     
     template<int datasize>
