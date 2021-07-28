@@ -1,3 +1,22 @@
+2021-07-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews-build.webkit.org] Verify GitHub integrity in commit queue
+        https://bugs.webkit.org/show_bug.cgi?id=228563
+        <rdar://problem/81230685>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (CommitQueueFactory.__init__): Add VerifyGitHubIntegrity.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestCommitQueueFactory.test_commit_queue_factory):
+        * CISupport/ews-build/steps.py:
+        (CheckPatchStatusOnEWSQueues.start):
+        (VerifyGitHubIntegrity):
+        (VerifyGitHubIntegrity.__init__):
+        (VerifyGitHubIntegrity.getResultSummary):
+        * Scripts/check-github-mirror-integrity: Import webkitscmpy from webkitpy.
+
 2021-07-28  Alex Christensen  <achristensen@webkit.org>
 
         WebSocket: Safari on iOS 15 beta 3 is sending invalid close frame

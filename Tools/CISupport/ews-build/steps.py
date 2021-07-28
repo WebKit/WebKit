@@ -3449,3 +3449,18 @@ class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
             self.setProperty('passed_mac_wk2', True)
         self.finished(SUCCESS)
         return None
+
+
+# FIXME: Only needed when GitHub is a mirror, remove once GitHub is the source of truth
+class VerifyGitHubIntegrity(steps.ShellSequence):
+    command = ['python3', 'Tools/Scripts/check-github-mirror-integrity']
+    name = 'verify-github-integrity'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(VerifyGitHubIntegrity, self).__init__(logEnviron=False, **kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Encountered some issues during cleanup'}
+        return {'step': 'Verified GitHub integrity'}
