@@ -1,3 +1,9 @@
+2021-07-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, Rebaseline imported/w3c/web-platform-tests/html/dom/idlharness.https.html on iPad.
+
+        * platform/ipad/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-07-28  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for inspector/canvas/recording-html-2d.html and inspector/canvas/updateShader-webgpu.html.
