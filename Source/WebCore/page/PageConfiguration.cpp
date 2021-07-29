@@ -29,6 +29,7 @@
 #include "AlternativeTextClient.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
+#include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "CookieJar.h"
 #include "DatabaseProvider.h"

@@ -1,3 +1,14 @@
+2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late July 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=228579
+
+        Unreviewed non-unified build fixes.
+
+        * Modules/webaudio/AudioContextOptions.h: Add missing <optional> header.
+        * html/BaseDateAndTimeInputType.cpp: Add missing "FrameView.h" header.
+        * page/PageConfiguration.cpp: Add missing "BroadcastChannelRegistry.h" header.
+
 2021-07-28  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Require GL_OES_EGL_image extension for xrCompatible GL context

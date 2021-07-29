@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebIDBServer.h"
 
+#include "Logging.h"
 #include "WebIDBConnectionToClient.h"
 #include "WebIDBServerMessages.h"
 #include <WebCore/StorageQuotaManager.h>

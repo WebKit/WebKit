@@ -38,8 +38,8 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/PageOverlayController.h>
-
 #include <WebCore/RenderLayerBacking.h>
+#include <WebCore/RenderView.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>

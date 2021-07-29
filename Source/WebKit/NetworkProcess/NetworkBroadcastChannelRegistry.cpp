@@ -27,6 +27,7 @@
 #include "NetworkBroadcastChannelRegistry.h"
 
 #include "WebBroadcastChannelRegistryMessages.h"
+#include <WebCore/MessageWithMessagePorts.h>
 
 namespace WebKit {
 

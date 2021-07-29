@@ -1,3 +1,24 @@
+2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late July 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=228579
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp: Add missing "Logging.h" header.
+        * NetworkProcess/NetworkBroadcastChannelRegistry.cpp: Add missing
+        <WebCore/MessageWithMessagePorts.h> header.
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp: Add missing
+        "NetworkBroadcastChannelRegistry.h" header.
+        * UIProcess/gtk/WebDateTimePickerGtk.cpp:
+        (WebKit::timeToString): Add missing WebCore:: namespace prefix to usages of constants of the
+        WebCore::SecondFormat enum.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp: Add missing
+        <WebCore/FrameView.h> header.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp: Add missing
+        <WebCore/RenderView.h> header.
+        * WebProcess/gtk/GtkSettingsManagerProxy.cpp: Add missing "WebCore.h" header.
+
 2021-07-28  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/opus container support

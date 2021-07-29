@@ -30,6 +30,7 @@
 #include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
 #include "Logging.h"
+#include "NetworkBroadcastChannelRegistry.h"
 #include "NetworkBroadcastChannelRegistryMessages.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"

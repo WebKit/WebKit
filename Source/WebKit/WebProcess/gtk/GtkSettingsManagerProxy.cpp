@@ -27,6 +27,7 @@
 #include "GtkSettingsManagerProxy.h"
 
 #include "GtkSettingsManagerProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/Page.h>
 #include <WebCore/RenderTheme.h>
 
