@@ -1,3 +1,17 @@
+2021-07-29  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer should update m_currentRotationSessionAngle
+        https://bugs.webkit.org/show_bug.cgi?id=228549
+        <rdar://80608977>
+
+        Reviewed by Eric Carlson.
+
+        Do not forget to update m_currentRotationSessionAngle when creating a new rotation session.
+        Also, make sure to recreate rotation session in case the pixel buffer size changes.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm:
+        (WebCore::RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer):
+
 2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late July 2021 edition
