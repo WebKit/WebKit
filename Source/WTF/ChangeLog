@@ -1,3 +1,19 @@
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        <rdar://problem/80693607>
+
+        Patch by Brent Fulgham.
+
+        Reviewed by Per Arne Vollan.
+
+        Add new SPI header for code signing features.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/cocoa/SecuritySPI.h:
+        * wtf/spi/darwin/CodeSignSPI.h: Added.
+
 2021-07-29  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Don't set capture attribution dynamically in the simulator

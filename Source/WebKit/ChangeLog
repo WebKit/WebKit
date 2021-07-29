@@ -1,3 +1,34 @@
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        <rdar://problem/80693607>
+
+        Patch by Brent Fulgham.
+
+        Reviewed by Per Arne Vollan.
+
+        We should not be using the PAC key to confirm a valid WebContent process is the source of
+        WebAuthn-related messages. Instead, we should confirm the message source is an Apple-signed
+        executable, and that the signining identity is for the WebContent process.
+
+        * Shared/Cocoa/CodeSigning.h: Renamed from Source/WebKit/Shared/mac/CodeSigning.h.
+        * Shared/Cocoa/CodeSigning.mm: Renamed from Source/WebKit/Shared/mac/CodeSigning.mm.
+        (WebKit::codeSigningIdentifier):
+        (WebKit::codeSigningIdentifierForCurrentProcess):
+        (WebKit::currentProcessIsPlatformBinary):
+        (WebKit::codeSigningIdentifierAndPlatformBinaryStatus):
+        * Shared/Cocoa/XPCEndpoint.mm:
+        (WebKit::XPCEndpoint::XPCEndpoint):
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::messageSourceIsValidWebContentProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getWebAuthnProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-07-29  Peng Liu  <peng.liu6@apple.com>
 
         The bundle path of downlevel Safari is wrong
