@@ -9,8 +9,7 @@ if (window.testRunner)
     jsTestIsAsync = true;
 
 function detachFrame() {
-    const frame = document.getElementById('iframe');
-    frame.parentNode.remove(frame);
+    document.getElementById('iframe').remove();
 
     setTimeout(() => { finishJSTest(); }, 0);
 }

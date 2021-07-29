@@ -1,3 +1,16 @@
+2021-07-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix fast/speechrecognition/detached-iframe.html
+        https://bugs.webkit.org/show_bug.cgi?id=228586
+
+        Reviewed by Chris Dumez.
+
+        The result of detached-iframe.html does not print description as remove() removes document.body instead of
+        the iframe.
+
+        * fast/speechrecognition/detached-iframe-expected.txt:
+        * fast/speechrecognition/detached-iframe.html:
+
 2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] http/tests/appcache/main-resource-redirect-with-sw.html is a flaky timeout.
