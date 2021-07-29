@@ -79,32 +79,32 @@ TEST_F(PreferredAudioBufferSize, Empty)
     EXPECT_EQ(512, preferredAudioBufferSize());
 }
 
-TEST_F(PreferredAudioBufferSize, AudioElement)
+TEST_F(PreferredAudioBufferSize, DISABLED_AudioElement)
 {
     runPlayingTestWithPageNamed(@"audio-only", 4096);
 }
 
-TEST_F(PreferredAudioBufferSize, WebAudio)
+TEST_F(PreferredAudioBufferSize, DISABLED_WebAudio)
 {
     runPlayingTestWithPageNamed(@"web-audio-only", 128);
 }
 
-TEST_F(PreferredAudioBufferSize, VideoOnly)
+TEST_F(PreferredAudioBufferSize, DISABLED_VideoOnly)
 {
     runPlayingTestWithPageNamed(@"video-without-audio", 4096);
 }
 
-TEST_F(PreferredAudioBufferSize, VideoWithAudio)
+TEST_F(PreferredAudioBufferSize, DISABLED_VideoWithAudio)
 {
     runPlayingTestWithPageNamed(@"video-with-audio", 4096);
 }
 
-TEST_F(PreferredAudioBufferSize, AudioWithWebAudio)
+TEST_F(PreferredAudioBufferSize, DISABLED_AudioWithWebAudio)
 {
     runPlayingTestWithPageNamed(@"audio-with-web-audio", 128);
 }
 
-TEST_F(PreferredAudioBufferSize, VideoWithAudioAndWebAudio)
+TEST_F(PreferredAudioBufferSize, DISABLED_VideoWithAudioAndWebAudio)
 {
     runPlayingTestWithPageNamed(@"video-with-audio-and-web-audio", 128);
 }

@@ -203,7 +203,7 @@ private:
     HashMap<CFNotificationName, NotificationCallback> _callbacks;
 };
 
-TEST_F(NowPlayingTest, AudioElement)
+TEST_F(NowPlayingTest, DISABLED_AudioElement)
 {
     executeAndWaitForWebViewToBecomeNowPlaying([&] {
         executeAndWaitForPlaying([&] {
@@ -214,7 +214,7 @@ TEST_F(NowPlayingTest, AudioElement)
     });
 }
 
-TEST_F(NowPlayingTest, VideoElementWithAudio)
+TEST_F(NowPlayingTest, DISABLED_VideoElementWithAudio)
 {
     executeAndWaitForWebViewToBecomeNowPlaying([&] {
         executeAndWaitForPlaying([&] {
@@ -246,7 +246,7 @@ TEST_F(NowPlayingTest, VideoElementWithMutedAudio)
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 }
 
-TEST_F(NowPlayingTest, VideoElementWithMutedAudioUnmutedWithUserGesture)
+TEST_F(NowPlayingTest, DISABLED_VideoElementWithMutedAudioUnmutedWithUserGesture)
 {
     executeAndWaitForPlaying([&] {
         loadPage("now-playing");

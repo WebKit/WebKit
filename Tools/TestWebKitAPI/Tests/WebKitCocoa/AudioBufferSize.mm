@@ -56,7 +56,7 @@ double waitForBufferSizeChange(WKWebView* webView, double oldSize)
     return 0;
 }
 
-TEST(WebKit, AudioBufferSize)
+TEST(WebKit, DISABLED_AudioBufferSize)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
