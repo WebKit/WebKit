@@ -50,9 +50,13 @@ class TestLocalSvn(testing.PathTestCase):
         with mocks.local.Svn(self.path):
             self.assertEqual(local.Svn(self.path).branch, 'trunk')
 
+    def test_url(self):
+        with mocks.local.Svn(self.path) as repo:
+            self.assertEqual(local.Svn(self.path).url(), repo.remote)
+
     def test_remote(self):
         with mocks.local.Svn(self.path) as repo:
-            self.assertEqual(local.Svn(self.path).remote(), repo.remote)
+            self.assertIsInstance(local.Svn(self.path).remote(), remote.Svn)
 
     def test_branches(self):
         with mocks.local.Svn(self.path):

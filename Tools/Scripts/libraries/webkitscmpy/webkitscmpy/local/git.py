@@ -34,6 +34,7 @@ from datetime import datetime, timedelta
 
 from webkitcorepy import run, decorators, NestedFuzzyDict
 from webkitscmpy.local import Scm
+from webkitscmpy import remote, Commit, Contributor, log
 from webkitscmpy import Commit, Contributor, log
 
 
@@ -253,6 +254,8 @@ class Git(Scm):
 
 
     GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
+    SSH_REMOTE = re.compile('(ssh://)?git@(?P<host>.+):(?P<path>.+).git')
+    HTTP_REMOTE = re.compile('(?P<protocol>https?)://(?P<host>.+)/(?P<path>.+).git')
 
     @classmethod
     @decorators.Memoize()
@@ -351,11 +354,36 @@ class Git(Scm):
             raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
         return tags.stdout.splitlines()
 
-    def remote(self, name=None):
+    @decorators.Memoize()
+    def url(self, name=None):
         result = run([self.executable(), 'remote', 'get-url', name or 'origin'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             raise self.Exception('Failed to retrieve remote for {}'.format(self.root_path))
         return result.stdout.rstrip()
+
+    @decorators.Memoize()
+    def remote(self, name=None):
+        url = self.url(name=name)
+        ssh_match = self.SSH_REMOTE.match(url)
+        http_match = self.HTTP_REMOTE.match(url)
+        if ssh_match:
+            url = 'https://{}/{}'.format(ssh_match.group('host'), ssh_match.group('path'))
+        elif http_match:
+            url = '{}://{}/{}'.format(http_match.group('protocol'), http_match.group('host'), http_match.group('path'))
+
+        if remote.GitHub.is_webserver(url):
+            return remote.GitHub(url, contributors=self.contributors)
+        if 'bitbucket' in url or 'stash' in url:
+            match = re.match(r'(?P<protocol>https?)://(?P<host>.+)/(?P<project>.+)/(?P<repo>.+)', url)
+            return remote.BitBucket(
+                '{}://{}/projects/{}/repos/{}'.format(
+                    match.group('protocol'),
+                    match.group('host'),
+                    match.group('project').upper(),
+                    match.group('repo'),
+                ), contributors=self.contributors,
+            )
+        return None
 
     def _commit_count(self, native_parameter):
         revision_count = run(

@@ -35,7 +35,7 @@ from datetime import datetime, timedelta
 
 from webkitcorepy import log, run, decorators
 from webkitscmpy.local.scm import Scm
-from webkitscmpy import Commit, Contributor, Version
+from webkitscmpy import remote, Commit, Contributor, Version
 
 
 class Svn(Scm):
@@ -297,8 +297,12 @@ class Svn(Scm):
             return len(self.cache._data[branch])
         return self._commit_count(revision=self.cache._data[branch][0], branch=self.default_branch)
 
-    def remote(self, name=None):
+    def url(self, name=None):
         return self.info(cached=True)['Repository Root']
+
+    @decorators.Memoize()
+    def remote(self, name=None):
+        return remote.Svn(self.url(name=name), contributors=self.contributors)
 
     def _branch_for(self, revision):
         if not self.cache:
@@ -311,7 +315,7 @@ class Svn(Scm):
             return candidate
 
         process = run(
-            [self.executable(), 'log', '-v', '-q', self.remote(), '-r', str(revision), '-l', '1'],
+            [self.executable(), 'log', '-v', '-q', self.url(), '-r', str(revision), '-l', '1'],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
         )
 

@@ -1,3 +1,28 @@
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Return remote objects from remote() function
+        https://bugs.webkit.org/show_bug.cgi?id=226980
+        <rdar://problem/79299760>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.url): Add function to return remote url directly.
+        (Git.remote): Construct the appropriate remote object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.url): Add function to return the remote url directly.
+        (Svn.remote): Construct the appropriate remote object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_url):
+        (TestGit.test_remote):
+        (TestGit.test_remote_github):
+        (TestGit.test_remote_bitbucket):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_url):
+        (TestLocalSvn.test_remote):
+
 2021-07-29  Peng Liu  <peng.liu6@apple.com>
 
         [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
