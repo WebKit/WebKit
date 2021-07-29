@@ -1,3 +1,19 @@
+2021-07-29  Chris Dumez  <cdumez@apple.com>
+
+        storage/indexeddb/detached-iframe.html is flaky on some bots
+        https://bugs.webkit.org/show_bug.cgi?id=228569
+        <rdar://80396559>
+
+        Reviewed by Sihui Liu.
+
+        The test was flaky because the `detachIframe()` function was incorrect and actually
+        removing the iframe's parent instead of the iframe (Credit to Sihui for finding this
+        out). This patch fixes the issue and also adds a description() to improve the test
+        output.
+
+        * storage/indexeddb/detached-iframe-expected.txt:
+        * storage/indexeddb/detached-iframe.html:
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ☂️ [GPU Process] Defer removal of resources in the GPU Process until we've executed all display list items which reference them
