@@ -1074,6 +1074,8 @@ webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogIn
 
 webkit.org/b/225665 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Slow ]
 
+webkit.org/b/228588 http/tests/appcache/main-resource-redirect-with-sw.html [ Pass Timeout ]
+
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
 
 webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
