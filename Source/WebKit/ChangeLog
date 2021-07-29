@@ -1,5 +1,36 @@
 2021-07-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r280433. rdar://problem/81286942
+
+    The bundle path of downlevel Safari is wrong
+    https://bugs.webkit.org/show_bug.cgi?id=228339
+    
+    Reviewed by Tim Horton.
+    
+    Use the same approach as `isSystemWebKit` to check whether the WebKit bundle
+    is from the staged framework.
+    
+    * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+    (WebKit::isFeatureFlagEnabled):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280433 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-29  Peng Liu  <peng.liu6@apple.com>
+
+            The bundle path of downlevel Safari is wrong
+            https://bugs.webkit.org/show_bug.cgi?id=228339
+
+            Reviewed by Tim Horton.
+
+            Use the same approach as `isSystemWebKit` to check whether the WebKit bundle
+            is from the staged framework.
+
+            * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+            (WebKit::isFeatureFlagEnabled):
+
+2021-07-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r280424. rdar://problem/81286934
 
     [macOS Catalina] Some feature preferences have wrong default values
