@@ -168,9 +168,3 @@ class TaskPoolUnittest(unittest.TestCase):
             sorted(captured.webkitcorepy.log.getvalue().splitlines()),
             ['worker/{} Teardown argument'.format(x) for x in range(4)],
         )
-
-    def test_invalid_shutdown(self):
-        with OutputCapture():
-            with self.assertRaises(TaskPool.Exception):
-                with TaskPool(workers=1, teardown=teardown, grace_period=1, force_fork=True) as pool:
-                    pool.do(wait, 5)
