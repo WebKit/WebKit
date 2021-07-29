@@ -1,3 +1,20 @@
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        CORS preflight checks not attributed to the correct application
+        https://bugs.webkit.org/show_bug.cgi?id=228585
+        <rdar://problem/81220151>
+
+        Reviewed by Alex Christensen.
+
+        We use _attributedBundleIdentifier to attribute loads to the correct
+        application. This parameter is set on each NSURLSession in the per-page
+        session sets. This patch sets the webPageProxyID for CORS preflight check
+        in the load parameters so the network data task knows to use the per-page
+        session set, so the loads get attributed to the right application.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+
 2021-07-29  Peng Liu  <peng.liu6@apple.com>
 
         [macOS Catalina] Some feature preferences have wrong default values
