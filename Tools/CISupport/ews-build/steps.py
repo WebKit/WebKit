@@ -3452,7 +3452,7 @@ class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
 
 
 # FIXME: Only needed when GitHub is a mirror, remove once GitHub is the source of truth
-class VerifyGitHubIntegrity(steps.ShellSequence):
+class VerifyGitHubIntegrity(shell.ShellCommand):
     command = ['python3', 'Tools/Scripts/check-github-mirror-integrity']
     name = 'verify-github-integrity'
     haltOnFailure = True
@@ -3462,5 +3462,5 @@ class VerifyGitHubIntegrity(steps.ShellSequence):
 
     def getResultSummary(self):
         if self.results != SUCCESS:
-            return {'step': 'Encountered some issues during cleanup'}
+            return {'step': 'GitHub integrity check failed'}
         return {'step': 'Verified GitHub integrity'}
