@@ -3365,9 +3365,6 @@ crypto/subtle/rsaes-pkcs1-v1_5-import-jwk-public-key-leading-zero.html [ Timeout
 # rdar://80397467 ([ iOS15 ] imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html (layout-test) is a constant timeout)
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Failure Crash ]
 
-# rdar://80396559 ([ iOS15 wk2 Release ] storage/indexeddb/detached-iframe.html (layout-test) is a flaky text failure)
-storage/indexeddb/detached-iframe.html [ Pass Failure ]
-
 # rdar://80384054 ([ iOS15 ] css3/filters/filter-repaint-shadow-layer-child.html is flaky failure)
 css3/filters/filter-repaint-shadow-layer-child.html [ Pass ImageOnlyFailure ]
 

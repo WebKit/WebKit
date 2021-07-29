@@ -650,8 +650,6 @@ webkit.org/b/224109 http/tests/privateClickMeasurement/store-private-click-measu
 
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Failure Pass ]
 
-webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
