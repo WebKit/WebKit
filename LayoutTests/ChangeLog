@@ -1,3 +1,16 @@
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ☂️ [GPU Process] Defer removal of resources in the GPU Process until we've executed all display list items which reference them
+        https://bugs.webkit.org/show_bug.cgi?id=228216
+        <rdar://problem/80473805>
+
+        Reviewed by Wenson Hsieh.
+
+        All the code changes have landed. Mark the tests as passing again.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-28  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/opus container support
