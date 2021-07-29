@@ -2003,3 +2003,6 @@ webkit.org/b/226789 imported/w3c/web-platform-tests/webstorage/event_case_sensit
 
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Pass Failure ]
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Pass Failure ]
+
+webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Slow ]
+webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Slow ]
