@@ -1,3 +1,20 @@
+2021-07-29  Youenn Fablet  <youenn@apple.com>
+
+        NetworkRTCUDPSocketCocoaConnections nw_listener_set_state_changed_handler callback should hold a reference to its listener
+        https://bugs.webkit.org/show_bug.cgi?id=228551
+        <rdar://81137047>
+
+        Reviewed by Alex Christensen.
+
+        nw_listener is not guaranteed to stay valid when calling the state change callback.
+        We need to hold a reference to the listener in the callback.
+        To prevent memory leaks, the callback will clear its listener reference when entering cancelled state.
+        The cancelled state is guaranteed to happen when calling cancel in the listener, which happens when closing the socket.
+        Covered by existing tests.
+
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+
 2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late July 2021 edition
