@@ -1,3 +1,39 @@
+2021-07-29  Alex Christensen  <achristensen@webkit.org>
+
+        [ Mac ] fast/dom/webtiming-document-open.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=228571
+
+        Reviewed by Chris Dumez.
+
+        In r278391 I made PerformanceTiming::monotonicTimeToIntegerMilliseconds call MonotonicTime::approximateWallTime,
+        which, if called multiple times, can give slightly different values, usually differing by 1 (millisecond, in this case).
+        To fix this, cache the value from the first call.  This uses an additional 168 bytes per frame in pages that use PerformanceTiming.
+        Once bug 227336 is turned on and the web is given a year or so to move to that replacement API, this whole API will be removed.
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::navigationStart const):
+        (WebCore::PerformanceTiming::unloadEventStart const):
+        (WebCore::PerformanceTiming::unloadEventEnd const):
+        (WebCore::PerformanceTiming::redirectStart const):
+        (WebCore::PerformanceTiming::redirectEnd const):
+        (WebCore::PerformanceTiming::fetchStart const):
+        (WebCore::PerformanceTiming::domainLookupStart const):
+        (WebCore::PerformanceTiming::domainLookupEnd const):
+        (WebCore::PerformanceTiming::connectStart const):
+        (WebCore::PerformanceTiming::connectEnd const):
+        (WebCore::PerformanceTiming::secureConnectionStart const):
+        (WebCore::PerformanceTiming::requestStart const):
+        (WebCore::PerformanceTiming::responseStart const):
+        (WebCore::PerformanceTiming::responseEnd const):
+        (WebCore::PerformanceTiming::domLoading const):
+        (WebCore::PerformanceTiming::domInteractive const):
+        (WebCore::PerformanceTiming::domContentLoadedEventStart const):
+        (WebCore::PerformanceTiming::domContentLoadedEventEnd const):
+        (WebCore::PerformanceTiming::domComplete const):
+        (WebCore::PerformanceTiming::loadEventStart const):
+        (WebCore::PerformanceTiming::loadEventEnd const):
+        * page/PerformanceTiming.h:
+
 2021-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wreturn-type warning in SQLiteDatabase.cpp

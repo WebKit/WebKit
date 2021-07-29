@@ -1,3 +1,12 @@
+2021-07-29  Alex Christensen  <achristensen@webkit.org>
+
+        [ Mac ] fast/dom/webtiming-document-open.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=228571
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac/TestExpectations:
+
 2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] 2 http/tests/cookies/same-site tests are flaky timing out.
