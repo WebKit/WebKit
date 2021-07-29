@@ -23,6 +23,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PrintStream.h>
 #include <wtf/StdIntExtras.h>
 #include <string.h>
 #include <type_traits>
@@ -129,6 +130,8 @@ public:
     void operator^=(const Bitmap&);
 
     unsigned hash() const;
+
+    void dump(PrintStream& out) const;
 
 private:
     static constexpr unsigned wordSize = sizeof(WordType) * 8;
@@ -505,6 +508,13 @@ inline unsigned Bitmap<bitmapSize, WordType>::hash() const
     for (size_t i = 0; i < words; ++i)
         result ^= IntHash<WordType>::hash(bits[i]);
     return result;
+}
+
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::dump(PrintStream& out) const
+{
+    for (size_t i = 0; i < size(); ++i)
+        out.print(get(i) ? "1" : "-");
 }
 
 } // namespace WTF

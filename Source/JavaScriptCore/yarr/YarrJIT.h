@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,9 @@
 #include "VM.h"
 #include "Yarr.h"
 #include "YarrPattern.h"
+#include <wtf/Bitmap.h>
+#include <wtf/FixedVector.h>
+#include <wtf/UniqueRef.h>
 
 #define YARR_CALL
 
@@ -56,6 +60,48 @@ enum class JITFailureReason : uint8_t {
     ExecutableMemoryAllocationFailure,
 };
 
+class BoyerMooreBitmap {
+    WTF_MAKE_FAST_ALLOCATED(BoyerMooreBitmap);
+public:
+    static constexpr unsigned mapSize = 128;
+    static constexpr unsigned mapMask = 128 - 1;
+    using Map = Bitmap<mapSize>;
+
+    BoyerMooreBitmap() = default;
+
+    unsigned count() const { return m_count; }
+    const Map& map() const { return m_map; }
+    bool isMaskEffective() const { return m_isMaskEffective; }
+
+    void add(UChar32 character)
+    {
+        unsigned position = character & mapMask;
+        if (position != static_cast<unsigned>(character))
+            m_isMaskEffective = true;
+        if (!m_map.get(position)) {
+            m_map.set(position);
+            ++m_count;
+        }
+    }
+
+private:
+    Map m_map { };
+    unsigned m_count { 0 };
+    bool m_isMaskEffective { false };
+};
+
+class BoyerMooreByteVector : public std::array<uint8_t, BoyerMooreBitmap::mapSize> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BoyerMooreByteVector(const BoyerMooreBitmap::Map& map)
+    {
+        fill(0);
+        map.forEachSetBit([&](unsigned index) {
+            (*this)[index] = 1;
+        });
+    }
+};
+
 #if CPU(ARM64E)
 extern "C" EncodedMatchResult vmEntryToYarrJIT(const void* input, unsigned start, unsigned length, int* output, MatchingContextHolder* matchingContext, const void* codePtr);
 extern "C" void vmEntryToYarrJITAfter(void);
@@ -78,13 +124,37 @@ public:
 
     bool has8BitCode() { return m_ref8.size(); }
     bool has16BitCode() { return m_ref16.size(); }
-    void set8BitCode(MacroAssemblerCodeRef<Yarr8BitPtrTag> ref) { m_ref8 = ref; }
-    void set16BitCode(MacroAssemblerCodeRef<Yarr16BitPtrTag> ref) { m_ref16 = ref; }
+    void set8BitCode(MacroAssemblerCodeRef<Yarr8BitPtrTag> ref, Vector<UniqueRef<BoyerMooreByteVector>> maps)
+    {
+        m_ref8 = ref;
+        m_maps.reserveCapacity(m_maps.size() + maps.size());
+        for (unsigned index = 0; index < maps.size(); ++index)
+            m_maps.uncheckedAppend(WTFMove(maps[index]));
+    }
+    void set16BitCode(MacroAssemblerCodeRef<Yarr16BitPtrTag> ref, Vector<UniqueRef<BoyerMooreByteVector>> maps)
+    {
+        m_ref16 = ref;
+        m_maps.reserveCapacity(m_maps.size() + maps.size());
+        for (unsigned index = 0; index < maps.size(); ++index)
+            m_maps.uncheckedAppend(WTFMove(maps[index]));
+    }
 
     bool has8BitCodeMatchOnly() { return m_matchOnly8.size(); }
     bool has16BitCodeMatchOnly() { return m_matchOnly16.size(); }
-    void set8BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> matchOnly) { m_matchOnly8 = matchOnly; }
-    void set16BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> matchOnly) { m_matchOnly16 = matchOnly; }
+    void set8BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> matchOnly, Vector<UniqueRef<BoyerMooreByteVector>> maps)
+    {
+        m_matchOnly8 = matchOnly;
+        m_maps.reserveCapacity(m_maps.size() + maps.size());
+        for (unsigned index = 0; index < maps.size(); ++index)
+            m_maps.uncheckedAppend(WTFMove(maps[index]));
+    }
+    void set16BitCodeMatchOnly(MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> matchOnly, Vector<UniqueRef<BoyerMooreByteVector>> maps)
+    {
+        m_matchOnly16 = matchOnly;
+        m_maps.reserveCapacity(m_maps.size() + maps.size());
+        for (unsigned index = 0; index < maps.size(); ++index)
+            m_maps.uncheckedAppend(WTFMove(maps[index]));
+    }
 
     bool usesPatternContextBuffer() { return m_usesPatternContextBuffer; }
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
@@ -170,13 +240,23 @@ public:
         return m_ref8.size() + m_ref16.size() + m_matchOnly8.size() + m_matchOnly16.size();
     }
 
-    void clear()
+    void clear(const AbstractLocker&)
     {
         m_ref8 = MacroAssemblerCodeRef<Yarr8BitPtrTag>();
         m_ref16 = MacroAssemblerCodeRef<Yarr16BitPtrTag>();
         m_matchOnly8 = MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag>();
         m_matchOnly16 = MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag>();
+        m_maps.clear();
         m_failureReason = std::nullopt;
+    }
+
+    const uint8_t* tryReuseBoyerMooreByteVector(unsigned index, BoyerMooreByteVector& vector) const
+    {
+        if (index < m_maps.size()) {
+            if (m_maps[index].get() == vector)
+                return m_maps[index]->data();
+        }
+        return nullptr;
     }
 
 private:
@@ -184,6 +264,7 @@ private:
     MacroAssemblerCodeRef<Yarr16BitPtrTag> m_ref16;
     MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> m_matchOnly8;
     MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> m_matchOnly16;
+    Vector<UniqueRef<BoyerMooreByteVector>> m_maps;
     bool m_usesPatternContextBuffer { false };
     std::optional<JITFailureReason> m_failureReason;
 };

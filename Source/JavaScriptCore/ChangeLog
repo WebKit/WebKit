@@ -1,5 +1,87 @@
 2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Yarr should perform BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+
+        Reviewed by Saam Barati.
+
+        This patch emits skipping fast-path at the beginning of body alternatives with a large stride. So we can quickly discard unrelated characters
+        and attempt to find possibly related sequence in the long sequence. The method is derived from V8's implementation (with some extensions).
+
+        If we have a searching pattern /abcdef/, then we can check the 6th character against a set of {a, b, c, d, e, f}.
+        If it does not match, we can shift 6 characters. We use this strategy since this way can be extended easily to support
+        disjunction, character-class, and ignore-cases. For example, in the case of /(?:abc|def)/, we can check 3rd character
+        against {a, b, c, d, e, f} and shift 3 characters if it does not match.
+
+        Then, the best way to perform the above shifting is that finding the longest character sequence which does not have
+        many candidates. In the case of /[a-z]aaaaaaa[a-z]/, we can extract "aaaaaaa" sequence and check 8th character against {a}.
+        If it does not match, then we can shift 7 characters (length of "aaaaaaa"). This shifting is better than using "[a-z]aaaaaaa[a-z]"
+        sequence and {a-z} set since {a-z} set will almost always match.
+
+        We first collect possible characters for each character position. Then, apply heuristics to extract good character sequence from
+        that and construct fast searching with long stride.
+
+        Microbenchmark which performs RegExp ops in Speedometer2/jQuery-TodoMVC shows 25% improvement.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      723.9739+-1.3997     ^    579.1698+-1.2505        ^ definitely 1.2500x faster
+
+        This improves Speedometer2/jQuery-TodoMVC by 3%.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |123.365625   |123.456250   |1.000735  | 0.804077                                         |
+            | VueJS-TodoMVC                        |26.912500    |26.925000    |1.000464  | 0.969603                                         |
+            | EmberJS-TodoMVC                      |127.540625   |127.562500   |1.000172  | 0.960474                                         |
+            | BackboneJS-TodoMVC                   |50.606250    |50.518750    |0.998271  | 0.670313                                         |
+            | Preact-TodoMVC                       |21.018750    |20.850000    |0.991971  | 0.563818                                         |
+            | AngularJS-TodoMVC                    |136.943750   |137.271875   |1.002396  | 0.531513                                         |
+            | Vanilla-ES2015-TodoMVC               |68.521875    |68.593750    |1.001049  | 0.701376                                         |
+            | Inferno-TodoMVC                      |65.559375    |65.803125    |1.003718  | 0.414418                                         |
+            | Flight-TodoMVC                       |77.284375    |76.715625    |0.992641  | 0.219870                                         |
+            | Angular2-TypeScript-TodoMVC          |40.725000    |40.318750    |0.990025  | 0.281212                                         |
+            | VanillaJS-TodoMVC                    |55.209375    |54.715625    |0.991057  | 0.056921                                         |
+            | jQuery-TodoMVC                       |266.396875   |258.471875   |0.970251  | 0.000000 (significant)                           |
+            | EmberJS-Debug-TodoMVC                |341.550000   |341.856250   |1.000897  | 0.618140                                         |
+            | React-TodoMVC                        |88.731250    |88.871875    |1.001585  | 0.512407                                         |
+            | React-Redux-TodoMVC                  |150.340625   |150.065625   |0.998171  | 0.412940                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |65.390625    |65.362500    |0.999570  | 0.834760                                         |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 245.96997
+            b mean = 246.86366
+            pValue = 0.0061448402
+            (Bigger means are better.)
+            1.004 times better
+            Results ARE significant
+
+        * runtime/OptionsList.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::BoyerMooreInfo::BoyerMooreInfo):
+        (JSC::Yarr::BoyerMooreInfo::length const):
+        (JSC::Yarr::BoyerMooreInfo::set):
+        (JSC::Yarr::BoyerMooreInfo::index const):
+        (JSC::Yarr::BoyerMooreInfo::setIndex):
+        (JSC::Yarr::BoyerMooreInfo::create):
+        (JSC::Yarr::BoyerMooreInfo::findBestCharacterSequence const):
+        (JSC::Yarr::BoyerMooreInfo::findWorthwhileCharacterSequenceForLookahead const):
+        (JSC::Yarr::BoyerMooreInfo::createCandidateBitmap const):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::BoyerMooreBitmap::count const):
+        (JSC::Yarr::BoyerMooreBitmap::map const):
+        (JSC::Yarr::BoyerMooreBitmap::isMaskEffective const):
+        (JSC::Yarr::BoyerMooreBitmap::add):
+        (JSC::Yarr::BoyerMooreByteVector::BoyerMooreByteVector):
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::clear):
+        (JSC::Yarr::YarrCodeBlock::findSameVector const):
+
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] load/store with BaseIndex is inefficient in ARM64
         https://bugs.webkit.org/show_bug.cgi?id=228543
 

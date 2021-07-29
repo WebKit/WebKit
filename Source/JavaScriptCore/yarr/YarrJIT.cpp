@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +35,126 @@
 #include "YarrDisassembler.h"
 #include "YarrMatchingContextHolder.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/HexNumber.h>
 #include <wtf/Threading.h>
 
 
 #if ENABLE(YARR_JIT)
 
 namespace JSC { namespace Yarr {
+namespace YarrJITInternal {
+static constexpr bool verbose = false;
+}
 
 #if CPU(ARM64E)
 JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToYarrJITAfter, vmEntryToYarrJITAfter);
 #endif
+
+class BoyerMooreInfo {
+    WTF_MAKE_NONCOPYABLE(BoyerMooreInfo);
+    WTF_MAKE_FAST_ALLOCATED(BoyerMooreInfo);
+public:
+    static constexpr unsigned maxLength = 32;
+
+    explicit BoyerMooreInfo(unsigned length)
+        : m_characters(length)
+    {
+        ASSERT(this->length() <= maxLength);
+    }
+
+    unsigned length() const { return m_characters.size(); }
+
+    void set(unsigned index, UChar32 character)
+    {
+        m_characters[index].add(character);
+    }
+
+    unsigned index() const { return m_index; }
+    void setIndex(unsigned index)
+    {
+        m_index = index;
+    }
+
+    static UniqueRef<BoyerMooreInfo> create(unsigned length)
+    {
+        return makeUniqueRef<BoyerMooreInfo>(length);
+    }
+
+    std::optional<std::tuple<unsigned, unsigned>> findWorthwhileCharacterSequenceForLookahead() const;
+    std::tuple<BoyerMooreBitmap::Map, bool> createCandidateBitmap(unsigned begin, unsigned end) const;
+
+private:
+    std::tuple<int, unsigned, unsigned> findBestCharacterSequence(unsigned numberOfCandidatesLimit) const;
+
+    Vector<BoyerMooreBitmap> m_characters;
+    unsigned m_index { 0 };
+};
+
+std::tuple<int, unsigned, unsigned> BoyerMooreInfo::findBestCharacterSequence(unsigned numberOfCandidatesLimit) const
+{
+    int biggestPoint = 0;
+    unsigned beginResult = 0;
+    unsigned endResult = 0;
+    for (unsigned index = 0; index < length();) {
+        while (index < length() && m_characters[index].count() > numberOfCandidatesLimit)
+            ++index;
+        if (index == length())
+            break;
+        unsigned begin = index;
+        BoyerMooreBitmap::Map map { };
+        for (; index < length() && m_characters[index].count() <= numberOfCandidatesLimit; ++index)
+            map.merge(m_characters[index].map());
+
+        // If map has many candidates, then point of this sequence is low since it will match too many things.
+        // And if the sequence is longer, then the point of this sequence is higher since it can skip many characters.
+        // FIXME: Currently we are handling all characters equally. But we should have weight per character since e.g. 'e' should appear more frequently than '\v'.
+        // https://bugs.webkit.org/show_bug.cgi?id=228610
+        int frequency = map.count();
+        int matchingProbability = BoyerMooreBitmap::mapSize - frequency;
+        int point = (index - begin) * matchingProbability;
+        if (point > biggestPoint) {
+            biggestPoint = point;
+            beginResult = begin;
+            endResult = index;
+        }
+    }
+    return std::tuple { biggestPoint, beginResult, endResult };
+}
+
+std::optional<std::tuple<unsigned, unsigned>> BoyerMooreInfo::findWorthwhileCharacterSequenceForLookahead() const
+{
+    // If candiates-per-character becomes larger, then sequence is not profitable since this sequence will match against
+    // too many characters. But if we limit candiates-per-character smaller, it is possible that we only find very short
+    // character sequence. We start with low limit, then enlarging the limit to find more and more profitable
+    // character sequence.
+    int biggestPoint = 0;
+    unsigned begin = 0;
+    unsigned end = 0;
+    constexpr unsigned maxCandidatesPerCharacter = 32;
+    for (unsigned limit = 4; limit < maxCandidatesPerCharacter; limit *= 2) {
+        auto [newPoint, newBegin, newEnd] = findBestCharacterSequence(limit);
+        if (newPoint > biggestPoint) {
+            biggestPoint = newPoint;
+            begin = newBegin;
+            end = newEnd;
+        }
+    }
+    if (!biggestPoint)
+        return std::nullopt;
+    return std::tuple { begin, end };
+}
+
+std::tuple<BoyerMooreBitmap::Map, bool> BoyerMooreInfo::createCandidateBitmap(unsigned begin, unsigned end) const
+{
+    BoyerMooreBitmap::Map map { };
+    bool isMaskEffective = false;
+    for (unsigned index = begin; index < end; ++index) {
+        auto& bmBitmap = m_characters[index];
+        map.merge(bmBitmap.map());
+        isMaskEffective |= bmBitmap.isMaskEffective();
+    }
+    return std::tuple { map, isMaskEffective };
+}
 
 class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
@@ -783,13 +894,11 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         explicit YarrOp(PatternTerm* term)
             : m_term(term)
             , m_op(YarrOpCode::Term)
-            , m_isDeadCode(false)
         {
         }
 
         explicit YarrOp(YarrOpCode op)
             : m_op(op)
-            , m_isDeadCode(false)
         {
         }
 
@@ -819,7 +928,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
         // This flag is used to null out the second pattern character, when
         // two are fused to match a pair together.
-        bool m_isDeadCode;
+        bool m_isDeadCode { false };
 
         // Currently used in the case of some of the more complex management of
         // 'm_checkedOffset', to cache the offset used in this alternative, to avoid
@@ -830,6 +939,8 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         // value that will be pushed into the pattern's frame to return to,
         // upon backtracking back into the disjunction.
         DataLabelPtr m_returnAddress;
+
+        BoyerMooreInfo* m_bmInfo { nullptr };
     };
 
     // BacktrackingState
@@ -1410,7 +1521,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
             allCharacters |= (static_cast<uint64_t>(currentCharacter) << shiftAmount);
 
-            if ((m_pattern.ignoreCase()) && (isASCIIAlpha(currentCharacter)))
+            if (m_pattern.ignoreCase() && isASCIIAlpha(currentCharacter))
                 ignoreCaseMask |= 32ULL << shiftAmount;
         }
 
@@ -2256,11 +2367,68 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
+                m_checkedOffset += alternative->m_minimumSize;
+
                 // We will reenter after the check, and assume the input position to have been
                 // set as appropriate to this alternative.
                 op.m_reentry = label();
 
-                m_checkedOffset += alternative->m_minimumSize;
+                // Emit fast skip path with stride if we have BoyerMooreInfo.
+                if (op.m_bmInfo) {
+                    auto range = op.m_bmInfo->findWorthwhileCharacterSequenceForLookahead();
+                    if (range) {
+                        auto [beginIndex, endIndex] = *range;
+                        ASSERT(endIndex <= alternative->m_minimumSize);
+
+                        auto [map, isMaskEffective] = op.m_bmInfo->createCandidateBitmap(beginIndex, endIndex);
+                        unsigned mapCount = map.count();
+                        // If candiate characters are <= 2, checking each is better than using vector.
+                        if (mapCount <= 2) {
+                            UChar32 character1 = map.findBit(0, true);
+                            ASSERT(character1 != BoyerMooreBitmap::Map::size());
+                            UChar32 character2 = 0xff;
+                            if (mapCount == 2) {
+                                character2 = map.findBit(character1 + 1, true);
+                                ASSERT(character2 != BoyerMooreBitmap::Map::size());
+                            }
+                            dataLogLnIf(Options::verboseRegExpCompilation(), "Found 1-or-2 characters lookahead character:(0x", hex(character1), "),character2:(", hex(character2), "),isMaskEffective:(", isMaskEffective,"),range:[", beginIndex, ", ", endIndex, ")");
+
+                            JumpList matched;
+                            auto loopHead = label();
+                            readCharacter(m_checkedOffset - endIndex + 1, regT0);
+                            if (isMaskEffective)
+                                and32(TrustedImm32(BoyerMooreBitmap::mapMask), regT0, regT0);
+                            matched.append(branch32(Equal, regT0, TrustedImm32(character1)));
+                            if (mapCount == 2)
+                                matched.append(branch32(Equal, regT0, TrustedImm32(character2)));
+                            op.m_jumps.append(jumpIfNoAvailableInput(endIndex - beginIndex));
+                            jump().linkTo(loopHead, this);
+                            matched.link(this);
+                        } else {
+                            const uint8_t* pointer = getBoyerMooreByteVector(op.m_bmInfo->index(), map);
+                            dataLogLnIf(Options::verboseRegExpCompilation(), "Found bitmap lookahead count:(", mapCount, "),range:[", beginIndex, ", ", endIndex, ")");
+
+                            move(TrustedImmPtr(pointer), regT1);
+                            auto loopHead = label();
+                            readCharacter(m_checkedOffset - endIndex + 1, regT0);
+                            and32(TrustedImm32(BoyerMooreBitmap::mapMask), regT0, regT0);
+                            auto matched = branchTest32(NonZero, BaseIndex(regT1, regT0, TimesOne));
+                            op.m_jumps.append(jumpIfNoAvailableInput(endIndex - beginIndex));
+                            jump().linkTo(loopHead, this);
+                            matched.link(this);
+                        }
+
+                        // If the pattern size is not fixed, then store the start index for use if we match.
+                        if (!m_pattern.m_body->m_hasFixedSize) {
+                            if (alternative->m_minimumSize) {
+                                move(index, regT0);
+                                sub32(Imm32(alternative->m_minimumSize), regT0);
+                                setMatchStart(regT0);
+                            } else
+                                setMatchStart(index);
+                        }
+                    }
+                }
                 break;
             }
             case YarrOpCode::BodyAlternativeNext:
@@ -2780,6 +2948,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     break;
                 }
                 YarrOp& endOp = m_ops[op.m_nextOp];
+                ASSERT(endOp.m_op == YarrOpCode::BodyAlternativeEnd);
 
                 YarrOp* beginOp = &op;
                 while (beginOp->m_op != YarrOpCode::BodyAlternativeBegin) {
@@ -2797,7 +2966,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 if (onceThrough)
                     m_backtrackingState.linkTo(endOp.m_reentry, this);
                 else {
-                    if (m_pattern.sticky() && m_ops[op.m_nextOp].m_op == YarrOpCode::BodyAlternativeEnd) {
+                    if (m_pattern.sticky()) {
                         // It is a sticky pattern and the last alternative failed, jump to the end.
                         m_backtrackingState.takeBacktracksToJumpList(lastStickyAlternativeFailures, this);
                     } else if (m_pattern.m_body->m_hasFixedSize
@@ -2813,41 +2982,41 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         // around to the first alternative.
                         m_backtrackingState.link(this);
 
-                        // No need to advance and retry for a sticky pattern.
-                        if (!m_pattern.sticky()) {
-                            // If the pattern size is not fixed, then store the start index for use if we match.
-                            if (!m_pattern.m_body->m_hasFixedSize) {
-                                if (alternative->m_minimumSize == 1)
-                                    setMatchStart(index);
-                                else {
-                                    move(index, regT0);
-                                    if (alternative->m_minimumSize)
-                                        sub32(Imm32(alternative->m_minimumSize - 1), regT0);
-                                    else
-                                        add32(TrustedImm32(1), regT0);
-                                    setMatchStart(regT0);
-                                }
-                            }
+                        // No need to advance and retry for a sticky pattern. And it is already handled before this branch.
+                        ASSERT(!m_pattern.sticky());
 
-                            // Generate code to loop. Check whether the last alternative is longer than the
-                            // first (e.g. /a|xy/ or /a|xyz/).
-                            if (alternative->m_minimumSize > beginOp->m_alternative->m_minimumSize) {
-                                // We want to loop, and increment input position. If the delta is 1, it is
-                                // already correctly incremented, if more than one then decrement as appropriate.
-                                unsigned delta = alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize;
-                                ASSERT(delta);
-                                if (delta != 1)
-                                    sub32(Imm32(delta - 1), index);
-                                jump(beginOp->m_reentry);
-                            } else {
-                                // If the first alternative has minimum size 0xFFFFFFFFu, then there cannot
-                                // be sufficent input available to handle this, so just fall through.
-                                unsigned delta = beginOp->m_alternative->m_minimumSize - alternative->m_minimumSize;
-                                if (delta != 0xFFFFFFFFu) {
-                                    // We need to check input because we are incrementing the input.
-                                    add32(Imm32(delta + 1), index);
-                                    checkInput().linkTo(beginOp->m_reentry, this);
-                                }
+                        // If the pattern size is not fixed, then store the start index for use if we match.
+                        if (!m_pattern.m_body->m_hasFixedSize) {
+                            if (alternative->m_minimumSize == 1)
+                                setMatchStart(index);
+                            else {
+                                move(index, regT0);
+                                if (alternative->m_minimumSize)
+                                    sub32(Imm32(alternative->m_minimumSize - 1), regT0);
+                                else
+                                    add32(TrustedImm32(1), regT0);
+                                setMatchStart(regT0);
+                            }
+                        }
+
+                        // Generate code to loop. Check whether the last alternative is longer than the
+                        // first (e.g. /a|xy/ or /a|xyz/).
+                        if (alternative->m_minimumSize > beginOp->m_alternative->m_minimumSize) {
+                            // We want to loop, and increment input position. If the delta is 1, it is
+                            // already correctly incremented, if more than one then decrement as appropriate.
+                            unsigned delta = alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize;
+                            ASSERT(delta);
+                            if (delta != 1)
+                                sub32(Imm32(delta - 1), index);
+                            jump(beginOp->m_reentry);
+                        } else {
+                            // If the first alternative has minimum size 0xFFFFFFFFu, then there cannot
+                            // be sufficent input available to handle this, so just fall through.
+                            unsigned delta = beginOp->m_alternative->m_minimumSize - alternative->m_minimumSize;
+                            if (delta != 0xFFFFFFFFu) {
+                                // We need to check input because we are incrementing the input.
+                                add32(Imm32(delta + 1), index);
+                                checkInput().linkTo(beginOp->m_reentry, this);
                             }
                         }
                     }
@@ -3643,6 +3812,21 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         size_t repeatLoop = m_ops.size();
         m_ops.append(YarrOp(YarrOpCode::BodyAlternativeBegin));
         m_ops.last().m_previousOp = notFound;
+        // Collect BoyerMooreInfo if it is possible and profitable. BoyerMooreInfo will be used to emit fast skip path with large stride
+        // at the beginning of the body alternatives.
+        // We do not emit these fast path when RegExp has sticky or unicode flag. Sticky case does not need this since
+        // it fails when the body alternatives fail to match with the current offset.
+        // FIXME: Support unicode flag.
+        // https://bugs.webkit.org/show_bug.cgi?id=228611
+        if (disjunction->m_minimumSize && disjunction->m_hasFixedSize && !m_pattern.sticky() && !m_pattern.unicode()) {
+            auto bmInfo = BoyerMooreInfo::create(std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
+            if (collectBoyerMooreInfo(disjunction, currentAlternativeIndex, bmInfo.get())) {
+                m_ops.last().m_bmInfo = bmInfo.ptr();
+                bmInfo->setIndex(m_bmInfos.size());
+                m_bmInfos.append(WTFMove(bmInfo));
+            }
+        }
+
         do {
             size_t lastOpIndex = m_ops.size() - 1;
             PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
@@ -3666,6 +3850,82 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         lastOp.m_op = YarrOpCode::BodyAlternativeEnd;
         lastOp.m_alternative = nullptr;
         lastOp.m_nextOp = repeatLoop;
+    }
+
+    bool collectBoyerMooreInfo(PatternDisjunction* disjunction, size_t currentAlternativeIndex, BoyerMooreInfo& bmInfo)
+    {
+        // If we have a searching pattern /abcdef/, then we can check the 6th character against a set of {a, b, c, d, e, f}.
+        // If it does not match, we can shift 6 characters. We use this strategy since this way can be extended easily to support
+        // disjunction, character-class, and ignore-cases. For example, in the case of /(?:abc|def)/, we can check 3rd character
+        // against {a, b, c, d, e, f} and shift 3 characters if it does not match.
+        //
+        // Then, the best way to perform the above shifting is that finding the longest character sequence which does not have
+        // many candidates. In the case of /[a-z]aaaaaaa[a-z]/, we can extract "aaaaaaa" sequence and check 8th character against {a}.
+        // If it does not match, then we can shift 7 characters (length of "aaaaaaa"). This shifting is better than using "[a-z]aaaaaaa[a-z]"
+        // sequence and {a-z} set since {a-z} set will almost always match.
+        //
+        // We first collect possible characters for each character position. Then, apply heuristics to extract good character sequence from
+        // that and construct fast searching with long stride.
+
+        ASSERT(disjunction->m_hasFixedSize); // We only support fixed-sized lookahead for BoyerMoore search.
+        ASSERT(disjunction->m_minimumSize);
+
+        // FIXME: Support nested disjunctions (e.g. /(?:abc|def|g(?:hi|jk))/).
+        // https://bugs.webkit.org/show_bug.cgi?id=228614
+        // FIXME: Support character-class (e.g. /[\d]test/).
+        // https://bugs.webkit.org/show_bug.cgi?id=228613
+        // FIXME: Support non-fixed-sized lookahead (e.g. /.*abc/ and extract "abc" sequence).
+        // https://bugs.webkit.org/show_bug.cgi?id=228612
+        auto& alternatives = disjunction->m_alternatives;
+        for (; currentAlternativeIndex < alternatives.size(); ++currentAlternativeIndex) {
+            unsigned cursor = 0;
+            PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
+            for (unsigned index = 0; index < alternative->m_terms.size() && cursor < bmInfo.length(); ++index) {
+                PatternTerm& term = alternative->m_terms[index];
+                switch (term.type) {
+                case PatternTerm::Type::AssertionBOL:
+                case PatternTerm::Type::AssertionEOL:
+                case PatternTerm::Type::AssertionWordBoundary:
+                case PatternTerm::Type::CharacterClass:
+                case PatternTerm::Type::BackReference:
+                case PatternTerm::Type::ForwardReference:
+                case PatternTerm::Type::ParenthesesSubpattern:
+                case PatternTerm::Type::ParentheticalAssertion:
+                case PatternTerm::Type::DotStarEnclosure:
+                    return false;
+                case PatternTerm::Type::PatternCharacter: {
+                    if (term.quantityType != QuantifierType::FixedCount || term.quantityMaxCount != 1)
+                        return false;
+                    if (term.inputPosition != index)
+                        return false;
+                    if (U16_LENGTH(term.patternCharacter) != 1 && m_decodeSurrogatePairs)
+                        return false;
+                    // For case-insesitive compares, non-ascii characters that have different
+                    // upper & lower case representations are already converted to a character class.
+                    ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(term.patternCharacter) || isCanonicallyUnique(term.patternCharacter, m_canonicalMode));
+                    if (m_pattern.ignoreCase() && isASCIIAlpha(term.patternCharacter)) {
+                        bmInfo.set(cursor, toASCIIUpper(term.patternCharacter));
+                        bmInfo.set(cursor, toASCIILower(term.patternCharacter));
+                    } else
+                        bmInfo.set(cursor, term.patternCharacter);
+                    ++cursor;
+                    break;
+                }
+                }
+            }
+        }
+        dataLogLnIf(YarrJITInternal::verbose, "Characters collected");
+        return true;
+    }
+
+    const uint8_t* getBoyerMooreByteVector(unsigned index, const BoyerMooreBitmap::Map& map)
+    {
+        auto vector = makeUniqueRef<BoyerMooreByteVector>(map);
+        if (const auto* existingPointer = m_codeBlock.tryReuseBoyerMooreByteVector(index, vector.get()))
+           return existingPointer;
+        const uint8_t* pointer = vector->data();
+        m_bmVector.append(WTFMove(vector));
+        return pointer;
     }
 
     void generateTryReadUnicodeCharacterHelper()
@@ -3952,14 +4212,14 @@ public:
 
         if (m_compileMode == JITCompileMode::MatchOnly) {
             if (m_charSize == CharSize::Char8)
-                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"));
+                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"), WTFMove(m_bmVector));
             else
-                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"));
+                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"), WTFMove(m_bmVector));
         } else {
             if (m_charSize == CharSize::Char8)
-                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"));
+                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"), WTFMove(m_bmVector));
             else
-                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"));
+                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"), WTFMove(m_bmVector));
         }
         if (m_failureReason)
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
@@ -4197,6 +4457,8 @@ private:
 
     // The regular expression expressed as a linear sequence of operations.
     Vector<YarrOp, 128> m_ops;
+    Vector<UniqueRef<BoyerMooreInfo>, 4> m_bmInfos;
+    Vector<UniqueRef<BoyerMooreByteVector>> m_bmVector;
 
     // This records the current input offset being applied due to the current
     // set of alternatives we are nested within. E.g. when matching the

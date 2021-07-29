@@ -361,7 +361,7 @@ void RegExp::deleteCode()
     m_state = NotCompiled;
 #if ENABLE(YARR_JIT)
     if (m_regExpJITCode)
-        m_regExpJITCode->clear();
+        m_regExpJITCode->clear(locker);
 #endif
     m_regExpBytecode = nullptr;
 }

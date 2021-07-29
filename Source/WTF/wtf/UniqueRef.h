@@ -46,9 +46,9 @@ UniqueRef<T> makeUniqueRef(Args&&... args)
 }
 
 template<typename T>
-UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T> ptr)
+UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T>&& ptr)
 {
-    return UniqueRef<T>(*ptr.release());
+    return UniqueRef<T>(WTFMove(ptr));
 }
 
 template<typename T>
@@ -67,6 +67,9 @@ public:
         ASSERT(m_ref);
     }
 
+    T* ptr() RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
+    T* ptr() const RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
+
     T& get() { ASSERT(m_ref); return *m_ref; }
     const T& get() const { ASSERT(m_ref); return *m_ref; }
 
@@ -83,8 +86,14 @@ public:
 
 private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
-    template<class U> friend UniqueRef<U> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<U>);
+    template<class U> friend UniqueRef<U> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<U>&&);
     template<class U> friend class UniqueRef;
+
+    explicit UniqueRef(std::unique_ptr<T>&& ptr)
+        : m_ref(WTFMove(ptr))
+    {
+        ASSERT(m_ref);
+    }
 
     std::unique_ptr<T> m_ref;
 };

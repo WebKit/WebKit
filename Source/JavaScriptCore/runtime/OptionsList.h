@@ -452,6 +452,7 @@ bool canUseWebAssemblyFastMemory();
     v(Unsigned, prototypeHitCountForLLIntCaching, 2, Normal, "Number of prototype property hits before caching a prototype in the LLInt. A count of 0 means never cache.") \
     \
     v(Bool, dumpCompiledRegExpPatterns, false, Normal, nullptr) \
+    v(Bool, verboseRegExpCompilation, false, Normal, nullptr) \
     \
     v(Bool, dumpModuleRecord, false, Normal, nullptr) \
     v(Bool, dumpModuleLoadingState, false, Normal, nullptr) \

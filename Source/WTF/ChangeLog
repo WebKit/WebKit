@@ -1,3 +1,18 @@
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should perform BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+
+        Reviewed by Saam Barati.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::dump const):
+        * wtf/Bitmap.h:
+        (WTF::WordType>::dump const):
+        * wtf/UniqueRef.h:
+        (WTF::makeUniqueRefFromNonNullUniquePtr):
+        (WTF::UniqueRef::UniqueRef):
+
 2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 
