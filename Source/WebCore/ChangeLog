@@ -1,3 +1,24 @@
+2021-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] .asc file extension is appended to filename of text/plain downloads
+        https://bugs.webkit.org/show_bug.cgi?id=228566
+
+        Reviewed by Adrian Perez de Castro.
+
+        Our MIMETypeRegistry::preferredExtensionForMIMEType returns "asc" for text/plain, possibly
+        because "asc" sorts alphabetically ahead of all other possible file extensions for
+        text/plain, and we just pick the first one. So if the text file does not contain any file
+        extension, we give it a file extension for a GPG signature. Ouch.
+
+        I don't know how to fix it, but we don't need to, because we don't really want to append any
+        file extension for text/plain anyway. That's just annoying. If I download a file named
+        "backtrace" then I don't want it renamed to "backtrace.txt". That would be expected on
+        Windows, but certainly not from WebKitGTK. So I think it's reasonable to have a special case
+        for text/plain.
+
+        * platform/xdg/MIMETypeRegistryXdg.cpp:
+        (WebCore::MIMETypeRegistry::preferredExtensionForMIMEType):
+
 2021-07-29  Youenn Fablet  <youenn@apple.com>
 
         RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer should update m_currentRotationSessionAngle
