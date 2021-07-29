@@ -1,3 +1,15 @@
+2021-07-29  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Disable hanging punctuation content
+        https://bugs.webkit.org/show_bug.cgi?id=228598
+
+        Reviewed by Antti Koivisto.
+
+        Currently we only check the root for hanging punctuation, but it is applicable to all elements including inline boxes.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
 2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
