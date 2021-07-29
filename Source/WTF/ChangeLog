@@ -1,3 +1,13 @@
+2021-07-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Don't set capture attribution dynamically in the simulator
+        https://bugs.webkit.org/show_bug.cgi?id=228596
+        rdar://81176531
+
+        Reviewed by Jer Noble.
+
+        * wtf/PlatformHave.h: Don't define HAVE_SYSTEM_STATUS for the simulator.
+
 2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
