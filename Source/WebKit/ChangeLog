@@ -1,3 +1,16 @@
+2021-07-29  Peng Liu  <peng.liu6@apple.com>
+
+        The bundle path of downlevel Safari is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=228339
+
+        Reviewed by Tim Horton.
+
+        Use the same approach as `isSystemWebKit` to check whether the WebKit bundle
+        is from the staged framework.
+
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         CORS preflight checks not attributed to the correct application
