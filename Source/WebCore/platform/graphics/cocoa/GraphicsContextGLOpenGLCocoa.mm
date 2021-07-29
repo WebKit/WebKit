@@ -309,6 +309,10 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    if (contextAttributes().xrCompatible)
+        requiredExtensions.append("GL_OES_EGL_image"_s);
+#endif
     ExtensionsGL& extensions = getExtensions();
     for (auto& extension : requiredExtensions) {
         if (!extensions.supports(extension)) {
