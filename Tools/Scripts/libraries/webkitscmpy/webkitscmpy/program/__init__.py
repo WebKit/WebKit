@@ -24,16 +24,18 @@ import argparse
 import logging
 import os
 
-from webkitcorepy import arguments, log as webkitcorepy_log
-from webkitscmpy import local, log, remote
-
+from .blame import Blame
 from .canonicalize import Canonicalize
 from .clean import Clean
 from .command import Command
 from .checkout import Checkout
 from .find import Find, Info
+from .log import Log
 from .pull import Pull
 from .setup_git_svn import SetupGitSvn
+
+from webkitcorepy import arguments, log as webkitcorepy_log
+from webkitscmpy import local, log, remote
 
 
 def main(args=None, path=None, loggers=None, contributors=None, identifier_template=None, subversion=None):
@@ -61,7 +63,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    programs = [Find, Info, Checkout, Canonicalize, Pull, Clean]
+    programs = [Find, Info, Checkout, Canonicalize, Pull, Clean, Log, Blame]
     if subversion:
         programs.append(SetupGitSvn)
 

@@ -1,5 +1,37 @@
 2021-07-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Add identifiers to 'log' and 'blame'
+        https://bugs.webkit.org/show_bug.cgi?id=228027
+        <rdar://problem/80691164>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.from_path): Pass all kwargs to local SCM object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Blame and Log commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/blame.py: Added.
+        (Blame): Invoke pager.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand): Shared command that handles replace hashes/revisions in
+        an SCM command with identifiers.
+        (FilteredCommand.parser): Allow user to change the prefered commit representation.
+        (FilteredCommand.pager): Pass output through more if called from a terminal.
+        (FilteredCommand.main): Modify output of provided command to replace commit representation
+        with the preffered commit representation.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/log.py: Added.
+        (Log): Invoke pager.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/log_unittest.py: Added.
+        (TestLog):
+        (TestLog.setUp):
+        (TestLog.test_git):
+        (TestLog.test_git_svn):
+        (TestLog.test_git):
+
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Catch AttributeError when getting password
         https://bugs.webkit.org/show_bug.cgi?id=228590
         <rdar://problem/81278799>
