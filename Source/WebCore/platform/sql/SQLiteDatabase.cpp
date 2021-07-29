@@ -200,6 +200,7 @@ static int checkpointModeValue(SQLiteDatabase::CheckpointMode mode)
     case SQLiteDatabase::CheckpointMode::Truncate:
         return SQLITE_CHECKPOINT_TRUNCATE;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void SQLiteDatabase::checkpoint(CheckpointMode mode)

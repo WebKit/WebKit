@@ -1,3 +1,13 @@
+2021-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wreturn-type warning in SQLiteDatabase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=228602
+
+        Unreviewed, add missing RELEASE_ASSERT_NOT_REACHED().
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::checkpointModeValue):
+
 2021-07-29  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Disable hanging punctuation content
