@@ -145,29 +145,41 @@ bool defaultOfflineWebApplicationCacheEnabled()
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_canvas_rendering");
-#endif
-
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+#else
     return false;
+#endif
 }
 
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_dom_rendering");
-#endif
-
+#else
     return false;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+#else
+    return false;
+#endif
 }
 
 bool defaultUseGPUProcessForMediaEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_media");
-#endif
-
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+#else
     return false;
+#endif
 }
 
 bool defaultUseGPUProcessForWebGLEnabled()
@@ -185,14 +197,21 @@ bool defaultUseGPUProcessForWebGLEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+
+#if HAVE(SYSTEM_FEATURE_FLAGS)
 #if PLATFORM(MAC)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #elif PLATFORM(IOS_FAMILY)
     return isFeatureFlagEnabled("gpu_process_media");
 #endif
-#endif
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+
+#else
     return false;
+#endif
 }
 
 bool defaultCaptureAudioInUIProcessEnabled()
@@ -206,8 +225,12 @@ bool defaultCaptureAudioInUIProcessEnabled()
 
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
 #else
     return false;
 #endif
@@ -219,8 +242,12 @@ bool defaultCaptureVideoInGPUProcessEnabled()
 
 bool defaultWebRTCCodecsInGPUProcess()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
 #else
     return false;
 #endif
@@ -257,7 +284,11 @@ bool defaultIncrementalPDFEnabled()
     return isFeatureFlagEnabled("incremental_pdf");
 #endif
 
+#if PLATFORM(MAC)
+    return true;
+#else
     return false;
+#endif
 }
 #endif
 
@@ -282,7 +313,11 @@ bool defaultWebMFormatReaderEnabled()
     return isFeatureFlagEnabled("webm_format_reader");
 #endif
 
+#if PLATFORM(MAC)
+    return true;
+#else
     return false;
+#endif
 }
 
 #endif // ENABLE(WEBM_FORMAT_READER)
