@@ -1,3 +1,20 @@
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Patch by David Kilzer.
+
+        Reviewed by David Kilzer.
+
+        * pal/spi/mac/SpeechSynthesisSPI.h:
+        * pal/spi/mac/SpeechSynthesisSPI.h:
+        (CopyIdentifierStringForPreferredVoiceInListWithLocale): Add.
+        - Define replacement function for
+          GetIdentifierStringForPreferredVoiceInListWithLocale()
+          in Monterey.
+
 2021-07-28  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/opus container support

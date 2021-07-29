@@ -1,3 +1,25 @@
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Patch by David Kilzer.
+
+        Reviewed by David Kilzer.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale):
+        - Switch to use
+          CopyIdentifierStringForPreferredVoiceInListWithLocale()
+          in Monterey.
+        - Change to return RetainPtr<> to handle lifetime of
+          object returned from new function.
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        - Change varible type to 'auto' since return type of
+          speechSynthesisGetDefaultVoiceIdentifierForLocale()
+          changed.
+
 2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use an imported target for the libgcrypt library

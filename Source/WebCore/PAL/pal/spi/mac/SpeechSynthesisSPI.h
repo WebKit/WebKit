@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,10 @@
 WTF_EXTERN_C_BEGIN
 
 CFArrayRef CopySpeechSynthesisVoicesForMode(CFTypeRef mode);
+#if HAVE(SPEECHSYNTHESIS_MONTEREY_SPI)
+CFStringRef CopyIdentifierStringForPreferredVoiceInListWithLocale(CFArrayRef voices, CFLocaleRef);
+#else
 CFStringRef GetIdentifierStringForPreferredVoiceInListWithLocale(CFArrayRef voices, CFLocaleRef);
+#endif
 
 WTF_EXTERN_C_END
