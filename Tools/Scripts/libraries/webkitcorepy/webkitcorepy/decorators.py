@@ -64,3 +64,21 @@ class Memoize(object):
     def clear(self):
         self._cache = defaultdict(dict)
         self._last_called = defaultdict(dict)
+
+
+class hybridmethod(object):
+    def __init__(self, function):
+        self.function = function
+
+    def __get__(self, obj, cls):
+        context = obj if obj is not None else cls
+
+        def wrapper(*args, **kwargs):
+            return self.function(context, *args, **kwargs)
+
+        wrapper.__name__ = self.function.__name__
+        wrapper.__doc__ = self.function.__doc__
+        wrapper.__func__ = wrapper.im_func = self.function
+        wrapper.__self__ = wrapper.im_self = context
+
+        return wrapper

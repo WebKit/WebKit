@@ -1,5 +1,25 @@
 2021-07-28  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add hybridmethod decorator
+        https://bugs.webkit.org/show_bug.cgi?id=225991
+        <rdar://problem/78230701>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/decorators.py:
+        (hybridmethod): Similar to the "classmethod" decorator, except this decorator allows the
+        decorated functions to differentiate between being called by the class and an instance
+        of the class.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/decorators_unittest.py:
+        (TestHybrid):
+        (TestHybrid.is_type):
+        (TestHybrid.test_type):
+        (TestHybrid.test_instance):
+
+2021-07-28  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Fix race condition in TaskPool unittests (follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=227455
         <rdar://problem/79873003>
