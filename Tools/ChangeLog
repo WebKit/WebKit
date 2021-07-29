@@ -1,3 +1,21 @@
+2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        makeWeakPtr should support Ref and RefPtr as the argument
+        https://bugs.webkit.org/show_bug.cgi?id=228574
+
+        Reviewed by Wenson Hsieh.
+
+        Added unit tests for makeWeakPtr<T> on Ref<T> and RefPtr<T>.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::BaseObjectWithRefAndWeakPtr): Added.
+        (TestWebKitAPI::BaseObjectWithRefAndWeakPtr::create): Added.
+        (TestWebKitAPI::BaseObjectWithRefAndWeakPtr::someFunction):
+        (TestWebKitAPI::DerivedObjectWithRefAndWeakPtr): Added.
+        (TestWebKitAPI::DerivedObjectWithRefAndWeakPtr::create):
+        (WTF_WeakPtr.MakeWeakPtrTakesRef): Added.
+        (WTF_WeakPtr.MakeWeakPtrTakesRefPtr): Added.
+
 2021-07-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add hybridmethod decorator

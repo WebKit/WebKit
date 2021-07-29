@@ -345,6 +345,101 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssignConst)
     }
 }
 
+class BaseObjectWithRefAndWeakPtr : public RefCounted<BaseObjectWithRefAndWeakPtr>, public CanMakeWeakPtr<BaseObjectWithRefAndWeakPtr> {
+public:
+    static Ref<BaseObjectWithRefAndWeakPtr> create() { return adoptRef(*new BaseObjectWithRefAndWeakPtr()); }
+
+    virtual ~BaseObjectWithRefAndWeakPtr() = default;
+    void someFunction() { }
+
+protected:
+    BaseObjectWithRefAndWeakPtr() = default;
+};
+
+class DerivedObjectWithRefAndWeakPtr : public BaseObjectWithRefAndWeakPtr {
+public:
+    static Ref<DerivedObjectWithRefAndWeakPtr> create() { return adoptRef(*new DerivedObjectWithRefAndWeakPtr()); }
+
+private:
+    DerivedObjectWithRefAndWeakPtr() = default;
+    virtual ~DerivedObjectWithRefAndWeakPtr() = default;
+};
+
+TEST(WTF_WeakPtr, MakeWeakPtrTakesRef)
+{
+    Ref baseObject = BaseObjectWithRefAndWeakPtr::create();
+    EXPECT_EQ(baseObject->refCount(), 1U);
+    EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 0U);
+    {
+        auto baseObjectWeakPtr = makeWeakPtr(baseObject);
+        EXPECT_EQ(baseObject->refCount(), 1U);
+        EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(baseObjectWeakPtr.get(), baseObject.ptr());
+    }
+    EXPECT_EQ(baseObject->refCount(), 1U);
+    EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 0U);
+
+    WeakPtr<BaseObjectWithRefAndWeakPtr> baseWeakPtr;
+    {
+        Ref derivedObject = DerivedObjectWithRefAndWeakPtr::create();
+        EXPECT_EQ(derivedObject->refCount(), 1U);
+        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+        {
+            WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr = makeWeakPtr(derivedObject);
+            EXPECT_EQ(derivedObject->refCount(), 1U);
+            EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+            EXPECT_EQ(derivedObjectWeakPtr.get(), derivedObject.ptr());
+        }
+        EXPECT_EQ(derivedObject->refCount(), 1U);
+        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+        {
+            Ref<BaseObjectWithRefAndWeakPtr> baseRefPtr = derivedObject;
+            EXPECT_EQ(derivedObject->refCount(), 2U);
+            EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+            baseWeakPtr = makeWeakPtr(baseRefPtr);
+            EXPECT_EQ(derivedObject->refCount(), 2U);
+            EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+            EXPECT_EQ(baseWeakPtr.get(), derivedObject.ptr());
+        }
+        EXPECT_EQ(derivedObject->refCount(), 1U);
+        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(baseWeakPtr.get(), derivedObject.ptr());
+    }
+    EXPECT_EQ(baseWeakPtr.get(), nullptr);
+}
+
+TEST(WTF_WeakPtr, MakeWeakPtrTakesRefPtr)
+{
+    RefPtr<BaseObjectWithRefAndWeakPtr> baseObject = BaseObjectWithRefAndWeakPtr::create();
+    EXPECT_EQ(baseObject->refCount(), 1U);
+    EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 0U);
+    {
+        auto baseObjectWeakPtr = makeWeakPtr(baseObject);
+        EXPECT_EQ(baseObject->refCount(), 1U);
+        EXPECT_EQ(baseObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(baseObjectWeakPtr.get(), baseObject.get());
+        baseObject = nullptr;
+        EXPECT_EQ(baseObjectWeakPtr.get(), nullptr);
+    }
+
+    RefPtr<DerivedObjectWithRefAndWeakPtr> derivedObject = DerivedObjectWithRefAndWeakPtr::create();
+    EXPECT_EQ(derivedObject->refCount(), 1U);
+    EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+    {
+        WeakPtr<DerivedObjectWithRefAndWeakPtr> derivedObjectWeakPtr = makeWeakPtr(derivedObject);
+        EXPECT_EQ(derivedObject->refCount(), 1U);
+        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 1U);
+        EXPECT_EQ(derivedObjectWeakPtr.get(), derivedObject.get());
+
+        WeakPtr<BaseObjectWithRefAndWeakPtr> baseObjectWeakPtr = makeWeakPtr<BaseObjectWithRefAndWeakPtr>(derivedObject);
+        EXPECT_EQ(derivedObject->refCount(), 1U);
+        EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 2U);
+        EXPECT_EQ(baseObjectWeakPtr.get(), derivedObject.get());
+    }
+    EXPECT_EQ(derivedObject->refCount(), 1U);
+    EXPECT_EQ(derivedObject->weakPtrFactory().weakPtrCount(), 0U);
+}
+
 template <typename T>
 unsigned computeSizeOfWeakHashSet(const WeakHashSet<T>& set)
 {

@@ -1,3 +1,18 @@
+2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        makeWeakPtr should support Ref and RefPtr as the argument
+        https://bugs.webkit.org/show_bug.cgi?id=228574
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds variants of makeWeakPtr<T> which take Ref<T> and RefPtr<T>.
+
+        Tests: TestWebKitAPI.WTF_WeakPtr.MakeWeakPtrTakesRef
+               TestWebKitAPI.WTF_WeakPtr.MakeWeakPtrTakesRefPtr
+
+        * wtf/WeakPtr.h:
+        (WTF::makeWeakPtr):
+
 2021-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] macOS Monterey and parallel OSes no longer need r280103
