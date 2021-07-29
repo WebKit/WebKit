@@ -187,14 +187,6 @@ if (ENABLE_ENCRYPTED_MEDIA)
         platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp
     )
 
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBGCRYPT_INCLUDE_DIRS}
-    )
-
-    list(APPEND WebCore_LIBRARIES
-        ${LIBGCRYPT_LIBRARIES} -lgpg-error
-    )
-
     if (ENABLE_THUNDER)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${THUNDER_INCLUDE_DIRS}

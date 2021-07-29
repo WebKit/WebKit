@@ -1,3 +1,15 @@
+2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Use an imported target for the libgcrypt library
+        https://bugs.webkit.org/show_bug.cgi?id=228581
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindLibGcrypt.cmake: Replaced find module by a new one which defines a
+        LibGcrypt::LibGcrypt imported target, using more modern CMake constructs.
+        * Source/cmake/OptionsGTK.cmake: Use the LibGcrypt::LibGcrypt imported target.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2021-07-28  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
