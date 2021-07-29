@@ -30,7 +30,7 @@ from datetime import date
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
-from send_email import send_email_to_patch_author, send_email_to_bot_watchers
+from send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin
 
 import json
 import os
@@ -3464,3 +3464,19 @@ class VerifyGitHubIntegrity(shell.ShellCommand):
         if self.results != SUCCESS:
             return {'step': 'GitHub integrity check failed'}
         return {'step': 'Verified GitHub integrity'}
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc != SUCCESS:
+            self.send_email_for_github_issue()
+        return rc
+
+    def send_email_for_github_issue(self):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            email_subject = 'URGENT: GitHub integrity check failed'
+            email_text = 'URGENT issue on github repository. Integrity check failed.\n\nBuild: {}\n\nBuilder: {}'.format(build_url, builder_name)
+            send_email_to_github_admin(email_subject, email_text)
+        except Exception as e:
+            print('Error in sending email for github issue: {}'.format(e))

@@ -3,6 +3,10 @@
       "aakash_jain@apple.com", 
       "webkit-ews-bot-watchers@group.apple.com"
   ],
+  "GITHUB_ADMIN_EMAILS": [
+      "jbedard@apple.com",
+      "admin@webkit.org"
+  ],
   "APPLE_BOT_WATCHERS_EMAILS": [
       "webkit-ews-bot-watchers@group.apple.com"
   ],

@@ -91,3 +91,7 @@ def send_email_to_bot_watchers(subject, text, builder_name, reference=''):
         send_email(get_email_ids('IGALIA_JSC_TEAM_EMAILS'), subject, text, reference)
     if any(pattern in builder_name.lower() for pattern in IGALIA_GTK_WPE_QUEUES_PATTERNS):
         send_email(get_email_ids('IGALIA_GTK_WPE_EMAILS'), subject, text, reference)
+
+
+def send_email_to_github_admin(subject, text, reference=''):
+    send_email(get_email_ids('GITHUB_ADMIN_EMAILS'), subject, text, reference)
