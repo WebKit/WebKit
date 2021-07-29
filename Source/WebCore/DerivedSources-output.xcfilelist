@@ -1167,6 +1167,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBRequest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransaction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransaction.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionDurability.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionDurability.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp

@@ -151,6 +151,7 @@ $(PROJECT_DIR)/Modules/indexeddb/IDBObjectStore.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBOpenDBRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransaction.idl
+$(PROJECT_DIR)/Modules/indexeddb/IDBTransactionDurability.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransactionMode.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBVersionChangeEvent.idl
 $(PROJECT_DIR)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl

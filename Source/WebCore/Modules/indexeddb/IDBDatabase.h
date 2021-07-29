@@ -63,7 +63,10 @@ public:
     ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, ObjectStoreParameters&&);
 
     using StringOrVectorOfStrings = WTF::Variant<String, Vector<String>>;
-    ExceptionOr<Ref<IDBTransaction>> transaction(StringOrVectorOfStrings&& storeNames, IDBTransactionMode);
+    struct TransactionOptions {
+        std::optional<IDBTransactionDurability> durability;
+    };
+    ExceptionOr<Ref<IDBTransaction>> transaction(StringOrVectorOfStrings&& storeNames, IDBTransactionMode, TransactionOptions = { });
     ExceptionOr<void> deleteObjectStore(const String& name);
     void close();
 

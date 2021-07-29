@@ -1,5 +1,58 @@
 2021-07-28  Sihui Liu  <sihui_liu@apple.com>
 
+        Implement IDBTransaction.durability
+        https://bugs.webkit.org/show_bug.cgi?id=228289
+
+        Reviewed by Darin Adler.
+
+        Spec: https://www.w3.org/TR/IndexedDB/#dom-idbtransaction-durability
+              https://www.w3.org/TR/IndexedDB/#dictdef-idbtransactionoptions
+
+        IDBTransaction.durability gives a hint about durability of a transaction. If it's strict, backend would try
+        syncing data to database file after transaction commit, which enforces durability. If it's relaxed, it means 
+        data may stay in the OS buffer some time after transaction commit, which gives better performance. Firefox and 
+        Chrome already implemented durability. They have different ways of setting durability, and we choose to use
+        TransactionOptions as spec.
+
+        Rebaselined existing tests.
+        New tests: storage/indexeddb/idbtransaction-durability-private.html
+                   storage/indexeddb/idbtransaction-durability.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBTransactionDurability.h: Added.
+        * Modules/indexeddb/IDBTransactionDurability.idl: Added.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        (WebCore::IDBServer::SQLiteIDBTransaction::durability const):
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::clientTransaction):
+        (WebCore::IDBTransactionInfo::IDBTransactionInfo):
+        (WebCore::IDBTransactionInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::durability const):
+        (WebCore::IDBTransactionInfo::encode const):
+        (WebCore::IDBTransactionInfo::decode):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::checkpointModeValue):
+        (WebCore::SQLiteDatabase::checkpoint):
+        (WebCore::SQLiteDatabase::useWALJournalMode):
+        * platform/sql/SQLiteDatabase.h:
+
+2021-07-28  Sihui Liu  <sihui_liu@apple.com>
+
         IDBFactory.databases should not return databases with invalid version
         https://bugs.webkit.org/show_bug.cgi?id=228554
 

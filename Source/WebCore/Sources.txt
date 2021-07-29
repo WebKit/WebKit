@@ -3210,6 +3210,7 @@ JSIDBObjectStore.cpp
 JSIDBOpenDBRequest.cpp
 JSIDBRequest.cpp
 JSIDBTransaction.cpp
+JSIDBTransactionDurability.cpp
 JSIDBTransactionMode.cpp
 JSIDBVersionChangeEvent.cpp
 JSIdleDeadline.cpp

@@ -1149,8 +1149,11 @@ IDBError SQLiteIDBBackingStore::commitTransaction(const IDBResourceIdentifier& i
             ASSERT(m_originalDatabaseInfoBeforeVersionChange);
             m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
         }
-    } else
+    } else {
         m_originalDatabaseInfoBeforeVersionChange = nullptr;
+        if (transaction->durability() == IDBTransactionDurability::Strict)
+            m_sqliteDB->checkpoint(SQLiteDatabase::CheckpointMode::Full);
+    }
 
     return error;
 }

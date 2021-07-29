@@ -65,6 +65,7 @@ public:
     void notifyCursorsOfChanges(int64_t objectStoreID);
 
     IDBTransactionMode mode() const { return m_info.mode(); }
+    IDBTransactionDurability durability() const { return m_info.durability(); }
     bool inProgress() const;
 
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }

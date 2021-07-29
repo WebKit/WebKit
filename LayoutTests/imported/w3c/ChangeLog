@@ -1,5 +1,17 @@
 2021-07-28  Sihui Liu  <sihui_liu@apple.com>
 
+        Implement IDBTransaction.durability
+        https://bugs.webkit.org/show_bug.cgi?id=228289
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker-expected.txt:
+
+2021-07-28  Sihui Liu  <sihui_liu@apple.com>
+
         IDBFactory.databases should not return databases with invalid version
         https://bugs.webkit.org/show_bug.cgi?id=228554
 
