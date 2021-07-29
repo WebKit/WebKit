@@ -1,3 +1,19 @@
+2021-07-28  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/opus container support
+        https://bugs.webkit.org/show_bug.cgi?id=227110
+        <rdar://problem/79437067>
+
+        Reviewed by Jer Noble.
+
+        Add various AVFoundation (AVAudioConverter) related methods and
+        CoreMedia to access required CMSampleBuffer related methods.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-07-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix build with SDKs containing new CFNetwork SPI declaration

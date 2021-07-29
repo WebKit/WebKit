@@ -111,6 +111,7 @@ bool defaultVP9SWDecoderEnabledOnBattery();
 
 #if ENABLE(MEDIA_SOURCE)
 bool defaultWebMParserEnabled();
+bool defaultWebMWebAudioEnabled();
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

@@ -32,22 +32,28 @@
 #import "Logging.h"
 #import "MediaUtilities.h"
 #import "PlatformMediaSessionManager.h"
+#import <AudioToolbox/AudioCodec.h>
 #import <AudioToolbox/AudioComponent.h>
 #import <AudioToolbox/AudioFormat.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <dlfcn.h>
 #import <wtf/FlipBytes.h>
 #import <wtf/Seconds.h>
-
 #if ENABLE(OPUS)
 #import <libwebrtc/opus_defines.h>
 #endif
+#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
 
 #if ENABLE(VORBIS) || ENABLE(OPUS)
 static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
 {
+    AudioComponentDescription desc { kAudioDecoderComponentType, decoderType, 'appl', kAudioComponentFlag_SandboxSafe, 0 };
+    AudioComponent comp = PAL::AudioComponentFindNext(0, &desc);
+    if (comp)
+        return true; // Already registered.
+
     constexpr char audioComponentsDylib[] = "/System/Library/Components/AudioCodecs.component/Contents/MacOS/AudioCodecs";
     void *handle = dlopen(audioComponentsDylib, RTLD_LAZY | RTLD_LOCAL);
     if (!handle)
@@ -57,7 +63,6 @@ static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
     if (!decoderFactory)
         return false;
 
-    AudioComponentDescription desc { 'adec', decoderType, 'appl', kAudioComponentFlag_SandboxSafe, 0 };
     if (!AudioComponentRegister(&desc, CFSTR(""), 0, decoderFactory)) {
         dlclose(handle);
         return false;
@@ -71,7 +76,7 @@ static RetainPtr<CMFormatDescriptionRef> createAudioFormatDescriptionForFormat(O
     AudioStreamBasicDescription asbd { };
     asbd.mFormatID = formatID;
     uint32_t size = sizeof(asbd);
-    auto error = AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, magicCookie.size(), magicCookie.data(), &size, &asbd);
+    auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, magicCookie.size(), magicCookie.data(), &size, &asbd);
     if (error) {
         RELEASE_LOG_ERROR(Media, "createAudioFormatDescriptionForFormat failed with error %d (%.4s)", error, (char *)&error);
         return nullptr;
@@ -326,19 +331,30 @@ static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& co
 
 bool isOpusDecoderAvailable()
 {
-    static bool available;
-
 #if ENABLE(OPUS) && PLATFORM(MAC)
     if (!PlatformMediaSessionManager::opusDecoderEnabled())
         return false;
 
+    return registerOpusDecoderIfNeeded();
+#else
+    return false;
+#endif
+}
+
+bool registerOpusDecoderIfNeeded()
+{
+#if ENABLE(OPUS) && PLATFORM(MAC)
+    static bool available;
+
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        available = registerDecoderFactory("ACOpusDecoderFactory", 'opus');
+        available = registerDecoderFactory("ACOpusDecoderFactory", kAudioFormatOpus);
     });
-#endif
 
     return available;
+#else
+    return false;
+#endif
 }
 
 RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(const OpusCookieContents& cookieContents)
@@ -418,19 +434,30 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
 
 bool isVorbisDecoderAvailable()
 {
-    static bool available;
-
 #if ENABLE(VORBIS) && PLATFORM(MAC)
     if (!PlatformMediaSessionManager::vorbisDecoderEnabled())
         return false;
+
+    return registerVorbisDecoderIfNeeded();
+#else
+    return false;
+#endif
+}
+
+bool registerVorbisDecoderIfNeeded()
+{
+#if ENABLE(VORBIS) && PLATFORM(MAC)
+    static bool available;
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         available = registerDecoderFactory("ACVorbisDecoderFactory", 'vorb');
     });
-#endif
 
     return available;
+#else
+    return false;
+#endif
 }
 
 RetainPtr<CMFormatDescriptionRef> createVorbisAudioFormatDescription(size_t privateDataSize, const void* privateData)

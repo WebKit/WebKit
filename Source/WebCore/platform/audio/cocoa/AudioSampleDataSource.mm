@@ -39,6 +39,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StringPrintStream.h>
 
+#import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
@@ -67,7 +68,7 @@ AudioSampleDataSource::AudioSampleDataSource(size_t maximumSampleCount, LoggerHe
 AudioSampleDataSource::~AudioSampleDataSource()
 {
     if (m_converter)
-        AudioConverterDispose(m_converter);
+        PAL::AudioConverterDispose(m_converter);
 }
 
 OSStatus AudioSampleDataSource::setupConverter()
@@ -75,14 +76,14 @@ OSStatus AudioSampleDataSource::setupConverter()
     ASSERT(m_inputDescription && m_outputDescription);
 
     if (m_converter) {
-        AudioConverterDispose(m_converter);
+        PAL::AudioConverterDispose(m_converter);
         m_converter = nullptr;
     }
 
     if (*m_inputDescription == *m_outputDescription)
         return 0;
 
-    OSStatus err = AudioConverterNew(&m_inputDescription->streamDescription(), &m_outputDescription->streamDescription(), &m_converter);
+    OSStatus err = PAL::AudioConverterNew(&m_inputDescription->streamDescription(), &m_outputDescription->streamDescription(), &m_converter);
     if (err) {
         RunLoop::main().dispatch([this, protectedThis = makeRefPtr(*this), err] {
             ERROR_LOG("AudioConverterNew returned error ", err);

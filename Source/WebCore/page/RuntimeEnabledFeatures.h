@@ -235,6 +235,8 @@ public:
 #if ENABLE(MEDIA_SOURCE)
     void setWebMParserEnabled(bool isEnabled) { m_webMParserEnabled = isEnabled; }
     bool webMParserEnabled() const { return m_webMParserEnabled; }
+    void setWebMWebAudioEnabled(bool isEnabled) { m_webMWebAudioEnabled = isEnabled; }
+    bool webMWebAudioEnabled() const { return m_webMWebAudioEnabled; }
 #endif
 
 #if HAVE(CELESTIAL)
@@ -371,6 +373,7 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     bool m_webMParserEnabled { false };
+    bool m_webMWebAudioEnabled { false };
 #endif
 
 #if HAVE(CELESTIAL)

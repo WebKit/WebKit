@@ -34,7 +34,7 @@ namespace WebCore {
 
 class PixelBuffer;
 
-class WEBCORE_EXPORT MediaSampleAVFObjC : public MediaSample {
+class MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
@@ -44,7 +44,7 @@ public:
     WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
     static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);
 
-    RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
+    WEBCORE_EXPORT RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
 
     MediaTime presentationTime() const override;
     MediaTime decodeTime() const override;
@@ -59,16 +59,16 @@ public:
     SampleFlags flags() const override;
     PlatformSample platformSample() override;
     std::optional<ByteRange> byteRange() const override;
-    void dump(PrintStream&) const override;
+    WEBCORE_EXPORT void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
-    bool isDivisable() const override;
-    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime) override;
-    Ref<MediaSample> createNonDisplayingCopy() const override;
+    WEBCORE_EXPORT bool isDivisable() const override;
+    WEBCORE_EXPORT std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime) override;
+    WEBCORE_EXPORT Ref<MediaSample> createNonDisplayingCopy() const override;
 
     VideoRotation videoRotation() const override { return m_rotation; }
     bool videoMirrored() const override { return m_mirrored; }
-    uint32_t videoPixelFormat() const final;
+    WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
 
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
@@ -78,34 +78,15 @@ public:
     void setByteRangeOffset(size_t);
 
 protected:
-    MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
-        : m_sample(WTFMove(sample))
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample)
-        : m_sample(sample)
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, AtomString trackID)
-        : m_sample(sample)
-        , m_id(trackID)
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
-        : m_sample(sample)
-        , m_id(AtomString::number(trackID))
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)
-        : m_sample(sample)
-        , m_rotation(rotation)
-        , m_mirrored(mirrored)
-    {
-    }
+    WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
+    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);
+    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, AtomString trackID);
+    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
+    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, VideoRotation, bool mirrored);
+    WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
 
     std::optional<MediaSample::ByteRange> byteRangeForAttachment(CFStringRef key) const;
 
-    virtual ~MediaSampleAVFObjC() = default;
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomString m_id;
     VideoRotation m_rotation { VideoRotation::None };
@@ -113,4 +94,3 @@ protected:
 };
 
 } // namespace WebCore
-

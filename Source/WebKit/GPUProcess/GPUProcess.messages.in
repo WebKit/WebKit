@@ -51,7 +51,7 @@ messages -> GPUProcess LegacyReceiver {
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+#if ENABLE(MEDIA_SOURCE)
     SetWebMParserEnabled(bool enabled);
 #endif
 

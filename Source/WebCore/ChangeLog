@@ -1,3 +1,103 @@
+2021-07-28  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/opus container support
+        https://bugs.webkit.org/show_bug.cgi?id=227110
+        <rdar://problem/79437067>
+
+        Reviewed by Jer Noble.
+
+        Add support for webm in Web Audio.
+        As decoding needs to be performed in the web content process we
+        need to ensure that the decoders are available there. For security
+        reasons, com.apple.audio.AudioComponentRegistrar mach calls are blocked
+        which prevents registering a new audio component.
+        We instead register it in the UI process so that AudioComponentFetchServerRegistrations
+        SPI can forward the registration in the web process.
+        Unfortunately, for unknown reasons, this fails for Vorbis audio codec (bug 228139).
+
+        To demux the webm content, we use the existing SourceBufferParserWebM to extract all
+        audio packets. We then iterate over all CM Samples and decode them into PCM, performing
+        resampling as needed on the fly.
+        There are things left to fix.
+        - Opus and Vorbis encoder delay isn't handled (bug 228140) which leaves audible
+        silence at the beginning of the destination buffer.
+        - We can only decode mono and stereo content. Opus and Vorbis let you define a
+        custom channel ordering, this is particularly used with ambisonic audio (with opus 255 mode).
+        CoreMedia doesn't easily deal with such re-ordering as it appears to be essentially
+        designed for audible content. With more than 2 channels, decoding will either fail
+        or produce channels in the wrong order.
+
+        Test: webaudio/decode-audio-data-webm-opus.html
+
+        * Headers.cmake: Export header so that we can register the decoder in the UI process.
+        * WebCore.xcodeproj/project.pbxproj: same as above.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType const): Make canPlayType(webm/audio; codecs=opus)
+        work if features is set.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebMWebAudioEnabled):
+        (WebCore::RuntimeEnabledFeatures::webMWebAudioEnabled const):
+        * platform/MediaSample.h: Fly-by fix: remove unnecessary WEBCORE_EXPORT
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::setLength):
+        * platform/audio/AudioBus.h: Add setLength method. Will change the reported length
+        without touching the underlying storage.
+        * platform/audio/AudioChannel.h: Add setLength method. Will change the reported
+        length without touching the underlying storage.
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::tryCreateAudioBufferList): Fix checkedInt use to catch potential overflow
+        (WebCore::AudioBufferListHolder::AudioBufferListHolder): Add convenience class that
+        free wrapped AudioBufferList object on exit.
+        (WebCore::AudioBufferListHolder::~AudioBufferListHolder):
+        (WebCore::AudioBufferListHolder::operator bool const):
+        (WebCore::AudioBufferListHolder::operator-> const):
+        (WebCore::AudioBufferListHolder::operator* const):
+        (WebCore::AudioBufferListHolder::isValid const):
+        (WebCore::AudioFileReader::AudioFileReader):
+        (WebCore::AudioFileReader::isMaybeWebM const): Method to check if the buffer
+        contains WebM data.
+        (WebCore::passthroughInputDataCallback): Required for AudioConverterFillComplexBuffer.
+        Will feed the decoder the data to decode, splitting the multiple packets found
+        in the CMSampleBuffer.
+        (WebCore::AudioFileReader::numberOfFrames const): Return the total number of
+        decoded frames in the packets.
+        (WebCore::AudioFileReader::fileDataFormat const): Create AudioStreamBasicDescription
+        related to the demuxed audio track. nullopt if unsupported content.
+        (WebCore::AudioFileReader::clientDataFormat const):
+        (WebCore::AudioFileReader::createBus):
+        (WebCore::AudioFileReader::logChannel const):
+        * platform/audio/cocoa/AudioFileReaderCocoa.h:
+        * platform/audio/cocoa/AudioSampleDataSource.h: Remove unused typedef.
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::~AudioSampleDataSource): Fly-by fix, make it use
+        PAL softlinks
+        (WebCore::AudioSampleDataSource::setupConverter): Fly-by fix, make it use PAL
+        softlinks
+        * platform/gamepad/mac/HIDGamepadProvider.mm: Fly-by fix, add missing header.
+        * platform/graphics/TrackPrivateBase.cpp: Fly-by fix, add missing header.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        Fly-by fix required by webkit-prepare : don't tag the whole class as WEBCORE_EXPORT.
+        Move constructor and destructor function definitions out-of-line to prevent
+        linkage errors.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::MediaSampleAVFObjC): Move code
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm: Fly-by fix, add missing header.
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h: Export some symbols, add new
+        method definitions.
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm:
+        (WebCore::registerDecoderFactory): Instead of attempting to register the decoder
+        by dl-opening the required library, first attempting to see if the decoder is
+        already available. Calling AudioComponentRegister in the web content process
+        when the GPU process is enabled will fail due to sandbox settings. Which would
+        incorrectly report the codec to not be available when it was.
+        (WebCore::createAudioFormatDescriptionForFormat):
+        (WebCore::isOpusDecoderAvailable): Fly-by fix, should the method be called
+        on non-mac platform it would have return the unitialized value of the available
+        static variable.
+        (WebCore::registerOpusDecoderIfNeeded): Added
+        (WebCore::isVorbisDecoderAvailable): Same as isOpusDecoderAvailable
+        (WebCore::registerVorbisDecoderIfNeeded): Added
+
 2021-07-28  Sihui Liu  <sihui_liu@apple.com>
 
         Implement IDBTransaction.durability

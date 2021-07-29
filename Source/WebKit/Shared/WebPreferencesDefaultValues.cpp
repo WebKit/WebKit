@@ -332,6 +332,15 @@ bool defaultWebMParserEnabled()
     return true;
 }
 
+bool defaultWebMWebAudioEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("webm_webaudio");
+#endif
+
+    return false;
+}
+
 #endif // ENABLE(MEDIA_SOURCE)
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

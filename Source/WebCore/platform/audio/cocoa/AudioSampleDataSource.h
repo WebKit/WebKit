@@ -33,7 +33,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
-typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {

@@ -1,3 +1,27 @@
+2021-07-28  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/opus container support
+        https://bugs.webkit.org/show_bug.cgi?id=227110
+        <rdar://problem/79437067>
+
+        Reviewed by Jer Noble.
+
+        Add default value for webm_webaudio feature flag for the different platforms.
+        Disabled by default on all platforms.
+        Fly-by fix: don't make webm parser dependent on VP9 support.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebMWebAudioEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+
 2021-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Start tracking resource uses for ImageBuffers

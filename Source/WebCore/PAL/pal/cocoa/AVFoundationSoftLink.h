@@ -324,4 +324,11 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVOutputContextOutputDevicesDid
 #define AVOutputContextOutputDevicesDidChangeNotification PAL::get_AVFoundation_AVOutputContextOutputDevicesDidChangeNotification()
 #endif // HAVE(AVROUTEPICKERVIEW)
 
+#if PLATFORM(COCOA)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioConverter)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioFormat)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioCompressedBuffer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioPCMBuffer)
+#endif // PLATFORM(COCOA)
+
 #endif // USE(AVFOUNDATION)
