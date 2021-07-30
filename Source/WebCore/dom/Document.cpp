@@ -3419,7 +3419,7 @@ void Document::updateBaseURL()
         // and DOM 3 Core does not specify how it should be resolved.
         m_baseURL = URL({ }, documentURI());
 
-        if (m_baseURL == aboutBlankURL()) {
+        if (m_baseURL.isAboutBlank()) {
             auto* creator = parentDocument();
             if (!creator && frame() && frame()->loader().opener())
                 creator = frame()->loader().opener()->document();
