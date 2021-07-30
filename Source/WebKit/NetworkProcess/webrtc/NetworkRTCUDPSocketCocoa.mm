@@ -45,6 +45,9 @@ SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDisposition_t)
 SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerAppInfoRef)
 SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDomainContextRef)
 SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDisposition_t*, (NEHelperTrackerAppInfoRef *app_info_ref, CFArrayRef domains, NEHelperTrackerDomainContextRef *trackerDomainContextRef, CFIndex *trackerDomainIndex), (app_info_ref, domains, trackerDomainContextRef, trackerDomainIndex))
+
+SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_allow_sharing_port_with_listener, void, __cdecl, (nw_parameters_t, nw_listener_t))
 #endif
 
 namespace WebKit {
@@ -169,7 +172,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
         auto hostAddress = address.ipaddr().ToString();
         if (address.ipaddr().IsNil())
             hostAddress = address.hostname();
-        auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), "0"));
+        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), 0));
         m_address = { nw_endpoint_get_hostname(localEndpoint.get()), nw_endpoint_get_port(localEndpoint.get()) };
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
@@ -288,15 +291,16 @@ RetainPtr<nw_connection_t> NetworkRTCUDPSocketCocoaConnections::createNWConnecti
         auto hostAddress = m_address.ipaddr().ToString();
         if (m_address.ipaddr().IsNil())
             hostAddress = m_address.hostname();
-#if defined(NW_HAS_SHARE_LISTENER_PORT) && NW_HAS_SHARE_LISTENER_PORT
-        nw_parameters_allow_sharing_port_with_listener(parameters.get(), m_nwListener.get());
-        auto portString = String::number(m_address.port());
-        auto portValue = portString.utf8().data();
-#else
-        // rdar://80176676: we workaround local loop port reuse by using 0 instead of m_address.port().
-        auto portValue = "0";
+
+        // rdar://80176676: we workaround local loop port reuse by using 0 instead of m_address.port() when nw_parameters_allow_sharing_port_with_listener is not available.
+        uint16_t port = 0;
+#if HAVE(NWPARAMETERS_TRACKER_API)
+        if (nw_parameters_allow_sharing_port_with_listenerPtr()) {
+            nw_parameters_allow_sharing_port_with_listenerPtr()(parameters.get(), m_nwListener.get());
+            port = m_address.port();
+        }
 #endif
-        auto localEndpoint = adoptNS(nw_endpoint_create_host(hostAddress.c_str(), portValue));
+        auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), port));
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), remoteAddress.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
