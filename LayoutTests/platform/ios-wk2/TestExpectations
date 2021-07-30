@@ -1882,6 +1882,8 @@ webkit.org/b/228305 [ Debug ] http/tests/xmlhttprequest/access-control-preflight
 
 webkit.org/b/215351 http/wpt/service-workers/module-meta-url-fragment.https.html [ Pass Failure ]
 
+webkit.org/b/228670 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Pass Timeout ]
+
 webkit.org/b/228165 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 
 webkit.org/b/215398 [ Release ] imported/w3c/web-platform-tests/css/css-images/idlharness.html [ Pass Timeout ]
