@@ -1,3 +1,70 @@
+2021-07-30  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280424. rdar://problem/81334136
+
+    [macOS Catalina] Some feature preferences have wrong default values
+    https://bugs.webkit.org/show_bug.cgi?id=228564
+    
+    Reviewed by Tim Horton.
+    
+    When `HAVE(SYSTEM_FEATURE_FLAGS)` is false, we still need to enable
+    some features by default.
+    
+    This patch makes sure the following features are enabled by default
+    on macOS (consistent with the properties in WebKit-macos.plist):
+    - async_frame_and_overflow_scrolling
+    - gpu_process_canvas_rendering
+    - gpu_process_media
+    - gpu_process_webrtc
+    - incremental_pdf
+    - vp9_decoder
+    - webm_format_reader
+    - webm_parser
+    
+    * Shared/WebPreferencesDefaultValues.cpp:
+    (WebKit::defaultUseGPUProcessForCanvasRenderingEnabled):
+    (WebKit::defaultUseGPUProcessForDOMRenderingEnabled):
+    (WebKit::defaultUseGPUProcessForMediaEnabled):
+    (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+    (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+    (WebKit::defaultWebRTCCodecsInGPUProcess):
+    (WebKit::defaultIncrementalPDFEnabled):
+    (WebKit::defaultWebMFormatReaderEnabled):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280424 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-29  Peng Liu  <peng.liu6@apple.com>
+
+            [macOS Catalina] Some feature preferences have wrong default values
+            https://bugs.webkit.org/show_bug.cgi?id=228564
+
+            Reviewed by Tim Horton.
+
+            When `HAVE(SYSTEM_FEATURE_FLAGS)` is false, we still need to enable
+            some features by default.
+
+            This patch makes sure the following features are enabled by default
+            on macOS (consistent with the properties in WebKit-macos.plist):
+            - async_frame_and_overflow_scrolling
+            - gpu_process_canvas_rendering
+            - gpu_process_media
+            - gpu_process_webrtc
+            - incremental_pdf
+            - vp9_decoder
+            - webm_format_reader
+            - webm_parser
+
+            * Shared/WebPreferencesDefaultValues.cpp:
+            (WebKit::defaultUseGPUProcessForCanvasRenderingEnabled):
+            (WebKit::defaultUseGPUProcessForDOMRenderingEnabled):
+            (WebKit::defaultUseGPUProcessForMediaEnabled):
+            (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+            (WebKit::defaultCaptureVideoInGPUProcessEnabled):
+            (WebKit::defaultWebRTCCodecsInGPUProcess):
+            (WebKit::defaultIncrementalPDFEnabled):
+            (WebKit::defaultWebMFormatReaderEnabled):
+
 2021-07-28  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/opus container support
