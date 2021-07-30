@@ -282,7 +282,7 @@ ALWAYS_INLINE bool JSObject::putInlineFast(JSGlobalObject* globalObject, Propert
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // FIXME: For a failure due to non-extensible structure, the error message is misleading.
+    // FIXME: For a failure due to non-extensible structure, the error message is misleading
     if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     return true;
@@ -345,8 +345,10 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
             // https://bugs.webkit.org/show_bug.cgi?id=214342
             if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
-            else
+            else {
+                ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
                 slot.setExistingProperty(this, offset);
+            }
 
             return true;
         }
@@ -403,8 +405,10 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
             // This allows adaptive watchpoints to observe if the new structure is the one we want.
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
             setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferredWatchpointFire));
-        } else
+        } else {
+            ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
             slot.setExistingProperty(this, offset);
+        }
 
         return true;
     }

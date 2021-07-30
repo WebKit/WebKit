@@ -1,3 +1,13 @@
+2021-07-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        definePropertyOnReceiver should check if receiver canPerformFastPutInline
+        https://bugs.webkit.org/show_bug.cgi?id=227963
+        <rdar://80259710>
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/reflect-set-custom-value.js: Added.
+
 2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Legacy RegExp fields should be accessors
