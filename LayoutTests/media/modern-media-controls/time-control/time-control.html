@@ -6,6 +6,7 @@
 description("Testing the <code>TimeControl</code> class.");
 
 const timeControl = new TimeControl({ layoutTraits: new MacOSLayoutTraits(LayoutTraits.Mode.Inline) });
+document.body.appendChild(timeControl.element);
 
 shouldBeEqualToString("timeControl.element.localName", "div");
 shouldBeEqualToString("timeControl.element.className", "time-control");
@@ -86,6 +87,8 @@ shouldBe("timeControl.scrubber.width", "136");
 shouldBe("timeControl.durationTimeLabel.x", "173");
 
 debug("");
+
+timeControl.element.remove();
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -41,6 +41,7 @@
     --fullscreen-controls-bar-height: 75px;
     --primary-glyph-color: rgba(255, 255, 255, 0.75);
     --secondary-glyph-color: rgba(255, 255, 255, 0.55);
+    --scrubber-margin: 5px;
 }
 
 :host(audio), :host(video.media-document.audio), * {

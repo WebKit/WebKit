@@ -1,3 +1,28 @@
+2021-07-30  Dean Jackson  <dino@apple.com>
+
+        [Media Controls] Add an option for having no scrubber on the time control and parameterize margin
+        https://bugs.webkit.org/show_bug.cgi?id=228633
+        rdar://81314458
+
+        Reviewed by Tim Horton.
+
+        Add support for a scrubber bar that does not have a knob (or, to be clear, an
+        invisible knob). While here, move the constant for the margin into a custom
+        CSS property so it can be easily overridden.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (*): Add --scrubber-margin custom property.
+        * Modules/modern-media-controls/controls/slider.css:
+        (.slider > .custom-slider > .knob.none): Add style for a "none" knob.
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.commit): Support "none".
+        * Modules/modern-media-controls/controls/time-control.js: Get the margin from
+        the new custom property.
+        (TimeControl.prototype.get minimumWidth):
+        (TimeControl.prototype.get idealMinimumWidth):
+        (TimeControl.prototype.layout):
+        (TimeControl.prototype._performIdealLayout):
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         postMessage() should throw if any duplicate transferable is found in transferList

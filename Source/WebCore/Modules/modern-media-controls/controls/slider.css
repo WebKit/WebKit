@@ -89,6 +89,14 @@
     border-radius: 4px;
 }
 
+.slider > .custom-slider > .knob.none {
+    top: -2px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
 .slider > input {
     top: 0;
     margin: 0;
