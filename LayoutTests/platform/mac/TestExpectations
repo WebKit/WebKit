@@ -2320,5 +2320,7 @@ webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-
 
 webkit.org/b/228640 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.tentative.https.html [ Pass Failure ]
 
+webkit.org/b/228642 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html [ Pass Failure ]
+
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
