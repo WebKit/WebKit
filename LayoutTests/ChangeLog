@@ -1,5 +1,14 @@
 2021-07-30  Eric Hutchison  <ehutchison@apple.com>
 
+        [ BigSur Release wk2 arm64] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228644.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-07-30  Eric Hutchison  <ehutchison@apple.com>
+
         Updated test expectations for imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html.
         https://bugs.webkit.org/show_bug.cgi?id=228197.
 
