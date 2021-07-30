@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import platform
 import re
 import subprocess
 import sys
@@ -120,7 +121,7 @@ class FilteredCommand(object):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            more = subprocess.Popen([which('more'), '-F'], stdin=child.stdout)
+            more = subprocess.Popen([which('more')] + ['-F'] if platform.system() == 'Darwin' else [], stdin=child.stdout)
 
             try:
                 while more.poll() is None and not child.poll():
