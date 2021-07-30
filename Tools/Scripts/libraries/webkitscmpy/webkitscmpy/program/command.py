@@ -116,6 +116,7 @@ class FilteredCommand(object):
             child = subprocess.Popen(
                 [sys.executable, file, repository.root_path, args.representation] + args.args,
                 env=environ,
+                cwd=os.getcwd(),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
@@ -158,15 +159,25 @@ class FilteredCommand(object):
 
         for index in range(len(args)):
             parsed = Commit.parse(args[index], do_assert=False)
-            if not parsed:
+            if parsed:
+                replacement = None
+                if repository.is_svn:
+                    replacement = repository.cache.to_revision(hash=parsed.hash, identifier=str(parsed) if parsed.identifier else None)
+                if repository.is_git:
+                    replacement = repository.cache.to_hash(revision=parsed.revision, identifier=str(parsed) if parsed.identifier else None)
+                if replacement:
+                    args[index] = replacement
                 continue
-            replacement = None
-            if repository.is_svn:
-                replacement = repository.cache.to_revision(hash=parsed.hash, identifier=str(parsed) if parsed.identifier else None)
-            if repository.is_git:
-                replacement = repository.cache.to_hash(revision=parsed.revision, identifier=str(parsed) if parsed.identifier else None)
-            if replacement:
-                args[index] = replacement
+
+            for candidate in [
+                os.path.abspath(os.path.join(os.getcwd(), args[index])),
+                os.path.abspath(os.path.join(repository.root_path, args[index])),
+            ]:
+                if not candidate.startswith(repository.root_path):
+                    continue
+                if os.path.exists(candidate):
+                    args[index] = candidate
+                    break
 
         log_output = subprocess.Popen(
             [repository.executable(), command] + args,

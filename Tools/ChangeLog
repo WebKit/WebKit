@@ -1,3 +1,17 @@
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Handle relative paths in filtered commands
+        https://bugs.webkit.org/show_bug.cgi?id=228606
+        <rdar://problem/81289748>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.pager): Child process should use the same current working directory.
+        (FilteredCommand.main): Convert any file names to their absolute paths.
+
 2021-07-29  Tim Horton  <timothy_horton@apple.com>
 
         Simplify ImageDiff SDK logic
