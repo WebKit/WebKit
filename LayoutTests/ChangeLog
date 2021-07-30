@@ -1,3 +1,15 @@
+2021-07-29  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Missing playing events when the ready state becomes HAVE_FUTURE_DATA/HAVE_ENOUGH_DATA from HAVE_METADATA state
+        https://bugs.webkit.org/show_bug.cgi?id=228531
+
+        Reviewed by Eric Carlson.
+
+        Added the testcase to checks if the playing event is fired correctly on the ready state changes.
+
+        * media/media-source/media-source-monitor-playing-event-expected.txt: Added.
+        * media/media-source/media-source-monitor-playing-event.html: Added.
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop building WebGPU and the WHLSL compiler to decrease binary size
