@@ -1,3 +1,16 @@
+2021-07-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=201481
+        <rdar://problem/55046055>
+
+        Reviewed by Youenn Fablet.
+
+        The test always passes now according to recent results, but it is shown as failed as TEXT because of the
+        expectation.
+
+        * platform/mac/TestExpectations:
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         Clicking an HTMLLinkElement should not trigger a navigation

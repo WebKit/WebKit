@@ -1602,8 +1602,6 @@ webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/var
 
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
-webkit.org/b/201481 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
-
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
 
 webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Pass Failure ]
