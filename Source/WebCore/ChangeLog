@@ -1,3 +1,17 @@
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [AspectRatio] Fix replaced-element-034.html
+        https://bugs.webkit.org/show_bug.cgi?id=228223
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Fix replaced-element-034.html by making hasReplacedLogicalHeight
+        return false for *-content when aspect-ratio is provided and relying
+        on computeReplacedLogicalHeight to take aspect-ratio into account.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::hasReplacedLogicalHeight const):
+
 2021-07-29  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Missing playing events when the ready state becomes HAVE_FUTURE_DATA/HAVE_ENOUGH_DATA from HAVE_METADATA state
