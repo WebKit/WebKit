@@ -1382,5 +1382,7 @@ webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-a
 
 webkit.org/b/228561 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Pass Timeout ]
 
+webkit.org/b/228626 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https.html [ Pass Failure ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
