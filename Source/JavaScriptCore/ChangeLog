@@ -1,3 +1,11 @@
+2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix wrong access width
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+        rdar://81341472
+
+        * yarr/YarrJIT.cpp:
+
 2021-07-30  Yijia Huang  <yijia_huang@apple.com>
 
         Add Pre/Post-Indexed Address Mode to Air for ARM64

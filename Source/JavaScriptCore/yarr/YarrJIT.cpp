@@ -2412,7 +2412,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             auto loopHead = label();
                             readCharacter(m_checkedOffset - endIndex + 1, regT0);
                             and32(TrustedImm32(BoyerMooreBitmap::mapMask), regT0, regT0);
-                            auto matched = branchTest32(NonZero, BaseIndex(regT1, regT0, TimesOne));
+                            auto matched = branchTest8(NonZero, BaseIndex(regT1, regT0, TimesOne));
                             op.m_jumps.append(jumpIfNoAvailableInput(endIndex - beginIndex));
                             jump().linkTo(loopHead, this);
                             matched.link(this);
