@@ -1,3 +1,15 @@
+2021-07-30  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Fix fallback methods in the libgcrypt find module
+        https://bugs.webkit.org/show_bug.cgi?id=228581
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/FindLibGcrypt.cmake: Make sure to use the libgcrypt-config script as
+        first fallback if libgcrypt.pc is not present, and fix the regexp used as last fallback
+        that checks the version from the gcrypt.h header as last fallback to only include digits
+        and periods.
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop building WebGPU and the WHLSL compiler to decrease binary size

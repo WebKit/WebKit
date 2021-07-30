@@ -47,7 +47,9 @@ if (PkgConfig_FOUND)
     pkg_check_modules(PC_GPGERROR QUIET gpg-error)
     set(LibGcrypt_COMPILE_OPTIONS ${PC_GCRYPT_CFLAGS_OTHER} ${PC_GPGERROR_CFLAGS_OTHER})
     set(LibGcrypt_VERSION ${PC_GCRYPT_VERSION})
-elseif (LIBGCRYPTCONFIG_SCRIPT)
+endif ()
+
+if (LIBGCRYPTCONFIG_SCRIPT AND NOT PC_GCRYPT)
     execute_process(
         COMMAND "${LIBGCRYPTCONFIG_SCRIPT}" --prefix
         RESULT_VARIABLE CONFIGSCRIPT_RESULT
@@ -105,8 +107,8 @@ find_library(LibGcrypt_LIBRARY
 )
 
 if (LibGcrypt_INCLUDE_DIR AND NOT LibGcrypt_VERSION)
-    file(STRINGS ${LIBGCRYPT_INCLUDE_DIR}/gcrypt.h GCRYPT_H REGEX "^#define GCRYPT_VERSION ")
-    string(REGEX REPLACE "^#define GCRYPT_VERSION \"(.*)\".*$" "\\1" LibGcrypt_VERSION "${GCRYPT_H}")
+    file(STRINGS ${LibGcrypt_INCLUDE_DIR}/gcrypt.h GCRYPT_H REGEX "^#define GCRYPT_VERSION ")
+    string(REGEX REPLACE "^#define GCRYPT_VERSION \"([0-9.]\+)[^\"]*\".*$" "\\1" LibGcrypt_VERSION "${GCRYPT_H}")
 endif ()
 
 include(FindPackageHandleStandardArgs)
