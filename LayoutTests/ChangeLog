@@ -1,5 +1,14 @@
 2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ iOS Debug ] fast/events/tabindex-focus-blur-all.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=228659
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         REGRESSION (r275641): [ iPad Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html is asserting.
         https://bugs.webkit.org/show_bug.cgi?id=228622
 
