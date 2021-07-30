@@ -256,5 +256,7 @@ class FilteredCommand(object):
                 line = log_output.stdout.readline()
 
         finally:
+            if not log_output.returncode:
+                sys.stderr.write(log_output.stderr.read())
             log_output.kill()
         return log_output.returncode
