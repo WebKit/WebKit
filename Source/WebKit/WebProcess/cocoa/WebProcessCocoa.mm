@@ -1066,7 +1066,6 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     auto appID = CFSTR("com.apple.WebKit.WebContent");
     auto reduceMotionEnabled = preferences.reduceMotionEnabled;
-    WTFLogAlways("AX: reduce motion: %d", (int)reduceMotionEnabled);
     if (_AXSReduceMotionEnabledApp(appID) != reduceMotionEnabled)
         _AXSSetReduceMotionEnabledApp(reduceMotionEnabled, appID);
     auto increaseButtonLegibility = preferences.increaseButtonLegibility;

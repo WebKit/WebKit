@@ -1,3 +1,14 @@
+2021-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        Accessibility code logs to stderr in many layout test runs
+        https://bugs.webkit.org/show_bug.cgi?id=228653
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+        r279342 accidentally landed a WTFLogAlways in a common codepath. Remove it.
+
 2021-07-30  Youenn Fablet  <youenn@apple.com>
 
         softlink nw_parameters_allow_sharing_port_with_listener
