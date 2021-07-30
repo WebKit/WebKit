@@ -306,11 +306,13 @@ ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShipp
         }
     }
 
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
     auto modifierException = firstApplicableModifier();
     if (modifierException.hasException())
         return modifierException.releaseException();
     if (auto modifierData = modifierException.releaseReturnValue())
         shippingOptions.appendVector(WTFMove(std::get<1>(*modifierData).additionalShippingMethods));
+#endif
 
     return WTFMove(shippingOptions);
 }
@@ -511,7 +513,7 @@ ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateR
     case Reason::ShippingOptionChanged:
         return shippingOptionUpdated();
     case Reason::PaymentMethodChanged:
-        return paymentMethodUpdated(computeErrors(paymentMethodErrors));
+        return paymentMethodUpdated(computeErrors(WTFMove(error), WTFMove(addressErrors), WTFMove(payerErrors), paymentMethodErrors));
     }
 
     ASSERT_NOT_REACHED();
@@ -574,6 +576,13 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
 
     ApplePayShippingMethodUpdate update;
 
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    auto newShippingMethods = computeShippingMethods();
+    if (newShippingMethods.hasException())
+        return newShippingMethods.releaseException();
+    update.newShippingMethods = newShippingMethods.releaseReturnValue();
+#endif
+
     auto newTotalAndLineItems = computeTotalAndLineItems();
     if (newTotalAndLineItems.hasException())
         return newTotalAndLineItems.releaseException();
@@ -617,14 +626,23 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
         paymentCoordinator().completeCouponCodeChange(WTFMove(update));
         return { };
     }
-#else
-    UNUSED_PARAM(errors);
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
     ASSERT(m_updateState == UpdateState::PaymentMethod);
     m_updateState = UpdateState::None;
 
     ApplePayPaymentMethodUpdate update;
+
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    update.errors = WTFMove(errors);
+
+    auto newShippingMethods = computeShippingMethods();
+    if (newShippingMethods.hasException())
+        return newShippingMethods.releaseException();
+    update.newShippingMethods = newShippingMethods.releaseReturnValue();
+#else
+    UNUSED_PARAM(errors);
+#endif
 
     auto newTotalAndLineItems = computeTotalAndLineItems();
     if (newTotalAndLineItems.hasException())

@@ -147,6 +147,9 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Apple
 
     m_total = WTFMove(shippingMethodUpdate->newTotal);
     m_lineItems = WTFMove(shippingMethodUpdate->newLineItems);
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    m_shippingMethods = WTFMove(shippingMethodUpdate->newShippingMethods);
+#endif
 #if defined(MockPaymentCoordinatorAdditions_completeShippingMethodSelection)
     MockPaymentCoordinatorAdditions_completeShippingMethodSelection
 #endif
@@ -169,8 +172,8 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Appl
 
     m_total = WTFMove(shippingContactUpdate->newTotal);
     m_lineItems = WTFMove(shippingContactUpdate->newLineItems);
-    m_errors = convert(WTFMove(shippingContactUpdate->errors));
     m_shippingMethods = WTFMove(shippingContactUpdate->newShippingMethods);
+    m_errors = convert(WTFMove(shippingContactUpdate->errors));
 #if defined(MockPaymentCoordinatorAdditions_completeShippingContactSelection)
     MockPaymentCoordinatorAdditions_completeShippingContactSelection
 #endif
@@ -183,6 +186,10 @@ void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<AppleP
 
     m_total = WTFMove(paymentMethodUpdate->newTotal);
     m_lineItems = WTFMove(paymentMethodUpdate->newLineItems);
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    m_shippingMethods = WTFMove(paymentMethodUpdate->newShippingMethods);
+    m_errors = convert(WTFMove(paymentMethodUpdate->errors));
+#endif
 #if defined(MockPaymentCoordinatorAdditions_completePaymentMethodSelection)
     MockPaymentCoordinatorAdditions_completePaymentMethodSelection
 #endif
@@ -197,8 +204,8 @@ void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCoup
 
     m_total = WTFMove(couponCodeUpdate->newTotal);
     m_lineItems = WTFMove(couponCodeUpdate->newLineItems);
-    m_errors = convert(WTFMove(couponCodeUpdate->errors));
     m_shippingMethods = WTFMove(couponCodeUpdate->newShippingMethods);
+    m_errors = convert(WTFMove(couponCodeUpdate->errors));
 #if defined(MockPaymentCoordinatorAdditions_completeCouponCodeChange)
     MockPaymentCoordinatorAdditions_completeCouponCodeChange
 #endif

@@ -28,10 +28,16 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayDetailsUpdateBase.h"
+#include "ApplePayShippingMethod.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct ApplePayShippingMethodUpdate final : public ApplePayDetailsUpdateBase {
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    Vector<ApplePayShippingMethod> newShippingMethods;
+#endif
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ApplePayShippingMethodUpdate> decode(Decoder&);
 };
@@ -40,6 +46,9 @@ template<class Encoder>
 void ApplePayShippingMethodUpdate::encode(Encoder& encoder) const
 {
     ApplePayDetailsUpdateBase::encode(encoder);
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    encoder << newShippingMethods;
+#endif
 }
 
 template<class Decoder>
@@ -49,6 +58,19 @@ std::optional<ApplePayShippingMethodUpdate> ApplePayShippingMethodUpdate::decode
 
     if (!result.decodeBase(decoder))
         return std::nullopt;
+
+#define DECODE(name, type) \
+    std::optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return std::nullopt; \
+    result.name = WTFMove(*name); \
+
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    DECODE(newShippingMethods, Vector<ApplePayShippingMethod>)
+#endif
+
+#undef DECODE
 
     return result;
 }

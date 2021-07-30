@@ -1,3 +1,53 @@
+2021-07-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
+        https://bugs.webkit.org/show_bug.cgi?id=228599
+        <rdar://problem/81190366>
+
+        Reviewed by Andy Estes.
+
+        r275169 made it so that `paymentMethodType` is no longer `required` so that `additionalShippingMethods`
+        can be specified without having to limit it to a specific payment method type. While this
+        works in theory, WebKit doesn't know about the user's selected payment method type until the
+        user actually selects a payment method, meaning that until then the `additionalShippingMethods`
+        are not used. Unfortunately (until now) `PKPaymentRequestPaymentMethodUpdate` did not
+        support providing a `NSArray<PKShippingMethod *> *`, so there was no way to update the list
+        of shipping methods when the user changed their selected payment method, meaning that WebKit
+        would have to wait/rely on the user to change their shipping address _after_ selecting a
+        payment method in order for `additionalShippingMethods` to take effect.
+
+        This also fixes an issue with WebKit's implementation of the W3C Payment Request API by
+        allowing any generic (i.e. things not specific to Apple Pay) `shippingOptions` provided in
+        `PaymentDetailsUpdate` to actually be used and update the Apple Pay sheet accordingly.
+
+        Test: http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html
+
+        * Modules/applepay/ApplePayModifier.idl:
+        * Modules/applepay/ApplePayModifier.h:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.idl:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.h:
+        (WebCore::ApplePayPaymentMethodUpdate::encode const):
+        (WebCore::ApplePayPaymentMethodUpdate::decode):
+        * Modules/applepay/ApplePayShippingMethodUpdate.idl:
+        * Modules/applepay/ApplePayShippingMethodUpdate.h:
+        (WebCore::ApplePayShippingMethodUpdate::encode const):
+        (WebCore::ApplePayShippingMethodUpdate::decode):
+        Add (or wrap existing) `additionalShippingMethods`/`newShippingMethods` properties.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::computeShippingMethods):
+        (WebCore::ApplePayPaymentHandler::detailsUpdated):
+        (WebCore::ApplePayPaymentHandler::shippingOptionUpdated):
+        (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+        Also call `computeShippingMethods()` and add the result to the update.
+
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::completeShippingMethodSelection):
+        (WebCore::MockPaymentCoordinator::completeShippingContactSelection):
+        (WebCore::MockPaymentCoordinator::completePaymentMethodSelection):
+        (WebCore::MockPaymentCoordinator::completeCouponCodeChange):
+        Support for testing.
+
 2021-07-29  Alex Christensen  <achristensen@webkit.org>
 
         [ Mac ] fast/dom/webtiming-document-open.html is a flaky failure
