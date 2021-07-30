@@ -1,5 +1,16 @@
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
+        Clicking an HTMLLinkElement should not trigger a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=228618
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/navigation.sub-expected.txt:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
         postMessage() should throw if any duplicate transferable is found in transferList
         https://bugs.webkit.org/show_bug.cgi?id=228608
 

@@ -1,4 +1,4 @@
-This tests html link element activation behavior on mouse click
+This tests that html link element has no activation behavior on mouse click
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

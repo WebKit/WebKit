@@ -1,3 +1,21 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Clicking an HTMLLinkElement should not trigger a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=228618
+
+        Reviewed by Sam Weinig.
+
+        Update existing tests to reflect behavior change. I verified that the tests were failing
+        in both Firefox and Chrome prior to me updating them.
+
+        * fast/dom/html-link-element-activation-behavior-on-element-click-expected.txt:
+        * fast/dom/html-link-element-activation-behavior-on-element-click.html:
+        * fast/dom/html-link-element-activation-behavior-on-mouse-click-expected.txt:
+        * fast/dom/html-link-element-activation-behavior-on-mouse-click.html:
+        * fast/dom/resources/html-link-element-activation-behavior-on-element-click-step1.html:
+        * fast/dom/resources/html-link-element-activation-behavior-on-mouse-click-step1.html:
+        * fast/dom/resources/html-link-element-activation-behavior-target.html:
+
 2021-07-30  Dean Jackson  <dino@apple.com>
 
         [Media Controls] Add an option for having no scrubber on the time control and parameterize margin

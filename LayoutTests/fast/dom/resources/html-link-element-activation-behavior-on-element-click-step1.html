@@ -13,6 +13,9 @@ link {
 <script>
 function elementClick(){
     document.getElementById("target").click();
+    setTimeout(() => {
+        window.parent.postMessage("test:ok", "*");
+    }, 100);
 }
 window.addEventListener("message", elementClick);
 </script>

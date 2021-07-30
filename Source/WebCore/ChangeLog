@@ -1,3 +1,21 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Clicking an HTMLLinkElement should not trigger a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=228618
+
+        Reviewed by Sam Weinig.
+
+        Clicking an HTMLLinkElement should not trigger a navigation because HTMLLinkElement has no activation
+        behavior as per the HTML specification:
+        - https://html.spec.whatwg.org/multipage/semantics.html#htmllinkelement
+
+        Firefox and Chrome follow the specification here.
+
+        No new tests, updated/rebaselined existing tests.
+
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLLinkElement.h:
+
 2021-07-30  Dean Jackson  <dino@apple.com>
 
         [Media Controls] Add an option for having no scrubber on the time control and parameterize margin

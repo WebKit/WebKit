@@ -1,10 +1,10 @@
 <head>
 <script>
-function ok(){
-    window.parent.postMessage("test:ok", "*");
+function fail(){
+    window.parent.postMessage("test:fail", "*");
 }
 </script>
 </head>
-<body onload="ok()">
+<body onload="fail()">
 <h1>target</h1>
 </body>

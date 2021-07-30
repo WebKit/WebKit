@@ -16,7 +16,10 @@ function mouseClick() {
         eventSender.mouseMoveTo(50, 140);
         eventSender.mouseDown();
         eventSender.mouseUp();
-    }	
+    }
+    setTimeout(() => {
+        window.parent.postMessage("test:ok", "*");
+    }, 100);
 }
 window.addEventListener("message", mouseClick);
 </script>
