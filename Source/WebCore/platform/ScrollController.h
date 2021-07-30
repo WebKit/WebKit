@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class KeyboardScrollingAnimator;
 class LayoutSize;
 class PlatformWheelEvent;
 class ScrollController;
@@ -71,6 +72,9 @@ public:
 
     virtual void startAnimationCallback(ScrollController&) = 0;
     virtual void stopAnimationCallback(ScrollController&) = 0;
+
+    virtual void updateKeyboardScrollPosition(MonotonicTime) { }
+    virtual KeyboardScrollingAnimator *keyboardScrollingAnimator() const { return nullptr; }
 
 #if ENABLE(RUBBER_BANDING)
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
@@ -121,6 +125,9 @@ public:
     bool usesScrollSnap() const;
     void stopAllTimers();
     void scrollPositionChanged();
+
+    void beginKeyboardScrolling();
+    void stopKeyboardScrolling();
     
     // Should be called periodically by the client. Started by startAnimationCallback(), stopped by stopAnimationCallback().
     void animationCallback(MonotonicTime);
@@ -163,9 +170,11 @@ private:
 
     void updateScrollSnapAnimatingState(MonotonicTime);
     void updateRubberBandAnimatingState(MonotonicTime);
-    
+    void updateKeyboardScrollingAnimatingState(MonotonicTime);
+
     void setIsAnimatingRubberBand(bool);
     void setIsAnimatingScrollSnap(bool);
+    void setIsAnimatingKeyboardScrolling(bool);
 
 #if PLATFORM(MAC)
     void startScrollSnapAnimation();
@@ -199,6 +208,7 @@ private:
     bool m_isRunningAnimatingCallback { false };
     bool m_isAnimatingRubberBand { false };
     bool m_isAnimatingScrollSnap { false };
+    bool m_isAnimatingKeyboardScrolling { false };
 
 #if PLATFORM(MAC)
     WallTime m_lastMomentumScrollTimestamp;

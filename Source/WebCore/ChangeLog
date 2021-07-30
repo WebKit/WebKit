@@ -1,3 +1,37 @@
+2021-07-30  Dana Estra  <destra@apple.com>
+
+        Add key-driven smooth scrolling to macOS
+        https://bugs.webkit.org/show_bug.cgi?id=228009
+
+        Reviewed by Tim Horton.
+
+        Cause keyboard scroll event to trigger start of smooth scroll animation, using same physics implementation as iOS smooth scrolling.
+
+        No tests yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        (WebCore::EventHandler::scrollDistance):
+        (WebCore::EventHandler::stopKeyboardScrolling):
+        (WebCore::EventHandler::startKeyboardScrolling):
+        * platform/KeyboardScrollingAnimator.cpp: Added.
+        * platform/KeyboardScrollingAnimator.h: Added.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::startAnimationCallback):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::animationCallback):
+        (WebCore::ScrollController::startOrStopAnimationCallbacks):
+        (WebCore::ScrollController::beginKeyboardScrolling):
+        (WebCore::ScrollController::stopKeyboardScrolling):
+        (WebCore::ScrollController::setIsAnimatingKeyboardScrolling):
+        (WebCore::ScrollController::updateKeyboardScrollingAnimatingState):
+        * platform/ScrollController.h:
+        (WebCore::ScrollControllerClient::updateKeyboardScrollPosition):
+        
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         Document's fallback base URL should be deduced from its creator when URL is about:blank

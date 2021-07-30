@@ -377,7 +377,8 @@ private:
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
     float scrollDistance(ScrollDirection, ScrollGranularity);
-    bool handleKeyboardScrolling(KeyboardEvent&);
+    bool startKeyboardScrolling(KeyboardEvent&);
+    void stopKeyboardScrolling();
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);
