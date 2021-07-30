@@ -1,3 +1,16 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r280482.
+
+        Will take a more conservative approach
+
+        Reverted changeset:
+
+        "HTMLElement.innerText setter should convert new lines to
+        <br>"
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+        https://commits.webkit.org/r280482
+
 2021-07-30  Dana Estra  <destra@apple.com>
 
         Add spacebar functionality for macOS smooth scrolling
