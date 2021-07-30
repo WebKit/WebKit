@@ -1,5 +1,26 @@
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+
+        Reviewed by Sam Weinig.
+
+        HTMLElement.innerText setter should convert new lines to <br>:
+        - https://html.spec.whatwg.org/multipage/dom.html#the-innertext-idl-attribute:dom-innertext-3
+        - https://html.spec.whatwg.org/multipage/dom.html#rendered-text-fragment
+
+        Our innerText setter had some logic that was specific to form elements and specific render
+        styles that wasn't part of the specification. It was causing us to not replace the new lines
+        with <br> in some cases. I dropped this logic to align with Blink and Gecko, as those are
+        passing the same WPT tests.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
         Clicking an HTMLLinkElement should not trigger a navigation
         https://bugs.webkit.org/show_bug.cgi?id=228618
 

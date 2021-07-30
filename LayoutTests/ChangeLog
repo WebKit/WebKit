@@ -1,3 +1,23 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a few tests that changed output.
+
+        * editing/pasteboard/smart-paste-paragraph-003-expected.txt:
+        * platform/mac/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/mac/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/mac/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/mac/fast/forms/textarea-width-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+
 2021-07-30  Sihui Liu  <sihui_liu@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a Flaky Failure

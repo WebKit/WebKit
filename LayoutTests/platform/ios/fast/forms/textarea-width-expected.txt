@@ -16,5 +16,5 @@ layer at (8,68) size 467x286 clip at (9,69) size 465x284
       RenderText {#text} at (0,0) size 454x28
         text run at (0,0) width 454: "1234567890abcdefghijABCDEFGHIJ1234567890abcdefghijABCDEFGHIJ12345X7890abcde"
         text run at (0,14) width 267: "fghijABCDEFGXIJ1234567890abcdefghijABCDEFGHIJ"
-        text run at (266,14) width 1: " "
+      RenderBR {BR} at (266,14) size 1x14
       RenderBR {BR} at (0,28) size 0x14

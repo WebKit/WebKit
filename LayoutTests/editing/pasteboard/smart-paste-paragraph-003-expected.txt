@@ -6,9 +6,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertText:Test paragraph. replacingDOMRange:range from 16 of #text > DIV > #document-fragment to 16 of #text > DIV > #document-fragment givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 32 of #text > DIV > #document-fragment to 32 of #text > DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldInsertText:Test paragraph. replacingDOMRange:range from 2 of DIV > #document-fragment to 2 of DIV > #document-fragment givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 Tests:
