@@ -4162,7 +4162,11 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #if ENABLE(WEB_RTC)
     Vector<Ref<RTCDataChannel>> dataChannels;
 #endif
+    HashSet<JSC::JSObject*> uniqueTransferables;
     for (auto& transferable : transferList) {
+        if (!uniqueTransferables.add(transferable.get()).isNewEntry)
+            return Exception { DataCloneError, "Duplicate transferable for structured clone"_s };
+
         if (auto arrayBuffer = toPossiblySharedArrayBuffer(vm, transferable.get())) {
             if (arrayBuffer->isDetached() || arrayBuffer->isShared())
                 return Exception { DataCloneError };

@@ -1,3 +1,18 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        postMessage() should throw if any duplicate transferable is found in transferList
+        https://bugs.webkit.org/show_bug.cgi?id=228608
+
+        Reviewed by Youenn Fablet.
+
+        postMessage() should throw if any duplicate transferable is found in transferList:
+        - https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializewithtransfer (Step 2.3)
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+
 2021-07-30  Rob Buis  <rbuis@igalia.com>
 
         [AspectRatio] Fix replaced-element-034.html

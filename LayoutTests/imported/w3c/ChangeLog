@@ -1,3 +1,14 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        postMessage() should throw if any duplicate transferable is found in transferList
+        https://bugs.webkit.org/show_bug.cgi?id=228608
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/transfer-errors.window-expected.txt:
+
 2021-07-28  Sihui Liu  <sihui_liu@apple.com>
 
         Implement IDBTransaction.durability
