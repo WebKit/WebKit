@@ -1,11 +1,12 @@
 function test6() {
+    var custom = $vm.createCustomTestGetterSetter();
     function foo() {
         const o = {};
         for (let i = 0; i < 8; i++) {
-            o.lastMatch;
-            o.__proto__ = RegExp;
+            o.customValue2;
+            o.__proto__ = custom;
         }
-        delete RegExp.input;
+        delete custom.customValue2;
     }
 
     foo();

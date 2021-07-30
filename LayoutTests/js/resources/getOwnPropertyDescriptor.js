@@ -25,7 +25,9 @@ descriptorShouldBe("String.prototype", "'concat'", {writable: true, enumerable: 
 descriptorShouldBe("RegExp.prototype", "'exec'", {writable: true, enumerable: false, configurable: true, value:"RegExp.prototype.exec"});
 descriptorShouldBe("document.__proto__.__proto__", "'createElement'", {writable: true, enumerable: true, configurable: true, value:"document.createElement"});
 descriptorShouldBe("Number", "'NEGATIVE_INFINITY'", {writable: false, enumerable: false, configurable: false, value:"Number.NEGATIVE_INFINITY"});
-descriptorShouldBe("RegExp", "'$_'", {writable: true, enumerable: false, configurable: true, value:"RegExp.$_"});
+var RegExp$_Getter = Object.getOwnPropertyDescriptor(RegExp, '$_').get;
+var RegExp$_Setter = Object.getOwnPropertyDescriptor(RegExp, '$_').set;
+descriptorShouldBe("RegExp", "'$_'", {get: "RegExp$_Getter", set: "RegExp$_Setter", enumerable: false, configurable: true,});
 descriptorShouldBe("Node", "'DOCUMENT_POSITION_DISCONNECTED'", {writable: false, enumerable: true, configurable: false, value:"Node.DOCUMENT_POSITION_DISCONNECTED"});
 descriptorShouldBe("Math", "'sin'", {writable: true, enumerable: false, configurable: true, value:"Math.sin"});
 descriptorShouldBe("[1,2,3]", "0", {writable: true, enumerable: true, configurable: true, value:"1"});

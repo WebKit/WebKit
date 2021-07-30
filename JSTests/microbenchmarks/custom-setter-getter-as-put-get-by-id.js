@@ -5,21 +5,20 @@ function assert(b) {
 }
 noInline(assert);
 
-// RegExp.input is a handy custom getter/setter.
-var o1 = RegExp;
+var o1 = $vm.createCustomTestGetterSetter();
 function test(o) {
-    o.input = "bar";
-    return o.input;
+    o.customValue2 = "bar";
+    return o.customValue2;
 }
 noInline(test);
 
 var o2 = {
-    input: "hello"
+    customValue2: "hello"
 }
 
 var o3 = {
     x: 20,
-    input: "hello"
+    customValue2: "hello"
 }
 
 // First compile as GetById node.

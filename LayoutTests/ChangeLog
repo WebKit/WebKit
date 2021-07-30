@@ -1,3 +1,18 @@
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Legacy RegExp fields should be accessors
+        https://bugs.webkit.org/show_bug.cgi?id=220233
+
+        Reviewed by Tadeu Zagallo.
+
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/dom/regexp-caching-expected.txt:
+        * js/dom/regexp-caching.html:
+        * js/resources/getOwnPropertyDescriptor.js:
+        * js/script-tests/static-put-in-prototype-chain.js:
+        * js/static-put-in-prototype-chain-expected.txt:
+        * js/static-put-in-prototype-chain.html:
+
 2021-07-29  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided

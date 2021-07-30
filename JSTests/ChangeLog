@@ -1,3 +1,28 @@
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Legacy RegExp fields should be accessors
+        https://bugs.webkit.org/show_bug.cgi?id=220233
+
+        Reviewed by Tadeu Zagallo.
+
+        * ChakraCore/test/Lib/forin_lib_v3.baseline-jsc:
+        * microbenchmarks/assign-custom-setter-polymorphic.js:
+        * microbenchmarks/assign-custom-setter.js:
+        * microbenchmarks/custom-setter-getter-as-put-get-by-id.js:
+        * microbenchmarks/custom-value-2.js:
+        * microbenchmarks/custom-value.js:
+        * microbenchmarks/get-custom-getter.js:
+        * stress/custom-value-delete-property-1.js:
+        * stress/custom-value-delete-property-2.js:
+        * stress/custom-value-delete-property-3.js:
+        * stress/object-assign-fast-path.js:
+        * stress/reflect-set.js:
+        * stress/regexp-constructor-dollar-getters-are-unique.js: Added.
+        * stress/regexp-setter-realm.js: Added.
+        * stress/static-put-in-prototype-chain.js: Added.
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Yarr should perform BoyerMoore search

@@ -20,10 +20,7 @@ function isReadOnly(object, property)
 
 function printPropertiesWithReadOnly(object)
 {
-    var array = new Array;
-    for (var property in object) {
-        array.push(property);
-    }
+    var array = Object.getOwnPropertyNames(object);
     array.sort();
     for (var i = 0; i < array.length; i++) {
         var property = array[i];
@@ -33,10 +30,7 @@ function printPropertiesWithReadOnly(object)
 
 function printProperties(object)
 {
-    var array = new Array;
-    for (var property in object) {
-        array.push(property);
-    }
+    var array = Object.getOwnPropertyNames(object);
     array.sort();
     for (var i = 0; i < array.length; i++) {
         var property = array[i];

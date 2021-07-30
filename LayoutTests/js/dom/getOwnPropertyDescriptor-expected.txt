@@ -39,9 +39,10 @@ PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').enumerable is false
 PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').configurable is false
-PASS Object.getOwnPropertyDescriptor(RegExp, '$_').value is RegExp.$_
-PASS Object.getOwnPropertyDescriptor(RegExp, '$_').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(RegExp, '$_').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(RegExp, '$_').get is RegExp$_Getter
+PASS Object.getOwnPropertyDescriptor(RegExp, '$_').set is RegExp$_Setter
+PASS Object.getOwnPropertyDescriptor(RegExp, '$_').hasOwnProperty('value') is false
+PASS Object.getOwnPropertyDescriptor(RegExp, '$_').hasOwnProperty('writable') is false
 PASS Object.getOwnPropertyDescriptor(RegExp, '$_').enumerable is false
 PASS Object.getOwnPropertyDescriptor(RegExp, '$_').configurable is true
 PASS Object.getOwnPropertyDescriptor(Node, 'DOCUMENT_POSITION_DISCONNECTED').value is Node.DOCUMENT_POSITION_DISCONNECTED

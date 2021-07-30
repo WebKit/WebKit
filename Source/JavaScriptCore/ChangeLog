@@ -1,3 +1,32 @@
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Legacy RegExp fields should be accessors
+        https://bugs.webkit.org/show_bug.cgi?id=220233
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch implements a part of Legacy RegExp features proposal [1], replacing
+        custom values with custom accessors that require |this| value to be RegExp
+        constructor of the same realm.
+
+        Apart from fixing property descriptors, this change brings legacy RegExpConstructor
+        fields in compliance with invariants of internal methods [2] (described in #151348),
+        aligning JSC with V8 and SpiderMonkey.
+
+        It doesn't, however, implement [[LegacyFeaturesEnabled]] and RegExp.prototype.compile
+        changes.
+
+        [1]: https://github.com/tc39/proposal-regexp-legacy-features
+        [2]: https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::JSC_DEFINE_CUSTOM_SETTER):
+        (JSC::regExpConstructorDollarImpl): Deleted.
+        * tools/JSDollarVM.cpp:
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add WebGPU to webkit.org/status
