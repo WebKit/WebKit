@@ -1,3 +1,20 @@
+2021-07-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][GTK] build broken with python2 after r280382
+        https://bugs.webkit.org/show_bug.cgi?id=228629
+
+        Reviewed by Philippe Normand.
+
+        Call {PYTHON_EXECUTABLE} instead of python3. Our build currently
+        supports both versions of python (2 and 3). If the user wants
+        to force a specific version it can do that via the CMake argument
+        -DPYTHON_EXECUTABLE=/path/to/python/interpreter
+
+        No new tests, is a build fix.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2021-07-29  Jer Noble  <jer.noble@apple.com>
 
         [macOS|AS] VTImageRotationSession returns a kVTImageRotationNotSupportedErr, breaks painting rotated videos

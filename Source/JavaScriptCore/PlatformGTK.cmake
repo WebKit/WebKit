@@ -6,7 +6,7 @@ set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE} @ONLY)
     add_custom_target(JavaScriptCore-build-revision
-        python3 "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${JavaScriptCore_PKGCONFIG_FILE}
+        ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${JavaScriptCore_PKGCONFIG_FILE}
         DEPENDS ${JavaScriptCore_PKGCONFIG_FILE}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} VERBATIM)
     list(APPEND JavaScriptCore_DEPENDENCIES

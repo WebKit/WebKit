@@ -21,7 +21,7 @@ configure_file(wpe/wpe-web-extension-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-w
 if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h @ONLY)
     add_custom_target(WebKit-build-revision
-        python3 "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
+        ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
         DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} VERBATIM)
     list(APPEND WebKit_DEPENDENCIES

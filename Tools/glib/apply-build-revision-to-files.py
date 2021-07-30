@@ -30,7 +30,7 @@ from webkitpy.common.system.filesystem import FileSystem  # nopep8
 def main(args):
     scm = SCMDetector(FileSystem(), Executive()).default_scm()
     svn_revision = scm.head_svn_revision()
-    build_revision = f"r{svn_revision}"
+    build_revision = "r{}".format(svn_revision)
 
     for in_file in args:
         with open(in_file) as fd:
