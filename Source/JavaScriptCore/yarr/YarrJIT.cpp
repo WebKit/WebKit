@@ -3972,9 +3972,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             push(X86Registers::r14);
             push(X86Registers::r15);
         }
-        // The ABI doesn't guarantee the upper bits are zero on unsigned arguments, so clear them ourselves.
-        zeroExtend32ToWord(index, index);
-        zeroExtend32ToWord(length, length);
 #if OS(WINDOWS)
         if (m_compileMode == JITCompileMode::IncludeSubpatterns)
             loadPtr(Address(X86Registers::ebp, 6 * sizeof(void*)), output);
@@ -3991,10 +3988,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             move(TrustedImm32(0xd800), leadingSurrogateTag);
             move(TrustedImm32(0xdc00), trailingSurrogateTag);
         }
-
-        // The ABI doesn't guarantee the upper bits are zero on unsigned arguments, so clear them ourselves.
-        zeroExtend32ToWord(index, index);
-        zeroExtend32ToWord(length, length);
 #elif CPU(ARM_THUMB2)
         push(ARMRegisters::r4);
         push(ARMRegisters::r5);

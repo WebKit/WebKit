@@ -103,7 +103,7 @@ public:
 };
 
 #if CPU(ARM64E)
-extern "C" EncodedMatchResult vmEntryToYarrJIT(const void* input, unsigned start, unsigned length, int* output, MatchingContextHolder* matchingContext, const void* codePtr);
+extern "C" EncodedMatchResult vmEntryToYarrJIT(const void* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder* matchingContext, const void* codePtr);
 extern "C" void vmEntryToYarrJITAfter(void);
 #endif
 
@@ -111,10 +111,10 @@ class YarrCodeBlock {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(YarrCodeBlock);
 
-    using YarrJITCode8 = EncodedMatchResult (*)(const LChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder& matchingContext) YARR_CALL;
-    using YarrJITCode16 = EncodedMatchResult (*)(const UChar* input, unsigned start, unsigned length, int* output, MatchingContextHolder& matchingContext) YARR_CALL;
-    using YarrJITCodeMatchOnly8 = EncodedMatchResult (*)(const LChar* input, unsigned start, unsigned length, void*, MatchingContextHolder& matchingContext) YARR_CALL;
-    using YarrJITCodeMatchOnly16 = EncodedMatchResult (*)(const UChar* input, unsigned start, unsigned length, void*, MatchingContextHolder& matchingContext) YARR_CALL;
+    using YarrJITCode8 = EncodedMatchResult (*)(const LChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder& matchingContext) YARR_CALL;
+    using YarrJITCode16 = EncodedMatchResult (*)(const UChar* input, UCPURegister start, UCPURegister length, int* output, MatchingContextHolder& matchingContext) YARR_CALL;
+    using YarrJITCodeMatchOnly8 = EncodedMatchResult (*)(const LChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder& matchingContext) YARR_CALL;
+    using YarrJITCodeMatchOnly16 = EncodedMatchResult (*)(const UChar* input, UCPURegister start, UCPURegister length, void*, MatchingContextHolder& matchingContext) YARR_CALL;
 
 public:
     YarrCodeBlock() = default;

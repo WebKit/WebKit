@@ -1,3 +1,17 @@
+2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use UCPURegister argument to remove zero extension in JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=228625
+
+        Reviewed by Robin Morisset.
+
+        Yarr JIT code emits zeroExtend32ToWord for some arguments, but this is not necessary if
+        argument is defined as UCPURegister. In that case, caller guarantees that top 32bits are
+        cleared.
+
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJIT.h:
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop building WebGPU and the WHLSL compiler to decrease binary size
