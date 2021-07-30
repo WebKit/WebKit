@@ -2,11 +2,11 @@
 --- Test begins ---
 * "about:blank"
 document.URL = about:blank
-document.baseURI = about:blank
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/resources/iframe-with-about-blank-children.html
 document.cookie = cookie=resources; cookie=parent
 * ""
 document.URL = about:blank
-document.baseURI = about:blank
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/resources/iframe-with-about-blank-children.html
 document.cookie = cookie=resources; cookie=parent
 --- After document.open() ---
 * "about:blank"

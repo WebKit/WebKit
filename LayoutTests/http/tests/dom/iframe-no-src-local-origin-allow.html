@@ -1,26 +1,19 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
 var iframeHasLoadedFirstPage = false;
 
 function runTest()
 {
-    shouldBe("document.getElementById('theFrame').contentDocument.baseURI", "'about:blank'");
+    shouldBeEqualToString("document.getElementById('theFrame').contentDocument.baseURI", "http://127.0.0.1:8000/dom/iframe-no-src-local-origin-allow.html");
     var frameDoc = document.getElementById('theFrame').contentWindow.document;
     var innerFrame = frameDoc.createElement("iframe");
     innerFrame.src = "resources/iframe-no-src-set-location-pass.html";
     innerFrame.id = "innerFrame";
     innerFrame.onload = function() {
         shouldBe("document.getElementById('theFrame').contentDocument.getElementById('innerFrame').contentDocument.body.innerHTML", "'PASS\\n'");
-        isSuccessfullyParsed();
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
     frameDoc.body.appendChild(innerFrame);
 }
@@ -30,6 +23,7 @@ function runTest()
 <body>
 <script>
 description("This tests that an iframe with no src attribute uses the parent document's origin when resolving links inserted into the frame via JavaScript.");
+jsTestIsAsync = true;
 </script>
 <iframe id="theFrame" onload="runTest()"></iframe>
 </body>

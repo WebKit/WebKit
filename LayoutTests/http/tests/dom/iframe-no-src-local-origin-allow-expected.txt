@@ -3,7 +3,7 @@ This tests that an iframe with no src attribute uses the parent document's origi
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.getElementById('theFrame').contentDocument.baseURI is 'about:blank'
+PASS document.getElementById('theFrame').contentDocument.baseURI is "http://127.0.0.1:8000/dom/iframe-no-src-local-origin-allow.html"
 PASS document.getElementById('theFrame').contentDocument.getElementById('innerFrame').contentDocument.body.innerHTML is 'PASS\n'
 PASS successfullyParsed is true
 

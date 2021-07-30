@@ -3,11 +3,11 @@
 --- Test begins ---
 * "about:blank"
 document.URL = about:blank
-document.baseURI = about:blank
+document.baseURI = http://set-by-base.example.com/
 document.cookie = cookie=parent
 * ""
 document.URL = about:blank
-document.baseURI = about:blank
+document.baseURI = http://set-by-base.example.com/
 document.cookie = cookie=parent
 --- After document.open() ---
 * "about:blank"

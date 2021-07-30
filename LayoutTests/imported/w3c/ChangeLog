@@ -1,3 +1,14 @@
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Document's fallback base URL should be deduced from its creator when URL is about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=228624
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test now that one more check is passing.
+
+        * web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url-expected.txt:
+
 2021-07-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Remove support for AVAssetImageGenerator

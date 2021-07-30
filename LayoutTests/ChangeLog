@@ -1,5 +1,30 @@
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
+        Document's fallback base URL should be deduced from its creator when URL is about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=228624
+
+        Reviewed by Geoffrey Garen.
+
+        Update existing tests to reflect behavior change. I have verified that those tests were failing in Firefox & Chrome and
+        are now passing in those browsers.
+
+        * http/tests/dom/iframe-no-src-local-origin-allow-expected.txt: Renamed from LayoutTests/fast/frames/iframe-no-src-local-origin-allow-expected.txt.
+        * http/tests/dom/iframe-no-src-local-origin-allow.html: Renamed from LayoutTests/fast/frames/iframe-no-src-local-origin-allow.html.
+        * http/tests/dom/iframe-no-src-set-location-expected.txt: Renamed from LayoutTests/fast/frames/iframe-no-src-set-location-expected.txt.
+        * http/tests/dom/iframe-no-src-set-location.html: Renamed from LayoutTests/fast/frames/iframe-no-src-set-location.html.
+        * http/tests/dom/resources/iframe-no-src-set-location-pass.html: Renamed from LayoutTests/fast/frames/resources/iframe-no-src-set-location-pass.html.
+        * http/tests/security/aboutBlank/security-context-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-write-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-window-open-expected.txt:
+        * http/tests/security/aboutBlank/security-context-with-base-tag-expected.txt:
+        * http/tests/security/aboutBlank/security-context-write-expected.txt:
+        * http/tests/security/aboutBlank/security-context-writeln-expected.txt:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
         HTMLElement.innerText setter should convert new lines to <br>
         https://bugs.webkit.org/show_bug.cgi?id=228605
 

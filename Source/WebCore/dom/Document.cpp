@@ -3406,7 +3406,6 @@ void Document::setURL(const URL& url)
 
 void Document::updateBaseURL()
 {
-    URL oldBaseURL = m_baseURL;
     // DOM 3 Core: When the Document supports the feature "HTML" [DOM Level 2 HTML], the base URI is computed using
     // first the value of the href attribute of the HTML BASE element if any, and the value of the documentURI attribute
     // from the Document interface otherwise.
@@ -3419,6 +3418,14 @@ void Document::updateBaseURL()
         // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
         // and DOM 3 Core does not specify how it should be resolved.
         m_baseURL = URL({ }, documentURI());
+
+        if (m_baseURL == aboutBlankURL()) {
+            auto* creator = parentDocument();
+            if (!creator && frame() && frame()->loader().opener())
+                creator = frame()->loader().opener()->document();
+            if (creator)
+                m_baseURL = creator->baseURL();
+        }
     }
 
     clearSelectorQueryCache();
