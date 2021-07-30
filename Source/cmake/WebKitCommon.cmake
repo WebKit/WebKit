@@ -228,7 +228,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     # Job pool to avoid running too many memory hungry linker processes
     # -----------------------------------------------------------------------------
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
         set_property(GLOBAL PROPERTY JOB_POOLS link_pool_jobs=4)
     else ()
         set_property(GLOBAL PROPERTY JOB_POOLS link_pool_jobs=2)

@@ -32,8 +32,8 @@ public:
     using Base = JSNonFinalObject;
 
 protected:
-    ErrorPrototypeBase(VM&, Structure*);
-    void finishCreation(VM&, const String&);
+    JS_EXPORT_PRIVATE ErrorPrototypeBase(VM&, Structure*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, const String&);
 };
 
 class ErrorPrototype final : public ErrorPrototypeBase {
@@ -48,7 +48,7 @@ public:
         return &vm.plainObjectSpace;
     }
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

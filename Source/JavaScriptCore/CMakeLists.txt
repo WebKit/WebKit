@@ -868,17 +868,32 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     llint/LLIntOpcode.h
 
+
+    bytecode/UnlinkedFunctionCodeBlock.h
+    bytecode/UnlinkedModuleProgramCodeBlock.h
+    bytecode/UnlinkedProgramCodeBlock.h
+    bytecode/ParseHash.h
+    bytecompiler/Label.h
+
+    parser/ExecutableInfo.h
     parser/Lexer.h
+    parser/ModuleScopeData.h
+    parser/Nodes.h
+    parser/Parser.h
     parser/ParserArena.h
     parser/ParserError.h
+    parser/ParserFunctionInfo.h
     parser/ParserModes.h
     parser/ParserTokens.h
+    parser/ResultType.h
     parser/SourceCode.h
+    parser/SourceCodeKey.h
     parser/SourceProvider.h
     parser/SourceProviderCache.h
     parser/SourceProviderCacheItem.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
+    
 
     profiler/ProfilerBytecode.h
     profiler/ProfilerBytecodeSequence.h
@@ -933,6 +948,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CatchScope.h
     runtime/CellSize.h
     runtime/ClassInfo.h
+    runtime/CodeCache.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
@@ -966,6 +982,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/EnsureStillAliveHere.h
     runtime/EnumerationMode.h
     runtime/Error.h
+    runtime/ErrorConstructor.h
     runtime/ErrorHandlingScope.h
     runtime/ErrorInstance.h
     runtime/ErrorPrototype.h
@@ -1241,7 +1258,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     yarr/YarrParser.h
     yarr/YarrPattern.h
     yarr/YarrUnicodeProperties.h
+
+    bytecode/Opcode.h
+    llint/LLIntOpcode.h
 )
+
+
 
 if (USE_INSPECTOR_SOCKET_SERVER)
     list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
