@@ -86,6 +86,9 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_rtcMonitor(*this)
     , m_rtcNetworkThread(rtcNetworkThread())
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(&m_rtcNetworkThread))
+#if PLATFORM(COCOA)
+    , m_sourceApplicationAuditToken(connection.networkProcess().sourceApplicationAuditToken())
+#endif
 {
 #if !RELEASE_LOG_DISABLED
     rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);

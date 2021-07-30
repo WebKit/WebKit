@@ -197,6 +197,7 @@ public:
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
+    std::optional<audit_token_t> sourceApplicationAuditToken() const;
 #endif
 #if PLATFORM(COCOA) || USE(SOUP)
     HashSet<String> hostNamesWithHSTSCache(PAL::SessionID) const;

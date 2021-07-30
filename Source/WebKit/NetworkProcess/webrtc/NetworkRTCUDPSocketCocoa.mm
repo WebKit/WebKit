@@ -74,6 +74,9 @@ private:
     bool m_isKnownTracker { false };
 #endif
     bool m_shouldBypassRelay { false };
+
+    std::optional<audit_token_t> m_sourceApplicationAuditToken;
+
     rtc::SocketAddress m_address;
     RetainPtr<nw_listener_t> m_nwListener;
     Lock m_nwConnectionsLock;
@@ -159,6 +162,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     , m_isKnownTracker(isKnownTracker(domain))
 #endif
     , m_shouldBypassRelay(isRelayDisabled)
+    , m_sourceApplicationAuditToken(rtcProvider.sourceApplicationAuditToken())
 {
     auto parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     {
@@ -232,6 +236,9 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
     nw_parameters_set_is_third_party_web_content(parameters, !m_isFirstParty);
     nw_parameters_set_is_known_tracker(parameters, m_isKnownTracker);
 #endif
+
+    if (m_sourceApplicationAuditToken)
+        nw_parameters_set_source_application(parameters, *m_sourceApplicationAuditToken);
 
     nw_parameters_set_reuse_local_address(parameters, true);
 }

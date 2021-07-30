@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
+#include "NWParametersSPI.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <wtf/BlockPtr.h>
@@ -94,6 +95,9 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     auto tcpTLS = adoptNS(nw_parameters_create_secure_tcp(isTLS ? NW_PARAMETERS_DEFAULT_CONFIGURATION : NW_PARAMETERS_DISABLE_PROTOCOL, ^(nw_protocol_options_t tcp_options) {
         nw_tcp_options_set_no_delay(tcp_options, true);
     }));
+
+    if (auto token = rtcProvider.sourceApplicationAuditToken())
+        nw_parameters_set_source_application(tcpTLS.get(), *token);
 
     m_nwConnection = adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 

@@ -34,6 +34,7 @@
 WTF_EXTERN_C_BEGIN
 
 void nw_parameters_set_account_id(nw_parameters_t, const char * account_id);
+void nw_parameters_set_source_application(nw_parameters_t, audit_token_t);
 
 #if HAVE(NWPARAMETERS_TRACKER_API)
 void nw_parameters_set_is_third_party_web_content(nw_parameters_t, bool is_third_party_web_content);

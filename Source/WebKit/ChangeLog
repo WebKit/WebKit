@@ -1,3 +1,29 @@
+2021-07-30  Youenn Fablet  <youenn@apple.com>
+
+        Attribute nw connections to the source application
+        https://bugs.webkit.org/show_bug.cgi?id=228641
+        <rdar://81039713>
+
+        Reviewed by Alex Christensen.
+
+        Add source application token for every nw connection/listener, like done for WebSocket or NSURLSession tasks.
+        This will allow the nw layer to do custom processing based on the application doing the loads.
+        Introduce an audit_token_t getter on NetworkProcess.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::sourceApplicationAuditData const):
+        (WebKit::NetworkProcess::sourceApplicationAuditToken const):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::sourceApplicationAuditToken const):
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::configureParameters):
+        * Platform/spi/Cocoa/NWParametersSPI.h:
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop building WebGPU and the WHLSL compiler to decrease binary size

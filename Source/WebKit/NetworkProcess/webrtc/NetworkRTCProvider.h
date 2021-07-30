@@ -105,6 +105,10 @@ public:
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
     void doSocketTaskOnRTCNetworkThread(WebCore::LibWebRTCSocketIdentifier, Function<void(Socket&)>&&);
 
+#if PLATFORM(COCOA)
+    const std::optional<audit_token_t>& sourceApplicationAuditToken() const { return m_sourceApplicationAuditToken; }
+#endif
+
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
     void startListeningForIPC();
@@ -147,6 +151,11 @@ private:
     bool m_isListeningSocketAuthorized { true };
     bool m_platformTCPSocketsEnabled { false };
     bool m_platformUDPSocketsEnabled { false };
+
+#if PLATFORM(COCOA)
+    std::optional<audit_token_t> m_sourceApplicationAuditToken;
+#endif
+
 };
 
 } // namespace WebKit
