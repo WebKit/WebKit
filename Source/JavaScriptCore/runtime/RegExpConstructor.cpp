@@ -100,7 +100,7 @@ JSC_DEFINE_CUSTOM_GETTER(regExpConstructorDollar, (JSGlobalObject* globalObject,
         return throwVMTypeError(globalObject, scope, "RegExp.$N getters require RegExp constructor as |this|"_s);
     unsigned N = propertyName.uid()->at(1) - '0';
     ASSERT(N >= 1 && N <= 9);
-    return JSValue::encode(globalObject->regExpGlobalData().getBackref(globalObject, N));
+    RELEASE_AND_RETURN(scope, JSValue::encode(globalObject->regExpGlobalData().getBackref(globalObject, N)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(regExpConstructorInput, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

@@ -1,3 +1,15 @@
+2021-07-30  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r280460): 42 JSC test failures on Debug arm64 with ASSERTION FAILED: !m_needExceptionCheck
+        https://bugs.webkit.org/show_bug.cgi?id=228652
+
+        Unreviewed unchecked exception fix.
+
+        Release scope before calling RegExpGlobalData::getBackref().
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
 2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use UCPURegister argument to remove zero extension in JIT code
