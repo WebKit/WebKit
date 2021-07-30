@@ -587,99 +587,92 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     }    
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityTreeAncestor
+static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descendant, const AccessibilityRoleSet& roles)
 {
-    auto matchFunc = [] (const AXCoreObject& object) {
-        AccessibilityRole role = object.roleValue();
-        return role == AccessibilityRole::Tree;
-    };
-
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
-        return parent->wrapper();
-    return nil;
+    auto* ancestor = Accessibility::findAncestor(descendant, false, [&roles] (const auto& object) {
+        return roles.contains(object.roleValue());
+    });
+    return ancestor ? ancestor->wrapper() : nil;
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityDescriptionListAncestor
+- (AccessibilityObjectWrapper *)_accessibilityTreeAncestor
 {
-    auto matchFunc = [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::DescriptionList;
-    };
-    
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Tree });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityListAncestor
+- (AccessibilityObjectWrapper *)_accessibilityDescriptionListAncestor
 {
-    auto matchFunc = [] (const AXCoreObject& object) {
-        AccessibilityRole role = object.roleValue();
-        return role == AccessibilityRole::List || role == AccessibilityRole::ListBox;
-    };
-    
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::DescriptionList });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityArticleAncestor
+- (AccessibilityObjectWrapper *)_accessibilityListAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::DocumentArticle;
-    }))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::List, AccessibilityRole::ListBox });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityLandmarkAncestor
+- (AccessibilityObjectWrapper *)_accessibilityArticleAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [self] (const AXCoreObject& object) {
-        return [self _accessibilityIsLandmarkRole:object.roleValue()];
-    }))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::DocumentArticle });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityTableAncestor
+- (AccessibilityObjectWrapper *)_accessibilityLandmarkAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        switch (object.roleValue()) {
-        case AccessibilityRole::Table:
-        case AccessibilityRole::TreeGrid:
-        case AccessibilityRole::Grid:
-            return true;
-        default:
-            return false;
-        }
-    }))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Document,
+        AccessibilityRole::DocumentArticle,
+        AccessibilityRole::DocumentNote,
+        AccessibilityRole::LandmarkBanner,
+        AccessibilityRole::LandmarkComplementary,
+        AccessibilityRole::LandmarkContentInfo,
+        AccessibilityRole::LandmarkDocRegion,
+        AccessibilityRole::LandmarkMain,
+        AccessibilityRole::LandmarkNavigation,
+        AccessibilityRole::LandmarkRegion,
+        AccessibilityRole::LandmarkSearch });
+}
+
+- (AccessibilityObjectWrapper *)_accessibilityTableAncestor
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Table,
+        AccessibilityRole::TreeGrid,
+        AccessibilityRole::Grid });
 }
 
 - (BOOL)_accessibilityIsInTableCell
 {
-    return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::Cell;
-    }) != nullptr;
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Cell }) != nullptr;
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityFieldsetAncestor
+- (AccessibilityObjectWrapper *)_accessibilityFieldsetAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.isFieldset();
-    }))
-        return parent->wrapper();
-    return nil;
-}
-
-- (AccessibilityObjectWrapper*)_accessibilityFrameAncestor
-{
-    auto* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.isWebArea();
-    });
-    if (!parent)
+    if (![self _prepareAccessibilityCall])
         return nil;
-    return parent->wrapper();
+
+    auto* ancestor = Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
+        return object.isFieldset();
+    });
+    return ancestor ? ancestor->wrapper() : nil;
+}
+
+- (AccessibilityObjectWrapper *)_accessibilityFrameAncestor
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::WebArea });
 }
 
 - (uint64_t)_accessibilityTraitsFromAncestors

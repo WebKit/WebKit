@@ -33,6 +33,7 @@
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "Widget.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 
@@ -238,6 +239,8 @@ enum class AccessibilityRole {
     WebCoreLink,
     Window,
 };
+
+using AccessibilityRoleSet = WTF::HashSet<AccessibilityRole, WTF::IntHash<AccessibilityRole>, WTF::StrongEnumHashTraits<AccessibilityRole>>;
 
 ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
 {

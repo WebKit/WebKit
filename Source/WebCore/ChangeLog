@@ -1,3 +1,33 @@
+2021-07-29  Andres Gonzalez  <andresg_22@apple.com>
+
+        Crash at WebCore: -[WebAccessibilityObjectWrapper _accessibilityTableAncestor].
+        https://bugs.webkit.org/show_bug.cgi?id=228600
+        rdar://79910135
+
+        Reviewed by Chris Fleizach.
+
+        The cause of the crash was that [WebAccessibilityObjectWrapper
+        _accessibilityTableAncestor] was dereferencing self.axBackingObject
+        which can be null.
+        The same problem was present in a number of methods that are retrieving
+        an ancestor of a given role. This patch solves this problem by calling
+        _prepareAccessibilityCall before trying to dereference the backing core
+        object.
+        Avoided code repetition by adding the helper function ancestorWithRole.
+
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (ancestorWithRole):
+        (-[WebAccessibilityObjectWrapper _accessibilityTreeAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityDescriptionListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityArticleAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityLandmarkAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTableAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityIsInTableCell]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFieldsetAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFrameAncestor]):
+
 2021-07-29  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa|WK1] -[NSAttributeString loadFromHTML...] methods will disable bluetooth route switching
