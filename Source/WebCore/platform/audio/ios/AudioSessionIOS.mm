@@ -99,6 +99,8 @@ namespace WebCore {
 static void setEligibleForSmartRouting(bool eligible)
 {
 #if PLATFORM(IOS)
+    if (!AudioSession::shouldManageAudioSessionCategory())
+        return;
 
     auto *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (![session respondsToSelector:@selector(setEligibleForBTSmartRoutingConsideration:error:)]

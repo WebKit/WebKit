@@ -1,3 +1,28 @@
+2021-07-29  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa|WK1] -[NSAttributeString loadFromHTML...] methods will disable bluetooth route switching
+        https://bugs.webkit.org/show_bug.cgi?id=228593
+        <rdar://81160969>
+
+        Reviewed by Eric Carlson.
+
+        NSAttributedString will use WebKitLegacy APIs to load provided HTML; in so doing, an AudioSessionIOS
+        singleton object is created, and -[AVAudioSession setEligibleForBTSmartRoutingConsideration:error:]
+        is called with a NO parameter, disabling smart routing for the calling process.
+
+        Disable this behavior if DeprecatedGlobalSettings::shouldManageAudioSessionCategory() returns false;
+        this setting is disabled for all WK1 clients, and enabled for WK2.
+
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory):
+        (WebCore::DeprecatedGlobalSettings::shouldManageAudioSessionCategory):
+        * page/DeprecatedGlobalSettings.h:
+        (WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory): Deleted.
+        (WebCore::DeprecatedGlobalSettings::shouldManageAudioSessionCategory): Deleted.
+        * platform/audio/AudioSession.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::setEligibleForSmartRouting):
+
 2021-07-29  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
