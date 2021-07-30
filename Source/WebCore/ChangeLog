@@ -1,3 +1,17 @@
+2021-07-30  Dana Estra  <destra@apple.com>
+
+        Add spacebar functionality for macOS smooth scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=228155
+
+        Reviewed by Tim Horton.
+        
+        Fixed bug that was causing spacebar events to return false from beginKeyboardScrollGesture.
+
+        Manually tested on webpage.
+
+        * platform/KeyboardScrollingAnimator.cpp:
+        (WebCore::KeyboardScrollingAnimator::beginKeyboardScrollGesture):
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed follow-up to r280491 to address review feedback from Darin Adler.

@@ -230,7 +230,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(KeyboardEvent& event)
 
     m_currentKeyboardScroll = scroll;
 
-    if (event.type() != eventNames().keydownEvent)
+    if (!(event.type() == eventNames().keydownEvent || event.type() == eventNames().keypressEvent))
         return false;
 
     if (m_scrollTriggeringKeyIsPressed)
