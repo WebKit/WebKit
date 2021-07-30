@@ -2322,5 +2322,7 @@ webkit.org/b/228640 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-
 
 webkit.org/b/228642 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html [ Pass Failure ]
 
+webkit.org/b/228197 [ BigSur+ ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html [ Pass Failure ]
+
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
