@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirGenerate.h"
+#include "B3CanonicalizePrePostIncrements.h"
 #include "B3Common.h"
 #include "B3DuplicateTails.h"
 #include "B3EliminateCommonSubexpressions.h"
@@ -118,6 +119,9 @@ void generateToAir(Procedure& procedure)
     legalizeMemoryOffsets(procedure);
     moveConstants(procedure);
     eliminateDeadCode(procedure);
+
+    if (procedure.optLevel() >= 2)
+        canonicalizePrePostIncrements(procedure);
 
     // FIXME: We should run pureCSE here to clean up some platform specific changes from the previous phases.
     // https://bugs.webkit.org/show_bug.cgi?id=164873

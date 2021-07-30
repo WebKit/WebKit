@@ -28,6 +28,300 @@
 
 #if ENABLE(B3_JIT)
 
+
+void testLoadPreIndex32()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int32_t nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int32_t* ptr = nums;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loopTest = proc.addBlock();
+    BasicBlock* loopBody = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Variable* r = proc.addVariable(Int32);
+    Variable* p = proc.addVariable(Int64);
+
+    // ---------------------- Root_Block
+    // r1 = 0
+    // Upsilon(r1, ^r2)
+    // p1 = addr
+    // Upsilon(p1, ^p2)
+    Value* r1 = root->appendIntConstant(proc, Origin(), Int32, 0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r1);
+    Value* p1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p1);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Loop_Test_Block
+    // loop:
+    // p2 = Phi()
+    // r2 = Phi()
+    // if r2 >= 10 goto done
+    Value* r2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), r);
+    Value* p2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), p);
+    Value* cond = loopTest->appendNew<Value>(proc, AboveEqual, Origin(), r2, loopTest->appendNew<Const32Value>(proc, Origin(), 10));
+    loopTest->appendNewControlValue(proc, Branch, Origin(), cond, FrequentedBlock(done), FrequentedBlock(loopBody));
+
+    // ---------------------- Loop_Body_Block
+    // p3 = p2 + 1
+    // Upsilon(p3, ^p2)
+    // r3 = r2 + load(p3)
+    // Upsilon(r3, ^r2)
+    // goto loop
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 4));
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
+    Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int32, Origin(), p3));
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
+    loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Done_Block
+    // done:
+    // return r2
+    done->appendNewControlValue(proc, Return, Origin(), r2);
+
+    proc.resetReachability();
+    validate(proc);
+    fixSSA(proc);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "#4]!");
+
+    auto test = [&] () -> int32_t {
+        int32_t r = 0;
+        while (r < 10)
+            r += *++ptr;
+        return r;
+    };
+
+    CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
+}
+
+void testLoadPreIndex64()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int64_t nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int64_t* ptr = nums;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loopTest = proc.addBlock();
+    BasicBlock* loopBody = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Variable* r = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(Int64);
+
+    // ---------------------- Root_Block
+    // r1 = 0
+    // Upsilon(r1, ^r2)
+    // p1 = addr
+    // Upsilon(p1, ^p2)
+    Value* r1 = root->appendIntConstant(proc, Origin(), Int64, 0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r1);
+    Value* p1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p1);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Loop_Test_Block
+    // loop:
+    // p2 = Phi()
+    // r2 = Phi()
+    // if r2 >= 10 goto done
+    Value* r2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), r);
+    Value* p2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), p);
+    Value* cond = loopTest->appendNew<Value>(proc, AboveEqual, Origin(), r2, loopTest->appendNew<Const64Value>(proc, Origin(), 10));
+    loopTest->appendNewControlValue(proc, Branch, Origin(), cond, FrequentedBlock(done), FrequentedBlock(loopBody));
+
+    // ---------------------- Loop_Body_Block
+    // p3 = p2 + 1
+    // Upsilon(p3, ^p2)
+    // r3 = r2 + load(p3)
+    // Upsilon(r3, ^r2)
+    // goto loop
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 8));
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
+    Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int64, Origin(), p3));
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
+    loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Done_Block
+    // done:
+    // return r2
+    done->appendNewControlValue(proc, Return, Origin(), r2);
+
+    proc.resetReachability();
+    validate(proc);
+    fixSSA(proc);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "#8]!");
+
+    auto test = [&] () -> int64_t {
+        int64_t r = 0;
+        while (r < 10)
+            r += *++ptr;
+        return r;
+    };
+
+    CHECK_EQ(invoke<int64_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
+}
+
+void testLoadPostIndex32()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int32_t nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int32_t* ptr = nums;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loopTest = proc.addBlock();
+    BasicBlock* loopBody = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Variable* r = proc.addVariable(Int32);
+    Variable* p = proc.addVariable(Int64);
+
+    // ---------------------- Root_Block
+    // r1 = 0
+    // Upsilon(r1, ^r2)
+    // p1 = addr
+    // Upsilon(p1, ^p2)
+    Value* r1 = root->appendIntConstant(proc, Origin(), Int32, 0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r1);
+    Value* p1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p1);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Loop_Test_Block
+    // loop:
+    // p2 = Phi()
+    // r2 = Phi()
+    // if r2 >= 10 goto done
+    Value* r2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), r);
+    Value* p2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), p);
+    Value* cond = loopTest->appendNew<Value>(proc, AboveEqual, Origin(), r2, loopTest->appendNew<Const32Value>(proc, Origin(), 10));
+    loopTest->appendNewControlValue(proc, Branch, Origin(), cond, FrequentedBlock(done), FrequentedBlock(loopBody));
+
+    // ---------------------- Loop_Body_Block
+    // r3 = r2 + load(p2)
+    // p3 = p2 + 1
+    // Upsilon(r3, ^r2)
+    // Upsilon(p3, ^p2)
+    // goto loop
+    Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int32, Origin(), p2));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 4));
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
+    loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Done_Block
+    // done:
+    // return r2
+    done->appendNewControlValue(proc, Return, Origin(), r2);
+
+    proc.resetReachability();
+    validate(proc);
+    fixSSA(proc);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "], #4");
+
+    auto test = [&] () -> int32_t {
+        int32_t r = 0;
+        while (r < 10)
+            r += *ptr++;
+        return r;
+    };
+
+    CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
+}
+
+void testLoadPostIndex64()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int64_t nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int64_t* ptr = nums;
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* loopTest = proc.addBlock();
+    BasicBlock* loopBody = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    Variable* r = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(Int64);
+
+    // ---------------------- Root_Block
+    // r1 = 0
+    // Upsilon(r1, ^r2)
+    // p1 = addr
+    // Upsilon(p1, ^p2)
+    Value* r1 = root->appendIntConstant(proc, Origin(), Int64, 0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r1);
+    Value* p1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p1);
+    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Loop_Test_Block
+    // loop:
+    // p2 = Phi()
+    // r2 = Phi()
+    // if r2 >= 10 goto done
+    Value* r2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), r);
+    Value* p2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), p);
+    Value* cond = loopTest->appendNew<Value>(proc, AboveEqual, Origin(), r2, loopTest->appendNew<Const64Value>(proc, Origin(), 10));
+    loopTest->appendNewControlValue(proc, Branch, Origin(), cond, FrequentedBlock(done), FrequentedBlock(loopBody));
+
+    // ---------------------- Loop_Body_Block
+    // r3 = r2 + load(p2)
+    // p3 = p2 + 1
+    // Upsilon(r3, ^r2)
+    // Upsilon(p3, ^p2)
+    // goto loop
+    Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int64, Origin(), p2));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 8));
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
+    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
+    loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
+
+    // ---------------------- Done_Block
+    // done:
+    // return r2
+    done->appendNewControlValue(proc, Return, Origin(), r2);
+
+    proc.resetReachability();
+    validate(proc);
+    fixSSA(proc);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "], #8");
+
+    auto test = [&] () -> int64_t {
+        int64_t r = 0;
+        while (r < 10)
+            r += *ptr++;
+        return r;
+    };
+
+    CHECK_EQ(invoke<int64_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
+}
+
+
 void testInsertSignedBitfieldInZero32()
 {
     if (JSC::Options::defaultB3OptLevel() < 2)
@@ -3697,6 +3991,11 @@ void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testZShrArgImm32(0xffffffff, 0));
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
+
+    RUN(testLoadPreIndex32());
+    RUN(testLoadPreIndex64());
+    RUN(testLoadPostIndex32());
+    RUN(testLoadPostIndex64());
 }
 
 #endif // ENABLE(B3_JIT)

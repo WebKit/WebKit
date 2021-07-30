@@ -2212,6 +2212,176 @@ void testXorNotWithUnsignedRightShift64()
         }
     }
 }
+
+void testStorePrePostIndex32()
+{
+    int32_t nums[] = { 1, 2, 3 };
+    intptr_t addr = bitwise_cast<intptr_t>(&nums[1]);
+    int32_t index = sizeof(int32_t);
+
+    auto test1 = [&] (int32_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *++p1 = 4; return p1;
+            jit.store32(GPRInfo::argumentGPR0, CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int32_t* p1 = bitwise_cast<int32_t*>(test1(4));
+    CHECK_EQ(*p1, 4);
+    CHECK_EQ(*--p1, nums[1]);
+
+    auto test2 = [&] (int32_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *p2++ = 5; return p2;
+            jit.store32(GPRInfo::argumentGPR0, CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int32_t* p2 = bitwise_cast<int32_t*>(test2(5));
+    CHECK_EQ(*p2, 4);
+    CHECK_EQ(*--p2, 5);
+}
+
+void testStorePrePostIndex64()
+{
+    int64_t nums[] = { 1, 2, 3 };
+    intptr_t addr = bitwise_cast<intptr_t>(&nums[1]);
+    int32_t index = sizeof(int64_t);
+
+    auto test1 = [&] (int64_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *++p1 = 4; return p1;
+            jit.store64(GPRInfo::argumentGPR0, CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int64_t* p1 = bitwise_cast<int64_t*>(test1(4));
+    CHECK_EQ(*p1, 4);
+    CHECK_EQ(*--p1, nums[1]);
+
+    auto test2 = [&] (int64_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *p2++ = 5; return p2;
+            jit.store64(GPRInfo::argumentGPR0, CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int64_t* p2 = bitwise_cast<int64_t*>(test2(5));
+    CHECK_EQ(*p2, 4);
+    CHECK_EQ(*--p2, 5);
+}
+
+void testLoadPrePostIndex32()
+{
+    int32_t nums[] = { 1, 2, 3 };
+    int32_t index = sizeof(int32_t);
+
+    auto test1 = [&] (int32_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *++p1; *p1 = 4; return res;
+            jit.load32(CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int32_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test1(4), 3);
+    CHECK_EQ(nums[2], 4);
+
+    auto test2 = [&] (int32_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *p2++; *p2 = 5; return res;
+            jit.load32(CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int32_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test2(5), 2);
+    CHECK_EQ(nums[2], 5);
+}
+
+void testLoadPrePostIndex64()
+{
+    int64_t nums[] = { 1, 2, 3 };
+    int32_t index = sizeof(int64_t);
+
+    auto test1 = [&] (int64_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *++p1; *p1 = 4; return res;
+            jit.load64(CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int64_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test1(4), 3);
+    CHECK_EQ(nums[2], 4);
+
+    auto test2 = [&] (int64_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *p2++; *p2 = 5; return res;
+            jit.load64(CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int64_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test2(5), 2);
+    CHECK_EQ(nums[2], 5);
+}
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
@@ -4805,6 +4975,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testXorNotWithLeftShift64());
     RUN(testXorNotWithRightShift64());
     RUN(testXorNotWithUnsignedRightShift64());
+
+    RUN(testStorePrePostIndex32());
+    RUN(testStorePrePostIndex64());
+    RUN(testLoadPrePostIndex32());
+    RUN(testLoadPrePostIndex64());
 #endif
 
 #if CPU(ARM64E)

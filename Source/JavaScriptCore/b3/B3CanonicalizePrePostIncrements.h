@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,56 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "B3Procedure.h"
-#include "B3Value.h"
-#include "B3ValueKey.h"
-
 namespace JSC { namespace B3 {
 
-inline ValueKey::ValueKey(Value* child, int64_t value)
-{
-    m_kind = Oops;
-    m_type = Void;
-    u.indices[0] = child->index();
-    u.value = value;
-}
+class Procedure;
 
-inline ValueKey::ValueKey(Kind kind, Type type, Value* child)
-    : m_kind(kind)
-    , m_type(type)
-{
-    u.indices[0] = child->index();
-}
-
-inline ValueKey::ValueKey(Kind kind, Type type, Value* left, Value* right)
-    : m_kind(kind)
-    , m_type(type)
-{
-    u.indices[0] = left->index();
-    u.indices[1] = right->index();
-}
-
-inline ValueKey::ValueKey(Kind kind, Type type, Value* a, Value* b, Value* c)
-    : m_kind(kind)
-    , m_type(type)
-{
-    u.indices[0] = a->index();
-    u.indices[1] = b->index();
-    u.indices[2] = c->index();
-}
-
-inline Value* ValueKey::child(Procedure& proc, unsigned index) const
-{
-    return proc.values()[index];
-}
+JS_EXPORT_PRIVATE bool canonicalizePrePostIncrements(Procedure&);
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

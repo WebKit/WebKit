@@ -207,7 +207,7 @@ public:
 
             finishAppendingInstructions(m_blockToBlock[block]);
         }
-        
+
         m_blockInsertionSet.execute();
 
         Air::InsertionSet insertionSet(m_code);
@@ -546,7 +546,7 @@ private:
             return std::nullopt;
         return scale;
     }
-    
+
     // This turns the given operand into an address.
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     Arg effectiveAddr(Value* address, Int offset, Width width)
@@ -2559,6 +2559,46 @@ private:
                     }
                 }
             }
+
+            // Pre-Index Canonical Form:
+            //     address = add(base, offset)
+            //     memory = load(base, offset)
+            // Post-Index Canonical Form:
+            //     memory = load(base, 0)
+            //     address = add(base, offset)
+            auto tryAppendIncrementAddress = [&] () -> bool {
+                Air::Opcode opcode = tryOpcodeForType(MoveWithIncrement32, MoveWithIncrement64, memory->type());
+                if (!isValidForm(opcode, Arg::PreIndex, Arg::Tmp) || !m_index)
+                    return false;
+                Value* address = m_block->at(m_index - 1);
+                if (address->opcode() != Add || address->type() != Int64)
+                    return false;
+                if (address->child(0) != memory->lastChild() || !address->child(1)->hasIntPtr())
+                    return false;
+                intptr_t offset = address->child(1)->asIntPtr();
+                Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
+                if (smallOffset != offset || !Arg::isValidPostIndexForm(smallOffset))
+                    return false;
+
+                Arg incrementArg = Arg();
+                if (memory->offset()) {
+                    if (smallOffset == memory->offset())
+                        incrementArg = Arg::preIndex(tmp(address), smallOffset);
+                } else
+                    incrementArg = Arg::postIndex(tmp(address), smallOffset);
+
+                if (incrementArg) {
+                    append(relaxedMoveForType(address->type()), tmp(address->child(0)), tmp(address));
+                    append(opcode, incrementArg, tmp(memory));
+                    m_locked.add(address);
+                    return true;
+                }
+                return false;
+            };
+
+            if (tryAppendIncrementAddress())
+                return;
+
             append(trappingInst(m_value, kind, m_value, addr(m_value), tmp(m_value)));
             return;
         }

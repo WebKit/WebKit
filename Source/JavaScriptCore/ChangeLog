@@ -1,3 +1,275 @@
+2021-07-30  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Pre/Post-Indexed Address Mode to Air for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228047
+
+        Reviewed by Phil Pizlo.
+
+        Pre-indexed addressing means that the address is the sum of the value in the 64-bit base register 
+        and an offset, and the address is then written back to the base register. And post-indexed 
+        addressing means that the address is the value in the 64-bit base register, and the sum of the 
+        address and the offset is then written back to the base register. They are relatively common for 
+        loops to iterate over an array by increasing/decreasing a pointer into the array at each iteration. 
+        With such an addressing mode, the instruction selector can merge the increment and access the array.
+
+        #####################################
+        ## Pre-Index Address Mode For Load ##
+        #####################################
+
+        LDR Wt, [Xn, #imm]!
+
+        In B3 Reduction Strength, since we have this reduction rule:
+            Turn this: Load(Add(address, offset1), offset = offset2)
+            Into this: Load(address, offset = offset1 + offset2)
+
+        Then, the equivalent pattern is:
+            address = Add(base, offset)
+            ...
+            memory = Load(base, offset)
+
+        First, we convert it to the canonical form:
+            address = Add(base, offset)
+            newMemory = Load(base, offset) // move the memory to just after the address
+            ...
+            memory = Identity(newMemory)
+
+        Next, lower to Air:
+            Move %base, %address
+            Move (%address, prefix(offset)), %newMemory
+
+        ######################################
+        ## Post-Index Address Mode For Load ##
+        ######################################
+
+        LDR Wt, [Xn], #imm
+
+        Then, the equivalent pattern is:
+            memory = Load(base, 0)
+            ...
+            address = Add(base, offset)
+
+        First, we convert it to the canonical form:
+            newOffset = Constant
+            newAddress = Add(base, offset)
+            memory = Load(base, 0) // move the offset and address to just before the memory
+            ...
+            offset = Identity(newOffset)
+            address = Identity(newAddress)
+
+        Next, lower to Air:
+            Move %base, %newAddress
+            Move (%newAddress, postfix(offset)), %memory
+
+        #############################
+        ## Pattern Match Algorithm ##
+        #############################
+
+        To detect the pattern for prefix/postfix increment address is tricky due to the structure in B3 IR. The 
+        algorithm used in this patch is to collect the first valid values (add/load), then search for any 
+        paired value (load/add) to match all of them. In worst case, the runtime complexity is O(n^2) 
+        when n is the number of all values.
+
+        After collecting two sets of candidates, we match the prefix incremental address first since it seems 
+        more beneficial to the compiler (shown in the next section). And then, go for the postfix one.
+
+        ##############################################
+        ## Test for Pre/Post-Increment Address Mode ##
+        ##############################################
+
+        Given Loop with Pre-Increment:
+        int64_t ldr_pre(int64_t *p) {
+            int64_t res = 0;
+            while (res < 10)
+                res += *++p;
+            return res;
+        }
+
+        B3 IR:
+        ------------------------------------------------------
+        BB#0: ; frequency = 1.000000
+            Int64 b@0 = Const64(0)
+            Int64 b@2 = ArgumentReg(%x0)
+            Void b@20 = Upsilon($0(b@0), ^18, WritesLocalState)
+            Void b@21 = Upsilon(b@2, ^19, WritesLocalState)
+            Void b@4 = Jump(Terminal)
+        Successors: #1
+        BB#1: ; frequency = 1.000000
+        Predecessors: #0, #2
+            Int64 b@18 = Phi(ReadsLocalState)
+            Int64 b@19 = Phi(ReadsLocalState)
+            Int64 b@7 = Const64(10)
+            Int32 b@8 = AboveEqual(b@18, $10(b@7))
+            Void b@9 = Branch(b@8, Terminal)
+        Successors: Then:#3, Else:#2
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Int64 b@10 = Const64(8)
+            Int64 b@11 = Add(b@19, $8(b@10))
+            Int64 b@13 = Load(b@11, ControlDependent|Reads:Top)
+            Int64 b@14 = Add(b@18, b@13)
+            Void b@22 = Upsilon(b@14, ^18, WritesLocalState)
+            Void b@23 = Upsilon(b@11, ^19, WritesLocalState)
+            Void b@16 = Jump(Terminal)
+        Successors: #1
+        BB#3: ; frequency = 1.000000
+        Predecessors: #1
+            Void b@17 = Return(b@18, Terminal)
+        Variables:
+            Int64 var0
+            Int64 var1
+        ------------------------------------------------------
+
+        W/O Pre-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Move $8, %x3, $8(b@12)
+            Add64 $8, %x0, %x1, b@11
+            Move (%x0,%x3), %x0, b@13
+            Add64 %x0, %x2, %x2, b@14
+            Move %x1, %x0, b@23
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        W/ Pre-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            MoveWithIncrement64 (%x0,Pre($8)), %x2, b@13
+            Add64 %x2, %x1, %x1, b@14
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        Given Loop with Post-Increment:
+        int64_t ldr_pre(int64_t *p) {
+            int64_t res = 0;
+            while (res < 10)
+                res += *p++;
+            return res;
+        }
+
+        B3 IR:
+        ------------------------------------------------------
+        BB#0: ; frequency = 1.000000
+            Int64 b@0 = Const64(0)
+            Int64 b@2 = ArgumentReg(%x0)
+            Void b@20 = Upsilon($0(b@0), ^18, WritesLocalState)
+            Void b@21 = Upsilon(b@2, ^19, WritesLocalState)
+            Void b@4 = Jump(Terminal)
+        Successors: #1
+        BB#1: ; frequency = 1.000000
+        Predecessors: #0, #2
+            Int64 b@18 = Phi(ReadsLocalState)
+            Int64 b@19 = Phi(ReadsLocalState)
+            Int64 b@7 = Const64(10)
+            Int32 b@8 = AboveEqual(b@18, $10(b@7))
+            Void b@9 = Branch(b@8, Terminal)
+        Successors: Then:#3, Else:#2
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Int64 b@10 = Load(b@19, ControlDependent|Reads:Top)
+            Int64 b@11 = Add(b@18, b@10)
+            Int64 b@12 = Const64(8)
+            Int64 b@13 = Add(b@19, $8(b@12))
+            Void b@22 = Upsilon(b@11, ^18, WritesLocalState)
+            Void b@23 = Upsilon(b@13, ^19, WritesLocalState)
+            Void b@16 = Jump(Terminal)
+        Successors: #1
+        BB#3: ; frequency = 1.000000
+        Predecessors: #1
+            Void b@17 = Return(b@18, Terminal)
+        Variables:
+            Int64 var0
+            Int64 var1
+        ------------------------------------------------------
+
+        W/O Post-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Move (%x0), %x2, b@10
+            Add64 %x2, %x1, %x1, b@11
+            Add64 $8, %x0, %x0, b@13
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        W/ Post-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            MoveWithIncrement64 (%x0,Post($8)), %x2, b@10
+            Add64 %x2, %x1, %x1, b@11
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        * Sources.txt:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::PreIndexAddress::PreIndexAddress):
+        (JSC::AbstractMacroAssembler::PostIndexAddress::PostIndexAddress):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        * assembler/testmasm.cpp:
+        (JSC::testStorePrePostIndex32):
+        (JSC::testStorePrePostIndex64):
+        (JSC::testLoadPrePostIndex32):
+        (JSC::testLoadPrePostIndex64):
+        * b3/B3CanonicalizePrePostIncrements.cpp: Added.
+        (JSC::B3::canonicalizePrePostIncrements):
+        * b3/B3CanonicalizePrePostIncrements.h: Copied from Source/JavaScriptCore/b3/B3ValueKeyInlines.h.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ValueKey.h:
+        * b3/B3ValueKeyInlines.h:
+        (JSC::B3::ValueKey::ValueKey):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::jsHash const):
+        (JSC::B3::Air::Arg::dump const):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::preIndex):
+        (JSC::B3::Air::Arg::postIndex):
+        (JSC::B3::Air::Arg::isPreIndex const):
+        (JSC::B3::Air::Arg::isPostIndex const):
+        (JSC::B3::Air::Arg::isMemory const):
+        (JSC::B3::Air::Arg::base const):
+        (JSC::B3::Air::Arg::offset const):
+        (JSC::B3::Air::Arg::isGP const):
+        (JSC::B3::Air::Arg::isFP const):
+        (JSC::B3::Air::Arg::isValidPreIndexForm):
+        (JSC::B3::Air::Arg::isValidPostIndexForm):
+        (JSC::B3::Air::Arg::isValidForm const):
+        (JSC::B3::Air::Arg::forEachTmpFast):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::asPreIndexAddress const):
+        (JSC::B3::Air::Arg::asPostIndexAddress const):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.h:
+        * b3/testb3_3.cpp:
+        (testLoadPreIndex32):
+        (testLoadPreIndex64):
+        (testLoadPostIndex32):
+        (testLoadPostIndex64):
+        (addShrTests):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::jitWriteThunkGenerator):
+
 2021-07-30  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         REGRESSION (r280460): 42 JSC test failures on Debug arm64 with ASSERTION FAILED: !m_needExceptionCheck

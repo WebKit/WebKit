@@ -77,6 +77,8 @@ public:
         Stack,
         CallArg,
         Index,
+        PreIndex,
+        PostIndex,
 
         // Immediate operands that customize the behavior of an operation. You can think of them as
         // secondary opcodes. They are always "Use"'d.
@@ -649,6 +651,30 @@ public:
         return Arg::index(base, index, scale, 0);
     }
 
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg preIndex(Air::Tmp base, Int index)
+    {
+        ASSERT(base.isGP());
+        ASSERT(isInt9(index));
+        Arg result;
+        result.m_kind = PreIndex;
+        result.m_base = base;
+        result.m_offset = index;
+        return result;
+    }
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static Arg postIndex(Air::Tmp base, Int index)
+    {
+        ASSERT(base.isGP());
+        ASSERT(isInt9(index));
+        Arg result;
+        result.m_kind = PostIndex;
+        result.m_base = base;
+        result.m_offset = index;
+        return result;
+    }
+
     static Arg relCond(MacroAssembler::RelationalCondition condition)
     {
         Arg result;
@@ -799,6 +825,16 @@ public:
         return kind() == Index;
     }
 
+    bool isPreIndex() const
+    {
+        return kind() == PreIndex;
+    }
+
+    bool isPostIndex() const
+    {
+        return kind() == PostIndex;
+    }
+
     bool isMemory() const
     {
         switch (kind()) {
@@ -808,6 +844,8 @@ public:
         case Stack:
         case CallArg:
         case Index:
+        case PreIndex:
+        case PostIndex:
             return true;
         default:
             return false;
@@ -972,7 +1010,7 @@ public:
 
     Air::Tmp base() const
     {
-        ASSERT(kind() == SimpleAddr || kind() == Addr || kind() == ExtendedOffsetAddr || kind() == Index);
+        ASSERT(kind() == SimpleAddr || kind() == Addr || kind() == ExtendedOffsetAddr || kind() == Index || kind() == PreIndex || kind() == PostIndex);
         return m_base;
     }
 
@@ -982,7 +1020,7 @@ public:
     {
         if (kind() == Stack)
             return static_cast<Value::OffsetType>(m_scale);
-        ASSERT(kind() == Addr || kind() == ExtendedOffsetAddr || kind() == CallArg || kind() == Index);
+        ASSERT(kind() == Addr || kind() == ExtendedOffsetAddr || kind() == CallArg || kind() == Index || kind() == PreIndex || kind() == PostIndex);
         return static_cast<Value::OffsetType>(m_offset);
     }
 
@@ -1044,6 +1082,8 @@ public:
         case Addr:
         case ExtendedOffsetAddr:
         case Index:
+        case PreIndex:
+        case PostIndex:
         case Stack:
         case CallArg:
         case RelCond:
@@ -1081,6 +1121,8 @@ public:
         case Addr:
         case ExtendedOffsetAddr:
         case Index:
+        case PreIndex:
+        case PostIndex:
         case Stack:
         case CallArg:
         case BigImm: // Yes, we allow BigImm as a double immediate. We use this for implementing stackmaps.
@@ -1237,6 +1279,22 @@ public:
         return false;
     }
 
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static bool isValidPreIndexForm(Int offset)
+    {
+        if (isARM64())
+            return isValidSignedImm9(offset);
+        return false;
+    }
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    static bool isValidPostIndexForm(Int offset)
+    {
+        if (isARM64())
+            return isValidSignedImm9(offset);
+        return false;
+    }
+
     // If you don't pass a width then this optimistically assumes that you're using the right width. But
     // the width is relevant to validity, so passing a null width is only useful for assertions. Don't
     // pass null widths when cascading through Args in the instruction selector!
@@ -1265,6 +1323,10 @@ public:
             return isValidAddrForm(offset(), width);
         case Index:
             return isValidIndexForm(scale(), offset(), width);
+        case PreIndex:
+            return isValidPreIndexForm(offset());
+        case PostIndex:
+            return isValidPostIndexForm(offset());
         case RelCond:
         case ResCond:
         case DoubleCond:
@@ -1284,6 +1346,8 @@ public:
         case SimpleAddr:
         case Addr:
         case ExtendedOffsetAddr:
+        case PreIndex:
+        case PostIndex:
             functor(m_base);
             break;
         case Index:
@@ -1327,6 +1391,10 @@ public:
         case Addr:
         case ExtendedOffsetAddr:
             functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
+            break;
+        case PreIndex:
+        case PostIndex:
+            functor(m_base, UseDef, GP, argRole == UseAddr ? argWidth : pointerWidth());
             break;
         case Index:
             functor(m_base, Use, GP, argRole == UseAddr ? argWidth : pointerWidth());
@@ -1381,6 +1449,18 @@ public:
         return MacroAssembler::BaseIndex(
             m_base.gpr(), m_index.gpr(), static_cast<MacroAssembler::Scale>(logScale()),
             static_cast<Value::OffsetType>(m_offset), m_extend);
+    }
+
+    MacroAssembler::PreIndexAddress asPreIndexAddress() const
+    {
+        ASSERT(isPreIndex());
+        return MacroAssembler::PreIndexAddress(m_base.gpr(), offset());
+    }
+
+    MacroAssembler::PostIndexAddress asPostIndexAddress() const
+    {
+        ASSERT(isPostIndex());
+        return MacroAssembler::PostIndexAddress(m_base.gpr(), offset());
     }
 
     MacroAssembler::RelationalCondition asRelationalCondition() const

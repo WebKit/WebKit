@@ -1140,4 +1140,9 @@ void addCopyTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
 
 bool shouldRun(const char* filter, const char* testName);
 
+void testLoadPreIndex32();
+void testLoadPreIndex64();
+void testLoadPostIndex32();
+void testLoadPostIndex64();
+
 #endif // ENABLE(B3_JIT)

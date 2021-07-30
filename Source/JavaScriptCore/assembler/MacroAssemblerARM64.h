@@ -1447,9 +1447,14 @@ public:
         load<64>(address, dest);
     }
 
-    void load64(RegisterID src, PostIndex simm, RegisterID dest)
+    void load64(PreIndexAddress src, RegisterID dest)
     {
-        m_assembler.ldr<64>(dest, src, simm);
+        m_assembler.ldr<64>(dest, src.base, PreIndex(src.index));
+    }
+
+    void load64(PostIndexAddress src, RegisterID dest)
+    {
+        m_assembler.ldr<64>(dest, src.base, PostIndex(src.index));
     }
 
     DataLabel32 load64WithAddressOffsetPatch(Address address, RegisterID dest)
@@ -1546,6 +1551,16 @@ public:
     void load32(const void* address, RegisterID dest)
     {
         load<32>(address, dest);
+    }
+
+    void load32(PreIndexAddress src, RegisterID dest)
+    {
+        m_assembler.ldr<32>(dest, src.base, PreIndex(src.index));
+    }
+
+    void load32(PostIndexAddress src, RegisterID dest)
+    {
+        m_assembler.ldr<32>(dest, src.base, PostIndex(src.index));
     }
 
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
@@ -1747,7 +1762,17 @@ public:
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<64>(src, address.base, memoryTempRegister);
     }
-    
+
+    void store64(RegisterID src, PreIndexAddress dest)
+    {
+        m_assembler.str<64>(src, dest.base, PreIndex(dest.index));
+    }
+
+    void store64(RegisterID src, PostIndexAddress dest)
+    {
+        m_assembler.str<64>(src, dest.base, PostIndex(dest.index));
+    }
+
     void store64(RegisterID src, const void* address)
     {
         store<64>(src, address);
@@ -1791,11 +1816,6 @@ public:
         store64(dataTempRegister, address);
     }
 
-    void store64(RegisterID src, RegisterID dest, PostIndex simm)
-    {
-        m_assembler.str<64>(src, dest, simm);
-    }
-    
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
@@ -1893,6 +1913,16 @@ public:
 
         moveToCachedReg(imm, dataMemoryTempRegister());
         store32(dataTempRegister, address);
+    }
+
+    void store32(RegisterID src, PreIndexAddress dest)
+    {
+        m_assembler.str<32>(src, dest.base, PreIndex(dest.index));
+    }
+
+    void store32(RegisterID src, PostIndexAddress dest)
+    {
+        m_assembler.str<32>(src, dest.base, PostIndex(dest.index));
     }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
