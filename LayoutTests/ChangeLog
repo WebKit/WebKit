@@ -1,3 +1,12 @@
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ] Rebaselining fast/dom/collection-iterators.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228657
+
+        Unreviewed test gardening.
+
+        * platform/ipad/fast/dom/collection-iterators-expected.txt: Added.
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         Document's fallback base URL should be deduced from its creator when URL is about:blank
