@@ -1,3 +1,13 @@
+2021-07-30  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION (r274460?): Infinite recursion on fullscreen/full-screen-remove-ancestor.html in WTR::InjectedBundlePage::closeFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=224085
+        rdar://75576840
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations: re-enable test.
+
 2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iPad ] fast/canvas/canvas-color-space-display-p3.html is failing.

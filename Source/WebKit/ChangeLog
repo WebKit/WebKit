@@ -1,3 +1,24 @@
+2021-07-30  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION (r274460?): Infinite recursion on fullscreen/full-screen-remove-ancestor.html in WTR::InjectedBundlePage::closeFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=224085
+        rdar://75576840
+
+        Reviewed by Eric Carlson.
+
+        WebFullScreenManager::close() is used to cleanup a transient error when exiting or
+        attempting to exit fullscreen; it then calls InjectedBundleXXX::closeFullScreen().
+        It is possible for the injected bundle's closeFullScreen() to attempt to exit full
+        screen mode again.
+        Rather than making the bundle responsible for doing the right thing, we add a
+        workaround in the fullscreen manager to ensure no recursion is happening.
+
+        Covered by existing test.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::close):
+        * WebProcess/FullScreen/WebFullScreenManager.h: Make close() method private
+
 2021-07-30  Tim Horton  <timothy_horton@apple.com>
 
         Accessibility code logs to stderr in many layout test runs

@@ -69,8 +69,6 @@ public:
 
     void videoControlsManagerDidChange();
 
-    void close();
-
 protected:
     WebFullScreenManager(WebPage*);
 
@@ -96,6 +94,10 @@ protected:
 #if ENABLE(VIDEO)
     RefPtr<WebCore::HTMLVideoElement> m_pipStandbyElement;
 #endif
+
+private:
+    void close();
+    bool m_closing { false };
 };
 
 } // namespace WebKit
