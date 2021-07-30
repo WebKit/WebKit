@@ -44,19 +44,11 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class CanvasRenderingContext;
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
-class InspectorShaderProgram;
 #if ENABLE(WEBGL)
+class InspectorShaderProgram;
 class WebGLProgram;
 class WebGLRenderingContextBase;
 #endif // ENABLE(WEBGL)
-#if ENABLE(WEBGPU)
-class GPUCanvasContext;
-class WebGPUDevice;
-class WebGPUPipeline;
-class WebGPUSwapChain;
-#endif // ENABLE(WEBGPU)
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
 class InspectorCanvasAgent final : public InspectorAgentBase, public Inspector::CanvasBackendDispatcherHandler, public CanvasObserver, public CanMakeWeakPtr<InspectorCanvasAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorCanvasAgent);
@@ -80,14 +72,12 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setRecordingAutoCaptureFrameCount(int);
     Inspector::Protocol::ErrorStringOr<void> startRecording(const Inspector::Protocol::Canvas::CanvasId&, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit);
     Inspector::Protocol::ErrorStringOr<void> stopRecording(const Inspector::Protocol::Canvas::CanvasId&);
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
     Inspector::Protocol::ErrorStringOr<String> requestShaderSource(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType);
     Inspector::Protocol::ErrorStringOr<void> updateShader(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType, const String& source);
-#if ENABLE(WEBGL)
     Inspector::Protocol::ErrorStringOr<void> setShaderProgramDisabled(const Inspector::Protocol::Canvas::ProgramId&, bool disabled);
     Inspector::Protocol::ErrorStringOr<void> setShaderProgramHighlighted(const Inspector::Protocol::Canvas::ProgramId&, bool highlighted);
 #endif // ENABLE(WEBGL)
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     // CanvasObserver
     void canvasChanged(CanvasBase&, const std::optional<FloatRect>&) final;
@@ -109,13 +99,6 @@ public:
     bool isWebGLProgramDisabled(WebGLProgram&);
     bool isWebGLProgramHighlighted(WebGLProgram&);
 #endif // ENABLE(WEBGL)
-#if ENABLE(WEBGPU)
-    void didCreateWebGPUDevice(WebGPUDevice&);
-    void willDestroyWebGPUDevice(WebGPUDevice&);
-    void willConfigureSwapChain(GPUCanvasContext&, WebGPUSwapChain&);
-    void didCreateWebGPUPipeline(WebGPUDevice&, WebGPUPipeline&);
-    void willDestroyWebGPUPipeline(WebGPUPipeline&);
-#endif // ENABLE(WEBGPU)
 
     // InspectorCanvasCallTracer
 #define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
@@ -134,32 +117,21 @@ private:
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
 
     void canvasDestroyedTimerFired();
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
     void programDestroyedTimerFired();
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL)
     void reset();
 
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
-#if ENABLE(WEBGPU)
-    InspectorCanvas& bindCanvas(WebGPUDevice&, bool captureBacktrace);
-#endif // ENABLE(WEBGPU)
     void unbindCanvas(InspectorCanvas&);
     RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
     RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
-#if ENABLE(WEBGPU)
-    RefPtr<InspectorCanvas> findInspectorCanvas(WebGPUDevice&);
-#endif // ENABLE(WEBGPU)
 
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
     void unbindProgram(InspectorShaderProgram&);
     RefPtr<InspectorShaderProgram> assertInspectorProgram(Inspector::Protocol::ErrorString&, const String& programId);
-#if ENABLE(WEBGL)
     RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
 #endif // ENABLE(WEBGL)
-#if ENABLE(WEBGPU)
-    RefPtr<InspectorShaderProgram> findInspectorProgram(WebGPUPipeline&);
-#endif // ENABLE(WEBGPU)
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
@@ -171,11 +143,11 @@ private:
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
 
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
     HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
     Vector<String> m_removedProgramIdentifiers;
     Timer m_programDestroyedTimer;
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL)
 
     HashSet<String> m_recordingCanvasIdentifiers;
 

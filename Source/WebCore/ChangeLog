@@ -1,3 +1,516 @@
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUBindGroupLayoutBinding.h: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutBinding.idl: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.h: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.idl: Removed.
+        * Modules/webgpu/GPUBlendDescriptor.idl: Removed.
+        * Modules/webgpu/GPUBufferDescriptor.idl: Removed.
+        * Modules/webgpu/GPUBufferUsage.idl: Removed.
+        * Modules/webgpu/GPUCanvasContext.cpp: Removed.
+        * Modules/webgpu/GPUCanvasContext.h: Removed.
+        * Modules/webgpu/GPUCanvasContext.idl: Removed.
+        * Modules/webgpu/GPUColor.idl: Removed.
+        * Modules/webgpu/GPUColorStateDescriptor.idl: Removed.
+        * Modules/webgpu/GPUColorWrite.idl: Removed.
+        * Modules/webgpu/GPUCompareFunction.idl: Removed.
+        * Modules/webgpu/GPUDepthStencilStateDescriptor.idl: Removed.
+        * Modules/webgpu/GPUErrorFilter.idl: Removed.
+        * Modules/webgpu/GPUExtent3D.idl: Removed.
+        * Modules/webgpu/GPULoadOp.idl: Removed.
+        * Modules/webgpu/GPUOrigin3D.h: Removed.
+        * Modules/webgpu/GPUOrigin3D.idl: Removed.
+        * Modules/webgpu/GPUOutOfMemoryError.idl: Removed.
+        * Modules/webgpu/GPURequestAdapterOptions.idl: Removed.
+        * Modules/webgpu/GPUSamplerDescriptor.idl: Removed.
+        * Modules/webgpu/GPUShaderStage.h: Removed.
+        * Modules/webgpu/GPUShaderStage.idl: Removed.
+        * Modules/webgpu/GPUStoreOp.idl: Removed.
+        * Modules/webgpu/GPUTextureDescriptor.idl: Removed.
+        * Modules/webgpu/GPUTextureFormat.idl: Removed.
+        * Modules/webgpu/GPUTextureUsage.idl: Removed.
+        * Modules/webgpu/GPUUncapturedErrorEvent.cpp: Removed.
+        * Modules/webgpu/GPUUncapturedErrorEvent.h: Removed.
+        * Modules/webgpu/GPUUncapturedErrorEvent.idl: Removed.
+        * Modules/webgpu/GPUValidationError.idl: Removed.
+        * Modules/webgpu/GPUVertexAttributeDescriptor.idl: Removed.
+        * Modules/webgpu/GPUVertexBufferDescriptor.idl: Removed.
+        * Modules/webgpu/GPUVertexInputDescriptor.idl: Removed.
+        * Modules/webgpu/Navigator+GPU.idl: Removed.
+        * Modules/webgpu/NavigatorGPU.cpp: Removed.
+        * Modules/webgpu/NavigatorGPU.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressEscapeMode.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressSpace.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAssignmentExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseFunctionAttribute.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBlock.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBreak.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLCommaExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLContinue.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDefaultDelete.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDereferenceExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDoWhileLoop.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEffectfulExpressionStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEntryPointType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFallthrough.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionAttribute.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLGlobalVariableReference.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalNotExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNameSpace.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeFunctionDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNumThreadsFunctionAttribute.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLQualifier.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReplaceWith.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLResolvableType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchCase.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTernaryExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedTypeHash.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclarationsStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMangledNames.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckReferenceTypes.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckReferenceTypes.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCodeLocation.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLError.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLexer.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameContext.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameContext.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLParser.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLParsingMode.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPipelineDescriptor.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLProgram.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLResolvingType.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLScopedSetAdder.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryFunctionMap.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h: Removed.
+        * Modules/webgpu/WebGPU.cpp: Removed.
+        * Modules/webgpu/WebGPU.h: Removed.
+        * Modules/webgpu/WebGPU.idl: Removed.
+        * Modules/webgpu/WebGPUAdapter.cpp: Removed.
+        * Modules/webgpu/WebGPUAdapter.h: Removed.
+        * Modules/webgpu/WebGPUAdapter.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroup.cpp: Removed.
+        * Modules/webgpu/WebGPUBindGroup.h: Removed.
+        * Modules/webgpu/WebGPUBindGroup.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroupBinding.h: Removed.
+        * Modules/webgpu/WebGPUBindGroupBinding.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroupLayout.cpp: Removed.
+        * Modules/webgpu/WebGPUBindGroupLayout.h: Removed.
+        * Modules/webgpu/WebGPUBindGroupLayout.idl: Removed.
+        * Modules/webgpu/WebGPUBuffer.cpp: Removed.
+        * Modules/webgpu/WebGPUBuffer.h: Removed.
+        * Modules/webgpu/WebGPUBuffer.idl: Removed.
+        * Modules/webgpu/WebGPUBufferBinding.h: Removed.
+        * Modules/webgpu/WebGPUBufferBinding.idl: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.h: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.idl: Removed.
+        * Modules/webgpu/WebGPUCommandEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPUCommandEncoder.h: Removed.
+        * Modules/webgpu/WebGPUCommandEncoder.idl: Removed.
+        * Modules/webgpu/WebGPUComputePassEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPUComputePassEncoder.h: Removed.
+        * Modules/webgpu/WebGPUComputePassEncoder.idl: Removed.
+        * Modules/webgpu/WebGPUComputePipeline.cpp: Removed.
+        * Modules/webgpu/WebGPUComputePipeline.h: Removed.
+        * Modules/webgpu/WebGPUComputePipeline.idl: Removed.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUDevice.cpp: Removed.
+        * Modules/webgpu/WebGPUDevice.h: Removed.
+        * Modules/webgpu/WebGPUDevice.idl: Removed.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.cpp: Removed.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.h: Removed.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl: Removed.
+        * Modules/webgpu/WebGPUDeviceEventHandler.idl: Removed.
+        * Modules/webgpu/WebGPUPipeline.cpp: Removed.
+        * Modules/webgpu/WebGPUPipeline.h: Removed.
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.h: Removed.
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.cpp: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.h: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.idl: Removed.
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h: Removed.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl: Removed.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUQueue.cpp: Removed.
+        * Modules/webgpu/WebGPUQueue.h: Removed.
+        * Modules/webgpu/WebGPUQueue.idl: Removed.
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPassDescriptor.h: Removed.
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPassEncoder.h: Removed.
+        * Modules/webgpu/WebGPURenderPassEncoder.idl: Removed.
+        * Modules/webgpu/WebGPURenderPipeline.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPipeline.h: Removed.
+        * Modules/webgpu/WebGPURenderPipeline.idl: Removed.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h: Removed.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUSampler.cpp: Removed.
+        * Modules/webgpu/WebGPUSampler.h: Removed.
+        * Modules/webgpu/WebGPUSampler.idl: Removed.
+        * Modules/webgpu/WebGPUShaderModule.cpp: Removed.
+        * Modules/webgpu/WebGPUShaderModule.h: Removed.
+        * Modules/webgpu/WebGPUShaderModule.idl: Removed.
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUSwapChain.cpp: Removed.
+        * Modules/webgpu/WebGPUSwapChain.h: Removed.
+        * Modules/webgpu/WebGPUSwapChain.idl: Removed.
+        * Modules/webgpu/WebGPUSwapChainDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUSwapChainDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUTexture.cpp: Removed.
+        * Modules/webgpu/WebGPUTexture.h: Removed.
+        * Modules/webgpu/WebGPUTexture.idl: Removed.
+        * Modules/webgpu/WebGPUTextureView.cpp: Removed.
+        * Modules/webgpu/WebGPUTextureView.h: Removed.
+        * Modules/webgpu/WebGPUTextureView.idl: Removed.
+        * Modules/webgpu/WorkerNavigator+GPU.idl: Removed.
+        * Modules/webgpu/WorkerNavigatorGPU.cpp: Removed.
+        * Modules/webgpu/WorkerNavigatorGPU.h: Removed.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::isWebGPUType): Deleted.
+        (WebCore::HTMLCanvasElement::createContextWebGPU): Deleted.
+        (WebCore::HTMLCanvasElement::getContextWebGPU): Deleted.
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isWebGL const):
+        (WebCore::CanvasRenderingContext::isWebGPU const): Deleted.
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::InspectorCanvas):
+        (WebCore::InspectorCanvas::canvasElement const):
+        (WebCore::InspectorCanvas::scriptExecutionContext const):
+        (WebCore::InspectorCanvas::resolveContext const):
+        (WebCore:: const):
+        (WebCore::InspectorCanvas::resetRecordingData):
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        (WebCore::InspectorCanvas::releaseObjectForRecording):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::canvasIfContextMatchesDevice): Deleted.
+        (WebCore::InspectorCanvas::deviceContext const): Deleted.
+        (WebCore::InspectorCanvas::isDeviceForCanvasContext const): Deleted.
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDeviceImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDeviceImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willConfigureSwapChainImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipelineImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUPipelineImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDevice): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDevice): Deleted.
+        (WebCore::InspectorInstrumentation::willConfigureSwapChain): Deleted.
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipeline): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUPipeline): Deleted.
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::requestShaderSource):
+        (WebCore::InspectorShaderProgram::updateShader):
+        (WebCore::InspectorShaderProgram::buildObjectForShaderProgram):
+        (WebCore::InspectorShaderProgram::pipeline const): Deleted.
+        * inspector/InspectorShaderProgram.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::stopRecording):
+        (WebCore::InspectorCanvasAgent::didChangeCanvasMemory):
+        (WebCore::InspectorCanvasAgent::recordAction):
+        (WebCore::InspectorCanvasAgent::reset):
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUDevice): Deleted.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGPUDevice): Deleted.
+        (WebCore::InspectorCanvasAgent::willConfigureSwapChain): Deleted.
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUPipeline): Deleted.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGPUPipeline): Deleted.
+        * inspector/agents/InspectorCanvasAgent.h:
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmGlobally):
+        * platform/Logging.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        * platform/graphics/cocoa/WebGPULayer.h: Removed.
+        * platform/graphics/cocoa/WebGPULayer.mm: Removed.
+        * platform/graphics/gpu/GPUBindGroup.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupAllocator.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupBinding.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupLayout.h: Removed.
+        * platform/graphics/gpu/GPUBlendDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUBuffer.cpp: Removed.
+        * platform/graphics/gpu/GPUBuffer.h: Removed.
+        * platform/graphics/gpu/GPUBufferBinding.h: Removed.
+        * platform/graphics/gpu/GPUBufferDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUBufferUsage.h: Removed.
+        * platform/graphics/gpu/GPUColor.h: Removed.
+        * platform/graphics/gpu/GPUColorStateDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUColorWrite.h: Removed.
+        * platform/graphics/gpu/GPUCommandBuffer.h: Removed.
+        * platform/graphics/gpu/GPUCompareFunction.h: Removed.
+        * platform/graphics/gpu/GPUComputePassEncoder.h: Removed.
+        * platform/graphics/gpu/GPUComputePipeline.h: Removed.
+        * platform/graphics/gpu/GPUComputePipelineDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUDepthStencilStateDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUDevice.cpp: Removed.
+        * platform/graphics/gpu/GPUDevice.h:
+        (WebCore::GPUDevice::platformDevice const): Deleted.
+        (WebCore::GPUDevice::swapChain const): Deleted.
+        (WebCore::GPUDevice::setErrorScopes): Deleted.
+        * platform/graphics/gpu/GPUError.cpp: Removed.
+        * platform/graphics/gpu/GPUError.h: Removed.
+        * platform/graphics/gpu/GPUErrorFilter.h: Removed.
+        * platform/graphics/gpu/GPUErrorScopes.cpp: Removed.
+        * platform/graphics/gpu/GPUErrorScopes.h: Removed.
+        * platform/graphics/gpu/GPUExtent3D.h: Removed.
+        * platform/graphics/gpu/GPULimits.h: Removed.
+        * platform/graphics/gpu/GPULoadOp.h: Removed.
+        * platform/graphics/gpu/GPUObjectBase.h: Removed.
+        * platform/graphics/gpu/GPUOutOfMemoryError.h: Removed.
+        * platform/graphics/gpu/GPUPipeline.cpp: Removed.
+        * platform/graphics/gpu/GPUPipeline.h: Removed.
+        * platform/graphics/gpu/GPUPipelineDescriptorBase.h: Removed.
+        * platform/graphics/gpu/GPUPipelineLayout.cpp: Removed.
+        * platform/graphics/gpu/GPUPipelineLayout.h: Removed.
+        * platform/graphics/gpu/GPUPipelineLayoutDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUPlatformTypes.h: Removed.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.cpp: Removed.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h: Removed.
+        * platform/graphics/gpu/GPUProgrammableStageDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUQueue.h: Removed.
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: Removed.
+        * platform/graphics/gpu/GPURenderPassEncoder.h: Removed.
+        * platform/graphics/gpu/GPURenderPipeline.h: Removed.
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Removed.
+        * platform/graphics/gpu/GPURequestAdapterOptions.h: Removed.
+        * platform/graphics/gpu/GPUSampler.h: Removed.
+        * platform/graphics/gpu/GPUSamplerDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUShaderModule.h: Removed.
+        * platform/graphics/gpu/GPUShaderModuleDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUStoreOp.h: Removed.
+        * platform/graphics/gpu/GPUSwapChain.h: Removed.
+        * platform/graphics/gpu/GPUSwapChainDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUTexture.h: Removed.
+        * platform/graphics/gpu/GPUTextureDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUTextureFormat.h: Removed.
+        * platform/graphics/gpu/GPUTextureUsage.h: Removed.
+        * platform/graphics/gpu/GPUUtils.h: Removed.
+        * platform/graphics/gpu/GPUValidationError.cpp: Removed.
+        * platform/graphics/gpu/GPUValidationError.h: Removed.
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUVertexBufferDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h: Removed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::prewarmGPU):
+        (WebCore::isAcceptableDevice): Deleted.
+        (WebCore::GPUDevice::prewarm): Deleted.
+        (WebCore::GPUDevice::tryCreate): Deleted.
+        (WebCore::GPUDevice::GPUDevice): Deleted.
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.cpp: Removed.
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.h: Removed.
+        * platform/graphics/gpu/cocoa/GPUPlatformTypesMetal.h: Removed.
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUSamplerMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUUtilsMetal.mm: Removed.
+        * platform/graphics/gpu/dawn/GPUBindGroupAllocatorDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUBindGroupDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUBindGroupLayoutDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUBufferDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUCommandBufferDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUComputePassEncoderDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUComputePipelineDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUDeviceDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUPlatformTypesDawn.h: Removed.
+        * platform/graphics/gpu/dawn/GPUProgrammablePassEncoderDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUQueueDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPURenderPassEncoderDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPURenderPipelineDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUSamplerDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUShaderModuleDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUSwapChainDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUTextureDawn.cpp: Removed.
+        * platform/ios/DragImageIOS.mm:
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::contentChanged):
+
 2021-07-29  Andres Gonzalez  <andresg_22@apple.com>
 
         Crash at WebCore: -[WebAccessibilityObjectWrapper _accessibilityTableAncestor].

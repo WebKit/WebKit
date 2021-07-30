@@ -90,7 +90,6 @@ OverconstrainedErrorEvent conditional=MEDIA_STREAM
 MediaEncryptedEvent conditional=ENCRYPTED_MEDIA
 MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA
 PointerEvent
-GPUUncapturedErrorEvent conditional=WEBGPU
 EnterPictureInPictureEvent conditional=PICTURE_IN_PICTURE_API
 XRInputSourceEvent conditional=WEBXR
 XRInputSourcesChangeEvent conditional=WEBXR

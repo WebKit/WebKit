@@ -81,10 +81,6 @@
 #include "WebGL2RenderingContext.h"
 #endif
 
-#if ENABLE(WEBGPU)
-#include "GPUCanvasContext.h"
-#endif
-
 #if ENABLE(WEBXR)
 #include "DOMWindow.h"
 #include "Navigator.h"
@@ -270,14 +266,6 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         }
 #endif
 
-#if ENABLE(WEBGPU)
-        if (m_context->isWebGPU()) {
-            if (!isWebGPUType(contextId))
-                return std::optional<RenderingContext> { std::nullopt };
-            return std::optional<RenderingContext> { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*m_context) } };
-        }
-#endif
-
         ASSERT_NOT_REACHED();
         return std::optional<RenderingContext> { std::nullopt };
     }
@@ -323,15 +311,6 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 #endif
 
-#if ENABLE(WEBGPU)
-    if (isWebGPUType(contextId)) {
-        auto context = createContextWebGPU(contextId);
-        if (!context)
-            return std::optional<RenderingContext> { std::nullopt };
-        return std::optional<RenderingContext> { RefPtr<GPUCanvasContext> { context } };
-    }
-#endif
-
     return std::optional<RenderingContext> { std::nullopt };
 }
 
@@ -346,11 +325,6 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::isWebGLType(type))
         return getContextWebGL(HTMLCanvasElement::toWebGLVersion(type));
-#endif
-
-#if ENABLE(WEBGPU)
-    if (HTMLCanvasElement::isWebGPUType(type))
-        return getContextWebGPU(type);
 #endif
 
     return nullptr;
@@ -494,47 +468,6 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(WebGLVersion type,
 }
 
 #endif // ENABLE(WEBGL)
-
-#if ENABLE(WEBGPU)
-
-bool HTMLCanvasElement::isWebGPUType(const String& type)
-{
-    return type == "gpu";
-}
-
-GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
-{
-    ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
-    ASSERT(!m_context);
-
-    if (!document().settings().webGPUEnabled())
-        return nullptr;
-
-    m_context = GPUCanvasContext::create(*this);
-    if (m_context) {
-        // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
-        invalidateStyleAndLayerComposition();
-    }
-
-    return static_cast<GPUCanvasContext*>(m_context.get());
-}
-
-GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
-{
-    ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
-
-    if (!document().settings().webGPUEnabled())
-        return nullptr;
-
-    if (m_context && !m_context->isWebGPU())
-        return nullptr;
-
-    if (!m_context)
-        return createContextWebGPU(type);
-    return static_cast<GPUCanvasContext*>(m_context.get());
-}
-
-#endif // ENABLE(WEBGPU)
 
 bool HTMLCanvasElement::isBitmapRendererType(const String& type)
 {

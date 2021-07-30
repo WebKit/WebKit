@@ -39,10 +39,6 @@ namespace WebKit {
 bool isFeatureFlagEnabled(const String&);
 #endif
 
-#if ENABLE(WEBGPU)
-bool defaultWebGPUEnabled();
-#endif
-
 #if HAVE(INCREMENTAL_PDF_APIS)
 bool defaultIncrementalPDFEnabled();
 #endif

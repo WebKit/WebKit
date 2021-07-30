@@ -1,6 +1,0 @@
-
-PASS simpleEnumFromInt
-PASS simpleEnumFromUint
-PASS weirdEnumFromInt
-PASS weirdEnumFromUint
-

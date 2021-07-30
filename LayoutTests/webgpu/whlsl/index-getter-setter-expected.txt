@@ -1,4 +1,0 @@
-
-PASS pointerIndexGetter
-PASS pointerGetter
-

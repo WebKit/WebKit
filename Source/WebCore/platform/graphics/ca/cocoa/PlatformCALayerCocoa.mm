@@ -57,10 +57,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-#if ENABLE(WEBGPU)
-#import "WebGPULayer.h"
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #import "FontAntialiasingStateSaver.h"
 #import "WAKWindow.h"
@@ -218,11 +214,6 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
     if ([layer isKindOfClass:[WebGLLayer class]])
         return LayerTypeContentsProvidedLayer;
 
-#if ENABLE(WEBGPU)
-    if ([layer isKindOfClass:[WebGPULayer class]])
-        return LayerTypeContentsProvidedLayer;
-#endif
-
     return LayerTypeCustom;
 }
 
@@ -275,7 +266,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
             layerClass = PAL::getAVPlayerLayerClass();
         break;
     case LayerTypeContentsProvidedLayer:
-        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebGPULayers.
+        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers.
         ASSERT_NOT_REACHED();
         break;
 #if ENABLE(MODEL_ELEMENT)

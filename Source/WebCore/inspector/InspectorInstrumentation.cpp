@@ -69,7 +69,6 @@
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
 #include "WebGLRenderingContextBase.h"
-#include "WebGPUDevice.h"
 #include "WebSocketFrame.h"
 #include "WorkerInspectorController.h"
 #include "WorkerOrWorkletGlobalScope.h"
@@ -79,10 +78,6 @@
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/StdLibExtras.h>
-
-#if ENABLE(WEBGPU)
-#include "WebGPUSwapChain.h"
-#endif
 
 namespace WebCore {
 
@@ -1119,43 +1114,6 @@ bool InspectorInstrumentation::isWebGLProgramHighlightedImpl(InstrumentingAgents
     if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
         return canvasAgent->isWebGLProgramHighlighted(program);
     return false;
-}
-#endif
-
-#if ENABLE(WEBGPU)
-void InspectorInstrumentation::didCreateWebGPUDeviceImpl(InstrumentingAgents& instrumentingAgents, WebGPUDevice& device)
-{
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->didCreateWebGPUDevice(device);
-}
-
-void InspectorInstrumentation::willDestroyWebGPUDeviceImpl(InstrumentingAgents& instrumentingAgents, WebGPUDevice& device)
-{
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->willDestroyWebGPUDevice(device);
-}
-
-void InspectorInstrumentation::willConfigureSwapChainImpl(InstrumentingAgents& instrumentingAgents, GPUCanvasContext& contextGPU, WebGPUSwapChain& newSwapChain)
-{
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->willConfigureSwapChain(contextGPU, newSwapChain);
-}
-
-void InspectorInstrumentation::didCreateWebGPUPipelineImpl(InstrumentingAgents& instrumentingAgents, WebGPUDevice& device, WebGPUPipeline& pipeline)
-{
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->didCreateWebGPUPipeline(device, pipeline);
-}
-
-void InspectorInstrumentation::willDestroyWebGPUPipelineImpl(InstrumentingAgents& instrumentingAgents, WebGPUPipeline& pipeline)
-{
-    if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
-        canvasAgent->willDestroyWebGPUPipeline(pipeline);
-}
-
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(WebGPUDevice& device)
-{
-    return instrumentingAgents(device.scriptExecutionContext());
 }
 #endif
 

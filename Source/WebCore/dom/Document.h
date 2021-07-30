@@ -319,9 +319,6 @@ using RenderingContext = Variant<
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
 #endif
-#if ENABLE(WEBGPU)
-    RefPtr<GPUCanvasContext>,
-#endif
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<CanvasRenderingContext2D>
 >;

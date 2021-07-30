@@ -1,3 +1,26 @@
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        This patch deletes the existing implementation just to reduce binary size in releases of WebKit
+        which don't enable WebGPU by default. It doesn't represent a change in direction or policy or
+        anything regarding WebGPU. It's a (somewhat temporary) pragmatic change.
+
+        Our current implementation of WebGPU:
+        1. Is off by default on all platforms
+        2. Is extremely outdated
+        3. Has no notion of the GPU Process, and therefore needs to be redesigned and largely rewritten
+        4. Only implements a fraction of what is in the spec
+
+        Removing the code from the tree doesn't delete it from existence; it's still in source control.
+        The benefit of reducing binary size seems to outweigh having this code in the tree.
+
+        * inspector/protocol/Canvas.json:
+        * inspector/scripts/codegen/generator.py:
+
 2021-07-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][GTK] build broken with python2 after r280382

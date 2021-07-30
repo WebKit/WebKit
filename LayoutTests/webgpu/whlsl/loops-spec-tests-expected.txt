@@ -1,4 +1,0 @@
-
-PASS doWhile
-PASS simpleWhile
-

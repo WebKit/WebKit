@@ -335,7 +335,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL webAnimationsCompositeOperationsEnabled;
 @property (nonatomic) BOOL webAnimationsMutableTimelinesEnabled;
 @property (nonatomic) BOOL webGL2Enabled;
-@property (nonatomic) BOOL webGPUEnabled;
 @property (nonatomic) BOOL maskWebGLStringsEnabled;
 @property (nonatomic) BOOL accessibilityObjectModelEnabled;
 @property (nonatomic) BOOL serverTimingEnabled;

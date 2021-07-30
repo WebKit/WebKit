@@ -1,9 +1,0 @@
-
-PASS uintBitAnd
-PASS uintBitOr
-PASS uintBitXor
-PASS uintBitNot
-PASS uintLShift
-PASS uintRShift
-PASS uintSimpleMath
-

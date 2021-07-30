@@ -4129,16 +4129,6 @@ webkit.org/b/190472 fast/forms/fieldset/fieldset-elements-htmlcollection.html [ 
 
 webkit.org/b/190520 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash Failure ]
 
-# WebGPU is not supported on Windows
-webgpu [ Skip ]
-inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
-inspector/canvas/resolveContext-webgpu.html [ Skip ]
-inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
-
 webkit.org/b/191194 fast/block/basic/inline-content-with-floating-image.html [ Failure ]
 webkit.org/b/191194 fast/block/basic/inline-content-with-floating-images2.html [ Failure ]
 webkit.org/b/191194 fast/dom/inline-event-attributes-release.html [ Failure ]

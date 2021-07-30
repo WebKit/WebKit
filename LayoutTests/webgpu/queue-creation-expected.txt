@@ -1,3 +1,0 @@
-
-PASS getQueue() on GPUDevice.
-

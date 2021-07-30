@@ -26,23 +26,11 @@
 #import "config.h"
 #import "GPUDevice.h"
 
-#if ENABLE(WEBGPU)
-
-#import "GPURequestAdapterOptions.h"
-#import "Logging.h"
 #import <Metal/Metal.h>
-#import <pal/spi/cocoa/MetalSPI.h>
-#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-static bool isAcceptableDevice(id <MTLDevice> device)
-{
-    UNUSED_PARAM(device);
-    return true;
-}
-
-void GPUDevice::prewarm()
+void prewarmGPU()
 {
 #if PLATFORM(MAC)
     // Call MTLCopyAllDevices() on a background thread to avoid hanging the main thread.
@@ -52,50 +40,4 @@ void GPUDevice::prewarm()
 #endif
 }
 
-RefPtr<GPUDevice> GPUDevice::tryCreate(const std::optional<GPURequestAdapterOptions>& options)
-{
-    RetainPtr<MTLDevice> devicePtr;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    
-#if PLATFORM(MAC)
-    if (!options || !options->powerPreference || options->powerPreference == GPUPowerPreference::LowPower) {
-        auto devices = adoptNS(MTLCopyAllDevices());
-        
-        for (id <MTLDevice> device : devices.get()) {
-            if (!isAcceptableDevice(device))
-                continue;
-            if (device.lowPower) {
-                devicePtr = device;
-                break;
-            }
-        }
-    }
-#else
-    UNUSED_PARAM(options);
-#endif // PLATFORM(MAC)
-    if (!devicePtr)
-        devicePtr = adoptNS(MTLCreateSystemDefaultDevice());
-
-    if (!isAcceptableDevice(devicePtr.get()))
-        devicePtr.clear();
-
-    END_BLOCK_OBJC_EXCEPTIONS
-
-    if (!devicePtr) {
-        LOG(WebGPU, "GPUDevice::GPUDevice(): Unable to create GPUDevice!");
-        return nullptr;
-    }
-
-    LOG(WebGPU, "GPUDevice::GPUDevice(): MTLDevice is %p", devicePtr.get());
-    return adoptRef(new GPUDevice(WTFMove(devicePtr)));
-}
-
-GPUDevice::GPUDevice(RetainPtr<MTLDevice>&& device)
-    : m_platformDevice(WTFMove(device))
-{
-}
-
 } // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

@@ -1,6 +1,0 @@
-
-PASS typeMismatchReturn
-PASS typeMismatchVariableDecl
-PASS typeMismatchAssignment
-PASS typeMismatchReturnParam
-

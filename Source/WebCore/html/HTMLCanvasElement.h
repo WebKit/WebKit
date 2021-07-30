@@ -89,12 +89,6 @@ public:
     WebGLRenderingContextBase* getContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
 #endif
 
-#if ENABLE(WEBGPU)
-    static bool isWebGPUType(const String&);
-    GPUCanvasContext* createContextWebGPU(const String&);
-    GPUCanvasContext* getContextWebGPU(const String&);
-#endif
-
     static bool isBitmapRendererType(const String&);
     ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
     ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);

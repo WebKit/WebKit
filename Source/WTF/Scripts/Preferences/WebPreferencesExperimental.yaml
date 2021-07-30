@@ -1225,19 +1225,6 @@ WebGLUsingMetal:
       "HAVE(WEBGL_COMPATIBLE_METAL)": true
       default: false
 
-WebGPUEnabled:
-  type: bool
-  humanReadableName: "WebGPU"
-  humanReadableDescription: "WebGPU Sketch prototype"
-  condition: ENABLE(WEBGPU)
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultWebGPUEnabled()
-    WebKit:
-      default: WebKit::defaultWebGPUEnabled()
-    WebCore:
-      default: false
-
 WebMFormatReaderEnabled:
   type: bool
   webcoreBinding: RuntimeEnabledFeatures

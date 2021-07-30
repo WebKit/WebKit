@@ -39,6 +39,7 @@
 #import "RealtimeMediaSourceSettings.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"

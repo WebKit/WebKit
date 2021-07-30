@@ -59,11 +59,6 @@
 #include "WebGLRenderingContextBase.h"
 #endif
 
-#if ENABLE(WEBGPU)
-#include "GPUCanvasContext.h"
-#include "WebGPUPipeline.h"
-#endif
-
 namespace Inspector {
 class ConsoleMessage;
 class ScriptArguments;
@@ -102,11 +97,6 @@ class WorkerOrWorkletGlobalScope;
 
 #if ENABLE(WEBGL)
 class WebGLProgram;
-#endif
-
-#if ENABLE(WEBGPU)
-class WebGPUDevice;
-class WebGPUSwapChain;
 #endif
 
 enum class StorageType : uint8_t;
@@ -302,13 +292,6 @@ public:
     static void willDestroyWebGLProgram(WebGLProgram&);
     static bool isWebGLProgramDisabled(WebGLRenderingContextBase&, WebGLProgram&);
     static bool isWebGLProgramHighlighted(WebGLRenderingContextBase&, WebGLProgram&);
-#endif
-#if ENABLE(WEBGPU)
-    static void didCreateWebGPUDevice(WebGPUDevice&);
-    static void willDestroyWebGPUDevice(WebGPUDevice&);
-    static void willConfigureSwapChain(GPUCanvasContext&, WebGPUSwapChain&);
-    static void didCreateWebGPUPipeline(WebGPUDevice&, WebGPUPipeline&);
-    static void willDestroyWebGPUPipeline(WebGPUPipeline&);
 #endif
 
     static void willApplyKeyframeEffect(Element&, KeyframeEffect&, ComputedEffectTiming);
@@ -512,14 +495,6 @@ private:
     static void willDestroyWebGLProgramImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isWebGLProgramDisabledImpl(InstrumentingAgents&, WebGLProgram&);
     static bool isWebGLProgramHighlightedImpl(InstrumentingAgents&, WebGLProgram&);
-#endif
-#if ENABLE(WEBGPU)
-    static void didCreateWebGPUDeviceImpl(InstrumentingAgents&, WebGPUDevice&);
-    static void willDestroyWebGPUDeviceImpl(InstrumentingAgents&, WebGPUDevice&);
-    static void willConfigureSwapChainImpl(InstrumentingAgents&, GPUCanvasContext&, WebGPUSwapChain&);
-    static void didCreateWebGPUPipelineImpl(InstrumentingAgents&, WebGPUDevice&, WebGPUPipeline&);
-    static void willDestroyWebGPUPipelineImpl(InstrumentingAgents&, WebGPUPipeline&);
-    static InstrumentingAgents* instrumentingAgents(WebGPUDevice&);
 #endif
 
     static void willApplyKeyframeEffectImpl(InstrumentingAgents&, Element&, KeyframeEffect&, ComputedEffectTiming);
@@ -1472,43 +1447,6 @@ inline bool InspectorInstrumentation::isWebGLProgramHighlighted(WebGLRenderingCo
     if (auto* agents = instrumentingAgents(contextWebGLBase.canvasBase().scriptExecutionContext()))
         return isWebGLProgramHighlightedImpl(*agents, program);
     return false;
-}
-#endif
-
-#if ENABLE(WEBGPU)
-inline void InspectorInstrumentation::didCreateWebGPUDevice(WebGPUDevice& device)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(device))
-        didCreateWebGPUDeviceImpl(*agents, device);
-}
-
-inline void InspectorInstrumentation::willDestroyWebGPUDevice(WebGPUDevice& device)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(device))
-        willDestroyWebGPUDeviceImpl(*agents, device);
-}
-
-inline void InspectorInstrumentation::willConfigureSwapChain(GPUCanvasContext& contextGPU, WebGPUSwapChain& newSwapChain)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(contextGPU.canvasBase().scriptExecutionContext()))
-        willConfigureSwapChainImpl(*agents, contextGPU, newSwapChain);
-}
-
-inline void InspectorInstrumentation::didCreateWebGPUPipeline(WebGPUDevice& device, WebGPUPipeline& pipeline)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(device))
-        didCreateWebGPUPipelineImpl(*agents, device, pipeline);
-}
-
-inline void InspectorInstrumentation::willDestroyWebGPUPipeline(WebGPUPipeline& pipeline)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(pipeline.scriptExecutionContext()))
-        willDestroyWebGPUPipelineImpl(*agents, pipeline);
 }
 #endif
 

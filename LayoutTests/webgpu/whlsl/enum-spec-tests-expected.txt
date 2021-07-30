@@ -1,9 +1,0 @@
-
-PASS enumDuplicates
-PASS defaultEnumConstructor
-PASS enumArrayRefBase
-PASS enumFloatBase
-PASS enumPtrBase
-PASS enumStructBase
-PASS enumNoMembers
-
