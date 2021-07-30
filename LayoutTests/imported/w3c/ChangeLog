@@ -1,3 +1,17 @@
+2021-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+
+        Reviewed by Eric Carlson.
+
+        The 2x2-green.mp4 file fails to decode as its natural size is too small for the system decoder to handle. Replace with
+        a media file of more reasonable size.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html:
+        * web-platform-tests/media/16x16-green.mp4: Added.
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         HTMLElement.innerText setter should convert new lines to <br>

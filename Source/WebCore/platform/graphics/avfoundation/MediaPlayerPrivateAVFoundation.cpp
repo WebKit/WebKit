@@ -543,11 +543,16 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         }
     }
 
+    if (newReadyState >= MediaPlayer::ReadyState::HaveCurrentData && m_cachedHasVideo && !hasAvailableVideoFrame()) {
+        newReadyState = MediaPlayer::ReadyState::HaveMetadata;
+        ALWAYS_LOG(LOGIDENTIFIER, "!hasAvailableVideoFrame(), lowering readyState to ", newReadyState);
+    }
+
     if (isReadyForVideoSetup() && currentRenderingMode() != preferredRenderingMode())
         setUpVideoRendering();
 
     if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo && hasAvailableVideoFrame()) {
-        if (m_readyState < MediaPlayer::ReadyState::HaveCurrentData)
+        if (newReadyState < MediaPlayer::ReadyState::HaveCurrentData)
             newReadyState = MediaPlayer::ReadyState::HaveCurrentData;
         m_haveReportedFirstVideoFrame = true;
         m_player->firstVideoFrameAvailable();
