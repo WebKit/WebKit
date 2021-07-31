@@ -1,3 +1,36 @@
+2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] branchTest8 should not emit tst for Zero/NonZero cases
+        https://bugs.webkit.org/show_bug.cgi?id=228674
+
+        Reviewed by Mark Lam.
+
+        Previously, branchTest8(NonZero, BaseIndex) emits `tst` instruction
+        unnecessarily. This is because the mask is truncated into 8bit, which
+        makes branchTest32 (which is internally used in branchTest8) emits tst.
+        We observed many unnecessary tst in YarrJIT.
+
+        This patch removes this unnecessary truncation since Zero/NonZero does
+        not care high bits of mask in branchTest8. This is ok because the
+        ResultCondition version of mask8OnCondition() is always used to generate
+        a mask that is only used against a value that is loaded with
+        MacroAssemblerHelpers::load8OnCondition(). For Zero/NonZero conditions,
+        load8OnCondition() will always zero fill the upper bytes. The 0 filled
+        upper bytes will not affect the result of a branch on zero or branch on
+        not zero.
+
+        Before:
+           0x10a8068b0:    ldrb     w16, [x7, x6]
+           0x10a8068b4:    tst      w16, #0xff
+           0x10a8068b8:    b.ne   0x10a8068cc
+
+        After:
+           0x1070068b0:    ldrb     w16, [x7, x6]
+           0x1070068b4:    cbnz     w16, 0x1070068c8
+
+        * assembler/MacroAssemblerHelpers.h:
+        (JSC::MacroAssemblerHelpers::mask8OnCondition):
+
 2021-07-30  Robin Morisset  <rmorisset@apple.com>
 
         Improve OSR entry into Wasm loops with arguments
