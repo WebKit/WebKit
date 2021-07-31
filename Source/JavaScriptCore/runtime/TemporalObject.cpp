@@ -45,7 +45,7 @@ namespace JSC {
 
 /* Source for TemporalObject.lut.h
 @begin temporalObjectTable
-  now            createNowObject                 DontEnum|PropertyCallback
+  Now            createNowObject                 DontEnum|PropertyCallback
 @end
 */
 

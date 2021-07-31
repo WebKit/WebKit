@@ -1,3 +1,17 @@
+2021-07-30  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Rename Temporal.now to Temporal.Now
+        https://bugs.webkit.org/show_bug.cgi?id=228658
+
+        Reviewed by Yusuke Suzuki.
+
+        See https://github.com/tc39/proposal-temporal/pull/1645. In the July
+        2021 meeting TC39 achieved consensus to rename Temporal.now to
+        Temporal.Now since it is a namespace.
+
+        * runtime/TemporalNow.cpp: Change Now[@@toStringTag] accordingly.
+        * runtime/TemporalObject.cpp: Rename now property to Now.
+
 2021-07-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         putInlineFastReplacingStaticPropertyIfNeeded should handle custom values
