@@ -111,6 +111,8 @@ fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
 fast/forms/file/entries-api/image-transcode-open-panel.html [ Pass ]
 fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass ]
 
+storage/indexeddb/database-transaction-cycle.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1381,8 +1383,6 @@ webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure 
 webkit.org/b/223387 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223383 compositing/video/video-border-radius.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/223453 [ arm64 ] storage/indexeddb/IDBObject-leak.html [ Pass Failure ]
 
 webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]
 

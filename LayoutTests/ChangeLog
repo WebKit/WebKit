@@ -1,3 +1,26 @@
+2021-07-30  Sihui Liu  <sihui_liu@apple.com>
+
+        [ macOS wk2 ARM 64 ] storage/indexeddb/IDBObject-leak.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223453
+        <rdar://problem/75580609>
+
+        Reviewed by Youenn Fablet.
+
+        As JavaScriptCore uses conservative GC, transaction may be still be alive after one gc call, so we should invoke
+        gc multiple times.
+
+        Also, this patch renames IDBObject-leak.html to database-transaction-cycle.html to better indicate what it is
+        testing.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * storage/indexeddb/IDBObject-leak-expected.txt: Removed.
+        * storage/indexeddb/IDBObject-leak.html: Removed.
+        * storage/indexeddb/database-transaction-cycle-expected.txt: Added.
+        * storage/indexeddb/database-transaction-cycle.html: Added.
+        * storage/indexeddb/resources/database-transaction-cycle-iframe.html: Added.
+
 2021-07-30  Rob Buis  <rbuis@igalia.com>
 
         [css-overflow] Implement clip value for overflow

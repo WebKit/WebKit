@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+<script>
+description('This test verifies that IDBTransaction objects are collected when connection to server is lost.');
+
+const gcInterval = 50;
+var gcCountdown = 50;
+var frame = null;
+
+function databaseName()
+{
+    return setDBNameFromPath();
+}
+
+function frameDatabaseOpened(event) 
+{
+    preamble(event);
+
+    gc();
+    setTimeout(() => {
+        shouldBeEqualToNumber("internals.numberOfIDBTransactions()", 1);
+        testRunner.terminateNetworkProcess();
+    }, gcInterval);
+}
+
+function frameTransactionAborted(event) 
+{
+    preamble(event);
+
+    frame.src = "about::blank";
+    gcCheck();
+}
+
+function gcCheck() 
+{
+    if (!gcCountdown) {
+        testFailed("IDBTransaction cannot be collected");
+        finishJSTest();
+        return;
+    }
+
+    if (!internals.numberOfIDBTransactions()) {
+        testPassed("IDBTransaction is collected");
+        finishJSTest();
+        return;
+    }
+
+    --gcCountdown;
+    gc();
+
+    setTimeout(gcCheck, gcInterval);
+}
+
+function test() 
+{
+    if (!window.internals || !internals.numberOfIDBTransactions) {
+        testFailed('This test requires access to the Internals object and numberOfIDBTransactions() function');
+        finishJSTest();
+        return;
+    }
+
+    if (!window.testRunner || !testRunner.terminateNetworkProcess) {
+        testFailed('This test requires access to the TestRunner object and terminateNetworkProcess() function');
+        finishJSTest();
+        return;
+    }
+
+    frame = document.createElement('iframe');
+    frame.src = "resources/database-transaction-cycle-iframe.html";
+    document.body.appendChild(frame);
+}
+
+window.onload = test;
+</script>
