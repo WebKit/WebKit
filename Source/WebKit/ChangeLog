@@ -1,5 +1,22 @@
 2021-07-31  Youenn Fablet  <youenn@apple.com>
 
+        Improve LocalSampleBufferDisplayLayer logging
+        https://bugs.webkit.org/show_bug.cgi?id=228582
+
+        Reviewed by Eric Carlson.
+
+        Send through IPC the log identifier to the GPU display layer.
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::setLogIdentifier):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::setLogIdentifier):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
         RemoteAudioMediaStreamTrackRendererInternalUnit should handle changes of requested sampleCount
         https://bugs.webkit.org/show_bug.cgi?id=228631
         <rdar://80690191>

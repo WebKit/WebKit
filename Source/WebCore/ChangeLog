@@ -1,5 +1,25 @@
 2021-07-31  Youenn Fablet  <youenn@apple.com>
 
+        Improve LocalSampleBufferDisplayLayer logging
+        https://bugs.webkit.org/show_bug.cgi?id=228582
+
+        Reviewed by Eric Carlson.
+
+        Add logging to correlate a LocalSampleBufferDisplayLayer to its HTMLMediaElement and its MediaStreamTrack.
+        Introduce setLogIdentifer for that purpose.
+        No observable change of behavior.
+
+        * platform/graphics/avfoundation/SampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        (WebCore::LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
         AVVideoCaptureSource should not start/stop the camera if trying to apply the same size/frame rate configuration
         https://bugs.webkit.org/show_bug.cgi?id=228634
         <rdar://81174160>
