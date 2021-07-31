@@ -1,3 +1,19 @@
+2021-07-31  Maciej Stachowiak  <mjs@apple.com>
+
+        ListAttributeTargetObserver is needlessly created even when there is no list attribute
+        https://bugs.webkit.org/show_bug.cgi?id=228541
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests because no behavior change.
+
+        This is possibly a small improvement (~0.5%) on Speedometer subtests that do innerHTML, but not statistically significant.
+
+        Ported from a Chromium change by Adithya Srinivasan
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::resetListAttributeTargetObserver): check if there's a list attribute before making an observer.
+
 2021-07-31  Youenn Fablet  <youenn@apple.com>
 
         Improve LocalSampleBufferDisplayLayer logging
