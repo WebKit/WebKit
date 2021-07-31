@@ -800,6 +800,7 @@ public:
 
 static JSC_DECLARE_CUSTOM_GETTER(testStaticValueGetter);
 static JSC_DECLARE_CUSTOM_SETTER(testStaticValuePutter);
+static JSC_DECLARE_CUSTOM_SETTER(testStaticValuePutterSetFlag);
 
 JSC_DEFINE_CUSTOM_GETTER(testStaticValueGetter, (JSGlobalObject*, EncodedJSValue, PropertyName))
 {
@@ -820,25 +821,39 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutter, (JSGlobalObject* globalObject, E
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValue")), JSValue::decode(value));
 }
 
+JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutterSetFlag, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue, PropertyName))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
+
+    return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValueSetterCalled")), jsBoolean(true));
+}
+
 static const struct CompactHashIndex staticCustomValueTableIndex[8] = {
     { 1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 3, -1 },
     { 2, -1 },
     { 0, -1 },
     { -1, -1 },
 };
 
-static const struct HashTableValue staticCustomValueTableValues[3] = {
+static const struct HashTableValue staticCustomValueTableValues[4] = {
     { "testStaticValue", static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutter) } },
     { "testStaticValueNoSetter", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
     { "testStaticValueReadOnly", PropertyAttribute::CustomValue | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), 0 } },
+    { "testStaticValueSetFlag", static_cast<unsigned>(PropertyAttribute::CustomValue), NoIntrinsic, { (intptr_t)static_cast<GetValueFunc>(testStaticValueGetter), (intptr_t)static_cast<PutValueFunc>(testStaticValuePutterSetFlag) } },
 };
 
 static const struct HashTable staticCustomValueTable =
-    { 3, 7, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
+    { 4, 7, true, nullptr, staticCustomValueTableValues, staticCustomValueTableIndex };
 
 class StaticCustomValue : public JSNonFinalObject {
     using Base = JSNonFinalObject;

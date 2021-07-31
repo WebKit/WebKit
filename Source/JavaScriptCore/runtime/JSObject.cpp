@@ -936,9 +936,13 @@ bool JSObject::putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject* glob
                 // FIXME: For an accessor with setter, the error message is misleading.
                 return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
             }
+            if (entry->value->attributes() & PropertyAttribute::CustomValue) {
+                PutValueFunc customSetter = entry->value->propertyPutter();
+                if (customSetter)
+                    RELEASE_AND_RETURN(scope, customSetter(structure->globalObject(), JSValue::encode(this), JSValue::encode(value), propertyName));
+            }
             // Avoid PutModePut because it fails for non-extensible structures.
-            ASSERT(!(entry->value->attributes() & PropertyAttribute::CustomValue));
-            putDirect(vm, propertyName, value, attributesForStructure(entry->value->attributes()), slot);
+            putDirect(vm, propertyName, value, attributesForStructure(entry->value->attributes()) & ~PropertyAttribute::CustomValue, slot);
             return true;
         }
     }
