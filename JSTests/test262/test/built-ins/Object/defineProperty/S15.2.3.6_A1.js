@@ -32,7 +32,7 @@ if (typeof document !== 'undefined' &&
   if (!refused) {
     var desc = Object.getOwnPropertyDescriptor(f, 'foo');
     if (desc.get !== getter) {
-      $ERROR('Getter on HTMLFormElement disappears');
+      throw new Test262Error('Getter on HTMLFormElement disappears');
     }
   }
 }

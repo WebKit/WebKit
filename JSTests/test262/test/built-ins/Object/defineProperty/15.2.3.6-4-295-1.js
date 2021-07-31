@@ -26,10 +26,10 @@ flags: [noStrict]
     Object.defineProperty(arguments, "0", {
       enumerable: false
     });
-    $ERROR("Expected an exception.");
+    throw new Test262Error("Expected an exception.");
   } catch (e) {
     if (!(e instanceof TypeError)) {
-      $ERROR("Expected TypeError, got " + e);
+      throw new Test262Error("Expected TypeError, got " + e);
     }
 
     verifyEqualTo(arguments, "0", 10);
@@ -41,7 +41,7 @@ flags: [noStrict]
     verifyNotConfigurable(arguments, "0");
 
     if (a !== 10) {
-      $ERROR('Expected "a === 10", actually ' + a);
+      throw new Test262Error('Expected "a === 10", actually ' + a);
     }
   }
 }(0, 1, 2));

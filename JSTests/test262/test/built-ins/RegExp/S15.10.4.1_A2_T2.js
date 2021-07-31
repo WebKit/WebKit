@@ -14,9 +14,9 @@ description: >
 
 //CHECK#1
 try {
-  $ERROR('#1.1: new RegExp(/1?1/mig, {}) throw SyntaxError. Actual: ' + (new RegExp(/1?1/mig, {})));
+  throw new Test262Error('#1.1: new RegExp(/1?1/mig, {}) throw SyntaxError. Actual: ' + (new RegExp(/1?1/mig, {})));
 } catch (e) {
   if ((e instanceof SyntaxError) !== true) {
-    $ERROR('#1.2: new RegExp(/1?1/mig, {}) throw SyntaxError. Actual: ' + (e));
+    throw new Test262Error('#1.2: new RegExp(/1?1/mig, {}) throw SyntaxError. Actual: ' + (e));
   }
 }

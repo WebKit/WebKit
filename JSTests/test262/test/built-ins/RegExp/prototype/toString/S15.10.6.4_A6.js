@@ -9,5 +9,5 @@ description: Checking RegExp.prototype.toString.prototype
 
 //CHECK#1
 if (RegExp.prototype.toString.prototype !== undefined) {
-	$ERROR('#1: RegExp.prototype.toString.prototype === undefined. Actual: ' + (RegExp.prototype.toString.prototype));
+	throw new Test262Error('#1: RegExp.prototype.toString.prototype === undefined. Actual: ' + (RegExp.prototype.toString.prototype));
 }

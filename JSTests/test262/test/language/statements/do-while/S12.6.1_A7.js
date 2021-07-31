@@ -17,7 +17,7 @@ __evaluated = eval("do eval(\"__condition++\"); while (__condition<5)");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__condition !== 5) {
-	$ERROR('#1: The "do-while" statement is evaluted according to the Standard ');
+	throw new Test262Error('#1: The "do-while" statement is evaluted according to the Standard ');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ if (__condition !== 5) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__evaluated !== 4) {
-	$ERROR('#2: The "do-while" statement returns (normal, V, empty)');
+	throw new Test262Error('#2: The "do-while" statement returns (normal, V, empty)');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

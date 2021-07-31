@@ -15,5 +15,5 @@ Object.prototype.indicator = 1;
 
 //CHECK#1
 if (RegExp.prototype.indicator !== 1) {
-	$ERROR('#1: Object.prototype.indicator = 1; RegExp.prototype.indicator === 1. Actual: ' + (RegExp.prototype.indicator));
+	throw new Test262Error('#1: Object.prototype.indicator = 1; RegExp.prototype.indicator === 1. Actual: ' + (RegExp.prototype.indicator));
 }

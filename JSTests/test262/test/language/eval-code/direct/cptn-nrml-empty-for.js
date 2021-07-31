@@ -11,5 +11,5 @@ description: for statement
 
 //CHECK#1
 if (eval("for(false;false;false);") !== undefined) {
-  $ERROR('#1: eval("for(false;false;false);") === undefined. Actual: ' + (eval("for(false;false;false);")));
+  throw new Test262Error('#1: eval("for(false;false;false);") === undefined. Actual: ' + (eval("for(false;false;false);")));
 }

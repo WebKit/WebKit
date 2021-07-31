@@ -13,15 +13,15 @@ var __re = RegExp.prototype;
 
 //CHECK#0
 if (__re.hasOwnProperty('global') !== true) {
-  $ERROR('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'global\') === true');
+  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'global\') === true');
 }
 
 //CHECK#1
 if ((delete __re.global) !== true) {
-  $ERROR('#1: __re = RegExp.prototype; (delete __re.global) === true');
+  throw new Test262Error('#1: __re = RegExp.prototype; (delete __re.global) === true');
 }
 
 //CHECK#2
 if (__re.hasOwnProperty('global') !== false) {
-  $ERROR('#2: __re = RegExp.prototype;delete __re.global === true; __re.hasOwnProperty(\'global\') === false');
+  throw new Test262Error('#2: __re = RegExp.prototype;delete __re.global === true; __re.hasOwnProperty(\'global\') === false');
 }

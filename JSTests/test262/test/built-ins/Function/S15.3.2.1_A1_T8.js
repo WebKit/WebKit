@@ -19,9 +19,9 @@ var body = "var 1=1;";
 //CHECK#1
 try {
   var f = new Function(body);
-  $ERROR('#1: If body is not parsable as FunctionBody then throw a SyntaxError exception');
+  throw new Test262Error('#1: If body is not parsable as FunctionBody then throw a SyntaxError exception');
 } catch (e) {
   if (!(e instanceof SyntaxError)) {
-    $ERROR('#1.1: If body is not parsable as FunctionBody then throw a SyntaxError exception');
+    throw new Test262Error('#1.1: If body is not parsable as FunctionBody then throw a SyntaxError exception');
   }
 }

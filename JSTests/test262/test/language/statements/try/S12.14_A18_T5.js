@@ -12,7 +12,7 @@ try{
   throw 13;
 }
 catch(e){
-  if (e!==13) $ERROR('#1: Exception ===13. Actual:  Exception ==='+ e  );
+  if (e!==13) throw new Test262Error('#1: Exception ===13. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#2
@@ -20,7 +20,7 @@ try{
   throw 10+3;
 }
 catch(e){
-  if (e!==13) $ERROR('#2: Exception ===13. Actual:  Exception ==='+ e  );
+  if (e!==13) throw new Test262Error('#2: Exception ===13. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#3
@@ -29,7 +29,7 @@ try{
   throw b;
 }
 catch(e){
-  if (e!==13) $ERROR('#3: Exception ===13. Actual:  Exception ==='+ e  );
+  if (e!==13) throw new Test262Error('#3: Exception ===13. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#4
@@ -39,7 +39,7 @@ try{
   throw a+b;
 }
 catch(e){
-  if (e!==13) $ERROR('#4: Exception ===13. Actual:  Exception ==='+ e  );
+  if (e!==13) throw new Test262Error('#4: Exception ===13. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#5
@@ -47,7 +47,7 @@ try{
   throw 2.13;
 }
 catch(e){
-  if (e!==2.13) $ERROR('#5: Exception ===2.13. Actual:  Exception ==='+ e  );
+  if (e!==2.13) throw new Test262Error('#5: Exception ===2.13. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#6
@@ -56,7 +56,7 @@ try{
   throw 2/3;
 }
 catch(e){
-  if (e!==ex) $ERROR('#6: Exception ===2/3. Actual:  Exception ==='+ e  );
+  if (e!==ex) throw new Test262Error('#6: Exception ===2/3. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#7
@@ -72,7 +72,7 @@ try{
   throw +Infinity;
 }
 catch(e){
-  if (e!==+Infinity) $ERROR('#8: Exception ===+Infinity. Actual:  Exception ==='+ e  );
+  if (e!==+Infinity) throw new Test262Error('#8: Exception ===+Infinity. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#9
@@ -80,7 +80,7 @@ try{
   throw -Infinity;
 }
 catch(e){
-  if (e!==-Infinity) $ERROR('#9: Exception ===-Infinity. Actual:  Exception ==='+ e  );
+  if (e!==-Infinity) throw new Test262Error('#9: Exception ===-Infinity. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#10
@@ -88,7 +88,7 @@ try{
   throw +0;
 }
 catch(e){
-  if (e!==+0) $ERROR('#10: Exception ===+0. Actual:  Exception ==='+ e  );
+  if (e!==+0) throw new Test262Error('#10: Exception ===+0. Actual:  Exception ==='+ e  );
 }
 
 // CHECK#11
@@ -96,5 +96,5 @@ try{
   throw -0;
 }
 catch(e){
-  if (e!==-0) $ERROR('#11: Exception ===-0. Actual:  Exception ==='+ e  );
+  if (e!==-0) throw new Test262Error('#11: Exception ===-0. Actual:  Exception ==='+ e  );
 }

@@ -15,7 +15,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.lastIndexOf.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.lastIndexOf.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.lastIndexOf.hasOwnProperty('length'));
+  throw new Test262Error('#1: String.prototype.lastIndexOf.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.lastIndexOf.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ verifyNotWritable(String.prototype.lastIndexOf, "length", null, function() {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.lastIndexOf.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.lastIndexOf.length; String.prototype.lastIndexOf.length = function(){return "shifted";}; String.prototype.lastIndexOf.length === __obj. Actual: ' + String.prototype.lastIndexOf.length);
+  throw new Test262Error('#2: __obj = String.prototype.lastIndexOf.length; String.prototype.lastIndexOf.length = function(){return "shifted";}; String.prototype.lastIndexOf.length === __obj. Actual: ' + String.prototype.lastIndexOf.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

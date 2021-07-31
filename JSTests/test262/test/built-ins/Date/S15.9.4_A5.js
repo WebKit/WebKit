@@ -9,10 +9,10 @@ description: Checking Date.length property
 
 //CHECK#1
 if (!Date.hasOwnProperty("length")) {
-  $ERROR('#1: Date constructor has length property');
+  throw new Test262Error('#1: Date constructor has length property');
 }
 
 //CHECK#2
 if (Date.length !== 7) {
-  $ERROR('#2: Date constructor length property value should be 7');
+  throw new Test262Error('#2: Date constructor length property value should be 7');
 }

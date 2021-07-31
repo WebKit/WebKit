@@ -11,19 +11,19 @@ description: Type(x) is string primitive or String object
 var x = "1";
 var y = x++;
 if (y !== 1) {
-  $ERROR('#1: var x = "1"; var y = x++; y === 1. Actual: ' + (y));
+  throw new Test262Error('#1: var x = "1"; var y = x++; y === 1. Actual: ' + (y));
 }
 
 //CHECK#2
 var x = "x";
 var y = x++; 
 if (isNaN(y) !== true) {
-  $ERROR('#2: var x = "x"; var y = x++; y === Not-a-Number. Actual: ' + (y));
+  throw new Test262Error('#2: var x = "x"; var y = x++; y === Not-a-Number. Actual: ' + (y));
 }
 
 //CHECK#3
 var x = new String("-1"); 
 var y = x++;
 if (y !== -1) {
-  $ERROR('#3: var x = new String("-1"); var y = x++; y === -1. Actual: ' + (y));
+  throw new Test262Error('#3: var x = new String("-1"); var y = x++; y === -1. Actual: ' + (y));
 }

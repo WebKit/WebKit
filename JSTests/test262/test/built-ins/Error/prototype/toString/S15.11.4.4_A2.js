@@ -14,10 +14,10 @@ try {
   var toStr = err1.toString();
 }
 catch (e) {
-  $ERROR('#1: var err1=new Error("Error"); var toStr=err1.toString(); lead to throwing exception. Exception is ' + e);
+  throw new Test262Error('#1: var err1=new Error("Error"); var toStr=err1.toString(); lead to throwing exception. Exception is ' + e);
 }
 if (toStr === undefined) {
-  $ERROR('#2: var err1=new Error("Error"); var toStr=err1.toString(); toStr!==undefined. Actual: ' + toStr);
+  throw new Test262Error('#2: var err1=new Error("Error"); var toStr=err1.toString(); toStr!==undefined. Actual: ' + toStr);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

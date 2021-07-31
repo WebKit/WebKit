@@ -20,10 +20,10 @@ var f = new Function("return arguments[0];");
 
 //CHECK#1
 if (!(f instanceof Function)) {
-  $ERROR('#3: When the Function constructor is called with one argument then body be that argument and the following steps are taken...');
+  throw new Test262Error('#3: When the Function constructor is called with one argument then body be that argument and the following steps are taken...');
 }
 
 //CHECK#2
 if (f("A") !== "A") {
-  $ERROR('#2: When the Function constructor is called with one argument then body be that argument and the following steps are taken...');
+  throw new Test262Error('#2: When the Function constructor is called with one argument then body be that argument and the following steps are taken...');
 }

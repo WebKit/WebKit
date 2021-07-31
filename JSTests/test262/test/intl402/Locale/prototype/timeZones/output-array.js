@@ -14,3 +14,4 @@ features: [Intl.Locale,Intl.Locale-info]
 ---*/
 
 assert(Array.isArray(new Intl.Locale('en-US').timeZones));
+assert(new Intl.Locale('en-US').timeZones.length > 0, 'array has at least one element');

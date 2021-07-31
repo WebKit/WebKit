@@ -24,7 +24,7 @@ info: |
   4. Else,
     a. Let O be ? ToObject(locales).
   5. Let len be ? ToLength(? Get(O, "length")).
-features: [Intl.DisplayNames, Symbol]
+features: [Intl.DisplayNames]
 ---*/
 
 var locales = {};

@@ -13,7 +13,7 @@ var m = n;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof m !== "object") {
-  $ERROR('#1: var n = {}; var m = n; typeof m === "object". Actual: ' + (typeof m));
+  throw new Test262Error('#1: var n = {}; var m = n; typeof m === "object". Actual: ' + (typeof m));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ populateAge(m);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (n.age !== 50) {
-  $ERROR('#2: var n = {}; var m = n; function populateAge(person){person.age = 50;} populateAge(m); n.age === 50. Actual: ' + (n.age));
+  throw new Test262Error('#2: var n = {}; var m = n; function populateAge(person){person.age = 50;} populateAge(m); n.age === 50. Actual: ' + (n.age));
 }
 
 //

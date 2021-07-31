@@ -21,7 +21,7 @@ __re.lastIndex = __string.lastIndexOf("0");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.match(__re).length !== 3) {
-  $ERROR('#1: __string.match(__re).length=== 3. Actual: ' + __string.match(__re).length);
+  throw new Test262Error('#1: __string.match(__re).length=== 3. Actual: ' + __string.match(__re).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ if (__string.match(__re).length !== 3) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__string.match(__re).index !== __string.lastIndexOf("0")) {
-  $ERROR('#2: __string.match(__re).index ===__string.lastIndexOf("0"). Actual: ' + __string.match(__re).index);
+  throw new Test262Error('#2: __string.match(__re).index ===__string.lastIndexOf("0"). Actual: ' + __string.match(__re).index);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ if (__string.match(__re).index !== __string.lastIndexOf("0")) {
 //CHECK#3
 for (var mi = 0; mi < __matches.length; mi++) {
   if (__string.match(__re)[mi] !== __matches[mi]) {
-    $ERROR('#3.' + mi + ': __string.match(__re)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(__re)[mi]);
+    throw new Test262Error('#3.' + mi + ': __string.match(__re)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(__re)[mi]);
   }
 }
 //

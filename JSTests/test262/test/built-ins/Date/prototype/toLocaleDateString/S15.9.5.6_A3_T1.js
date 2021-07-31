@@ -13,5 +13,5 @@ includes: [propertyHelper.js]
 var x = Date.prototype.toLocaleDateString.length;
 verifyNotWritable(Date.prototype.toLocaleDateString, "length", null, 1);
 if (Date.prototype.toLocaleDateString.length !== x) {
-  $ERROR('#1: The Date.prototype.toLocaleDateString.length has the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.toLocaleDateString.length has the attribute ReadOnly');
 }

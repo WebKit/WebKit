@@ -18,9 +18,9 @@ description: >
 
 //CHECK#1
 try {
-  $ERROR('#1.1: /[\\vd-G]/.exec("a") throw SyntaxError. Actual: ' + (new RegExp("[\\vd-G]").exec("a")));
+  throw new Test262Error('#1.1: /[\\vd-G]/.exec("a") throw SyntaxError. Actual: ' + (new RegExp("[\\vd-G]").exec("a")));
 } catch (e) {
   if((e instanceof SyntaxError) !== true){
-    $ERROR('#1.2: /[\\vd-G]/.exec("a") throw SyntaxError. Actual: ' + (e));
+    throw new Test262Error('#1.2: /[\\vd-G]/.exec("a") throw SyntaxError. Actual: ' + (e));
   }
 }

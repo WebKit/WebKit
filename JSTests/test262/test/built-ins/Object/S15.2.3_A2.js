@@ -11,5 +11,5 @@ description: Checking Function.prototype.isPrototypeOf(Object)
 
 // CHECK#
 if (!(Function.prototype.isPrototypeOf(Object))) {
-  $ERROR('#1: the value of the internal [[Prototype]] property of the Object constructor is the Function prototype object.');
+  throw new Test262Error('#1: the value of the internal [[Prototype]] property of the Object constructor is the Function prototype object.');
 }

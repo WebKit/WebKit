@@ -13,14 +13,14 @@ description: >
 
 //CHECK#1
 if (typeof func !== 'function') {
-  $ERROR('#1: func = function(){return 1;} is NOT an function');
+  throw new Test262Error('#1: func = function(){return 1;} is NOT an function');
 }
 
 var n_obj = Object(func);
 
 //CHECK#2
 if ((n_obj !== func) || (n_obj() !== 1)) {
-  $ERROR('#2: Object(function) returns function');
+  throw new Test262Error('#2: Object(function) returns function');
 }
 
 function func() {

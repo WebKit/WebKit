@@ -10,11 +10,11 @@ description: Type(x) is boolean primitive or Boolean object
 //CHECK#1
 var x = false; 
 if (void x !== undefined) {
-  $ERROR('#1: var x = false; void x === undefined. Actual: ' + (void x));
+  throw new Test262Error('#1: var x = false; void x === undefined. Actual: ' + (void x));
 }
 
 //CHECK#2
 var x = new Boolean(true);
 if (void x !== undefined) {
-  $ERROR('#2: var x = new Boolean(true); void x === undefined. Actual: ' + (void x));
+  throw new Test262Error('#2: var x = new Boolean(true); void x === undefined. Actual: ' + (void x));
 }

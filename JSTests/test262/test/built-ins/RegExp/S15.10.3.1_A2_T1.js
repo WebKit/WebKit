@@ -13,9 +13,9 @@ description: >
 
 //CHECK#1
 try {
-	$ERROR('#1.1: RegExp(new RegExp("\\d"), "1")) throw SyntaxError. Actual: ' + (RegExp(new RegExp("\d"), "1")));
+	throw new Test262Error('#1.1: RegExp(new RegExp("\\d"), "1")) throw SyntaxError. Actual: ' + (RegExp(new RegExp("\d"), "1")));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: RegExp(new RegExp("\\d"), "1")) throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: RegExp(new RegExp("\\d"), "1")) throw SyntaxError. Actual: ' + (e));
 	}
 }

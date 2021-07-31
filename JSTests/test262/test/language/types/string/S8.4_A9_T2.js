@@ -16,7 +16,7 @@ var strObj_=new String();
 ////////////////////////////////////////////////////////////
 // CHECK#1
 if (str.constructor !== strObj.constructor){
-  $ERROR('#1: "".constructor === new String("").constructor');
+  throw new Test262Error('#1: "".constructor === new String("").constructor');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ if (str.constructor !== strObj.constructor){
 ////////////////////////////////////////////////////////////
 // CHECK#2
 if (str.constructor !== strObj_.constructor){
-  $ERROR('#2: "".constructor === new String().constructor');
+  throw new Test262Error('#2: "".constructor === new String().constructor');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ if (str.constructor !== strObj_.constructor){
 ////////////////////////////////////////////////////////////
 // CHECK#3
 if (str != strObj){
-  $ERROR('#3: values of str=""; and strObj=new String(""); are equal');
+  throw new Test262Error('#3: values of str=""; and strObj=new String(""); are equal');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ if (str != strObj){
 ////////////////////////////////////////////////////////////
 // CHECK#4
 if (str === strObj){
-  $ERROR('#4: objects of str=""; and strObj=new String(""); are different');
+  throw new Test262Error('#4: objects of str=""; and strObj=new String(""); are different');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ if (str === strObj){
 ////////////////////////////////////////////////////////////
 // CHECK#5
 if (str != strObj_){
-  $ERROR('#5: values of str=""; and strObj=new String(); are equal');
+  throw new Test262Error('#5: values of str=""; and strObj=new String(); are equal');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ if (str != strObj_){
 ////////////////////////////////////////////////////////////
 // CHECK#6
 if (str === strObj_){
-  $ERROR('#6: objects of str=""; and strObj=new String(); are different');
+  throw new Test262Error('#6: objects of str=""; and strObj=new String(); are different');
 }
 //
 /////////////////////////////////////////////////////////////

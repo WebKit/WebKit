@@ -15,7 +15,7 @@ var knock=function(){count++};
 //CHECK#1
 knock();
 if (count !==1) {
-  $ERROR('#1: count=0; knock=function(){count++}; knock(); count === 1. Actual: ' + (count));
+  throw new Test262Error('#1: count=0; knock=function(){count++}; knock(); count === 1. Actual: ' + (count));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ if (count !==1) {
 //CHECK#2
 this['knock']();
 if (count !==2) {
-  $ERROR('#2: count=0; knock=function(){count++}; knock(); this[\'knock\'](); count === 2. Actual: ' + (count));
+  throw new Test262Error('#2: count=0; knock=function(){count++}; knock(); this[\'knock\'](); count === 2. Actual: ' + (count));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

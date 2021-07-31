@@ -11,25 +11,25 @@ description: x and y are primitive numbers
 
 //CHECK#1
 if ((Number.POSITIVE_INFINITY == Number.POSITIVE_INFINITY) !== true) {
-  $ERROR('#1: (+Infinity == +Infinity) === true');
+  throw new Test262Error('#1: (+Infinity == +Infinity) === true');
 }
 
 //CHECK#2
 if ((Number.NEGATIVE_INFINITY == Number.NEGATIVE_INFINITY) !== true) {
-  $ERROR('#2: (-Infinity == -Infinity) === true');
+  throw new Test262Error('#2: (-Infinity == -Infinity) === true');
 }
 
 //CHECK#3
 if ((Number.POSITIVE_INFINITY == -Number.NEGATIVE_INFINITY) !== true) {
-  $ERROR('#3: (+Infinity == -(-Infinity)) === true');
+  throw new Test262Error('#3: (+Infinity == -(-Infinity)) === true');
 }
 
 //CHECK#4
 if ((1 == 0.999999999999) !== false) {
-  $ERROR('#4: (1 == 0.999999999999) === false');
+  throw new Test262Error('#4: (1 == 0.999999999999) === false');
 }
 
 //CHECK#5
 if ((1.0 == 1) !== true) {
-  $ERROR('#5: (1.0 == 1) === true');
+  throw new Test262Error('#5: (1.0 == 1) === true');
 }

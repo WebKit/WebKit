@@ -21,14 +21,14 @@ function f_arg() {
 //CHECK#1
 try {
   f_arg(x(),y());
-  $ERROR('#1.1: var x = { valueOf: function () { throw "x"; } }; var y = { valueOf: function () { throw "y"; } }; function f_arg() {} f_arg(x(),y()) throw "x". Actual: ' + (f_arg(x(),y())));  
+  throw new Test262Error('#1.1: var x = { valueOf: function () { throw "x"; } }; var y = { valueOf: function () { throw "y"; } }; function f_arg() {} f_arg(x(),y()) throw "x". Actual: ' + (f_arg(x(),y())));  
 }
 catch (e) {
   if (e === "y") {
-     $ERROR('#1.2: First argument is evaluated first, and then second argument');
+     throw new Test262Error('#1.2: First argument is evaluated first, and then second argument');
    } else {
      if (e !== "x") {
-       $ERROR('#1.3: var x = { valueOf: function () { throw "x"; } }; var y = { valueOf: function () { throw "y"; } }; function f_arg() {} f_arg(x(),y()) throw "x". Actual: ' + (e));
+       throw new Test262Error('#1.3: var x = { valueOf: function () { throw "x"; } }; var y = { valueOf: function () { throw "y"; } }; function f_arg() {} f_arg(x(),y()) throw "x". Actual: ' + (e));
      }
    }
 }

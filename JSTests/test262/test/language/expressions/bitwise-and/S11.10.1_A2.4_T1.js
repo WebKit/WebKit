@@ -10,11 +10,11 @@ description: Checking with "="
 //CHECK#1
 var x = 0; 
 if (((x = 1) & x) !== 1) {
-  $ERROR('#1: var x = 0; ((x = 1) & x) === 1. Actual: ' + (((x = 1) & x)));
+  throw new Test262Error('#1: var x = 0; ((x = 1) & x) === 1. Actual: ' + (((x = 1) & x)));
 }
 
 //CHECK#2
 var x = 0; 
 if ((x & (x = 1)) !== 0) {
-  $ERROR('#2: var x = 0; (x & (x = 1)) === 0. Actual: ' + ((x & (x = 1))));
+  throw new Test262Error('#2: var x = 0; (x & (x = 1)) === 0. Actual: ' + ((x & (x = 1))));
 }

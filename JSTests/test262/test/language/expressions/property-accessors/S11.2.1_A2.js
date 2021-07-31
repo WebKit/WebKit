@@ -12,21 +12,21 @@ description: >
 //CHECK#1
 try {
   object[1];
-  $ERROR('#1.1: object[1] throw ReferenceError. Actual: ' + (object[1]));  
+  throw new Test262Error('#1.1: object[1] throw ReferenceError. Actual: ' + (object[1]));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: object[1] throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: object[1] throw ReferenceError. Actual: ' + (e));  
   }
 }
 
 //CHECK#2
 try {
   object.prop;
-  $ERROR('#2.1: object.prop throw ReferenceError. Actual: ' + (object.prop)); 
+  throw new Test262Error('#2.1: object.prop throw ReferenceError. Actual: ' + (object.prop)); 
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#2.2: object.prop throw ReferenceError. Actual: ' + (e)); 
+    throw new Test262Error('#2.2: object.prop throw ReferenceError. Actual: ' + (e)); 
   }
 }

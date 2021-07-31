@@ -12,7 +12,7 @@ description: Declaring variable within "for" statement
 try{
 	infor_var = infor_var;
 }catch(e){
-	$ERROR('#1: Variable declaration inside "for" loop is admitted');
+	throw new Test262Error('#1: Variable declaration inside "for" loop is admitted');
 };
 //
 //////////////////////////////////////////////////////////////////////////////

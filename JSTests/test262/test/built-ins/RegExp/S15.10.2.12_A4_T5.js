@@ -18,11 +18,11 @@ while (regexp_W.exec(non_w) !== null) {
 }
 
 if (non_w.length !== k) {
-   $ERROR('#1: non-w');
+   throw new Test262Error('#1: non-w');
 }
 
 //CHECK#2
 var non_W = "_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 if (/\W/.exec(non_W) !== null) {
-   $ERROR('#2: non-W');
+   throw new Test262Error('#2: non-W');
 }

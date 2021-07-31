@@ -11,11 +11,11 @@ var i=1;
 function Integer( value, exception ) {
   try{
     this.value = checkValue( value );
-    if(exception) $ERROR('#'+i+'.1: Must be exception');
+    if(exception) throw new Test262Error('#'+i+'.1: Must be exception');
   }
   catch(e){
     this.value = e.toString();
-    if(!exception) $ERROR('#'+i+'.2: Don`t must be exception');
+    if(!exception) throw new Test262Error('#'+i+'.2: Don`t must be exception');
   }
   i++;
 }

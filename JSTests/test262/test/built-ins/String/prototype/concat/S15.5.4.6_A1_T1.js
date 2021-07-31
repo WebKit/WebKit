@@ -14,7 +14,7 @@ __instance.concat = String.prototype.concat;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.concat(false, true) !== "42falsetrue") {
-  $ERROR('#1: __instance = new Object(42); __instance.concat = String.prototype.concat;  __instance.concat(false,true) === "42falsetrue". Actual: ' + __instance.concat(false, true));
+  throw new Test262Error('#1: __instance = new Object(42); __instance.concat = String.prototype.concat;  __instance.concat(false,true) === "42falsetrue". Actual: ' + __instance.concat(false, true));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

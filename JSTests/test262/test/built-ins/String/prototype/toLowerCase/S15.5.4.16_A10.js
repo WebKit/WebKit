@@ -15,7 +15,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.toLowerCase.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.toLowerCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLowerCase.hasOwnProperty('length'));
+  throw new Test262Error('#1: String.prototype.toLowerCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLowerCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ verifyNotWritable(String.prototype.toLowerCase, "length", null, function() {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.toLowerCase.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.toLowerCase.length; String.prototype.toLowerCase.length = function(){return "shifted";}; String.prototype.toLowerCase.length === __obj. Actual: ' + String.prototype.toLowerCase.length);
+  throw new Test262Error('#2: __obj = String.prototype.toLowerCase.length; String.prototype.toLowerCase.length = function(){return "shifted";}; String.prototype.toLowerCase.length === __obj. Actual: ' + String.prototype.toLowerCase.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

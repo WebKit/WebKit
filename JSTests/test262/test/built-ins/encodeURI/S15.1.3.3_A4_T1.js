@@ -9,15 +9,15 @@ description: Checking ENGLISH ALPHABET
 
 //CHECK#1
 if (encodeURI("http://unipro.ru/0123456789") !== "http://unipro.ru/0123456789") {
-  $ERROR('#1: http://unipro.ru/0123456789');
+  throw new Test262Error('#1: http://unipro.ru/0123456789');
 }
 
 //CHECK#2
 if (encodeURI("aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ") !== "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ") {
-  $ERROR('#2: aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ');
+  throw new Test262Error('#2: aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ');
 }
 
 //CHECK#3
 if (encodeURI("aA_bB-cC.dD!eE~fF*gG'hH(iI)jJ;kK/lL?mM:nN@oO&pP=qQ+rR$sS,tT9uU8vV7wW6xX5yY4zZ") !== "aA_bB-cC.dD!eE~fF*gG'hH(iI)jJ;kK/lL?mM:nN@oO&pP=qQ+rR$sS,tT9uU8vV7wW6xX5yY4zZ") {
-  $ERROR('#3: ');
+  throw new Test262Error('#3: ');
 }

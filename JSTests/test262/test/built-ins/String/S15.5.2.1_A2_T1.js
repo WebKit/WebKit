@@ -14,7 +14,7 @@ var __str__obj = new String("abba");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.isPrototypeOf(__str__obj))) {
-  $ERROR('#1: var __str__obj = new String("abba"); String.prototype.isPrototypeOf(__str__obj)===true');
+  throw new Test262Error('#1: var __str__obj = new String("abba"); String.prototype.isPrototypeOf(__str__obj)===true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

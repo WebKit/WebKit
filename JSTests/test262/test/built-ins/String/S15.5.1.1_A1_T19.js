@@ -14,7 +14,7 @@ var __str = String(new Array(1, 2, 3));
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(new Array(1,2,3)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(new Array(1,2,3)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "1,2,3") {
-  $ERROR('#2: __str = String(new Array(1,2,3)); __str === "1,2,3". Actual: __str ===' + __str);
+  throw new Test262Error('#2: __str = String(new Array(1,2,3)); __str === "1,2,3". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

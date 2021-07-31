@@ -13,5 +13,5 @@ if (x === 1)
 else
   Date.prototype.toDateString = 1;
 if (Date.prototype.toDateString === x) {
-  $ERROR('#1: The Date.prototype.toDateString has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.toDateString has not the attribute ReadOnly');
 }

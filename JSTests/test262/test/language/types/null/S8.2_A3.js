@@ -16,7 +16,7 @@ description: Check type of null
 //////////////////////////////////////////////////////////////
 // CHECK#1
 if (typeof(null) !== "object") {
-  $ERROR('#1: typeof null === "object". Actual: ' + (typeof null));
+  throw new Test262Error('#1: typeof null === "object". Actual: ' + (typeof null));
 }
 //
 /////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ var __str = String(undefined);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(undefined); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(undefined); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "undefined") {
-  $ERROR('#2: __str = String(undefined); __str === "undefined". Actual: __str ===' + __str);
+  throw new Test262Error('#2: __str = String(undefined); __str === "undefined". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -11,12 +11,12 @@ description: Checking use Object.prototype.toString
 var x = Array();
 x.getClass = Object.prototype.toString;
 if (x.getClass() !== "[object " + "Array" + "]") {
-  $ERROR('#1: var x = Array(); x.getClass = Object.prototype.toString; x is Array object. Actual: ' + (x.getClass()));
+  throw new Test262Error('#1: var x = Array(); x.getClass = Object.prototype.toString; x is Array object. Actual: ' + (x.getClass()));
 }
 
 //CHECK#2
 var x = Array(0, 1, 2);
 x.getClass = Object.prototype.toString;
 if (x.getClass() !== "[object " + "Array" + "]") {
-  $ERROR('#2: var x = Array(0,1,2); x.getClass = Object.prototype.toString; x is Array object. Actual: ' + (x.getClass()));
+  throw new Test262Error('#2: var x = Array(0,1,2); x.getClass = Object.prototype.toString; x is Array object. Actual: ' + (x.getClass()));
 }

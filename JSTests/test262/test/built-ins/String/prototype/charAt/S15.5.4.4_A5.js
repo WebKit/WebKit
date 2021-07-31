@@ -21,10 +21,10 @@ var __obj = {
 //CHECK#1
 try {
   var x = __obj.charAt();
-  $ERROR('#1: __obj={valueOf:1,toString:function(){throw \'intostring\'},charAt:String.prototype.charAt}; "var x = __obj.charAt()" lead to throwing exception');
+  throw new Test262Error('#1: __obj={valueOf:1,toString:function(){throw \'intostring\'},charAt:String.prototype.charAt}; "var x = __obj.charAt()" lead to throwing exception');
 } catch (e) {
   if (e !== 'intostring') {
-    $ERROR('#1.1: Exception === \'intostring\'. Actual: exception ===' + e);
+    throw new Test262Error('#1.1: Exception === \'intostring\'. Actual: exception ===' + e);
   }
 }
 //

@@ -26,10 +26,10 @@ __instance.concat = String.prototype.concat;
 //CHECK#1
 try {
   String.prototype.concat.call(__instance, __obj, notexist);
-  $ERROR('#1: "String.prototype.concat.call(__instance,__obj, notexist)" lead to throwing exception');
+  throw new Test262Error('#1: "String.prototype.concat.call(__instance,__obj, notexist)" lead to throwing exception');
 } catch (e) {
   if (e !== "intostring") {
-    $ERROR('#1: e === "intostring". Actual: ' + e);
+    throw new Test262Error('#1: e === "intostring". Actual: ' + e);
   }
 }
 //

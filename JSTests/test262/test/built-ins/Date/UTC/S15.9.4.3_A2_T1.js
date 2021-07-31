@@ -9,9 +9,9 @@ description: The "length" property of the "UTC" is 7
 ---*/
 
 if (Date.UTC.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The UTC has a "length" property');
+  throw new Test262Error('#1: The UTC has a "length" property');
 }
 
 if (Date.UTC.length !== 7) {
-  $ERROR('#2: The "length" property of the UTC is 7');
+  throw new Test262Error('#2: The "length" property of the UTC is 7');
 }

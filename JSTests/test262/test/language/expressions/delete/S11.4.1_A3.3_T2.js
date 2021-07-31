@@ -12,7 +12,7 @@ function MyFunction() {}
 MyFunction.prop = 1;
 delete MyFunction.prop;
 if (MyFunction.prop !== undefined) {
-  $ERROR(
+  throw new Test262Error(
     '#1: function MyFunction(){}; MyFunction.prop = 1; delete MyFunction.prop; MyFunction.prop === undefined. Actual: ' +
     MyFunction.prop
   );

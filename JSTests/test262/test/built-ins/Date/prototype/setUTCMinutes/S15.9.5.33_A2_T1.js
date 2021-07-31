@@ -8,9 +8,9 @@ description: The "length" property of the "setUTCMinutes" is 3
 ---*/
 
 if (Date.prototype.setUTCMinutes.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The setUTCMinutes has a "length" property');
+  throw new Test262Error('#1: The setUTCMinutes has a "length" property');
 }
 
 if (Date.prototype.setUTCMinutes.length !== 3) {
-  $ERROR('#2: The "length" property of the setUTCMinutes is 3');
+  throw new Test262Error('#2: The "length" property of the setUTCMinutes is 3');
 }

@@ -15,7 +15,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.toLocaleUpperCase.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.toLocaleUpperCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLocaleUpperCase.hasOwnProperty('length'));
+  throw new Test262Error('#1: String.prototype.toLocaleUpperCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLocaleUpperCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ verifyNotWritable(String.prototype.toLocaleUpperCase, "length", null, function()
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.toLocaleUpperCase.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.toLocaleUpperCase.length; String.prototype.toLocaleUpperCase.length = function(){return "shifted";}; String.prototype.toLocaleUpperCase.length === __obj. Actual: ' + String.prototype.toLocaleUpperCase.length);
+  throw new Test262Error('#2: __obj = String.prototype.toLocaleUpperCase.length; String.prototype.toLocaleUpperCase.length = function(){return "shifted";}; String.prototype.toLocaleUpperCase.length === __obj. Actual: ' + String.prototype.toLocaleUpperCase.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

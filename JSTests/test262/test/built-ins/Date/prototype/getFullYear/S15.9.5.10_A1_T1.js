@@ -14,5 +14,5 @@ if (x === 1)
 else
   Date.prototype.getFullYear = 1;
 if (Date.prototype.getFullYear === x) {
-  $ERROR('#1: The Date.prototype.getFullYear has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getFullYear has not the attribute ReadOnly');
 }

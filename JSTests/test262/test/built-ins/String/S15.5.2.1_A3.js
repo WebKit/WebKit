@@ -16,7 +16,7 @@ __str__obj.toString = Object.prototype.toString;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str__obj.toString() !== "[object " + "String" + "]") {
-  $ERROR('#1: var __str__obj = new String("seamaid"); __str__obj.toString = Object.prototype.toString; __str__obj.toString() === "[object String]". Actual: __str__obj.toString() ===' + __str__obj.toString());
+  throw new Test262Error('#1: var __str__obj = new String("seamaid"); __str__obj.toString = Object.prototype.toString; __str__obj.toString() === "[object String]". Actual: __str__obj.toString() ===' + __str__obj.toString());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

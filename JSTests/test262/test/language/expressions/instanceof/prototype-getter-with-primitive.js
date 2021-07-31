@@ -25,7 +25,7 @@ info: |
 // therefore we need to use a non-constructor function to install the getter.
 Object.defineProperty(Function.prototype, "prototype", {
   get: function() {
-    $ERROR("getter for 'prototype' called");
+    throw new Test262Error("getter for 'prototype' called");
   }
 });
 

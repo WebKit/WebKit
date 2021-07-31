@@ -15,5 +15,5 @@ var obj = new Number();
 
 //CHECK#1
 if (obj.toString() !== "[object Number]") {
-  $ERROR('#1: The [[Class]] property of the newly constructed object is set to "Number"');
+  throw new Test262Error('#1: The [[Class]] property of the newly constructed object is set to "Number"');
 }

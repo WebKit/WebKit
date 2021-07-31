@@ -10,5 +10,5 @@ description: Checking if Math.max() equals to -Infinity
 // CHECK#1
 if (Math.max() != -Infinity)
 {
-  $ERROR("#1: 'Math.max() != -Infinity'");
+  throw new Test262Error("#1: 'Math.max() != -Infinity'");
 }

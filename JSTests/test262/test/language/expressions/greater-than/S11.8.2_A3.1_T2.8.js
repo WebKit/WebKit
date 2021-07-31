@@ -13,20 +13,20 @@ description: >
 
 //CHECK#1
 if (true > undefined !== false) {
-  $ERROR('#1: true > undefined === false');
+  throw new Test262Error('#1: true > undefined === false');
 }
 
 //CHECK#2
 if (undefined > true !== false) {
-  $ERROR('#2: undefined > true === false');
+  throw new Test262Error('#2: undefined > true === false');
 }
 
 //CHECK#3
 if (new Boolean(true) > undefined !== false) {
-  $ERROR('#3: new Boolean(true) > undefined === false');
+  throw new Test262Error('#3: new Boolean(true) > undefined === false');
 }
 
 //CHECK#4
 if (undefined > new Boolean(true) !== false) {
-  $ERROR('#4: undefined > new Boolean(true) === false');
+  throw new Test262Error('#4: undefined > new Boolean(true) === false');
 }

@@ -17,10 +17,10 @@ var __instance = new __FACTORY;
 
 //CHECK#1
 if ((__instance instanceof RegExp) !== true) {
-	$ERROR('#1: __FACTORY = RegExp.prototype.constructor; __instance = new __FACTORY; (__instance instanceof RegExp) === true');
+	throw new Test262Error('#1: __FACTORY = RegExp.prototype.constructor; __instance = new __FACTORY; (__instance instanceof RegExp) === true');
 }
 
 //CHECK#2
 if (__instance.constructor !== RegExp) {
-	$ERROR('#2: __FACTORY = RegExp.prototype.constructor; __instance = new __FACTORY; __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
+	throw new Test262Error('#2: __FACTORY = RegExp.prototype.constructor; __instance = new __FACTORY; __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
 }

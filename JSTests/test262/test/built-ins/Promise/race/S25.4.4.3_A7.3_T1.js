@@ -21,6 +21,6 @@ resolveP1(1);
 
 Promise.race([p1, p2]).then(function(arg) {
   if (arg !== 1) {
-    $ERROR("Expected fulfillment with 1, got " + arg);
+    throw new Test262Error("Expected fulfillment with 1, got " + arg);
   }
 }).then($DONE, $DONE);

@@ -11,22 +11,22 @@ description: Used values "10", 10, new String("10"), new Object(10) and "abc"
 
 //CHECK#1
 if (typeof Number("10") !== "number") {
-  $ERROR('#1: typeof Number("10") should be "number", actual is "' + typeof Number("10") + '"');
+  throw new Test262Error('#1: typeof Number("10") should be "number", actual is "' + typeof Number("10") + '"');
 }
 
 //CHECK#2
 if (typeof Number(10) !== "number") {
-  $ERROR('#2: typeof Number(10) should be "number", actual is "' + typeof Number(10) + '"');
+  throw new Test262Error('#2: typeof Number(10) should be "number", actual is "' + typeof Number(10) + '"');
 }
 
 //CHECK#3
 if (typeof Number(new String("10")) !== "number") {
-  $ERROR('#3: typeof Number(new String("10")) should be "number", actual is "' + typeof Number(new String("10")) + '"');
+  throw new Test262Error('#3: typeof Number(new String("10")) should be "number", actual is "' + typeof Number(new String("10")) + '"');
 }
 
 //CHECK#4
 if (typeof Number(new Object(10)) !== "number") {
-  $ERROR('#4: typeof Number(new Object(10)) should be "number", actual is "' + typeof Number(new Object(10)) + '"');
+  throw new Test262Error('#4: typeof Number(new Object(10)) should be "number", actual is "' + typeof Number(new Object(10)) + '"');
 }
 
 //CHECK #5

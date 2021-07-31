@@ -10,17 +10,17 @@ es5id: 8.5_A13_T2
 description: Finite Non zero values where e is 971
 ---*/
 
-//CHECK #1 
+//CHECK #1
 if ((1*(Math.pow(2,52))*(Math.pow(2,971))) !== 8.98846567431158e+307){
-  $ERROR('#1: (1*(Math.pow(2,52))*(Math.pow(2,971))) === 8.98846567431158e+307. Actual: ' + ((1*(Math.pow(2,52))*(Math.pow(2,971)))));
+  throw new Test262Error('#1: (1*(Math.pow(2,52))*(Math.pow(2,971))) === 8.98846567431158e+307. Actual: ' + ((1*(Math.pow(2,52))*(Math.pow(2,971)))));
 }
 
-//CHECK #2 
+//CHECK #2
 if ((1*((Math.pow(2,53))-1)*(Math.pow(2,971))) !== 1.7976931348623157e+308){
-  $ERROR('#2: (1*((Math.pow(2,53))-1)*(Math.pow(2,971))) === 1.7976931348623157e+308. Actual: ' + ((1*((Math.pow(2,53))-1)*(Math.pow(2,971)))));
+  throw new Test262Error('#2: (1*((Math.pow(2,53))-1)*(Math.pow(2,971))) === 1.7976931348623157e+308. Actual: ' + ((1*((Math.pow(2,53))-1)*(Math.pow(2,971)))));
 }
 
-//CHECK #3 
+//CHECK #3
 if ((-1*(Math.pow(2,52))*(Math.pow(2,971))) !== -8.98846567431158e+307){
-  $ERROR('#3: (-1*(Math.pow(2,52))*(Math.pow(2,971))) === -8.98846567431158e+307. Actual: ' + ((-1*(Math.pow(2,52))*(Math.pow(2,971)))));
+  throw new Test262Error('#3: (-1*(Math.pow(2,52))*(Math.pow(2,971))) === -8.98846567431158e+307. Actual: ' + ((-1*(Math.pow(2,52))*(Math.pow(2,971)))));
 }

@@ -10,10 +10,10 @@ description: If GetBase(AssigmentExpression) is null, throw ReferenceError
 //CHECK#1
 try {
   x = y;
-  $ERROR('#1.1: x = y throw ReferenceError. Actual: ' + (x = y));  
+  throw new Test262Error('#1.1: x = y throw ReferenceError. Actual: ' + (x = y));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: x = y throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: x = y throw ReferenceError. Actual: ' + (e));  
   }
 }

@@ -28,7 +28,7 @@ const poisoned = {
 try {
   $DETACHBUFFER(i64a.buffer); // Detaching a non-shared ArrayBuffer sets the [[ArrayBufferData]] value to null
 } catch (error) {
-  $ERROR(`An unexpected error occurred when detaching ArrayBuffer: ${error.message}`);
+  throw new Test262Error(`An unexpected error occurred when detaching ArrayBuffer: ${error.message}`);
 }
 
 assert.throws(TypeError, function() {

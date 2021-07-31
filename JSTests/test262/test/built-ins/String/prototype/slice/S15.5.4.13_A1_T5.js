@@ -23,7 +23,7 @@ Function.prototype.slice = String.prototype.slice;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__func.slice(null, Function().slice(__func, 5).length) !== "gnull") {
-  $ERROR('#1: __func.slice(null, Function().slice(__func,5).length) === "gnull". Actual: ' + __func.slice(null, Function().slice(__func, 5).length));
+  throw new Test262Error('#1: __func.slice(null, Function().slice(__func,5).length) === "gnull". Actual: ' + __func.slice(null, Function().slice(__func, 5).length));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

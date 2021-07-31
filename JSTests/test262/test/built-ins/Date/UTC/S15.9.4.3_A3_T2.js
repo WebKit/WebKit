@@ -11,9 +11,9 @@ description: Checking DontDelete attribute
 ---*/
 
 if (delete Date.UTC.length !== true) {
-  $ERROR('#1: The Date.UTC.length property does not have the attributes DontDelete');
+  throw new Test262Error('#1: The Date.UTC.length property does not have the attributes DontDelete');
 }
 
 if (Date.UTC.hasOwnProperty('length')) {
-  $ERROR('#2: The Date.UTC.length property does not have the attributes DontDelete');
+  throw new Test262Error('#2: The Date.UTC.length property does not have the attributes DontDelete');
 }

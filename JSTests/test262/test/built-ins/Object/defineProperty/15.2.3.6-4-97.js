@@ -29,7 +29,7 @@ try {
     configurable: false
   });
 
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyEqualTo(obj, "property", getFunc());
 
@@ -38,7 +38,7 @@ try {
   verifyNotConfigurable(obj, "property");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

@@ -13,15 +13,15 @@ var obj = Object((null, 2, 3), 1, 2);
 
 //CHECK#1
 if (obj.constructor !== Number) {
-  $ERROR('#1: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
+  throw new Test262Error('#1: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
 }
 
 //CHECK#2
 if (typeof obj !== "object") {
-  $ERROR('#2: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
+  throw new Test262Error('#2: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
 }
 
 //CHECK#3
 if ((obj != 3) || (obj === 3)) {
-  $ERROR('3#: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
+  throw new Test262Error('3#: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
 }

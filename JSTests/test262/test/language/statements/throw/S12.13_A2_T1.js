@@ -14,5 +14,5 @@ try{
   throw undefined;
 }
 catch(e){
-  if (e!==undefined) $ERROR('#1: Exception === undefined. Actual:  Exception ==='+ e  );
+  if (e!==undefined) throw new Test262Error('#1: Exception === undefined. Actual:  Exception ==='+ e  );
 }

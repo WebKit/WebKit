@@ -15,7 +15,7 @@ var object = {
 };
 var x = new Array(object);
 if (x.join() !== "[object Object]") {
-  $ERROR('#1: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.join() === "[object Object]". Actual: ' + (x.join()));
+  throw new Test262Error('#1: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.join() === "[object Object]". Actual: ' + (x.join()));
 }
 
 //CHECK#2
@@ -29,7 +29,7 @@ var object = {
 };
 var x = new Array(object);
 if (x.join() !== "*") {
-  $ERROR('#2: var object = {valueOf: function() {return "+"}, toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
+  throw new Test262Error('#2: var object = {valueOf: function() {return "+"}, toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
 }
 
 //CHECK#3
@@ -43,7 +43,7 @@ var object = {
 };
 var x = new Array(object);
 if (x.join() !== "+") {
-  $ERROR('#3: var object = {valueOf: function() {return "+"}, toString: function() {return {}}} var x = new Array(object); x.join() === "+". Actual: ' + (x.join()));
+  throw new Test262Error('#3: var object = {valueOf: function() {return "+"}, toString: function() {return {}}} var x = new Array(object); x.join() === "+". Actual: ' + (x.join()));
 }
 
 //CHECK#4
@@ -58,14 +58,14 @@ try {
   };
   var x = new Array(object);
   if (x.join() !== "*") {
-    $ERROR('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
+    throw new Test262Error('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
   }
 }
 catch (e) {
   if (e === "error") {
-    $ERROR('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.join() not throw "error"');
+    throw new Test262Error('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.join() not throw "error"');
   } else {
-    $ERROR('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.join() not throw Error. Actual: ' + (e));
+    throw new Test262Error('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.join() not throw Error. Actual: ' + (e));
   }
 }
 
@@ -77,7 +77,7 @@ var object = {
 };
 var x = new Array(object);
 if (x.join() !== "*") {
-  $ERROR('#5: var object = {toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
+  throw new Test262Error('#5: var object = {toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
 }
 
 //CHECK#6
@@ -91,7 +91,7 @@ var object = {
 }
 var x = new Array(object);
 if (x.join() !== "*") {
-  $ERROR('#6: var object = {valueOf: function() {return {}}, toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
+  throw new Test262Error('#6: var object = {valueOf: function() {return {}}, toString: function() {return "*"}} var x = new Array(object); x.join() === "*". Actual: ' + (x.join()));
 }
 
 //CHECK#7
@@ -106,11 +106,11 @@ try {
   };
   var x = new Array(object);
   x.join();
-  $ERROR('#7.1: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.join() throw "error". Actual: ' + (x.join()));
+  throw new Test262Error('#7.1: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.join() throw "error". Actual: ' + (x.join()));
 }
 catch (e) {
   if (e !== "error") {
-    $ERROR('#7.2: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.join() throw "error". Actual: ' + (e));
+    throw new Test262Error('#7.2: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.join() throw "error". Actual: ' + (e));
   }
 }
 
@@ -126,10 +126,10 @@ try {
   };
   var x = new Array(object);
   x.join();
-  $ERROR('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.join() throw TypeError. Actual: ' + (x.join()));
+  throw new Test262Error('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.join() throw TypeError. Actual: ' + (x.join()));
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.join() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.join() throw TypeError. Actual: ' + (e));
   }
 }

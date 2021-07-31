@@ -10,7 +10,7 @@ description: Checking this use new Array() and []
 //CHECK#1
 var x = new Array();
 if (x.join() !== "") {
-  $ERROR('#1: x = new Array(); x.join() === "". Actual: ' + (x.join()));
+  throw new Test262Error('#1: x = new Array(); x.join() === "". Actual: ' + (x.join()));
 }
 
 //CHECK#2
@@ -18,5 +18,5 @@ x = [];
 x[0] = 1;
 x.length = 0;
 if (x.join() !== "") {
-  $ERROR('#2: x = []; x[0] = 1; x.length = 0; x.join() === "". Actual: ' + (x.join()));
+  throw new Test262Error('#2: x = []; x[0] = 1; x.length = 0; x.join() === "". Actual: ' + (x.join()));
 }

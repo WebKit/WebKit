@@ -16,7 +16,7 @@ __music_box.ziggy = __ziggy__func;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
 if (typeof __music_box.ziggy !== "function") {
-	$ERROR('#1: typeof __music_box.ziggy === "function". Actual: typeof __music_box.ziggy ==='+typeof __music_box.ziggy);
+	throw new Test262Error('#1: typeof __music_box.ziggy === "function". Actual: typeof __music_box.ziggy ==='+typeof __music_box.ziggy);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ if (typeof __music_box.ziggy !== "function") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__music_box.ziggy() !== "ziggy stardust") {
-	$ERROR('#2: __music_box.ziggy() === "ziggy stardust". Actual: __music_box.ziggy() ==='+__music_box.ziggy());
+	throw new Test262Error('#2: __music_box.ziggy() === "ziggy stardust". Actual: __music_box.ziggy() ==='+__music_box.ziggy());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

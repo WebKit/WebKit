@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (!(Function.prototype.toString.hasOwnProperty('length'))) {
-  $ERROR('#1: the Function.prototype.toString has length property.');
+  throw new Test262Error('#1: the Function.prototype.toString has length property.');
 }
 
 var obj = Function.prototype.toString.length;
@@ -21,5 +21,5 @@ verifyNotWritable(Function.prototype.toString, "length", null, function(){return
 
 //CHECK#2
 if (Function.prototype.toString.length !== obj) {
-  $ERROR('#2: the Function.prototype.toString length property has the attributes ReadOnly.');
+  throw new Test262Error('#2: the Function.prototype.toString length property has the attributes ReadOnly.');
 }

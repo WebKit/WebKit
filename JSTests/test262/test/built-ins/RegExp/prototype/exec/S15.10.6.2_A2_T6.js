@@ -15,9 +15,9 @@ __instance.exec = RegExp.prototype.exec;
 
 //CHECK#1
 try {
-	$ERROR('#1.1: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance["exec"]("message to investigate"). Actual: ' + (__instance["exec"]("message to investigate")));
+	throw new Test262Error('#1.1: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance["exec"]("message to investigate"). Actual: ' + (__instance["exec"]("message to investigate")));
 } catch (e) {
 	if ((e instanceof TypeError) !== true) {
-		$ERROR('#1.2: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance["exec"]("message to investigate"). Actual: ' + (e));
+		throw new Test262Error('#1.2: __instance = new Number(1.0); __instance.exec = RegExp.prototype.exec; __instance["exec"]("message to investigate"). Actual: ' + (e));
 	}
 }

@@ -20,5 +20,5 @@ var object = {
 [object, object].sort();
 if (counter < 2) {
   // sort calls ToString() for each element at least once
-  $ERROR('#1: [object, object].sort(); counter < 2. Actual: ' + (counter));
+  throw new Test262Error('#1: [object, object].sort(); counter < 2. Actual: ' + (counter));
 }

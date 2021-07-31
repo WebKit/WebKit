@@ -26,9 +26,9 @@ Promise.resolve = function() {
 
 Promise.allSettled([1])
   .then(function() {
-    $ERROR('The promise should not be fulfilled.');
+    throw new Test262Error('The promise should not be fulfilled.');
   }, function(reason) {
     if (reason !== thrown) {
-      $ERROR('The promise should be rejected with the thrown error object');
+      throw new Test262Error('The promise should be rejected with the thrown error object');
     }
   }).then($DONE, $DONE);

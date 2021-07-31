@@ -8,5 +8,5 @@ description: The Date.prototype has the property "toLocaleString"
 ---*/
 
 if (Date.prototype.hasOwnProperty("toLocaleString") !== true) {
-  $ERROR('#1: The Date.prototype has the property "toLocaleString"');
+  throw new Test262Error('#1: The Date.prototype has the property "toLocaleString"');
 }

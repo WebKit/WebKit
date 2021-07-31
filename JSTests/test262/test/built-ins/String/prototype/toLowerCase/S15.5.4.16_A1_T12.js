@@ -23,10 +23,10 @@ __obj.toLowerCase = String.prototype.toLowerCase;
 //CHECK#1
 try {
   var x = __obj.toLowerCase();
-  $ERROR('#1: "var x = __obj.toLowerCase()" lead to throwing exception');
+  throw new Test262Error('#1: "var x = __obj.toLowerCase()" lead to throwing exception');
 } catch (e) {
   if (e !== "intostr") {
-    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
+    throw new Test262Error('#1.1: Exception === "intostr". Actual: ' + e);
   }
 }
 //

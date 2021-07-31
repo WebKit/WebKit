@@ -9,10 +9,10 @@ description: Insert "\0" into string
 
 // CHECK#1
 if ("x\0y" === "x") {
-  $ERROR('#1: "x\\0y" !== "x"');
+  throw new Test262Error('#1: "x\\0y" !== "x"');
 }
 
 // CHECK#2
 if (!(("x\0a" < "x\0b") && ("x\0b" < "x\0c"))) {
-  $ERROR('#2: (("x\\0a" < "x\\0b") && ("x\\0b" < "x\\0c")) === true');
+  throw new Test262Error('#2: (("x\\0a" < "x\\0b") && ("x\\0b" < "x\\0c")) === true');
 }

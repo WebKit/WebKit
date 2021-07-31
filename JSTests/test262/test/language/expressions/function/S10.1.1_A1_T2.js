@@ -12,16 +12,16 @@ description: Creating function dynamically by using a FunctionExpression
 //CHECK#1
 var x=function f1(){return 1;}();
 if(x!==1)
-  $ERROR('#1: Create function dynamically either by using a FunctionExpression');
+  throw new Test262Error('#1: Create function dynamically either by using a FunctionExpression');
 
 //CHECK#2
 var y=function  (){return 2;}();
 if(y!==2){
-  $ERROR('#2: Create an anonymous function dynamically either by using a FunctionExpression');
+  throw new Test262Error('#2: Create an anonymous function dynamically either by using a FunctionExpression');
 }
 
 //CHECK#2
 var z = (function(){return 3;})();
 if(z!==3){
-  $ERROR('#3: Create an anonymous function dynamically either by using a FunctionExpression wrapped in a group operator');
+  throw new Test262Error('#3: Create an anonymous function dynamically either by using a FunctionExpression wrapped in a group operator');
 }

@@ -14,7 +14,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.lastIndexOf.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.lastIndexOf.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.lastIndexOf.hasOwnProperty('length'));
+  throw new Test262Error('#0: String.prototype.lastIndexOf.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.lastIndexOf.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ if (!(String.prototype.lastIndexOf.hasOwnProperty('length'))) {
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
 if (String.prototype.lastIndexOf.propertyIsEnumerable('length')) {
-  $ERROR('#1: String.prototype.lastIndexOf.propertyIsEnumerable(\'length\') return false. Actual: ' + String.prototype.lastIndexOf.propertyIsEnumerable('length'));
+  throw new Test262Error('#1: String.prototype.lastIndexOf.propertyIsEnumerable(\'length\') return false. Actual: ' + String.prototype.lastIndexOf.propertyIsEnumerable('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ for (var p in String.prototype.lastIndexOf) {
 }
 
 if (count !== 0) {
-  $ERROR('#2: count=0; for (p in String.prototype.lastIndexOf){if (p==="length") count++;}; count === 0. Actual: ' + count);
+  throw new Test262Error('#2: count=0; for (p in String.prototype.lastIndexOf){if (p==="length") count++;}; count === 0. Actual: ' + count);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

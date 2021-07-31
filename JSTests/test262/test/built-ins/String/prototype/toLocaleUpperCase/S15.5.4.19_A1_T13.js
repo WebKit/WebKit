@@ -21,7 +21,7 @@ __obj.toLocaleUpperCase = String.prototype.toLocaleUpperCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__obj.toLocaleUpperCase() !== "1") {
-  $ERROR('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLocaleUpperCase = String.prototype.toLocaleUpperCase; __obj.toLocaleUpperCase() ==="1". Actual: ' + __obj.toLocaleUpperCase());
+  throw new Test262Error('#1: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLocaleUpperCase = String.prototype.toLocaleUpperCase; __obj.toLocaleUpperCase() ==="1". Actual: ' + __obj.toLocaleUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ if (__obj.toLocaleUpperCase() !== "1") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__obj.toLocaleUpperCase().length !== 1) {
-  $ERROR('#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLocaleUpperCase = String.prototype.toLocaleUpperCase; __obj.toLocaleUpperCase().length === 1. Actual: ' + __obj.toLocaleUpperCase().length);
+  throw new Test262Error('#2: var __obj = {toString:function(){return {};},valueOf:function(){return 1;}}; __obj.toLocaleUpperCase = String.prototype.toLocaleUpperCase; __obj.toLocaleUpperCase().length === 1. Actual: ' + __obj.toLocaleUpperCase().length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

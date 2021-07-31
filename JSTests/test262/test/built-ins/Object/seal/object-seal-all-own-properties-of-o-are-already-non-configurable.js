@@ -34,13 +34,13 @@ Object.defineProperty(obj, "foo2", {
 });
 
 if (!Object.isExtensible(obj)) {
-  $ERROR('Expected obj to be extensible, actually ' + Object.isExtensible(obj));
+  throw new Test262Error('Expected obj to be extensible, actually ' + Object.isExtensible(obj));
 }
 
 Object.seal(obj);
 
 if (Object.isExtensible(obj)) {
-  $ERROR('Expected obj NOT to be extensible, actually ' + Object.isExtensible(obj));
+  throw new Test262Error('Expected obj NOT to be extensible, actually ' + Object.isExtensible(obj));
 }
 
 verifyEqualTo(obj, "foo1", 10);

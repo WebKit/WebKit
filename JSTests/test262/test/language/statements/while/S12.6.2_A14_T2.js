@@ -19,7 +19,7 @@ while(function __func(){return 1;}()){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__reached !== 1) {
-	$ERROR('#2: function expression inside of while expression is allowed');
+	throw new Test262Error('#2: function expression inside of while expression is allowed');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

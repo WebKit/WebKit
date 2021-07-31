@@ -9,10 +9,10 @@ description: Use FORM FEED(\u000C and \f)
 
 // CHECK#1
 if (eval("'\u000Cstr\u000Cing\u000C'") !== "\u000Cstr\u000Cing\u000C") {
-  $ERROR('#1: eval("\'\\u000Cstr\\u000Cing\\u000C\'") === "\\u000Cstr\\u000Cing\\u000C"');
+  throw new Test262Error('#1: eval("\'\\u000Cstr\\u000Cing\\u000C\'") === "\\u000Cstr\\u000Cing\\u000C"');
 }
 
 //CHECK#2
 if (eval("'\fstr\fing\f'") !== "\fstr\fing\f") {
-  $ERROR('#2: eval("\'\\fstr\\fing\\f\'") === "\\fstr\\fing\\f"');
+  throw new Test262Error('#2: eval("\'\\fstr\\fing\\f\'") === "\\fstr\\fing\\f"');
 }

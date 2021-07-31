@@ -12,7 +12,7 @@ flags: [noStrict]
 function MyFunction() {}
 var MyObjectVar = new MyFunction();
 if (delete MyObjectVar !== false) {
-  $ERROR(
+  throw new Test262Error(
     '#1: function MyFunction(){}; var MyObjectVar = new MyFunction(); delete MyObjectVar === false'
   );
 }

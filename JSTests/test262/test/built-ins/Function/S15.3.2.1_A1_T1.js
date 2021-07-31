@@ -23,9 +23,9 @@ var body = {
 //CHECK#1
 try {
   var f = new Function(body);
-  $ERROR('#1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
+  throw new Test262Error('#1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
 } catch (e) {
   if (e !== 7) {
-    $ERROR('#1.1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
+    throw new Test262Error('#1.1: When the Function constructor is called with one argument then body be that argument the following step are taken: call ToString(body)');
   }
 }

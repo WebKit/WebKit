@@ -13,7 +13,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.search.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.search.hasOwnProperty('length'));
+  throw new Test262Error('#1: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ verifyNotWritable(String.prototype.search, "length", null, function() {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.search.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.search.length; String.prototype.search.length = function(){return "shifted";}; String.prototype.search.length === __obj. Actual: ' + String.prototype.search.length);
+  throw new Test262Error('#2: __obj = String.prototype.search.length; String.prototype.search.length = function(){return "shifted";}; String.prototype.search.length === __obj. Actual: ' + String.prototype.search.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

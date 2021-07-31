@@ -10,7 +10,7 @@ description: Call "abcd".indexOf("abcdab",99) and check result
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("abcd".indexOf("abcdab", 99) !== -1) {
-  $ERROR('#1: "abcd".indexOf("abcdab",99)===-1. Actual: ' + ("abcd".indexOf("abcdab", 99)));
+  throw new Test262Error('#1: "abcd".indexOf("abcdab",99)===-1. Actual: ' + ("abcd".indexOf("abcdab", 99)));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

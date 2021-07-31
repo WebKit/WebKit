@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToString() evaluates to "" lastIndexOf() evaluates to lastIndexOf("",0)
 if ("".lastIndexOf() !== -1) {
-  $ERROR('#1: "".lastIndexOf() === -1. Actual: ' + ("".lastIndexOf()));
+  throw new Test262Error('#1: "".lastIndexOf() === -1. Actual: ' + ("".lastIndexOf()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

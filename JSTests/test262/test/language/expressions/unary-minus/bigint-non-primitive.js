@@ -27,13 +27,13 @@ assert.sameValue(-{
   },
 
   valueOf: function() {
-    $ERROR();
+    throw new Test262Error();
   },
 
   toString: function() {
-    $ERROR();
+    throw new Test262Error();
   }
-}, -1n, 'The value of -{[Symbol.toPrimitive]: function() {return 1n;}, valueOf: function() {$ERROR();}, toString: function() {$ERROR();}} is -1n');
+}, -1n, 'The value of -{[Symbol.toPrimitive]: function() {return 1n;}, valueOf: function() {throw new Test262Error();}, toString: function() {throw new Test262Error();}} is -1n');
 
 assert.sameValue(-{
   valueOf: function() {
@@ -41,9 +41,9 @@ assert.sameValue(-{
   },
 
   toString: function() {
-    $ERROR();
+    throw new Test262Error();
   }
-}, -1n, 'The value of -{valueOf: function() {return 1n;}, toString: function() {$ERROR();}} is -1n');
+}, -1n, 'The value of -{valueOf: function() {return 1n;}, toString: function() {throw new Test262Error();}} is -1n');
 
 assert.sameValue(-{
   toString: function() {

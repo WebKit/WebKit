@@ -13,7 +13,7 @@ flags: [noStrict]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (delete Number.NaN !== false){
-  $ERROR('#1: delete Number.NaN === false. Actual: ' + (delete Number.NaN));
+  throw new Test262Error('#1: delete Number.NaN === false. Actual: ' + (delete Number.NaN));
 };
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ if (delete Number.NaN !== false){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof(Number.NaN) === "undefined"){
-  $ERROR('#2: delete Number.NaN; typeof(Number.NaN) !== "undefined" ');
+  throw new Test262Error('#2: delete Number.NaN; typeof(Number.NaN) !== "undefined" ');
 };
 //
 //////////////////////////////////////////////////////////////////////////////

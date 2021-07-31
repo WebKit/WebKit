@@ -17,7 +17,7 @@ var __str = "lego";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str.charCodeAt(__obj) !== 0x65) {
-  $ERROR('#1: var __obj = {toString:function(){return 1;}}; var __str = "lego"; __str.charCodeAt(__obj) === 0x65. Actual: ' + __str.charCodeAt(__obj));
+  throw new Test262Error('#1: var __obj = {toString:function(){return 1;}}; var __str = "lego"; __str.charCodeAt(__obj) === 0x65. Actual: ' + __str.charCodeAt(__obj));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -12,7 +12,7 @@ Number.prototype.toLowerCase = String.prototype.toLowerCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (NaN.toLowerCase() !== "nan") {
-  $ERROR('#1: Number.prototype.toLowerCase = String.prototype.toLowerCase; NaN.toLowerCase()=== "nan". Actual: ' + NaN.toLowerCase());
+  throw new Test262Error('#1: Number.prototype.toLowerCase = String.prototype.toLowerCase; NaN.toLowerCase()=== "nan". Actual: ' + NaN.toLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

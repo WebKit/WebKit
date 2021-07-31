@@ -12,10 +12,10 @@ description: Checking Math object case
 //CHECK#1
 try {
   Math();
-  $ERROR('#1.1: Math() throw TypeError. Actual: ' + (Math()));	
+  throw new Test262Error('#1.1: Math() throw TypeError. Actual: ' + (Math()));	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: Math() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#1.2: Math() throw TypeError. Actual: ' + (e));	
   }
 }

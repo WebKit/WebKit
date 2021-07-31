@@ -11,11 +11,11 @@ description: Applying grouping operator to Boolean
 
 //CHECK#1
 if ((true) !== true) {
-  $ERROR('#1: (true) === true');
+  throw new Test262Error('#1: (true) === true');
 }
 
 //CHECK#2
 var x = new Boolean(true);
 if ((x) !== x) {
-  $ERROR('#2: var x = new Boolean(true); (x) === x. Actual: ' + ((x)));
+  throw new Test262Error('#2: var x = new Boolean(true); (x) === x. Actual: ' + ((x)));
 }

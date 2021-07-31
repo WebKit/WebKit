@@ -15,7 +15,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.toLocaleLowerCase.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.toLocaleLowerCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLocaleLowerCase.hasOwnProperty('length'));
+  throw new Test262Error('#1: String.prototype.toLocaleLowerCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLocaleLowerCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ verifyNotWritable(String.prototype.toLocaleLowerCase, "length", null, function()
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.toLocaleLowerCase.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.toLocaleLowerCase.length; String.prototype.toLocaleLowerCase.length = function(){return "shifted";}; String.prototype.toLocaleLowerCase.length === __obj. Actual: ' + String.prototype.toLocaleLowerCase.length);
+  throw new Test262Error('#2: __obj = String.prototype.toLocaleLowerCase.length; String.prototype.toLocaleLowerCase.length = function(){return "shifted";}; String.prototype.toLocaleLowerCase.length === __obj. Actual: ' + String.prototype.toLocaleLowerCase.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

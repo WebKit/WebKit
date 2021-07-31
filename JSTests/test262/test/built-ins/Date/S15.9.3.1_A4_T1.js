@@ -29,21 +29,21 @@ var myObj = function(val) {
 //CHECK#1
 try {
   var x1 = new Date(new myObj(1), new myObj(2));
-  $ERROR("#1: The 1st step is calling ToNumber(year)");
+  throw new Test262Error("#1: The 1st step is calling ToNumber(year)");
 }
 catch (e) {
   if (e !== "valueOf-1") {
-    $ERROR("#1: The 1st step is calling ToNumber(year)");
+    throw new Test262Error("#1: The 1st step is calling ToNumber(year)");
   }
 }
 
 //CHECK#2
 try {
   var x2 = new Date(1, new myObj(2));
-  $ERROR("#2: The 2nd step is calling ToNumber(month)");
+  throw new Test262Error("#2: The 2nd step is calling ToNumber(month)");
 }
 catch (e) {
   if (e !== "valueOf-2") {
-    $ERROR("#2: The 2nd step is calling ToNumber(month)");
+    throw new Test262Error("#2: The 2nd step is calling ToNumber(month)");
   }
 }

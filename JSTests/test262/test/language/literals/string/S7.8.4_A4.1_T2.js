@@ -9,25 +9,25 @@ description: "SingleEscapeSequence :: one of ' \" \\"
 
 //CHECK#1
 if (String.fromCharCode(0x0027) !== "\'") {
-  $ERROR('#1: String.fromCharCode(0x0027) === "\\\'"');
+  throw new Test262Error('#1: String.fromCharCode(0x0027) === "\\\'"');
 }
 
 //CHECK#2
 if (String.fromCharCode(0x0022) !== '\"') {
-  $ERROR('#2: String.fromCharCode(0x0027) === \'\\\"\'');
+  throw new Test262Error('#2: String.fromCharCode(0x0027) === \'\\\"\'');
 }
 
 //CHECK#3
 if (String.fromCharCode(0x005C) !== "\\") {
-  $ERROR('#3: String.fromCharCode(0x005C) === "\\\"');
+  throw new Test262Error('#3: String.fromCharCode(0x005C) === "\\\"');
 }
 
 //CHECK#4
 if ("\'" !== "'") {
-  $ERROR('#4: "\'" === "\\\'"');
+  throw new Test262Error('#4: "\'" === "\\\'"');
 }
 
 //CHECK#5
 if ('\"' !== '"') {
-  $ERROR('#5: \'\"\' === \'\\\"\'');
+  throw new Test262Error('#5: \'\"\' === \'\\\"\'');
 }

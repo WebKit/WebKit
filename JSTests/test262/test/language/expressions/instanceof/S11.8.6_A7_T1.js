@@ -13,10 +13,10 @@ var __obj={};
 
 //CHECK#1
 if (!(__obj instanceof Object)) {
-	$ERROR('#1: If instanceof returns true then GetValue(RelationalExpression) was constructed with ShiftExpression');
+	throw new Test262Error('#1: If instanceof returns true then GetValue(RelationalExpression) was constructed with ShiftExpression');
 }
 
 //CHECK#2
 if (__obj.constructor !== Object) {
-	$ERROR('#2: If instanceof returns true then GetValue(RelationalExpression) was constructed with ShiftExpression');
+	throw new Test262Error('#2: If instanceof returns true then GetValue(RelationalExpression) was constructed with ShiftExpression');
 }

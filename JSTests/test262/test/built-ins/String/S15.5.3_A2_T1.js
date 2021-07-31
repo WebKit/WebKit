@@ -12,7 +12,7 @@ description: Checking Function.prototype.isPrototypeOf(String)
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#
 if (!(Function.prototype.isPrototypeOf(String))) {
-  $ERROR('#1: Function.prototype.isPrototypeOf(String) return true. Actual: ' + Function.prototype.isPrototypeOf(String));
+  throw new Test262Error('#1: Function.prototype.isPrototypeOf(String) return true. Actual: ' + Function.prototype.isPrototypeOf(String));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

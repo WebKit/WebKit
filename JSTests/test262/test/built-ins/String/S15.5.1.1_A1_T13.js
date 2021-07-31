@@ -14,7 +14,7 @@ var __str = String(true);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(true); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(true); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "true") {
-  $ERROR('#2: __str = String(true); __str === "true". Actual: __str ===' + __str);
+  throw new Test262Error('#2: __str = String(true); __str === "true". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ __str = String(false);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (typeof __str !== "string") {
-  $ERROR('#3: __str = String(false); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#3: __str = String(false); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__str !== "false") {
-  $ERROR('#4: __str = String(false); __str === "false". Actual: __str ===' + __str);
+  throw new Test262Error('#4: __str = String(false); __str === "false". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ __str = String(Boolean(true));
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#5
 if (typeof __str !== "string") {
-  $ERROR('#5: __str = String(Boolean(true)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#5: __str = String(Boolean(true)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
 if (__str !== "true") {
-  $ERROR('#6: __str = String(Boolean(true)); __str === "true". Actual: __str ===' + __str);
+  throw new Test262Error('#6: __str = String(Boolean(true)); __str === "true". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ __str = String(Boolean(false));
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#7
 if (typeof __str !== "string") {
-  $ERROR('#7: __str = String(Boolean(false)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#7: __str = String(Boolean(false)); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#8
 if (__str !== "false") {
-  $ERROR('#8: __str = String(Boolean(false)); __str === "false". Actual: __str ===' + __str);
+  throw new Test262Error('#8: __str = String(Boolean(false)); __str === "false". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

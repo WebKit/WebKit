@@ -27,10 +27,10 @@ new Function(p, p, p, "this.shifted=a3;").apply(obj, (function() {
 
 //CHECK#1
 if (obj["shifted"] !== "c") {
-  $ERROR('#1: If argArray is either an array or an arguments object, the function is passed the...');
+  throw new Test262Error('#1: If argArray is either an array or an arguments object, the function is passed the...');
 }
 
 //CHECK#2
 if (typeof this["shifted"] !== "undefined") {
-  $ERROR('#2: If argArray is either an array or an arguments object, the function is passed the...');
+  throw new Test262Error('#2: If argArray is either an array or an arguments object, the function is passed the...');
 }

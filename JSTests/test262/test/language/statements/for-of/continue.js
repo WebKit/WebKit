@@ -18,7 +18,7 @@ for (var x of iterator) {
   i++;
   continue;
 
-  $ERROR('This code is unreachable.');
+  throw new Test262Error('This code is unreachable.');
 }
 
 assert.sameValue(i, 2);

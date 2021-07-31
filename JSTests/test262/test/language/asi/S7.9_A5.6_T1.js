@@ -18,7 +18,7 @@ y
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ((x!==0)&(y!==1)) {
-	$ERROR('#1: Check Postfix Increment Operator for automatic semicolon insertion');
+	throw new Test262Error('#1: Check Postfix Increment Operator for automatic semicolon insertion');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ x
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if ((x!==0)&(y!==2)) {
-	$ERROR('#2: Check Postfix Increment Operator for automatic semicolon insertion');
+	throw new Test262Error('#2: Check Postfix Increment Operator for automatic semicolon insertion');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

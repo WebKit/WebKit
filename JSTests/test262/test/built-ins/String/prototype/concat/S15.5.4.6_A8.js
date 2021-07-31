@@ -12,7 +12,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.concat.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.concat.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
+  throw new Test262Error('#0: String.prototype.concat.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ if (!(String.prototype.concat.hasOwnProperty('length'))) {
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
 if (String.prototype.concat.propertyIsEnumerable('length')) {
-  $ERROR('#1: String.prototype.concat.propertyIsEnumerable(\'length\') return false. Actual: ' + String.prototype.concat.propertyIsEnumerable('length'));
+  throw new Test262Error('#1: String.prototype.concat.propertyIsEnumerable(\'length\') return false. Actual: ' + String.prototype.concat.propertyIsEnumerable('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ for (var p in String.prototype.concat) {
 }
 
 if (count !== 0) {
-  $ERROR('#2: count = 0; for (p in String.prototype.concat){ if (p==="length") count++;}; count === 0. Actual: ' + count);
+  throw new Test262Error('#2: count = 0; for (p in String.prototype.concat){ if (p==="length") count++;}; count === 0. Actual: ' + count);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

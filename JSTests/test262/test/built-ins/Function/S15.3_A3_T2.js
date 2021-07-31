@@ -16,12 +16,12 @@ var f = Function.call("blablastring", "return this.color;");
 
 //CHECK#1
 if (f() !== "red") {
-  $ERROR('#1: ');
+  throw new Test262Error('#1: ');
 }
 
 var g = Function.call(null, "return this.planet;");
 
 //CHECK#2
 if (g() !== "mars") {
-  $ERROR('#2: ');
+  throw new Test262Error('#2: ');
 }

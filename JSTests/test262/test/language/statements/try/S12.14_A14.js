@@ -31,7 +31,7 @@ try{
   }
 }
 catch(e){
-  if (e!=="ex") $ERROR('#1: Exception ==="ex". Actual:  Exception ==='+ e  );
+  if (e!=="ex") throw new Test262Error('#1: Exception ==="ex". Actual:  Exception ==='+ e  );
 }
 
 // CHECK#2
@@ -40,11 +40,11 @@ with(myObj){
     throw p1;
   }
   catch(e){
-    if (e!=="a") $ERROR('#2.1: Exception ==="a". Actual:  Exception ==='+ e  );
+    if (e!=="a") throw new Test262Error('#2.1: Exception ==="a". Actual:  Exception ==='+ e  );
     p1='pass';
   }
 }
-if(myObj.p1!=='pass') $ERROR('#2.2: "throw p1" lead to throwing exception');
+if(myObj.p1!=='pass') throw new Test262Error('#2.2: "throw p1" lead to throwing exception');
 
 // CHECK#3
 with(myObj){
@@ -53,15 +53,15 @@ with(myObj){
     throw p2;
   }
   catch(e){
-    if (e!=="b") $ERROR('#3.1: Exception ==="b". Actual:  Exception ==='+ e  );
+    if (e!=="b") throw new Test262Error('#3.1: Exception ==="b". Actual:  Exception ==='+ e  );
     p1='pass';
   }
   finally{
     p2='pass';
   }
 }
-if(myObj.p1!=='pass') $ERROR('#3.2: "throw p2" lead to throwing exception');
-if(myObj.p2!=='pass') $ERROR('#3.3: "finally" block must be evaluated');
+if(myObj.p1!=='pass') throw new Test262Error('#3.2: "throw p2" lead to throwing exception');
+if(myObj.p2!=='pass') throw new Test262Error('#3.3: "finally" block must be evaluated');
 
 // CHECK#4
 myObj.p1='fail';
@@ -76,4 +76,4 @@ try{
   }
 }
 catch(e){}
-if(myObj.p1!=='pass') $ERROR('#4: "finally" block must be evaluated');
+if(myObj.p1!=='pass') throw new Test262Error('#4: "finally" block must be evaluated');

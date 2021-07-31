@@ -17,11 +17,11 @@ Array.prototype[2] = 2;
 var x = [0, 1];
 x.length = 3;
 if (x.hasOwnProperty('2') !== false) {
-  $ERROR('#1: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.hasOwnProperty(\'2\') === false. Actual: ' + (x.hasOwnProperty('2')));
+  throw new Test262Error('#1: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.hasOwnProperty(\'2\') === false. Actual: ' + (x.hasOwnProperty('2')));
 }
 
 //CHECK#2
 x.length = 2;
 if (x[2] !== 2) {
-  $ERROR('#2: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.length = 2; x[2] === 2. Actual: ' + (x[2]));
+  throw new Test262Error('#2: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.length = 2; x[2] === 2. Actual: ' + (x[2]));
 }

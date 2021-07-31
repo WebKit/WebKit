@@ -7,7 +7,7 @@ es5id: 8.1_A4
 description: Check value of not existed property
 ---*/
 
-// CHECK#1 
+// CHECK#1
 if ((new Object()).newProperty !== undefined) {
-  $ERROR('#1: (new Object()).newProperty === undefined. Actual: ' + ((new Object()).newProperty));
+  throw new Test262Error('#1: (new Object()).newProperty === undefined. Actual: ' + ((new Object()).newProperty));
 }

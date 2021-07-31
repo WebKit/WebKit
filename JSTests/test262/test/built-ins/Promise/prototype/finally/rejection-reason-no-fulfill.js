@@ -19,7 +19,7 @@ p.finally(function() {
   assert.sameValue(arguments.length, 0, 'onFinally receives zero args');
   return replacement;
 }).then(function() {
-  $ERROR('promise is rejected pre-finally; onFulfill should not be called');
+  throw new Test262Error('promise is rejected pre-finally; onFulfill should not be called');
 }).catch(function(reason) {
   sequence.push(2);
   assert.sameValue(reason, original, 'onFinally can not override the rejection value by returning');

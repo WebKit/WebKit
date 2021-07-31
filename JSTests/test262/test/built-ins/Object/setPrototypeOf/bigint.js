@@ -10,7 +10,7 @@ features: [BigInt]
 try {
   let {} = 0n;
 } catch (e) {
-  $ERROR('Expected RequireObjectCoercible to succeed for BigInt values');
+  throw new Test262Error('Expected RequireObjectCoercible to succeed for BigInt values');
 }
 
 assert.sameValue(Object.setPrototypeOf(0n, null), 0n);

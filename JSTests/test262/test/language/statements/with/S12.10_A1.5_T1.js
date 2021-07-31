@@ -69,77 +69,77 @@ for(var prop in myObj){
 }
 
 if(!(p1 === 1)){
-  $ERROR('#1: p1 === 1. Actual:  p1 ==='+ p1  );
+  throw new Test262Error('#1: p1 === 1. Actual:  p1 ==='+ p1  );
 }
 
 if(!(p2 === "x2")){
-  $ERROR('#2: p2 === "x2". Actual:  p2 ==='+ p2  );
+  throw new Test262Error('#2: p2 === "x2". Actual:  p2 ==='+ p2  );
 }
 
 if(!(p3 === 3)){
-  $ERROR('#3: p3 === 3. Actual:  p3 ==='+ p3  );
+  throw new Test262Error('#3: p3 === 3. Actual:  p3 ==='+ p3  );
 }
 
 if(!(p4 === "x4")){
-  $ERROR('#4: p4 === "x4". Actual:  p4 ==='+ p4  );
+  throw new Test262Error('#4: p4 === "x4". Actual:  p4 ==='+ p4  );
 }
 
 if(!(p5 === "x5")){
-  $ERROR('#5: p5 === "x5". Actual:  p5 ==='+ p5  );
+  throw new Test262Error('#5: p5 === "x5". Actual:  p5 ==='+ p5  );
 }
 
 if(!(myObj.p1 === "x1")){
-  $ERROR('#6: myObj.p1 === "x1". Actual:  myObj.p1 ==='+ myObj.p1  );
+  throw new Test262Error('#6: myObj.p1 === "x1". Actual:  myObj.p1 ==='+ myObj.p1  );
 }
 
 if(!(myObj.p2 === "b")){
-  $ERROR('#7: myObj.p2 === "b". Actual:  myObj.p2 ==='+ myObj.p2  );
+  throw new Test262Error('#7: myObj.p2 === "b". Actual:  myObj.p2 ==='+ myObj.p2  );
 }
 
 if(!(myObj.p3 === undefined)){
-  $ERROR('#8: myObj.p3 === undefined. Actual:  myObj.p3 ==='+ myObj.p3  );
+  throw new Test262Error('#8: myObj.p3 === undefined. Actual:  myObj.p3 ==='+ myObj.p3  );
 }
 
 if(!(myObj.p4 === undefined)){
-  $ERROR('#9: myObj.p4 === undefined. Actual:  myObj.p4 ==='+ myObj.p4  );
+  throw new Test262Error('#9: myObj.p4 === undefined. Actual:  myObj.p4 ==='+ myObj.p4  );
 }
 
 if(!(myObj.p5 === undefined)){
-  $ERROR('#10: myObj.p5 === undefined. Actual:  myObj.p5 ==='+ myObj.p5  );
+  throw new Test262Error('#10: myObj.p5 === undefined. Actual:  myObj.p5 ==='+ myObj.p5  );
 }
 
 if(!(st_parseInt !== parseInt)){
-  $ERROR('#11: myObj.parseInt !== parseInt');
+  throw new Test262Error('#11: myObj.parseInt !== parseInt');
 }
 
 if(!(st_NaN === "obj_NaN")){
-  $ERROR('#12: myObj.NaN !== NaN');
+  throw new Test262Error('#12: myObj.NaN !== NaN');
 }
 
 if(!(st_Infinity !== Infinity)){
-  $ERROR('#13: myObj.Infinity !== Infinity');
+  throw new Test262Error('#13: myObj.Infinity !== Infinity');
 }
 
 if(!(st_eval !== eval)){
-  $ERROR('#14: myObj.eval !== eval');
+  throw new Test262Error('#14: myObj.eval !== eval');
 }
 
 if(!(st_parseFloat !== parseFloat)){
-  $ERROR('#15: myObj.parseFloat !== parseFloat');
+  throw new Test262Error('#15: myObj.parseFloat !== parseFloat');
 }
 
 if(!(st_isNaN !== isNaN)){
-  $ERROR('#16: myObj.isNaN !== isNaN');
+  throw new Test262Error('#16: myObj.isNaN !== isNaN');
 }
 
 if(!(st_isFinite !== isFinite)){
-  $ERROR('#17: myObj.isFinite !== isFinite');
+  throw new Test262Error('#17: myObj.isFinite !== isFinite');
 }
 
 if(!(value === undefined)){
-  $ERROR('#18: value === undefined. Actual:  value ==='+ value  );
+  throw new Test262Error('#18: value === undefined. Actual:  value ==='+ value  );
 }
 
 if(!(myObj.value === "value")){
-  $ERROR('#19: myObj.value === "value". Actual:  myObj.value ==='+ myObj.value  );
+  throw new Test262Error('#19: myObj.value === "value". Actual:  myObj.value ==='+ myObj.value  );
 }

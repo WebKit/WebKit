@@ -14,5 +14,5 @@ var __re = new RegExp();
 
 //CHECK#1
 if (RegExp.prototype.isPrototypeOf(__re) !== true) {
-	$ERROR('#1: __re = new RegExp(); RegExp.prototype.isPrototypeOf(__re) === true. Actual: ' + (RegExp.prototype.isPrototypeOf(__re)));
+	throw new Test262Error('#1: __re = new RegExp(); RegExp.prototype.isPrototypeOf(__re) === true. Actual: ' + (RegExp.prototype.isPrototypeOf(__re)));
 }

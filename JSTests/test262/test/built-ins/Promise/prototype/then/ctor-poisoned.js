@@ -20,8 +20,8 @@ Object.defineProperty(p, "constructor", {
 
 assert.throws(Test262Error, function() {
   p.then(function() {
-    $ERROR("Should never be called.");
+    throw new Test262Error("Should never be called.");
   }, function() {
-    $ERROR("Should never be called.");
+    throw new Test262Error("Should never be called.");
   });
 });

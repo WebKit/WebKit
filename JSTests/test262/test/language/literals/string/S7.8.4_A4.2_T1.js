@@ -12,6 +12,6 @@ var CharacterCode = [0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0
 var NonEscapeCharacter = ["\A", "\B", "\C", "\D", "\E", "\F", "\G", "\H", "\I", "\J", "\K", "\L", "\M", "\N", "\O", "\P", "\Q", "\R", "\S", "\T", "\U", "\V", "\W", "\X", "\Y", "\Z"];
 for (var index = 0; index <= 25; index++) {
   if (String.fromCharCode(CharacterCode[index]) !== NonEscapeCharacter[index]) {
-    $ERROR('#' + NonEscapeCharacter[index] + ' ');
+    throw new Test262Error('#' + NonEscapeCharacter[index] + ' ');
   }
 }

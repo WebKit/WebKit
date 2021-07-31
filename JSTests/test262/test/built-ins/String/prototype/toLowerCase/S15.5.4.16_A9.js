@@ -14,7 +14,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.toLowerCase.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.toLowerCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLowerCase.hasOwnProperty('length'));
+  throw new Test262Error('#0: String.prototype.toLowerCase.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.toLowerCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (!(String.prototype.toLowerCase.hasOwnProperty('length'))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!delete String.prototype.toLowerCase.length) {
-  $ERROR('#1: delete String.prototype.toLowerCase.length return true');
+  throw new Test262Error('#1: delete String.prototype.toLowerCase.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (!delete String.prototype.toLowerCase.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.toLowerCase.hasOwnProperty('length')) {
-  $ERROR('#2: delete String.prototype.toLowerCase.length; String.prototype.toLowerCase.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.toLowerCase.hasOwnProperty('length'));
+  throw new Test262Error('#2: delete String.prototype.toLowerCase.length; String.prototype.toLowerCase.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.toLowerCase.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

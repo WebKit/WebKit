@@ -11,7 +11,7 @@ description: Checking Expression and Variable statements for x >>>= y
 var x = 4;
 var x1 = (x >>>= 1);
 if (x1 !== 2) {
-  $ERROR('#1: var x = 4; var x1 = (x >>>= 1); x1 === 2. Actual: ' + (x1));
+  throw new Test262Error('#1: var x = 4; var x1 = (x >>>= 1); x1 === 2. Actual: ' + (x1));
 }
 
 //CHECK#2
@@ -20,5 +20,5 @@ var y1;
 y = 4;
 y1 = (y >>>= 1);
 if (y1 !== 2) {
-  $ERROR('#2: y = 4; y1 = (y >>>= 1); y1 === 2. Actual: ' + (y1));
+  throw new Test262Error('#2: y = 4; y1 = (y >>>= 1); y1 === 2. Actual: ' + (y1));
 }

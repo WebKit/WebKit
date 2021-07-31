@@ -10,7 +10,7 @@ description: Checking String.prototype.replace.prototype;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.prototype.replace.prototype !== undefined) {
-  $ERROR('#1: String.prototype.replace.prototype === undefined. Actual: ' + String.prototype.replace.prototype);
+  throw new Test262Error('#1: String.prototype.replace.prototype === undefined. Actual: ' + String.prototype.replace.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

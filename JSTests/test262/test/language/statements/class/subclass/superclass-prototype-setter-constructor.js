@@ -9,7 +9,7 @@ function Base() {}
 
 Base.prototype = {
   set constructor(_) {
-    $ERROR("`Base.prototype.constructor` is unreachable.");
+    throw new Test262Error("`Base.prototype.constructor` is unreachable.");
   }
 };
 

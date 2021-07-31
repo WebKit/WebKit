@@ -8,9 +8,9 @@ description: The "length" property of the "getTimezoneOffset" is 0
 ---*/
 
 if (Date.prototype.getTimezoneOffset.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The getTimezoneOffset has a "length" property');
+  throw new Test262Error('#1: The getTimezoneOffset has a "length" property');
 }
 
 if (Date.prototype.getTimezoneOffset.length !== 0) {
-  $ERROR('#2: The "length" property of the getTimezoneOffset is 0');
+  throw new Test262Error('#2: The "length" property of the getTimezoneOffset is 0');
 }

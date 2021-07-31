@@ -23,7 +23,7 @@ if (__instance.concat(
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF,
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF
   ) !== "001234567891011121314150123456789101112131415012345678910111213141501234567891011121314150123456789101112131415012345678910111213141501234567891011121314150123456789101112131415") {
-  $ERROR('#1: Call concat([,[...]]) function with 128 arguments does not lead to throwing any errors');
+  throw new Test262Error('#1: Call concat([,[...]]) function with 128 arguments does not lead to throwing any errors');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

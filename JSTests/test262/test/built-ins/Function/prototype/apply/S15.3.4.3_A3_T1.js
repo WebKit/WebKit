@@ -13,5 +13,5 @@ Function("this.field=\"strawberry\"").apply();
 
 //CHECK#1
 if (this["field"] !== "strawberry") {
-  $ERROR('#1: If thisArg is null or undefined, the called function is passed the global object as the this value');
+  throw new Test262Error('#1: If thisArg is null or undefined, the called function is passed the global object as the this value');
 }

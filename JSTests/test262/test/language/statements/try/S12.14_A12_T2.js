@@ -30,10 +30,10 @@ for (x in mycars){
   fin=-1;
 }
 if(fin!==1){
-  $ERROR('#1.1: "finally" block must be evaluated');
+  throw new Test262Error('#1.1: "finally" block must be evaluated');
 }
 if(i!==3){
-  $ERROR('#1.2:  "try{continue} catch finally" must work correctly');
+  throw new Test262Error('#1.2:  "try{continue} catch finally" must work correctly');
 }
 
 // CHECK#2
@@ -52,10 +52,10 @@ for (x in mycars){
   fin2=-1;
 }
 if(fin2!==1){
-  $ERROR('#2.1: "finally" block must be evaluated');
+  throw new Test262Error('#2.1: "finally" block must be evaluated');
 }
 if(c2!==3){
-  $ERROR('#2.1: "try catch{continue} finally" must work correctly');
+  throw new Test262Error('#2.1: "try catch{continue} finally" must work correctly');
 }
 
 // CHECK#3
@@ -74,10 +74,10 @@ for (x in mycars){
   fin3=0;
 }
 if(c3!==3){
-  $ERROR('#3.1: "finally" block must be evaluated');
+  throw new Test262Error('#3.1: "finally" block must be evaluated');
 }
 if(fin3!==1){
-  $ERROR('#3.2: "try catch finally{continue}" must work correctly');
+  throw new Test262Error('#3.2: "try catch finally{continue}" must work correctly');
 }
 
 // CHECK#4
@@ -92,7 +92,7 @@ for (x in mycars){
   fin=-1;
 }
 if(fin!==1){
-  $ERROR('#4: "finally" block must be evaluated at "try{continue} finally" construction');
+  throw new Test262Error('#4: "finally" block must be evaluated at "try{continue} finally" construction');
 }
 
 // CHECK#5
@@ -108,7 +108,7 @@ for (x in mycars){
   c5+=12;
 }
 if(c5!==3){
-  $ERROR('#5: "try catch{continue}" must work correctly');
+  throw new Test262Error('#5: "try catch{continue}" must work correctly');
 }
 
 // CHECK#6
@@ -125,8 +125,8 @@ for (x in mycars){
   fin6=-1;
 }
 if(fin6!==1){
-  $ERROR('#6.1: "finally" block must be evaluated');
+  throw new Test262Error('#6.1: "finally" block must be evaluated');
 }
 if(c6!==3){
-  $ERROR('#6.2: "try finally{continue}" must work correctly');
+  throw new Test262Error('#6.2: "try finally{continue}" must work correctly');
 }

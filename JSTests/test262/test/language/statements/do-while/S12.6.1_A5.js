@@ -14,7 +14,7 @@ __evaluated = eval("do {__in__do__before__break=1; break; __in__do__after__break
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__in__do__before__break !== 1) {
-	$ERROR('#1: __in__do__before__break === 1. Actual:  __in__do__before__break ==='+ __in__do__before__break  );
+	throw new Test262Error('#1: __in__do__before__break === 1. Actual:  __in__do__before__break ==='+ __in__do__before__break  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (__in__do__before__break !== 1) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof __in__do__after__break !== "undefined") {
-	$ERROR('#2: typeof __in__do__after__break === "undefined". Actual:  typeof __in__do__after__break ==='+ typeof __in__do__after__break  );
+	throw new Test262Error('#2: typeof __in__do__after__break === "undefined". Actual:  typeof __in__do__after__break ==='+ typeof __in__do__after__break  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (typeof __in__do__after__break !== "undefined") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__evaluated !== 1) {
-	$ERROR('#3: __evaluated === 1. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#3: __evaluated === 1. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -17,5 +17,5 @@ var obj = new String("soap");
 
 //CHECK#1
 if (!(obj.touched)) {
-  $ERROR('#1: If thisArg is not null(defined) the called function is passed ToObject(thisArg) as the this value');
+  throw new Test262Error('#1: If thisArg is not null(defined) the called function is passed ToObject(thisArg) as the this value');
 }

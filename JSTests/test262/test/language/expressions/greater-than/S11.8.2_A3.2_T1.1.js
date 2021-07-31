@@ -13,30 +13,30 @@ description: >
 
 //CHECK#1
 if ("1" > "1" !== false) {
-  $ERROR('#1: "1" > "1" === false');
+  throw new Test262Error('#1: "1" > "1" === false');
 }
 
 //CHECK#2
 if (new String("1") > "1" !== false) {
-  $ERROR('#2: new String("1") > "1" === false');
+  throw new Test262Error('#2: new String("1") > "1" === false');
 }
 
 //CHECK#3
 if ("1" > new String("1") !== false) {
-  $ERROR('#3: "1" > new String("1") === false');
+  throw new Test262Error('#3: "1" > new String("1") === false');
 }
 
 //CHECK#4
 if (new String("1") > new String("1") !== false) {
-  $ERROR('#4: new String("1") > new String("1") === false');
+  throw new Test262Error('#4: new String("1") > new String("1") === false');
 }
 
 //CHECK#5
 if ("x" > "1" !== true) {
-  $ERROR('#5: "x" > "1" === true');
+  throw new Test262Error('#5: "x" > "1" === true');
 }
 
 //CHECK#6
 if ("1" > "x" !== false) {
-  $ERROR('#6: "1" > "x" === false');
+  throw new Test262Error('#6: "1" > "x" === false');
 }

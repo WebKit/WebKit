@@ -22,7 +22,7 @@ DDsin = DD_operator(Math.sin, 0.00001);
 //CHECK#1
 // ((sin(x))')' = -sin(x)
 if (DDsin( Math.PI/2 ) + Math.sin( Math.PI/2 ) > 0.00001) {
-	$ERROR('#1: return Expression yields to Return (return, GetValue(Evaluate Expression), empty)');
+	throw new Test262Error('#1: return Expression yields to Return (return, GetValue(Evaluate Expression), empty)');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

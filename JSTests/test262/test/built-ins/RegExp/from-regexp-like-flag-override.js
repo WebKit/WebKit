@@ -25,7 +25,7 @@ var result;
 
 Object.defineProperty(obj, 'flags', {
   get: function() {
-    $ERROR('The `flags` property value should not be referenced.');
+    throw new Test262Error('The `flags` property value should not be referenced.');
   }
 });
 

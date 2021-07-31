@@ -18,18 +18,18 @@ for (var indexI = 0; indexI <= 65535; indexI++) {
     eval("/*var " + String.fromCharCode(indexI) + "xx = 1*/");
     var hex = decimalToHexString(indexI);
     if (xx !== 0) {
-      $ERROR('#' + hex + ' ');
+      throw new Test262Error('#' + hex + ' ');
       errorCount++;
     }
   } catch (e){
-    $ERROR('#' + hex + ' ');
+    throw new Test262Error('#' + hex + ' ');
     errorCount++;
   }
   count++;
 }
 
 if (errorCount > 0) {
-  $ERROR('Total error: ' + errorCount + ' bad Unicode character in ' + count);
+  throw new Test262Error('Total error: ' + errorCount + ' bad Unicode character in ' + count);
 }
 
 function decimalToHexString(n) {

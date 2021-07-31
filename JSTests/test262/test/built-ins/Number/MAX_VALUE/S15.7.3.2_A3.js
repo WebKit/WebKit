@@ -13,7 +13,7 @@ verifyNotConfigurable(Number, "MAX_VALUE");
 // CHECK#1
 try {
   if (delete Number.MAX_VALUE !== false) {
-    $ERROR('#1: delete Number.MAX_VALUE === false');
+    throw new Test262Error('#1: delete Number.MAX_VALUE === false');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;

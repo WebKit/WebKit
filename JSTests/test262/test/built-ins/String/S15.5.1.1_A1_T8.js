@@ -23,7 +23,7 @@ Array.prototype.toString = __old__Array__prototype__toString;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(new Array); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(new Array); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "__ARRAY__") {
-  $ERROR('#2: Array.prototype.toString=function(){return "__ARRAY__";}; __str = String(new Array); __str === "__ARRAY__". Actual: __str ===' + __str);
+  throw new Test262Error('#2: Array.prototype.toString=function(){return "__ARRAY__";}; __str = String(new Array); __str === "__ARRAY__". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

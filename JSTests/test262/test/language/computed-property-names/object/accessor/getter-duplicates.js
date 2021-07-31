@@ -15,7 +15,7 @@ assert.sameValue(A.a, 'A', "The value of `A.a` is `'A'`");
 
 var B = {
   get b() {
-    $ERROR("The `b` getter definition in `B` is unreachable");
+    throw new Test262Error("The `b` getter definition in `B` is unreachable");
   },
   get ['b']() {
     return 'B';
@@ -25,10 +25,10 @@ assert.sameValue(B.b, 'B', "The value of `B.b` is `'B'`");
 
 var C = {
   get c() {
-    $ERROR("The `c` getter definition in `C` is unreachable");
+    throw new Test262Error("The `c` getter definition in `C` is unreachable");
   },
   get ['c']() {
-    $ERROR("The `['c']` getter definition in `C` is unreachable");
+    throw new Test262Error("The `['c']` getter definition in `C` is unreachable");
   },
   get ['c']() {
     return 'C';
@@ -38,7 +38,7 @@ assert.sameValue(C.c, 'C', "The value of `C.c` is `'C'`");
 
 var D = {
   get ['d']() {
-    $ERROR("The `['d']` getter definition in `D` is unreachable");
+    throw new Test262Error("The `['d']` getter definition in `D` is unreachable");
   },
   get d() {
     return 'D';

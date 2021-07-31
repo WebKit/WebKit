@@ -15,7 +15,7 @@ description: >
 //CHECK#1
 for (var i = -2; i < 0; i++) {
   if ("ABC\u0041\u0042\u0043".charAt(i) !== "\u0041\u0042\u0043ABC".substring(i, i + 1)) {
-    $ERROR('#' + (i + 2) + ': "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') === "\\u0041\\u0042\\u0043ABC".substring(' + i + ', ' + (i + 1) + '). Actual: "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') ===' + ("ABC\u0041\u0042\u0043".charAt(i)));
+    throw new Test262Error('#' + (i + 2) + ': "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') === "\\u0041\\u0042\\u0043ABC".substring(' + i + ', ' + (i + 1) + '). Actual: "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') ===' + ("ABC\u0041\u0042\u0043".charAt(i)));
   }
 }
 

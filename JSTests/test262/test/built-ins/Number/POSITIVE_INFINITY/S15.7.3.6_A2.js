@@ -11,9 +11,9 @@ includes: [propertyHelper.js]
 // CHECK#1
 verifyNotWritable(Number, "POSITIVE_INFINITY", null, 1);
 if (isFinite(Number.POSITIVE_INFINITY)) {
-  $ERROR('#1: Number.POSITIVE_INFINITY = 1; Number.POSITIVE_INFINITY === +Infinity');
+  throw new Test262Error('#1: Number.POSITIVE_INFINITY = 1; Number.POSITIVE_INFINITY === +Infinity');
 } else {
   if (Number.POSITIVE_INFINITY <= 0) {
-    $ERROR('#1: Number.POSITIVE_INFINITY = 1; Number.POSITIVE_INFINITY === +Infinity');
+    throw new Test262Error('#1: Number.POSITIVE_INFINITY = 1; Number.POSITIVE_INFINITY === +Infinity');
   }
 }

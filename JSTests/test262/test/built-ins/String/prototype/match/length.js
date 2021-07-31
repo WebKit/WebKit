@@ -25,7 +25,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.match.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.match.hasOwnProperty("length") return true. Actual: ' + String.prototype.match.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.match.hasOwnProperty("length") return true. Actual: ' + String.prototype.match.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ if (!(String.prototype.match.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.match.length !== 1) {
-  $ERROR('#2: String.prototype.match.length === 1. Actual: ' + String.prototype.match.length);
+  throw new Test262Error('#2: String.prototype.match.length === 1. Actual: ' + String.prototype.match.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

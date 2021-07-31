@@ -12,5 +12,5 @@ var __re = /2|12/;
 
 //CHECK#0
 if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	$ERROR('#0: var __string = new Number(1.012); __re = /2|12/; __re.test(__string) === (__re.exec(__string) !== null)');
+	throw new Test262Error('#0: var __string = new Number(1.012); __re = /2|12/; __re.test(__string) === (__re.exec(__string) !== null)');
 }

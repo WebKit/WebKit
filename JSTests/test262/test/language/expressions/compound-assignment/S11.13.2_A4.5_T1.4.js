@@ -13,26 +13,26 @@ var x;
 x = null;
 x -= undefined;
 if (isNaN(x) !== true) {
-  $ERROR('#1: x = null; x -= undefined; x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#1: x = null; x -= undefined; x === Not-a-Number. Actual: ' + (x));
 }
 
 //CHECK#2
 x = undefined;
 x -= null;
 if (isNaN(x) !== true) {
-  $ERROR('#2: x = undefined; x -= null; x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#2: x = undefined; x -= null; x === Not-a-Number. Actual: ' + (x));
 }
 
 //CHECK#3
 x = undefined;
 x -= undefined;
 if (isNaN(x) !== true) {
-  $ERROR('#3: x = undefined; x -= undefined; x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#3: x = undefined; x -= undefined; x === Not-a-Number. Actual: ' + (x));
 }
 
 //CHECK#4
 x = null;
 x -= null;
 if (x !== 0) {
-  $ERROR('#4: x = null; x -= null; x === 0. Actual: ' + (x));
+  throw new Test262Error('#4: x = null; x -= null; x === 0. Actual: ' + (x));
 }

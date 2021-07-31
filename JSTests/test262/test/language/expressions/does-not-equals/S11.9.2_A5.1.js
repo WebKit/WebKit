@@ -11,35 +11,35 @@ description: x and y are primitive strings
 
 //CHECK#1
 if (("" != "") !== false) {
-  $ERROR('#1: ("" != "") === false');
+  throw new Test262Error('#1: ("" != "") === false');
 }
 
 //CHECK#2
 if ((" " != " ") !== false) {
-  $ERROR('#2: " (" != " ") === false');
+  throw new Test262Error('#2: " (" != " ") === false');
 }
 
 //CHECK#3
 if ((" " != "") !== true) {
-  $ERROR('#3: " (" != "") === true');
+  throw new Test262Error('#3: " (" != "") === true');
 }
 
 //CHECK#4
 if (("string" != "string") !== false) {
-  $ERROR('#4: ("string" != "string") === false');
+  throw new Test262Error('#4: ("string" != "string") === false');
 }
 
 //CHECK#5
 if ((" string" != "string ") !== true) {
-  $ERROR('#5: (" string" != "string ") === true');
+  throw new Test262Error('#5: (" string" != "string ") === true');
 }
 
 //CHECK#6
 if (("1.0" != "1") !== true) {
-  $ERROR('#6: ("1.0" != "1") === true');
+  throw new Test262Error('#6: ("1.0" != "1") === true');
 }
 
 //CHECK#7
 if (("0xff" != "255") !== true) {
-  $ERROR('#7: ("0xff" != "255") === true');
+  throw new Test262Error('#7: ("0xff" != "255") === true');
 }

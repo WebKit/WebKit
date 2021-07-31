@@ -9,105 +9,105 @@ description: "NonEscapeSequence :: ENGLISH CAPITAL ALPHABET"
 
 //CHECK#A-Z
 if ("A" !== "\A") {
-  $ERROR('#A');
+  throw new Test262Error('#A');
 }
 
 if ("B" !== "\B") {
-  $ERROR('#B');
+  throw new Test262Error('#B');
 }
 
 if ("C" !== "\C") {
-  $ERROR('#C');
+  throw new Test262Error('#C');
 }
 
 if ("D" !== "\D") {
-  $ERROR('#D');
+  throw new Test262Error('#D');
 }
 
 if ("E" !== "\E") {
-  $ERROR('#E');
+  throw new Test262Error('#E');
 }
 
 if ("F" !== "\F") {
-  $ERROR('#F');
+  throw new Test262Error('#F');
 }
 
 if ("G" !== "\G") {
-  $ERROR('#G');
+  throw new Test262Error('#G');
 }
 
 if ("H" !== "\H") {
-  $ERROR('#H');
+  throw new Test262Error('#H');
 }
 
 if ("I" !== "\I") {
-  $ERROR('#I');
+  throw new Test262Error('#I');
 }
 
 if ("J" !== "\J") {
-  $ERROR('#J');
+  throw new Test262Error('#J');
 }
 
 if ("K" !== "\K") {
-  $ERROR('#K');
+  throw new Test262Error('#K');
 }
 
 if ("L" !== "\L") {
-  $ERROR('#L');
+  throw new Test262Error('#L');
 }
 
 if ("M" !== "\M") {
-  $ERROR('#M');
+  throw new Test262Error('#M');
 }
 
 if ("N" !== "\N") {
-  $ERROR('#N');
+  throw new Test262Error('#N');
 }
 
 if ("O" !== "\O") {
-  $ERROR('#O');
+  throw new Test262Error('#O');
 }
 
 if ("P" !== "\P") {
-  $ERROR('#P');
+  throw new Test262Error('#P');
 }
 
 if ("Q" !== "\Q") {
-  $ERROR('#Q');
+  throw new Test262Error('#Q');
 }
 
 if ("R" !== "\R") {
-  $ERROR('#R');
+  throw new Test262Error('#R');
 }
 
 if ("S" !== "\S") {
-  $ERROR('#S');
+  throw new Test262Error('#S');
 }
 
 if ("T" !== "\T") {
-  $ERROR('#T');
+  throw new Test262Error('#T');
 }
 
 if ("U" !== "\U") {
-  $ERROR('#U');
+  throw new Test262Error('#U');
 }
 
 if ("V" !== "\V") {
-  $ERROR('#V');
+  throw new Test262Error('#V');
 }
 
 if ("W" !== "\W") {
-  $ERROR('#W');
+  throw new Test262Error('#W');
 }
 
 if ("X" !== "\X") {
-  $ERROR('#X');
+  throw new Test262Error('#X');
 }
 
 if ("Y" !== "\Y") {
-  $ERROR('#Y');
+  throw new Test262Error('#Y');
 }
 
 if ("Z" !== "\Z") {
-  $ERROR('#Z');
+  throw new Test262Error('#Z');
 }

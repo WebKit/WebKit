@@ -24,5 +24,5 @@ a
 ()
 
 if (x !== 7) {
-  $ERROR('#1: Check Function Expression for automatic semicolon insertion');
+  throw new Test262Error('#1: Check Function Expression for automatic semicolon insertion');
 }

@@ -28,10 +28,10 @@ function testFunction() {
   }
 
   if (scope.x !== 1) {
-    $ERROR('#1: scope.x === 1. Actual: ' + (scope.x));
+    throw new Test262Error('#1: scope.x === 1. Actual: ' + (scope.x));
   }
   if (x !== 0) {
-    $ERROR('#2: x === 0. Actual: ' + (x));
+    throw new Test262Error('#2: x === 0. Actual: ' + (x));
   }
 }
 testFunction();

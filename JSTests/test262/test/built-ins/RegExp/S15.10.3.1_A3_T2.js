@@ -15,10 +15,10 @@ var __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm");
 
 //CHECK#1
 if (__instance.constructor !== RegExp) {
-	$ERROR('#1: __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm"); __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
+	throw new Test262Error('#1: __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm"); __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
 }
 
 //CHECK#2
 if (__instance.source !== "[a-c]*") {
-	$ERROR('#2: __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm"); __instance.source === "[a-c]*". Actual: '+ (__instance.source));
+	throw new Test262Error('#2: __instance = RegExp({toString:function(){return "[a-c]*";}}, "gm"); __instance.source === "[a-c]*". Actual: '+ (__instance.source));
 }

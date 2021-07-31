@@ -24,7 +24,7 @@ item += "ing";
 // The values of item and itemRef are NOT equal, as a whole
 // new string object has been created
 if( item == itemRef ){
-  $ERROR('#1: var item = new String("test"); var itemRef = item; item += "ing"; item != itemRef');
+  throw new Test262Error('#1: var item = new String("test"); var itemRef = item; item += "ing"; item != itemRef');
 };
 //
 //////////////////////////////////////////////////////////////////////////////

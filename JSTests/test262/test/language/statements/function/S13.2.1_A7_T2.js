@@ -22,7 +22,7 @@ var __func = function (){
 try{
     var x=__func();
 } catch(e){
-    $ERROR('#1: var x=__func() does not lead to throwing exception. Actual: exception is '+e);
+    throw new Test262Error('#1: var x=__func() does not lead to throwing exception. Actual: exception is '+e);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

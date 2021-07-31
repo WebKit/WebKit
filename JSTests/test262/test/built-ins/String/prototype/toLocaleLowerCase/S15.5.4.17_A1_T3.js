@@ -10,7 +10,7 @@ description: Checking by using eval
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (eval("\"BJ\"").toLocaleLowerCase() !== "bj") {
-  $ERROR('#1: eval("\\"BJ\\"").toLocaleLowerCase() === "bj". Actual: ' + eval("\"BJ\"").toLocaleLowerCase());
+  throw new Test262Error('#1: eval("\\"BJ\\"").toLocaleLowerCase() === "bj". Actual: ' + eval("\"BJ\"").toLocaleLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

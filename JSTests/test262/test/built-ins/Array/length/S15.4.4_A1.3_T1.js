@@ -10,5 +10,5 @@ description: Array.prototype.length === 0
 
 //CHECK#1
 if (Array.prototype.length !== 0) {
-  $ERROR('#1.1: Array.prototype.length === 0. Actual: ' + (Array.prototype.length));
+  throw new Test262Error('#1.1: Array.prototype.length === 0. Actual: ' + (Array.prototype.length));
 }

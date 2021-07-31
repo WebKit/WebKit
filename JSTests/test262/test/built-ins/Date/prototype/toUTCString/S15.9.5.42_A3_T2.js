@@ -10,9 +10,9 @@ description: Checking DontDelete attribute
 ---*/
 
 if (delete Date.prototype.toUTCString.length !== true) {
-  $ERROR('#1: The Date.prototype.toUTCString.length property does not have the attributes DontDelete');
+  throw new Test262Error('#1: The Date.prototype.toUTCString.length property does not have the attributes DontDelete');
 }
 
 if (Date.prototype.toUTCString.hasOwnProperty('length')) {
-  $ERROR('#2: The Date.prototype.toUTCString.length property does not have the attributes DontDelete');
+  throw new Test262Error('#2: The Date.prototype.toUTCString.length property does not have the attributes DontDelete');
 }

@@ -8,5 +8,5 @@ description: encodeURI("#") === "#"
 ---*/
 
 if (encodeURI("#") !== "#") {
-  $ERROR('#1: unescapedURISet containing "#"');
+  throw new Test262Error('#1: unescapedURISet containing "#"');
 }

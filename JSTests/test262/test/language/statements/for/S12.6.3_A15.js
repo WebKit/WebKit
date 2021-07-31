@@ -14,10 +14,10 @@ for(var i=0;i<10;i++){
 	i*=2;
   break;	
 }
-if (i!==0)  $ERROR('#1: i === 0. Actual:  i ==='+ i  );
+if (i!==0)  throw new Test262Error('#1: i === 0. Actual:  i ==='+ i  );
 
 //CHECK#2
 for(var i=0;i<10;i++){
   i*=2;
-  if (i===3)  $ERROR('#2: i !== 3');
+  if (i===3)  throw new Test262Error('#2: i !== 3');
 }

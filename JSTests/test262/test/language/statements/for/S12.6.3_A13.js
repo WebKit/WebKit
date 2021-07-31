@@ -14,7 +14,7 @@ description: Declaring variable in "for" ExpressionNoIn
 try {
 	index = index;
 } catch (e) {
-	$ERROR('#1: VariableDeclaration in "var VariableDeclarationListNoIn" of for IterationStatement is allowed');
+	throw new Test262Error('#1: VariableDeclaration in "var VariableDeclarationListNoIn" of for IterationStatement is allowed');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -11,9 +11,9 @@ description: Checking if using 1.0 as F leads to throwing the correct exception
 
 //CHECK#1
 try {
-	$ERROR('#1.1: new RegExp("^",1.0) throw SyntaxError. Actual: ' + (new RegExp("^",1.0)));
+	throw new Test262Error('#1.1: new RegExp("^",1.0) throw SyntaxError. Actual: ' + (new RegExp("^",1.0)));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: new RegExp("^",1.0) throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: new RegExp("^",1.0) throw SyntaxError. Actual: ' + (e));
 	}
 }

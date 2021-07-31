@@ -19,7 +19,7 @@ __evaluated = eval("for(var ind in (arr=[2,1,4,3]))__str+=arr[ind]");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__evaluated !== __str) {
-	$ERROR('#1: __evaluated === __str. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#1: __evaluated === __str. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ if (__evaluated !== __str) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (!( (__str.indexOf("2")!==-1)&&(__str.indexOf("1")!==-1)&&(__str.indexOf("4")!==-1)&&(__str.indexOf("3")!==-1) )) {
-	$ERROR('#2: (__str.indexOf("2")!==-1)&&(__str.indexOf("1")!==-1)&&(__str.indexOf("4")!==-1)&&(__str.indexOf("3")!==-1)');
+	throw new Test262Error('#2: (__str.indexOf("2")!==-1)&&(__str.indexOf("1")!==-1)&&(__str.indexOf("4")!==-1)&&(__str.indexOf("3")!==-1)');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

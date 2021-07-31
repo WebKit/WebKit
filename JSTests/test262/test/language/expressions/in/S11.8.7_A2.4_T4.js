@@ -10,5 +10,5 @@ flags: [noStrict]
 
 //CHECK#1
 if ((NUMBER = Number, "MAX_VALUE") in NUMBER !== true) {
-  $ERROR('#1: (NUMBER = Number, "MAX_VALUE") in NUMBER !== true');
+  throw new Test262Error('#1: (NUMBER = Number, "MAX_VALUE") in NUMBER !== true');
 }

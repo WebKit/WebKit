@@ -14,7 +14,7 @@ __instance.charAt = String.prototype.charAt;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.charAt(false) + __instance.charAt(true) + __instance.charAt(true + 1) !== "fal") {
-  $ERROR('#1: __instance = new Boolean; __instance.charAt = String.prototype.charAt;  __instance = new Boolean; __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true)+__instance.charAt(true+1) === "fal". Actual: ' + __instance.charAt(false) + __instance.charAt(true) + __instance.charAt(true + 1));
+  throw new Test262Error('#1: __instance = new Boolean; __instance.charAt = String.prototype.charAt;  __instance = new Boolean; __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true)+__instance.charAt(true+1) === "fal". Actual: ' + __instance.charAt(false) + __instance.charAt(true) + __instance.charAt(true + 1));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

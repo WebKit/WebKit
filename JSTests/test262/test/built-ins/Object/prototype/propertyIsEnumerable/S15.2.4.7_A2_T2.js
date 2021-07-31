@@ -17,7 +17,7 @@ description: >
 
 //CHECK#1
 if (typeof Object.prototype.propertyIsEnumerable !== "function") {
-  $ERROR('#1: propertyIsEnumerable method is defined');
+  throw new Test262Error('#1: propertyIsEnumerable method is defined');
 }
 
 var obj = {
@@ -26,12 +26,12 @@ var obj = {
 
 //CHECK#2
 if (typeof obj.propertyIsEnumerable !== "function") {
-  $ERROR('#2: propertyIsEnumerable method is accessed');
+  throw new Test262Error('#2: propertyIsEnumerable method is accessed');
 }
 
 //CHECK#3
 if (!(obj.propertyIsEnumerable("the_property"))) {
-  $ERROR('#3: propertyIsEnumerable method works properly');
+  throw new Test262Error('#3: propertyIsEnumerable method works properly');
 }
 
 //CHECK#4
@@ -40,6 +40,6 @@ for (var prop in obj) {
   accum += prop;
 }
 if (accum.indexOf("the_property") !== 0) {
-  $ERROR('#4: enumerating works properly');
+  throw new Test262Error('#4: enumerating works properly');
 }
 //

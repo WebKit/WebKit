@@ -10,11 +10,11 @@ description: Checking "undefined" case
 //CHECK#1
 try {
   undefined();
-    $ERROR('#1.1: undefined() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#1.1: undefined() throw TypeError. Actual: ' + (e));	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: undefined() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#1.2: undefined() throw TypeError. Actual: ' + (e));	
   }
 }
 
@@ -22,10 +22,10 @@ catch (e) {
 try {
   var x = undefined;
   x();
-    $ERROR('#2.1: var x = undefined; x() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#2.1: var x = undefined; x() throw TypeError. Actual: ' + (e));	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#2.2: var x = undefined; x() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#2.2: var x = undefined; x() throw TypeError. Actual: ' + (e));	
   }
 }

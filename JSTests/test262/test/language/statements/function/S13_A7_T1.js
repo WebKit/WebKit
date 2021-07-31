@@ -11,7 +11,7 @@ function __func(){'ground control to major tom'};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __func !== "function") {
-	$ERROR('#1: typeof __func === "function". Actual: typeof __func ==='+typeof __func);
+	throw new Test262Error('#1: typeof __func === "function". Actual: typeof __func ==='+typeof __func);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ function __func__2(){b};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof __func__2 !== "function") {
-	$ERROR('#2: typeof __func__2 === "function". Actual: typeof __func__2 ==='+typeof __func__2);
+	throw new Test262Error('#2: typeof __func__2 === "function". Actual: typeof __func__2 ==='+typeof __func__2);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ function __func__3(){1};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (typeof __func__3 !== "function") {
-	$ERROR('#3: typeof __func__3 === "function". Actual: typeof __func__3 ==='+typeof __func__3);
+	throw new Test262Error('#3: typeof __func__3 === "function". Actual: typeof __func__3 ==='+typeof __func__3);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ function __func__4(){1+c};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (typeof __func__4 !== "function") {
-	$ERROR('#4: typeof __func__4 === "function". Actual: typeof __func__4 ==='+typeof __func__4);
+	throw new Test262Error('#4: typeof __func__4 === "function". Actual: typeof __func__4 ==='+typeof __func__4);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ function __func__5(){inc(d)};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#5
 if (typeof __func__5 !== "function") {
-	$ERROR('#5: typeof __func__5 === "function". Actual: typeof __func__5 ==='+typeof __func__5);
+	throw new Test262Error('#5: typeof __func__5 === "function". Actual: typeof __func__5 ==='+typeof __func__5);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ function __func__6(){var \u0042 = 1;};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
 if (typeof __func__6 !== "function") {
-	$ERROR('#6: typeof __func__6 === "function". Actual: typeof __func__6 ==='+typeof __func__6);
+	throw new Test262Error('#6: typeof __func__6 === "function". Actual: typeof __func__6 ==='+typeof __func__6);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ if (typeof __func__6 !== "function") {
 ////////////////////////////////////////////////////////////////////////////////
 ////CHECK#7
 //if (typeof __func__7 !== "function") {
-//	$ERROR('#7: The FunctionBody must be SourceElements');
+//	throw new Test262Error('#7: The FunctionBody must be SourceElements');
 //}
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,7 @@ var a = {
 
 try {
   a.splice(1, 2, 4);
-  $ERROR("Expected a TypeError");
+  throw new Test262Error("Expected a TypeError");
 } catch (e) {
   if (!(e instanceof TypeError)) {
     throw e;

@@ -12,7 +12,7 @@ var x=+Infinity;
 ///////////////////////////////////////////////////////
 // CHECK#1
 if (typeof(x) !== "number"){
-  $ERROR('#1: var x=+Infinity; typeof(x) === "number". Actual: ' + (typeof(x)));
+  throw new Test262Error('#1: var x=+Infinity; typeof(x) === "number". Actual: ' + (typeof(x)));
 }
 //
 //////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if (typeof(x) !== "number"){
 ///////////////////////////////////////////////////////
 // CHECK#2
 if (typeof(+Infinity) !== "number"){
-  $ERROR('#2: typeof(+Infinity) === "number". Actual: ' + (typeof(+Infinity)));
+  throw new Test262Error('#2: typeof(+Infinity) === "number". Actual: ' + (typeof(+Infinity)));
 }
 //
 //////////////////////////////////////////////////////////

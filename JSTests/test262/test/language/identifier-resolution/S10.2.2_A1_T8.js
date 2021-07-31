@@ -27,5 +27,5 @@ function f1(){
 }
 
 if(!(f1() === "obj")){
-  $ERROR("#1: Scope chain disturbed");
+  throw new Test262Error("#1: Scope chain disturbed");
 }

@@ -13,20 +13,20 @@ description: >
 
 // CHECK#1
 if (+(13) !== 13) {
-  $ERROR('#1: +(13) === 13. Actual: ' + (+(13)));
+  throw new Test262Error('#1: +(13) === 13. Actual: ' + (+(13)));
 }
 
 // CHECK#2
 if (+(-13) !== -13) { 
-  $ERROR('#2: +(-13) === -13. Actual: ' + (+(-13)));
+  throw new Test262Error('#2: +(-13) === -13. Actual: ' + (+(-13)));
 }
 
 // CHECK#3
 if (+(1.3) !== 1.3) {
-  $ERROR('#3: +(1.3) === 1.3. Actual: ' + (+(1.3)));
+  throw new Test262Error('#3: +(1.3) === 1.3. Actual: ' + (+(1.3)));
 }
 
 // CHECK#4
 if (+(-1.3) !== -1.3) {
-  $ERROR('#4: +(-1.3) === -1.3. Actual: ' + (+(-1.3)));
+  throw new Test262Error('#4: +(-1.3) === -1.3. Actual: ' + (+(-1.3)));
 }

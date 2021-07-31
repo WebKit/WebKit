@@ -80,11 +80,11 @@ firstIterResult = new Proxy({}, {
     if (name === 'value') {
       return null;
     }
-    $ERROR('This code is unreachable.');
+    throw new Test262Error('This code is unreachable.');
   }
 });
 for (var x of iterable) {
-  $ERROR('This code is unreachable.');
+  throw new Test262Error('This code is unreachable.');
 }
 
 firstIterResult = new Proxy({}, {
@@ -95,7 +95,7 @@ firstIterResult = new Proxy({}, {
     if (name === 'value') {
       return 23;
     }
-    $ERROR('This code is unreachable.');
+    throw new Test262Error('This code is unreachable.');
   }
 });
 var i = 0;

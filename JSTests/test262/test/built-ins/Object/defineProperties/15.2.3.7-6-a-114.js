@@ -17,7 +17,7 @@ Object.defineProperties(arr, {
 });
 
 if (arr.length !== 0) {
-  $ERROR("Expected arr.length to be 0, actually " + arr.length);
+  throw new Test262Error("Expected arr.length to be 0, actually " + arr.length);
 }
 
 arr.length = 2;

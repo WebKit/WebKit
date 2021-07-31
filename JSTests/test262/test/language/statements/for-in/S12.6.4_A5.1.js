@@ -40,4 +40,4 @@ if(!(
 (__arr.indexOf("db2")!==-1)&
 (__arr.indexOf("dc3")!==-1)&
 (__arr.indexOf("dd4")!==-1)
-)) $ERROR('#1: The nested for-in Statement applied to hierarchial object works properly as described in the Standard');
+)) throw new Test262Error('#1: The nested for-in Statement applied to hierarchial object works properly as described in the Standard');

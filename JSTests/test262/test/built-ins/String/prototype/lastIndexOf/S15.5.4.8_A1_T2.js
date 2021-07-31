@@ -18,7 +18,7 @@ __instance.lastIndexOf = String.prototype.lastIndexOf;
 if (__instance.lastIndexOf("A" !== "\u0041", function() {
     return 0;
   }(), null) !== 0) {
-  $ERROR('#1: __instance = new Boolean; __instance.lastIndexOf = String.prototype.lastIndexOf;  __instance.lastIndexOf("A"!=="\\u0041", function(){return 0;}(),null) === 0. Actual: ' + __instance.lastIndexOf("A" !== "\u0041", function() {
+  throw new Test262Error('#1: __instance = new Boolean; __instance.lastIndexOf = String.prototype.lastIndexOf;  __instance.lastIndexOf("A"!=="\\u0041", function(){return 0;}(),null) === 0. Actual: ' + __instance.lastIndexOf("A" !== "\u0041", function() {
     return 0;
   }(), null));
 }

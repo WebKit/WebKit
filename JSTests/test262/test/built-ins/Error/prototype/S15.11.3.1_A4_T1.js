@@ -10,7 +10,7 @@ description: Checking Error.hasOwnProperty('prototype')
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(Error.hasOwnProperty('prototype'))) {
-  $ERROR('#1: Error.hasOwnProperty(\'prototype\') return true. Actual: ' + Error.hasOwnProperty('prototype'));
+  throw new Test262Error('#1: Error.hasOwnProperty(\'prototype\') return true. Actual: ' + Error.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

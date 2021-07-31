@@ -19,10 +19,10 @@ function myFunction1(){
 }
 var x1=myFunction1();
 if(x1!==1){
-  $ERROR('#1.1: x1===1. Actual: x1==='+x1);
+  throw new Test262Error('#1.1: x1===1. Actual: x1==='+x1);
 }
 if (c1!==1){
-  $ERROR('#1.2: "finally" block must be evaluated');
+  throw new Test262Error('#1.2: "finally" block must be evaluated');
 }
 
 // CHECK#2
@@ -38,11 +38,11 @@ function myFunction2(){
 }
 try{
   var x2=myFunction2();
-  $ERROR('#2.1: Throwing exception inside function lead to throwing exception outside this function');
+  throw new Test262Error('#2.1: Throwing exception inside function lead to throwing exception outside this function');
 }
 catch(e){
   if (c2!==1){
-    $ERROR('#2.2: "finally" block must be evaluated');
+    throw new Test262Error('#2.2: "finally" block must be evaluated');
   }
 }
 
@@ -58,11 +58,11 @@ function myFunction3(){
 }
 try{
   var x3=myFunction3();
-  $ERROR('#3.1: Throwing exception inside function lead to throwing exception outside this function');
+  throw new Test262Error('#3.1: Throwing exception inside function lead to throwing exception outside this function');
 }
 catch(e){
   if (c3!==1){
-    $ERROR('#3.2: "finally" block must be evaluated');
+    throw new Test262Error('#3.2: "finally" block must be evaluated');
   }
 }
 
@@ -80,11 +80,11 @@ function myFunction4(){
 }
 try{
   var x4=myFunction4();
-  $ERROR('#4.2: Throwing exception inside function lead to throwing exception outside this function');
+  throw new Test262Error('#4.2: Throwing exception inside function lead to throwing exception outside this function');
 }
 catch(e){
   if (c4!==1){
-    $ERROR('#4.3: "finally" block must be evaluated');
+    throw new Test262Error('#4.3: "finally" block must be evaluated');
   }
 }
 
@@ -102,11 +102,11 @@ function myFunction5(){
 }
 try{
   var x5=myFunction5();
-  $ERROR('#5.2: Throwing exception inside function lead to throwing exception outside this function');
+  throw new Test262Error('#5.2: Throwing exception inside function lead to throwing exception outside this function');
 }
 catch(e){
   if (c5!==1){
-    $ERROR('#5.3: "finally" block must be evaluated');
+    throw new Test262Error('#5.3: "finally" block must be evaluated');
   }
 }
 
@@ -125,17 +125,17 @@ function myFunction6(){
 }
 try{
   var x6=myFunction6();
-  $ERROR('#6.1: Throwing exception inside function lead to throwing exception outside this function');
+  throw new Test262Error('#6.1: Throwing exception inside function lead to throwing exception outside this function');
 }
 catch(e){
   if(e==="ex1"){
-    $ERROR('#6.2: Exception !=="ex1". Actual: catch previous exception');
+    throw new Test262Error('#6.2: Exception !=="ex1". Actual: catch previous exception');
   }
   if(e!=="ex2"){
-    $ERROR('#6.3: Exception !=="ex1". Actual: '+e);
+    throw new Test262Error('#6.3: Exception !=="ex1". Actual: '+e);
   }
   if (c6!==1){
-    $ERROR('#6.4: "finally" block must be evaluated');
+    throw new Test262Error('#6.4: "finally" block must be evaluated');
   }
 }
 
@@ -152,10 +152,10 @@ function myFunction7(){
 }
 var x7=myFunction7();
 if(x7!==2){
-  $ERROR('#7.1: "catch" block must be evaluated');
+  throw new Test262Error('#7.1: "catch" block must be evaluated');
 }
 if (c7!==1){
-  $ERROR('#7.2: "finally" block must be evaluated');
+  throw new Test262Error('#7.2: "finally" block must be evaluated');
 }
 
 // CHECK#8
@@ -176,5 +176,5 @@ catch(ex1){
   c8=10;
 }
 if (c8!==1){
-  $ERROR('#8: "finally" block must be evaluated');
+  throw new Test262Error('#8: "finally" block must be evaluated');
 }

@@ -15,10 +15,10 @@ var f = Function("arg1,arg2,arg3", "arg4,arg5", null);
 
 //CHECK#1
 if (!(f.hasOwnProperty('length'))) {
-  $ERROR('#1: the function has length property.');
+  throw new Test262Error('#1: the function has length property.');
 }
 
 //CHECK#2
 if (f.length !== 5) {
-  $ERROR('#2: The value of the length property is usually an integer that indicates the "typical" number of arguments expected by the function');
+  throw new Test262Error('#2: The value of the length property is usually an integer that indicates the "typical" number of arguments expected by the function');
 }

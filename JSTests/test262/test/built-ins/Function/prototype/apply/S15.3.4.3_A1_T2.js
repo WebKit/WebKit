@@ -20,15 +20,15 @@ var obj = new FACTORY;
 
 //CHECK#1
 if (typeof obj.apply !== "function") {
-  $ERROR('#1: apply method accessed');
+  throw new Test262Error('#1: apply method accessed');
 }
 
 //CHECK#2
 try {
   obj.apply();
-  $ERROR('#2: If the object does not have a [[Call]] property, a TypeError exception is thrown');
+  throw new Test262Error('#2: If the object does not have a [[Call]] property, a TypeError exception is thrown');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#2.1: If the object does not have a [[Call]] property, a TypeError exception is thrown');
+    throw new Test262Error('#2.1: If the object does not have a [[Call]] property, a TypeError exception is thrown');
   }
 }

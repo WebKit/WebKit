@@ -18,7 +18,7 @@ __instance.substring = String.prototype.substring;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.substring(new Array(), new Boolean(1)) !== "f") {
-  $ERROR('#1: __instance = new Boolean(); __instance.substring = String.prototype.substring;  __instance.substring(new Array(), new Boolean(1)) === "f". Actual: ' + __instance.substring(new Array(), new Boolean(1)));
+  throw new Test262Error('#1: __instance = new Boolean(); __instance.substring = String.prototype.substring;  __instance.substring(new Array(), new Boolean(1)) === "f". Actual: ' + __instance.substring(new Array(), new Boolean(1)));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

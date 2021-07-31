@@ -12,7 +12,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String(void 0).replace("e", undefined) !== "undundefinedfined") {
-  $ERROR('#1: String(void 0).replace("e",undefined) === "undundefinedfined". Actual: ' + String(void 0).replace("e", undefined));
+  throw new Test262Error('#1: String(void 0).replace("e",undefined) === "undundefinedfined". Actual: ' + String(void 0).replace("e", undefined));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

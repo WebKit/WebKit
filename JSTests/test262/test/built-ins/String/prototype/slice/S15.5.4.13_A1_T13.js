@@ -28,10 +28,10 @@ var __obj2 = {
 //CHECK#1
 try {
   var x = "ABB\u0041BABAB\u0031BBAA".slice(__obj, __obj2);
-  $ERROR('#1: "var x = slice(__obj,__obj2)" lead to throwing exception');
+  throw new Test262Error('#1: "var x = slice(__obj,__obj2)" lead to throwing exception');
 } catch (e) {
   if (e !== "inend") {
-    $ERROR('#1.1: Exception === "inend". Actual: ' + e);
+    throw new Test262Error('#1.1: Exception === "inend". Actual: ' + e);
   }
 }
 //

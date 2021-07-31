@@ -14,7 +14,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.concat.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.concat.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
+  throw new Test262Error('#0: String.prototype.concat.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (!(String.prototype.concat.hasOwnProperty('length'))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!delete String.prototype.concat.length) {
-  $ERROR('#1: delete String.prototype.concat.length return true');
+  throw new Test262Error('#1: delete String.prototype.concat.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (!delete String.prototype.concat.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.concat.hasOwnProperty('length')) {
-  $ERROR('#2: delete String.prototype.concat.length; String.prototype.concat.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
+  throw new Test262Error('#2: delete String.prototype.concat.length; String.prototype.concat.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.concat.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

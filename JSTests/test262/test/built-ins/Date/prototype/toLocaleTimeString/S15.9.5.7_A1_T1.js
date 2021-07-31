@@ -15,5 +15,5 @@ if (x === 1)
 else
   Date.prototype.toLocaleTimeString = 1;
 if (Date.prototype.toLocaleTimeString === x) {
-  $ERROR('#1: The Date.prototype.toLocaleTimeString has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.toLocaleTimeString has not the attribute ReadOnly');
 }

@@ -8,9 +8,9 @@ description: The "length" property of the "toString" is 0
 ---*/
 
 if (Date.prototype.toString.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The toString has a "length" property');
+  throw new Test262Error('#1: The toString has a "length" property');
 }
 
 if (Date.prototype.toString.length !== 0) {
-  $ERROR('#2: The "length" property of the toString is 0');
+  throw new Test262Error('#2: The "length" property of the toString is 0');
 }

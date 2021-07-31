@@ -14,5 +14,5 @@ var __executed = /a[]/.test("\0a\0a");;
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /a[]/.test("\\0a\\0a") === false');
+	throw new Test262Error('#1: /a[]/.test("\\0a\\0a") === false');
 }

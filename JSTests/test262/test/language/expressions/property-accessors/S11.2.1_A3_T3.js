@@ -12,30 +12,30 @@ description: Checking String case;
 
 //CHECK#1
 if ("abc123".charAt(5) !== "3") {
-  $ERROR('#1: "abc123".charAt(5) === "3". Actual: ' + ("abc123".charAt(5)));
+  throw new Test262Error('#1: "abc123".charAt(5) === "3". Actual: ' + ("abc123".charAt(5)));
 }
 
 //CHECK#2
 if ("abc123"["charAt"](0) !== "a") {
-  $ERROR('#2: "abc123"["charAt"](0) === "a". Actual: ' + ("abc123"["charAt"](0)));
+  throw new Test262Error('#2: "abc123"["charAt"](0) === "a". Actual: ' + ("abc123"["charAt"](0)));
 }
 
 //CHECK#3
 if ("abc123".length !== 6) {
-  $ERROR('#3: "abc123".length === 6. Actual: ' + ("abc123".length));
+  throw new Test262Error('#3: "abc123".length === 6. Actual: ' + ("abc123".length));
 }
 
 //CHECK#4
 if ("abc123"["length"] !== 6) {
-  $ERROR('#4: "abc123"["length"] === 6. Actual: ' + ("abc123"["length"]));
+  throw new Test262Error('#4: "abc123"["length"] === 6. Actual: ' + ("abc123"["length"]));
 }
 
 //CHECK#5
 if (new String("abc123").length !== 6) {
-  $ERROR('#5: new String("abc123").length === 6. Actual: ' + (new String("abc123").length));
+  throw new Test262Error('#5: new String("abc123").length === 6. Actual: ' + (new String("abc123").length));
 }
 
 //CHECK#6
 if (new String("abc123")["charAt"](2) !== "c") {
-  $ERROR('#6: new String("abc123")["charAt"](2) === "c". Actual: ' + (new String("abc123")["charAt"](2)));
+  throw new Test262Error('#6: new String("abc123")["charAt"](2) === "c". Actual: ' + (new String("abc123")["charAt"](2)));
 }

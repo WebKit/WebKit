@@ -13,7 +13,7 @@ function __func__MULT(incrementator, arg, mult){ return incrementator(arg)*mult;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__func__MULT(__func__INC, 2, 2) !== 6) {
-	$ERROR('#1: function  can be passed as argument');
+	throw new Test262Error('#1: function  can be passed as argument');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

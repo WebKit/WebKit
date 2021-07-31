@@ -12,21 +12,21 @@ description: Checking Global object case
 //CHECK#1
 try {
   new this;
-  $ERROR('#1: new this throw TypeError');	
+  throw new Test262Error('#1: new this throw TypeError');	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1: new this throw TypeError');	
+    throw new Test262Error('#1: new this throw TypeError');	
   }
 }
 
 //CHECK#2
 try {
   new this();
-  $ERROR('#2: new this() throw TypeError'); 
+  throw new Test262Error('#2: new this() throw TypeError'); 
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#2: new this() throw TypeError'); 
+    throw new Test262Error('#2: new this() throw TypeError'); 
   }
 }

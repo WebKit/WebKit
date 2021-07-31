@@ -13,5 +13,5 @@ if (x === 1)
 else
   Date.prototype.setDate = 1;
 if (Date.prototype.setDate === x) {
-  $ERROR('#1: The Date.prototype.setDate has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.setDate has not the attribute ReadOnly');
 }

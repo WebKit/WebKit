@@ -21,9 +21,9 @@ Object.defineProperty(iterThrows, Symbol.iterator, {
 });
 
 Promise.race(iterThrows).then(function() {
-  $ERROR('Promise unexpectedly fulfilled: Promise.race(iterThrows) should throw');
+  throw new Test262Error('Promise unexpectedly fulfilled: Promise.race(iterThrows) should throw');
 }, function(err) {
   if (!(err instanceof Error)) {
-    $ERROR('Expected Promise to be rejected with an error, got ' + err);
+    throw new Test262Error('Expected Promise to be rejected with an error, got ' + err);
   }
 }).then($DONE, $DONE);

@@ -13,15 +13,15 @@ function f_arg(x,y) {
 
 //CHECK#1
 if (f_arg().length !== 0) {
-  $ERROR('#1: function f_arg(x,y) {return arguments;} f_arg().length === 0. Actual: ' + (f_arg().length));
+  throw new Test262Error('#1: function f_arg(x,y) {return arguments;} f_arg().length === 0. Actual: ' + (f_arg().length));
 }
 
 //CHECK#2
 if (f_arg()[0] !== undefined) {
-  $ERROR('#2: function f_arg(x,y) {return arguments;} f_arg()[0] === undefined. Actual: ' + (f_arg()[0]));
+  throw new Test262Error('#2: function f_arg(x,y) {return arguments;} f_arg()[0] === undefined. Actual: ' + (f_arg()[0]));
 }
 
 //CHECK#3
 if (f_arg.length !== 2) {
-  $ERROR('#3: function f_arg(x,y) {return arguments;} f_arg.length === 2. Actual: ' + (f_arg.length));
+  throw new Test262Error('#3: function f_arg(x,y) {return arguments;} f_arg.length === 2. Actual: ' + (f_arg.length));
 }

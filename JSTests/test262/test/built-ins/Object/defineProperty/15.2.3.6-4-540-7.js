@@ -52,7 +52,7 @@ try {
   });
 } catch (e1) {
   if (!result) {
-    $ERROR('Expected result to be true, actually ' + result);
+    throw new Test262Error('Expected result to be true, actually ' + result);
   }
 
 
@@ -66,7 +66,7 @@ try {
 
 
   if (!(e1 instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e1);
+    throw new Test262Error("Expected TypeError, got " + e1);
   }
 
 }

@@ -9,8 +9,8 @@ description: Tests that JSON.parse treats "__proto__" as a regular property name
 
 var x = JSON.parse('{"__proto__":[]}');
 if (Object.getPrototypeOf(x) !== Object.prototype) {
-  $ERROR('#1: JSON.parse confused by "__proto__"');
+  throw new Test262Error('#1: JSON.parse confused by "__proto__"');
 }
 if (!Array.isArray(x.__proto__)) {
-  $ERROR('#2: JSON.parse did not set "__proto__" as a regular property');
+  throw new Test262Error('#2: JSON.parse did not set "__proto__" as a regular property');
 }

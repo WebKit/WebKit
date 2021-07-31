@@ -11,5 +11,5 @@ description: Try to enumerate properties of Number
 var count=0;
 for (p in Number) count++;
 if (count > 0){
-  $ERROR('#1: count=0; for (p in Number) count++; count > 0. Actual: ' + (count));
+  throw new Test262Error('#1: count=0; for (p in Number) count++; count > 0. Actual: ' + (count));
 }

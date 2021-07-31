@@ -12,9 +12,9 @@ description: Throw statement
 //CHECK#1
 try {
   eval("throw 1;");
-  $ERROR('#1.1: throw 1 must throw SyntaxError. Actual: ' + (eval("throw 1;")));
+  throw new Test262Error('#1.1: throw 1 must throw SyntaxError. Actual: ' + (eval("throw 1;")));
 } catch(e) {
   if (e !== 1) {
-    $ERROR('#1.2: throw 1 must throw SyntaxError. Actual: ' + (e));
+    throw new Test262Error('#1.2: throw 1 must throw SyntaxError. Actual: ' + (e));
   }  
 }

@@ -20,7 +20,7 @@ var __instance = new __FACTORY;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.charAt(eval("1"), true, null, {}) !== "i") {
-  $ERROR('#1: __instance.charAt(eval("1"),true,null,{})=== "i". Actual: ' + __instance.charAt(eval("1"), true, null, {}));
+  throw new Test262Error('#1: __instance.charAt(eval("1"),true,null,{})=== "i". Actual: ' + __instance.charAt(eval("1"), true, null, {}));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

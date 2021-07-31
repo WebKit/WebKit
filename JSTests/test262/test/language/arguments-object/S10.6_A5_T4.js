@@ -18,11 +18,11 @@ function f1(){
 
 try{
   if(f1().length !== str){
-    $ERROR("#1: A property length have attribute { ReadOnly }");
+    throw new Test262Error("#1: A property length have attribute { ReadOnly }");
   }
 }
 catch(e){
-  $ERROR("#1: arguments object don't exists");
+  throw new Test262Error("#1: arguments object don't exists");
 }
 
 //CHECK#2
@@ -32,9 +32,9 @@ var f2 = function(){
   };
 try{
   if(f2().length !== str){
-    $ERROR("#2: A property length have attribute { ReadOnly }");
+    throw new Test262Error("#2: A property length have attribute { ReadOnly }");
   }
 }
 catch(e){
-  $ERROR("#2: arguments object don't exists");
+  throw new Test262Error("#2: arguments object don't exists");
 }

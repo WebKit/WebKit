@@ -12,6 +12,6 @@ var unicode = ["\u0410", "\u0411", "\u0412", "\u0413", "\u0414", "\u0415", "\u04
 var character = ["А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я", "Ё"];
 for (var index = 0; index <= 32; index++) {
   if (unicode[index] !== character[index]) {
-    $ERROR('#' + character[index] + ' ');
+    throw new Test262Error('#' + character[index] + ' ');
   }
 }

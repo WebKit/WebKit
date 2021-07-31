@@ -14,7 +14,7 @@ try{
   throw "exception #1";
 }
 catch(e){
-  if (e!=="exception #1") $ERROR('#1: Exception ==="exception #1". Actual:  Exception ==='+ e );
+  if (e!=="exception #1") throw new Test262Error('#1: Exception ==="exception #1". Actual:  Exception ==='+ e );
 }
 
 // CHECK#2
@@ -23,5 +23,5 @@ try{
   throw b;
 }
 catch(e){
-  if (e!=="exception #1") $ERROR('#2: Exception ==="exception #1". Actual:  Exception ==='+ e );
+  if (e!=="exception #1") throw new Test262Error('#2: Exception ==="exception #1". Actual:  Exception ==='+ e );
 }

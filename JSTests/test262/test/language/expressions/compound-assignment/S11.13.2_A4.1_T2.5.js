@@ -15,54 +15,54 @@ var x;
 x = true;
 x *= "1";
 if (x !== 1) {
-  $ERROR('#1: x = true; x *= "1"; x === 1. Actual: ' + (x));
+  throw new Test262Error('#1: x = true; x *= "1"; x === 1. Actual: ' + (x));
 }
 
 //CHECK#2
 x = "1";
 x *= true;
 if (x !== 1) {
-  $ERROR('#2: x = "1"; x *= true; x === 1. Actual: ' + (x));
+  throw new Test262Error('#2: x = "1"; x *= true; x === 1. Actual: ' + (x));
 }
 
 //CHECK#3
 x = new Boolean(true);
 x *= "1";
 if (x !== 1) {
-  $ERROR('#3: x = new Boolean(true); x *= "1"; x === 1. Actual: ' + (x));
+  throw new Test262Error('#3: x = new Boolean(true); x *= "1"; x === 1. Actual: ' + (x));
 }
 
 //CHECK#4
 x = "1";
 x *= new Boolean(true);
 if (x !== 1) {
-  $ERROR('#4: x = "1"; x *= new Boolean(true); x === 1. Actual: ' + (x));
+  throw new Test262Error('#4: x = "1"; x *= new Boolean(true); x === 1. Actual: ' + (x));
 }
 
 //CHECK#5
 x = true;
 x *= new String("1");
 if (x !== 1) {
-  $ERROR('#5: x = true; x *= new String("1"); x === 1. Actual: ' + (x));
+  throw new Test262Error('#5: x = true; x *= new String("1"); x === 1. Actual: ' + (x));
 }
 
 //CHECK#6
 x = new String("1");
 x *= true;
 if (x !== 1) {
-  $ERROR('#6: x = new String("1"); x *= true; x === 1. Actual: ' + (x));
+  throw new Test262Error('#6: x = new String("1"); x *= true; x === 1. Actual: ' + (x));
 }
 
 //CHECK#7
 x = new Boolean(true);
 x *= new String("1");
 if (x !== 1) {
-  $ERROR('#7: x = new Boolean(true); x *= new String("1"); x === 1. Actual: ' + (x));
+  throw new Test262Error('#7: x = new Boolean(true); x *= new String("1"); x === 1. Actual: ' + (x));
 }
 
 //CHECK#8
 x = new String("1");
 x *= new Boolean(true);
 if (x !== 1) {
-  $ERROR('#8: x = new String("1"); x *= new Boolean(true); x === 1. Actual: ' + (x));
+  throw new Test262Error('#8: x = new String("1"); x *= new Boolean(true); x === 1. Actual: ' + (x));
 }

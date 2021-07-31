@@ -13,9 +13,8 @@ description: >
 
 try {
   new eval();
-  $ERROR('#1.1: new eval() throw TypeError. Actual: ' + (new eval()));
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: new eval() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: new eval() throw TypeError. Actual: ' + (e));
   }
 }

@@ -34,14 +34,14 @@ var body = {
 //CHECK#1
 try {
   var f = new Function(p, body);
-  $ERROR('#1: test failed');
+  throw new Test262Error('#1: test failed');
 } catch (e) {
   if (e !== "body") {
-    $ERROR('#1.1: i) Let Result(i) be the first argument; ii) Let P be ToString(Result(i))');
+    throw new Test262Error('#1.1: i) Let Result(i) be the first argument; ii) Let P be ToString(Result(i))');
   }
 }
 
 //CHECK#2
 if (p !== 1) {
-  $ERROR('#2: i) Let Result(i) be the first argument; ii) Let P be ToString(Result(i))');
+  throw new Test262Error('#2: i) Let Result(i) be the first argument; ii) Let P be ToString(Result(i))');
 }

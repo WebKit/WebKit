@@ -12,77 +12,77 @@ description: Function execution context - Constructor Properties
 function test() {
   //CHECK#13
   if (Object === null) {
-    $ERROR("#13: Object === null");
+    throw new Test262Error("#13: Object === null");
   }
 
   //CHECK#14
   if (Function === null) {
-    $ERROR("#14: Function === null");
+    throw new Test262Error("#14: Function === null");
   }
 
   //CHECK#15
   if (String === null) {
-    $ERROR("#15: String === null");
+    throw new Test262Error("#15: String === null");
   }
 
   //CHECK#16
   if (Number === null) {
-    $ERROR("#16: Function === null");
+    throw new Test262Error("#16: Function === null");
   }
 
   //CHECK#17
   if (Array === null) {
-    $ERROR("#17: Array === null");
+    throw new Test262Error("#17: Array === null");
   }
 
   //CHECK#18
   if (Boolean === null) {
-    $ERROR("#20: Boolean === null");
+    throw new Test262Error("#20: Boolean === null");
   }
 
   //CHECK#18
   if (Date === null) {
-    $ERROR("#18: Date === null");
+    throw new Test262Error("#18: Date === null");
   }
 
   //CHECK#19
   if (RegExp === null) {
-    $ERROR("#19: RegExp === null");
+    throw new Test262Error("#19: RegExp === null");
   }
 
   //CHECK#20
   if (Error === null) {
-    $ERROR("#20: Error === null");
+    throw new Test262Error("#20: Error === null");
   }
 
   //CHECK#21
   if (EvalError === null) {
-    $ERROR("#21: EvalError === null");
+    throw new Test262Error("#21: EvalError === null");
   }
 
   //CHECK#22
   if (RangeError === null) {
-    $ERROR("#22: RangeError === null");
+    throw new Test262Error("#22: RangeError === null");
   }
 
   //CHECK#23
   if (ReferenceError === null) {
-    $ERROR("#23: ReferenceError === null");
+    throw new Test262Error("#23: ReferenceError === null");
   }
 
   //CHECK#24
   if (SyntaxError === null) {
-    $ERROR("#24: SyntaxError === null");
+    throw new Test262Error("#24: SyntaxError === null");
   }
 
   //CHECK#25
   if (TypeError === null) {
-    $ERROR("#25: TypeError === null");
+    throw new Test262Error("#25: TypeError === null");
   }
 
   //CHECK#26
   if (URIError === null) {
-    $ERROR("#26: URIError === null");
+    throw new Test262Error("#26: URIError === null");
   }
 }
 

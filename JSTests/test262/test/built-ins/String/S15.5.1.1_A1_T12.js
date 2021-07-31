@@ -14,7 +14,7 @@ var __str = String(1 / "a");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(1/"a"); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(1/"a"); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "NaN") {
-  $ERROR('#2: __str = String(1/"a"); __str === "NaN". Actual: __str ===' + __str);
+  throw new Test262Error('#2: __str = String(1/"a"); __str === "NaN". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ __str = String("b" * null);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (typeof __str !== "string") {
-  $ERROR('#3: __str = String("b"*null); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#3: __str = String("b"*null); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (__str !== "NaN") {
-  $ERROR('#4: __str = String("b"*null); __str === "NaN". Actual: __str ===' + __str);
+  throw new Test262Error('#4: __str = String("b"*null); __str === "NaN". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ __str = String(Number.NaN);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#5
 if (typeof __str !== "string") {
-  $ERROR('#5: __str = String(Number.NaN); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#5: __str = String(Number.NaN); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
 if (__str !== "NaN") {
-  $ERROR('#6: __str = String(Number.NaN); __str === "NaN". Actual: __str ===' + __str);
+  throw new Test262Error('#6: __str = String(Number.NaN); __str === "NaN". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

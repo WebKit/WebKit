@@ -11,10 +11,10 @@ description: Checking property toFixed
 
 //CHECK#1
 if ((new Number()).hasOwnProperty("toFixed") !== false) {
-  $ERROR('#1: Number instance must have no special property "toFixed"');
+  throw new Test262Error('#1: Number instance must have no special property "toFixed"');
 }
 
 //CHECK#2
 if ((new Number()).toFixed !== Number.prototype.toFixed) {
-  $ERROR('#2: Number instance property "toFixed" must be inherited from Number prototype object');
+  throw new Test262Error('#2: Number instance property "toFixed" must be inherited from Number prototype object');
 }

@@ -34,5 +34,5 @@ for (var indexI = 0; indexI < interval.length; indexI++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: If B = 1110xxxx (n = 3) and (string.charAt(k + 7) and  string.charAt(k + 8)) do not represent hexadecimal digits, throw URIError');
+  throw new Test262Error('#1: If B = 1110xxxx (n = 3) and (string.charAt(k + 7) and  string.charAt(k + 8)) do not represent hexadecimal digits, throw URIError');
 }

@@ -18,7 +18,7 @@ var __re = /([\d]{5})([-\ ]?[\d]{4})?$/g;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.match(__re).length !== __matches.length) {
-  $ERROR('#1: __string.match(__re).length=== __matches.length. Actual: ' + __string.match(__re).length);
+  throw new Test262Error('#1: __string.match(__re).length=== __matches.length. Actual: ' + __string.match(__re).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (__string.match(__re).length !== __matches.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__string.match(__re)[0] !== __matches[0]) {
-  $ERROR('#2: __string.match(__re)[0]===__matches[0]. Actual: ' + __string.match(__re)[0]);
+  throw new Test262Error('#2: __string.match(__re)[0]===__matches[0]. Actual: ' + __string.match(__re)[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -17,11 +17,11 @@ for (var indexI = 0; indexI <= 65535; indexI++) {
     try {
       var str = String.fromCharCode(indexI);
       if (decodeURIComponent(str) !== str) {
-        $ERROR('#' + hex + ' ');
+        throw new Test262Error('#' + hex + ' ');
         errorCount++;
       }
     } catch (e) {
-      $ERROR('#' + hex + ' ');
+      throw new Test262Error('#' + hex + ' ');
       errorCount++;
     }
     count++;
@@ -29,5 +29,5 @@ for (var indexI = 0; indexI <= 65535; indexI++) {
 }
 
 if (errorCount > 0) {
-  $ERROR('Total error: ' + errorCount + ' bad Unicode character in ' + count);
+  throw new Test262Error('Total error: ' + errorCount + ' bad Unicode character in ' + count);
 }

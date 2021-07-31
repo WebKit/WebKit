@@ -10,10 +10,10 @@ description: Checking with undeclarated variables
 //CHECK#1
 try {
   max_value in (max_value = "MAX_VALUE", Number);
-  $ERROR('#1.1: max_value in (max_value = "MAX_VALUE", Number) throw ReferenceError. Actual: ' + (max_value in (max_value = "MAX_VALUE", Number)));  
+  throw new Test262Error('#1.1: max_value in (max_value = "MAX_VALUE", Number) throw ReferenceError. Actual: ' + (max_value in (max_value = "MAX_VALUE", Number)));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: max_value in (max_value = "MAX_VALUE", Number) throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: max_value in (max_value = "MAX_VALUE", Number) throw ReferenceError. Actual: ' + (e));  
   }
 }

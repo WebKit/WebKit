@@ -13,10 +13,10 @@ var __str = new Object("");
 //CHECK#1
 try {
   new __str;
-  $ERROR('#1: __str = new Object(""); "new __str" lead to throwing exception');
+  throw new Test262Error('#1: __str = new Object(""); "new __str" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1.1: Exception is instance of TypeError. Actual: exception is ' + e);
+    throw new Test262Error('#1.1: Exception is instance of TypeError. Actual: exception is ' + e);
   }
 }
 //

@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (!(Function.prototype.call.hasOwnProperty('length'))) {
-  $ERROR('#1: the Function.prototype.call has length property.');
+  throw new Test262Error('#1: the Function.prototype.call has length property.');
 }
 
 var obj = Function.prototype.call.length;
@@ -23,5 +23,5 @@ verifyNotWritable(Function.prototype.call, "length", null, function() {
 
 //CHECK#2
 if (Function.prototype.call.length !== obj) {
-  $ERROR('#2: the Function.prototype.call length property has the attributes ReadOnly.');
+  throw new Test262Error('#2: the Function.prototype.call length property has the attributes ReadOnly.');
 }

@@ -14,12 +14,12 @@ description: >
 
 // CHECK#1
 if (Number(new Number()) !== 0) {
-  $ERROR('#1: Number(new Number()) === 0. Actual: ' + (Number(new Number())));
+  throw new Test262Error('#1: Number(new Number()) === 0. Actual: ' + (Number(new Number())));
 }
 
 // CHECK#2
 if (Number(new Number(0)) !== 0) {
-  $ERROR('#2: Number(new Number(0)) === 0. Actual: ' + (Number(new Number(0))));
+  throw new Test262Error('#2: Number(new Number(0)) === 0. Actual: ' + (Number(new Number(0))));
 }
 
 // CHECK#3
@@ -27,10 +27,10 @@ assert.sameValue(Number(new Number(NaN)), NaN, "Number(new Number(NaN)");
 
 // CHECK#4
 if (Number(new Number(null)) !== 0) {
-  $ERROR('#4.1: Number(new Number(null)) === 0. Actual: ' + (Number(new Number(null))));
+  throw new Test262Error('#4.1: Number(new Number(null)) === 0. Actual: ' + (Number(new Number(null))));
 } else {
   if (1 / Number(new Number(null)) !== Number.POSITIVE_INFINITY) {
-    $ERROR('#4.2: Number(new Number(null)) === +0. Actual: -0');
+    throw new Test262Error('#4.2: Number(new Number(null)) === +0. Actual: -0');
   }
 }
 
@@ -39,29 +39,29 @@ assert.sameValue(Number(new Number(void 0)), NaN, "Number(new Number(void 0)");
 
 // CHECK#6
 if (Number(new Number(true)) !== 1) {
-  $ERROR('#6: Number(new Number(true)) === 1. Actual: ' + (Number(new Number(true))));
+  throw new Test262Error('#6: Number(new Number(true)) === 1. Actual: ' + (Number(new Number(true))));
 }
 
 // CHECK#7
 if (Number(new Number(false)) !== +0) {
-  $ERROR('#7.1: Number(new Number(false)) === 0. Actual: ' + (Number(new Number(false))));
+  throw new Test262Error('#7.1: Number(new Number(false)) === 0. Actual: ' + (Number(new Number(false))));
 } else {
   if (1 / Number(new Number(false)) !== Number.POSITIVE_INFINITY) {
-    $ERROR('#7.2: Number(new Number(false)) === +0. Actual: -0');
+    throw new Test262Error('#7.2: Number(new Number(false)) === +0. Actual: -0');
   }
 }
 
 // CHECK#8
 if (Number(new Boolean(true)) !== 1) {
-  $ERROR('#8: Number(new Boolean(true)) === 1. Actual: ' + (Number(new Boolean(true))));
+  throw new Test262Error('#8: Number(new Boolean(true)) === 1. Actual: ' + (Number(new Boolean(true))));
 }
 
 // CHECK#9
 if (Number(new Boolean(false)) !== +0) {
-  $ERROR('#9.1: Number(new Boolean(false)) === 0. Actual: ' + (Number(new Boolean(false))));
+  throw new Test262Error('#9.1: Number(new Boolean(false)) === 0. Actual: ' + (Number(new Boolean(false))));
 } else {
   if (1 / Number(new Boolean(false)) !== Number.POSITIVE_INFINITY) {
-    $ERROR('#9.2: Number(new Boolean(false)) === +0. Actual: -0');
+    throw new Test262Error('#9.2: Number(new Boolean(false)) === +0. Actual: -0');
   }
 }
 
@@ -97,7 +97,7 @@ var myobj2 = {
 };
 
 if (Number(myobj2) !== 9876543210) {
-  $ERROR("#12: Number(myobj2) calls ToPrimitive with hint Number. Exptected: 9876543210. Actual: " + (Number(myobj2)));
+  throw new Test262Error("#12: Number(myobj2) calls ToPrimitive with hint Number. Exptected: 9876543210. Actual: " + (Number(myobj2)));
 }
 
 
@@ -124,7 +124,7 @@ var myobj4 = {
 };
 
 if (Number(myobj4) !== 67890) {
-  $ERROR("#14: Number(myobj4) calls ToPrimitive with hint Number. Exptected: 67890.  Actual: " + (Number(myobj4)));
+  throw new Test262Error("#14: Number(myobj4) calls ToPrimitive with hint Number. Exptected: 67890.  Actual: " + (Number(myobj4)));
 }
 
 // CHECK#15

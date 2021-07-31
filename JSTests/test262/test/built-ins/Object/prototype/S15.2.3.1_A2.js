@@ -9,7 +9,7 @@ description: Checking if enumerating "Object.prototype" property fails
 
 // CHECK#1
 if (Object.propertyIsEnumerable('prototype')) {
-  $ERROR('#1: the Object.prototype property has the attributes DontEnum');
+  throw new Test262Error('#1: the Object.prototype property has the attributes DontEnum');
 }
 
 // CHECK#2
@@ -20,5 +20,5 @@ for (var p in Object) {
 }
 
 if (cout !== 0) {
-  $ERROR('#2: the Object.prototype property has the attributes DontEnum');
+  throw new Test262Error('#2: the Object.prototype property has the attributes DontEnum');
 }

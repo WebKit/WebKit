@@ -9,5 +9,5 @@ description: Checking undeclared variable case
 
 //CHECK#1
 if (delete this.x !== true) {
-  $ERROR('#1: delete this.x === true');
+  throw new Test262Error('#1: delete this.x === true');
 }

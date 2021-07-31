@@ -16,4 +16,4 @@ function test(){
 	a+b
 }
 var x=test();
-if (x!==undefined) $ERROR('#1: Automatic semicolon insertion not work with return');
+if (x!==undefined) throw new Test262Error('#1: Automatic semicolon insertion not work with return');

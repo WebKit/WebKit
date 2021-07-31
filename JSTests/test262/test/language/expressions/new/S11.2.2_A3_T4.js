@@ -12,11 +12,11 @@ description: Checking "undefined" case
 //CHECK#1
 try {
   new undefined;
-  $ERROR('#1: new undefined throw TypeError');	
+  throw new Test262Error('#1: new undefined throw TypeError');	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1: new undefined throw TypeError');	
+    throw new Test262Error('#1: new undefined throw TypeError');	
   }
 }
 
@@ -24,11 +24,11 @@ catch (e) {
 try {
   var x = undefined;
   new x;
-  $ERROR('#2: var x = undefined; new x throw TypeError');	
+  throw new Test262Error('#2: var x = undefined; new x throw TypeError');	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#2: var x = undefined; new x throw TypeError');	
+    throw new Test262Error('#2: var x = undefined; new x throw TypeError');	
   }
 }
 
@@ -36,10 +36,10 @@ catch (e) {
 try {
   var x = undefined;
   new x();
-  $ERROR('#3: var x = undefined; new x() throw TypeError'); 
+  throw new Test262Error('#3: var x = undefined; new x() throw TypeError'); 
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#3: var x = undefined; new x() throw TypeError'); 
+    throw new Test262Error('#3: var x = undefined; new x() throw TypeError'); 
   }
 }

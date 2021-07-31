@@ -13,22 +13,22 @@ description: >
 
 //CHECK#1
 if ((new Boolean(true) != new Boolean(true)) !== true) {
-  $ERROR('#1: (new Boolean(true) != new Boolean(true)) === true');
+  throw new Test262Error('#1: (new Boolean(true) != new Boolean(true)) === true');
 }
 
 //CHECK#2
 if ((new Number(1) != new Number(1)) !== true) {
-  $ERROR('#2: (new Number(1) != new Number(1)) === true');
+  throw new Test262Error('#2: (new Number(1) != new Number(1)) === true');
 }
 
 //CHECK#3
 if ((new String("x") != new String("x")) !== true) {
-  $ERROR('#3: (new String("x") != new String("x")) === true');
+  throw new Test262Error('#3: (new String("x") != new String("x")) === true');
 }
 
 //CHECK#4
 if ((new Object() != new Object()) !== true) {
-  $ERROR('#4: (new Object() != new Object()) === true');
+  throw new Test262Error('#4: (new Object() != new Object()) === true');
 }
 
 //CHECK#5
@@ -36,20 +36,20 @@ var x, y;
 x = {}; 
 y = x;
 if ((x != y) !== false) {
-  $ERROR('#5: x = {}; y = x; (x != y) === false');
+  throw new Test262Error('#5: x = {}; y = x; (x != y) === false');
 }
 
 //CHECK#6
 if ((new Boolean(true) != new Number(1)) !== true) {
-  $ERROR('#6 (new Boolean(true) != new Number(1)) === true');
+  throw new Test262Error('#6 (new Boolean(true) != new Number(1)) === true');
 }
 
 //CHECK#7
 if ((new Number(1) != new String("1")) !== true) {
-  $ERROR('#7: (new Number(1) != new String("1")) === true');
+  throw new Test262Error('#7: (new Number(1) != new String("1")) === true');
 }
 
 //CHECK#8
 if ((new String("1") != new Boolean(true)) !== true) {
-  $ERROR('#8: (new String("x") != new Boolean(true)) === true');
+  throw new Test262Error('#8: (new String("x") != new Boolean(true)) === true');
 }

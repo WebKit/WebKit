@@ -10,15 +10,15 @@ description: "IdentifierPart :: m"
 //CHECK#1
 var regexp = /(?:)/m; 
 if (regexp.global !== false) {
-  $ERROR('#1: var regexp = /(?:)/g; regexp.global === false. Actual: ' + (regexp.global));
+  throw new Test262Error('#1: var regexp = /(?:)/g; regexp.global === false. Actual: ' + (regexp.global));
 }
 
 //CHECK#2 
 if (regexp.ignoreCase !== false) {
-  $ERROR('#2: var regexp = /(?:)/g; regexp.ignoreCase === false. Actual: ' + (regexp.ignoreCase));
+  throw new Test262Error('#2: var regexp = /(?:)/g; regexp.ignoreCase === false. Actual: ' + (regexp.ignoreCase));
 }
 
 //CHECK#3
 if (regexp.multiline !== true) {
-  $ERROR('#3: var regexp = /(?:)/g; regexp.multiline === true. Actual: ' + (regexp.multiline));
+  throw new Test262Error('#3: var regexp = /(?:)/g; regexp.multiline === true. Actual: ' + (regexp.multiline));
 }

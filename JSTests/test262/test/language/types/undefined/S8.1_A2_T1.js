@@ -12,7 +12,7 @@ var x;
 ///////////////////////////////////////////////////////////////////
 // CHECK#1
 if (!(x === undefined)) {
-  $ERROR('#1: var x; x === undefined. Actual: ' + (x));
+  throw new Test262Error('#1: var x; x === undefined. Actual: ' + (x));
 }
 //
 ///////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if (!(x === undefined)) {
 ///////////////////////////////////////////////////////////////////
 // CHECK#2
 if (!(typeof(x) === "undefined")) {
-  $ERROR('#2: var x; typeof(x) === "undefined". Actual: ' + (typeof(x)));
+  throw new Test262Error('#2: var x; typeof(x) === "undefined". Actual: ' + (typeof(x)));
 }
 //
 ///////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ if (!(typeof(x) === "undefined")) {
 ///////////////////////////////////////////////////////////////////
 // CHECK#3
 if (!(x === void 0)) {
-  $ERROR('#3: var x; x === void 0. Actual: ' + (x));
+  throw new Test262Error('#3: var x; x === void 0. Actual: ' + (x));
 }
 //
 ///////////////////////////////////////////////////////////////////

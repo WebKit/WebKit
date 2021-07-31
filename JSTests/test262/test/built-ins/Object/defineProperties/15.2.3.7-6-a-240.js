@@ -32,7 +32,7 @@ try {
     }
   });
 
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyEqualTo(arr, "1", obj1);
 
@@ -43,7 +43,7 @@ try {
   verifyNotConfigurable(arr, "1");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

@@ -35,7 +35,7 @@ r.exec = function() {
     get 0() {
       r.lastIndex = {
         valueOf: function() {
-          $ERROR('This function should not be invoked.');
+          throw new Test262Error('This function should not be invoked.');
         }
       };
       return thisMatch;

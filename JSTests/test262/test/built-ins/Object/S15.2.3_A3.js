@@ -9,10 +9,10 @@ description: Checking Object.length
 
 //CHECK#1
 if (!Object.hasOwnProperty("length")) {
-  $ERROR('#1: The Object constructor has the property "length"');
+  throw new Test262Error('#1: The Object constructor has the property "length"');
 }
 
 //CHECK#2
 if (Object.length !== 1) {
-  $ERROR('#2: Object.length property value should be 1');
+  throw new Test262Error('#2: Object.length property value should be 1');
 }

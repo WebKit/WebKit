@@ -23,7 +23,7 @@ assert.throws(TypeError, function() {
   var base = undefined;
   var prop = {
     toString: function() {
-      $ERROR("property key evaluated");
+      throw new Test262Error("property key evaluated");
     }
   };
 

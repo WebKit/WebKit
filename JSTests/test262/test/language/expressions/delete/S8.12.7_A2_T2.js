@@ -21,7 +21,7 @@ var __palette = new Palette();
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__palette.red !== 0xff0000) {
-  $ERROR(
+  throw new Test262Error(
     '#1: function Palette(){}; Palette.prototype = {red:0xFF0000, green:0x00FF00}; __palette = new Palette; __palette.red === 0xFF0000. Actual: ' +
     __palette.red
   );
@@ -32,7 +32,7 @@ if (__palette.red !== 0xff0000) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (delete __palette.red !== true) {
-  $ERROR(
+  throw new Test262Error(
     '#2 function Palette(){}; Palette.prototype = {red:0xFF0000, green:0x00FF00}; __palette = new Palette; delete __palette.red === true. Actual: ' +
     delete __palette.red
   );
@@ -43,7 +43,7 @@ if (delete __palette.red !== true) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__palette.red !== 0xff0000) {
-  $ERROR(
+  throw new Test262Error(
     '#3: function Palette(){}; Palette.prototype = {red:0xFF0000, green:0x00FF00}; __palette = new Palette; __palette.red === 0xFF0000. Actual: ' +
     __palette.red
   );

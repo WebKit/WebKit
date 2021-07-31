@@ -12,7 +12,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.match.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.match.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.match.hasOwnProperty('length'));
+  throw new Test262Error('#0: String.prototype.match.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.match.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ if (!(String.prototype.match.hasOwnProperty('length'))) {
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
 if (String.prototype.match.propertyIsEnumerable('length')) {
-  $ERROR('#1: String.prototype.match.propertyIsEnumerable(\'length\') return false');
+  throw new Test262Error('#1: String.prototype.match.propertyIsEnumerable(\'length\') return false');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ for (var p in String.prototype.match) {
 }
 
 if (count !== 0) {
-  $ERROR('#2: count=0; for (p in String.prototype.match){if (p==="length") count++;}; count === 0. Actual: ' + count);
+  throw new Test262Error('#2: count=0; for (p in String.prototype.match){if (p==="length") count++;}; count === 0. Actual: ' + count);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

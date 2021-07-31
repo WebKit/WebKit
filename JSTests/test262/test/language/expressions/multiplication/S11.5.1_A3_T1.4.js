@@ -9,20 +9,20 @@ description: Type(x) and Type(y) vary between Null and Undefined
 
 //CHECK#1
 if (isNaN(null * undefined) !== true) {
-  $ERROR('#1: null * undefined === Not-a-Number. Actual: ' + (null * undefined));
+  throw new Test262Error('#1: null * undefined === Not-a-Number. Actual: ' + (null * undefined));
 }
 
 //CHECK#2
 if (isNaN(undefined * null) !== true) {
-  $ERROR('#2: undefined * null === Not-a-Number. Actual: ' + (undefined * null));
+  throw new Test262Error('#2: undefined * null === Not-a-Number. Actual: ' + (undefined * null));
 }
 
 //CHECK#3
 if (isNaN(undefined * undefined) !== true) {
-  $ERROR('#3: undefined * undefined === Not-a-Number. Actual: ' + (undefined * undefined));
+  throw new Test262Error('#3: undefined * undefined === Not-a-Number. Actual: ' + (undefined * undefined));
 }
 
 //CHECK#4
 if (null * null !== 0) {
-  $ERROR('#4: null * null === 0. Actual: ' + (null * null));
+  throw new Test262Error('#4: null * null === 0. Actual: ' + (null * null));
 }

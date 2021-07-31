@@ -8,9 +8,9 @@ description: The "length" property of the "toLocaleDateString" is 0
 ---*/
 
 if (Date.prototype.toLocaleDateString.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The toLocaleDateString has a "length" property');
+  throw new Test262Error('#1: The toLocaleDateString has a "length" property');
 }
 
 if (Date.prototype.toLocaleDateString.length !== 0) {
-  $ERROR('#2: The "length" property of the toLocaleDateString is 0');
+  throw new Test262Error('#2: The "length" property of the toLocaleDateString is 0');
 }

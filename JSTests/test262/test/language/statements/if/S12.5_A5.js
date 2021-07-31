@@ -15,7 +15,7 @@ description: >
 //CHECK#1
 try {
 	__func=__func;
-	$ERROR('#1: "__func=__func" lead to throwing exception');
+	throw new Test262Error('#1: "__func=__func" lead to throwing exception');
 } catch (e) {
 	;
 }
@@ -29,7 +29,7 @@ try {
 	if(function __func(){throw "FunctionExpression";}) (function(){throw "TrueBranch"})(); else (function(){"MissBranch"})();
 } catch (e) {
 	if (e !== "TrueBranch") {
-		$ERROR('#2: Exception ==="TrueBranch". Actual:  Exception ==='+ e);
+		throw new Test262Error('#2: Exception ==="TrueBranch". Actual:  Exception ==='+ e);
 	}
 }
 //
@@ -39,7 +39,7 @@ try {
 //CHECK#3
 try {
 	__func=__func;
-	$ERROR('#3: "__func=__func" lead to throwing exception');
+	throw new Test262Error('#3: "__func=__func" lead to throwing exception');
 } catch (e) {
 	;
 }

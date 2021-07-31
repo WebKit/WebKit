@@ -19,6 +19,6 @@ bases[5] = -0.999999999999999;
 
 for (var i = 0; i < bases.length; i++) {
   if ((bases[i] ** exponent) !== +0) {
-    $ERROR("(" + bases[i] + " **  " + exponent + ") !== +0");
+    throw new Test262Error("(" + bases[i] + " **  " + exponent + ") !== +0");
   }
 }

@@ -19,20 +19,20 @@ x.length = 2;
 
 //CHECK#1
 if (x[0] !== 0) {
-  $ERROR('#1: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[0] === 0. Actual: ' + (x[0]));
+  throw new Test262Error('#1: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[0] === 0. Actual: ' + (x[0]));
 }
 
 //CHECK#2
 if (x[1] !== 1) {
-  $ERROR('#2: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[1] === 1. Actual: ' + (x[1]));
+  throw new Test262Error('#2: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[1] === 1. Actual: ' + (x[1]));
 }
 
 //CHECK#3
 if (x[2] !== undefined) {
-  $ERROR('#3: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[2] === undefined. Actual: ' + (x[2]));
+  throw new Test262Error('#3: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[2] === undefined. Actual: ' + (x[2]));
 }
 
 //CHECK#4
 if (x[4294967294] !== undefined) {
-  $ERROR('#4: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[4294967294] === undefined. Actual: ' + (x[4294967294]));
+  throw new Test262Error('#4: x = [0,1,2]; x[4294967294] = 4294967294; x.length = 2; x[4294967294] === undefined. Actual: ' + (x[4294967294]));
 }

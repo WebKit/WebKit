@@ -16,10 +16,10 @@ description: >
 Array.prototype.myproperty = 1;
 var x = new Array();
 if (x.myproperty !== 1) {
-  $ERROR('#1: Array.prototype.myproperty = 1; var x = new Array(); x.myproperty === 1. Actual: ' + (x.myproperty));
+  throw new Test262Error('#1: Array.prototype.myproperty = 1; var x = new Array(); x.myproperty === 1. Actual: ' + (x.myproperty));
 }
 
 //CHECK#2
 if (x.hasOwnProperty('myproperty') !== false) {
-  $ERROR('#2: Array.prototype.myproperty = 1; var x = new Array(); x.hasOwnProperty(\'myproperty\') === false. Actual: ' + (x.hasOwnProperty('myproperty')));
+  throw new Test262Error('#2: Array.prototype.myproperty = 1; var x = new Array(); x.hasOwnProperty(\'myproperty\') === false. Actual: ' + (x.hasOwnProperty('myproperty')));
 }

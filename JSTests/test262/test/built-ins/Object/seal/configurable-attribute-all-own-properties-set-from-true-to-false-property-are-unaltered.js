@@ -37,7 +37,7 @@ var preCheck = Object.isExtensible(obj);
 Object.seal(obj);
 
 if (!preCheck) {
-  $ERROR('Expected preCheck to be true, actually ' + preCheck);
+  throw new Test262Error('Expected preCheck to be true, actually ' + preCheck);
 }
 
 

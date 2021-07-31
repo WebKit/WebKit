@@ -17,5 +17,5 @@ description: >
 Array.prototype.myproperty = 1;
 var x = new Array(0);
 if (x.myproperty !== 1) {
-  $ERROR('#1: Array.prototype.myproperty = 1; var x = new Array(0); x.myproperty === 1. Actual: ' + (x.myproperty));
+  throw new Test262Error('#1: Array.prototype.myproperty = 1; var x = new Array(0); x.myproperty === 1. Actual: ' + (x.myproperty));
 }

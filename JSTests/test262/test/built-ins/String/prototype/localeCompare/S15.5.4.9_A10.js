@@ -15,7 +15,7 @@ includes: [propertyHelper.js]
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.localeCompare.hasOwnProperty('length'))) {
-  $ERROR('#1: String.prototype.localeCompare.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.localeCompare.hasOwnProperty('length'));
+  throw new Test262Error('#1: String.prototype.localeCompare.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.localeCompare.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ verifyNotWritable(String.prototype.localeCompare, "length", null, function() {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.localeCompare.length !== __obj) {
-  $ERROR('#2: __obj = String.prototype.localeCompare.length; String.prototype.localeCompare.length = function(){return "shifted";}; String.prototype.localeCompare.length === __obj. Actual: ' + String.prototype.localeCompare.length);
+  throw new Test262Error('#2: __obj = String.prototype.localeCompare.length; String.prototype.localeCompare.length = function(){return "shifted";}; String.prototype.localeCompare.length === __obj. Actual: ' + String.prototype.localeCompare.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

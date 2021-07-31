@@ -9,15 +9,15 @@ description: Compare Number('0x3') and Number('0X3') with 3
 
 // CHECK#1
 if (Number("3") !== 3) {
-  $ERROR('#1: Number("3") === 3. Actual: ' + (Number("3")));
+  throw new Test262Error('#1: Number("3") === 3. Actual: ' + (Number("3")));
 }
 
 // CHECK#2
 if (+("0x3") !== 3) {
-  $ERROR('#2: +("0x3") === 3. Actual: ' + (+("0x3")));
+  throw new Test262Error('#2: +("0x3") === 3. Actual: ' + (+("0x3")));
 }
 
 // CHECK#3
 if (Number("0X3") !== 3) {
-  $ERROR('#3: Number("0X3") === 3. Actual: ' + (Number("0X3")));
+  throw new Test262Error('#3: Number("0X3") === 3. Actual: ' + (Number("0X3")));
 }

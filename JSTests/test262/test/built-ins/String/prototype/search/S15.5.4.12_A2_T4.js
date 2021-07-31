@@ -15,7 +15,7 @@ var regExp = /Four/;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (bString.search(regExp) !== -1) {
-  $ERROR('#1: var bString = new String("one two three four five"); var regExp = /Four/; bString.search(regExp)=== -1. Actual: ' + bString.search(regExp));
+  throw new Test262Error('#1: var bString = new String("one two three four five"); var regExp = /Four/; bString.search(regExp)=== -1. Actual: ' + bString.search(regExp));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

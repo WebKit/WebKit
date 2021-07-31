@@ -9,5 +9,5 @@ description: Checking isFinite.prototype
 
 //CHECK#1
 if (isFinite.prototype !== undefined) {
-  $ERROR('#1: isFinite.prototype === undefined. Actual: ' + (isFinite.prototype));
+  throw new Test262Error('#1: isFinite.prototype === undefined. Actual: ' + (isFinite.prototype));
 }

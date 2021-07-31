@@ -9,5 +9,5 @@ description: "BooleanLiteral :: false"
 
 //CHECK#1
 if (Boolean(false) !== false) {
-  $ERROR('#1: Boolean(false) === false. Actual: Boolean(false) === ' + (Boolean(false)));
+  throw new Test262Error('#1: Boolean(false) === false. Actual: Boolean(false) === ' + (Boolean(false)));
 }

@@ -11,10 +11,10 @@ description: Any nonempty string convert to Boolean by implicit transformation
 
 // CHECK#1
 if (!(" ") !== false) {
-  $ERROR('#1: !(" ") === false. Actual: ' + (!(" ")));	
+  throw new Test262Error('#1: !(" ") === false. Actual: ' + (!(" ")));	
 }
 
 // CHECK#2
 if (!("Nonempty String") !== false) {
-  $ERROR('#2: !("Nonempty String") === false. Actual: ' + (!("Nonempty String")));	
+  throw new Test262Error('#2: !("Nonempty String") === false. Actual: ' + (!("Nonempty String")));	
 }

@@ -11,9 +11,9 @@ description: Checking if using "ii" as F leads to throwing the correct exception
 
 //CHECK#1
 try {
-	$ERROR('#1.1: new RegExp(undefined,"ii") throw SyntaxError. Actual: ' + (new RegExp(undefined,"ii")));
+	throw new Test262Error('#1.1: new RegExp(undefined,"ii") throw SyntaxError. Actual: ' + (new RegExp(undefined,"ii")));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: new RegExp(undefined,"ii") throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: new RegExp(undefined,"ii") throw SyntaxError. Actual: ' + (e));
 	}
 }

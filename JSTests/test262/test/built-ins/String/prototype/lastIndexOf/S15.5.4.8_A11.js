@@ -10,7 +10,7 @@ description: Checking String.prototype.lastIndexOf.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.lastIndexOf.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.lastIndexOf.hasOwnProperty("length") return true. Actual: ' + String.prototype.lastIndexOf.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.lastIndexOf.hasOwnProperty("length") return true. Actual: ' + String.prototype.lastIndexOf.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.lastIndexOf.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.lastIndexOf.length !== 1) {
-  $ERROR('#2: String.prototype.lastIndexOf.length === 1. Actual: ' + String.prototype.lastIndexOf.length);
+  throw new Test262Error('#2: String.prototype.lastIndexOf.length === 1. Actual: ' + String.prototype.lastIndexOf.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

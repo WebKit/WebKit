@@ -10,133 +10,133 @@ description: "NonEscapeSequence :: RUSSIAN CAPITAL ALPHABET"
 //CHECK#А-Я
 
 if ("А" !== "\А") {
-  $ERROR('#А');
+  throw new Test262Error('#А');
 }
 
 if ("Б" !== "\Б") {
-  $ERROR('#Б');
+  throw new Test262Error('#Б');
 }
 
 if ("В" !== "\В") {
-  $ERROR('#В');
+  throw new Test262Error('#В');
 }
 
 if ("Г" !== "\Г") {
-  $ERROR('#Г');
+  throw new Test262Error('#Г');
 }
 
 if ("Д" !== "\Д") {
-  $ERROR('#Д');
+  throw new Test262Error('#Д');
 }
 
 if ("Е" !== "\Е") {
-  $ERROR('#Е');
+  throw new Test262Error('#Е');
 }
 
 if ("Ж" !== "\Ж") {
-  $ERROR('#Ж');
+  throw new Test262Error('#Ж');
 }
 
 if ("З" !== "\З") {
-  $ERROR('#З');
+  throw new Test262Error('#З');
 }
 
 if ("И" !== "\И") {
-  $ERROR('#И');
+  throw new Test262Error('#И');
 }
 
 if ("Й" !== "\Й") {
-  $ERROR('#Й');
+  throw new Test262Error('#Й');
 }
 
 if ("К" !== "\К") {
-  $ERROR('#К');
+  throw new Test262Error('#К');
 }
 
 if ("Л" !== "\Л") {
-  $ERROR('#Л');
+  throw new Test262Error('#Л');
 }
 
 if ("М" !== "\М") {
-  $ERROR('#М');
+  throw new Test262Error('#М');
 }
 
 if ("Н" !== "\Н") {
-  $ERROR('#Н');
+  throw new Test262Error('#Н');
 }
 
 if ("О" !== "\О") {
-  $ERROR('#О');
+  throw new Test262Error('#О');
 }
 
 if ("П" !== "\П") {
-  $ERROR('#П');
+  throw new Test262Error('#П');
 }
 
 if ("Р" !== "\Р") {
-  $ERROR('#Р');
+  throw new Test262Error('#Р');
 }
 
 if ("С" !== "\С") {
-  $ERROR('#С');
+  throw new Test262Error('#С');
 }
 
 if ("Т" !== "\Т") {
-  $ERROR('#Т');
+  throw new Test262Error('#Т');
 }
 
 if ("У" !== "\У") {
-  $ERROR('#У');
+  throw new Test262Error('#У');
 }
 
 if ("Ф" !== "\Ф") {
-  $ERROR('#Ф');
+  throw new Test262Error('#Ф');
 }
 
 if ("Х" !== "\Х") {
-  $ERROR('#Х');
+  throw new Test262Error('#Х');
 }
 
 if ("Ц" !== "\Ц") {
-  $ERROR('#Ц');
+  throw new Test262Error('#Ц');
 }
 
 if ("Ч" !== "\Ч") {
-  $ERROR('#Ч');
+  throw new Test262Error('#Ч');
 }
 
 if ("Ш" !== "\Ш") {
-  $ERROR('#Ш');
+  throw new Test262Error('#Ш');
 }
 
 if ("Щ" !== "\Щ") {
-  $ERROR('#Щ');
+  throw new Test262Error('#Щ');
 }
 
 if ("Ъ" !== "\Ъ") {
-  $ERROR('#Ъ');
+  throw new Test262Error('#Ъ');
 }
 
 if ("Ы" !== "\Ы") {
-  $ERROR('#Ы');
+  throw new Test262Error('#Ы');
 }
 
 if ("Ь" !== "\Ь") {
-  $ERROR('#Ь');
+  throw new Test262Error('#Ь');
 }
 
 if ("Э" !== "\Э") {
-  $ERROR('#Э');
+  throw new Test262Error('#Э');
 }
 
 if ("Ю" !== "\Ю") {
-  $ERROR('#Ю');
+  throw new Test262Error('#Ю');
 }
 
 if ("Я" !== "\Я") {
-  $ERROR('#Я');
+  throw new Test262Error('#Я');
 }
 
 if ("Ё" !== "\Ё") {
-  $ERROR('#Ё');
+  throw new Test262Error('#Ё');
 }

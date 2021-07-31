@@ -14,7 +14,7 @@ description: Argument of the hasOwnProperty method is a custom boolean property
 
 //CHECK#1
 if (typeof Object.prototype.hasOwnProperty !== "function") {
-  $ERROR('#1: hasOwnProperty method is defined');
+  throw new Test262Error('#1: hasOwnProperty method is defined');
 }
 
 var obj = {
@@ -23,16 +23,16 @@ var obj = {
 
 //CHECK#2
 if (typeof obj.hasOwnProperty !== "function") {
-  $ERROR('#2: hasOwnProperty method is accessed');
+  throw new Test262Error('#2: hasOwnProperty method is accessed');
 }
 
 //CHECK#3
 if (obj.hasOwnProperty("hasOwnProperty")) {
-  $ERROR('#3: hasOwnProperty method works properly');
+  throw new Test262Error('#3: hasOwnProperty method works properly');
 }
 
 //CHECK#4
 if (!(obj.hasOwnProperty("the_property"))) {
-  $ERROR('#4: hasOwnProperty method works properly');
+  throw new Test262Error('#4: hasOwnProperty method works properly');
 }
 //

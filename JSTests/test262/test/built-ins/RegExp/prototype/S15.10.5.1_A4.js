@@ -10,7 +10,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (RegExp.hasOwnProperty('prototype') !== true) {
-	$ERROR('#1: RegExp.hasOwnProperty(\'prototype\') === true');
+	throw new Test262Error('#1: RegExp.hasOwnProperty(\'prototype\') === true');
 }
 
 var __obj = RegExp.prototype;
@@ -19,5 +19,5 @@ verifyNotWritable(RegExp, "prototype", null, function(){return "shifted";});
 
 //CHECK#2
 if (RegExp.prototype !== __obj) {
-	$ERROR('#2: __obj = RegExp.prototype; RegExp.prototype = function(){return "shifted";}; RegExp.prototype === __obj. Actual: ' + (RegExp.prototype));
+	throw new Test262Error('#2: __obj = RegExp.prototype; RegExp.prototype = function(){return "shifted";}; RegExp.prototype === __obj. Actual: ' + (RegExp.prototype));
 }

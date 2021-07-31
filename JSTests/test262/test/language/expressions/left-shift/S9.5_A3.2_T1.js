@@ -9,10 +9,10 @@ description: Use operator <<0
 
 // CHECK#1
 if ((1.2345 << 0) !== 1) {
-  $ERROR('#1: (1.2345 << 0) === 1. Actual: ' + ((1.2345 << 0)));
+  throw new Test262Error('#1: (1.2345 << 0) === 1. Actual: ' + ((1.2345 << 0)));
 }
 
 // CHECK#2
 if ((-5.4321 << 0) !== -5) {
-  $ERROR('#2: (-5.4321 << 0) === -5. Actual: ' + ((-5.4321 << 0)));
+  throw new Test262Error('#2: (-5.4321 << 0) === -5. Actual: ' + ((-5.4321 << 0)));
 }

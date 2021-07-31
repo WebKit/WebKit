@@ -9,35 +9,35 @@ description: Type(x) is number primitive or Number object
 
 //CHECK#1
 if (!0.1 !== false) {
-  $ERROR('#1: !0.1 === false');
+  throw new Test262Error('#1: !0.1 === false');
 }
 
 //CHECK#2
 if (!new Number(-0.1) !== false) {
-  $ERROR('#2: !new Number(-0.1) === false');
+  throw new Test262Error('#2: !new Number(-0.1) === false');
 }
 
 //CHECK#3
 if (!NaN !== true) {
-  $ERROR('#3: !NaN === true');
+  throw new Test262Error('#3: !NaN === true');
 }
 
 //CHECK#4
 if (!new Number(NaN) !== false) {
-  $ERROR('#4: !new Number(NaN) === false');
+  throw new Test262Error('#4: !new Number(NaN) === false');
 }
 
 //CHECK#5
 if (!0 !== true) {
-  $ERROR('#5: !0 === true');
+  throw new Test262Error('#5: !0 === true');
 }
 
 //CHECK#6
 if (!new Number(0) !== false) {
-  $ERROR('#6: !new Number(0) === false');
+  throw new Test262Error('#6: !new Number(0) === false');
 }
 
 //CHECK#7
 if (!Infinity !== false) {
-  $ERROR('#7: !Infinity === false');
+  throw new Test262Error('#7: !Infinity === false');
 }

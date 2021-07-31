@@ -9,10 +9,10 @@ description: Use operator ~
 
 // CHECK#1
 if (~1.2345 !== ~1) {
-  $ERROR('#1: ~1.2345 === ~1)');
+  throw new Test262Error('#1: ~1.2345 === ~1)');
 }
 
 // CHECK#2
 if (~-5.4321 !== ~-5) {
-  $ERROR('#2: ~-5.4321 === ~-5)');
+  throw new Test262Error('#2: ~-5.4321 === ~-5)');
 }

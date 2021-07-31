@@ -20,7 +20,7 @@ __instance.concat = String.prototype.concat;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.concat("two", x) !== "onetwoundefined") {
-  $ERROR('#1: var x; __instance = {toString:function(){return "one"}}; __instance.concat = String.prototype.concat;  __instance.concat("two",x) === "onetwoundefined". Actual: ' + __instance.concat("two", x));
+  throw new Test262Error('#1: var x; __instance = {toString:function(){return "one"}}; __instance.concat = String.prototype.concat;  __instance.concat("two",x) === "onetwoundefined". Actual: ' + __instance.concat("two", x));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

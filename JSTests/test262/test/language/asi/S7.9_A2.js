@@ -12,19 +12,19 @@ label1: for (var i = 0; i <= 0; i++) {
   for (var j = 0; j <= 0; j++) {
     break label1;
   }
-  $ERROR('#1: Check break statement for automatic semicolon insertion');
+  throw new Test262Error('#1: Check break statement for automatic semicolon insertion');
 }
 
 //CHECK#2
 var result = false;
 label2: for (var i = 0; i <= 0; i++) {
   for (var j = 0; j <= 0; j++) {
-    break 
+    break
     label2;
-  }  
+  }
   result = true;
 }
 
 if (result !== true) {
-  $ERROR('#2: Check break statement for automatic semicolon insertion');
+  throw new Test262Error('#2: Check break statement for automatic semicolon insertion');
 }

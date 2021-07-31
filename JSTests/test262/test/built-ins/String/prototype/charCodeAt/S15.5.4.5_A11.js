@@ -10,7 +10,7 @@ description: Checking String.prototype.charCodeAt.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.charCodeAt.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.charCodeAt.hasOwnProperty("length") return true. Actual: ' + String.prototype.charCodeAt.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.charCodeAt.hasOwnProperty("length") return true. Actual: ' + String.prototype.charCodeAt.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.charCodeAt.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.charCodeAt.length !== 1) {
-  $ERROR('#2: String.prototype.charCodeAt.length === 1. Actual: ' + String.prototype.charCodeAt.length);
+  throw new Test262Error('#2: String.prototype.charCodeAt.length === 1. Actual: ' + String.prototype.charCodeAt.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

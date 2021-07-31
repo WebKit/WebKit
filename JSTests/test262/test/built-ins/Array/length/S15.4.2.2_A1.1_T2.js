@@ -15,5 +15,5 @@ description: Array.prototype.toString = Object.prototype.toString
 Array.prototype.toString = Object.prototype.toString;
 var x = new Array(0);
 if (x.toString() !== "[object " + "Array" + "]") {
-  $ERROR('#1: Array.prototype.toString = Object.prototype.toString; var x = new Array(0); x.toString() === "[object " + "Array" + "]". Actual: ' + (x.toString()));
+  throw new Test262Error('#1: Array.prototype.toString = Object.prototype.toString; var x = new Array(0); x.toString() === "[object " + "Array" + "]". Actual: ' + (x.toString()));
 }

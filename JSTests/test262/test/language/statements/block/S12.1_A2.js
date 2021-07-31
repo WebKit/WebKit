@@ -25,10 +25,10 @@ assert.throws(ReferenceError, function() {
 //CHECK#2
 try {
     throw "catchme";	
-    $ERROR('#2: throw "catchme" lead to throwing exception');
+    throw new Test262Error('#2: throw "catchme" lead to throwing exception');
 } catch (e) {
 	if (e!=="catchme") {
-		$ERROR('#2.1: Exception === "catchme". Actual:  Exception ==='+ e  );
+		throw new Test262Error('#2.1: Exception === "catchme". Actual:  Exception ==='+ e  );
 	}
 }
 

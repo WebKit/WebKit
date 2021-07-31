@@ -11,15 +11,15 @@ description: >
 
 //CHECK#1
 if ((new Function("arg1,arg2", "var x =arg1; this.y=arg2;return arg1+arg2;"))("1", 2) !== "12") {
-  $ERROR('#1: Every function instance has a [[Call]] property');
+  throw new Test262Error('#1: Every function instance has a [[Call]] property');
 }
 
 //CHECK#2
 if (typeof x !== "undefined") {
-  $ERROR('#2: Every function instance has a [[Call]] property');
+  throw new Test262Error('#2: Every function instance has a [[Call]] property');
 }
 
 //CHECK#3
 if (y !== 2) {
-  $ERROR('#3: Every function instance has a [[Call]] property');
+  throw new Test262Error('#3: Every function instance has a [[Call]] property');
 }

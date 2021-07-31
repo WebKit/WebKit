@@ -18,15 +18,15 @@ description: Value of the function constructor argument is 1
 try {
   var f = new Function(1);
 } catch (e) {
-  $ERROR('#1: test failed with error ' + e);
+  throw new Test262Error('#1: test failed with error ' + e);
 }
 
 //CHECK#2
 if (f.constructor !== Function) {
-  $ERROR('#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2');
+  throw new Test262Error('#2: When the Function constructor is called with one argument then body be that argument and creates a new Function object as specified in 13.2');
 }
 
 //CHECK#3
 if (f() !== undefined) {
-  $ERROR('#3: When the Function constructor is called with one argument then body be that argument the following steps are taken...');
+  throw new Test262Error('#3: When the Function constructor is called with one argument then body be that argument the following steps are taken...');
 }

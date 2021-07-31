@@ -26,7 +26,7 @@ try {
     configurable: true
   });
 
-  $ERROR("Expected TypeError");
+  throw new Test262Error("Expected TypeError");
 } catch (e) {
   assert(e instanceof TypeError);
 

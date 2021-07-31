@@ -13,15 +13,15 @@ description: >
 
 //CHECK#0
 if ((RegExp.prototype.exec.hasOwnProperty('length') !== true)) {
-  $ERROR('#0: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
+  throw new Test262Error('#0: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
 }
 
 //CHECK#1
 if (delete RegExp.prototype.exec.length !== true) {
-  $ERROR('#1: delete RegExp.prototype.exec.length === true');
+  throw new Test262Error('#1: delete RegExp.prototype.exec.length === true');
 }
 
 //CHECK#2
 if (RegExp.prototype.exec.hasOwnProperty('length') !== false) {
-  $ERROR('#2: delete RegExp.prototype.exec.length; RegExp.prototype.exec.hasOwnProperty(\'length\') === false');
+  throw new Test262Error('#2: delete RegExp.prototype.exec.length; RegExp.prototype.exec.hasOwnProperty(\'length\') === false');
 }

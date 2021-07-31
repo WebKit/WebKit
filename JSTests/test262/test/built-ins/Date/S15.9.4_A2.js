@@ -8,5 +8,5 @@ description: Checking existence of the property "parse"
 ---*/
 
 if (!Date.hasOwnProperty("parse")) {
-  $ERROR('#1: The Date constructor has the property "parse"');
+  throw new Test262Error('#1: The Date constructor has the property "parse"');
 }

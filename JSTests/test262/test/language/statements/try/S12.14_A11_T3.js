@@ -24,10 +24,10 @@ for(var i=0;i<5;i++){
   c1+=2;
 };
 if(fin!==1){
-  $ERROR('#1.1: "finally" block must be evaluated');
+  throw new Test262Error('#1.1: "finally" block must be evaluated');
 }
 if(c1!==1){
-  $ERROR('#1.2: "try{break}catch finally" must work correctly');
+  throw new Test262Error('#1.2: "try{break}catch finally" must work correctly');
 }
 
 // CHECK#2
@@ -47,10 +47,10 @@ for(var i=0;i<5;i++){
   fin2=-1;
 };
 if(fin2!==1){
-  $ERROR('#2.1: "finally" block must be evaluated');
+  throw new Test262Error('#2.1: "finally" block must be evaluated');
 }
 if(c2!==1){
-  $ERROR('#2.2: "try catch{break} finally" must work correctly');
+  throw new Test262Error('#2.2: "try catch{break} finally" must work correctly');
 }
 
 // CHECK#3
@@ -70,10 +70,10 @@ for(var i=0;i<5;i++){
   fin3=0;
 };
 if(fin3!==1){
-  $ERROR('#3.1: "finally" block must be evaluated');
+  throw new Test262Error('#3.1: "finally" block must be evaluated');
 }
 if(c3!==1){
-  $ERROR('#3.2: "try catch finally{break}" must work correctly');
+  throw new Test262Error('#3.2: "try catch finally{break}" must work correctly');
 }
 
 // CHECK#4
@@ -90,10 +90,10 @@ for(var i=0;i<5;i++){
   c4+=2;
 };
 if(fin4!==1){
-  $ERROR('#4.1: "finally" block must be evaluated');
+  throw new Test262Error('#4.1: "finally" block must be evaluated');
 }
 if(c4!==1){
-  $ERROR('#4.2: "try{break} finally" must work correctly');
+  throw new Test262Error('#4.2: "try{break} finally" must work correctly');
 }
 
 // CHECK#5
@@ -106,7 +106,7 @@ for(var i=0;i<5;i++){
   }
 };
 if(i!==0){
-  $ERROR('#5: "try catch{break}" must work correctly');
+  throw new Test262Error('#5: "try catch{break}" must work correctly');
 }
 
 // CHECK#6
@@ -120,7 +120,7 @@ for(var c6=0;c6<5;){
   c6+=2;
 };
 if(c6!==1){
-  $ERROR('#6: "try{break} catch" must work correctly');
+  throw new Test262Error('#6: "try{break} catch" must work correctly');
 }
 
 // CHECK#7
@@ -143,8 +143,8 @@ catch(ex1){
   c7=10;
 }
 if(fin7!==1){
-  $ERROR('#7.1: "finally" block must be evaluated');
+  throw new Test262Error('#7.1: "finally" block must be evaluated');
 }
 if(c7!==1){
-  $ERROR('#7.2: "try finally{break}" must work correctly');
+  throw new Test262Error('#7.2: "try finally{break}" must work correctly');
 }

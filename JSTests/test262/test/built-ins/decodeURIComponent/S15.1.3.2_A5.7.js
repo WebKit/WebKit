@@ -13,9 +13,9 @@ description: >
 
 try {
   new decodeURIComponent();
-  $ERROR('#1.1: new decodeURIComponent() throw TypeError. Actual: ' + (new decodeURIComponent()));
+  throw new Test262Error('#1.1: new decodeURIComponent() throw TypeError. Actual: ' + (new decodeURIComponent()));
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: new decodeURIComponent() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: new decodeURIComponent() throw TypeError. Actual: ' + (e));
   }
 }

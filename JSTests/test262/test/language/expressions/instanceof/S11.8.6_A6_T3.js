@@ -13,15 +13,15 @@ function MyFunct(){return 0};
 
 //CHECK#1
 if (MyFunct instanceof MyFunct){
-	$ERROR('#1 function MyFunct(){return 0}; MyFunct instanceof MyFunct === false');
+	throw new Test262Error('#1 function MyFunct(){return 0}; MyFunct instanceof MyFunct === false');
 }
 
 //CHECK#2
 if (MyFunct instanceof Function !== true){
-	$ERROR('#2 function MyFunct(){return 0}; MyFunct instanceof Function === true');
+	throw new Test262Error('#2 function MyFunct(){return 0}; MyFunct instanceof Function === true');
 }
 
 //CHECK#3
 if (MyFunct instanceof Object !== true){
-	$ERROR('#3 function MyFunct(){return 0}; MyFunct instanceof Object === true');
+	throw new Test262Error('#3 function MyFunct(){return 0}; MyFunct instanceof Object === true');
 }

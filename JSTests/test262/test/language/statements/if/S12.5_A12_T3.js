@@ -10,7 +10,7 @@ description: Using embedded "if/else" into "if" without "else" constructions
 //CHECK# 1
 if(true)
   if (false)
-    $ERROR('#1.1: At embedded "if/else" constructions engine must select right branches');
+    throw new Test262Error('#1.1: At embedded "if/else" constructions engine must select right branches');
   else
     ;
 
@@ -19,18 +19,18 @@ if(true)
   if (true)
     ;
   else
-    $ERROR('#2.1: At embedded "if/else" constructions engine must select right branches');
+    throw new Test262Error('#2.1: At embedded "if/else" constructions engine must select right branches');
 
 //CHECK# 3
 if(false)
   if (true)
-    $ERROR('#3.1: At embedded "if/else" constructions engine must select right branches');
+    throw new Test262Error('#3.1: At embedded "if/else" constructions engine must select right branches');
   else
-    $ERROR('#3.2: At embedded "if/else" constructions engine must select right branches');
+    throw new Test262Error('#3.2: At embedded "if/else" constructions engine must select right branches');
 
 //CHECK# 4
 if(false)
   if (true)
-    $ERROR('#4.1: At embedded "if/else" constructions engine must select right branches');
+    throw new Test262Error('#4.1: At embedded "if/else" constructions engine must select right branches');
   else
-    $ERROR('#4.2: At embedded "if/else" constructions engine must select right branches');
+    throw new Test262Error('#4.2: At embedded "if/else" constructions engine must select right branches');

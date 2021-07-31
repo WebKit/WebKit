@@ -11,5 +11,5 @@ var __re = /e{1}/;
 
 //CHECK#0
 if (__re.test(void 0) !== (__re.exec(void 0) !== null)) {
-	$ERROR('#0: __re = /e{1}/; __re.test(void 0) === (__re.exec(void 0) !== null)');
+	throw new Test262Error('#0: __re = /e{1}/; __re.test(void 0) === (__re.exec(void 0) !== null)');
 }

@@ -13,7 +13,7 @@ __evaluated = (function (){return;})();
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__evaluated !== undefined) {
-	$ERROR('#1: If Expression is omitted, the return value is undefined');
+	throw new Test262Error('#1: If Expression is omitted, the return value is undefined');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

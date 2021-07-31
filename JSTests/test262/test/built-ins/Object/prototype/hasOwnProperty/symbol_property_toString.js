@@ -23,7 +23,7 @@ var wrapper = {
     return sym;
   },
   valueOf: function() {
-    $ERROR("valueOf() called");
+    throw new Test262Error("valueOf() called");
   }
 };
 

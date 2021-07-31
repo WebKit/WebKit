@@ -31,7 +31,7 @@ try {
       return 36;
     }
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyEqualTo(arrObj, "property", getFunc());
 
@@ -42,7 +42,7 @@ try {
   verifyNotConfigurable(arrObj, "property");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

@@ -19,5 +19,5 @@ for(var index=0; index<10; index+=1) {
 }
 
 if (__str!=="56789") {
-	$ERROR('#1: __str === "56789". Actual:  __str ==='+ __str  );
+	throw new Test262Error('#1: __str === "56789". Actual:  __str ==='+ __str  );
 }

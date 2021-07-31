@@ -9,10 +9,10 @@ description: Checking primitive value and Object value cases
 
 //CHECK#1
 if (delete 1 !== true) {
-  $ERROR('#1: delete 1 === true');
+  throw new Test262Error('#1: delete 1 === true');
 }
 
 //CHECK#2
 if (delete new Object() !== true) {
-  $ERROR('#2: delete new Object() === true');
+  throw new Test262Error('#2: delete new Object() === true');
 }

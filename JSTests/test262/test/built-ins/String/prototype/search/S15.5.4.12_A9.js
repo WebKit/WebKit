@@ -14,7 +14,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(String.prototype.search.hasOwnProperty('length'))) {
-  $ERROR('#0: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.search.hasOwnProperty('length'));
+  throw new Test262Error('#0: String.prototype.search.hasOwnProperty(\'length\') return true. Actual: ' + String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (!(String.prototype.search.hasOwnProperty('length'))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!delete String.prototype.search.length) {
-  $ERROR('#1: delete String.prototype.search.length return true');
+  throw new Test262Error('#1: delete String.prototype.search.length return true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (!delete String.prototype.search.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.search.hasOwnProperty('length')) {
-  $ERROR('#2: delete String.prototype.search.length; String.prototype.search.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.search.hasOwnProperty('length'));
+  throw new Test262Error('#2: delete String.prototype.search.length; String.prototype.search.hasOwnProperty(\'length\') return false. Actual: ' + String.prototype.search.hasOwnProperty('length'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

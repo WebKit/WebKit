@@ -13,7 +13,7 @@ description: Call toLowerCase() function for function call
 if (function() {
     return "GnulLuNa"
   }().toLowerCase() !== "gnulluna") {
-  $ERROR('#1: function(){return "GnulLuNa"}().toLowerCase() === "gnulluna". Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "GnulLuNa"}().toLowerCase() === "gnulluna". Actual: ' + function() {
     return "GnulLuNa"
   }().toLowerCase());
 }

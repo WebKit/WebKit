@@ -13,20 +13,20 @@ var array = [];
 
 //CHECK#1
 if (typeof array !== "object") {
-  $ERROR('#1: var array = []; typeof array === "object". Actual: ' + (typeof array));
+  throw new Test262Error('#1: var array = []; typeof array === "object". Actual: ' + (typeof array));
 }
 
 //CHECK#2
 if (array instanceof Array !== true) {
-  $ERROR('#2: var array = []; array instanceof Array === true');
+  throw new Test262Error('#2: var array = []; array instanceof Array === true');
 }
 
 //CHECK#3
 if (array.toString !== Array.prototype.toString) {
-  $ERROR('#3: var array = []; array.toString === Array.prototype.toString. Actual: ' + (array.toString));
+  throw new Test262Error('#3: var array = []; array.toString === Array.prototype.toString. Actual: ' + (array.toString));
 }
 
 //CHECK#4
 if (array.length !== 0) {
-  $ERROR('#4: var array = []; array.length === 0. Actual: ' + (array.length));
+  throw new Test262Error('#4: var array = []; array.length === 0. Actual: ' + (array.length));
 }

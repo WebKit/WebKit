@@ -12,7 +12,7 @@ var aString = new String("test string probe");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (aString.search("string pro") !== 5) {
-  $ERROR('#1: var aString = new String("test string probe"); aString.search("string pro")=== 5. Actual: ' + aString.search("string pro"));
+  throw new Test262Error('#1: var aString = new String("test string probe"); aString.search("string pro")=== 5. Actual: ' + aString.search("string pro"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

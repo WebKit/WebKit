@@ -23,10 +23,10 @@ description: >
 //CHECK#1
 try {
    eval("/a\\\u000A/").source;
-   $ERROR('#1.1: RegularExpressionChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ' + (eval("/a\\\u000A/").source));
+   throw new Test262Error('#1.1: RegularExpressionChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ' + (eval("/a\\\u000A/").source));
 }
 catch (e) {
   if ((e instanceof SyntaxError) !== true) {
-     $ERROR('#1.2: RegularExpressionChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ' + (e));
+     throw new Test262Error('#1.2: RegularExpressionChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ' + (e));
   }
 }

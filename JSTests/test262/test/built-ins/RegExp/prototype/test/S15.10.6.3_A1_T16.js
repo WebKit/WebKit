@@ -11,5 +11,5 @@ var __re = /undefined/;
 
 //CHECK#0
 if (__re.test() !== (__re.exec() !== null)) {
-	$ERROR('#0: __re = /undefined/; __re.test() === (__re.exec() !== null)');
+	throw new Test262Error('#0: __re = /undefined/; __re.test() === (__re.exec() !== null)');
 }

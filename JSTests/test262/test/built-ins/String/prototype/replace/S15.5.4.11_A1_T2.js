@@ -18,7 +18,7 @@ __instance.replace = String.prototype.replace;
 if (__instance.replace(function() {
     return false;
   }(), x) !== "undefined") {
-  $ERROR('#1: var x; __instance = new Boolean; __instance.replace = String.prototype.replace;  __instance.replace(function(){return false;}(),x) === "undefined". Actual: ' + __instance.replace(function() {
+  throw new Test262Error('#1: var x; __instance = new Boolean; __instance.replace = String.prototype.replace;  __instance.replace(function(){return false;}(),x) === "undefined". Actual: ' + __instance.replace(function() {
     return false;
   }(), x));
 }

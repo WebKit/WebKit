@@ -9,5 +9,5 @@ description: Checking decodeURIComponent.prototype
 
 //CHECK#1
 if (decodeURIComponent.prototype !== undefined) {
-  $ERROR('#1: decodeURIComponent.prototype === undefined. Actual: ' + (decodeURIComponent.prototype));
+  throw new Test262Error('#1: decodeURIComponent.prototype === undefined. Actual: ' + (decodeURIComponent.prototype));
 }

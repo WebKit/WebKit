@@ -17,25 +17,25 @@ var arr = x.concat();
 //CHECK#0
 arr.getClass = Object.prototype.toString;
 if (arr.getClass() !== "[object " + "Array" + "]") {
-  $ERROR('#0: var x = [0,1]; var arr = x.concat(); arr is Array object. Actual: ' + (arr.getClass()));
+  throw new Test262Error('#0: var x = [0,1]; var arr = x.concat(); arr is Array object. Actual: ' + (arr.getClass()));
 }
 
 //CHECK#1
 if (arr[0] !== 0) {
-  $ERROR('#1: var x = [0,1]; var arr = x.concat(); arr[0] === 0. Actual: ' + (arr[0]));
+  throw new Test262Error('#1: var x = [0,1]; var arr = x.concat(); arr[0] === 0. Actual: ' + (arr[0]));
 }
 
 //CHECK#2
 if (arr[1] !== 1) {
-  $ERROR('#2: var x = [0,1]; var arr = x.concat(); arr[1] === 1. Actual: ' + (arr[1]));
+  throw new Test262Error('#2: var x = [0,1]; var arr = x.concat(); arr[1] === 1. Actual: ' + (arr[1]));
 }
 
 //CHECK#3
 if (arr.length !== 2) {
-  $ERROR('#3: var x = [0,1]; var arr = x.concat(); arr.length === 2. Actual: ' + (arr.length));
+  throw new Test262Error('#3: var x = [0,1]; var arr = x.concat(); arr.length === 2. Actual: ' + (arr.length));
 }
 
 //CHECK#4
 if (arr === x) {
-  $ERROR('#4: var x = [0,1]; var arr = x.concat(); arr !== x');
+  throw new Test262Error('#4: var x = [0,1]; var arr = x.concat(); arr !== x');
 }

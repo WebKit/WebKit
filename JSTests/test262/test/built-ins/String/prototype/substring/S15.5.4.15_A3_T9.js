@@ -18,7 +18,7 @@ __instance.substring = String.prototype.substring;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.substring(Math.PI, -10) !== "[ob") {
-  $ERROR('#1: __instance = Math; __instance.substring = String.prototype.substring;  __instance.substring(Math.PI, -10) === "[ob". Actual: ' + __instance.substring(Math.PI, -10));
+  throw new Test262Error('#1: __instance = Math; __instance.substring = String.prototype.substring;  __instance.substring(Math.PI, -10) === "[ob". Actual: ' + __instance.substring(Math.PI, -10));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

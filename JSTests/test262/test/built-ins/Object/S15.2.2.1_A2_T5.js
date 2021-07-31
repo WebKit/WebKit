@@ -15,10 +15,10 @@ var n_obj = new Object(obj);
 
 //CHECK#1
 if (n_obj !== obj) {
-  $ERROR('#1: When the Object constructor is called and if the value is an Object simply value returns.');
+  throw new Test262Error('#1: When the Object constructor is called and if the value is an Object simply value returns.');
 }
 
 //CHECK#2
 if ((n_obj.getFullYear() !== 1978) || (n_obj.getMonth() !== 3)) {
-  $ERROR('#2: When the Object constructor is called and if the value is an Object simply value returns.');
+  throw new Test262Error('#2: When the Object constructor is called and if the value is an Object simply value returns.');
 }

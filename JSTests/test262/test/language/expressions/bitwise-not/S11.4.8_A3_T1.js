@@ -9,15 +9,15 @@ description: Type(x) is boolean primitive or Boolean object
 
 //CHECK#1
 if (~false !== -1) {
-  $ERROR('#1: ~false === -1. Actual: ' + (~false));
+  throw new Test262Error('#1: ~false === -1. Actual: ' + (~false));
 }
 
 //CHECK#2
 if (~new Boolean(true) !== -2) {
-  $ERROR('#2: ~new Boolean(true) === -2. Actual: ' + (~new Boolean(true)));
+  throw new Test262Error('#2: ~new Boolean(true) === -2. Actual: ' + (~new Boolean(true)));
 }
 
 //CHECK#3
 if (~new Boolean(false) !== -1) {
-  $ERROR('#3: ~new Boolean(false) === -1. Actual: ' + (~new Boolean(false)));
+  throw new Test262Error('#3: ~new Boolean(false) === -1. Actual: ' + (~new Boolean(false)));
 }

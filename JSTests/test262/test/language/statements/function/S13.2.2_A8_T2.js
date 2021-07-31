@@ -30,7 +30,7 @@ var __instance = new __func(__FRST, __SCND);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.first !== undefined) {
-	$ERROR('#1: __instance.first === undefined. Actual: __instance.first ==='+__instance.first);
+	throw new Test262Error('#1: __instance.first === undefined. Actual: __instance.first ==='+__instance.first);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ if (__instance.first !== undefined) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__instance.prop!==__SCND) {
-	$ERROR('#2: __instance.prop === __SCND. Actual: __instance.prop ==='+__instance.prop);
+	throw new Test262Error('#2: __instance.prop === __SCND. Actual: __instance.prop ==='+__instance.prop);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ if (__instance.prop!==__SCND) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__instance("SAM")!== "SAMBA") {
-	$ERROR('#2: __instance("SAM") === "SAMBA". Actual: __instance("SAM") ==='+__instance("SAM"));
+	throw new Test262Error('#2: __instance("SAM") === "SAMBA". Actual: __instance("SAM") ==='+__instance("SAM"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

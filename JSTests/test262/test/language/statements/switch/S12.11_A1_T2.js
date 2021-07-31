@@ -43,45 +43,45 @@ function SwitchTest(value){
 }
         
 if(!(SwitchTest(0) === 6)){
-  $ERROR("#1: SwitchTest(0) === 6. Actual:  SwitchTest(0) ==="+ SwitchTest(0)  );
+  throw new Test262Error("#1: SwitchTest(0) === 6. Actual:  SwitchTest(0) ==="+ SwitchTest(0)  );
 }
 
 if(!(SwitchTest(1) === 512)){
-  $ERROR("#2: SwitchTest(1) === 512. Actual:  SwitchTest(1) ==="+ SwitchTest(1)  );
+  throw new Test262Error("#2: SwitchTest(1) === 512. Actual:  SwitchTest(1) ==="+ SwitchTest(1)  );
 }
 
 if(!(SwitchTest(2) === 32)){
-  $ERROR("#3: SwitchTest(2) === 32. Actual:  SwitchTest(2) ==="+ SwitchTest(2)  );
+  throw new Test262Error("#3: SwitchTest(2) === 32. Actual:  SwitchTest(2) ==="+ SwitchTest(2)  );
 }
 
 if(!(SwitchTest(3) === 48)){
-  $ERROR("#4: SwitchTest(3) === 48. Actual:  SwitchTest(3) ==="+ SwitchTest(3)  );
+  throw new Test262Error("#4: SwitchTest(3) === 48. Actual:  SwitchTest(3) ==="+ SwitchTest(3)  );
 }
 
 if(!(SwitchTest(4) === 64)){
-  $ERROR("#5: SwitchTest(4) === 64. Actual:  SwitchTest(4) ==="+ SwitchTest(4)  );
+  throw new Test262Error("#5: SwitchTest(4) === 64. Actual:  SwitchTest(4) ==="+ SwitchTest(4)  );
 }
 
 if(!(SwitchTest(true) === 32)){
-  $ERROR("#6: SwitchTest(true) === 32. Actual:  SwitchTest(true) ==="+ SwitchTest(true)  );
+  throw new Test262Error("#6: SwitchTest(true) === 32. Actual:  SwitchTest(true) ==="+ SwitchTest(true)  );
 }
 
 if(!(SwitchTest(false) === 32)){
-  $ERROR("#7: SwitchTest(false) === 32. Actual:  SwitchTest(false) ==="+ SwitchTest(false)  );
+  throw new Test262Error("#7: SwitchTest(false) === 32. Actual:  SwitchTest(false) ==="+ SwitchTest(false)  );
 }
 
 if(!(SwitchTest(null) === 32)){
-  $ERROR("#8: SwitchTest(null) === 32. Actual:  SwitchTest(null) ==="+ SwitchTest(null)  );
+  throw new Test262Error("#8: SwitchTest(null) === 32. Actual:  SwitchTest(null) ==="+ SwitchTest(null)  );
 }
 
 if(!(SwitchTest(void 0) === 32)){
-  $ERROR("#9: SwitchTest(void 0) === 32. Actual:  SwitchTest(void 0) ==="+ SwitchTest(void 0)  );
+  throw new Test262Error("#9: SwitchTest(void 0) === 32. Actual:  SwitchTest(void 0) ==="+ SwitchTest(void 0)  );
 }
 
 if(!(SwitchTest('0') === 32)){
-  $ERROR("#10: SwitchTest('0') === 32. Actual:  SwitchTest('0') ==="+ SwitchTest('0')  );
+  throw new Test262Error("#10: SwitchTest('0') === 32. Actual:  SwitchTest('0') ==="+ SwitchTest('0')  );
 }
 
 if(!(SwitchTest(x) === 128)){
-  $ERROR("#10: SwitchTest(x) === 128. Actual:  SwitchTest(x) ==="+ SwitchTest(x)  );
+  throw new Test262Error("#10: SwitchTest(x) === 128. Actual:  SwitchTest(x) ==="+ SwitchTest(x)  );
 }

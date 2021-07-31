@@ -14,12 +14,12 @@ description: Array.prototype.toString = Object.prototype.toString
 Array.prototype.toString = Object.prototype.toString;
 var x = new Array();
 if (x.toString() !== "[object " + "Array" + "]") {
-  $ERROR('#1: Array.prototype.toString = Object.prototype.toString; var x = new Array(); x.toString() === "[object " + "Array" + "]". Actual: ' + (x.toString()));
+  throw new Test262Error('#1: Array.prototype.toString = Object.prototype.toString; var x = new Array(); x.toString() === "[object " + "Array" + "]". Actual: ' + (x.toString()));
 }
 
 //CHECK#2
 Array.prototype.toString = Object.prototype.toString;
 var x = new Array(0, 1, 2);
 if (x.toString() !== "[object " + "Array" + "]") {
-  $ERROR('#2: Array.prototype.toString = Object.prototype.toString; var x = new Array(0,1,2); x.toString() === "[object " + "Array" + "]". Actual: ' + (x.toString()));
+  throw new Test262Error('#2: Array.prototype.toString = Object.prototype.toString; var x = new Array(0,1,2); x.toString() === "[object " + "Array" + "]". Actual: ' + (x.toString()));
 }

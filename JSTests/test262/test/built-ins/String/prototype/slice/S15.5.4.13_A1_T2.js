@@ -18,7 +18,7 @@ __instance.slice = String.prototype.slice;
 if (__instance.slice(function() {
     return true;
   }(), x) !== "alse") {
-  $ERROR('#1: var x; __instance = new Boolean; __instance.slice = String.prototype.slice;  __instance.slice(function(){return true;}(),x) === "alse". Actual: ' + __instance.slice(function() {
+  throw new Test262Error('#1: var x; __instance = new Boolean; __instance.slice = String.prototype.slice;  __instance.slice(function(){return true;}(),x) === "alse". Actual: ' + __instance.slice(function() {
     return true;
   }(), x));
 }

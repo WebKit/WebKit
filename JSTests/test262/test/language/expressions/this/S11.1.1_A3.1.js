@@ -13,11 +13,11 @@ flags: [noStrict]
 //CHECK#1
 function ReturnThis() {return this}
 if (ReturnThis() !== this) {
-  $ERROR('#1: function ReturnThis() {return this} ReturnThis() === this. Actual: ' + (ReturnThis()));
+  throw new Test262Error('#1: function ReturnThis() {return this} ReturnThis() === this. Actual: ' + (ReturnThis()));
 }
 
 //CHECK#2
 function ReturnEvalThis() {return eval("this")}
 if (ReturnEvalThis() !== this) {
-  $ERROR('#2: function ReturnEvalThis() {return eval("this")} ReturnEvalThis() === this. Actual: ' + (ReturnEvalThis()));
+  throw new Test262Error('#2: function ReturnEvalThis() {return eval("this")} ReturnEvalThis() === this. Actual: ' + (ReturnEvalThis()));
 }

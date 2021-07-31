@@ -13,56 +13,56 @@ description: >
 
 //CHECK#1
 if (1 % 1 !== 0) {
-  $ERROR('#1.1: 1 % 1 === 0. Actual: ' + (1 % 1));
+  throw new Test262Error('#1.1: 1 % 1 === 0. Actual: ' + (1 % 1));
 } else {
   if (1 / (1 % 1) !== Number.POSITIVE_INFINITY) {
-    $ERROR('#1.2: 1 % 1 === + 0. Actual: -0');
+    throw new Test262Error('#1.2: 1 % 1 === + 0. Actual: -0');
   }
 }
 
 //CHECK#2
 if (-1 % -1 !== -0) {
-  $ERROR('#2.1: -1 % -1 === 0. Actual: ' + (-1 % -1));
+  throw new Test262Error('#2.1: -1 % -1 === 0. Actual: ' + (-1 % -1));
 } else {
   if (1 / (-1 % -1) !== Number.NEGATIVE_INFINITY) {
-    $ERROR('#2.2: -1 % -1 === - 0. Actual: +0');
+    throw new Test262Error('#2.2: -1 % -1 === - 0. Actual: +0');
   }
 }
 
 //CHECK#3
 if (-1 % 1 !== -0) {
-  $ERROR('#3.1: -1 % 1 === 0. Actual: ' + (-1 % 1));
+  throw new Test262Error('#3.1: -1 % 1 === 0. Actual: ' + (-1 % 1));
 } else {
   if (1 / (-1 % 1) !== Number.NEGATIVE_INFINITY) {
-    $ERROR('#3.2: -1 % 1 === - 0. Actual: +0');
+    throw new Test262Error('#3.2: -1 % 1 === - 0. Actual: +0');
   }
 }
 
 //CHECK#4
 if (1 % -1 !== 0) {
-  $ERROR('#4.1: 1 % -1 === 0. Actual: ' + (1 % -1));
+  throw new Test262Error('#4.1: 1 % -1 === 0. Actual: ' + (1 % -1));
 } else {
   if (1 / (1 % -1) !== Number.POSITIVE_INFINITY) {
-    $ERROR('#4.2: 1 % -1 === + 0. Actual: -0');
+    throw new Test262Error('#4.2: 1 % -1 === + 0. Actual: -0');
   }
 }
 
 //CHECK#5
 if (101 % 51 !== 50) {
-  $ERROR('#5: 101 % 51 === 50. Actual: ' + (101 % 51));
+  throw new Test262Error('#5: 101 % 51 === 50. Actual: ' + (101 % 51));
 }
 
 //CHECK#6
 if (101 % -51 !== 50) {
-  $ERROR('#6: 101 % -51 === 50. Actual: ' + (101 % -51));
+  throw new Test262Error('#6: 101 % -51 === 50. Actual: ' + (101 % -51));
 }
 
 //CHECK#7
 if (-101 % 51 !== -50) {
-  $ERROR('#7: -101 % 51 === -50. Actual: ' + (-101 % 51));
+  throw new Test262Error('#7: -101 % 51 === -50. Actual: ' + (-101 % 51));
 }
 
 //CHECK#8
 if (-101 % -51 !== -50) {
-  $ERROR('#8: -101 % -51 === -50. Actual: ' + (-101 % -51));
+  throw new Test262Error('#8: -101 % -51 === -50. Actual: ' + (-101 % -51));
 }

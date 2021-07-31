@@ -9,5 +9,5 @@ description: "\"\\x00\""
 
 //CHECK#1
 if ("\x00" !== "\0") {
-  $ERROR('#1: "\\x00" === "\\0"');
+  throw new Test262Error('#1: "\\x00" === "\\0"');
 }

@@ -11,20 +11,20 @@ description: x and y are primitive booleans
 
 //CHECK#1
 if (true !== true) {
-  $ERROR('#1: true === true');
+  throw new Test262Error('#1: true === true');
 }
 
 //CHECK#2
 if (false !== false) {
-  $ERROR('#2: false === false');
+  throw new Test262Error('#2: false === false');
 }
 
 //CHECK#3
 if (!(true !== false)) {
-  $ERROR('#3: true !== false');
+  throw new Test262Error('#3: true !== false');
 }
 
 //CHECK#4
 if (!(false !== true)) {
-  $ERROR('#4: false !== true');
+  throw new Test262Error('#4: false !== true');
 }

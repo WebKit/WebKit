@@ -27,7 +27,7 @@ try {
   Object.defineProperty(arrObj, "1", {
     get: undefined
   });
-  $ERROR("Expected TypeError");
+  throw new Test262Error("Expected TypeError");
 } catch (e) {
   assert(e instanceof TypeError);
   assert(arrObj.hasOwnProperty("1"));

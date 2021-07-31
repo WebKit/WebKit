@@ -9,70 +9,70 @@ description: x or y is null or undefined
 
 //CHECK#1
 if (!(undefined !== null)) {
-  $ERROR('#1: undefined !== null');
+  throw new Test262Error('#1: undefined !== null');
 }
 
 //CHECK#2
 if (!(null !== undefined)) {
-  $ERROR('#2: null !== undefined');
+  throw new Test262Error('#2: null !== undefined');
 }
 
 //CHECK#3
 if (!(null !== 0)) {
-  $ERROR('#3: null !== 0');
+  throw new Test262Error('#3: null !== 0');
 }
 
 //CHECK#4
 if (!(0 !== null)) {
-  $ERROR('#4: 0 !== null');
+  throw new Test262Error('#4: 0 !== null');
 }
 
 //CHECK#5
 if (!(null !== false)) {
-  $ERROR('#5: null !== false');
+  throw new Test262Error('#5: null !== false');
 }
 
 //CHECK#6
 if (!(false !== null)) {
-  $ERROR('#6: false !== null');
+  throw new Test262Error('#6: false !== null');
 }
 
 //CHECK#7
 if (!(undefined !== false)) {
-  $ERROR('#7: undefined !== false');
+  throw new Test262Error('#7: undefined !== false');
 }
 
 //CHECK#8
 if (!(false !== undefined)) {
-  $ERROR('#8: false !== undefined');
+  throw new Test262Error('#8: false !== undefined');
 }
 
 //CHECK#9
 if (!(null !== new Object())) {
-  $ERROR('#9: null !== new Object()');
+  throw new Test262Error('#9: null !== new Object()');
 }
 
 //CHECK#10
 if (!(new Object() !== null)) {
-  $ERROR('#10: new Object() !== null');
+  throw new Test262Error('#10: new Object() !== null');
 }
 
 //CHECK#11
 if (!(null !== "null")) {
-  $ERROR('#11: null !== "null"');
+  throw new Test262Error('#11: null !== "null"');
 }
 
 //CHECK#12
 if (!("null" !== null)) {
-  $ERROR('#12: "null" !== null');
+  throw new Test262Error('#12: "null" !== null');
 }
 
 //CHECK#13
 if (!(undefined !== "undefined")) {
-  $ERROR('#13: undefined !== "undefined"');
+  throw new Test262Error('#13: undefined !== "undefined"');
 }
 
 //CHECK#14
 if (!("undefined" !== undefined)) {
-  $ERROR('#14: "undefined" !== undefined');
+  throw new Test262Error('#14: "undefined" !== undefined');
 }

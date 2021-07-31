@@ -14,9 +14,9 @@ description: >
 
 try {
   new Array.prototype.toLocaleString();
-  $ERROR('#1.1: new Array.prototype.toLocaleString() throw TypeError. Actual: ' + (new Array.prototype.toLocaleString()));
+  throw new Test262Error('#1.1: new Array.prototype.toLocaleString() throw TypeError. Actual: ' + (new Array.prototype.toLocaleString()));
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: new Array.prototype.toLocaleString() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: new Array.prototype.toLocaleString() throw TypeError. Actual: ' + (e));
   }
 }

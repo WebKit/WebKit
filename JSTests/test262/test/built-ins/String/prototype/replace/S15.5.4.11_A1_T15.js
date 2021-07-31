@@ -21,10 +21,10 @@ Object.prototype.replace = String.prototype.replace;
 //CHECK#1
 try {
   var x = __instance.replace(__obj, 1) === "1100.0017001";
-  $ERROR('#1.0: x = __instance.replace(__obj, 1) === "1100.0017001" lead to throwing exception');
+  throw new Test262Error('#1.0: x = __instance.replace(__obj, 1) === "1100.0017001" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1.1: Exception is instance of TypeError. Actual: ' + e);
+    throw new Test262Error('#1.1: Exception is instance of TypeError. Actual: ' + e);
   }
 }
 //

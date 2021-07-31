@@ -13,7 +13,7 @@ __reg.toLowerCase = String.prototype.toLowerCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__reg.toLowerCase() !== "/abc/") {
-  $ERROR('#1: var __reg = new RegExp("ABC"); __reg.toLowerCase = String.prototype.toLowerCase; __reg.toLowerCase() === "/abc/". Actual: ' + __reg.toLowerCase());
+  throw new Test262Error('#1: var __reg = new RegExp("ABC"); __reg.toLowerCase = String.prototype.toLowerCase; __reg.toLowerCase() === "/abc/". Actual: ' + __reg.toLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -19,4 +19,4 @@ var a=1,b=2,d=4,e=5;
 a=b+c
 (d+e)
 
-if (a !== 20) $ERROR('#1: Automatic semicolon insertion work wrong');
+if (a !== 20) throw new Test262Error('#1: Automatic semicolon insertion work wrong');

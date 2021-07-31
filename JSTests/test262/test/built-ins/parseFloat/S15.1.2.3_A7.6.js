@@ -9,5 +9,5 @@ description: Checking parseFloat.prototype
 
 //CHECK#1
 if (parseFloat.prototype !== undefined) {
-  $ERROR('#1: parseFloat.prototype === undefined. Actual: ' + (parseFloat.prototype));
+  throw new Test262Error('#1: parseFloat.prototype === undefined. Actual: ' + (parseFloat.prototype));
 }

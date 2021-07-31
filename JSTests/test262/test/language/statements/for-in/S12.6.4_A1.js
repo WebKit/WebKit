@@ -14,7 +14,7 @@ try {
 	    var key=__key;
 	};
 } catch (e) {
-	$ERROR('#1: "for(key in undefined){}" does not lead to throwing exception');
+	throw new Test262Error('#1: "for(key in undefined){}" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ try {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (key!==undefined) {
-	$ERROR('#2: key === undefined. Actual: key === '+key);
+	throw new Test262Error('#2: key === undefined. Actual: key === '+key);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

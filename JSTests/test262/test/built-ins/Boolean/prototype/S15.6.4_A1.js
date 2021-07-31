@@ -11,16 +11,16 @@ description: Checking type and value of Boolean.prototype
 
 //CHECK#1
 if (typeof Boolean.prototype !== "object") {
-  $ERROR('#1: typeof Boolean.prototype === "object"');
+  throw new Test262Error('#1: typeof Boolean.prototype === "object"');
 }
 
 //CHECK#2
 if (Boolean.prototype != false) {
-  $ERROR('#2: Boolean.prototype == false');
+  throw new Test262Error('#2: Boolean.prototype == false');
 }
 
 delete Boolean.prototype.toString;
 
 if (Boolean.prototype.toString() !== "[object Boolean]") {
-  $ERROR('#3: The [[Class]] property of the Boolean prototype object is set to "Boolean"');
+  throw new Test262Error('#3: The [[Class]] property of the Boolean prototype object is set to "Boolean"');
 }

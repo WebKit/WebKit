@@ -11,7 +11,7 @@ description: Argument is x, and instance is new String, x is undefined variable
 //CHECK#1
 //since ToString(undefined) evaluates to "undefined" search(undefined) evaluates to search("undefined")
 if (new String("undefined").search(x) !== 0) {
-  $ERROR('#1: var x; new String("undefined").search(x) === 0. Actual: ' + new String("undefined").search(x));
+  throw new Test262Error('#1: var x; new String("undefined").search(x) === 0. Actual: ' + new String("undefined").search(x));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

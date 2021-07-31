@@ -17,10 +17,10 @@ var resolveP1, rejectP2,
   });
 
 Promise.race([p1, p2]).then(function() {
-  $ERROR("Should not be fulfilled: expected rejection.");
+  throw new Test262Error("Should not be fulfilled: expected rejection.");
 }, function(arg) {
   if (arg !== 2) {
-    $ERROR("Expected rejection reason to be 2, got " + arg);
+    throw new Test262Error("Expected rejection reason to be 2, got " + arg);
   }
 }).then($DONE, $DONE);
 

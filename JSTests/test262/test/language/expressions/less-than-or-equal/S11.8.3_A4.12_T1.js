@@ -12,35 +12,35 @@ description: x and y are string primitives
 
 //CHECK#1
 if (("xx" <= "xy") !== true) {
-  $ERROR('#1: ("xx" <= "xy") === true');
+  throw new Test262Error('#1: ("xx" <= "xy") === true');
 }
 
 //CHECK#2
 if (("xy" <= "xx") !== false) {
-  $ERROR('#2: ("xy" <= "xx") === false');
+  throw new Test262Error('#2: ("xy" <= "xx") === false');
 }
 
 //CHECK#3
 if (("x" <= "y") !== true) {
-  $ERROR('#3: ("x" <= y") === true');
+  throw new Test262Error('#3: ("x" <= y") === true');
 }
 
 //CHECK#4
 if (("aab" <= "aba") !== true) {
-  $ERROR('#4: ("aab" <= aba") === true');
+  throw new Test262Error('#4: ("aab" <= aba") === true');
 }
 
 //CHECK#5
 if (("\u0061\u0061\u0061\u0062" <= "\u0061\u0061\u0061\u0061") !== false) {
-  $ERROR('#5: ("\\u0061\\u0061\\u0061\\u0062" <= \\u0061\\u0061\\u0061\\u0061") === false');
+  throw new Test262Error('#5: ("\\u0061\\u0061\\u0061\\u0062" <= \\u0061\\u0061\\u0061\\u0061") === false');
 }
 
 //CHECK#6
 if (("a\u0000a" <= "a\u0000b") !== true) {
-  $ERROR('#6: ("a\\u0000a" <= "a\\u0000b") === true');
+  throw new Test262Error('#6: ("a\\u0000a" <= "a\\u0000b") === true');
 }
 
 //CHECK#7
 if (("aB" <= "aa") !== true) {
-  $ERROR('#7: ("aB" <= aa") === true');
+  throw new Test262Error('#7: ("aB" <= aa") === true');
 }

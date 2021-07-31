@@ -17,6 +17,7 @@ flags:
   TypedArray.prototype.at: useAtMethod
   String.prototype.at: useAtMethod
   top-level-await: useTopLevelAwait
+  array-find-from-last: useArrayFindLastMethod
 skip:
   features:
     - Atomics.waitAsync
@@ -29,6 +30,10 @@ skip:
     - Temporal
     - import-assertions
     - json-modules
+    - class-static-block
+    - Intl.DisplayNames-v2
+    - Intl.DateTimeFormat-extend-timezonename
+    - callable-boundary-realms
   paths:
   files:
     # https://github.com/claudepache/es-legacy-function-reflection

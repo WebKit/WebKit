@@ -13,11 +13,11 @@ description: >
 
 //CHECK#0
 if (!(Object.prototype.propertyIsEnumerable.hasOwnProperty('length'))) {
-  $ERROR('#0: the Object.prototype.propertyIsEnumerable has length property');
+  throw new Test262Error('#0: the Object.prototype.propertyIsEnumerable has length property');
 }
 
 //CHECK#1
 if (!delete Object.prototype.propertyIsEnumerable.length) {
-  $ERROR('#1: The Object.prototype.propertyIsEnumerable.length property does not have the attributes DontDelete');
+  throw new Test262Error('#1: The Object.prototype.propertyIsEnumerable.length property does not have the attributes DontDelete');
 }
 //

@@ -16,14 +16,14 @@ var rejectP1,
   obj = {};
 
 if (p1 !== p2) {
-  $ERROR("Expected p1 === Promise.resolve(p1) because they have same constructor");
+  throw new Test262Error("Expected p1 === Promise.resolve(p1) because they have same constructor");
 }
 
 p2.then(function() {
-  $ERROR("Expected p2 to be rejected, not fulfilled.");
+  throw new Test262Error("Expected p2 to be rejected, not fulfilled.");
 }, function(arg) {
   if (arg !== obj) {
-    $ERROR("Expected promise to be rejected with reason obj, actually " + arg);
+    throw new Test262Error("Expected promise to be rejected with reason obj, actually " + arg);
   }
 }).then($DONE, $DONE);
 

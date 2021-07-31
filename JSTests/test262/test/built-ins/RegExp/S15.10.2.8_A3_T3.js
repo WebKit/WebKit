@@ -18,5 +18,5 @@ var __executed = /([Jj]ava([Ss]cript)?)\sis\s(fun\w*)/.test("Developing with Jav
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /([Jj]ava([Ss]cript)?)\\sis\\s(fun\\w*)/.test("Developing with JavaScript is dangerous, do not try it without assistance") === false');
+	throw new Test262Error('#1: /([Jj]ava([Ss]cript)?)\\sis\\s(fun\\w*)/.test("Developing with JavaScript is dangerous, do not try it without assistance") === false');
 }

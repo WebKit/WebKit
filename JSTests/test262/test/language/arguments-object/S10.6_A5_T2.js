@@ -21,11 +21,11 @@ function f1(){
 
 try{
   if(!f1()){
-    $ERROR("#1: A property length don't have attribute { DontEnum }");
+    throw new Test262Error("#1: A property length don't have attribute { DontEnum }");
   }
 }
 catch(e){
-  $ERROR("#1: arguments object don't exists");
+  throw new Test262Error("#1: arguments object don't exists");
 }
 
 //CHECK#2
@@ -40,9 +40,9 @@ var f2 = function(){
 
 try{
   if(!f2()){
-    $ERROR("#2: A property length don't have attribute { DontEnum }");
+    throw new Test262Error("#2: A property length don't have attribute { DontEnum }");
   }
 }
 catch(e){
-  $ERROR("#2: arguments object don't exists");
+  throw new Test262Error("#2: arguments object don't exists");
 }

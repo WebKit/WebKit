@@ -11,20 +11,20 @@ description: >
 
 //CHECK#1
 if ((false && true) !== false) {
-  $ERROR('#1: (false && true) === false');
+  throw new Test262Error('#1: (false && true) === false');
 }
 
 //CHECK#2
 if ((false && false) !== false) {
-  $ERROR('#2: (false && false) === false');
+  throw new Test262Error('#2: (false && false) === false');
 }
 
 //CHECK#3
 if ((false && new Boolean(true)) !== false) {
-  $ERROR('#3: (false && new Boolean(true)) === false');
+  throw new Test262Error('#3: (false && new Boolean(true)) === false');
 }
 
 //CHECK#4
 if ((false && new Boolean(false)) !== false) {
-  $ERROR('#4: (false && new Boolean(false)) === false');
+  throw new Test262Error('#4: (false && new Boolean(false)) === false');
 }

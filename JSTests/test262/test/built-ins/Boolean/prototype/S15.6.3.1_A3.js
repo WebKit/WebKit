@@ -13,7 +13,7 @@ verifyNotConfigurable(Boolean, "prototype");
 
 try {
   if (delete Boolean.prototype !== false) {
-    $ERROR('#1: Boolean.prototype has the attribute DontDelete');
+    throw new Test262Error('#1: Boolean.prototype has the attribute DontDelete');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;

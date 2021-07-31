@@ -14,7 +14,7 @@ var proto = Error.prototype;
 verifyNotConfigurable(Error, "prototype");
 try {
   if ((delete Error.prototype) !== false) {
-    $ERROR('#1: Error.prototype has the attribute DontDelete');
+    throw new Test262Error('#1: Error.prototype has the attribute DontDelete');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;
@@ -26,7 +26,7 @@ try {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (Error.prototype !== proto) {
-  $ERROR('#2: var proto=Error.prototype; delete Error.prototype; Error.prototype===proto. Actual: ' + Error.prototype);
+  throw new Test262Error('#2: var proto=Error.prototype; delete Error.prototype; Error.prototype===proto. Actual: ' + Error.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -24,7 +24,7 @@ try {
       writable: true
     }
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyEqualTo(arr, "property", undefined);
 
@@ -35,7 +35,7 @@ try {
   verifyNotConfigurable(arr, "property");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

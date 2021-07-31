@@ -9,10 +9,10 @@ description: Use SPACE(\u0020)
 
 // CHECK#1
 if (eval("'\u0020str\u0020ing\u0020'") !== "\u0020str\u0020ing\u0020") {
-  $ERROR('#1: eval("\'\\u0020str\\u0020ing\\u0020\'") === "\\u0020str\\u0020ing\\u0020"');
+  throw new Test262Error('#1: eval("\'\\u0020str\\u0020ing\\u0020\'") === "\\u0020str\\u0020ing\\u0020"');
 }
 
 //CHECK#2
 if (eval("' str ing '") !== " str ing ") {
-  $ERROR('#2: eval("\' str ing \'") === " str ing "');
+  throw new Test262Error('#2: eval("\' str ing \'") === " str ing "');
 }

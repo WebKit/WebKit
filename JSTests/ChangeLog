@@ -1,3 +1,10 @@
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=228627
+
+        Reviewed by Ross Kirsling.
+
 2021-07-30  Robin Morisset  <rmorisset@apple.com>
 
         Improve OSR entry into Wasm loops with arguments

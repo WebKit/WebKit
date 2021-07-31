@@ -11,8 +11,8 @@ var y;
 
 function f(a){
   var x;
-  
-  if (a === 1) 
+
+  if (a === 1)
     return x;
   else {
     if(x === undefined) {
@@ -27,5 +27,5 @@ function f(a){
 y = f(0);
 
 if(!(y === undefined)){
-  $ERROR("#1: Recursive function calls shares execution context");
+  throw new Test262Error("#1: Recursive function calls shares execution context");
 }

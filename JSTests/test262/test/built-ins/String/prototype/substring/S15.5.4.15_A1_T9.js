@@ -18,7 +18,7 @@ var __obj = {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (new String(__obj).substring( /*(function(){})()*/ undefined, undefined) !== "undefined") {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).substring(/*(function(){})()*/undefined,undefined) === "undefined". Actual: ' + new String(__obj).substring( /*(function(){})()*/ undefined, undefined));
+  throw new Test262Error('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).substring(/*(function(){})()*/undefined,undefined) === "undefined". Actual: ' + new String(__obj).substring( /*(function(){})()*/ undefined, undefined));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -9,9 +9,9 @@ description: Number('') convert to Number by explicit transformation
 
 // CHECK#1
 if (Number("") !== 0) {
-  $ERROR('#1.1: Number("") === 0. Actual: ' + (Number("")));
+  throw new Test262Error('#1.1: Number("") === 0. Actual: ' + (Number("")));
 } else {
   if (1 / Number("") !== Number.POSITIVE_INFINITY) {
-    $ERROR('#1.2: Number("") == +0. Actual: -0');
+    throw new Test262Error('#1.2: Number("") == +0. Actual: -0');
   }
 }

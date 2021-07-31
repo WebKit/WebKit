@@ -11,15 +11,15 @@ flags: [noStrict]
 //CHECK#1
 try {
   x && (x = true);
-  $ERROR('#1.1: x && (x = true) throw ReferenceError. Actual: ' + (x && (x = true)));
+  throw new Test262Error('#1.1: x && (x = true) throw ReferenceError. Actual: ' + (x && (x = true)));
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: x && (x = true) throw ReferenceError. Actual: ' + (e));
+    throw new Test262Error('#1.2: x && (x = true) throw ReferenceError. Actual: ' + (e));
   }
 }
 
 //CHECK#2
 if (((y = true) && y) !== true) {
-  $ERROR('#2: ((y = true) && y) === true');
+  throw new Test262Error('#2: ((y = true) && y) === true');
 }

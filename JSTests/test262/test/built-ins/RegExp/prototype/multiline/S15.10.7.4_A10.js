@@ -12,7 +12,7 @@ var __re = RegExp.prototype;
 
 //CHECK#1
 if (__re.hasOwnProperty('multiline') !== true) {
-  $ERROR('#1: __re = RegExp.prototype; __re.hasOwnProperty(\'multiline\') === true');
+  throw new Test262Error('#1: __re = RegExp.prototype; __re.hasOwnProperty(\'multiline\') === true');
 }
 
 var __sample = /\n/;
@@ -22,5 +22,5 @@ verifyNotWritable(__sample, "multiline", "multiline", "shifted");
 
 //CHECK#2
 if (__sample.multiline !== __obj) {
-  $ERROR('#2: __sample = /\n/; __obj = __sample.multiline; __sample.multiline = "shifted"; __sample.multiline === __obj. Actual: ' + (__sample.multiline));
+  throw new Test262Error('#2: __sample = /\n/; __obj = __sample.multiline; __sample.multiline = "shifted"; __sample.multiline === __obj. Actual: ' + (__sample.multiline));
 }

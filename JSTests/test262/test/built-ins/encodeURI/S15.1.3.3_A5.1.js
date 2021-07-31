@@ -9,7 +9,7 @@ description: Checking use propertyIsEnumerable, for-in
 
 //CHECK#1
 if (encodeURI.propertyIsEnumerable('length') !== false) {
-  $ERROR('#1: encodeURI.propertyIsEnumerable(\'length\') === false. Actual: ' + (encodeURI.propertyIsEnumerable('length')));
+  throw new Test262Error('#1: encodeURI.propertyIsEnumerable(\'length\') === false. Actual: ' + (encodeURI.propertyIsEnumerable('length')));
 }
 
 //CHECK#2
@@ -21,5 +21,5 @@ for (var p in encodeURI) {
 }
 
 if (result !== true) {
-  $ERROR('#2: result = true; for (p in encodeURI) { if (p === "length") result = false; }  result === true;');
+  throw new Test262Error('#2: result = true; for (p in encodeURI) { if (p === "length") result = false; }  result === true;');
 }

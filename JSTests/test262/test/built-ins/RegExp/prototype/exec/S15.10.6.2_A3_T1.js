@@ -27,12 +27,12 @@ do{
 
 //CHECK#1
 if (__expected.length !== __matched.length) {
-	$ERROR('#1: __executed = /(?:ab|cd)\\d?/g.exec("ab  cd2  ab34  cd"); __matched.length === ' + (__expected.length) + '.Actual: ' + (__matched.length));
+	throw new Test262Error('#1: __executed = /(?:ab|cd)\\d?/g.exec("ab  cd2  ab34  cd"); __matched.length === ' + (__expected.length) + '.Actual: ' + (__matched.length));
 }
 
 //CHECK#2
 for(var index=0; index<__expected.length; index++) {
 	if (__expected[index] !== __matched[index]) {
-		$ERROR('#2: __executed = /(?:ab|cd)\\d?/g.exec("ab  cd2  ab34  cd"); __matched[' + index + '] === ' + __expected[index] + '. Actual: ' + __matched[index]);
+		throw new Test262Error('#2: __executed = /(?:ab|cd)\\d?/g.exec("ab  cd2  ab34  cd"); __matched[' + index + '] === ' + __expected[index] + '. Actual: ' + __matched[index]);
 	}
 }

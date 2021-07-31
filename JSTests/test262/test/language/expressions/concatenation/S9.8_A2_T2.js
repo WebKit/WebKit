@@ -9,5 +9,5 @@ description: null convert to String by implicit transformation
 
 // CHECK#1
 if (null + "" !== "null") {
-  $ERROR('#1: null + "" === "null". Actual: ' + (null + "")); 
+  throw new Test262Error('#1: null + "" === "null". Actual: ' + (null + "")); 
 }

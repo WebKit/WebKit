@@ -8,9 +8,9 @@ description: The "length" property of the "getUTCDay" is 0
 ---*/
 
 if (Date.prototype.getUTCDay.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The getUTCDay has a "length" property');
+  throw new Test262Error('#1: The getUTCDay has a "length" property');
 }
 
 if (Date.prototype.getUTCDay.length !== 0) {
-  $ERROR('#2: The "length" property of the getUTCDay is 0');
+  throw new Test262Error('#2: The "length" property of the getUTCDay is 0');
 }

@@ -10,7 +10,7 @@ description: Checking String.prototype.substring.prototype
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.prototype.substring.prototype !== undefined) {
-  $ERROR('#1: String.prototype.substring.prototype === undefined. Actual: ' + String.prototype.substring.prototype);
+  throw new Test262Error('#1: String.prototype.substring.prototype === undefined. Actual: ' + String.prototype.substring.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

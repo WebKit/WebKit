@@ -11,9 +11,9 @@ description: Pattern is "[{-z]"
 
 //CHECK#1
 try {
-	$ERROR('#1.1: new RegExp("[{-z]") throw SyntaxError. Actual: ' + (new RegExp("[{-z]")));
+	throw new Test262Error('#1.1: new RegExp("[{-z]") throw SyntaxError. Actual: ' + (new RegExp("[{-z]")));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: new RegExp("[{-z]") throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: new RegExp("[{-z]") throw SyntaxError. Actual: ' + (e));
 	}
 }

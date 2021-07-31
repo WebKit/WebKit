@@ -16,9 +16,9 @@ __instance.test = RegExp.prototype.test;
 //CHECK#1
 try { 
   __instance.test("message to investigate");
-  $ERROR('#1.1: __instance = Math; __instance.test = RegExp.prototype.test;  __instance.test("message to investigate")');
+  throw new Test262Error('#1.1: __instance = Math; __instance.test = RegExp.prototype.test;  __instance.test("message to investigate")');
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: __instance = Math; __instance.test = RegExp.prototype.test;  __instance.test("message to investigate"). Actual: ' + (e));
+    throw new Test262Error('#1.2: __instance = Math; __instance.test = RegExp.prototype.test;  __instance.test("message to investigate"). Actual: ' + (e));
   }
 }

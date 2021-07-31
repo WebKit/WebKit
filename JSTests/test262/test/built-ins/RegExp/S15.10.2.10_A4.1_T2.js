@@ -23,7 +23,7 @@ for (var index = 0; index < hex.length; index++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: ENGLISH CAPITAL ALPHABET');
+  throw new Test262Error('#1: ENGLISH CAPITAL ALPHABET');
 }  
 
 //CHECK#61-7A
@@ -38,5 +38,5 @@ for (index = 0; index < hex.length; index++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: english small alphabet');
+  throw new Test262Error('#1: english small alphabet');
 }

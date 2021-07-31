@@ -8,9 +8,9 @@ description: The "length" property of the "setFullYear" is 3
 ---*/
 
 if (Date.prototype.setFullYear.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The setFullYear has a "length" property');
+  throw new Test262Error('#1: The setFullYear has a "length" property');
 }
 
 if (Date.prototype.setFullYear.length !== 3) {
-  $ERROR('#2: The "length" property of the setFullYear is 3');
+  throw new Test262Error('#2: The "length" property of the setFullYear is 3');
 }

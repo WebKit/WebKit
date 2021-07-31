@@ -10,9 +10,9 @@ description: Checking if creating "new Function("this.p1=1").apply" fails
 try {
   var FACTORY = Function("this.p1=1").apply;
   var obj = new FACTORY();
-  $ERROR('#1: Function.prototype.apply can\'t be used as [[Construct]] caller');
+  throw new Test262Error('#1: Function.prototype.apply can\'t be used as [[Construct]] caller');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1.1: Function.prototype.apply can\'t be used as [[Construct]] caller');
+    throw new Test262Error('#1.1: Function.prototype.apply can\'t be used as [[Construct]] caller');
   }
 }

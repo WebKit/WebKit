@@ -18,7 +18,7 @@ assert.sameValue(calls, 1, "The value of `calls` is `1`");
 calls = 0;
 var B = {
   set b(_) {
-    $ERROR("The `b` setter definition in `B` is unreachable");
+    throw new Test262Error("The `b` setter definition in `B` is unreachable");
   },
   set ['b'](_) {
     calls++;
@@ -30,10 +30,10 @@ assert.sameValue(calls, 1, "The value of `calls` is `1`");
 calls = 0;
 var C = {
   set c(_) {
-    $ERROR("The `c` setter definition in `C` is unreachable");
+    throw new Test262Error("The `c` setter definition in `C` is unreachable");
   },
   set ['c'](_) {
-    $ERROR("The first `['c']` setter definition in `C` is unreachable");
+    throw new Test262Error("The first `['c']` setter definition in `C` is unreachable");
   },
   set ['c'](_) {
     calls++
@@ -45,7 +45,7 @@ assert.sameValue(calls, 1, "The value of `calls` is `1`");
 calls = 0;
 var D = {
   set ['d'](_) {
-    $ERROR("The `['d']` setter definition in `D` is unreachable");
+    throw new Test262Error("The `['d']` setter definition in `D` is unreachable");
   },
   set d(_) {
     calls++

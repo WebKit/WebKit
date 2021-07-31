@@ -13,23 +13,23 @@ var num = 1.1;
 
 // CHECK#1
 if (typeof num !== 'number') {
-  $ERROR('#1: num = 1.1 should be Number primitive');
+  throw new Test262Error('#1: num = 1.1 should be Number primitive');
 }
 
 var obj = Object(num);
 
 //CHECK#2
 if (typeof obj !== "object") {
-  $ERROR('#2: Object(1.1) returns ToObject(1.1)');
+  throw new Test262Error('#2: Object(1.1) returns ToObject(1.1)');
 }
 
 //CHECK#3
 if (obj.constructor !== Number) {
-  $ERROR('#3: Object(1.1) returns ToObject(1.1)');
+  throw new Test262Error('#3: Object(1.1) returns ToObject(1.1)');
 }
 
 //CHECK#4
 if ((obj != 1.1) || (obj === 1.1)) {
-  $ERROR('#4: Object(1.1) returns ToObject(1.1)');
+  throw new Test262Error('#4: Object(1.1) returns ToObject(1.1)');
 }
 //

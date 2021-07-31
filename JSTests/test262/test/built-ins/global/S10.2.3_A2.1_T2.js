@@ -10,22 +10,22 @@ description: Global execution context - Function Properties
 //CHECK#1
 for (var x in this) {
   if (x === 'eval') {
-    $ERROR("#1: 'eval' have attribute DontEnum");
+    throw new Test262Error("#1: 'eval' have attribute DontEnum");
   } else if (x === 'parseInt') {
-    $ERROR("#1: 'parseInt' have attribute DontEnum");
+    throw new Test262Error("#1: 'parseInt' have attribute DontEnum");
   } else if (x === 'parseFloat') {
-    $ERROR("#1: 'parseFloat' have attribute DontEnum");
+    throw new Test262Error("#1: 'parseFloat' have attribute DontEnum");
   } else if (x === 'isNaN') {
-    $ERROR("#1: 'isNaN' have attribute DontEnum");
+    throw new Test262Error("#1: 'isNaN' have attribute DontEnum");
   } else if (x === 'isFinite') {
-    $ERROR("#1: 'isFinite' have attribute DontEnum");
+    throw new Test262Error("#1: 'isFinite' have attribute DontEnum");
   } else if (x === 'decodeURI') {
-    $ERROR("#1: 'decodeURI' have attribute DontEnum");
+    throw new Test262Error("#1: 'decodeURI' have attribute DontEnum");
   } else if (x === 'decodeURIComponent') {
-    $ERROR("#1: 'decodeURIComponent' have attribute DontEnum");
+    throw new Test262Error("#1: 'decodeURIComponent' have attribute DontEnum");
   } else if (x === 'encodeURI') {
-    $ERROR("#1: 'encodeURI' have attribute DontEnum");
+    throw new Test262Error("#1: 'encodeURI' have attribute DontEnum");
   } else if (x === 'encodeURIComponent') {
-    $ERROR("#1: 'encodeURIComponent' have attribute DontEnum");
+    throw new Test262Error("#1: 'encodeURIComponent' have attribute DontEnum");
   }
 }

@@ -14,7 +14,7 @@ __instance.replace = String.prototype.replace;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.replace(true, 1) !== "1") {
-  $ERROR('#1: __instance = new Object(true); __instance.replace = String.prototype.replace;  __instance.replace(true, 1) === "1". Actual: ' + __instance.replace(true, 1));
+  throw new Test262Error('#1: __instance = new Object(true); __instance.replace = String.prototype.replace;  __instance.replace(true, 1) === "1". Actual: ' + __instance.replace(true, 1));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

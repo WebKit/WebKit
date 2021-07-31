@@ -8,5 +8,5 @@ description: Checking existence of the property "NaN"
 ---*/
 
 if (!Number.hasOwnProperty("NaN")) {
-  $ERROR('#1: The Number constructor has the property "NaN"');
+  throw new Test262Error('#1: The Number constructor has the property "NaN"');
 }

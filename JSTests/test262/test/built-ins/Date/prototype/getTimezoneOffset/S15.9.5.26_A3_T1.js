@@ -13,5 +13,5 @@ includes: [propertyHelper.js]
 var x = Date.prototype.getTimezoneOffset.length;
 verifyNotWritable(Date.prototype.getTimezoneOffset, "length", null, 1);
 if (Date.prototype.getTimezoneOffset.length !== x) {
-  $ERROR('#1: The Date.prototype.getTimezoneOffset.length has the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getTimezoneOffset.length has the attribute ReadOnly');
 }

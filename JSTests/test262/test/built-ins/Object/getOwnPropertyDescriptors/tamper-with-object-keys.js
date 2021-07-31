@@ -9,7 +9,7 @@ author: Jordan Harband
 ---*/
 
 function fakeObjectGetOwnPropertyDescriptor() {
-  $ERROR('The overriden version of Object.getOwnPropertyDescriptor was called!');
+  throw new Test262Error('The overriden version of Object.getOwnPropertyDescriptor was called!');
 }
 Object.getOwnPropertyDescriptor = fakeObjectGetOwnPropertyDescriptor;
 

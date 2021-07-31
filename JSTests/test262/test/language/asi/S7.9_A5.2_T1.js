@@ -13,9 +13,9 @@ var y = 0;
 x
 ++y
 if (x !== 0) {
-  $ERROR('#1: Check Prefix Increment Operator for automatic semicolon insertion');
+  throw new Test262Error('#1: Check Prefix Increment Operator for automatic semicolon insertion');
 } else {
   if (y !== 1) {
-    $ERROR('#2: Check Prefix Increment Operator for automatic semicolon insertion');
+    throw new Test262Error('#2: Check Prefix Increment Operator for automatic semicolon insertion');
   }
 }

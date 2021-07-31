@@ -13,17 +13,17 @@ description: length === 100, P in [0, 98, 99]
 var x = Array(100);
 x[0] = 1;
 if (x.length !== 100) {
-  $ERROR('#1: x = Array(100); x[0] = 1; x.length === 100. Actual: ' + (x.length));
+  throw new Test262Error('#1: x = Array(100); x[0] = 1; x.length === 100. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x[98] = 1;
 if (x.length !== 100) {
-  $ERROR('#2: x = Array(100); x[0] = 1; x[98] = 1; x.length === 100. Actual: ' + (x.length));
+  throw new Test262Error('#2: x = Array(100); x[0] = 1; x[98] = 1; x.length === 100. Actual: ' + (x.length));
 }
 
 //CHECK#3
 x[99] = 1;
 if (x.length !== 100) {
-  $ERROR('#3: x = Array(100); x[0] = 1; x[98] = 1; x[99] = 1; x.length === 100. Actual: ' + (x.length));
+  throw new Test262Error('#3: x = Array(100); x[0] = 1; x[98] = 1; x[99] = 1; x.length === 100. Actual: ' + (x.length));
 }

@@ -13,6 +13,6 @@ var uriAlpha = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 for (var indexC = 0; indexC < uriAlpha.length; indexC++) {
   var str = uriAlpha[indexC];
   if (encodeURI(str) !== str) {
-    $ERROR('#' + (indexC + 1) + ': unescapedURISet containing ' + str);
+    throw new Test262Error('#' + (indexC + 1) + ': unescapedURISet containing ' + str);
   }
 }

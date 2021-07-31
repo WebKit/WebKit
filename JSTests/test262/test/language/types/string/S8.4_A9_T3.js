@@ -13,7 +13,7 @@ var strObj=new String;
 ////////////////////////////////////////////////////////////
 // CHECK#1
 if (str.constructor !== strObj.constructor){
-  $ERROR('#1: "".constructor === new String.constructor');
+  throw new Test262Error('#1: "".constructor === new String.constructor');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ if (str.constructor !== strObj.constructor){
 ////////////////////////////////////////////////////////////
 // CHECK#2
 if (str != strObj){
-  $ERROR('#2: values of str=""; and strObj=new String(""); are equal');
+  throw new Test262Error('#2: values of str=""; and strObj=new String(""); are equal');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ if (str != strObj){
 ////////////////////////////////////////////////////////////
 // CHECK#3
 if (str === strObj){
-  $ERROR('#3: objects of str=""; and strObj=new String(""); are different');
+  throw new Test262Error('#3: objects of str=""; and strObj=new String(""); are different');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ if (str === strObj){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if (typeof str == typeof strObj){
-  $ERROR('#4: types of str=""; and strObj=new String(""); are different');
+  throw new Test262Error('#4: types of str=""; and strObj=new String(""); are different');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

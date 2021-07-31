@@ -20,7 +20,7 @@ __obj.toLowerCase = String.prototype.toLowerCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__obj.toLowerCase() !== "ab") {
-  $ERROR('#1: var __obj = {toString:function(){return "\u0041B";}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ==="ab". Actual: ' + __obj.toLowerCase());
+  throw new Test262Error('#1: var __obj = {toString:function(){return "\u0041B";}}; __obj.toLowerCase = String.prototype.toLowerCase; __obj.toLowerCase() ==="ab". Actual: ' + __obj.toLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

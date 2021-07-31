@@ -11,34 +11,34 @@ description: >
 
 //CHECK#1
 if ((true && true) !== true) {
-  $ERROR('#1: (true && true) === true');
+  throw new Test262Error('#1: (true && true) === true');
 }
 
 //CHECK#2
 if ((true && false) !== false) {
-  $ERROR('#2: (true && false) === false');
+  throw new Test262Error('#2: (true && false) === false');
 }
 
 //CHECK#3
 var y = new Boolean(true);
 if ((new Boolean(true) &&  y) !== y) {
-  $ERROR('#3: (var y = new Boolean(true); (new Boolean(true) &&  y) === y');
+  throw new Test262Error('#3: (var y = new Boolean(true); (new Boolean(true) &&  y) === y');
 }
 
 //CHECK#4
 var y = new Boolean(false);
 if ((new Boolean(true) &&  y) !== y) {
-  $ERROR('#4: (var y = new Boolean(false); (new Boolean(true) &&  y) === y');
+  throw new Test262Error('#4: (var y = new Boolean(false); (new Boolean(true) &&  y) === y');
 }
 
 //CHECK#5
 var y = new Boolean(true);
 if ((new Boolean(false) &&  y) !== y) {
-  $ERROR('#5: (var y = new Boolean(true); (new Boolean(false) &&  y) === y');
+  throw new Test262Error('#5: (var y = new Boolean(true); (new Boolean(false) &&  y) === y');
 }
 
 //CHECK#6
 var y = new Boolean(false);
 if ((new Boolean(false) &&  y) !== y) {
-  $ERROR('#6: (var y = new Boolean(false); (new Boolean(false) &&  y) === y');
+  throw new Test262Error('#6: (var y = new Boolean(false); (new Boolean(false) &&  y) === y');
 }

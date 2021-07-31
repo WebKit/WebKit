@@ -14,7 +14,7 @@ description: >
 if (function() {
     return "gnulluna"
   }().replace(null, Function()) !== "gundefineduna") {
-  $ERROR('#1: function(){return "gnulluna"}().replace(null, Function()) === "gundefineduna". Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "gnulluna"}().replace(null, Function()) === "gundefineduna". Actual: ' + function() {
     return "gnulluna"
   }().replace(null, Function()));
 }

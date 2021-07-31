@@ -15,7 +15,7 @@ function __func(arguments){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__func(42) !== 42) {
-	$ERROR('#1: "arguments" variable overrides ActivationObject.arguments');
+	throw new Test262Error('#1: "arguments" variable overrides ActivationObject.arguments');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

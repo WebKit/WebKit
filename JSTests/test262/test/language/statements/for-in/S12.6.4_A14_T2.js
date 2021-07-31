@@ -20,7 +20,7 @@ for(x in function __func(){return {a:1};}()){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__reached !== "a") {
-	$ERROR('#2: function expession inside of for-in expression allowed');
+	throw new Test262Error('#2: function expession inside of for-in expression allowed');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

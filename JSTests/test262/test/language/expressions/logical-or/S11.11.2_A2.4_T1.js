@@ -10,11 +10,11 @@ description: Checking with "="
 //CHECK#1
 var x = true; 
 if (((x = false) || x) !== false) {
-  $ERROR('#1: var x = true; ((x = false) || x) === false');
+  throw new Test262Error('#1: var x = true; ((x = false) || x) === false');
 }
 
 //CHECK#2
 var x = true; 
 if ((x || (x = false)) !== true) {
-  $ERROR('#2: var x = true; (x || (x = false)) === true');
+  throw new Test262Error('#2: var x = true; (x || (x = false)) === true');
 }

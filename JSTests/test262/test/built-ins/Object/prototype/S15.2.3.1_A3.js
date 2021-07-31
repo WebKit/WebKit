@@ -12,7 +12,7 @@ verifyNotConfigurable(Object, "prototype");
 //CHECK#1
 try {
   if ((delete Object.prototype) !== false) {
-    $ERROR('#1: Object.prototype has the attribute DontDelete');
+    throw new Test262Error('#1: Object.prototype has the attribute DontDelete');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;
@@ -21,5 +21,5 @@ try {
 
 //CHECK#2
 if (!(Object.hasOwnProperty('prototype'))) {
-  $ERROR('#2: the Object.prototype property has the attributes DontDelete.');
+  throw new Test262Error('#2: the Object.prototype property has the attributes DontDelete.');
 }

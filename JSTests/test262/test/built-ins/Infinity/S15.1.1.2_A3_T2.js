@@ -10,5 +10,5 @@ flags: [noStrict]
 
 // CHECK#1
 if (delete Infinity !== false) {
-  $ERROR('#1: delete Infinity === false. Actual: ' + (delete Infinity));
+  throw new Test262Error('#1: delete Infinity === false. Actual: ' + (delete Infinity));
 }

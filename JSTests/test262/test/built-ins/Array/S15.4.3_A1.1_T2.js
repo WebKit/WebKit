@@ -12,5 +12,5 @@ description: Function.prototype.toString = Object.prototype.toString
 //CHECK#1
 Function.prototype.toString = Object.prototype.toString;
 if (Array.toString() !== "[object " + "Function" + "]") {
-  $ERROR('#1: Function.prototype.toString = Object.prototype.toString; Array.toString() === "[object " + "Function" + "]". Actual: ' + (Array.toString()));
+  throw new Test262Error('#1: Function.prototype.toString = Object.prototype.toString; Array.toString() === "[object " + "Function" + "]". Actual: ' + (Array.toString()));
 }

@@ -12,5 +12,5 @@ var obj = Function;
 var thisobj = this.Function;
 
 if (obj !== thisobj) {
-  $ERROR('Function is the property of global');
+  throw new Test262Error('Function is the property of global');
 }

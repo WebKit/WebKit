@@ -8,9 +8,9 @@ description: The "length" property of the "setTime" is 1
 ---*/
 
 if (Date.prototype.setTime.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The setTime has a "length" property');
+  throw new Test262Error('#1: The setTime has a "length" property');
 }
 
 if (Date.prototype.setTime.length !== 1) {
-  $ERROR('#2: The "length" property of the setTime is 1');
+  throw new Test262Error('#2: The "length" property of the setTime is 1');
 }

@@ -9,9 +9,9 @@ description: Checking if call of RegExp instance fails
 
 //CHECK#1
 try {
-	$ERROR('#1.1: /[^a]*/() throw TypeError. Actual: ' + (/[^a]*/()));
+	throw new Test262Error('#1.1: /[^a]*/() throw TypeError. Actual: ' + (/[^a]*/()));
 } catch (e) {
 	if ((e instanceof TypeError) !== true) {
-		$ERROR('#1.2: /[^a]*/() throw TypeError. Actual: ' + (e));
+		throw new Test262Error('#1.2: /[^a]*/() throw TypeError. Actual: ' + (e));
 	}
 }

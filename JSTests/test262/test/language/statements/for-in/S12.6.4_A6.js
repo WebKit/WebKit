@@ -28,7 +28,7 @@ for (key in __instance){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!((__accum.indexOf("prop1")!==-1)&&(__accum.indexOf("feat2")!==-1)&&(__accum.indexOf("hinthinted")!==-1))) {
-	$ERROR('#1: (__accum.indexOf("prop1")!==-1)&&(__accum.indexOf("feat2")!==-1)&&(__accum.indexOf("hinthinted")!==-1)');
+	throw new Test262Error('#1: (__accum.indexOf("prop1")!==-1)&&(__accum.indexOf("feat2")!==-1)&&(__accum.indexOf("hinthinted")!==-1)');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ if (!((__accum.indexOf("prop1")!==-1)&&(__accum.indexOf("feat2")!==-1)&&(__accum
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__accum.indexOf("hintprotohint")!==-1) {
-	$ERROR('#2: __accum.indexOf("hintprotohint") === -1. Actual:  __accum.indexOf("hintprotohint") ==='+ __accum.indexOf("hintprotohint")  );
+	throw new Test262Error('#2: __accum.indexOf("hintprotohint") === -1. Actual:  __accum.indexOf("hintprotohint") ==='+ __accum.indexOf("hintprotohint")  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

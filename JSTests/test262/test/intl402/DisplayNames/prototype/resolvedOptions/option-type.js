@@ -25,6 +25,7 @@ info: |
   [[Style]]: "style"
   [[Type]]: "type"
   [[Fallback]]: "fallback"
+  [[LanguageDisplay]]: "languageDisplay"
 
   Intl.DisplayNames ([ locales [ , options ]])
 

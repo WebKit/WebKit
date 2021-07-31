@@ -9,9 +9,9 @@ description: Tested RegExp is "x{0,1}{1,}"
 
 //CHECK#1
 try {
-	$ERROR('#1.1: new RegExp("x{0,1}{1,}") throw SyntaxError. Actual: ' + (new RegExp("x{0,1}{1,}")));
+	throw new Test262Error('#1.1: new RegExp("x{0,1}{1,}") throw SyntaxError. Actual: ' + (new RegExp("x{0,1}{1,}")));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: new RegExp("x{0,1}{1,}") throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: new RegExp("x{0,1}{1,}") throw SyntaxError. Actual: ' + (e));
 	}
 }

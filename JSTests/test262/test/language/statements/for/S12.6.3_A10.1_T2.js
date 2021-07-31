@@ -16,7 +16,7 @@ var __str, index2, index3, index6;
 try {
 	__in__deepest__loop=__in__deepest__loop;
 } catch (e) {
-	$ERROR('#1: "__in__deepest__loop=__in__deepest__loop" does not lead to throwing exception');
+	throw new Test262Error('#1: "__in__deepest__loop=__in__deepest__loop" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ try {
 try {
 	index0=index0;
 } catch (e) {
-	$ERROR('#2: "index0=index0" does not lead to throwing exception');
+	throw new Test262Error('#2: "index0=index0" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ try {
 try {
 	index1=index1;
 } catch (e) {
-	$ERROR('#3: "index1=index1" does not lead to throwing exception');
+	throw new Test262Error('#3: "index1=index1" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ try {
 try {
 	index4=index4;
 } catch (e) {
-	$ERROR('#4: "index4=index4" does not lead to throwing exception');
+	throw new Test262Error('#4: "index4=index4" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ try {
 try {
 	index5=index5;
 } catch (e) {
-	$ERROR('#4: "index5=index5" does not lead to throwing exception');
+	throw new Test262Error('#4: "index5=index5" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ try {
 try {
 	index7=index7;
 } catch (e) {
-	$ERROR('#6: "index7=index7" does not lead to throwing exception');
+	throw new Test262Error('#6: "index7=index7" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ try {
 try {
 	index8=index8;
 } catch (e) {
-	$ERROR('#7: "index8=index8" does not lead to throwing exception');
+	throw new Test262Error('#7: "index8=index8" does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ for( var index0=0; index0<=1; index0++) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str!== "000000000\n100000000\n110000000\n110000001\n111000000\n111000001\n111100000\n111100001\n111110000\n111110001\n111111000\n111111001\n111111100\n111111101\n111111110\n111111111\n") {
-	$ERROR('#2: __str === "000000000\\n100000000\\n110000000\\n110000001\\n111000000\\n111000001\\n111100000\\n111100001\\n111110000\\n111110001\\n111111000\\n111111001\\n111111100\\n111111101\\n111111110\\n111111111\\n". Actual:  __str ==='+ __str  );
+	throw new Test262Error('#2: __str === "000000000\\n100000000\\n110000000\\n110000001\\n111000000\\n111000001\\n111100000\\n111100001\\n111110000\\n111110001\\n111111000\\n111111001\\n111111100\\n111111101\\n111111110\\n111111111\\n". Actual:  __str ==='+ __str  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

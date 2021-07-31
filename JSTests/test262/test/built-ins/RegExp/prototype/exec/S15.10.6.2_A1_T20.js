@@ -17,28 +17,28 @@ __expected.input="undefined";
 
 //CHECK#0
 if ((__executed instanceof Array) !== true) {
-	$ERROR('#0: __executed = /[a-f]d/.exec(x); var x; (__executed instanceof Array) === true');
+	throw new Test262Error('#0: __executed = /[a-f]d/.exec(x); var x; (__executed instanceof Array) === true');
 }
 
 //CHECK#1
 if (__executed.length !== __expected.length) {
-  $ERROR('#1: __executed = /[a-f]d/.exec(x); var x; __executed.length === ' + __expected.length + '. Actual: ' + __executed.length);
+  throw new Test262Error('#1: __executed = /[a-f]d/.exec(x); var x; __executed.length === ' + __expected.length + '. Actual: ' + __executed.length);
 }
 
 //CHECK#2
 if (__executed.index !== __expected.index) {
-  $ERROR('#2: __executed = /[a-f]d/.exec(x); var x; __executed.index === ' + __expected.index + '. Actual: ' + __executed.index);
+  throw new Test262Error('#2: __executed = /[a-f]d/.exec(x); var x; __executed.index === ' + __expected.index + '. Actual: ' + __executed.index);
 }
 
 //CHECK#3
 if (__executed.input !== __expected.input) {
-  $ERROR('#3: __executed = /[a-f]d/.exec(x); var x; __executed.input === ' + __expected.input + '. Actual: ' + __executed.input);
+  throw new Test262Error('#3: __executed = /[a-f]d/.exec(x); var x; __executed.input === ' + __expected.input + '. Actual: ' + __executed.input);
 }
 
 //CHECK#4
 for(var index=0; index<__expected.length; index++) {
   if (__executed[index] !== __expected[index]) {
-    $ERROR('#4: __executed = /[a-f]d/.exec(x); var x; __executed[' + index + '] === ' + __expected[index] + '. Actual: ' + __executed[index]);
+    throw new Test262Error('#4: __executed = /[a-f]d/.exec(x); var x; __executed[' + index + '] === ' + __expected[index] + '. Actual: ' + __executed[index]);
   }
 }
 

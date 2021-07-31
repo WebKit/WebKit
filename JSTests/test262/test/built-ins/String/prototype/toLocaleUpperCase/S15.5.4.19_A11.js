@@ -10,7 +10,7 @@ description: Checking String.prototype.toLocaleUpperCase.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.toLocaleUpperCase.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.toLocaleUpperCase.hasOwnProperty("length") return true. Actual: ' + String.prototype.toLocaleUpperCase.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.toLocaleUpperCase.hasOwnProperty("length") return true. Actual: ' + String.prototype.toLocaleUpperCase.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.toLocaleUpperCase.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.toLocaleUpperCase.length !== 0) {
-  $ERROR('#2: String.prototype.toLocaleUpperCase.length === 0. Actual: ' + String.prototype.toLocaleUpperCase.length);
+  throw new Test262Error('#2: String.prototype.toLocaleUpperCase.length === 0. Actual: ' + String.prototype.toLocaleUpperCase.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

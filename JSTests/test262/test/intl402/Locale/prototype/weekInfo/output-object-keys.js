@@ -24,6 +24,9 @@ includes: [propertyHelper.js, compareArray.js]
 ---*/
 
 const result = new Intl.Locale('en').weekInfo;
+function isIntegerBetweenOneAndSeven(value) {
+  return value === 1 || value === 2 || value === 3 || value === 4 || value === 5 || value === 6 || value === 7;
+}
 
 assert.compareArray(Reflect.ownKeys(result), ['firstDay', 'weekendStart', 'weekendEnd', 'minimalDays']);
 
@@ -32,21 +35,37 @@ verifyProperty(result, 'firstDay', {
   enumerable: true,
   configurable: true
 });
+assert(
+  isIntegerBetweenOneAndSeven(new Intl.Locale('en').weekInfo.firstDay),
+  '`firstDay` must be an integer between one and seven (inclusive)'
+);
 
 verifyProperty(result, 'weekendStart', {
   writable: true,
   enumerable: true,
   configurable: true
 });
+assert(
+  isIntegerBetweenOneAndSeven(new Intl.Locale('en').weekInfo.weekendStart),
+  '`weekendStart` must be an integer between one and seven (inclusive)'
+);
 
 verifyProperty(result, 'weekendEnd', {
   writable: true,
   enumerable: true,
   configurable: true
 });
+assert(
+  isIntegerBetweenOneAndSeven(new Intl.Locale('en').weekInfo.weekendEnd),
+  '`weekendEnd` must be an integer between one and seven (inclusive)'
+);
 
 verifyProperty(result, 'minimalDays', {
   writable: true,
   enumerable: true,
   configurable: true
 });
+assert(
+  isIntegerBetweenOneAndSeven(new Intl.Locale('en').weekInfo.minimalDays),
+  '`minimalDays` must be an integer between one and seven (inclusive)'
+);

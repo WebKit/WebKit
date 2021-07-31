@@ -13,40 +13,40 @@ var x;
 
 //CHECK#1
 if (typeof Boolean(x = 0) !== "boolean") {
-  $ERROR('#1.1: typeof Boolean(x=0) should be "boolean", actual is "' + typeof Boolean(x = 0) + '"');
+  throw new Test262Error('#1.1: typeof Boolean(x=0) should be "boolean", actual is "' + typeof Boolean(x = 0) + '"');
 }
 if (Boolean(x = 0) !== false) {
-  $ERROR('#1.2: Boolean(x=0) should be false');
+  throw new Test262Error('#1.2: Boolean(x=0) should be false');
 }
 
 //CHECK#2
 if (typeof Boolean(x = 1) !== "boolean") {
-  $ERROR('#2.1: typeof Boolean(x=1) should be "boolean", actual is "' + typeof Boolean(x = 1) + '"');
+  throw new Test262Error('#2.1: typeof Boolean(x=1) should be "boolean", actual is "' + typeof Boolean(x = 1) + '"');
 }
 if (Boolean(x = 1) !== true) {
-  $ERROR('#2.2: Boolean(x=1) should be true');
+  throw new Test262Error('#2.2: Boolean(x=1) should be true');
 }
 
 //CHECK#3
 if (typeof Boolean(x = false) !== "boolean") {
-  $ERROR('#3.1: typeof Boolean(x=false) should be "boolean", actual is "' + typeof Boolean(x = false) + '"');
+  throw new Test262Error('#3.1: typeof Boolean(x=false) should be "boolean", actual is "' + typeof Boolean(x = false) + '"');
 }
 if (Boolean(x = false) !== false) {
-  $ERROR('#3.2: Boolean(x=false) should be false');
+  throw new Test262Error('#3.2: Boolean(x=false) should be false');
 }
 
 //CHECK#4
 if (typeof Boolean(x = true) !== "boolean") {
-  $ERROR('#4.1: typeof Boolean(x=true) should be "boolean", actual is "' + typeof Boolean(x = true) + '"');
+  throw new Test262Error('#4.1: typeof Boolean(x=true) should be "boolean", actual is "' + typeof Boolean(x = true) + '"');
 }
 if (Boolean(x = true) !== true) {
-  $ERROR('#4.2: Boolean(x=true) should be true');
+  throw new Test262Error('#4.2: Boolean(x=true) should be true');
 }
 
 //CHECK#5
 if (typeof Boolean(x = null) !== "boolean") {
-  $ERROR('#5.1: typeof Boolean(x=null) should be "boolean", actual is "' + typeof Boolean(x = null) + '"');
+  throw new Test262Error('#5.1: typeof Boolean(x=null) should be "boolean", actual is "' + typeof Boolean(x = null) + '"');
 }
 if (Boolean(x = null) !== false) {
-  $ERROR('#5.2: Boolean(x=null) should be false');
+  throw new Test262Error('#5.2: Boolean(x=null) should be false');
 }

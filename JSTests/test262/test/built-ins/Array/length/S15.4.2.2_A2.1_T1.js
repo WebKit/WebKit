@@ -13,17 +13,17 @@ description: Array constructor is given one argument
 //CHECK#1
 var x = new Array(0);
 if (x.length !== 0) {
-  $ERROR('#1: var x = new Array(0); x.length === 0. Actual: ' + (x.length));
+  throw new Test262Error('#1: var x = new Array(0); x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#2
 var x = new Array(1);
 if (x.length !== 1) {
-  $ERROR('#2: var x = new Array(1); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#2: var x = new Array(1); x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#3
 var x = new Array(4294967295);
 if (x.length !== 4294967295) {
-  $ERROR('#3: var x = new Array(4294967295); x.length === 4294967295. Actual: ' + (x.length));
+  throw new Test262Error('#3: var x = new Array(4294967295); x.length === 4294967295. Actual: ' + (x.length));
 }

@@ -15,12 +15,12 @@ var f = Function.call(this, "return this.planet;");
 
 //CHECK#1
 if (f() !== undefined) {
-  $ERROR('#1: ');
+  throw new Test262Error('#1: ');
 }
 
 var planet = "mars";
 
 //CHECK#2
 if (f() !== "mars") {
-  $ERROR('#2: ');
+  throw new Test262Error('#2: ');
 }

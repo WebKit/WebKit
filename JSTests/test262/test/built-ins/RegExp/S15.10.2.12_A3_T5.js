@@ -12,7 +12,7 @@ description: non-w
 //CHECK#1
 var non_w = "\f\n\r\t\v~`!@#$%^&*()-+={[}]|\\:;'<,>./? " + '"';
 if (/\w/.exec(non_w) !== null) {
-   $ERROR('#1: non-w');
+   throw new Test262Error('#1: non-w');
 }
 
 //CHECK#2
@@ -24,5 +24,5 @@ while (regexp_w.exec(non_W) !== null) {
 }
 
 if (non_W.length !== k) {
-   $ERROR('#2: non-W');
+   throw new Test262Error('#2: non-W');
 }

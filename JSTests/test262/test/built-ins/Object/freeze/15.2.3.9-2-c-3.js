@@ -42,21 +42,21 @@ verifyEqualTo(obj, "foo2", 10);
 
 obj.foo2 = 12;
 if (!resultSetFun) {
-  $ERROR('Expected obj["foo2"] set() to be called, but was not.');
+  throw new Test262Error('Expected obj["foo2"] set() to be called, but was not.');
 }
 
 if (!isEnumerable(obj, "foo2")) {
-  $ERROR('Expected obj["foo2"] to be enumerable.');
+  throw new Test262Error('Expected obj["foo2"] to be enumerable.');
 }
 
 var desc1 = Object.getOwnPropertyDescriptor(obj, "foo1");
 if (desc1.configurable || desc1.writable) {
-  $ERROR('Expected obj["foo1"] to be non-writable, non-configurable; actually ' + JSON.stringify(desc1));
+  throw new Test262Error('Expected obj["foo1"] to be non-writable, non-configurable; actually ' + JSON.stringify(desc1));
 }
 
 var desc2 = Object.getOwnPropertyDescriptor(obj, "foo2");
 if (desc2.configurable || desc2.writable) {
-  $ERROR('Expected obj["foo2"] to be non-writable, non-configurable; actually ' + JSON.stringify(desc2));
+  throw new Test262Error('Expected obj["foo2"] to be non-writable, non-configurable; actually ' + JSON.stringify(desc2));
 }
 
 verifyEqualTo(obj, "foo1", 10);

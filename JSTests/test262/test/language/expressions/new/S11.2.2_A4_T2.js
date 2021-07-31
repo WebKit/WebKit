@@ -12,11 +12,11 @@ description: Checking Number object case
 //CHECK#1
 try {
   new new Number(1);
-  $ERROR('#1: new new Number(1) throw TypeError');
+  throw new Test262Error('#1: new new Number(1) throw TypeError');
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1: new new Number(1) throw TypeError');
+    throw new Test262Error('#1: new new Number(1) throw TypeError');
   }
 }
 
@@ -24,11 +24,11 @@ catch (e) {
 try {
   var x = new Number(1);
   new x;
-  $ERROR('#2: var x = new Number(1); new x throw TypeError');
+  throw new Test262Error('#2: var x = new Number(1); new x throw TypeError');
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#2: var x = new Number(1); new x throw TypeError');
+    throw new Test262Error('#2: var x = new Number(1); new x throw TypeError');
   }
 }
 
@@ -36,10 +36,10 @@ catch (e) {
 try {
   var x = new Number(1);
   new x();
-  $ERROR('#3: var x = new Number(1); new x() throw TypeError');
+  throw new Test262Error('#3: var x = new Number(1); new x() throw TypeError');
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#3: var x = new Number(1); new x() throw TypeError');
+    throw new Test262Error('#3: var x = new Number(1); new x() throw TypeError');
   }
 }

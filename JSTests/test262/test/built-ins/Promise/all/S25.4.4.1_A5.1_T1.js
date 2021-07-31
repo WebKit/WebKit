@@ -23,7 +23,7 @@ iterThrows[Symbol.iterator] = function() {
 };
 
 Promise.all(iterThrows).then(function() {
-  $ERROR('Promise unexpectedly resolved: Promise.all(iterThrows) should throw TypeError');
+  throw new Test262Error('Promise unexpectedly resolved: Promise.all(iterThrows) should throw TypeError');
 }, function(reason) {
   assert.sameValue(reason, error);
 }).then($DONE, $DONE);

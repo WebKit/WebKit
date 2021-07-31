@@ -12,7 +12,7 @@ Number.prototype.toLocaleLowerCase = String.prototype.toLocaleLowerCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ((Number.NEGATIVE_INFINITY).toLocaleLowerCase() !== "-infinity") {
-  $ERROR('#1: Number.prototype.toLocaleLowerCase = String.prototype.toLocaleLowerCase; (Number.NEGATIVE_INFINITY).toLocaleLowerCase() === "-infinity". Actual: ' + (Number.NEGATIVE_INFINITY).toLocaleLowerCase());
+  throw new Test262Error('#1: Number.prototype.toLocaleLowerCase = String.prototype.toLocaleLowerCase; (Number.NEGATIVE_INFINITY).toLocaleLowerCase() === "-infinity". Actual: ' + (Number.NEGATIVE_INFINITY).toLocaleLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ var str='';
 ////////////////////////////////////////////////////////////
 // CHECK#1
 if (str == undefined){
-  $ERROR('#1: Empty string and undefined are not equal (!=) to each other');
+  throw new Test262Error('#1: Empty string and undefined are not equal (!=) to each other');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (str == undefined){
 ////////////////////////////////////////////////////////////
 // CHECK#2
 if (str == null){
-  $ERROR('#1: Empty string and Null are not equal (!=) to each other');
+  throw new Test262Error('#1: Empty string and Null are not equal (!=) to each other');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (str == null){
 ////////////////////////////////////////////////////////////
 // CHECK#3
 if (str != 0){
-  $ERROR('#3: Empty string and 0 are equal (==) to each other, since they all evaluate to 0');
+  throw new Test262Error('#3: Empty string and 0 are equal (==) to each other, since they all evaluate to 0');
 }
 //
 /////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ if (str != 0){
 ////////////////////////////////////////////////////////////
 // CHECK#4
 if (str != false){
-  $ERROR('#4: Empty string and false are equal (==) to each other, since they all evaluate to 0');
+  throw new Test262Error('#4: Empty string and false are equal (==) to each other, since they all evaluate to 0');
 }
 //
 /////////////////////////////////////////////////////////////

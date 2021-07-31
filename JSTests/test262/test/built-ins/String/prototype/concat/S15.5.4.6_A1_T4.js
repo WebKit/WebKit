@@ -11,7 +11,7 @@ description: Call concat([,[...]]) function without argument of string object
 //CHECK#1
 //since ToString() evaluates to "" concat() evaluates to concat("")
 if ("lego".concat() !== "lego") {
-  $ERROR('#1: "lego".concat() === "lego". Actual: ' + ("lego".concat()));
+  throw new Test262Error('#1: "lego".concat() === "lego". Actual: ' + ("lego".concat()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

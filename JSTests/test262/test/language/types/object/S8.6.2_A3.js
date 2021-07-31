@@ -13,7 +13,7 @@ var __obj={};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__obj.toString() !== "[object " + 'Object' + "]"){
-  $ERROR('#1: var __obj={}; __obj.toString() === "[object " + \'Object\' + "]". Actual: ' + (__obj.toString()));
+  throw new Test262Error('#1: var __obj={}; __obj.toString() === "[object " + \'Object\' + "]". Actual: ' + (__obj.toString()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

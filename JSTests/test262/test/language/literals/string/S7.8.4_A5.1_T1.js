@@ -9,5 +9,5 @@ description: String.fromCharCode(0x0000)
 
 //CHECK#1
 if (String.fromCharCode(0x0000) !== "\0") {
-  $ERROR('#1: String.fromCharCode(0x0000) === "\\0"');
+  throw new Test262Error('#1: String.fromCharCode(0x0000) === "\\0"');
 }

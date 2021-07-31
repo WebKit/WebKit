@@ -11,10 +11,10 @@ description: Checking property toLocaleString
 
 //CHECK#1
 if ((new Number()).hasOwnProperty("toLocaleString") !== false) {
-  $ERROR('#1: Number instance must have no special property "toLocaleString"');
+  throw new Test262Error('#1: Number instance must have no special property "toLocaleString"');
 }
 
 //CHECK#2
 if ((new Number()).toLocaleString !== Number.prototype.toLocaleString) {
-  $ERROR('#2: Number instance property "toLocaleString" must be inherited from Number prototype object');
+  throw new Test262Error('#2: Number instance property "toLocaleString" must be inherited from Number prototype object');
 }

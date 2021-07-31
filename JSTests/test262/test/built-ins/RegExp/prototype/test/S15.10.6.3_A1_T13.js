@@ -12,5 +12,5 @@ var __re = /t[a-b|q-s]/;
 
 //CHECK#0
 if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	$ERROR('#0: var __string = true;__re = /t[a-b|q-s]/; __re.test(__string) === (__re.exec(__string) !== null)');
+	throw new Test262Error('#0: var __string = true;__re = /t[a-b|q-s]/; __re.test(__string) === (__re.exec(__string) !== null)');
 }

@@ -9,7 +9,7 @@ author: Jordan Harband
 ---*/
 
 function fakeObject() {
-  $ERROR('The overriden version of Object was called!');
+  throw new Test262Error('The overriden version of Object was called!');
 }
 fakeObject.getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors;
 fakeObject.keys = Object.keys;

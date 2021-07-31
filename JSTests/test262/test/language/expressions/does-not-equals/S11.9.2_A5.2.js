@@ -11,25 +11,25 @@ description: x is primitive number, y is primitive string
 
 //CHECK#1
 if ((1 != "1") !== false) {
-  $ERROR('#1: (1 != "1") === false');
+  throw new Test262Error('#1: (1 != "1") === false');
 }
 
 //CHECK#2
 if ((1.100 != "+1.10") !== false) {
-  $ERROR('#2: (1.100 != "+1.10") === false');
+  throw new Test262Error('#2: (1.100 != "+1.10") === false');
 }
 
 //CHECK#3
 if ((1 != "true") !== true) {
-  $ERROR('#3: (1 != "true") === true');
+  throw new Test262Error('#3: (1 != "true") === true');
 }
 
 //CHECK#4
 if ((255 != "0xff") !== false) {
-  $ERROR('#4: (255 != "0xff") === false');
+  throw new Test262Error('#4: (255 != "0xff") === false');
 }
 
 //CHECK#5
 if ((0 != "") !== false) {
-  $ERROR('#5: (0 != "") === false');
+  throw new Test262Error('#5: (0 != "") === false');
 }

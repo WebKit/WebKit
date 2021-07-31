@@ -37,7 +37,7 @@ includes: [propertyHelper.js]
     configurable: false
   });
   if (c !== 3) {
-    $ERROR('Expected c === 3, actually ' + c);
+    throw new Test262Error('Expected c === 3, actually ' + c);
   }
 
   verifyEqualTo(arguments, "genericProperty", getFunc());

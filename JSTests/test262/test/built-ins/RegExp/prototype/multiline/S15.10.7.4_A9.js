@@ -13,15 +13,15 @@ var __re = RegExp.prototype;
 
 //CHECK#0
 if (__re.hasOwnProperty('multiline') !== true) {
-  $ERROR('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'multiline\') === true');
+  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'multiline\') === true');
 }
 
 //CHECK#1
 if ((delete __re.multiline) !== true) {
-  $ERROR('#1: __re = RegExp.prototype; (delete __re.multiline) === true');
+  throw new Test262Error('#1: __re = RegExp.prototype; (delete __re.multiline) === true');
 }
 
 //CHECK#2
 if (__re.hasOwnProperty('multiline') !== false) {
-  $ERROR('#2: __re = RegExp.prototype;delete __re.multiline === true; __re.hasOwnProperty(\'multiline\') === false');
+  throw new Test262Error('#2: __re = RegExp.prototype;delete __re.multiline === true; __re.hasOwnProperty(\'multiline\') === false');
 }

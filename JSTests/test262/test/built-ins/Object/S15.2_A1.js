@@ -12,5 +12,5 @@ var obj = Object;
 var thisobj = this.Object;
 
 if (obj !== thisobj) {
-  $ERROR('Object is the property of global');
+  throw new Test262Error('Object is the property of global');
 }

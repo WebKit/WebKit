@@ -14,7 +14,7 @@ __instance.charAt = String.prototype.charAt;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.charAt(false) + __instance.charAt(true) !== "42") {
-  $ERROR('#1: __instance = new Object(42); __instance.charAt = String.prototype.charAt;  __instance = new Object(42); __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true) === "42". Actual: ' + __instance.charAt(false) + __instance.charAt(true));
+  throw new Test262Error('#1: __instance = new Object(42); __instance.charAt = String.prototype.charAt;  __instance = new Object(42); __instance.charAt = String.prototype.charAt; __instance.charAt(false)+__instance.charAt(true) === "42". Actual: ' + __instance.charAt(false) + __instance.charAt(true));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

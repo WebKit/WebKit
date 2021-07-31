@@ -8,5 +8,5 @@ description: Checking existence of the property "prototype"
 ---*/
 
 if (!Number.hasOwnProperty("prototype")) {
-  $ERROR('#1: The Number constructor has the property "prototype"');
+  throw new Test262Error('#1: The Number constructor has the property "prototype"');
 }

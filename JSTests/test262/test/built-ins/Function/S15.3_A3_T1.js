@@ -23,10 +23,10 @@ var about_mars = f();
 
 //CHECK#2
 if (about_mars !== undefined) {
-  $ERROR('#2: When applied to the Function object itself, thisArg should be ignored');
+  throw new Test262Error('#2: When applied to the Function object itself, thisArg should be ignored');
 }
 
 //CHECK#3
 if (this.godname !== "ares" && mars.godname === undefined) {
-  $ERROR('#3: When applied to the Function object itself, thisArg should be ignored');
+  throw new Test262Error('#3: When applied to the Function object itself, thisArg should be ignored');
 }

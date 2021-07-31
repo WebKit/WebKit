@@ -14,7 +14,7 @@ var __string;
 //CHECK#1
 var __re = /1|12/;
 if (__re.exec(__string) !== null) {
-	$ERROR('#1: var __string; /1|12/.exec(__string) === null; function __string(){}. Actual: ' + (__re));
+	throw new Test262Error('#1: var __string; /1|12/.exec(__string) === null; function __string(){}. Actual: ' + (__re));
 }
 
 function __string(){};

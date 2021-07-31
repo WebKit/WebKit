@@ -28,7 +28,7 @@ Object.defineProperties(arr, {
 });
 
 if (!Object.prototype.hasOwnProperty.call(arr, "0")) {
-  $ERROR("Expected hasOwnProperty to return true.");
+  throw new Test262Error("Expected hasOwnProperty to return true.");
 }
 
 arr[0] = 101;
@@ -36,7 +36,7 @@ arr[0] = 101;
 verifyEqualTo(arr, 0, 101);
 
 if (arr.verifySetter !== 101) {
-  $ERROR('Expected arr.verifySetter === 101, actually ' + arr.verifySetter);
+  throw new Test262Error('Expected arr.verifySetter === 101, actually ' + arr.verifySetter);
 }
 
 verifyNotConfigurable(arr, 0);

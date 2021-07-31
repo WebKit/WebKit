@@ -10,74 +10,74 @@ description: "NonEscapeSequence :: ENGLISH SMALL ALPHABET"
 //CHECK#a-z without b, f, n, r, t, v, x, u
 
 if ("a" !== "\a") {
-  $ERROR('#a');
+  throw new Test262Error('#a');
 }
 
 if ("c" !== "\c") {
-  $ERROR('#c');
+  throw new Test262Error('#c');
 }
 
 if ("d" !== "\d") {
-  $ERROR('#d');
+  throw new Test262Error('#d');
 }
 
 if ("e" !== "\e") {
-  $ERROR('#e');
+  throw new Test262Error('#e');
 }
 
 if ("g" !== "\g") {
-  $ERROR('#g');
+  throw new Test262Error('#g');
 }
 
 if ("h" !== "\h") {
-  $ERROR('#h');
+  throw new Test262Error('#h');
 }
 
 if ("i" !== "\i") {
-  $ERROR('#i');
+  throw new Test262Error('#i');
 }
 
 if ("j" !== "\j") {
-  $ERROR('#j');
+  throw new Test262Error('#j');
 }
 
 if ("k" !== "\k") {
-  $ERROR('#k');
+  throw new Test262Error('#k');
 }
 
 if ("l" !== "\l") {
-  $ERROR('#l');
+  throw new Test262Error('#l');
 }
 
 if ("m" !== "\m") {
-  $ERROR('#m');
+  throw new Test262Error('#m');
 }
 
 
 if ("o" !== "\o") {
-  $ERROR('#o');
+  throw new Test262Error('#o');
 }
 
 if ("p" !== "\p") {
-  $ERROR('#p');
+  throw new Test262Error('#p');
 }
 
 if ("q" !== "\q") {
-  $ERROR('#q');
+  throw new Test262Error('#q');
 }
 
 if ("s" !== "\s") {
-  $ERROR('#s');
+  throw new Test262Error('#s');
 }
 
 if ("w" !== "\w") {
-  $ERROR('#w');
+  throw new Test262Error('#w');
 }
 
 if ("y" !== "\y") {
-  $ERROR('#y');
+  throw new Test262Error('#y');
 }
 
 if ("z" !== "\z") {
-  $ERROR('#z');
+  throw new Test262Error('#z');
 }

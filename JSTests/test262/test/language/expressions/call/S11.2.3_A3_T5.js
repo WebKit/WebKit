@@ -10,11 +10,11 @@ description: Checking "null" case
 //CHECK#1
 try {
   null();
-    $ERROR('#1.1: null() throw TypeError. Actual: ' + (null()));	
+    throw new Test262Error('#1.1: null() throw TypeError. Actual: ' + (null()));	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: null() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#1.2: null() throw TypeError. Actual: ' + (e));	
   }
 }
 
@@ -22,10 +22,10 @@ catch (e) {
 try {
   var x = null;
   x();
-    $ERROR('#2.1: var x = null; x() throw TypeError. Actual: ' + (x()));	
+    throw new Test262Error('#2.1: var x = null; x() throw TypeError. Actual: ' + (x()));	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#2.2: var x = null; x() throw TypeError. Actual: ' + (e));	
+    throw new Test262Error('#2.2: var x = null; x() throw TypeError. Actual: ' + (e));	
   }
 }

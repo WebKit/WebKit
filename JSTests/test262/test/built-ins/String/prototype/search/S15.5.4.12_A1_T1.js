@@ -14,7 +14,7 @@ __instance.search = String.prototype.search;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.search(true) !== 0) {
-  $ERROR('#1: __instance = new Object(true); __instance.search = String.prototype.search;  __instance.search(true) === 0. Actual: ' + __instance.search(true));
+  throw new Test262Error('#1: __instance = new Object(true); __instance.search = String.prototype.search;  __instance.search(true) === 0. Actual: ' + __instance.search(true));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

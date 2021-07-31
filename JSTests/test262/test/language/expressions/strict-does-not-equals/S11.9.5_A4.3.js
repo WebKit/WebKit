@@ -11,45 +11,45 @@ description: x and y are primitive numbers
 
 //CHECK#1
 if (Number.POSITIVE_INFINITY !== Number.POSITIVE_INFINITY) {
-  $ERROR('#1: +Infinity === +Infinity');
+  throw new Test262Error('#1: +Infinity === +Infinity');
 }
 
 //CHECK#2
 if (Number.NEGATIVE_INFINITY !== Number.NEGATIVE_INFINITY) {
-  $ERROR('#2: -Infinity === -Infinity');
+  throw new Test262Error('#2: -Infinity === -Infinity');
 }
 
 //CHECK#3
 if (13 !== 13) {
-  $ERROR('#3: 13 === 13');
+  throw new Test262Error('#3: 13 === 13');
 }
 
 //CHECK#4
 if (-13 !== -13) {
-  $ERROR('#4: -13 === -13');
+  throw new Test262Error('#4: -13 === -13');
 }
 
 //CHECK#5
 if (1.3 !== 1.3) {
-  $ERROR('#5: 1.3 === 1.3');
+  throw new Test262Error('#5: 1.3 === 1.3');
 }
 
 //CHECK#6
 if (-1.3 !== -1.3) {
-  $ERROR('#6: -1.3 === -1.3');
+  throw new Test262Error('#6: -1.3 === -1.3');
 }
 
 //CHECK#7
 if (Number.POSITIVE_INFINITY !== -Number.NEGATIVE_INFINITY) {
-  $ERROR('#7: +Infinity === -(-Infinity)');
+  throw new Test262Error('#7: +Infinity === -(-Infinity)');
 }
 
 //CHECK#8
 if (!(1 !== 0.999999999999)) {
-  $ERROR('#8: 1 !== 0.999999999999');
+  throw new Test262Error('#8: 1 !== 0.999999999999');
 }
 
 //CHECK#9
 if (1.0 !== 1) {
-  $ERROR('#9: 1.0 === 1');
+  throw new Test262Error('#9: 1.0 === 1');
 }

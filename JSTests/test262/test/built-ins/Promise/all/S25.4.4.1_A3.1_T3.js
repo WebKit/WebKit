@@ -20,9 +20,9 @@ Object.defineProperty(iterThrows, Symbol.iterator, {
 });
 
 Promise.all(iterThrows).then(function() {
-  $ERROR('Promise unexpectedly fulfilled: Promise.all(iterThrows) should throw TypeError');
+  throw new Test262Error('Promise unexpectedly fulfilled: Promise.all(iterThrows) should throw TypeError');
 }, function(err) {
   if (!(err instanceof Error)) {
-    $ERROR('Expected promise to be rejected with error, got ' + err);
+    throw new Test262Error('Expected promise to be rejected with error, got ' + err);
   }
 }).then($DONE, $DONE);

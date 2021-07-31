@@ -11,7 +11,7 @@ function __mFunc(){var __accum=""; for (var i = 0; i < arguments.length; ++i){__
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__mFunc("A","B","C","D","E","F") !== "ABCDEF"){
-  $ERROR('#1: function __mFunc(){var __accum=""; for (var i = 0; i < arguments.length; ++i){__accum += arguments[i]};return __accum;}; __mFunc("A","B","C","D","E","F") === "ABCDEF". Actual: ' + (__mFunc("A","B","C","D","E","F")));
+  throw new Test262Error('#1: function __mFunc(){var __accum=""; for (var i = 0; i < arguments.length; ++i){__accum += arguments[i]};return __accum;}; __mFunc("A","B","C","D","E","F") === "ABCDEF". Actual: ' + (__mFunc("A","B","C","D","E","F")));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

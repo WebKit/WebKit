@@ -9,7 +9,7 @@ description: Checking if enumerating the Function.prototype property fails
 
 // CHECK#1
 if (Function.propertyIsEnumerable('prototype')) {
-  $ERROR('#1: the Function.prototype property has the attributes DontEnum');
+  throw new Test262Error('#1: the Function.prototype property has the attributes DontEnum');
 }
 
 // CHECK#2
@@ -20,5 +20,5 @@ for (var p in Function) {
 }
 
 if (count !== 0) {
-  $ERROR('#2: the Function.prototype property has the attributes DontEnum');
+  throw new Test262Error('#2: the Function.prototype property has the attributes DontEnum');
 }

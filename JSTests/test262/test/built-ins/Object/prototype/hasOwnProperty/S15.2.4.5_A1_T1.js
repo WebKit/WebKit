@@ -16,11 +16,11 @@ description: >
 
 //CHECK#1
 if (typeof Object.prototype.hasOwnProperty !== "function") {
-  $ERROR('#1: hasOwnProperty method is defined');
+  throw new Test262Error('#1: hasOwnProperty method is defined');
 }
 
 //CHECK#2
 if (!(Object.prototype.hasOwnProperty("hasOwnProperty"))) {
-  $ERROR('#2: hasOwnProperty method works properly');
+  throw new Test262Error('#2: hasOwnProperty method works properly');
 }
 //

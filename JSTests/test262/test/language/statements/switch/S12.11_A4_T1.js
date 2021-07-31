@@ -31,4 +31,4 @@ function SwitchTest(value){
 }
 
 var x = SwitchTest(0);
-if(x!==6) $ERROR("#1: SwitchTest(0) === 6. Actual:  SwitchTest(0) ==="+ SwitchTest(0)  );
+if(x!==6) throw new Test262Error("#1: SwitchTest(0) === 6. Actual:  SwitchTest(0) ==="+ SwitchTest(0)  );

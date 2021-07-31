@@ -10,7 +10,7 @@ description: Checking String.prototype.toLocaleUpperCase.prototype
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.prototype.toLocaleUpperCase.prototype !== undefined) {
-  $ERROR('#1: String.prototype.toLocaleUpperCase.prototype === undefined. Actual: ' + String.prototype.toLocaleUpperCase.prototype);
+  throw new Test262Error('#1: String.prototype.toLocaleUpperCase.prototype === undefined. Actual: ' + String.prototype.toLocaleUpperCase.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

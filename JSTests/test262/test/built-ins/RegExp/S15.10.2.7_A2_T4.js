@@ -13,5 +13,5 @@ var __executed = /b{8}/.test("aaabbbbcccddeeeefffff");
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /b{8}/.test("aaabbbbcccddeeeefffff") === false');
+	throw new Test262Error('#1: /b{8}/.test("aaabbbbcccddeeeefffff") === false');
 }

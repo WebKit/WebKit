@@ -14,5 +14,5 @@ var __executed = /[]/.exec("a[b\n[]\tc]d");
 
 //CHECK#1
 if (__executed !== null) {
-	$ERROR('#1: /[]/.exec("a[b\\n[]\\tc]d") === false');
+	throw new Test262Error('#1: /[]/.exec("a[b\\n[]\\tc]d") === false');
 }

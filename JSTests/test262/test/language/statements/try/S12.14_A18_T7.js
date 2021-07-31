@@ -23,7 +23,7 @@ try{
 }
 catch(e){
   for (var i=0;i<3;i++){
-    if (e[i]!==mycars[i]) $ERROR('#1.'+i+': Exception['+i+']===mycars['+i+']. Actual:  Exception['+i+']==='+ e[i] );
+    if (e[i]!==mycars[i]) throw new Test262Error('#1.'+i+': Exception['+i+']===mycars['+i+']. Actual:  Exception['+i+']==='+ e[i] );
   }
 }
 
@@ -33,10 +33,10 @@ try{
 }
 catch(e){
   for (var i=0;i<3;i++){
-    if (e[i]!==mycars[i]) $ERROR('#2.'+i+': Exception['+i+']===mycars['+i+']. Actual:  Exception['+i+']==='+ e[i] );
+    if (e[i]!==mycars[i]) throw new Test262Error('#2.'+i+': Exception['+i+']===mycars['+i+']. Actual:  Exception['+i+']==='+ e[i] );
   }
   for (var i=3;i<6;i++){
-    if (e[i]!==mycars2[i-3]) $ERROR('#2.'+i+': Exception['+i+']===mycars2['+i+']. Actual:  Exception['+i+']==='+ e[i] );
+    if (e[i]!==mycars2[i-3]) throw new Test262Error('#2.'+i+': Exception['+i+']===mycars2['+i+']. Actual:  Exception['+i+']==='+ e[i] );
   }
 }
 
@@ -46,7 +46,7 @@ try{
 }
 catch(e){
   for (var i=0;i<3;i++){
-    if (e[i]!==mycars2[i]) $ERROR('#3.'+i+': Exception['+i+']===mycars2['+i+']. Actual:  Exception['+i+']==='+ e[i]);
+    if (e[i]!==mycars2[i]) throw new Test262Error('#3.'+i+': Exception['+i+']===mycars2['+i+']. Actual:  Exception['+i+']==='+ e[i]);
   }
 }
 
@@ -56,9 +56,9 @@ try{
 }
 catch(e){
   for (var i=0;i<3;i++){
-    if (e[i]!==mycars[i]) $ERROR('#4.'+i+': Exception['+i+']===mycars['+i+']. Actual:  Exception['+i+']==='+ e[i] );
+    if (e[i]!==mycars[i]) throw new Test262Error('#4.'+i+': Exception['+i+']===mycars['+i+']. Actual:  Exception['+i+']==='+ e[i] );
   }
   for (var i=3;i<6;i++){
-    if (e[i]!==mycars2[i-3]) $ERROR('#4.'+i+': Exception['+i+']===mycars2['+(i-3)+']. Actual:  Exception['+i+']==='+ e[i]);
+    if (e[i]!==mycars2[i-3]) throw new Test262Error('#4.'+i+': Exception['+i+']===mycars2['+(i-3)+']. Actual:  Exception['+i+']==='+ e[i]);
   }
 }

@@ -9,7 +9,7 @@ function Base() {}
 
 Base.prototype = {
   set m(_) {
-    $ERROR("`Base.prototype.m` is unreachable.");
+    throw new Test262Error("`Base.prototype.m` is unreachable.");
   }
 };
 

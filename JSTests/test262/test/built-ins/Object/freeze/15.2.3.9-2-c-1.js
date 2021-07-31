@@ -24,10 +24,10 @@ Object.freeze(obj);
 var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
 if (desc.configurable !== false) {
-  $ERROR("Expected desc.configurable to be false, actually " + desc.configurable);
+  throw new Test262Error("Expected desc.configurable to be false, actually " + desc.configurable);
 }
 if (desc.writable !== false) {
-  $ERROR("Expected desc.writable to be false, actually " + desc.writable);
+  throw new Test262Error("Expected desc.writable to be false, actually " + desc.writable);
 }
 
 verifyEqualTo(obj, "foo", 10);

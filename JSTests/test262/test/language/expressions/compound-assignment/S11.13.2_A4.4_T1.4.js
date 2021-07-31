@@ -13,38 +13,38 @@ var x;
 x = "1";
 x += "1";
 if (x !== "11") {
-  $ERROR('#1: x = "1"; x += "1"; x === "11". Actual: ' + (x));
+  throw new Test262Error('#1: x = "1"; x += "1"; x === "11". Actual: ' + (x));
 }
 
 //CHECK#2
 x = new String("1");
 x += "1";
 if (x !== "11") {
-  $ERROR('#2: x = new String("1"); x += "1"; x === "11". Actual: ' + (x));
+  throw new Test262Error('#2: x = new String("1"); x += "1"; x === "11". Actual: ' + (x));
 }
 
 //CHECK#3
 x = "1";
 x += new String("1");
 if (x !== "11") {
-  $ERROR('#3: x = "1"; x += new String("1"); x === "11". Actual: ' + (x));
+  throw new Test262Error('#3: x = "1"; x += new String("1"); x === "11". Actual: ' + (x));
 }
 
 //CHECK#4
 x = new String("1");
 x += new String("1");
 if (x !== "11") {
-  $ERROR('#4: x = new String("1"); x += new String("1"); x === "11". Actual: ' + (x));
+  throw new Test262Error('#4: x = new String("1"); x += new String("1"); x === "11". Actual: ' + (x));
 }
 
 //CHECK#5
 if ("x" + "1" !=="x1") {
-  $ERROR('#5: x = "x"; x += "1"; x === "x1". Actual: ' + (x));
+  throw new Test262Error('#5: x = "x"; x += "1"; x === "x1". Actual: ' + (x));
 }
 
 //CHECK#6
 x = "1";
 x += "x";
 if (x !== "1x") {
-  $ERROR('#6: x = "1"; x += "x"; x === "1x". Actual: ' + (x));
+  throw new Test262Error('#6: x = "1"; x += "x"; x === "1x". Actual: ' + (x));
 }

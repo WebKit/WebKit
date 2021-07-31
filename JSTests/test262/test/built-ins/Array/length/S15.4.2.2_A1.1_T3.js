@@ -13,5 +13,5 @@ description: Checking use isPrototypeOf
 
 //CHECK#1
 if (Array.prototype.isPrototypeOf(new Array(0)) !== true) {
-  $ERROR('#1: Array.prototype.isPrototypeOf(new Array(0)) === true. Actual: ' + (Array.prototype.isPrototypeOf(new Array(0))));
+  throw new Test262Error('#1: Array.prototype.isPrototypeOf(new Array(0)) === true. Actual: ' + (Array.prototype.isPrototypeOf(new Array(0))));
 }

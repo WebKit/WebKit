@@ -8,5 +8,5 @@ description: The Date.prototype has the property "toString"
 ---*/
 
 if (Date.prototype.hasOwnProperty("toString") !== true) {
-  $ERROR('#1: The Date.prototype has the property "toString"');
+  throw new Test262Error('#1: The Date.prototype has the property "toString"');
 }

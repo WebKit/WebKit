@@ -18,7 +18,7 @@ for (var i = 0; i <= 1000; i++)
   var x = i / 10.0;
   if (Math.round(x) !== Math.floor(x + 0.5))
   {
-    $ERROR("#1: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
+    throw new Test262Error("#1: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
   }
 }
 
@@ -34,6 +34,6 @@ for (i = -5; i >= -1000; i--)
 
   if (Math.round(x) !== Math.floor(x + 0.5))
   {
-    $ERROR("#2: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
+    throw new Test262Error("#2: 'x = " + x + "; Math.round(x) !== Math.floor(x + 0.5)'")
   }
 }

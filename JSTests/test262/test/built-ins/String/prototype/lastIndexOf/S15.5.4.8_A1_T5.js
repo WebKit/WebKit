@@ -15,7 +15,7 @@ description: >
 if (function() {
     return "gnullunazzgnull"
   }().lastIndexOf(null) !== 11) {
-  $ERROR('#1: function(){return "gnullunazzgnull"}().lastIndexOf(null) === 11. Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "gnullunazzgnull"}().lastIndexOf(null) === 11. Actual: ' + function() {
     return "gnullunazzgnull"
   }().lastIndexOf(null));
 }

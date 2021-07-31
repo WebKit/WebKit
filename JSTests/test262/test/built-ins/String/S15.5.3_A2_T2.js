@@ -14,7 +14,7 @@ Function.prototype.indicator = 1;
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#
 if (String.indicator !== 1) {
-  $ERROR('#1: Function.prototype.indicator = 1; String.indicator === 1. Actual: String.indicator ===' + String.indicator);
+  throw new Test262Error('#1: Function.prototype.indicator = 1; String.indicator === 1. Actual: String.indicator ===' + String.indicator);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

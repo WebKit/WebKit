@@ -11,10 +11,10 @@ description: x is primitive boolean, y is primitive number
 
 //CHECK#1
 if ((true == 1) !== true) {
-  $ERROR('#1: (true == 1) === true');
+  throw new Test262Error('#1: (true == 1) === true');
 }
 
 //CHECK#2
 if ((false == "0") !== true) {
-  $ERROR('#2: (false == "0") === true');
+  throw new Test262Error('#2: (false == "0") === true');
 }

@@ -10,5 +10,5 @@ description: For testing use variable f = Function()
 var f = Function();
 
 if (Object.prototype.toString.call(f) !== "[object Function]") {
-  $ERROR('#1: The value of the [[Class]] property is "Function"');
+  throw new Test262Error('#1: The value of the [[Class]] property is "Function"');
 }

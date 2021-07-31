@@ -80,7 +80,7 @@ try {
     	__re.test(__html);
     }
 } catch (e) {
-	$ERROR('#'+index+": XML Shallow Parsing with Regular Expression: "+__patterns[index]);
+	throw new Test262Error('#'+index+": XML Shallow Parsing with Regular Expression: "+__patterns[index]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

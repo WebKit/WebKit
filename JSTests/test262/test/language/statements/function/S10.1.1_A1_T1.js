@@ -14,4 +14,4 @@ function f1(){
   return 1;
 }
 if(typeof(f1)!=="function")
-  $ERROR('#1: typeof(f1)!=="function"');
+  throw new Test262Error('#1: typeof(f1)!=="function"');

@@ -11,7 +11,7 @@ description: Changing variable value using property attributes
 //CHECK#1
 this['__declared__var'] = "baloon";
 if (this['__declared__var'] !== "baloon") {
-	$ERROR('#1: this[\'__declared__var\'] === "baloon". Actual:  this[\'__declared__var\'] ==='+ this['__declared__var']  );
+	throw new Test262Error('#1: this[\'__declared__var\'] === "baloon". Actual:  this[\'__declared__var\'] ==='+ this['__declared__var']  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ if (this['__declared__var'] !== "baloon") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__declared__var !== "baloon") {
-	$ERROR('#2: __declared__var === "baloon". Actual:  __declared__var ==='+ __declared__var  );
+	throw new Test262Error('#2: __declared__var === "baloon". Actual:  __declared__var ==='+ __declared__var  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -9,25 +9,25 @@ description: Type(x) is string primitive or String object
 
 //CHECK#1
 if (~"1" !== -2) {
-  $ERROR('#1: ~"1" === -2. Actual: ' + (~"1"));
+  throw new Test262Error('#1: ~"1" === -2. Actual: ' + (~"1"));
 }
 
 //CHECK#2
 if (~new String("0") !== -1) {
-  $ERROR('#2: ~new String("0") === -1. Actual: ' + (~new String("0")));
+  throw new Test262Error('#2: ~new String("0") === -1. Actual: ' + (~new String("0")));
 }
 
 //CHECK#3
 if (~"x" !== -1) {
-  $ERROR('#3: ~"x" === -1. Actual: ' + (~"x"));
+  throw new Test262Error('#3: ~"x" === -1. Actual: ' + (~"x"));
 }
 
 //CHECK#4
 if (~"" !== -1) {
-  $ERROR('#4: ~"" === -1. Actual: ' + (~""));
+  throw new Test262Error('#4: ~"" === -1. Actual: ' + (~""));
 }
 
 //CHECK#5
 if (~new String("-2") !== 1) {
-  $ERROR('#5: ~new String("-2") === 1. Actual: ' + (~new String("-2")));
+  throw new Test262Error('#5: ~new String("-2") === 1. Actual: ' + (~new String("-2")));
 }

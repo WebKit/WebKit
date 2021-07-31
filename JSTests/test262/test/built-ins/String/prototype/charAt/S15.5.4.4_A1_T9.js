@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToInteger(undefined) evaluates to 0 charAt() evaluates to charAt(0)
 if (new String(42).charAt(function() {}()) !== "4") {
-  $ERROR('#1: new String(42).charAt(function(){}()) === "4". Actual: new String(42).charAt(function(){}()) ===' + new String(42).charAt(function() {}()));
+  throw new Test262Error('#1: new String(42).charAt(function(){}()) === "4". Actual: new String(42).charAt(function(){}()) ===' + new String(42).charAt(function() {}()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

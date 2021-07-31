@@ -13,10 +13,10 @@ var global = this;
   "use strict";
 
   if (this === global) {
-    $ERROR('#1: Sort leaks global');
+    throw new Test262Error('#1: Sort leaks global');
   }
   if (this !== undefined) {
-    $ERROR('#2: Sort comparefn should be called with this===undefined. ' +
+    throw new Test262Error('#2: Sort comparefn should be called with this===undefined. ' +
       'Actual: ' + this);
   }
   return x - y;

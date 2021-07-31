@@ -17,7 +17,7 @@ var obj = {
 obj.constructor[Symbol.species] = function() {
   return {
     exec: function() {
-      $ERROR('No match should be attempted when `limit` is `0`.');
+      throw new Test262Error('No match should be attempted when `limit` is `0`.');
     }
   };
 };

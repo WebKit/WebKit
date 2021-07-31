@@ -15,7 +15,7 @@ var __str = "1";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.replace(__re, __str) !== "1a1s1d1f1") {
-  $ERROR('#1: var x; var __re = new RegExp(x,"g"); __instance = String("asdf"); __str = "1"; __instance.replace(__re, __str) === "1a1s1d1f1". Actual: ' + __instance.replace(__re, __str));
+  throw new Test262Error('#1: var x; var __re = new RegExp(x,"g"); __instance = String("asdf"); __str = "1"; __instance.replace(__re, __str) === "1a1s1d1f1". Actual: ' + __instance.replace(__re, __str));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

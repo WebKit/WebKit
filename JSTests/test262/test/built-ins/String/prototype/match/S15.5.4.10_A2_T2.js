@@ -14,7 +14,7 @@ var __string = "343443444";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.match(/34/g).length !== 3) {
-  $ERROR('#1: __string = "343443444"; __string.match(/34/g).length=== 3. Actual: ' + __string.match(/34/g).length);
+  throw new Test262Error('#1: __string = "343443444"; __string.match(/34/g).length=== 3. Actual: ' + __string.match(/34/g).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ if (__string.match(/34/g).length !== 3) {
 //CHECK#2
 for (var mi = 0; mi < __matches.length; mi++) {
   if (__string.match(/34/g)[mi] !== __matches[mi]) {
-    $ERROR('#2.' + mi + ': __matches=["34","34","34"]; __string = "343443444"; __string.match(/34/g)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(/34/g)[mi]);
+    throw new Test262Error('#2.' + mi + ': __matches=["34","34","34"]; __string = "343443444"; __string.match(/34/g)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(/34/g)[mi]);
   }
 }
 //

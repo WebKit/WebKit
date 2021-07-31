@@ -10,11 +10,11 @@ description: Checking Expression and Variable statements
 //CHECK#1
 var x = 0;
 if ((x = 1) !== 1) {
-  $ERROR('#1: var x = 0; (x = 1) === 1. Actual: ' + ((x = 1)));
+  throw new Test262Error('#1: var x = 0; (x = 1) === 1. Actual: ' + ((x = 1)));
 }
 
 //CHECK#2
 x = 0;
 if ((x = 1) !== 1) {
-  $ERROR('#2: x = 0; (x = 1) === 1. Actual: ' + ((x = 1)));
+  throw new Test262Error('#2: x = 0; (x = 1) === 1. Actual: ' + ((x = 1)));
 }
