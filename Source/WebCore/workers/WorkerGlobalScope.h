@@ -104,6 +104,7 @@ public:
     void clearInterval(int timeoutId);
 
     bool isSecureContext() const final;
+    bool crossOriginIsolated() const;
 
     WorkerNavigator* optionalNavigator() const { return m_navigator.get(); }
     WorkerLocation* optionalLocation() const { return m_location.get(); }

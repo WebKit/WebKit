@@ -318,6 +318,7 @@ namespace WebCore {
     macro(controller) \
     macro(createImageBitmap) \
     macro(createReadableStream) \
+    macro(crossOriginIsolated) \
     macro(customElements) \
     macro(decode) \
     macro(disturbed) \

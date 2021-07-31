@@ -5,6 +5,6 @@ PASS unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "ji
 PASS unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-site"
 PASS unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-site unsafe-allow-outgoing"
 PASS unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-origin unsafe-allow-outgoing"
-FAIL unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-origin" assert_equals: name expected "" but got "unsafe-none_to_SAME_SITE_same-origin"
-FAIL unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-origin-allow-popups" assert_equals: name expected "" but got "unsafe-none_to_SAME_SITE_same-origin-allow-popups"
+PASS unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-origin"
+PASS unsafe-none document opening popup to https://127.0.0.1:9443 with COOP: "same-origin-allow-popups"
 

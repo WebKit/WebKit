@@ -1489,6 +1489,8 @@ loader/CanvasActivityRecord.cpp
 loader/ContentFilter.cpp
 loader/CookieJar.cpp
 loader/CrossOriginAccessControl.cpp
+loader/CrossOriginEmbedderPolicy.cpp
+loader/CrossOriginOpenerPolicy.cpp
 loader/CrossOriginPreflightChecker.cpp
 loader/CrossOriginPreflightResultCache.cpp
 loader/CustomHeaderFields.cpp @no-unify

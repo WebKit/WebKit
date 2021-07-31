@@ -1,5 +1,5 @@
 
-FAIL same-origin with structured headers document opening popup to https://localhost:9443 with COOP: "unsafe-none; report-to=endpoint" assert_equals: name expected "" but got "same-origin with structured headers_to_SAME_ORIGIN_unsafe-none;-report-to=endpoint"
+PASS same-origin with structured headers document opening popup to https://localhost:9443 with COOP: "unsafe-none; report-to=endpoint"
 PASS same-origin with structured headers document opening popup to https://localhost:9443 with COOP: "same-origin; report-to=endpoint"
-FAIL same-origin with structured headers document opening popup to https://localhost:9443 with COOP: "same-origin-allow-popups; report-to=endpoint" assert_equals: name expected "" but got "same-origin with structured headers_to_SAME_ORIGIN_same-origin-allow-popups;-report-to=endpoint"
+PASS same-origin with structured headers document opening popup to https://localhost:9443 with COOP: "same-origin-allow-popups; report-to=endpoint"
 

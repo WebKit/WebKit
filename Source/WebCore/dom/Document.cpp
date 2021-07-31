@@ -6256,6 +6256,12 @@ void Document::initSecurityContext()
     contentSecurityPolicy()->copyStateFrom(ownerFrame->document()->contentSecurityPolicy());
     contentSecurityPolicy()->updateSourceSelf(ownerFrame->document()->securityOrigin());
 
+    // https://html.spec.whatwg.org/multipage/browsers.html#creating-a-new-browsing-context (Step 12)
+    // If creator is non-null and creator's origin is same origin with creator's relevant settings object's top-level origin, then set coop
+    // to creator's browsing context's top-level browsing context's active document's cross-origin opener policy.
+    if (m_frame->isMainFrame() && openerFrame && openerFrame->document() && openerFrame->document()->isSameOriginAsTopDocument())
+        setCrossOriginOpenerPolicy(openerFrame->document()->crossOriginOpenerPolicy());
+
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, new browsing contexts must inherit from an
     // ongoing set of upgraded requests. When opening a new browsing context, we need to capture its
     // existing upgrade request. Nested browsing contexts are handled during DocumentWriter::begin.
@@ -6300,6 +6306,16 @@ void Document::initContentSecurityPolicy()
         contentSecurityPolicy()->createPolicyForPluginDocumentFrom(*openerFrame->document()->contentSecurityPolicy());
     else
         contentSecurityPolicy()->copyStateFrom(parentFrame->document()->contentSecurityPolicy());
+}
+
+// https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
+bool Document::shouldForceNoOpenerBasedOnCOOP() const
+{
+    if (!settings().crossOriginOpenerPolicyEnabled())
+        return false;
+
+    auto COOPValue = topDocument().crossOriginOpenerPolicy().value;
+    return (COOPValue == CrossOriginOpenerPolicyValue::SameOrigin || COOPValue == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP) && !isSameOriginAsTopDocument();
 }
 
 bool Document::isContextThread() const
@@ -8837,6 +8853,18 @@ LazyLoadImageObserver& Document::lazyLoadImageObserver()
     if (!m_lazyLoadImageObserver)
         m_lazyLoadImageObserver = makeUnique<LazyLoadImageObserver>();
     return *m_lazyLoadImageObserver;
+}
+
+const CrossOriginOpenerPolicy& Document::crossOriginOpenerPolicy() const
+{
+    if (this != &topDocument())
+        return topDocument().crossOriginOpenerPolicy();
+    return m_crossOriginOpenerPolicy;
+}
+
+void Document::setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy& policy)
+{
+    m_crossOriginOpenerPolicy = policy;
 }
 
 void Document::prepareCanvasesForDisplayIfNeeded()

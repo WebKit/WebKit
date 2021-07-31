@@ -140,7 +140,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     bool shouldReuseDefaultView = m_frame->loader().stateMachine().isDisplayingInitialEmptyDocument()
         && m_frame->document()->isSecureTransitionTo(url)
-        && (!m_frame->window() || !m_frame->window()->wasWrappedWithoutInitializedSecurityOrigin());
+        && (m_frame->window() && !m_frame->window()->wasWrappedWithoutInitializedSecurityOrigin() && m_frame->window()->mayReuseForNavigation());
 
     // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
     // we need to retain its ongoing set of upgraded requests in new navigation contexts per <http://www.w3.org/TR/upgrade-insecure-requests/>

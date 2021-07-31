@@ -1,4 +1,4 @@
 
-FAIL CSP: sandbox allow-popups allow-scripts allow-same-origin; CSP sandboxed Cross-Origin-Opener-Policy popup should result in a network error assert_unreached: A COOP popup was created from a CSP-sandboxed popup Reached unreachable code
+PASS CSP: sandbox allow-popups allow-scripts allow-same-origin; CSP sandboxed Cross-Origin-Opener-Policy popup should result in a network error
 PASS CSP: sandbox allow-popups allow-scripts; CSP sandboxed Cross-Origin-Opener-Policy popup should result in a network error
 

@@ -1,4 +1,4 @@
 
-FAIL CSP: sandbox allow-popups allow-scripts allow-same-origin; CSP sandbox popup navigate to Cross-Origin-Opener-Policy document should work assert_equals: e.data.name expected "" but got "allow-popups_allow-scripts_allow-same-origin"
-FAIL CSP: sandbox allow-popups allow-scripts; CSP sandbox popup navigate to Cross-Origin-Opener-Policy document should work assert_equals: e.data.name expected "" but got "allow-popups_allow-scripts"
+PASS CSP: sandbox allow-popups allow-scripts allow-same-origin; CSP sandbox popup navigate to Cross-Origin-Opener-Policy document should work
+PASS CSP: sandbox allow-popups allow-scripts; CSP sandbox popup navigate to Cross-Origin-Opener-Policy document should work
 

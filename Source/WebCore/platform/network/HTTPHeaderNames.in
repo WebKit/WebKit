@@ -51,6 +51,10 @@ Content-Type
 Content-Range
 Cookie
 Cookie2
+Cross-Origin-Embedder-Policy
+Cross-Origin-Embedder-Policy-Report-Only
+Cross-Origin-Opener-Policy
+Cross-Origin-Opener-Policy-Report-Only
 Cross-Origin-Resource-Policy
 Date
 DNT

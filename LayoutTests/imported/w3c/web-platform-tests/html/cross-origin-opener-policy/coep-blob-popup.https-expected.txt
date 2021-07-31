@@ -1,5 +1,5 @@
 
-FAIL COOP+COEP blob URL popup: window.open() assert_equals: expected "blob:https://localhost:9443/8d894a2a-25d1-417c-accf-77e1048a7b07" but got "blob:https://localhost:9443/e036f361-8969-4214-a30c-f4df7aba4bf9"
+FAIL COOP+COEP blob URL popup: window.open() assert_true: Cross-origin without CORP did not fail expected true got false
 FAIL COOP+COEP blob URL popup: <a> assert_true: Cross-origin without CORP did not fail expected true got false
 FAIL COOP+COEP blob URL popup: <a rel=noopener> assert_true: Cross-origin without CORP did not fail expected true got false
 

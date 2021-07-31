@@ -29,6 +29,7 @@
 #pragma once
 
 #include "BackForwardItemIdentifier.h"
+#include "CrossOriginOpenerPolicy.h"
 #include "FrameLoaderTypes.h"
 #include "GlobalFrameIdentifier.h"
 #include "LayoutPoint.h"
@@ -68,11 +69,15 @@ public:
         Requester(const Document&);
 
         const URL& url() const { return m_url; }
-        const SecurityOrigin& securityOrigin() const { return *m_origin; }
+        SecurityOrigin& securityOrigin() const { return *m_origin; }
+        SecurityOrigin& topOrigin() const { return *m_topOrigin; }
+        CrossOriginOpenerPolicy crossOriginOpenerPolicy() const { return m_crossOriginOpenerPolicy; }
         const GlobalFrameIdentifier& globalFrameIdentifier() const { return m_globalFrameIdentifier; }
     private:
         URL m_url;
         RefPtr<SecurityOrigin> m_origin;
+        RefPtr<SecurityOrigin> m_topOrigin;
+        CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
         GlobalFrameIdentifier m_globalFrameIdentifier;
     };
     const std::optional<Requester>& requester() const { return m_requester; }

@@ -270,7 +270,8 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
     FrameLoadRequest frameLoadRequest { *mainFrame.document(), mainFrame.document()->securityOrigin(), { }, "_blank"_s, InitiatedByMainFrame::Unknown };
 
     bool created;
-    auto frame = WebCore::createWindow(mainFrame, mainFrame, WTFMove(frameLoadRequest), { }, created);
+    WindowFeatures features;
+    auto frame = WebCore::createWindow(mainFrame, mainFrame, WTFMove(frameLoadRequest), features, created);
     if (!frame)
         return;
 

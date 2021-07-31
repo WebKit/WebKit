@@ -23,20 +23,20 @@ Both popup windows inspect state and report back to the test context using Broad
 
 PASS navigation: SAME_ORIGIN; parentCOOP: unsafe-none; childCOOP: unsafe-none
 PASS navigation: SAME_SITE; parentCOOP: unsafe-none; childCOOP: unsafe-none
-FAIL navigation: SAME_ORIGIN; parentCOOP: unsafe-none; childCOOP: same-origin-allow-popups assert_equals: child name expected "" but got "c6f92487-c13b-4149-8679-d2178f102ecc"
-FAIL navigation: SAME_SITE; parentCOOP: unsafe-none; childCOOP: same-origin-allow-popups assert_equals: child name expected "" but got "e4b81964-b0c3-4caf-9784-c494afa2f457"
-FAIL navigation: SAME_ORIGIN; parentCOOP: unsafe-none; childCOOP: same-origin assert_equals: child name expected "" but got "e5543127-3c36-460f-bb0c-8ecba7fea07b"
-FAIL navigation: SAME_SITE; parentCOOP: unsafe-none; childCOOP: same-origin assert_equals: child name expected "" but got "22981940-75cb-4db6-9669-f9de8efb2005"
+PASS navigation: SAME_ORIGIN; parentCOOP: unsafe-none; childCOOP: same-origin-allow-popups
+PASS navigation: SAME_SITE; parentCOOP: unsafe-none; childCOOP: same-origin-allow-popups
+PASS navigation: SAME_ORIGIN; parentCOOP: unsafe-none; childCOOP: same-origin
+PASS navigation: SAME_SITE; parentCOOP: unsafe-none; childCOOP: same-origin
 PASS navigation: SAME_ORIGIN; parentCOOP: same-origin-allow-popups; childCOOP: unsafe-none
 PASS navigation: SAME_SITE; parentCOOP: same-origin-allow-popups; childCOOP: unsafe-none
 PASS navigation: SAME_ORIGIN; parentCOOP: same-origin-allow-popups; childCOOP: same-origin-allow-popups
-FAIL navigation: SAME_SITE; parentCOOP: same-origin-allow-popups; childCOOP: same-origin-allow-popups assert_equals: child name expected "" but got "18f71203-8538-447c-9376-2bbe9b8d38df"
-FAIL navigation: SAME_ORIGIN; parentCOOP: same-origin-allow-popups; childCOOP: same-origin assert_equals: child name expected "" but got "cc026a5c-5298-44be-a3a2-1040025ca0cc"
-FAIL navigation: SAME_SITE; parentCOOP: same-origin-allow-popups; childCOOP: same-origin assert_equals: child name expected "" but got "0f4770cd-34a2-45a1-9124-d0e3092fb728"
-FAIL navigation: SAME_ORIGIN; parentCOOP: same-origin; childCOOP: unsafe-none assert_equals: child name expected "" but got "3e14edda-2d7e-4896-b54f-b50a115aca4d"
-FAIL navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: unsafe-none assert_equals: child name expected "" but got "6eaffae0-f3fb-4ddb-961f-620d1eba5b0d"
-FAIL navigation: SAME_ORIGIN; parentCOOP: same-origin; childCOOP: same-origin-allow-popups assert_equals: child name expected "" but got "e4d53ab9-257f-4251-8f0b-6aff251d7ed2"
-FAIL navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: same-origin-allow-popups assert_equals: child name expected "" but got "5ded3478-cf50-4468-961c-7b8805cec198"
+PASS navigation: SAME_SITE; parentCOOP: same-origin-allow-popups; childCOOP: same-origin-allow-popups
+PASS navigation: SAME_ORIGIN; parentCOOP: same-origin-allow-popups; childCOOP: same-origin
+PASS navigation: SAME_SITE; parentCOOP: same-origin-allow-popups; childCOOP: same-origin
+PASS navigation: SAME_ORIGIN; parentCOOP: same-origin; childCOOP: unsafe-none
+PASS navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: unsafe-none
+PASS navigation: SAME_ORIGIN; parentCOOP: same-origin; childCOOP: same-origin-allow-popups
+PASS navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: same-origin-allow-popups
 PASS navigation: SAME_ORIGIN; parentCOOP: same-origin; childCOOP: same-origin
-FAIL navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: same-origin assert_equals: child name expected "" but got "7daf1201-32b9-43ec-afde-513edd584ffd"
+PASS navigation: SAME_SITE; parentCOOP: same-origin; childCOOP: same-origin
 

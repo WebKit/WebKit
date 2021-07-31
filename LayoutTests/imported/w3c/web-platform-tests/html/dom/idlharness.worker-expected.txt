@@ -630,7 +630,7 @@ PASS WorkerGlobalScope interface: attribute onrejectionhandled
 PASS WorkerGlobalScope interface: attribute onunhandledrejection
 PASS WorkerGlobalScope interface: attribute origin
 PASS WorkerGlobalScope interface: attribute isSecureContext
-FAIL WorkerGlobalScope interface: attribute crossOriginIsolated assert_true: The prototype object must have a property "crossOriginIsolated" expected true got false
+PASS WorkerGlobalScope interface: attribute crossOriginIsolated
 PASS WorkerGlobalScope interface: operation btoa(DOMString)
 PASS WorkerGlobalScope interface: operation atob(DOMString)
 PASS WorkerGlobalScope interface: operation setTimeout(TimerHandler, optional long, any...)
@@ -693,7 +693,7 @@ PASS WorkerGlobalScope interface: self must inherit property "onrejectionhandled
 PASS WorkerGlobalScope interface: self must inherit property "onunhandledrejection" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "origin" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "isSecureContext" with the proper type
-FAIL WorkerGlobalScope interface: self must inherit property "crossOriginIsolated" with the proper type assert_inherits: property "crossOriginIsolated" not found in prototype chain
+PASS WorkerGlobalScope interface: self must inherit property "crossOriginIsolated" with the proper type
 PASS WorkerGlobalScope interface: self must inherit property "btoa(DOMString)" with the proper type
 PASS WorkerGlobalScope interface: calling btoa(DOMString) on self with too few arguments must throw TypeError
 PASS WorkerGlobalScope interface: self must inherit property "atob(DOMString)" with the proper type

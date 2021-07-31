@@ -3,16 +3,16 @@ These tests create a "parent" popup window which is an HTML document with a spec
 The HTTP `Refresh` header is used to ensure the child eventually closes itself (since proper observance of COOP will prevent the parent from closing the child in some cases).
 
 
-FAIL /common/dummy.xml - parent COOP: ""; child COOP: "same-origin" assert_equals: expected (object) null but got (string) "FAIL"
-FAIL /common/dummy.xml - parent COOP: "same-origin"; child COOP: "" assert_equals: expected (object) null but got (string) "FAIL"
-FAIL /common/dummy.xml - parent COOP: "same-origin"; child COOP: "same-origin" assert_equals: expected "foobar" but got "FAIL"
-FAIL /images/red.png - parent COOP: ""; child COOP: "same-origin" assert_equals: expected (object) null but got (string) "foobar"
-FAIL /images/red.png - parent COOP: "same-origin"; child COOP: "" assert_equals: expected (object) null but got (string) "foobar"
+PASS /common/dummy.xml - parent COOP: ""; child COOP: "same-origin"
+PASS /common/dummy.xml - parent COOP: "same-origin"; child COOP: ""
+PASS /common/dummy.xml - parent COOP: "same-origin"; child COOP: "same-origin"
+PASS /images/red.png - parent COOP: ""; child COOP: "same-origin"
+PASS /images/red.png - parent COOP: "same-origin"; child COOP: ""
 PASS /images/red.png - parent COOP: "same-origin"; child COOP: "same-origin"
-FAIL /common/text-plain.txt - parent COOP: ""; child COOP: "same-origin" assert_equals: expected (object) null but got (string) "foobar"
-FAIL /common/text-plain.txt - parent COOP: "same-origin"; child COOP: "" assert_equals: expected (object) null but got (string) "foobar"
+PASS /common/text-plain.txt - parent COOP: ""; child COOP: "same-origin"
+PASS /common/text-plain.txt - parent COOP: "same-origin"; child COOP: ""
 PASS /common/text-plain.txt - parent COOP: "same-origin"; child COOP: "same-origin"
-FAIL /media/2x2-green.mp4 - parent COOP: ""; child COOP: "same-origin" assert_equals: expected (object) null but got (string) "foobar"
-FAIL /media/2x2-green.mp4 - parent COOP: "same-origin"; child COOP: "" assert_equals: expected (object) null but got (string) "foobar"
+PASS /media/2x2-green.mp4 - parent COOP: ""; child COOP: "same-origin"
+PASS /media/2x2-green.mp4 - parent COOP: "same-origin"; child COOP: ""
 PASS /media/2x2-green.mp4 - parent COOP: "same-origin"; child COOP: "same-origin"
 

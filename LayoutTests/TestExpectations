@@ -399,7 +399,6 @@ imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ DumpJSConsoleLogInStdErr ]
@@ -715,13 +714,14 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-co
 # Cross-Origin Opener Policy reporting is not supported and it is causing those tests to time out.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting [ Skip ]
 
-# This test is timing out because the location.href setter's relative URL resolution seems incorrect.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html [ Skip ]
+# This test is timing out locally but passing on wpt.live. The issue is that we run the WPT tests over localhost and they
+# are thus marked as secure contexts even when served over HTTP. The test assumes the context is non-secure because the
+# test is served over HTTP.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html [ Skip ]
 
 # COOP tests that are failing and keep printing a different uuid in the error output.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/blob-popup.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Failure Pass ]
 
 # Newly imported WPT tests that are crashing.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]

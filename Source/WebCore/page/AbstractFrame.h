@@ -50,6 +50,8 @@ public:
 protected:
     AbstractFrame();
 
+    void resetWindowProxy();
+
 private:
     virtual AbstractDOMWindow* virtualWindow() const = 0;
 

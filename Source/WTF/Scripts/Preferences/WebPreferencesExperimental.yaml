@@ -321,6 +321,18 @@ CoreMathMLEnabled:
     WebCore:
       default: false
 
+CrossOriginOpenerPolicyEnabled:
+  type: bool
+  humanReadableName: "Cross-Origin-Opener-Policy (COOP) header"
+  humanReadableDescription: "Support for Cross-Origin-Opener-Policy (COOP) header"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DialogElementEnabled:
   type: bool
   humanReadableName: "Dialog Element"

@@ -390,6 +390,10 @@ static bool isSafeRedirectionResponseHeader(HTTPHeaderName name)
         || name == HTTPHeaderName::ReferrerPolicy
         || name == HTTPHeaderName::Refresh
         || name == HTTPHeaderName::Vary
+        || name == HTTPHeaderName::CrossOriginOpenerPolicy
+        || name == HTTPHeaderName::CrossOriginOpenerPolicyReportOnly
+        || name == HTTPHeaderName::CrossOriginEmbedderPolicy
+        || name == HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly
         || name == HTTPHeaderName::AccessControlAllowCredentials
         || name == HTTPHeaderName::AccessControlAllowHeaders
         || name == HTTPHeaderName::AccessControlAllowMethods

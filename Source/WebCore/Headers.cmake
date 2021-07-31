@@ -776,6 +776,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/ContentFilterClient.h
     loader/CookieJar.h
     loader/CrossOriginAccessControl.h
+    loader/CrossOriginEmbedderPolicy.h
+    loader/CrossOriginOpenerPolicy.h
     loader/CrossOriginPreflightResultCache.h
     loader/CustomHeaderFields.h
     loader/DocumentLoadTiming.h

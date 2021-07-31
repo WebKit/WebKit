@@ -40,4 +40,10 @@ AbstractFrame::~AbstractFrame()
     m_windowProxy->detachFromFrame();
 }
 
+void AbstractFrame::resetWindowProxy()
+{
+    m_windowProxy->detachFromFrame();
+    m_windowProxy = WindowProxy::create(*this);
+}
+
 } // namespace WebCore

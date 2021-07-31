@@ -69,8 +69,10 @@ bool SecurityContext::isSecureTransitionTo(const URL& url) const
     return securityOriginPolicy()->origin().isSameOriginDomain(SecurityOrigin::create(url).get());
 }
 
-void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
+void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource source)
 {
+    if (source != SandboxFlagsSource::CSP)
+        m_creationSandboxFlags |= mask;
     m_sandboxFlags |= mask;
 
     // The SandboxOrigin is stored redundantly in the security origin.

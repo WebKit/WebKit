@@ -1,5 +1,108 @@
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
+        Add initial support for 'Cross-Origin-Opener-Policy' HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=192193
+        <rdar://problem/42013525>
+
+        Reviewed by Geoff Garen.
+
+        Add initial support for 'Cross-Origin-Opener-Policy' HTTP header:
+        - https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy-value
+
+        Support is complete enough to pass most WPT tests with the exception of:
+        - The ones involving blob. Support for Blob does not seem trivial so I will address
+          separately (https://github.com/whatwg/html/issues/5198).
+        - The ones that requires reporting COOP enforcement as this is not supported yet.
+          This is a fairly large task so I'll handle separately.
+        - The ones that involve Cross-Origin-Embedder-Policy (COEP) and this is not yet
+          supported.
+
+        I tried to stay as close as possible to the HTML specification as possible in terms
+        of structuring and naming. I also have code comments to link to the relevant HTML
+        spec sections.
+
+        Note that as it stands, we do not currently swap process based on COOP header. We
+        merely do isolation of the new browsing context at JS level for now. At some point,
+        we'll want to actually process-swap, once we support COEP and we want to re-enable
+        some Web APIs such as SharedArrayBuffer.
+
+        No new tests, covered by web-plaform-tests/html/cross-origin-opener-policy.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::shouldForceNoOpenerBasedOnCOOP const):
+        (WebCore::Document::crossOriginOpenerPolicy const):
+        (WebCore::Document::setCrossOriginOpenerPolicy):
+        * dom/Document.h:
+        (WebCore::Document::isSameOriginAsTopDocument const):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::enforceSandboxFlags):
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::creationSandboxFlags const):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openURLExternally):
+        * loader/CrossOriginEmbedderPolicy.cpp: Copied from Source/WebCore/page/AbstractFrame.cpp.
+        (WebCore::obtainCrossOriginEmbedderPolicy):
+        * loader/CrossOriginEmbedderPolicy.h: Copied from Source/WebCore/page/AbstractFrame.cpp.
+        * loader/CrossOriginOpenerPolicy.cpp: Added.
+        (WebCore::obtainCrossOriginOpenerPolicy):
+        * loader/CrossOriginOpenerPolicy.h: Copied from Source/WebCore/page/AbstractFrame.h.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::checkIfCOOPValuesRequireBrowsingContextGroupSwitch):
+        (WebCore::computeResponseOriginAndCOOP):
+        (WebCore::DocumentLoader::doCrossOriginOpenerHandlingOfResponse):
+        (WebCore::DocumentLoader::enforceResponseCrossOriginOpenerPolicy):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::crossOriginOpenerPolicy const):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::createWindow):
+        (WebCore::FrameLoader::switchBrowsingContextsGroup):
+        * loader/FrameLoader.h:
+        * loader/NavigationAction.cpp:
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::Requester::securityOrigin const):
+        (WebCore::NavigationAction::Requester::topOrigin const):
+        (WebCore::NavigationAction::Requester::crossOriginOpenerPolicy const):
+        * page/AbstractFrame.cpp:
+        (WebCore::AbstractFrame::resetWindowProxy):
+        * page/AbstractFrame.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::crossOriginIsolated const):
+        (WebCore::DOMWindow::createWindow):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::resetScript):
+        * page/Frame.h:
+        * page/Page.h:
+        (WebCore::Page::setOpenedByDOMWithOpener):
+        * page/WindowOrWorkerGlobalScope.idl:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::applyPolicyToScriptExecutionContext):
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseStructuredFieldValue):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isSafeRedirectionResponseHeader):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::crossOriginIsolated const):
+        * workers/WorkerGlobalScope.h:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r280482.
 
         Will take a more conservative approach

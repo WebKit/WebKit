@@ -46,8 +46,8 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
 interface mixin WindowOrWorkerGlobalScope {
     [Replaceable] readonly attribute USVString origin;
     readonly attribute boolean isSecureContext;
-    // FIXME: Implement 'crossOriginIsolated'.
-    // readonly attribute boolean crossOriginIsolated;
+
+    [EnabledBySetting=CrossOriginOpenerPolicy] readonly attribute boolean crossOriginIsolated;
  
     // Base64 utility methods.
     DOMString atob(DOMString string);

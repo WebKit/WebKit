@@ -1,6 +1,6 @@
 
-FAIL sw_normal, popup_normal assert_equals: expected "No opener is set" but got "An opener is set"
+PASS sw_normal, popup_normal
 PASS sw_normal, popup_coop
-FAIL sw_coop, popup_normal assert_equals: expected "No opener is set" but got "An opener is set"
+PASS sw_coop, popup_normal
 PASS sw_coop, popup_coop
 

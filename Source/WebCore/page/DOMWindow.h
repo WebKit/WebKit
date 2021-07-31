@@ -310,6 +310,8 @@ public:
     // Secure Contexts
     bool isSecureContext() const;
 
+    bool crossOriginIsolated() const;
+
     // Events
     // EventTarget API
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
@@ -402,6 +404,9 @@ public:
     bool wasWrappedWithoutInitializedSecurityOrigin() const { return m_wasWrappedWithoutInitializedSecurityOrigin; }
     void setAsWrappedWithoutInitializedSecurityOrigin() { m_wasWrappedWithoutInitializedSecurityOrigin = true; }
 
+    void setMayReuseForNavigation(bool mayReuseForNavigation) { m_mayReuseForNavigation = mayReuseForNavigation; }
+    bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
+
 private:
     explicit DOMWindow(Document&);
 
@@ -486,6 +491,7 @@ private:
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
 
     bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
+    bool m_mayReuseForNavigation { true };
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif

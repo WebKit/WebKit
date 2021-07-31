@@ -31,6 +31,7 @@
 #include "CanvasBase.h"
 #include "Color.h"
 #include "ContainerNode.h"
+#include "CrossOriginOpenerPolicy.h"
 #include "DisabledAdaptations.h"
 #include "DocumentEventTiming.h"
 #include "DocumentIdentifier.h"
@@ -1349,6 +1350,12 @@ public:
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
     SecurityOrigin& topOrigin() const final { return topDocument().securityOrigin(); }
 
+    bool isSameOriginAsTopDocument() const { return securityOrigin().isSameOriginAs(topOrigin()); }
+    bool shouldForceNoOpenerBasedOnCOOP() const;
+
+    const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const;
+    void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy&);
+
     void willLoadScriptElement(const URL&);
     void willLoadFrameElement(const URL&);
 
@@ -2047,6 +2054,7 @@ private:
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
     std::optional<ReferrerPolicy> m_referrerPolicy;
     ReadyState m_readyState { Complete };
+    CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
 
     MutationObserverOptions m_mutationObserverTypes { 0 };
 

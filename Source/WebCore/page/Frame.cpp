@@ -1128,6 +1128,12 @@ bool Frame::arePluginsEnabled()
     return settings().arePluginsEnabled();
 }
 
+void Frame::resetScript()
+{
+    resetWindowProxy();
+    m_script = makeUniqueRef<ScriptController>(*this);
+}
+
 #if ENABLE(DATA_DETECTION)
 
 DataDetectionResultsStorage& Frame::dataDetectionResults()

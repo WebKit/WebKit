@@ -1,11 +1,11 @@
 
 PASS Same-origin popup with coop/coep
-FAIL historical: "same-site" popup with coop/coep assert_equals: name expected "" but got "same-site-popup-with-coop/coep"
-FAIL Same-origin popup with coop unsafe-none/coep assert_equals: name expected "" but got "popup-with-coop-unsafe-none/coep"
-FAIL historical: "same-site" popup with coop unsafe-none/coep assert_equals: name expected "" but got "same-site-popup-with-coop-unsafe-none/coep"
-FAIL Same-origin popup with coop unsafe-none without coep assert_equals: name expected "" but got "popup-with-coop-unsafe-none-without-coep"
-FAIL historical: "same-site" popup with coop unsafe-none without coep assert_equals: name expected "" but got "same-site-popup-with-coop-unsafe-none-without-coep"
-FAIL Same-origin popup without coep assert_equals: name expected "" but got "popup-without-coep"
-FAIL historical: "same-site" popup without coep assert_equals: name expected "" but got "same-site-popup-without-coep"
-FAIL Bonus: window.crossOriginIsolated assert_true: expected true got undefined
+PASS historical: "same-site" popup with coop/coep
+PASS Same-origin popup with coop unsafe-none/coep
+PASS historical: "same-site" popup with coop unsafe-none/coep
+PASS Same-origin popup with coop unsafe-none without coep
+PASS historical: "same-site" popup with coop unsafe-none without coep
+PASS Same-origin popup without coep
+PASS historical: "same-site" popup without coep
+FAIL Bonus: window.crossOriginIsolated assert_true: expected true got false
 

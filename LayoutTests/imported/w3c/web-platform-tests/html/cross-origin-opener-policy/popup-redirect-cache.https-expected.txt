@@ -1,11 +1,11 @@
 
-FAIL same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache true and destCache false assert_equals: name expected "" but got "SAME_ORIGIN_CROSS_ORIGIN_cache_redirect_not_cache_destination"
-FAIL same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache false and destCache true assert_equals: name expected "" but got "SAME_ORIGIN_CROSS_ORIGIN_not_cache_redirect_cache_destination"
-FAIL same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache true and destCache true assert_equals: name expected "" but got "SAME_ORIGIN_CROSS_ORIGIN_cache_redirect_cache_destination"
-FAIL same-origin document opening popup redirect from https://127.0.0.1:9443 to https://localhost:9443 with redirectCache true and destCache false assert_equals: name expected "" but got "CROSS_ORIGIN_SAME_ORIGIN_cache_redirect_not_cache_destination"
-FAIL same-origin document opening popup redirect from https://127.0.0.1:9443 to https://localhost:9443 with redirectCache false and destCache true assert_equals: name expected "" but got "CROSS_ORIGIN_SAME_ORIGIN_not_cache_redirect_cache_destination"
-FAIL same-origin document opening popup redirect from https://127.0.0.1:9443 to https://localhost:9443 with redirectCache true and destCache true assert_equals: name expected "" but got "CROSS_ORIGIN_SAME_ORIGIN_cache_redirect_cache_destination"
-FAIL same-origin document opening popup redirect from https://127.0.0.1:9443 to https://127.0.0.1:9443 with redirectCache true and destCache false assert_equals: name expected "" but got "SAME_SITE_CROSS_ORIGIN_cache_redirect_not_cache_destination"
-FAIL same-origin document opening popup redirect from https://127.0.0.1:9443 to https://127.0.0.1:9443 with redirectCache false and destCache true assert_equals: name expected "" but got "SAME_SITE_CROSS_ORIGIN_not_cache_redirect_cache_destination"
-FAIL same-origin document opening popup redirect from https://127.0.0.1:9443 to https://127.0.0.1:9443 with redirectCache true and destCache true assert_equals: name expected "" but got "SAME_SITE_CROSS_ORIGIN_cache_redirect_cache_destination"
+PASS same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache true and destCache false
+PASS same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache false and destCache true
+PASS same-origin document opening popup redirect from https://localhost:9443 to https://127.0.0.1:9443 with redirectCache true and destCache true
+PASS same-origin document opening popup redirect from https://127.0.0.1:9443 to https://localhost:9443 with redirectCache true and destCache false
+PASS same-origin document opening popup redirect from https://127.0.0.1:9443 to https://localhost:9443 with redirectCache false and destCache true
+PASS same-origin document opening popup redirect from https://127.0.0.1:9443 to https://localhost:9443 with redirectCache true and destCache true
+PASS same-origin document opening popup redirect from https://127.0.0.1:9443 to https://127.0.0.1:9443 with redirectCache true and destCache false
+PASS same-origin document opening popup redirect from https://127.0.0.1:9443 to https://127.0.0.1:9443 with redirectCache false and destCache true
+PASS same-origin document opening popup redirect from https://127.0.0.1:9443 to https://127.0.0.1:9443 with redirectCache true and destCache true
 
