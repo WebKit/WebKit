@@ -1,3 +1,11 @@
+2021-07-31  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r280493.
+        warning: variable ‘block’ set but not used [-Wunused-but-set-variable]
+
+        * b3/B3CanonicalizePrePostIncrements.cpp:
+        (JSC::B3::canonicalizePrePostIncrements):
+
 2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] branchTest8 should not emit tst for Zero/NonZero cases

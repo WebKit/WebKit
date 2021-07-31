@@ -52,7 +52,6 @@ bool canonicalizePrePostIncrements(Procedure& proc)
 
     InsertionSet insertionSet { proc };
     BlockInsertionSet blockInsertionSet { proc };
-    BasicBlock* block { nullptr };
     unsigned index { 0 };
 
     Dominators& dominators = proc.dominators();
@@ -129,7 +128,6 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     };
 
     for (BasicBlock* basicBlock : proc.blocksInPreOrder()) {
-        block = basicBlock;
         for (index = 0; index < basicBlock->size(); ++index) {
             Value* value = basicBlock->at(index);
             tryPrePostIndex(value);
