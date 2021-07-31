@@ -275,6 +275,7 @@ enum class BoxSizing : uint8_t {
 enum class Overflow : uint8_t {
     Visible,
     Hidden,
+    Clip,
     Scroll,
     Auto,
     PagedX,

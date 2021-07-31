@@ -437,6 +437,8 @@ public:
 
     bool hasNonVisibleOverflow() const { return m_bitfields.hasNonVisibleOverflow(); }
 
+    bool hasPotentiallyScrollableOverflow() const;
+
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
     bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate()); }
 
@@ -1185,6 +1187,13 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
 inline bool RenderObject::isAtomicInlineLevelBox() const
 {
     return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplaced());
+}
+
+inline bool RenderObject::hasPotentiallyScrollableOverflow() const
+{
+    // We only need to test one overflow dimension since 'visible' and 'clip' always get accompanied
+    // with 'clip' or 'visible' in the other dimension (see Style::Adjuster::adjust).
+    return hasNonVisibleOverflow() && style().overflowX() != Overflow::Clip && style().overflowX() != Overflow::Visible;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);

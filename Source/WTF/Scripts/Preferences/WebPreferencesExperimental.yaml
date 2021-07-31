@@ -744,6 +744,18 @@ OpusDecoderEnabled:
     WebKit:
       default: true
 
+OverflowClipEnabled:
+  type: bool
+  humanReadableName: "CSS overflow: clip support"
+  humanReadableDescription: "Enable CSS overflow: clip support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 OverscrollBehaviorEnabled:
   type: bool
   humanReadableName: "CSS Overscroll Behavior"

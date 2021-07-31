@@ -649,6 +649,7 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 
     switch (overflowX) {
     case Overflow::Hidden:
+    case Overflow::Clip:
         if (overrideHidden)
             hMode = ScrollbarAuto;
         else
@@ -667,6 +668,7 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 
     switch (overflowY) {
     case Overflow::Hidden:
+    case Overflow::Clip:
         if (overrideHidden)
             vMode = ScrollbarAuto;
         else

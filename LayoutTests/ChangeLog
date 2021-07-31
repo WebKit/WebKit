@@ -1,3 +1,12 @@
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [css-overflow] Implement clip value for overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198230
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for 'Cross-Origin-Opener-Policy' HTTP header

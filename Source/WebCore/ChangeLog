@@ -1,3 +1,65 @@
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [css-overflow] Implement clip value for overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198230
+
+        Reviewed by Simon Fraser.
+
+        Implement overflow: clip. Parsing is like the other
+        overflow values but special logic is added to handle
+        the case where only one of overflow-x/overflow-y uses
+        'clip' [1]. Also adjusts code that computes layout and
+        visual overflow to take overflow: clip into account.
+
+        This matches Chrome and Firefox.
+
+        [1] https://drafts.csswg.org/css-overflow/#propdef-overflow-x
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator Overflow const):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::operator==):
+        (WebCore::add):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * page/FrameView.cpp: handle scrollbars
+        on viewport element same as overflow: hidden.
+        (WebCore::FrameView::applyOverflowToViewport):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::scrollWidth const): overflow clip
+        forbids all scrolling.
+        (WebCore::RenderBox::scrollHeight const): Ditto.
+        (WebCore::RenderBox::setScrollLeft): Ditto.
+        (WebCore::RenderBox::setScrollTop): Ditto.
+        (WebCore::RenderBox::setScrollPosition): Ditto.
+        (WebCore::RenderBox::requiresLayerWithScrollableArea const): do
+        not create layer with scrollable area for overflow: clip.
+        (WebCore::RenderBox::canBeProgramaticallyScrolled const): overflow clip
+        forbids all scrolling.
+        (WebCore::RenderBox::scrollPosition const): overflow clip
+        forbids all scrolling.
+        (WebCore::RenderBox::overflowClipRect const): only clip the rect horizontally
+        for overflow-x: clip and only vertically for overflow-y: clip.
+        (WebCore::RenderBox::createsNewFormattingContext const): do
+        not create formatting context for overflow: clip.
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingScrollableContainerForSnapping const):
+        * rendering/RenderObject.h: Add helper method that excludes overflow-x/y: clip.
+        (WebCore::RenderObject::hasPotentiallyScrollableOverflow const):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * style/StyleAdjuster.cpp: Add special logic is to handle the case where only
+        one of overflow-x/overflow-y uses 'clip'.
+        (WebCore::Style::Adjuster::adjust const):
+
 2021-07-30  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for 'Cross-Origin-Opener-Policy' HTTP header

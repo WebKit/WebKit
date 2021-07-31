@@ -481,7 +481,7 @@ RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
         // want to return this as our container. Instead we should use the root element.
         if (candidate->isRenderView())
             break;
-        if (candidate->hasNonVisibleOverflow())
+        if (candidate->hasPotentiallyScrollableOverflow())
             return downcast<RenderBox>(candidate);
     }
 

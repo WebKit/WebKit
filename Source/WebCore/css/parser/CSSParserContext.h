@@ -87,6 +87,8 @@ struct CSSParserContext {
     bool attachmentEnabled { false };
 #endif
 
+    bool overflowClipEnabled { false };
+
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
     bool isPropertyRuntimeDisabled(CSSPropertyID) const;
