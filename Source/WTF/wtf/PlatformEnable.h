@@ -751,6 +751,10 @@
 #define ENABLE_YARR_JIT_BACKREFERENCES 1
 #endif
 
+#if CPU(ARM64) || CPU(X86_64)
+#define ENABLE_YARR_JIT_UNICODE_EXPRESSIONS 1
+#endif
+
 /* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
    enabled as well: */
 #if ENABLE(JIT) || ENABLE(YARR_JIT) || !ENABLE(C_LOOP)

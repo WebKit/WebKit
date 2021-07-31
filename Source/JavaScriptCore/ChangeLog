@@ -1,5 +1,17 @@
 2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Move JIT_UNICODE_EXPRESSIONS to ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) in PlatformEnable.h
+        https://bugs.webkit.org/show_bug.cgi?id=228669
+
+        Reviewed by Alexey Shvayka.
+
+        Move JIT_UNICODE_EXPRESSIONS to PlatformEnable.h to align to the other YarrJIT flags.
+        This makes it easy to read that this is enabled on ARM64 and X86_64.
+
+        * yarr/YarrJIT.cpp:
+
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Clean up Yarr by using `static constexpr`
         https://bugs.webkit.org/show_bug.cgi?id=228678
 

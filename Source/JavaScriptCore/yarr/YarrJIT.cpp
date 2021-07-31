@@ -198,7 +198,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
     static constexpr RegisterID returnRegister2 = ARM64Registers::x1;
 
     static constexpr TrustedImm32 surrogateTagMask = TrustedImm32(0xfffffc00);
-#define JIT_UNICODE_EXPRESSIONS
 #elif CPU(MIPS)
     static constexpr RegisterID input = MIPSRegisters::a0;
     static constexpr RegisterID index = MIPSRegisters::a1;
@@ -259,7 +258,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
     static constexpr TrustedImm32 leadingSurrogateTag = TrustedImm32(0xd800);
     static constexpr TrustedImm32 trailingSurrogateTag = TrustedImm32(0xdc00);
     static constexpr TrustedImm32 surrogateTagMask = TrustedImm32(0xfffffc00);
-#define JIT_UNICODE_EXPRESSIONS
 #endif
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
@@ -561,7 +559,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             unicodeFail.link(this);
     }
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
     void advanceIndexAfterCharacterClassTermMatch(const PatternTerm* term, JumpList& failuresAfterIncrementingIndex, const RegisterID character)
     {
         ASSERT(term->type == PatternTerm::Type::CharacterClass);
@@ -644,7 +642,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         return BaseIndex(input, indexReg, TimesTwo, characterOffset * static_cast<int32_t>(sizeof(UChar)));
     }
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
     void tryReadUnicodeCharImpl(RegisterID resultReg)
     {
         ASSERT(m_charSize == CharSize::Char16);
@@ -691,7 +689,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
         if (m_charSize == CharSize::Char8)
             load8(address, resultReg);
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         else if (m_decodeSurrogatePairs)
             tryReadUnicodeChar(address, resultReg);
 #endif
@@ -1679,7 +1677,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         }
 
         op.m_jumps.append(branch32(NotEqual, character, Imm32(ch)));
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs && !U_IS_BMP(ch))
             add32(TrustedImm32(2), countRegister);
         else
@@ -1711,7 +1709,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             failures.append(jumpIfCharNotEquals(ch, m_checkedOffset - term->inputPosition, character));
 
             add32(TrustedImm32(1), index);
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
             if (m_decodeSurrogatePairs && !U_IS_BMP(ch)) {
                 Jump surrogatePairOk = notAtEndOfInput();
                 sub32(TrustedImm32(1), index);
@@ -1785,7 +1783,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             nonGreedyFailures.append(jumpIfCharNotEquals(ch, m_checkedOffset - term->inputPosition, character));
 
             add32(TrustedImm32(1), index);
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
             if (m_decodeSurrogatePairs && !U_IS_BMP(ch)) {
                 Jump surrogatePairOk = notAtEndOfInput();
                 sub32(TrustedImm32(1), index);
@@ -1835,7 +1833,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 matchDest.link(this);
             }
         }
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs && (!term->characterClass->hasOneCharacterSize() || term->invert())) {
             Jump isBMPChar = branch32(LessThan, character, supplementaryPlanesBase);
             op.m_jumps.append(atEndOfInput());
@@ -1846,7 +1844,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
     }
     void backtrackCharacterClassOnce(size_t opIndex)
     {
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs) {
             YarrOp& op = m_ops[opIndex];
             PatternTerm* term = op.m_term;
@@ -1874,7 +1872,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
         Checked<unsigned> scaledMaxCount = term->quantityMaxCount;
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs && term->characterClass->hasOnlyNonBMPCharacters() && !term->invert())
             scaledMaxCount *= 2;
 #endif
@@ -1896,7 +1894,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             }
         }
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs) {
             if (term->isFixedWidthCharacterClass())
                 add32(TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1), countRegister);
@@ -1933,7 +1931,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         JumpList failures;
         JumpList failuresDecrementIndex;
         Label loop(this);
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (term->isFixedWidthCharacterClass() && term->characterClass->hasNonBMPCharacters()) {
             move(TrustedImm32(1), character);
             failures.append(checkNotEnoughInput(character));
@@ -1956,7 +1954,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             matchDest.link(this);
         }
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs)
             advanceIndexAfterCharacterClassTermMatch(term, failuresDecrementIndex, character);
         else
@@ -2012,7 +2010,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             sub32(TrustedImm32(1), countRegister);
             add32(TrustedImm32(1), index);
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
             Jump isBMPChar = branch32(LessThan, character, supplementaryPlanesBase);
             add32(TrustedImm32(1), index);
             isBMPChar.link(this);
@@ -2036,7 +2034,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         move(TrustedImm32(0), countRegister);
         op.m_reentry = label();
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs) {
             if (!term->characterClass->hasOneCharacterSize() || term->invert())
                 storeToFrame(index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
@@ -2059,7 +2057,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
         m_backtrackingState.link(this);
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs) {
             if (!term->characterClass->hasOneCharacterSize() || term->invert())
                 loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::beginIndex(), index);
@@ -2086,7 +2084,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             }
         }
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs)
             advanceIndexAfterCharacterClassTermMatch(term, nonGreedyFailuresDecrementIndex, character);
         else
@@ -3930,7 +3928,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
     void generateTryReadUnicodeCharacterHelper()
     {
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_tryReadUnicodeCharacterCalls.isEmpty())
             return;
 
@@ -4074,7 +4072,7 @@ public:
     {
         YarrCodeBlock& codeBlock = m_codeBlock;
 
-#ifndef JIT_UNICODE_EXPRESSIONS
+#if !ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs) {
             codeBlock.setFallBackWithFailureReason(JITFailureReason::DecodeSurrogatePair);
             return;
@@ -4140,7 +4138,7 @@ public:
             move(regT0, stackPointerRegister);
         }
 
-#ifdef JIT_UNICODE_EXPRESSIONS
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs)
             getEffectiveAddress(BaseIndex(input, length, TimesTwo), endOfStringAddress);
 #endif
