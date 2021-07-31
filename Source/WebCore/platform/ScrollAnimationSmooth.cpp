@@ -84,7 +84,8 @@ bool ScrollAnimationSmooth::scroll(ScrollbarOrientation orientation, ScrollGranu
         minScrollPosition = extents.minimumScrollPosition.y();
         maxScrollPosition = extents.maximumScrollPosition.y();
     }
-    bool needToScroll = updatePerAxisData(orientation == HorizontalScrollbar ? m_horizontalData : m_verticalData, granularity, step * multiplier, minScrollPosition, maxScrollPosition);
+    auto& data = orientation == HorizontalScrollbar ? m_horizontalData : m_verticalData;
+    bool needToScroll = updatePerAxisData(data, granularity, data.desiredPosition + (step * multiplier), minScrollPosition, maxScrollPosition);
     if (needToScroll && !isActive()) {
         m_startTime = orientation == HorizontalScrollbar ? m_horizontalData.startTime : m_verticalData.startTime;
         animationTimerFired();
@@ -96,9 +97,9 @@ void ScrollAnimationSmooth::scroll(const FloatPoint& position)
 {
     ScrollGranularity granularity = ScrollByPage;
     auto extents = m_scrollExtentsFunction();
-    bool needToScroll = updatePerAxisData(m_horizontalData, granularity, position.x() - m_horizontalData.currentPosition, extents.minimumScrollPosition.x(), extents.maximumScrollPosition.x(), smoothFactorForProgrammaticScroll);
+    bool needToScroll = updatePerAxisData(m_horizontalData, granularity, position.x(), extents.minimumScrollPosition.x(), extents.maximumScrollPosition.x(), smoothFactorForProgrammaticScroll);
     needToScroll |=
-        updatePerAxisData(m_verticalData, granularity, position.y() - m_verticalData.currentPosition, extents.minimumScrollPosition.y(), extents.maximumScrollPosition.y(), smoothFactorForProgrammaticScroll);
+        updatePerAxisData(m_verticalData, granularity, position.y(), extents.minimumScrollPosition.y(), extents.maximumScrollPosition.y(), smoothFactorForProgrammaticScroll);
     if (needToScroll && !isActive()) {
         m_startTime = m_horizontalData.startTime;
         animationTimerFired();
@@ -287,18 +288,16 @@ static inline void getAnimationParametersForGranularity(ScrollGranularity granul
     }
 }
 
-bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranularity granularity, float delta, float minScrollPosition, float maxScrollPosition, double smoothFactor)
+bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranularity granularity, float newPosition, float minScrollPosition, float maxScrollPosition, double smoothFactor)
 {
-    if (!data.startTime || !delta || (delta < 0) != (data.desiredPosition - data.currentPosition < 0)) {
+    if (!data.startTime || newPosition == data.currentPosition) {
         data.desiredPosition = data.currentPosition;
         data.startTime = { };
     }
 
-    float newPosition = data.currentPosition + delta;
     newPosition = std::max(std::min(newPosition, maxScrollPosition), minScrollPosition);
     if (newPosition == data.desiredPosition)
         return false;
-
 
     Seconds animationTime, repeatMinimumSustainTime, attackTime, releaseTime, maximumCoastTime;
     Curve coastTimeCurve;

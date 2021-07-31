@@ -1,3 +1,26 @@
+2021-07-31  Martin Robinson  <mrobinson@webkit.org>
+
+        REGRESSION(r279564): [GTK] Mouse wheel scrolling scrolls too little (take two)
+        https://bugs.webkit.org/show_bug.cgi?id=228572
+
+        Reviewed by Adrian Perez de Castro.
+
+        Test: platform/gtk/fast/scrolling/scroll-wheel-repeated-events.html
+
+        When scrolling by a delta with ScrollAnimationSmooth, base the target point
+        on the current scroll target instead of on the current position. We also
+        pass the point to updatePerAxisData instead of the delta in order to make
+        it more explicit what the desired behavior is for this method.
+
+        * platform/ScrollAnimationSmooth.h: Update argument name.
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::scroll): Base the delta on the target position and
+        pass that as the argument to updatePerAxisData. When scrolling to a point, simply
+        pass that to updatePerAxisData.
+        (WebCore::ScrollAnimationSmooth::updatePerAxisData): Accept a point instead of a
+        delta, which makes it more obvious how to use this function and allows it to
+        be used the same way by both version of ScrollAnimationSmooth::scroll.
+
 2021-07-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r280488.

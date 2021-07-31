@@ -96,7 +96,7 @@ private:
         int visibleLength { 0 };
     };
 
-    bool updatePerAxisData(PerAxisData&, ScrollGranularity, float delta, float minScrollPosition, float maxScrollPosition, double smoothFactor = 1);
+    bool updatePerAxisData(PerAxisData&, ScrollGranularity, float newPosition, float minScrollPosition, float maxScrollPosition, double smoothFactor = 1);
     bool animateScroll(PerAxisData&, MonotonicTime currentTime);
 
     void requestAnimationTimerFired();
