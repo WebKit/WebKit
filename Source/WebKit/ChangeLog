@@ -1,3 +1,21 @@
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
+        RemoteAudioMediaStreamTrackRendererInternalUnit should handle changes of requested sampleCount
+        https://bugs.webkit.org/show_bug.cgi?id=228631
+        <rdar://80690191>
+
+        Reviewed by Eric Carlson.
+
+        The requested number of samples might change in case the output device changes.
+        When changing device, we might have a generated buffer of 4096 while 1024 samples are requested.
+        For each 1024 sample chunk, we will request a buffer of 4096, which cannot be provided by WebProcess.
+        To prevent this case, we keep track of a requested sample count overshoot so that next time the render callback is called,
+        we might not request to generate another chunk.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::render):
+
 2021-07-30  Jean-Yves Avenard  <jya@apple.com>
 
         REGRESSION (r274460?): Infinite recursion on fullscreen/full-screen-remove-ancestor.html in WTR::InjectedBundlePage::closeFullScreen
