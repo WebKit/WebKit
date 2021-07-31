@@ -1,3 +1,16 @@
+2021-07-30  Robin Morisset  <rmorisset@apple.com>
+
+        Improve OSR entry into Wasm loops with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=228595
+
+        Reviewed by Yusuke Suzuki.
+
+        Just a straightforward test that counts to 1M in a loop, to exercise both OSR entry and a loop with an argument at the same time.
+        100k iterations was not enough to reliably complete an OSR entry.
+
+        * wasm/stress/osr-entry-with-loop-arguments.js: Added.
+        (async test):
+
 2021-07-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         putInlineFastReplacingStaticPropertyIfNeeded should handle custom values

@@ -1,3 +1,25 @@
+2021-07-30  Robin Morisset  <rmorisset@apple.com>
+
+        Improve OSR entry into Wasm loops with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=228595
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch has two parts:
+        - improve the Wasm OSR code to fully support loop arguments (just some plumbing to make sure that the right values are propagated)
+        - improve the B3 validator to fix a hole I noticed while writing the first part: we were not detecting code that introduce Upsilons in the wrong blocks.
+          Naturally, this caused hard to debug issues, as B3 has no well-defined semantics for a Phi that is reached before the corresponding Upsilon(s).
+
+        * b3/B3Validate.cpp:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addLoop):
+
 2021-07-30  Philip Chimento  <pchimento@igalia.com>
 
         [JSC] Rename Temporal.now to Temporal.Now
