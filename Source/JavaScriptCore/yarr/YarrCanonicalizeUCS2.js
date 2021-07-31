@@ -168,7 +168,7 @@ function createTables(prefix, maxValue, canonicalGroups)
         print("const UChar32 " + prefixLower + "CharacterSet" + i + "[] = { " + characters + "0 };");
     }
     print();
-    print("static const size_t " + prefixUpper + "_CANONICALIZATION_SETS = " + characterSetInfo.length + ";");
+    print("static constexpr size_t " + prefixUpper + "_CANONICALIZATION_SETS = " + characterSetInfo.length + ";");
     print("const UChar32* const " + prefixLower + "CharacterSetInfo[" + prefixUpper + "_CANONICALIZATION_SETS] = {");
     for (i in characterSetInfo)
     print("    " + prefixLower + "CharacterSet" + i + ",");

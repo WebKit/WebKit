@@ -54,7 +54,7 @@ const UChar32 ucs2CharacterSet20[] = { 0x0462, 0x0463, 0x1c87, 0 };
 const UChar32 ucs2CharacterSet21[] = { 0x1e60, 0x1e61, 0x1e9b, 0 };
 const UChar32 ucs2CharacterSet22[] = { 0x1c88, 0xa64a, 0xa64b, 0 };
 
-static const size_t UCS2_CANONICALIZATION_SETS = 23;
+static constexpr size_t UCS2_CANONICALIZATION_SETS = 23;
 const UChar32* const ucs2CharacterSetInfo[UCS2_CANONICALIZATION_SETS] = {
     ucs2CharacterSet0,
     ucs2CharacterSet1,

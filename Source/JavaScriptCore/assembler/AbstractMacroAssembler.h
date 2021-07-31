@@ -350,9 +350,9 @@ public:
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
     struct TrustedImm32 : public TrustedImm {
-        TrustedImm32() { }
+        constexpr TrustedImm32() = default;
         
-        explicit TrustedImm32(int32_t value)
+        explicit constexpr TrustedImm32(int32_t value)
             : m_value(value)
         {
         }
@@ -364,7 +364,7 @@ public:
         }
 #endif
 
-        int32_t m_value;
+        int32_t m_value { 0 };
     };
 
 

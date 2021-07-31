@@ -1,3 +1,21 @@
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up Yarr by using `static constexpr`
+        https://bugs.webkit.org/show_bug.cgi?id=228678
+
+        Reviewed by Alexey Shvayka.
+
+        Modernize Yarr code by using static constexpr.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImm32::TrustedImm32):
+        * yarr/YarrCanonicalizeUCS2.cpp:
+        * yarr/YarrCanonicalizeUCS2.js:
+        (set characters.hex.set string_appeared_here):
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        * yarr/YarrJIT.cpp:
+
 2021-07-31  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r280493.

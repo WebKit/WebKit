@@ -159,106 +159,106 @@ std::tuple<BoyerMooreBitmap::Map, bool> BoyerMooreInfo::createCandidateBitmap(un
 class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
 #if CPU(ARM_THUMB2)
-    static const RegisterID input = ARMRegisters::r0;
-    static const RegisterID index = ARMRegisters::r1;
-    static const RegisterID length = ARMRegisters::r2;
-    static const RegisterID output = ARMRegisters::r3;
+    static constexpr RegisterID input = ARMRegisters::r0;
+    static constexpr RegisterID index = ARMRegisters::r1;
+    static constexpr RegisterID length = ARMRegisters::r2;
+    static constexpr RegisterID output = ARMRegisters::r3;
 
-    static const RegisterID regT0 = ARMRegisters::r4;
-    static const RegisterID regT1 = ARMRegisters::r5;
-    static const RegisterID initialStart = ARMRegisters::r8;
+    static constexpr RegisterID regT0 = ARMRegisters::r4;
+    static constexpr RegisterID regT1 = ARMRegisters::r5;
+    static constexpr RegisterID initialStart = ARMRegisters::r8;
 
-    static const RegisterID returnRegister = ARMRegisters::r0;
-    static const RegisterID returnRegister2 = ARMRegisters::r1;
+    static constexpr RegisterID returnRegister = ARMRegisters::r0;
+    static constexpr RegisterID returnRegister2 = ARMRegisters::r1;
 
 #elif CPU(ARM64)
     // Argument registers
-    static const RegisterID input = ARM64Registers::x0;
-    static const RegisterID index = ARM64Registers::x1;
-    static const RegisterID length = ARM64Registers::x2;
-    static const RegisterID output = ARM64Registers::x3;
-    static const RegisterID matchingContext = ARM64Registers::x4;
-    static const RegisterID freelistRegister = ARM64Registers::x4; // Loaded from the MatchingContextHolder in the prologue.
-    static const RegisterID freelistSizeRegister = ARM64Registers::x5; // Only used during initialization.
+    static constexpr RegisterID input = ARM64Registers::x0;
+    static constexpr RegisterID index = ARM64Registers::x1;
+    static constexpr RegisterID length = ARM64Registers::x2;
+    static constexpr RegisterID output = ARM64Registers::x3;
+    static constexpr RegisterID matchingContext = ARM64Registers::x4;
+    static constexpr RegisterID freelistRegister = ARM64Registers::x4; // Loaded from the MatchingContextHolder in the prologue.
+    static constexpr RegisterID freelistSizeRegister = ARM64Registers::x5; // Only used during initialization.
 
     // Scratch registers
-    static const RegisterID regT0 = ARM64Registers::x6;
-    static const RegisterID regT1 = ARM64Registers::x7;
-    static const RegisterID regT2 = ARM64Registers::x8;
-    static const RegisterID remainingMatchCount = ARM64Registers::x9;
-    static const RegisterID regUnicodeInputAndTrail = ARM64Registers::x10;
-    static const RegisterID unicodeTemp = ARM64Registers::x5;
-    static const RegisterID initialStart = ARM64Registers::x11;
-    static const RegisterID supplementaryPlanesBase = ARM64Registers::x12;
-    static const RegisterID leadingSurrogateTag = ARM64Registers::x13;
-    static const RegisterID trailingSurrogateTag = ARM64Registers::x14;
-    static const RegisterID endOfStringAddress = ARM64Registers::x15;
+    static constexpr RegisterID regT0 = ARM64Registers::x6;
+    static constexpr RegisterID regT1 = ARM64Registers::x7;
+    static constexpr RegisterID regT2 = ARM64Registers::x8;
+    static constexpr RegisterID remainingMatchCount = ARM64Registers::x9;
+    static constexpr RegisterID regUnicodeInputAndTrail = ARM64Registers::x10;
+    static constexpr RegisterID unicodeTemp = ARM64Registers::x5;
+    static constexpr RegisterID initialStart = ARM64Registers::x11;
+    static constexpr RegisterID supplementaryPlanesBase = ARM64Registers::x12;
+    static constexpr RegisterID leadingSurrogateTag = ARM64Registers::x13;
+    static constexpr RegisterID trailingSurrogateTag = ARM64Registers::x14;
+    static constexpr RegisterID endOfStringAddress = ARM64Registers::x15;
 
-    static const RegisterID returnRegister = ARM64Registers::x0;
-    static const RegisterID returnRegister2 = ARM64Registers::x1;
+    static constexpr RegisterID returnRegister = ARM64Registers::x0;
+    static constexpr RegisterID returnRegister2 = ARM64Registers::x1;
 
-    const TrustedImm32 surrogateTagMask = TrustedImm32(0xfffffc00);
+    static constexpr TrustedImm32 surrogateTagMask = TrustedImm32(0xfffffc00);
 #define JIT_UNICODE_EXPRESSIONS
 #elif CPU(MIPS)
-    static const RegisterID input = MIPSRegisters::a0;
-    static const RegisterID index = MIPSRegisters::a1;
-    static const RegisterID length = MIPSRegisters::a2;
-    static const RegisterID output = MIPSRegisters::a3;
+    static constexpr RegisterID input = MIPSRegisters::a0;
+    static constexpr RegisterID index = MIPSRegisters::a1;
+    static constexpr RegisterID length = MIPSRegisters::a2;
+    static constexpr RegisterID output = MIPSRegisters::a3;
 
-    static const RegisterID regT0 = MIPSRegisters::t4;
-    static const RegisterID regT1 = MIPSRegisters::t5;
-    static const RegisterID initialStart = MIPSRegisters::t6;
+    static constexpr RegisterID regT0 = MIPSRegisters::t4;
+    static constexpr RegisterID regT1 = MIPSRegisters::t5;
+    static constexpr RegisterID initialStart = MIPSRegisters::t6;
 
-    static const RegisterID returnRegister = MIPSRegisters::v0;
-    static const RegisterID returnRegister2 = MIPSRegisters::v1;
+    static constexpr RegisterID returnRegister = MIPSRegisters::v0;
+    static constexpr RegisterID returnRegister2 = MIPSRegisters::v1;
 
 #elif CPU(X86_64)
 #if !OS(WINDOWS)
     // Argument registers
-    static const RegisterID input = X86Registers::edi;
-    static const RegisterID index = X86Registers::esi;
-    static const RegisterID length = X86Registers::edx;
-    static const RegisterID output = X86Registers::ecx;
-    static const RegisterID matchingContext = X86Registers::r8;
-    static const RegisterID freelistRegister = X86Registers::r8; // Loaded from the MatchingContextHolder in the prologue.
-    static const RegisterID freelistSizeRegister = X86Registers::r9; // Only used during initialization.
+    static constexpr RegisterID input = X86Registers::edi;
+    static constexpr RegisterID index = X86Registers::esi;
+    static constexpr RegisterID length = X86Registers::edx;
+    static constexpr RegisterID output = X86Registers::ecx;
+    static constexpr RegisterID matchingContext = X86Registers::r8;
+    static constexpr RegisterID freelistRegister = X86Registers::r8; // Loaded from the MatchingContextHolder in the prologue.
+    static constexpr RegisterID freelistSizeRegister = X86Registers::r9; // Only used during initialization.
 #else
     // If the return value doesn't fit in 64bits, its destination is pointed by rcx and the parameters are shifted.
     // http://msdn.microsoft.com/en-us/library/7572ztz4.aspx
-    COMPILE_ASSERT(sizeof(MatchResult) > sizeof(void*), MatchResult_does_not_fit_in_64bits);
-    static const RegisterID input = X86Registers::edx;
-    static const RegisterID index = X86Registers::r8;
-    static const RegisterID length = X86Registers::r9;
-    static const RegisterID output = X86Registers::r10;
+    static_assert(sizeof(MatchResult) > sizeof(void*), "MatchResult does not fit in 64bits");
+    static constexpr RegisterID input = X86Registers::edx;
+    static constexpr RegisterID index = X86Registers::r8;
+    static constexpr RegisterID length = X86Registers::r9;
+    static constexpr RegisterID output = X86Registers::r10;
 #endif
 
     // Scratch registers
-    static const RegisterID regT0 = X86Registers::eax;
+    static constexpr RegisterID regT0 = X86Registers::eax;
 #if !OS(WINDOWS)
-    static const RegisterID regT1 = X86Registers::r9;
-    static const RegisterID regT2 = X86Registers::r10;
+    static constexpr RegisterID regT1 = X86Registers::r9;
+    static constexpr RegisterID regT2 = X86Registers::r10;
 #else
-    static const RegisterID regT1 = X86Registers::ecx;
-    static const RegisterID regT2 = X86Registers::edi;
+    static constexpr RegisterID regT1 = X86Registers::ecx;
+    static constexpr RegisterID regT2 = X86Registers::edi;
 #endif
 
-    static const RegisterID initialStart = X86Registers::ebx;
+    static constexpr RegisterID initialStart = X86Registers::ebx;
 #if !OS(WINDOWS)
-    static const RegisterID remainingMatchCount = X86Registers::r12;
+    static constexpr RegisterID remainingMatchCount = X86Registers::r12;
 #else
-    static const RegisterID remainingMatchCount = X86Registers::esi;
+    static constexpr RegisterID remainingMatchCount = X86Registers::esi;
 #endif
-    static const RegisterID regUnicodeInputAndTrail = X86Registers::r13;
-    static const RegisterID unicodeTemp = X86Registers::r14;
-    static const RegisterID endOfStringAddress = X86Registers::r15;
+    static constexpr RegisterID regUnicodeInputAndTrail = X86Registers::r13;
+    static constexpr RegisterID unicodeTemp = X86Registers::r14;
+    static constexpr RegisterID endOfStringAddress = X86Registers::r15;
 
-    static const RegisterID returnRegister = X86Registers::eax;
-    static const RegisterID returnRegister2 = X86Registers::edx;
+    static constexpr RegisterID returnRegister = X86Registers::eax;
+    static constexpr RegisterID returnRegister2 = X86Registers::edx;
 
-    const TrustedImm32 supplementaryPlanesBase = TrustedImm32(0x10000);
-    const TrustedImm32 leadingSurrogateTag = TrustedImm32(0xd800);
-    const TrustedImm32 trailingSurrogateTag = TrustedImm32(0xdc00);
-    const TrustedImm32 surrogateTagMask = TrustedImm32(0xfffffc00);
+    static constexpr TrustedImm32 supplementaryPlanesBase = TrustedImm32(0x10000);
+    static constexpr TrustedImm32 leadingSurrogateTag = TrustedImm32(0xd800);
+    static constexpr TrustedImm32 trailingSurrogateTag = TrustedImm32(0xdc00);
+    static constexpr TrustedImm32 surrogateTagMask = TrustedImm32(0xfffffc00);
 #define JIT_UNICODE_EXPRESSIONS
 #endif
 

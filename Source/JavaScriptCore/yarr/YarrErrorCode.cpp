@@ -34,7 +34,7 @@ const char* errorMessage(ErrorCode error)
 {
 #define REGEXP_ERROR_PREFIX "Invalid regular expression: "
     // The order of this array must match the ErrorCode enum.
-    static const char* errorMessages[] = {
+    static const char* const errorMessages[] = {
         nullptr,                                                                    // NoError
         REGEXP_ERROR_PREFIX "regular expression too large",                         // PatternTooLarge
         REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",                // QuantifierOutOfOrder
