@@ -1,3 +1,21 @@
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
+        AVVideoCaptureSource should not start/stop the camera if trying to apply the same size/frame rate configuration
+        https://bugs.webkit.org/show_bug.cgi?id=228634
+        <rdar://81174160>
+
+        Reviewed by Eric Carlson.
+
+        In some configurations, pages want to set a frame rate of 30, but the actual frame rate set will be 29.9999.
+        In that case, our heuristic to not recalibrate the camera fails.
+        To prevent this, we add checks in AVVideoCaptureSource to validate whether the new presets are the same as the already applied ones.
+
+        Manually tested.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSessionSizeAndFrameRate):
+
 2021-07-31  Martin Robinson  <mrobinson@webkit.org>
 
         REGRESSION(r279564): [GTK] Mouse wheel scrolling scrolls too little (take two)

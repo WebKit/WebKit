@@ -326,13 +326,20 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
 
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { m_currentPreset->size.width(), m_currentPreset->size.height(), m_currentFrameRate });
 
+    auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
+    ASSERT(frameRateRange);
+
+    if (m_appliedPreset && m_appliedPreset->format.get() == m_currentPreset->format.get() && m_appliedFrameRateRange.get() == frameRateRange) {
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, " settings already match");
+        return;
+    }
+
     ASSERT(avPreset->format);
 
     NSError *error = nil;
     [m_session beginConfiguration];
     @try {
         if ([device() lockForConfiguration:&error]) {
-            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting preset to ", m_currentSize);
             [device() setActiveFormat:avPreset->format.get()];
 
 #if PLATFORM(MAC)
@@ -345,8 +352,6 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
             [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
 
-            auto* frameRateRange = frameDurationForFrameRate(m_currentFrameRate);
-            ASSERT(frameRateRange);
             if (frameRateRange) {
                 m_currentFrameRate = clampTo(m_currentFrameRate, frameRateRange.minFrameRate, frameRateRange.maxFrameRate);
 
@@ -364,6 +369,8 @@ void AVVideoCaptureSource::setSessionSizeAndFrameRate()
                 ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "cannot find proper frame rate range for the selected preset\n");
 
             [device() unlockForConfiguration];
+            m_appliedFrameRateRange = frameRateRange;
+            m_appliedPreset = m_currentPreset;
         }
     } @catch(NSException *exception) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);

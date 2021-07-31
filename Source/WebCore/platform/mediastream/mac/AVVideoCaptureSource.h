@@ -133,7 +133,9 @@ private:
     RetainPtr<AVCaptureDevice> m_device;
 
     RefPtr<AVVideoPreset> m_currentPreset;
-    IntSize m_currentSize;
+    RefPtr<AVVideoPreset> m_appliedPreset;
+    RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
+
     double m_currentFrameRate;
     bool m_interrupted { false };
     bool m_isRunning { false };
