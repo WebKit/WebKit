@@ -1,3 +1,22 @@
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Move DOM-unrelated tests out of fast/regex/dom
+        https://bugs.webkit.org/show_bug.cgi?id=228661
+
+        Reviewed by Saam Barati.
+
+        By moving to fast/regex/, we can run them from JSC tests too.
+
+        * fast/regex/lastIndex-expected.txt: Renamed from LayoutTests/fast/regex/dom/lastIndex-expected.txt.
+        * fast/regex/lastIndex.html: Renamed from LayoutTests/fast/regex/dom/lastIndex.html.
+        * fast/regex/non-pattern-characters-expected.txt: Renamed from LayoutTests/fast/regex/dom/non-pattern-characters-expected.txt.
+        * fast/regex/non-pattern-characters.html: Renamed from LayoutTests/fast/regex/dom/non-pattern-characters.html.
+        * fast/regex/script-tests/lastIndex.js: Renamed from LayoutTests/fast/regex/dom/script-tests/lastIndex.js.
+        * fast/regex/script-tests/non-pattern-characters.js: Renamed from LayoutTests/fast/regex/dom/script-tests/non-pattern-characters.js.
+        * fast/regex/script-tests/unicodeCaseInsensitive.js: Renamed from LayoutTests/fast/regex/dom/script-tests/unicodeCaseInsensitive.js.
+        * fast/regex/unicodeCaseInsensitive-expected.txt: Renamed from LayoutTests/fast/regex/dom/unicodeCaseInsensitive-expected.txt.
+        * fast/regex/unicodeCaseInsensitive.html: Renamed from LayoutTests/fast/regex/dom/unicodeCaseInsensitive.html.
+
 2021-07-30  Sihui Liu  <sihui_liu@apple.com>
 
         [ macOS wk2 ARM 64 ] storage/indexeddb/IDBObject-leak.html is a flakey text failure

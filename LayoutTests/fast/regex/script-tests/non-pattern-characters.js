@@ -1,5 +1,5 @@
 description(
-"This page tests handling of characters which, according to ECMA 262, are not regular expression PatternCharacters. Those characters are: ^ $ \ . * + ? ( ) [ ] { } |"
+"This page tests handling of characters which, according to ECMA 262, are not regular expression PatternCharacters. Those characters are: ^ $ \\ . * + ? ( ) [ ] { } |"
 );
 
 // We test two cases, to match the two cases in the WREC parser.
