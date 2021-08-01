@@ -365,7 +365,7 @@ void ChromeClientHaiku::intrinsicContentsSizeChanged(const IntSize&) const
 {
 }
 
-void ChromeClientHaiku::scrollRectIntoView(const IntRect&) const
+void ChromeClientHaiku::scrollContainingScrollViewsToRevealRect(const IntRect&) const
 {
     // NOTE: Used for example to make the view scroll with the mouse when selecting.
 }

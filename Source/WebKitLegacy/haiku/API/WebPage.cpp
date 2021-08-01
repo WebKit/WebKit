@@ -87,6 +87,7 @@
 #include "WebCore/TextEncoding.h"
 #include "WebCore/UserContentController.h"
 #include "WebApplicationCache.h"
+#include "WebBroadcastChannelRegistry.h"
 #include "WebDatabaseProvider.h"
 #include "WebDiagnosticLoggingClient.h"
 #include "WebDownload.h"
@@ -274,7 +275,8 @@ BWebPage::BWebPage(BWebView* webView, BPrivate::Network::BUrlContext* context)
         makeUniqueRef<ProgressTrackerClientHaiku>(this),
         makeUniqueRef<FrameLoaderClientHaiku>(this),
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<MediaRecorderProviderHaiku>()
+        makeUniqueRef<MediaRecorderProviderHaiku>(),
+        WebBroadcastChannelRegistry::getOrCreate(false)
         );
 
     // alternativeText
