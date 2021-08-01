@@ -37,6 +37,8 @@ typedef void(^SYNotesActivationObserverHandler)(BOOL isVisible);
 
 @property (nonatomic, readonly, getter=isVisible) BOOL visible;
 
+@property (nonatomic, readonly) CGRect visibleFrame;
+
 - (instancetype)initWithHandler:(nullable SYNotesActivationObserverHandler)handler;
 
 @end

@@ -179,6 +179,9 @@ interface TestRunner {
     undefined addChromeInputField(object callback);
     undefined removeChromeInputField(object callback);
     undefined focusWebView(object callback);
+    undefined setTextInChromeInputField(DOMString text, object callback);
+    undefined getSelectedTextInChromeInputField(object callback);
+    undefined selectChromeInputField(object callback);
 
     // Window/view state
     undefined setBackingScaleFactor(double backingScaleFactor, object callback);

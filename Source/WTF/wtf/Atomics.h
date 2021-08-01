@@ -329,6 +329,15 @@ inline void dependentLoadLoadFence() { compilerFence(); }
 inline void dependentLoadLoadFence() { loadLoadFence(); }
 #endif
 
+template<typename T>
+T opaque(T pointer)
+{
+#if !OS(WINDOWS)
+    asm volatile("" : "+r"(pointer) ::);
+#endif
+    return pointer;
+}
+
 typedef unsigned InternalDependencyType;
 
 inline InternalDependencyType opaqueMixture()
@@ -391,6 +400,55 @@ public:
         Dependency result;
         result.m_value = output;
         return result;
+    }
+
+    // This function exists as a helper to aid in not making mistakes when doing a load
+    // and fencing on the result of the load. A couple examples of where things can go
+    // wrong, and how this function helps:
+    // 
+    // Consider this program:
+    // ```
+    // a = load(p1)
+    // b = load(p2)
+    // if (a != b) return;
+    // d = Dependency::fence(b)
+    // ```
+    // When consuming the d dependency, the compiler can prove that a and b are the same
+    // value, and end up replacing the dependency on whatever register is allocated for `a`
+    // instead of being over `b`, leading to the dependency being on load(p1) instead of
+    // load(p2). We fix this by splitting the value feeding into the fence and the value
+    // being used:
+    // b' = load(p2)
+    // Dependency::fence(b')
+    // b = opaque(b')
+    // b' feeds into the fence, and b will be the value compared. Crucially, the compiler can't
+    // prove that b == b'.
+    //
+    // Let's consider another use case. Imagine you end up with a program like this (perhaps
+    // after some inlining or various optimizations):
+    // a = load(p1)
+    // b = load(p2)
+    // if (a != b) return;
+    // c = load(p2)
+    // d = Dependency::fence(c)
+    // Similar to the first test, the compiler can prove a and b are the same, allowing it to
+    // prove that c == a == b, allowing it to potentially have the dependency be on the wrong
+    // value, similar to above. The fix here is to obscure the pointer we're loading from from
+    // the compiler.
+    template<typename T>
+    static Dependency loadAndFence(const T* pointer, T& output)
+    {
+#if CPU(ARM64) || CPU(ARM)
+        T value = *opaque(pointer);
+        Dependency dependency = Dependency::fence(value);
+        output = opaque(value);
+        return dependency;
+#else
+        T value = *pointer;
+        Dependency dependency = Dependency::fence(value);
+        output = value;
+        return dependency;
+#endif
     }
     
     // On TSO architectures, this just returns the pointer you pass it. On ARM, this produces a new

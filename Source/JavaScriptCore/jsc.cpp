@@ -429,7 +429,6 @@ public:
     bool m_module { false };
     bool m_exitCode { false };
     bool m_destroyVM { false };
-    bool m_profile { false };
     bool m_treatWatchdogExceptionAsSuccess { false };
     bool m_alwaysDumpUncaughtException { false };
     bool m_dumpMemoryFootprint { false };
@@ -3265,7 +3264,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         if (!strcmp(arg, "-p")) {
             if (++i == argc)
                 printUsageStatement();
-            m_profile = true;
+            Options::setOption("useProfiler=1");
             m_profilerOutput = argv[i];
             continue;
         }
@@ -3454,9 +3453,6 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         JSLockHolder locker(vm);
 
         startTimeoutThreadIfNeeded(vm);
-        if (options.m_profile && !vm.m_perBytecodeProfiler)
-            vm.m_perBytecodeProfiler = makeUnique<Profiler::Database>(vm);
-
         globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
         globalObject->setRemoteDebuggingEnabled(options.m_enableRemoteDebugging);
         func(vm, globalObject, success);
@@ -3478,7 +3474,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         printf("\n");
     }
 
-    if (options.m_profile) {
+    if (Options::useProfiler()) {
         JSLockHolder locker(vm);
         if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
             fprintf(stderr, "could not save profiler output.\n");

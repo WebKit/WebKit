@@ -47,13 +47,8 @@ function test()
     let baseThrowTypeErrorFunction = Object.getOwnPropertyDescriptor(arguments, "callee").get;
 
     let sources = [
-        new ThrowTypeErrorSource("Function.prototype", Function.prototype, ["arguments", "caller"]),
-        new ThrowTypeErrorSource("Array.prototype.push (builtin)", arrayProtoPush, ["arguments", "caller"]),
-        new ThrowTypeErrorSource("Strict function arguments", strictArguments, ["arguments", "caller"]),
-        new ThrowTypeErrorSource("Sloppy function arguments", sloppyArguments, ["arguments", "caller"]),
-        new ThrowTypeErrorSource("Strict arguments", strictArguments(), ["callee", "caller"]),
-        new ThrowTypeErrorSource("Sloppy arguments", sloppyArguments(), ["callee", "caller"]),
-        new ThrowTypeErrorSource("Class constructor", (new A()).constructor, ["arguments", "caller"])
+        new ThrowTypeErrorSource("Strict arguments", strictArguments(), ["callee"]),
+        new ThrowTypeErrorSource("Sloppy arguments", sloppyArguments(), ["callee"]),
     ];
 
     let errors = 0;

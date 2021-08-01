@@ -33,11 +33,12 @@ JSValue PropertySlot::functionGetter(JSGlobalObject* globalObject) const
     return m_data.getter.getterSetter->callGetter(globalObject, m_thisValue);
 }
 
-JSValue PropertySlot::customGetter(JSGlobalObject* globalObject, PropertyName propertyName) const
+JSValue PropertySlot::customGetter(VM& vm, PropertyName propertyName) const
 {
+    ASSERT(m_slotBase);
+    JSGlobalObject* globalObject = m_slotBase->globalObject(vm);
     JSValue thisValue = m_attributes & PropertyAttribute::CustomAccessor ? m_thisValue : JSValue(slotBase());
     if (auto domAttribute = this->domAttribute()) {
-        VM& vm = globalObject->vm();
         if (!thisValue.inherits(vm, domAttribute->classInfo)) {
             auto scope = DECLARE_THROW_SCOPE(vm);
             return throwDOMAttributeGetterTypeError(globalObject, scope, domAttribute->classInfo, propertyName);

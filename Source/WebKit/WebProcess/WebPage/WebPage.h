@@ -399,6 +399,7 @@ public:
 
     void layoutIfNeeded();
     void updateRendering();
+    bool shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const;
     void finalizeRenderingUpdate(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
 
     void releaseMemory(WTF::Critical);
@@ -551,7 +552,7 @@ public:
     WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const URL&);
 #endif
     
-    enum class ShouldPerformLayout { Default, Yes };
+    enum class ShouldPerformLayout : bool { Default, Yes };
     EditorState editorState(ShouldPerformLayout = ShouldPerformLayout::Default) const;
     void updateEditorStateAfterLayoutIfEditabilityChanged();
 
@@ -788,9 +789,9 @@ public:
     void performActionOnElement(uint32_t action);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&&);
     void autofillLoginCredentials(const String&, const String&);
-    void setFocusedElementValue(const String&);
-    void setFocusedElementValueAsNumber(double);
-    void setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection);
+    void setFocusedElementValue(const WebCore::ElementContext&, const String&);
+    void setFocusedElementValueAsNumber(const WebCore::ElementContext&, double);
+    void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection);
     void setIsShowingInputViewForFocusedElement(bool);
     bool isShowingInputViewForFocusedElement() const { return m_isShowingInputViewForFocusedElement; }
     void updateSelectionAppearance();
@@ -822,6 +823,9 @@ public:
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
     void requestDocumentEditingContext(WebKit::DocumentEditingContextRequest, CompletionHandler<void(WebKit::DocumentEditingContext)>&&);
 #endif
+
+    void willChangeSelectionForAccessibility() { m_isChangingSelectionForAccessibility = true; }
+    void didChangeSelectionForAccessibility() { m_isChangingSelectionForAccessibility = false; }
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
     void dispatchAsynchronousTouchEvents(Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>&&);
@@ -893,8 +897,6 @@ public:
 #if PLATFORM(GTK)
     void collapseSelectionInFrame(WebCore::FrameIdentifier);
     void showEmojiPicker(WebCore::Frame&);
-
-    void themeDidChange(String&&);
 #endif
 
     void didApplyStyle();
@@ -1048,7 +1050,7 @@ public:
     void simulateMouseMotion(WebCore::IntPoint, WallTime);
 
 #if ENABLE(CONTEXT_MENUS)
-    void contextMenuShowing() { m_isShowingContextMenu = true; }
+    void startWaitingForContextMenuToShow() { m_waitingForContextMenuToShow = true; }
 #endif
 
     bool wheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
@@ -1133,6 +1135,8 @@ public:
 
     bool alwaysShowsHorizontalScroller() const { return m_alwaysShowsHorizontalScroller; };
     bool alwaysShowsVerticalScroller() const { return m_alwaysShowsVerticalScroller; };
+    
+    void scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin);
 
     void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
     WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }
@@ -1616,7 +1620,8 @@ private:
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
 
 #if ENABLE(CONTEXT_MENUS)
-    void contextMenuHidden() { m_isShowingContextMenu = false; }
+    void didShowContextMenu();
+    void didDismissContextMenu();
 #endif
 #if ENABLE(CONTEXT_MENU_EVENT)
     void contextMenuForKeyEvent();
@@ -1913,6 +1918,8 @@ private:
 
     void platformIsPlayingMediaDidChange();
 
+    bool hasPendingEditorStateUpdate() const;
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -2166,7 +2173,7 @@ private:
     OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
 
 #if ENABLE(CONTEXT_MENUS)
-    bool m_isShowingContextMenu { false };
+    bool m_waitingForContextMenuToShow { false };
 #endif
 
     RefPtr<WebCore::Element> m_focusedElement;
@@ -2175,7 +2182,13 @@ private:
     bool m_pendingThemeColorChange { false };
     bool m_pendingPageExtendedBackgroundColorChange { false };
     bool m_pendingSampledPageTopColorChange { false };
-    bool m_hasPendingEditorStateUpdate { false };
+
+    enum class PendingEditorStateUpdateStatus : uint8_t {
+        NotScheduled,
+        Scheduled,
+        ScheduledDuringAccessibilitySelectionChange,
+    };
+    PendingEditorStateUpdateStatus m_pendingEditorStateUpdateStatus { PendingEditorStateUpdateStatus::NotScheduled };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     CompletionHandler<void(bool)> m_pendingSynchronousTouchEventReply;
@@ -2265,6 +2278,7 @@ private:
     bool m_mainFrameProgressCompleted { false };
     bool m_shouldDispatchFakeMouseMoveEvents { true };
     bool m_isSelectingTextWhileInsertingAsynchronously { false };
+    bool m_isChangingSelectionForAccessibility { false };
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };
     mutable EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
@@ -2326,10 +2340,6 @@ private:
     String m_processDisplayName;
     WebCore::AllowsContentJavaScript m_allowsContentJavaScriptFromMostRecentNavigation { WebCore::AllowsContentJavaScript::Yes };
 
-#if PLATFORM(GTK)
-    String m_themeName;
-#endif
-    
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
@@ -2370,6 +2380,8 @@ private:
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { false };
 #endif
+
+    bool m_needsSiteSpecificViewportQuirks { true };
 };
 
 #if !PLATFORM(IOS_FAMILY)

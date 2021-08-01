@@ -282,9 +282,19 @@ JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
     return frame.script().globalObject(world);
 }
 
-DOMWindow& incumbentDOMWindow(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
+DOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
 {
-    return asJSDOMWindow(&callerGlobalObject(lexicalGlobalObject, callFrame))->wrapped();
+    if (auto* globalObject = CallFrame::globalObjectOfClosestCodeBlock(fallbackGlobalObject.vm(), &callFrame))
+        return asJSDOMWindow(globalObject)->wrapped();
+    return asJSDOMWindow(&fallbackGlobalObject)->wrapped();
+}
+
+DOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject)
+{
+    VM& vm = fallbackGlobalObject.vm();
+    if (auto* globalObject = CallFrame::globalObjectOfClosestCodeBlock(vm, vm.topCallFrame))
+        return asJSDOMWindow(globalObject)->wrapped();
+    return asJSDOMWindow(&fallbackGlobalObject)->wrapped();
 }
 
 DOMWindow& activeDOMWindow(JSGlobalObject& lexicalGlobalObject)

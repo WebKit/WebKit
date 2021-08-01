@@ -1,0 +1,7 @@
+
+PASS BroadcastChannel works in workers
+FAIL BroadcastChannel works in shared workers Can't find variable: SharedWorker
+PASS Closing and re-opening a channel works.
+PASS BroadcastChannel created after a worker self.close()
+PASS BroadcastChannel used after a worker self.close()
+

@@ -32,6 +32,8 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "RenderBlockFlow.h"
+#include "RenderFlexibleBox.h"
+#include "RenderGrid.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -164,8 +166,8 @@ bool PositionIterator::isCandidate() const
     if (isRenderedTable(m_anchorNode) || editingIgnoresContent(*m_anchorNode))
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parentNode());
 
-    if (!is<HTMLHtmlElement>(*m_anchorNode) && is<RenderBlockFlow>(*renderer)) {
-        RenderBlockFlow& block = downcast<RenderBlockFlow>(*renderer);
+    if (!is<HTMLHtmlElement>(*m_anchorNode) && (is<RenderBlockFlow>(*renderer) || is<RenderGrid>(*renderer) || is<RenderFlexibleBox>(*renderer))) {
+        auto& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
                 return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode);

@@ -414,6 +414,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_paused(true)
     , m_seeking(false)
     , m_seekRequested(false)
+    , m_wasPlayingBeforeSeeking(false)
     , m_sentStalledEvent(false)
     , m_sentEndEvent(false)
     , m_pausedInternal(false)
@@ -473,6 +474,9 @@ void HTMLMediaElement::initializeMediaSession()
 
     if (document.settings().invisibleAutoplayNotPermitted())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted);
+
+    if (document.settings().requiresPageVisibilityToPlayAudio())
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageVisibilityToPlayAudio);
 
     if (document.ownerElement() || !document.isMediaDocument()) {
         if (m_shouldVideoPlaybackRequireUserGesture) {
@@ -1042,6 +1046,15 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
     return m_networkState;
 }
 
+static inline bool webMWebAudioEnabled()
+{
+#if ENABLE(MEDIA_SOURCE)
+    return RuntimeEnabledFeatures::sharedFeatures().webMWebAudioEnabled();
+#else
+    return false;
+#endif
+}
+
 String HTMLMediaElement::canPlayType(const String& mimeType) const
 {
     MediaEngineSupportParameters parameters;
@@ -1055,7 +1068,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     // Temporarily work around bug 226922. For now claim that the opus and vorbis codecs aren't supported
     // so that sites relying on this test to determine if webaudio use of opus or vorbis won't error.
     auto codecs = contentType.codecs();
-    if (support == MediaPlayer::SupportsType::IsSupported && (codecs.contains("opus") || codecs.contains("vorbis")))
+    if (support == MediaPlayer::SupportsType::IsSupported && ((codecs.contains("opus") && !webMWebAudioEnabled()) || codecs.contains("vorbis")))
         support = MediaPlayer::SupportsType::IsNotSupported;
 #endif
 
@@ -2069,7 +2082,7 @@ void HTMLMediaElement::noneSupported()
 
     // 6.1 - Set the error attribute to a new MediaError object whose code attribute is set to
     // MEDIA_ERR_SRC_NOT_SUPPORTED.
-    m_error = MediaError::create(MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED);
+    m_error = MediaError::create(MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED, "Unsupported source type"_s);
 
     // 6.2 - Forget the media element's media-resource-specific text tracks.
     forgetResourceSpecificTracks();
@@ -2110,9 +2123,9 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
     // 2 - Set the error attribute to a new MediaError object whose code attribute is
     // set to MEDIA_ERR_NETWORK/MEDIA_ERR_DECODE.
     if (error == MediaPlayer::NetworkState::NetworkError)
-        m_error = MediaError::create(MediaError::MEDIA_ERR_NETWORK);
+        m_error = MediaError::create(MediaError::MEDIA_ERR_NETWORK, "Media failed to load"_s);
     else if (error == MediaPlayer::NetworkState::DecodeError)
-        m_error = MediaError::create(MediaError::MEDIA_ERR_DECODE);
+        m_error = MediaError::create(MediaError::MEDIA_ERR_DECODE, "Media failed to decode"_s);
     else
         ASSERT_NOT_REACHED();
 
@@ -2494,7 +2507,7 @@ void HTMLMediaElement::mediaPlayerKeyNeeded(Uint8Array* initData)
         && (!document().settings().encryptedMediaAPIEnabled() || document().quirks().hasBrokenEncryptedMediaAPISupportQuirk())
 #endif
         ) {
-        m_error = MediaError::create(MediaError::MEDIA_ERR_ENCRYPTED);
+        m_error = MediaError::create(MediaError::MEDIA_ERR_ENCRYPTED, "Media is encrypted"_s);
         scheduleEvent(eventNames().errorEvent);
         return;
     }
@@ -3078,11 +3091,13 @@ void HTMLMediaElement::clearSeeking()
     m_seeking = false;
     m_seekRequested = false;
     m_pendingSeekType = NoSeek;
+    m_wasPlayingBeforeSeeking = false;
     invalidateCachedTime();
 }
 
 void HTMLMediaElement::finishSeek()
 {
+    bool wasPlayingBeforeSeeking = m_wasPlayingBeforeSeeking;
     // 4.8.10.9 Seeking
     // 14 - Set the seeking IDL attribute to false.
     clearSeeking();
@@ -3108,6 +3123,8 @@ void HTMLMediaElement::finishSeek()
     if (m_mediaSource)
         m_mediaSource->monitorSourceBuffers();
 #endif
+    if (wasPlayingBeforeSeeking)
+        playInternal();
 }
 
 HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
@@ -3366,7 +3383,7 @@ void HTMLMediaElement::setPlaybackRate(double rate)
 void HTMLMediaElement::updatePlaybackRate()
 {
     double requestedRate = requestedPlaybackRate();
-    if (m_player && potentiallyPlaying() && m_player->rate() != requestedRate)
+    if (m_player && potentiallyPlaying() && m_player->effectiveRate() != requestedRate)
         m_player->setRate(requestedRate);
 }
 
@@ -3562,6 +3579,8 @@ void HTMLMediaElement::pause()
         removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::RequireUserGestureToControlControlsManager);
 
     pauseInternal();
+    // If we have a pending seek, ensure playback doesn't resume.
+    m_wasPlayingBeforeSeeking = false;
 }
 
 void HTMLMediaElement::pauseInternal()
@@ -4851,7 +4870,7 @@ void HTMLMediaElement::handleSeekToPlaybackPosition(double position)
 
     if (!m_isScrubbingRemotely) {
         m_isScrubbingRemotely = true;
-        if (!paused())
+        if ((m_wasPlayingBeforeSeeking = !paused()))
             pauseInternal();
     }
 #else
@@ -4919,7 +4938,7 @@ void HTMLMediaElement::mediaPlayerRateChanged()
 
     // Stash the rate in case the one we tried to set isn't what the engine is
     // using (eg. it can't handle the rate we set)
-    m_reportedPlaybackRate = m_player->rate();
+    m_reportedPlaybackRate = m_player->effectiveRate();
 
     ALWAYS_LOG(LOGIDENTIFIER, "rate: ", m_reportedPlaybackRate);
 
@@ -5525,7 +5544,7 @@ void HTMLMediaElement::userCancelledLoad()
     clearMediaPlayer();
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED.
-    m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
+    m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED, "Load was aborted"_s);
 
     // 3 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().abortEvent);
@@ -5774,17 +5793,6 @@ void HTMLMediaElement::visibilityStateChanged()
     mediaSession().visibilityChanged();
     if (m_player)
         m_player->setVisible(!m_elementIsHidden);
-
-    bool isPlayingAudio = isPlaying() && hasAudio() && !muted() && volume();
-    if (!isPlayingAudio) {
-        if (m_elementIsHidden) {
-            ALWAYS_LOG(LOGIDENTIFIER, "Suspending playback after going to the background");
-            mediaSession().beginInterruption(PlatformMediaSession::EnteringBackground);
-        } else {
-            ALWAYS_LOG(LOGIDENTIFIER, "Resuming playback after entering foreground");
-            mediaSession().endInterruption(PlatformMediaSession::MayResumePlaying);
-        }
-    }
 }
 
 bool HTMLMediaElement::requiresTextTrackRepresentation() const

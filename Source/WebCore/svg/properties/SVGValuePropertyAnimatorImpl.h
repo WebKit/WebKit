@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ public:
         return adoptRef(*new SVGLengthAnimator(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other));
     }
 
-    void start(SVGElement* targetElement) override
+    void start(SVGElement& targetElement) override
     {
         String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
         SVGLengthValue value(SVGLengthMode::Other);
@@ -51,5 +51,4 @@ public:
     }
 };
 
-}
-
+} // namespace WebCore

@@ -1,0 +1,24 @@
+Ensure durability of transaction is expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+onOpenUpgradeNeeded():
+database = event.target.result
+PASS event.target.transaction.durability is "default"
+
+onOpenSuccess():
+transaction = database.transaction('objectstore')
+PASS transaction.durability is "default"
+
+onTransactionComplete():
+PASS transaction.durability is "default"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

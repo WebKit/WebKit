@@ -52,14 +52,15 @@ public:
     void closeAndDeleteDatabasesForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& callback);
     void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);
 
-    void suspend();
+    enum class SuspensionCondition : bool { Always, IfIdle };
+    bool suspend(SuspensionCondition = SuspensionCondition::Always);
     void resume();
 
     // Message handlers.
     void openDatabase(const WebCore::IDBRequestData&);
     void deleteDatabase(const WebCore::IDBRequestData&);
     void abortTransaction(const WebCore::IDBResourceIdentifier&);
-    void commitTransaction(const WebCore::IDBResourceIdentifier&);
+    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount);
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);

@@ -79,9 +79,6 @@ public:
     enum class AttributeType : uint8_t { CSS, XML, Auto };
     AttributeType attributeType() const { return m_attributeType; }
 
-    void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value);
-    virtual void determinePropertyValueTypes(const String& from, const String& to);
-
 protected:
     SVGAnimationElement(const QualifiedName&, Document&);
 

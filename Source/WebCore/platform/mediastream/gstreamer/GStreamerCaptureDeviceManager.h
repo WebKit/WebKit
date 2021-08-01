@@ -28,10 +28,6 @@
 #include "GStreamerCaptureDevice.h"
 #include "RealtimeMediaSourceFactory.h"
 
-#if USE(PIPEWIRE)
-#include <libportal/portal.h>
-#endif
-
 namespace WebCore {
 
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
@@ -76,26 +72,46 @@ public:
     static GStreamerDisplayCaptureDeviceManager& singleton();
     const Vector<CaptureDevice>& captureDevices() final { return m_devices; };
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
+    CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, const MediaConstraints*);
+
+    enum PipeWireOutputType {
+        Monitor = 1 << 0,
+        Window = 1 << 1
+    };
+
+    void stopSource(const String& persistentID);
 
 protected:
-#if USE(PIPEWIRE)
-    void setSession(XdpSession*);
-#endif
-    void sessionStarted();
-    void notifyClient();
-    void sessionWasClosed();
+    void notifyResponse() { m_currentResponseCallback(); }
 
 private:
     GStreamerDisplayCaptureDeviceManager();
     ~GStreamerDisplayCaptureDeviceManager();
 
-    CompletionHandler<void()> m_callback;
+    void waitResponseSignal(const char* objectPath);
+
     Vector<CaptureDevice> m_devices;
-#if USE(PIPEWIRE)
-    GRefPtr<XdpPortal> m_portal;
-    GRefPtr<XdpSession> m_session;
-#endif
+
+    struct Session {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_MAKE_NONCOPYABLE(Session);
+        Session(int fd, String&& path)
+            : fd(fd)
+            , path(WTFMove(path)) { }
+
+        ~Session()
+        {
+            close(fd);
+        }
+
+        int fd;
+        String path;
+    };
+    HashMap<String, std::unique_ptr<Session>> m_sessions;
+
+    GRefPtr<GDBusProxy> m_proxy;
+    CompletionHandler<void()> m_currentResponseCallback;
 };
 }
 
-#endif // ENABLE(MEDIA_STREAM)  && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

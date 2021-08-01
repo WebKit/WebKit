@@ -23,5 +23,5 @@ try {
     exception = e;
 }
 
-if (exception != "RangeError: Out of memory")
+if (exception && exception != "RangeError: Out of memory")
     throw "FAILED";

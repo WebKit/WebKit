@@ -244,6 +244,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "GtkSettingsManager.h"
 #include <WebCore/SelectionData.h>
 #endif
 
@@ -571,7 +572,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
-    GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
+    if (m_preferences->mediaSessionCoordinatorEnabled())
+        GroupActivitiesSessionNotifier::sharedNotifier().addWebPage(*this);
 #endif
 }
 
@@ -612,7 +614,8 @@ WebPageProxy::~WebPageProxy()
     websiteDataStore().networkProcess().send(Messages::NetworkProcess::RemoveWebPageNetworkParameters(sessionID(), m_identifier), 0);
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
-    GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
+    if (m_preferences->mediaSessionCoordinatorEnabled())
+        GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
 }
 
@@ -968,6 +971,11 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     auto accessibilityToken = provisionalPage->takeAccessibilityToken();
     if (!accessibilityToken.isEmpty())
         registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    auto accessibilityPlugID = provisionalPage->accessibilityPlugID();
+    if (!accessibilityPlugID.isEmpty())
+        bindAccessibilityTree(accessibilityPlugID);
 #endif
 }
 
@@ -3316,9 +3324,15 @@ private:
 };
 
 #if ENABLE(APP_BOUND_DOMAINS)
-static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL)
+static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL, bool isRunningTest)
 {
-    return requestURL.protocolIsAbout() || requestURL.protocolIsData() || requestURL.protocolIsBlob() || requestURL.isLocalFile() || requestURL.protocolIsJavaScript();
+    return !isRunningTest
+        && (SecurityOrigin::isLocalHostOrLoopbackIPAddress(requestURL.host())
+            || requestURL.protocolIsAbout()
+            || requestURL.protocolIsData()
+            || requestURL.protocolIsBlob()
+            || requestURL.isLocalFile()
+            || requestURL.protocolIsJavaScript());
 }
 
 bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL& requestURL, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
@@ -3336,7 +3350,7 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
     if (m_ignoresAppBoundDomains)
         return true;
 
-    if (isMainFrame && shouldTreatURLProtocolAsAppBound(requestURL)) {
+    if (isMainFrame && shouldTreatURLProtocolAsAppBound(requestURL, websiteDataStore().configuration().enableInAppBrowserPrivacyForTesting())) {
         isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::Yes;
         m_limitsNavigationsToAppBoundDomains = true;
     }
@@ -4932,7 +4946,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
-    if (frame->isMainFrame())
+    if (frame->isMainFrame() && m_preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().webPageURLChanged(*this);
 #endif
 }
@@ -5429,7 +5443,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
 #if ENABLE(APP_BOUND_DOMAINS)
-    bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url());
+    bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url(), websiteDataStore().configuration().enableInAppBrowserPrivacyForTesting());
     auto host = shouldSendSecurityOriginData ? frameInfo.securityOrigin.host : request.url().host();
     auto protocol = shouldSendSecurityOriginData ? frameInfo.securityOrigin.protocol : request.url().protocol();
     m_websiteDataStore->beginAppBoundDomainCheck(host.toString(), protocol.toString(), listener);
@@ -6814,7 +6828,7 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     // can hang the page / WebDriver test. Pretend to show and immediately dismiss the context menu.
     if (auto* automationSession = process().processPool().automationSession()) {
         if (m_controlledByAutomation && automationSession->isSimulatingUserInteraction()) {
-            send(Messages::WebPage::ContextMenuHidden());
+            send(Messages::WebPage::DidShowContextMenu());
             return;
         }
     }
@@ -6828,6 +6842,21 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     m_activeContextMenu = pageClient().createContextMenuProxy(*this, WTFMove(contextMenuContextData), userData);
 
     m_activeContextMenu->show();
+}
+
+void WebPageProxy::didShowContextMenu()
+{
+    // Don't send `Messages::WebPage::DidShowContextMenu` as that should've already been eagerly
+    // sent when requesting the context menu to show, regardless of the result of that request.
+
+    pageClient().didShowContextMenu();
+}
+
+void WebPageProxy::didDismissContextMenu()
+{
+    send(Messages::WebPage::DidDismissContextMenu());
+
+    pageClient().didDismissContextMenu();
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -7627,6 +7656,8 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->terminate();
     }
+
+    m_needsSiteSpecificViewportQuirks = true;
 }
 
 void WebPageProxy::provisionalProcessDidTerminate()
@@ -8221,7 +8252,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.canUseCredentialStorage = m_canUseCredentialStorage;
 
 #if PLATFORM(GTK)
-    parameters.themeName = pageClient().themeName();
+    parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
@@ -10747,6 +10778,16 @@ void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProx
     });
 }
 #endif
+
+void WebPageProxy::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
+{
+    pageClient().requestScrollToRect(targetRect, origin);
+}
+
+void WebPageProxy::scrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
+{
+    send(Messages::WebPage::ScrollToRect(targetRect, origin));
+}
 
 #if PLATFORM(COCOA)
 void WebPageProxy::appPrivacyReportTestingData(CompletionHandler<void(const AppPrivacyReportTestingData&)>&& completionHandler)

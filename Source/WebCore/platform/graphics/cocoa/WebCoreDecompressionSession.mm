@@ -31,10 +31,10 @@
 #import <CoreMedia/CMBufferQueue.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
-#import <pal/cf/CoreMediaSoftLink.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/MonotonicTime.h>
+#import <wtf/RunLoop.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/Vector.h>
 #import <wtf/WTFSemaphore.h>
@@ -42,6 +42,7 @@
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 
 // Equivalent to WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer);
 // Needed due to requirement of specifying the PAL namespace.

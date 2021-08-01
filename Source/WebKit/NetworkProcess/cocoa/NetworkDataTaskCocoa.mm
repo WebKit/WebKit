@@ -57,7 +57,8 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
-static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { };
+static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { }
+static void overrideAttributionContext(NSMutableURLRequest *) { }
 #endif
 
 namespace WebKit {
@@ -343,6 +344,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
 #endif
+
+    overrideAttributionContext(mutableRequest.get());
 
     if (parameters.pcmDataCarried)
         processPCMRequest(*parameters.pcmDataCarried, mutableRequest.get());

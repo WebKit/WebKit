@@ -30,6 +30,8 @@
 #include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
 #include "Logging.h"
+#include "NetworkBroadcastChannelRegistry.h"
+#include "NetworkBroadcastChannelRegistryMessages.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoad.h"
@@ -192,6 +194,12 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
 
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::NetworkBroadcastChannelRegistry::messageReceiverName()) {
+        if (auto* networkSession = this->networkSession())
+            networkSession->broadcastChannelRegistry().didReceiveMessage(connection, decoder);
         return;
     }
 
@@ -367,6 +375,9 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 
     while (!m_networkResourceLoaders.isEmpty())
         m_networkResourceLoaders.begin()->value->abort();
+
+    if (auto* networkSession = this->networkSession())
+        networkSession->broadcastChannelRegistry().removeConnection(connection);
 
     // All trackers of resources that were in the middle of being loaded were
     // stopped with the abort() calls above, but we still need to sweep up the

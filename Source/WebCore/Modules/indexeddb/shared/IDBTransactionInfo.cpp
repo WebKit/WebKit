@@ -39,11 +39,13 @@ IDBTransactionInfo::IDBTransactionInfo(const IDBResourceIdentifier& identifier)
 {
 }
 
-IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<String>& objectStores, IDBTransactionMode mode)
+IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<String>& objectStores, IDBTransactionMode mode, std::optional<IDBTransactionDurability> durability)
 {
     IDBTransactionInfo result((IDBResourceIdentifier(connectionProxy)));
-    result.m_mode = mode;
     result.m_objectStores = objectStores;
+    result.m_mode = mode;
+    if (durability)
+        result.m_durability = *durability;
 
     return result;
 }
@@ -61,6 +63,7 @@ IDBTransactionInfo IDBTransactionInfo::versionChange(const IDBServer::IDBConnect
 IDBTransactionInfo::IDBTransactionInfo(const IDBTransactionInfo& info)
     : m_identifier(info.identifier())
     , m_mode(info.m_mode)
+    , m_durability(info.m_durability)
     , m_newVersion(info.m_newVersion)
     , m_objectStores(info.m_objectStores)
 {
@@ -82,6 +85,7 @@ void IDBTransactionInfo::isolatedCopy(const IDBTransactionInfo& source, IDBTrans
 {
     destination.m_identifier = source.m_identifier.isolatedCopy();
     destination.m_mode = source.m_mode;
+    destination.m_durability = source.m_durability;
     destination.m_newVersion = source.m_newVersion;
 
     destination.m_objectStores.reserveCapacity(source.m_objectStores.size());

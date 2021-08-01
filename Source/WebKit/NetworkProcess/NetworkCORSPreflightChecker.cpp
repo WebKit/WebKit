@@ -73,6 +73,8 @@ void NetworkCORSPreflightChecker::startPreflight()
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation = NetworkTransactionInformation { NetworkTransactionInformation::Type::Preflight, loadParameters.request, { }, { } };
 
+    loadParameters.webPageProxyID = m_parameters.webPageProxyID;
+
     if (auto* networkSession = m_networkProcess->networkSession(m_parameters.sessionID)) {
         m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
         m_task->resume();

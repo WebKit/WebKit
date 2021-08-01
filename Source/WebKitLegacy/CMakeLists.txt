@@ -20,6 +20,7 @@ set(WebKitLegacy_SOURCES
 	Storage/InProcessIDBServer.cpp
 
     WebCoreSupport/NetworkStorageSessionMap.cpp
+    WebCoreSupport/WebBroadcastChannelRegistry.cpp
     WebCoreSupport/WebResourceLoadScheduler.cpp
     WebCoreSupport/WebViewGroup.cpp
 )

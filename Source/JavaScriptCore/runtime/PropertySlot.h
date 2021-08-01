@@ -367,7 +367,7 @@ public:
 
 private:
     JS_EXPORT_PRIVATE JSValue functionGetter(JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE JSValue customGetter(JSGlobalObject*, PropertyName) const;
+    JS_EXPORT_PRIVATE JSValue customGetter(VM&, PropertyName) const;
 
     union {
         EncodedJSValue value;
@@ -405,7 +405,7 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, Prope
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
         return functionGetter(globalObject);
-    return customGetter(globalObject, propertyName);
+    return customGetter(getVM(globalObject), propertyName);
 }
 
 ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, uint64_t propertyName) const
@@ -415,7 +415,7 @@ ALWAYS_INLINE JSValue PropertySlot::getValue(JSGlobalObject* globalObject, uint6
         return JSValue::decode(m_data.value);
     if (m_propertyType == TypeGetter)
         return functionGetter(globalObject);
-    return customGetter(globalObject, Identifier::from(vm, propertyName));
+    return customGetter(getVM(globalObject), Identifier::from(vm, propertyName));
 }
 
 } // namespace JSC

@@ -101,10 +101,10 @@ public:
     // FIXME: Audit the call sites of this function and replace them with iteration if possible.
     const uint8_t* data() const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
-    Vector<uint8_t> copyData() { return { data(), size() }; }
+    Vector<uint8_t> copyData() const;
 
-    // Combines all the segments into a Vector and returns that vector after clearing the SharedBuffer.
-    Vector<uint8_t> takeData();
+    // Similar to copyData() but avoids copying and will take the data instead when it is safe (The SharedBuffer is not shared).
+    Vector<uint8_t> extractData();
 
     // Creates an ArrayBuffer and copies this SharedBuffer's contents to that
     // ArrayBuffer without merging segmented buffers into a flat buffer.
@@ -227,6 +227,9 @@ private:
 #endif
 
     void combineIntoOneSegment() const;
+
+    // Combines all the segments into a Vector and returns that vector after clearing the SharedBuffer.
+    Vector<uint8_t> takeData();
     
     static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
 
@@ -238,6 +241,13 @@ private:
     bool internallyConsistent() const;
 #endif
 };
+
+inline Vector<uint8_t> SharedBuffer::extractData()
+{
+    if (hasOneRef())
+        return takeData();
+    return copyData();
+}
 
 class WEBCORE_EXPORT SharedBufferDataView {
 public:

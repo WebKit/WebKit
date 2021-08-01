@@ -451,7 +451,7 @@ void GPUProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnabl
 }
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+#if ENABLE(MEDIA_SOURCE)
 void GPUProcess::setWebMParserEnabled(bool enabled)
 {
     if (m_webMParserEnabled == enabled)

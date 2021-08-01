@@ -298,8 +298,6 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelWindowStateEventID { 0 };
 #endif
     unsigned long toplevelWindowRealizedID { 0 };
-    unsigned long themeChangedID { 0 };
-    unsigned long applicationPreferDarkThemeID { 0 };
 
     // View State.
     OptionSet<ActivityState::Flag> activityState;
@@ -401,16 +399,6 @@ static gboolean toplevelWindowStateEvent(GtkWidget*, GdkEventWindowState* event,
     return FALSE;
 }
 
-static void themeChanged(WebKitWebViewBase* webViewBase)
-{
-    webViewBase->priv->pageProxy->themeDidChange();
-}
-
-static void applicationPreferDarkThemeChanged(WebKitWebViewBase* webViewBase)
-{
-    webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
-}
-
 static void toplevelWindowRealized(WebKitWebViewBase* webViewBase)
 {
     gtk_widget_realize(GTK_WIDGET(webViewBase));
@@ -444,17 +432,6 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
         g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelWindowRealizedID);
         priv->toplevelWindowRealizedID = 0;
     }
-    if (priv->themeChangedID || priv->applicationPreferDarkThemeID) {
-        auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
-        if (priv->themeChangedID) {
-            g_signal_handler_disconnect(settings, priv->themeChangedID);
-            priv->themeChangedID = 0;
-        }
-        if (priv->applicationPreferDarkThemeID) {
-            g_signal_handler_disconnect(settings, priv->applicationPreferDarkThemeID);
-            priv->applicationPreferDarkThemeID = 0;
-        }
-    }
 
     priv->toplevelOnScreenWindow = window;
 
@@ -482,12 +459,6 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
                          G_CALLBACK(toplevelWindowFocusOutEvent), webViewBase);
     priv->toplevelWindowStateEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "window-state-event", G_CALLBACK(toplevelWindowStateEvent), webViewBase);
-
-    auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
-    priv->themeChangedID =
-        g_signal_connect_swapped(settings, "notify::gtk-theme-name", G_CALLBACK(themeChanged), webViewBase);
-    priv->applicationPreferDarkThemeID =
-        g_signal_connect_swapped(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(applicationPreferDarkThemeChanged), webViewBase);
 
     if (gtk_widget_get_realized(GTK_WIDGET(window)))
         gtk_widget_realize(GTK_WIDGET(webViewBase));
@@ -1782,16 +1753,6 @@ static void webkitWebViewBaseRoot(GtkWidget* widget)
     }
     priv->toplevelWindowUnrealizedID =
         g_signal_connect_swapped(priv->toplevelOnScreenWindow, "unrealize", G_CALLBACK(toplevelWindowUnrealized), widget);
-
-    auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
-    priv->themeChangedID =
-        g_signal_connect_swapped(settings, "notify::gtk-theme-name", G_CALLBACK(+[](WebKitWebViewBase* webViewBase) {
-            webViewBase->priv->pageProxy->themeDidChange();
-        }), widget);
-    priv->applicationPreferDarkThemeID =
-        g_signal_connect_swapped(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(+[](WebKitWebViewBase* webViewBase) {
-            webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
-        }), widget);
 }
 
 static void webkitWebViewBaseUnroot(GtkWidget* widget)
@@ -1805,9 +1766,6 @@ static void webkitWebViewBaseUnroot(GtkWidget* widget)
     g_clear_signal_handler(&priv->toplevelWindowUnrealizedID, priv->toplevelOnScreenWindow);
     if (gtk_widget_get_realized(GTK_WIDGET(priv->toplevelOnScreenWindow)))
         g_clear_signal_handler(&priv->toplevelWindowStateChangedID, gtk_native_get_surface(GTK_NATIVE(priv->toplevelOnScreenWindow)));
-    auto* settings = gtk_widget_get_settings(GTK_WIDGET(priv->toplevelOnScreenWindow));
-    g_clear_signal_handler(&priv->themeChangedID, settings);
-    g_clear_signal_handler(&priv->applicationPreferDarkThemeID, settings);
     priv->toplevelOnScreenWindow = nullptr;
 
     OptionSet<ActivityState::Flag> flagsToUpdate;
@@ -2155,6 +2113,13 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gtk_gesture_group(gesture, priv->touchGestureGroup);
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "swipe", G_CALLBACK(webkitWebViewBaseTouchSwipe), viewWidget, G_CONNECT_SWAPPED);
+
+    auto* settings = gtk_settings_get_default();
+    auto callback = +[](WebKitWebViewBase* webViewBase) {
+        webViewBase->priv->pageProxy->effectiveAppearanceDidChange();
+    };
+    g_signal_connect_object(settings, "notify::gtk-theme-name", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
 }
 
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)

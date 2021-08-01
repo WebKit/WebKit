@@ -613,6 +613,8 @@ protected:
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
 private:
+    friend class Internals;
+
     void createMediaPlayer();
 
     bool supportsFocus() const override;
@@ -645,7 +647,7 @@ private:
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
-    double effectivePlaybackRate() const;
+    WEBCORE_EXPORT double effectivePlaybackRate() const;
     double requestedPlaybackRate() const;
 
     void mediaPlayerNetworkStateChanged() final;
@@ -1069,6 +1071,7 @@ private:
     bool m_paused : 1;
     bool m_seeking : 1;
     bool m_seekRequested : 1;
+    bool m_wasPlayingBeforeSeeking : 1;
 
     // data has not been loaded since sending a "stalled" event
     bool m_sentStalledEvent : 1;

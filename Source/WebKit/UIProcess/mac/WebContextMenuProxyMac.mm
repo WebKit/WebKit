@@ -171,12 +171,12 @@
 
 - (void)menuWillOpen:(NSMenu *)menu
 {
-    _menuProxy->page()->pageClient().didShowContextMenu();
+    _menuProxy->page()->didShowContextMenu();
 }
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    _menuProxy->page()->pageClient().didDismissContextMenu();
+    _menuProxy->page()->didDismissContextMenu();
 }
 
 @end

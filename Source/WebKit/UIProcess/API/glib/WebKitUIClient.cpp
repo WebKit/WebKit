@@ -352,6 +352,11 @@ private:
         webkitWebViewIsPlayingAudioChanged(m_webView);
     }
 
+    void mediaCaptureStateDidChange(WebCore::MediaProducer::MediaStateFlags mediaStateFlags) final
+    {
+        webkitWebViewMediaCaptureStateDidChange(m_webView, mediaStateFlags);
+    }
+
 #if ENABLE(POINTER_LOCK)
     void requestPointerLock(WebPageProxy* page) final
     {
@@ -384,3 +389,7 @@ void attachUIClientToView(WebKitWebView* webView)
     webkitWebViewGetPage(webView).setUIClient(makeUnique<UIClient>(webView));
 }
 
+void detachUIClientFromView(WebKitWebView* webView)
+{
+    webkitWebViewGetPage(webView).setUIClient(nullptr);
+}

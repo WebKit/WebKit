@@ -64,6 +64,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << persistentCredentialStorageEnabled;
     encoder << ignoreTLSErrors;
     encoder << proxySettings;
+    encoder << cookieAcceptPolicy;
 #endif
 #if USE(CURL)
     encoder << cookiePersistentStorageFile;
@@ -85,6 +86,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << preventsSystemHTTPProxyAuthentication;
     encoder << appHasRequestedCrossWebsiteTrackingPermission;
     encoder << useNetworkLoader;
+    encoder << allowsHSTSWithUntrustedRootCertificate;
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -188,6 +190,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> proxySettings;
     if (!proxySettings)
         return std::nullopt;
+
+    std::optional<WebCore::HTTPCookieAcceptPolicy> cookieAcceptPolicy;
+    decoder >> cookieAcceptPolicy;
+    if (!cookieAcceptPolicy)
+        return std::nullopt;
 #endif
 
 #if USE(CURL)
@@ -282,6 +289,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!useNetworkLoader)
         return std::nullopt;
 
+    std::optional<bool> allowsHSTSWithUntrustedRootCertificate;
+    decoder >> allowsHSTSWithUntrustedRootCertificate;
+    if (!allowsHSTSWithUntrustedRootCertificate)
+        return std::nullopt;
+    
     std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
@@ -312,6 +324,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*persistentCredentialStorageEnabled)
         , WTFMove(*ignoreTLSErrors)
         , WTFMove(*proxySettings)
+        , WTFMove(*cookieAcceptPolicy)
 #endif
 #if USE(CURL)
         , WTFMove(*cookiePersistentStorageFile)
@@ -333,6 +346,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*preventsSystemHTTPProxyAuthentication)
         , WTFMove(*appHasRequestedCrossWebsiteTrackingPermission)
         , WTFMove(*useNetworkLoader)
+        , WTFMove(*allowsHSTSWithUntrustedRootCertificate)
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
 }

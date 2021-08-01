@@ -74,6 +74,13 @@ public:
     // How many sample-frames do we contain?
     size_t length() const { return m_length; }
 
+    // Set new length. Can only be set to a value lower than the current length.
+    void setLength(size_t newLength)
+    {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(newLength <= length());
+        m_length = newLength;
+    }
+
     // Direct access to PCM sample data. Non-const accessor clears silent flag.
     float* mutableData()
     {

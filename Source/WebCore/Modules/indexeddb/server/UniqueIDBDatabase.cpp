@@ -312,7 +312,7 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     ASSERT(m_currentOpenDBRequest->isDeleteRequest());
 
     if (m_databaseInfo)
-        m_mostRecentDeletedDatabaseInfo = WTFMove(m_databaseInfo);
+        m_mostRecentDeletedDatabaseInfo = std::exchange(m_databaseInfo, nullptr);
 
     // If this UniqueIDBDatabase was brought into existence for the purpose of deleting the file on disk,
     // we won't have a m_mostRecentDeletedDatabaseInfo. In that case, we'll manufacture one using the
@@ -337,22 +337,18 @@ void UniqueIDBDatabase::handleDatabaseOperations()
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::handleDatabaseOperations - There are %u pending", m_pendingOpenDBRequests.size());
 
-    if (m_versionChangeDatabaseConnection || m_versionChangeTransaction) {
-        // We can't start any new open-database operations right now, but we might be able to start handling a delete operation.
-        if (!m_currentOpenDBRequest)
-            m_currentOpenDBRequest = takeNextRunnableRequest(RequestType::Delete);
-    } else if (!m_currentOpenDBRequest || m_currentOpenDBRequest->connection().isClosed())
+    if (!m_currentOpenDBRequest && (m_versionChangeDatabaseConnection || m_versionChangeTransaction))
+        return;
+
+    if (!m_currentOpenDBRequest || m_currentOpenDBRequest->connection().isClosed())
         m_currentOpenDBRequest = takeNextRunnableRequest();
 
     while (m_currentOpenDBRequest) {
         handleCurrentOperation();
-        if (!m_currentOpenDBRequest) {
-            if (m_versionChangeTransaction)
-                m_currentOpenDBRequest = takeNextRunnableRequest(RequestType::Delete);
-            else
-                m_currentOpenDBRequest = takeNextRunnableRequest();
-        } else // Request need multiple attempts to handle.
+        if (m_versionChangeTransaction || m_currentOpenDBRequest)
             break;
+
+        m_currentOpenDBRequest = takeNextRunnableRequest();
     }
     LOG(IndexedDB, "UniqueIDBDatabase::handleDatabaseOperations - There are %u pending after this round of handling", m_pendingOpenDBRequests.size());
 }
@@ -411,7 +407,7 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     m_inProgressTransactions.set(versionChangeTransactionInfo.identifier(), m_versionChangeTransaction);
     
     auto error = m_backingStore->beginTransaction(versionChangeTransactionInfo);
-    auto operation = WTFMove(m_currentOpenDBRequest);
+    auto operation = std::exchange(m_currentOpenDBRequest, nullptr);
     IDBResultData result;
     if (error.isNull()) {
         addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
@@ -1191,6 +1187,13 @@ void UniqueIDBDatabase::immediateClose()
     close();
 }
 
+bool UniqueIDBDatabase::hasActiveTransactions() const
+{
+    ASSERT(isMainThread());
+
+    return !m_inProgressTransactions.isEmpty();
+}
+
 void UniqueIDBDatabase::abortActiveTransactions()
 {
     ASSERT(isMainThread());
@@ -1235,6 +1238,31 @@ RefPtr<ServerOpenDBRequest> UniqueIDBDatabase::takeNextRunnableRequest(RequestTy
     }
 
     return nullptr;
+}
+
+String UniqueIDBDatabase::filePath() const
+{
+    return m_backingStore ? m_backingStore->fullDatabasePath() : nullString();
+}
+
+std::optional<IDBDatabaseNameAndVersion> UniqueIDBDatabase::nameAndVersion() const
+{
+    if (!m_backingStore)
+        return std::nullopt;
+
+    if (m_versionChangeTransaction) {
+        if (auto databaseInfo = m_versionChangeTransaction->originalDatabaseInfo()) {
+            // The database is newly created.
+            if (!databaseInfo->version())
+                return std::nullopt;
+
+            return IDBDatabaseNameAndVersion { databaseInfo->name(), databaseInfo->version() };
+        }
+
+        return std::nullopt;
+    }
+
+    return IDBDatabaseNameAndVersion { m_databaseInfo->name(), m_databaseInfo->version() };
 }
 
 } // namespace IDBServer

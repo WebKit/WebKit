@@ -86,6 +86,7 @@ public:
 
     bool supportsSimultaneousTransactions() final { return false; }
     bool isEphemeral() final { return false; }
+    String fullDatabasePath() const final;
 
     bool hasTransaction(const IDBResourceIdentifier&) const final;
 
@@ -103,7 +104,6 @@ public:
 
 private:
     String filenameForDatabaseName() const;
-    String fullDatabasePath() const;
     String fullDatabaseDirectoryWithUpgrade();
 
     IDBError ensureValidRecordsTable();

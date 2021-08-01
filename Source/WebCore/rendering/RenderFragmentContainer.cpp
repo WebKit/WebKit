@@ -52,14 +52,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFragmentContainer);
 RenderFragmentContainer::RenderFragmentContainer(Element& element, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(element, WTFMove(style))
     , m_fragmentedFlow(fragmentedFlow)
-    , m_isValid(false)
 {
 }
 
 RenderFragmentContainer::RenderFragmentContainer(Document& document, RenderStyle&& style, RenderFragmentedFlow* fragmentedFlow)
     : RenderBlockFlow(document, WTFMove(style))
     , m_fragmentedFlow(fragmentedFlow)
-    , m_isValid(false)
 {
 }
 
@@ -260,6 +258,44 @@ void RenderFragmentContainer::repaintFragmentedFlowContentRectangle(const Layout
     repaintRectangle(clippedRect);
 }
 
+LayoutRect RenderFragmentContainer::fragmentedFlowContentRectangle(const LayoutRect& rect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect)
+{
+    auto clippedRect = rect;
+
+    if (fragmentedFlowPortionClipRect) {
+        LayoutRect flippedFragmentedFlowPortionClipRect(*fragmentedFlowPortionClipRect);
+        fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionClipRect);
+        clippedRect.edgeInclusiveIntersect(flippedFragmentedFlowPortionClipRect); // edgeInclusiveIntersect to avoid rects with zero height or width becoming zero-sized.
+    }
+
+    LayoutRect flippedFragmentedFlowPortionRect(fragmentedFlowPortionRect);
+    fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
+
+    // Put the fragment rect into the fragment's physical coordinate space.
+    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - flippedFragmentedFlowPortionRect.location()));
+
+    // Now switch to the fragment's writing mode coordinate space and let it repaint itself.
+    flipForWritingMode(clippedRect);
+    
+    return clippedRect;
+}
+
+Vector<LayoutRect> RenderFragmentContainer::fragmentRectsForFlowContentRect(const LayoutRect& contentRect)
+{
+    auto portionRect = fragmentedFlowPortionRect();
+    auto fragmentLocation = contentBoxRect().location();
+    
+    auto fragmentRect = contentRect;
+    
+    auto flippedFragmentedFlowPortionRect = portionRect;
+    fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowPortionRect);
+    fragmentRect.setLocation(fragmentLocation + (fragmentRect.location() - flippedFragmentedFlowPortionRect.location()));
+
+    flipForWritingMode(fragmentRect);
+
+    return { fragmentRect };
+}
+
 void RenderFragmentContainer::installFragmentedFlow()
 {
     ASSERT_NOT_REACHED();
@@ -383,6 +419,7 @@ void RenderFragmentContainer::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
+// FIXME: Unused.
 void RenderFragmentContainer::adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect& fragmentBounds) const
 {
     LayoutRect flippedFragmentedFlowPortionRect = fragmentedFlowPortionRect();

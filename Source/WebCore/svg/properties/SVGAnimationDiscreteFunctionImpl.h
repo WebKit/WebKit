@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ public:
     using Base = SVGAnimationDiscreteFunction<bool>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from = SVGPropertyTraits<bool>::fromString(from);
         m_to = SVGPropertyTraits<bool>::fromString(to);
@@ -51,7 +51,7 @@ class SVGAnimationEnumerationFunction : public SVGAnimationDiscreteFunction<Enum
 public:
     using Base::Base;
 
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from = SVGPropertyTraits<EnumType>::fromString(from);
         m_to = SVGPropertyTraits<EnumType>::fromString(to);
@@ -63,7 +63,7 @@ public:
     using Base = SVGAnimationDiscreteFunction<SVGMarkerOrientType>;
     using Base::Base;
 
-    void setFromAndToValues(SVGElement*, const String&, const String&) override
+    void setFromAndToValues(SVGElement&, const String&, const String&) override
     {
         // Values will be set by SVGAnimatedAngleOrientAnimator.
         ASSERT_NOT_REACHED();
@@ -78,7 +78,7 @@ public:
     using Base = SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue>;
     using Base::Base;
     
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from = SVGPreserveAspectRatioValue(from);
         m_to = SVGPreserveAspectRatioValue(to);
@@ -90,11 +90,11 @@ public:
     using Base = SVGAnimationDiscreteFunction<String>;
     using Base::Base;
     
-    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    void setFromAndToValues(SVGElement&, const String& from, const String& to) override
     {
         m_from = from;
         m_to = to;
     }
 };
 
-}
+} // namespace WebCore

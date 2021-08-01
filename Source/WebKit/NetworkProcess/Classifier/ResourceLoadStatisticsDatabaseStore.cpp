@@ -44,7 +44,6 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
-#include <WebCore/SQLiteTransaction.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
@@ -350,6 +349,7 @@ HashSet<ResourceLoadStatisticsDatabaseStore*>& ResourceLoadStatisticsDatabaseSto
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
     , m_storageDirectoryPath(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))
+    , m_transaction(m_database)
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
@@ -575,8 +575,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     if (!needsUpdatedSchema())
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     for (auto& table : expectedTableAndIndexQueries().keys()) {
         auto alterTable = m_database.prepareStatementSlow(makeString("ALTER TABLE ", table, " RENAME TO _", table));
@@ -609,8 +608,6 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
         }
     }
 
-    transaction.commit();
-
     if (!createUniqueIndices()) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to create unique indices, error message: %s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -641,13 +638,11 @@ void ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable(String&& tabl
 {
     ASSERT(existingColumns.size() <= expectedColumns.size());
 
-    SQLiteTransaction transaction(m_database);
+    auto transaction = beginTransactionIfNecessary();
+
     for (auto& column : expectedColumns) {
         if (existingColumns.contains(column))
             continue;
-        
-        if (!transaction.inProgress())
-            transaction.begin();
 
         auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", column));
         if (!statement) {
@@ -662,7 +657,6 @@ void ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable(String&& tabl
         }
         statement->reset();
     }
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::addMissingColumnsIfNecessary()
@@ -719,8 +713,8 @@ void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
     if (!missingTables)
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transaction = beginTransactionIfNecessary();
+
     for (auto& table : *missingTables) {
         auto createTableQuery = expectedTableAndIndexQueries().get(table).first;
         if (!m_database.executeCommandSlow(createTableQuery))
@@ -732,7 +726,6 @@ void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
         ASSERT_NOT_REACHED();
         return;
     }
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
@@ -1049,10 +1042,8 @@ std::optional<unsigned> ResourceLoadStatisticsDatabaseStore::domainID(const Regi
     return scopedStatement->columnInt(0);
 }
 
-String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const SQLiteTransaction&, const HashSet<RegistrableDomain>& domainList)
+String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const HashSet<RegistrableDomain>& domainList)
 {
-    ASSERT(m_database.transactionInProgress());
-
     StringBuilder builder;
     for (auto& topFrameResource : domainList) {
         // Insert query will fail if top frame domain is not already in the database
@@ -1062,9 +1053,9 @@ String ResourceLoadStatisticsDatabaseStore::ensureAndMakeDomainList(const SQLite
     return builder.toString();
 }
 
-void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const SQLiteTransaction& transaction, const String& statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
+void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const String& statement, const HashSet<RegistrableDomain>& domainList, unsigned domainID)
 {
-    auto insertRelationshipStatement = m_database.prepareStatementSlow(makeString(statement, ensureAndMakeDomainList(transaction, domainList), " );"));
+    auto insertRelationshipStatement = m_database.prepareStatementSlow(makeString(statement, ensureAndMakeDomainList(domainList), " );"));
     
     if (!insertRelationshipStatement
         || insertRelationshipStatement->bindInt(1, domainID) != SQLITE_OK) {
@@ -1088,26 +1079,27 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const SQL
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const SQLiteTransaction& transaction, const ResourceLoadStatistics& loadStatistics)
+void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const ResourceLoadStatistics& loadStatistics)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
+
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto registrableDomainID = domainID(loadStatistics.registrableDomain);
     
     if (!registrableDomainID)
         return;
 
-    insertDomainRelationshipList(transaction, storageAccessUnderTopFrameDomainsQuery, loadStatistics.storageAccessUnderTopFrameDomains, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsToQuery, loadStatistics.topFrameUniqueRedirectsTo, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, loadStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsFromQuery, loadStatistics.topFrameUniqueRedirectsFrom, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, subframeUnderTopFrameDomainsQuery, loadStatistics.subframeUnderTopFrameDomains, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, subresourceUnderTopFrameDomainsQuery, loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, subresourceUniqueRedirectsToQuery, loadStatistics.subresourceUniqueRedirectsTo, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, subresourceUniqueRedirectsFromQuery, loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, topFrameLinkDecorationsFromQuery, loadStatistics.topFrameLinkDecorationsFrom, registrableDomainID.value());
-    insertDomainRelationshipList(transaction, topFrameLoadedThirdPartyScriptsQuery, loadStatistics.topFrameLoadedThirdPartyScripts, registrableDomainID.value());
+    insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, loadStatistics.storageAccessUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, loadStatistics.topFrameUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, loadStatistics.topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, loadStatistics.topFrameUniqueRedirectsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, loadStatistics.subframeUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, loadStatistics.subresourceUnderTopFrameDomains, registrableDomainID.value());
+    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, loadStatistics.subresourceUniqueRedirectsTo, registrableDomainID.value());
+    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, loadStatistics.topFrameLinkDecorationsFrom, registrableDomainID.value());
+    insertDomainRelationshipList(topFrameLoadedThirdPartyScriptsQuery, loadStatistics.topFrameLoadedThirdPartyScripts, registrableDomainID.value());
 }
 
 void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore& memoryStore)
@@ -1117,8 +1109,7 @@ void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const Resource
     if (!isEmpty())
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto& statisticsMap = memoryStore.data();
     for (const auto& statistic : statisticsMap.values()) {
@@ -1133,15 +1124,14 @@ void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const Resource
     // Make a separate pass for inter-domain relationships so we
     // can refer to the ObservedDomain table entries
     for (auto& statistic : statisticsMap.values())
-        insertDomainRelationships(transaction, statistic);
-
-    transaction.commit();
+        insertDomainRelationships(statistic);
 }
 
-void ResourceLoadStatisticsDatabaseStore::merge(const SQLiteTransaction& transaction, WebCore::SQLiteStatement* current, const ResourceLoadStatistics& other)
+void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement* current, const ResourceLoadStatistics& other)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
+
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto currentRegistrableDomain = current->columnText(RegistrableDomainIndex);
     auto currentLastSeen = current->columnDouble(LastSeenIndex);
@@ -1165,21 +1155,22 @@ void ResourceLoadStatisticsDatabaseStore::merge(const SQLiteTransaction& transac
         setUserInteraction(other.registrableDomain, true, std::max(WallTime::fromRawSeconds(currentMostRecentUserInteraction), other.mostRecentUserInteractionTime));
 
     if (other.grandfathered && !currentGrandfathered)
-        setGrandfathered(transaction, other.registrableDomain, true);
+        setGrandfathered(other.registrableDomain, true);
     if (other.isPrevalentResource && !currentIsPrevalent)
-        setPrevalentResource(transaction, other.registrableDomain);
+        setPrevalentResource(other.registrableDomain);
     if (other.isVeryPrevalentResource && !currentIsVeryPrevalent)
-        setVeryPrevalentResource(transaction, other.registrableDomain);
+        setVeryPrevalentResource(other.registrableDomain);
     if (other.dataRecordsRemoved > currentDataRecordsRemoved)
         updateDataRecordsRemoved(other.registrableDomain, other.dataRecordsRemoved);
     if (other.gotLinkDecorationFromPrevalentResource && !currentIsScheduledForAllButCookieDataRemoval)
-        setIsScheduledForAllButCookieDataRemoval(transaction, other.registrableDomain, true);
+        setIsScheduledForAllButCookieDataRemoval(other.registrableDomain, true);
 }
 
-void ResourceLoadStatisticsDatabaseStore::mergeStatistic(const SQLiteTransaction& transaction, const ResourceLoadStatistics& statistic)
+void ResourceLoadStatisticsDatabaseStore::mergeStatistic(const ResourceLoadStatistics& statistic)
 {
     ASSERT(!RunLoop::isMain());
 
+    auto transactionScope = beginTransactionIfNecessary();
     auto scopedStatement = this->scopedStatement(m_getResourceDataByDomainNameStatement, getResourceDataByDomainNameQuery, "mergeStatistic"_s);
     if (!scopedStatement
         || scopedStatement->bindText(1, statistic.registrableDomain.string()) != SQLITE_OK
@@ -1189,7 +1180,7 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistic(const SQLiteTransaction
         return;
     }
 
-    merge(transaction, scopedStatement.get(), statistic);
+    merge(scopedStatement.get(), statistic);
 }
 
 void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadStatistics>&& statistics)
@@ -1198,8 +1189,7 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadSta
     if (statistics.isEmpty())
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     for (auto& statistic : statistics) {
         if (!domainID(statistic.registrableDomain)) {
@@ -1210,15 +1200,13 @@ void ResourceLoadStatisticsDatabaseStore::mergeStatistics(Vector<ResourceLoadSta
                 return;
             }
         } else
-            mergeStatistic(transaction, statistic);
+            mergeStatistic(statistic);
     }
 
     // Make a separate pass for inter-domain relationships so we
     // can refer to the ObservedDomain table entries.
     for (auto& statistic : statistics)
-        insertDomainRelationships(transaction, statistic);
-
-    transaction.commit();
+        insertDomainRelationships(statistic);
 }
 
 static ASCIILiteral joinSubStatisticsForSorting()
@@ -1456,19 +1444,16 @@ void ResourceLoadStatisticsDatabaseStore::reclassifyResources()
     if (notVeryPrevalentResources.isEmpty())
         return;
 
-    SQLiteTransaction transaction(m_database);
+    auto transaction = beginTransactionIfNecessary();
+
     for (auto& resourceStatistic : notVeryPrevalentResources.values()) {
         if (shouldSkip(resourceStatistic.registrableDomain))
             continue;
 
         auto newPrevalence = classifier().calculateResourcePrevalence(resourceStatistic.subresourceUnderTopFrameDomainsCount, resourceStatistic.subresourceUniqueRedirectsToCount, resourceStatistic.subframeUnderTopFrameDomainsCount, resourceStatistic.topFrameUniqueRedirectsToCount, resourceStatistic.prevalence);
-        if (newPrevalence != resourceStatistic.prevalence) {
-            if (!transaction.inProgress())
-                transaction.begin();
-            setPrevalentResource(transaction, resourceStatistic.registrableDomain, newPrevalence);
-        }
+        if (newPrevalence != resourceStatistic.prevalence)
+            setPrevalentResource(resourceStatistic.registrableDomain, newPrevalence);
     }
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::classifyPrevalentResources()
@@ -1575,8 +1560,7 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
         }
     }
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto incrementStorageAccess = m_database.prepareStatement("UPDATE ObservedDomains SET timesAccessedAsFirstPartyDueToStorageAccessAPI = timesAccessedAsFirstPartyDueToStorageAccessAPI + 1 WHERE domainID = ?"_s);
     if (!incrementStorageAccess
@@ -1587,11 +1571,9 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
         return;
     }
     
-    grantStorageAccessInternal(transaction, WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedEarlier, scope, [completionHandler = WTFMove(completionHandler)] (StorageAccessWasGranted wasGranted) mutable {
+    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, userWasPromptedEarlier, scope, [completionHandler = WTFMove(completionHandler)] (StorageAccessWasGranted wasGranted) mutable {
         completionHandler(wasGranted == StorageAccessWasGranted::Yes ? StorageAccessStatus::HasAccess : StorageAccessStatus::CannotRequestAccess);
     });
-
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, OpenerDomain&& openerDomain)
@@ -1607,18 +1589,14 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener(Domain
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
     }
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-    grantStorageAccessInternal(transaction, WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, [](StorageAccessWasGranted) { });
-    transaction.commit();
+    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, [](StorageAccessWasGranted) { });
 }
 
 void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     if (promptWasShown == StorageAccessPromptWasShown::Yes) {
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
@@ -1629,20 +1607,17 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
         ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
         if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
-            ASSERT(hasHadUserInteraction(transaction, subFrameDomain, OperatingDatesWindow::Long));
+            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
 #endif
-        insertDomainRelationshipList(transaction, storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
+        insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
     }
 
-    grantStorageAccessInternal(transaction, WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
-
-    transaction.commit();
+    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
 }
 
-void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(const SQLiteTransaction& transaction, SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
 
     if (subFrameDomain == topFrameDomain) {
         completionHandler(StorageAccessWasGranted::Yes);
@@ -1650,6 +1625,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(const SQLit
     }
 
     if (promptWasShownNowOrEarlier == StorageAccessPromptWasShown::Yes) {
+        auto transactionScope = beginTransactionIfNecessary();
 #ifndef NDEBUG
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         if (!subFrameStatus.second) {
@@ -1659,7 +1635,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(const SQLit
         ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
         if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
-            ASSERT(hasHadUserInteraction(transaction, subFrameDomain, OperatingDatesWindow::Long));
+            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
 #endif
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
@@ -1682,8 +1658,8 @@ void ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains(const HashSe
     if (domains.isEmpty())
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
+
     for (auto& registrableDomain : domains) {
         auto result = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
         if (!result.second)
@@ -1695,7 +1671,6 @@ void ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains(const HashSe
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
-    transaction.commit();
 }
 
 Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode()
@@ -1708,8 +1683,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentRe
     Vector<RegistrableDomain> primaryDomainsToBlock;
     primaryDomainsToBlock.reserveInitialCapacity(2);
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(debugStaticPrevalentResource());
     if (!result.second) {
@@ -1717,7 +1691,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentRe
         return { };
     }
 
-    setPrevalentResource(transaction, debugStaticPrevalentResource(), ResourceLoadPrevalence::High);
+    setPrevalentResource(debugStaticPrevalentResource(), ResourceLoadPrevalence::High);
     primaryDomainsToBlock.uncheckedAppend(debugStaticPrevalentResource());
 
     if (!debugManualPrevalentResource().isEmpty()) {
@@ -1726,7 +1700,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentRe
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode was not completed due to failed insert attempt for debugManualPrevalentResource", this);
             return { };
         }
-        setPrevalentResource(transaction, debugManualPrevalentResource(), ResourceLoadPrevalence::High);
+        setPrevalentResource(debugManualPrevalentResource(), ResourceLoadPrevalence::High);
         primaryDomainsToBlock.uncheckedAppend(debugManualPrevalentResource());
 
         if (debugLoggingEnabled()) {
@@ -1734,8 +1708,6 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::ensurePrevalentRe
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Did set '"_s, debugManualPrevalentResource().string(), "' as prevalent resource for the purposes of ITP Debug Mode."_s));
         }
     }
-
-    transaction.commit();
 
     return primaryDomainsToBlock;
 }
@@ -1747,20 +1719,17 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
     bool areTargetAndTopFrameDomainsSameSite = targetDomain == topFrameDomain;
     bool areTargetAndSourceDomainsSameSite = targetDomain == sourceDomain;
 
-    SQLiteTransaction transaction(m_database);
+    auto transactionScope = beginTransactionIfNecessary();
 
     bool statisticsWereUpdated = false;
     if (!isMainFrame && !(areTargetAndTopFrameDomainsSameSite || areTargetAndSourceDomainsSameSite)) {
-        if (!transaction.inProgress())
-            transaction.begin();
-
         auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
         if (!targetResult.second) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target domain", this);
             return;
         }
         updateLastSeen(targetDomain, ResourceLoadStatistics::reduceTimeResolution(WallTime::now()));
-        insertDomainRelationshipList(transaction, subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
+        insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *targetResult.second);
         statisticsWereUpdated = true;
     }
 
@@ -1768,43 +1737,36 @@ void ResourceLoadStatisticsDatabaseStore::logFrameNavigation(const RegistrableDo
         if (isMainFrame) {
             bool wasNavigatedAfterShortDelayWithoutUserInteraction = !wasPotentiallyInitiatedByUser && delayAfterMainFrameDocumentLoad < parameters().minDelayAfterMainFrameDocumentLoadToNotBeARedirect;
             if (isRedirect || wasNavigatedAfterShortDelayWithoutUserInteraction) {
-                if (!transaction.inProgress())
-                    transaction.begin();
-
                 auto redirectingDomainResult = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
                 auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
                 if (!targetResult.second || !redirectingDomainResult.second) {
                     ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target or redirecting domain (isMainFrame)", this);
                     return;
                 }
-                insertDomainRelationshipList(transaction, topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
                 if (isRedirect) {
-                    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+                    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
 
                     if (UNLIKELY(debugLoggingEnabled())) {
                         RELEASE_LOG_INFO(ITPDebug, "Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().data(), targetDomain.string().utf8().data());
                         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Did set '", sourceDomain.string(), "' as making a top frame redirect to '", targetDomain.string(), "'."));
                     }
                 }
-                insertDomainRelationshipList(transaction, topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
+                insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
                 statisticsWereUpdated = true;
             }
         } else if (isRedirect) {
-            if (!transaction.inProgress())
-                transaction.begin();
-
             auto redirectingDomainResult = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
             auto targetResult = ensureResourceStatisticsForRegistrableDomain(targetDomain);
             if (!targetResult.second || !redirectingDomainResult.second) {
                 ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logFrameNavigation was not completed due to failed insert attempt of target or redirecting domain (isRedirect)", this);
                 return;
             }
-            insertDomainRelationshipList(transaction, subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
-            insertDomainRelationshipList(transaction, subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
+            insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
+            insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ sourceDomain }), *targetResult.second);
             statisticsWereUpdated = true;
         }
     }
-    transaction.commit();
 
     if (statisticsWereUpdated)
         scheduleStatisticsProcessingRequestIfNecessary();
@@ -1815,28 +1777,24 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     ASSERT(!RunLoop::isMain());
     ASSERT(fromDomain != toDomain);
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto toDomainResult = ensureResourceStatisticsForRegistrableDomain(toDomain);
     if (!toDomainResult.second) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration was not completed due to failed insert attempt", this);
         return;
     }
-    insertDomainRelationshipList(transaction, topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
+    insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
     
     if (isPrevalentResource(fromDomain))
-        setIsScheduledForAllButCookieDataRemoval(transaction, toDomain, true);
-
-    transaction.commit();
+        setIsScheduledForAllButCookieDataRemoval(toDomain, true);
 }
 
 void ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto targetResult = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!targetResult.second) {
@@ -1852,8 +1810,6 @@ void ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSam
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
-
-    transaction.commit();
     
     completionHandler();
 }
@@ -1878,18 +1834,15 @@ void ResourceLoadStatisticsDatabaseStore::logUserInteraction(const TopFrameDomai
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::logUserInteraction was not completed due to failed insert attempt", this);
         return;
     }
-    bool didHavePreviousUserInteraction = hasHadUserInteraction(transaction, domain, OperatingDatesWindow::Long);
+    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
     setUserInteraction(domain, true, WallTime::now());
-
-    transaction.commit();
 
     if (didHavePreviousUserInteraction) {
         completionHandler();
@@ -1902,16 +1855,7 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-    clearUserInteraction(transaction, domain, WTFMove(completionHandler));
-    transaction.commit();
-}
-
-void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const WebCore::SQLiteTransaction&, const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto targetResult = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!targetResult.second) {
@@ -1937,19 +1881,8 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const WebCore::SQ
 bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
 {
     ASSERT(!RunLoop::isMain());
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-    bool result = hasHadUserInteraction(transaction, domain, operatingDatesWindow);
-    transaction.commit();
-    return result;
-}
 
-
-bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const WebCore::SQLiteTransaction& transaction, const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
-
+    auto transactionScope = beginTransactionIfNecessary();
     auto scopedStatement = this->scopedStatement(m_hadUserInteractionStatement, hadUserInteractionQuery, "hasHadUserInteraction"_s);
     if (!scopedStatement
         || scopedStatement->bindText(1, domain.string()) != SQLITE_OK
@@ -1968,19 +1901,20 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const WebCore::S
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
-        clearUserInteraction(transaction, domain, [] { });
+        clearUserInteraction(domain, [] { });
         hadUserInteraction = false;
     }
     return hadUserInteraction;
 }
 
-void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const SQLiteTransaction&, const RegistrableDomain& domain, ResourceLoadPrevalence newPrevalence)
+void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const RegistrableDomain& domain, ResourceLoadPrevalence newPrevalence)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
 
     if (shouldSkip(domain))
         return;
+
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto registrableDomainID = domainID(domain);
     if (!registrableDomainID) {
@@ -2124,8 +2058,7 @@ void ResourceLoadStatisticsDatabaseStore::clearPrevalentResource(const Registrab
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
@@ -2142,24 +2075,13 @@ void ResourceLoadStatisticsDatabaseStore::clearPrevalentResource(const Registrab
         ASSERT_NOT_REACHED();
         return;
     }
-
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::setGrandfathered(const RegistrableDomain& domain, bool value)
 {
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-
-    setGrandfathered(transaction, domain, value);
-
-    transaction.commit();
-}
-
-void ResourceLoadStatisticsDatabaseStore::setGrandfathered(const WebCore::SQLiteTransaction&, const RegistrableDomain& domain, bool value)
-{
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
+
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
@@ -2177,10 +2099,11 @@ void ResourceLoadStatisticsDatabaseStore::setGrandfathered(const WebCore::SQLite
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval(const SQLiteTransaction&, const RegistrableDomain& domain, bool value)
+void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval(const RegistrableDomain& domain, bool value)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
+
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
@@ -2240,8 +2163,7 @@ void ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain(const S
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
     if (!result.second) {
@@ -2249,17 +2171,14 @@ void ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameDomain(const S
         return;
     }
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    insertDomainRelationshipList(transaction, subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
-
-    transaction.commit();
+    insertDomainRelationshipList(subframeUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain(const SubResourceDomain& subresourceDomain, const TopFrameDomain& topFrameDomain)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
     if (!result.second) {
@@ -2267,17 +2186,14 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameDomain(cons
         return;
     }
     // For consistency, make sure we also have a statistics entry for the top frame domain.
-    insertDomainRelationshipList(transaction, subresourceUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
-
-    transaction.commit();
+    insertDomainRelationshipList(subresourceUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
     if (!result.second) {
@@ -2285,17 +2201,14 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo(const S
         return;
     }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(transaction, subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
-
-    transaction.commit();
+    insertDomainRelationshipList(subresourceUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom(const SubResourceDomain& subresourceDomain, const RedirectDomain& redirectDomain)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(subresourceDomain);
     if (!result.second) {
@@ -2303,17 +2216,14 @@ void ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom(const
         return;
     }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(transaction, subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
-
-    transaction.commit();
+    insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
     if (!result.second) {
@@ -2321,18 +2231,15 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo(const TopF
         return;
     }
 
-    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
-    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
-
-    transaction.commit();
+    insertDomainRelationshipList(topFrameUniqueRedirectsToQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
+    insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const TopFrameDomain& topFrameDomain, const RedirectDomain& redirectDomain)
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(topFrameDomain);
     if (!result.second) {
@@ -2340,9 +2247,7 @@ void ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom(const To
         return;
     }
     // For consistency, make sure we also have a statistics entry for the redirect domain.
-    insertDomainRelationshipList(transaction, topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
-
-    transaction.commit();
+    insertDomainRelationshipList(topFrameUniqueRedirectsFromQuery, HashSet<RegistrableDomain>({ redirectDomain }), *result.second);
 }
 
 std::pair<ResourceLoadStatisticsDatabaseStore::AddedRecord, std::optional<unsigned>> ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
@@ -2703,7 +2608,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
     auto oldestUserInteraction = now;
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor toDeleteOrRestrictFor;
 
-    SQLiteTransaction transaction(m_database);
+    auto transactionScope = beginTransactionIfNecessary();
 
     Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
@@ -2718,9 +2623,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
         } else {
             if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
-                if (!transaction.inProgress())
-                    transaction.begin();
-                setIsScheduledForAllButCookieDataRemoval(transaction, statistic.registrableDomain, false);
+                setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
             }
             if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
@@ -2740,8 +2643,6 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
         toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
-
-    transaction.commit();
     
     return toDeleteOrRestrictFor;
 }
@@ -2806,8 +2707,7 @@ void ResourceLoadStatisticsDatabaseStore::setLastSeen(const RegistrableDomain& d
 {
     ASSERT(!RunLoop::isMain());
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
@@ -2816,8 +2716,6 @@ void ResourceLoadStatisticsDatabaseStore::setLastSeen(const RegistrableDomain& d
     }
     
     updateLastSeen(domain, WallTime::fromRawSeconds(seconds.seconds()));
-
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const RegistrableDomain& domain)
@@ -2827,19 +2725,7 @@ void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const Registrable
     if (shouldSkip(domain))
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-    setPrevalentResource(transaction, domain);
-    transaction.commit();
-}
-
-void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const SQLiteTransaction& transaction, const RegistrableDomain& domain)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
-
-    if (shouldSkip(domain))
-        return;
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
@@ -2847,7 +2733,7 @@ void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const SQLiteTrans
         return;
     }
 
-    setPrevalentResource(transaction, domain, ResourceLoadPrevalence::High);
+    setPrevalentResource(domain, ResourceLoadPrevalence::High);
 }
 
 void ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource(const RegistrableDomain& domain)
@@ -2857,21 +2743,7 @@ void ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource(const Registr
     if (shouldSkip(domain))
         return;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-
-    setVeryPrevalentResource(transaction, domain);
-
-    transaction.commit();
-}
-
-void ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource(const SQLiteTransaction& transaction, const RegistrableDomain& domain)
-{
-    ASSERT(!RunLoop::isMain());
-    ASSERT(m_database.transactionInProgress());
-
-    if (shouldSkip(domain))
-        return;
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
@@ -2879,7 +2751,7 @@ void ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource(const SQLiteT
         return;
     }
 
-    setPrevalentResource(transaction, domain, ResourceLoadPrevalence::VeryHigh);
+    setPrevalentResource(domain, ResourceLoadPrevalence::VeryHigh);
 }
 
 void ResourceLoadStatisticsDatabaseStore::updateDataRecordsRemoved(const RegistrableDomain& domain, int value)
@@ -3177,8 +3049,7 @@ void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary
             return;
     }
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     int rowsToPrune = m_operatingDatesSize - operatingDatesWindowLong + 1;
     if (rowsToPrune > 0) {
@@ -3202,8 +3073,6 @@ void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary
     }
 
     updateOperatingDatesParameters();
-
-    transaction.commit();
 }
 
 bool ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow operatingDatesWindow) const
@@ -3238,8 +3107,7 @@ void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const
     // Populate the Operating Dates table with enough days to require pruning.
     double daysAgoInSeconds = 0;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     for (unsigned i = 1; i <= numberOfOperatingDaysPassed; i++) {
         double daysToSubtract = Seconds::fromHours(24 * i).value();
@@ -3259,8 +3127,6 @@ void ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting(const
     }
 
     updateOperatingDatesParameters();
-
-    transaction.commit();
 
     // Make sure mostRecentUserInteractionTime is the least recent of all entries.
     daysAgoInSeconds -= Seconds::fromHours(24).value();
@@ -3364,9 +3230,7 @@ std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<Attr
 
 void ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement(PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType)
 {
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
-    auto commitTransaction = makeScopeExit([&transaction] { transaction.commit(); });
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto sourceData = ensureResourceStatisticsForRegistrableDomain(attribution.sourceSite().registrableDomain);
     auto attributionDestinationData = ensureResourceStatisticsForRegistrableDomain(attribution.destinationSite().registrableDomain);
@@ -3552,8 +3416,7 @@ void ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement(std::opti
         bindParameter = String::number(*domainIDToMatch);
     }
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto clearUnattributedScopedStatement = this->scopedStatement(m_clearUnattributedPrivateClickMeasurementStatement, clearUnattributedPrivateClickMeasurementQuery, "clearPrivateClickMeasurement"_s);
 
@@ -3574,8 +3437,6 @@ void ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement(std::opti
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement clearAttributedScopedStatement, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
-
-    transaction.commit();
 }
 
 void ResourceLoadStatisticsDatabaseStore::clearExpiredPrivateClickMeasurement()
@@ -3771,8 +3632,7 @@ void ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurements
 {
     auto expiredTimeToSend = WallTime::now() - 1_h;
 
-    SQLiteTransaction transaction(m_database);
-    transaction.begin();
+    auto transactionScope = beginTransactionIfNecessary();
 
     auto earliestTimeToSendToSourceStatement = m_database.prepareStatement("UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToSource = ?"_s);
     auto earliestTimeToSendToDestinationStatement = m_database.prepareStatement("UPDATE AttributedPrivateClickMeasurement SET earliestTimeToSendToDestination = null"_s);
@@ -3788,10 +3648,17 @@ void ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurements
         ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
+}
 
-    transaction.commit();
+ScopeExit<Function<void()>> ResourceLoadStatisticsDatabaseStore::beginTransactionIfNecessary()
+{
+    if (m_transaction.inProgress())
+        return makeScopeExit(Function<void()> { [] { } });
 
-    return;
+    m_transaction.begin();
+    return makeScopeExit(Function<void()> { [this] {
+        m_transaction.commit();
+    } });
 }
 
 } // namespace WebKit

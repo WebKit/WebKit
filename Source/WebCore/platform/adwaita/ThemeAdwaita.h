@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "StyleColor.h"
 #include "Theme.h"
 
 namespace WebCore {
@@ -34,12 +35,12 @@ class Path;
 
 class ThemeAdwaita : public Theme {
 public:
-    static Color focusColor();
-    static void paintFocus(GraphicsContext&, const FloatRect&, int offset);
+    static Color focusColor(bool focusColor);
+    static void paintFocus(GraphicsContext&, const FloatRect&, int offset, bool useDarkAppearance);
     static void paintFocus(GraphicsContext&, const Path&, const Color&);
     static void paintFocus(GraphicsContext&, const Vector<FloatRect>&, const Color&);
     enum class ArrowDirection { Up, Down };
-    static void paintArrow(GraphicsContext&, ArrowDirection);
+    static void paintArrow(GraphicsContext&, ArrowDirection, bool);
 
     virtual Color activeSelectionForegroundColor() const;
     virtual Color activeSelectionBackgroundColor() const;
@@ -53,10 +54,10 @@ private:
     LengthBox controlBorder(ControlPart, const FontCascade&, const LengthBox&, float) const final;
     void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool) final;
 
-    void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, float);
-    void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, float);
-    void paintButton(ControlStates&, GraphicsContext&, const FloatRect&, float);
-    void paintSpinButton(ControlStates&, GraphicsContext&, const FloatRect&, float);
+    void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+    void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+    void paintButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+    void paintSpinButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
 };
 
 } // namespace WebCore

@@ -87,6 +87,19 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
     WebCore:
       default: true
 
+# We have to resolve the privacy issue in https://github.com/whatwg/html/issues/5803 before we can enable this.
+BroadcastChannelEnabled:
+  type: bool
+  humanReadableName: "BroadcastChannel API"
+  humanReadableDescription: "BroadcastChannel API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CFNetworkNetworkLoaderEnabled:
   type: bool
   humanReadableName: "Experimental network loader"
@@ -663,7 +676,7 @@ MediaSessionCoordinatorEnabled:
     WebKitLegacy:
       default: true
     WebKit:
-      default: true
+      default: WebKit::defaultMediaSessionCoordinatorEnabled()
     WebCore:
       default: true
 
@@ -927,7 +940,7 @@ ScreenCaptureEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(MAC) || USE(PIPEWIRE)": true
+      "PLATFORM(MAC) || USE(GSTREAMER)": true
       default: false
     WebCore:
       default: false
@@ -1069,10 +1082,11 @@ VP8DecoderEnabled:
   webcoreBinding: none
   condition: ENABLE(VP9)
   defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultVP8DecoderEnabled()
     WebKit:
       default: WebKit::defaultVP8DecoderEnabled()
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 VP9DecoderEnabled:
   type: bool
   humanReadableName: "VP9 decoder"
@@ -1082,7 +1096,7 @@ VP9DecoderEnabled:
     WebCore:
       default: false
     WebKitLegacy:
-      default: false
+      default: WebKit::defaultVP9DecoderEnabled()
     WebKit:
       default: WebKit::defaultVP9DecoderEnabled()
 
@@ -1240,12 +1254,24 @@ WebMParserEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   humanReadableName: "WebM MSE parser"
   humanReadableDescription: "Enable WebM MSE parser"
-  condition: ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+  condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: WebKit::defaultWebMParserEnabled()
     WebKit:
       default: WebKit::defaultWebMParserEnabled()
+
+WebMWebAudioEnabled:
+  type: bool
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "WebM Web Audio"
+  humanReadableDescription: "Enable WebM Web Audio"
+  condition: ENABLE(MEDIA_SOURCE)
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultWebMWebAudioEnabled()
+    WebKit:
+      default: WebKit::defaultWebMWebAudioEnabled()
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH264LowLatencyEncoderEnabled:

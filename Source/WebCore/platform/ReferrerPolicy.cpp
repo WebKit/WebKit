@@ -41,7 +41,7 @@ static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy,
         if (equalLettersIgnoringASCIICase(policy, "always"))
             return ReferrerPolicy::UnsafeUrl;
         if (equalLettersIgnoringASCIICase(policy, "default"))
-            return ReferrerPolicy::NoReferrerWhenDowngrade;
+            return ReferrerPolicy::Default;
     }
 
     if (equalLettersIgnoringASCIICase(policy, "no-referrer"))

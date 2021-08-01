@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "AtomicHTMLToken.h"
+#include "AtomHTMLToken.h"
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "HTMLNames.h"
@@ -38,7 +38,7 @@ namespace WebCore {
 class HTMLStackItem : public RefCounted<HTMLStackItem> {
 public:
     // Normal HTMLElementStack and HTMLFormattingElementList items.
-    static Ref<HTMLStackItem> create(Ref<Element>&&, AtomicHTMLToken&&, const AtomString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
+    static Ref<HTMLStackItem> create(Ref<Element>&&, AtomHTMLToken&&, const AtomString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
     static Ref<HTMLStackItem> create(Ref<Element>&&, const AtomString&, Vector<Attribute>&&);
 
     // Document fragment or element for parsing context.
@@ -61,7 +61,7 @@ public:
     bool matchesHTMLTag(const AtomString&) const;
 
 private:
-    HTMLStackItem(Ref<Element>&&, AtomicHTMLToken&&, const AtomString& namespaceURI);
+    HTMLStackItem(Ref<Element>&&, AtomHTMLToken&&, const AtomString& namespaceURI);
     HTMLStackItem(Ref<Element>&&, const AtomString& localName, const AtomString& namespaceURI, Vector<Attribute>&&);
     explicit HTMLStackItem(Element&);
     explicit HTMLStackItem(DocumentFragment&);
@@ -76,7 +76,7 @@ bool isInHTMLNamespace(const HTMLStackItem&);
 bool isNumberedHeaderElement(const HTMLStackItem&);
 bool isSpecialNode(const HTMLStackItem&);
 
-inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken&& token, const AtomString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomHTMLToken&& token, const AtomString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
     : m_node(WTFMove(element))
     , m_namespaceURI(namespaceURI)
     , m_localName(token.name())
@@ -84,7 +84,7 @@ inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken&& to
 {
 }
 
-inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomicHTMLToken&& token, const AtomString& namespaceURI)
+inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomHTMLToken&& token, const AtomString& namespaceURI)
 {
     return adoptRef(*new HTMLStackItem(WTFMove(element), WTFMove(token), namespaceURI));
 }

@@ -7,6 +7,7 @@ sys.stdout.write(
     'Content-Type: text/html\r\n\r\n'
     '<!DOCTYPE html>\n'
     '<html>\n'
+    '<meta name="referrer" content="unsafe-url">\n'
     '<body>\n'
     '<script>\n'
     'if (window.testRunner) {\n'

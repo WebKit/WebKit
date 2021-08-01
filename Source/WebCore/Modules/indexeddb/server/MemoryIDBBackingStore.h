@@ -80,6 +80,7 @@ private:
 
     bool supportsSimultaneousTransactions() final { return true; }
     bool isEphemeral() final { return true; }
+    String fullDatabasePath() const final { return nullString(); }
 
     bool hasTransaction(const IDBResourceIdentifier& identifier) const final { return m_transactions.contains(identifier); }
 
@@ -97,7 +98,7 @@ private:
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;
 
     HashMap<uint64_t, RefPtr<MemoryObjectStore>> m_objectStoresByIdentifier;
-    HashMap<String, MemoryObjectStore*> m_objectStoresByName;
+    HashMap<String, RefPtr<MemoryObjectStore>> m_objectStoresByName;
 };
 
 } // namespace IDBServer

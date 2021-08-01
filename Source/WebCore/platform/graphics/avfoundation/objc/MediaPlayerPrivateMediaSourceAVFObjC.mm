@@ -592,6 +592,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
         [m_synchronizer setRate:m_rate];
 }
 
+double MediaPlayerPrivateMediaSourceAVFObjC::rate() const
+{
+    return m_rate;
+}
+
+double MediaPlayerPrivateMediaSourceAVFObjC::effectiveRate() const
+{
+    return PAL::CMTimebaseGetRate([m_synchronizer timebase]);
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
 {
     ALWAYS_LOG(LOGIDENTIFIER, preservesPitch);

@@ -249,10 +249,34 @@ void MediaElementSession::visibilityChanged()
 {
     scheduleClientDataBufferingCheck();
 
-    if (m_element.elementIsHidden() && !m_element.isFullscreen())
+    bool elementIsHidden = m_element.elementIsHidden();
+
+    if (elementIsHidden && !m_element.isFullscreen())
         m_elementIsHiddenUntilVisibleInViewport = true;
     else if (m_element.isVisibleInViewport())
         m_elementIsHiddenUntilVisibleInViewport = false;
+
+    bool isPlayingAudio = m_element.isPlaying() && m_element.hasAudio() && !m_element.muted() && m_element.volume();
+    if (!isPlayingAudio) {
+        if (elementIsHidden) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Suspending silent playback after page visibility: hidden");
+            beginInterruption(PlatformMediaSession::EnteringBackground);
+        } else {
+            ALWAYS_LOG(LOGIDENTIFIER, "Resuming silent playback after page visibility: showing");
+            endInterruption(PlatformMediaSession::MayResumePlaying);
+        }
+        return;
+    }
+
+    if (hasBehaviorRestriction(RequirePageVisibilityToPlayAudio)) {
+        if (elementIsHidden) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Suspending audible playback after page visibility: hidden");
+            beginInterruption(PlatformMediaSession::EnteringBackground);
+        } else {
+            ALWAYS_LOG(LOGIDENTIFIER, "Resuming audible playback after page visibility: showing");
+            endInterruption(PlatformMediaSession::MayResumePlaying);
+        }
+    }
 }
 
 void MediaElementSession::isVisibleInViewportChanged()
@@ -388,6 +412,11 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for audio rate change restriction");
+        return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
+    }
+
+    if (m_restrictions & RequirePageVisibilityToPlayAudio && (!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume() && m_element.elementIsHidden()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because page visibility required for audio rate change restriction");
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 

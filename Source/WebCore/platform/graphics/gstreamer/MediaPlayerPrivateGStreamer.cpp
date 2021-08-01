@@ -200,11 +200,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
-    if (m_mediaLocations) {
-        gst_structure_free(m_mediaLocations);
-        m_mediaLocations = nullptr;
-    }
-
     if (WEBKIT_IS_WEB_SRC(m_source.get()) && GST_OBJECT_PARENT(m_source.get()))
         g_signal_handlers_disconnect_by_func(GST_ELEMENT_PARENT(m_source.get()), reinterpret_cast<gpointer>(uriDecodeBinElementAddedCallback), this);
 
@@ -909,9 +904,8 @@ void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
         return;
 
     const char* role = m_player->isVideoPlayer() ? "video" : "music";
-    GstStructure* structure = gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role, nullptr);
-    g_object_set(object, "stream-properties", structure, nullptr);
-    gst_structure_free(structure);
+    GUniquePtr<GstStructure> properties(gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role, nullptr));
+    g_object_set(object, "stream-properties", properties.get(), nullptr);
     GUniquePtr<gchar> elementName(gst_element_get_name(GST_ELEMENT(object)));
     GST_DEBUG_OBJECT(pipeline(), "Set media.role as %s at %s", role, elementName.get());
 }
@@ -2391,22 +2385,20 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
 void MediaPlayerPrivateGStreamer::mediaLocationChanged(GstMessage* message)
 {
-    if (m_mediaLocations)
-        gst_structure_free(m_mediaLocations);
-
     const GstStructure* structure = gst_message_get_structure(message);
-    if (structure) {
-        // This structure can contain:
-        // - both a new-location string and embedded locations structure
-        // - or only a new-location string.
-        m_mediaLocations = gst_structure_copy(structure);
-        const GValue* locations = gst_structure_get_value(m_mediaLocations, "locations");
+    if (!structure)
+        return;
 
-        if (locations)
-            m_mediaLocationCurrentIndex = static_cast<int>(gst_value_list_get_size(locations)) -1;
+    // This structure can contain:
+    // - both a new-location string and embedded locations structure
+    // - or only a new-location string.
+    m_mediaLocations.reset(gst_structure_copy(structure));
+    const GValue* locations = gst_structure_get_value(m_mediaLocations.get(), "locations");
 
-        loadNextLocation();
-    }
+    if (locations)
+        m_mediaLocationCurrentIndex = static_cast<int>(gst_value_list_get_size(locations)) - 1;
+
+    loadNextLocation();
 }
 
 bool MediaPlayerPrivateGStreamer::loadNextLocation()
@@ -2414,19 +2406,19 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
     if (!m_mediaLocations)
         return false;
 
-    const GValue* locations = gst_structure_get_value(m_mediaLocations, "locations");
+    const GValue* locations = gst_structure_get_value(m_mediaLocations.get(), "locations");
     const char* newLocation = nullptr;
 
     if (!locations) {
         // Fallback on new-location string.
-        newLocation = gst_structure_get_string(m_mediaLocations, "new-location");
+        newLocation = gst_structure_get_string(m_mediaLocations.get(), "new-location");
         if (!newLocation)
             return false;
     }
 
     if (!newLocation) {
         if (m_mediaLocationCurrentIndex < 0) {
-            m_mediaLocations = nullptr;
+            m_mediaLocations.reset();
             return false;
         }
 

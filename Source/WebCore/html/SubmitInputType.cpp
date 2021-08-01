@@ -75,7 +75,7 @@ void SubmitInputType::handleDOMActivateEvent(Event& event)
 
     protectedElement->setActivatedSubmit(true);
     if (auto currentForm = makeRefPtr(protectedElement->form()))
-        currentForm->submitIfPossible(&event); // Event handlers can run.
+        currentForm->submitIfPossible(&event, element()); // Event handlers can run.
     protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();
 }

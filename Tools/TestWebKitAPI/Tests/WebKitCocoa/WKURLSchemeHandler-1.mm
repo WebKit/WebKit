@@ -32,6 +32,7 @@
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKErrorPrivate.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -1618,4 +1619,20 @@ TEST(URLSchemeHandler, Ranges)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ranges:///main.html"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "playing");
     EXPECT_TRUE(foundRangeRequest);
+}
+
+TEST(URLSchemeHandler, HandleURLRewrittenByPlugIn)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"SchemeChangingPlugIn"];
+    configuration._allowedNetworkHosts = [NSSet set];
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    __block bool done = false;
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        EXPECT_WK_STREQ(task.request.URL.absoluteString, "test+rewritten+scheme://webkit.org/testpath");
+        done = true;
+    }];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test+rewritten+scheme"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/testpath"]]];
+    TestWebKitAPI::Util::run(&done);
 }

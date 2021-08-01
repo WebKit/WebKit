@@ -5,7 +5,7 @@ CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be c
 PASS calls handleEvent method of event listener
 PASS looks up handleEvent method on every event dispatch
 PASS doesn't look up handleEvent method on callable event listeners
-FAIL rethrows errors when getting handleEvent assert_true: Timed out waiting for error expected true got false
-FAIL throws if handleEvent is falsy and not callable assert_true: Timed out waiting for error expected true got false
-FAIL throws if handleEvent is thruthy and not callable assert_true: Timed out waiting for error expected true got false
+PASS rethrows errors when getting handleEvent
+FAIL throws if handleEvent is falsy and not callable promise_rejects_js: function "function () { throw e }" threw null, not an object
+FAIL throws if handleEvent is thruthy and not callable promise_rejects_js: function "function () { throw e }" threw null, not an object
 

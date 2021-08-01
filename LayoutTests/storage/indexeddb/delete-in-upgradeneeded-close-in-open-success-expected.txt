@@ -19,11 +19,6 @@ db = event.target.result
 deleteRequest = indexedDB.deleteDatabase(dbname)
 request2.onsuccess = deleteSuccessCallback
 
-versionChangeCallback():
-PASS event.oldVersion is 1
-PASS event.newVersion is null
-sawVersionChange = true
-
 openSuccess():
 PASS sawUpgradeNeeded is true
 db = event.target.result
@@ -31,8 +26,8 @@ PASS db.version is 1
 db.close()
 
 deleteSuccessCallback():
-PASS sawVersionChange is true
-PASS sawDeleteBlocked is true
+PASS sawVersionChange is false
+PASS sawDeleteBlocked is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

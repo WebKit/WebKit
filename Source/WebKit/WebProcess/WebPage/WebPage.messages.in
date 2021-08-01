@@ -93,10 +93,10 @@ messages -> WebPage LegacyReceiver {
     StopInteraction()
     PerformActionOnElement(uint32_t action)
     FocusNextFocusedElement(bool isForward) -> () Async
-    SetFocusedElementValue(String value)
     AutofillLoginCredentials(String username, String password)
-    SetFocusedElementValueAsNumber(double value)
-    SetFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
+    SetFocusedElementValue(struct WebCore::ElementContext context, String value)
+    SetFocusedElementValueAsNumber(struct WebCore::ElementContext context, double value)
+    SetFocusedElementSelectedIndex(struct WebCore::ElementContext context, uint32_t index, bool allowMultipleSelection)
     ApplicationWillResignActive()
     ApplicationDidEnterBackground(bool isSuspendedUnderLock)
     ApplicationDidFinishSnapshottingAfterEnteringBackground()
@@ -162,11 +162,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     DidChooseDate(String date);
     DidEndDateTimePicker();
-#endif
-
-#if ENABLE(CONTEXT_MENUS)
-    ContextMenuHidden()
-    ContextMenuForKeyEvent()
 #endif
 
     ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
@@ -345,7 +340,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(CONTEXT_MENUS)
     # Context menu.
+    DidShowContextMenu()
+    DidDismissContextMenu()
     DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem)
+    ContextMenuForKeyEvent()
 #endif
 
     # Open panel.
@@ -515,10 +513,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 
-#if PLATFORM(GTK)
-    ThemeDidChange(String themeName)
-#endif
-
 #if PLATFORM(COCOA)
     RequestActiveNowPlayingSessionInfo() -> (bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier) Async
 #endif
@@ -643,6 +637,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if ENABLE(IMAGE_ANALYSIS)
     UpdateWithTextRecognitionResult(struct WebCore::TextRecognitionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (enum:uint8_t WebKit::TextRecognitionUpdateResult result) Async
 #endif
+
+    ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
 #if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementPreviewDidObtainContextId(struct WebCore::ElementContext elementContext, String uuid, uint32_t contextId)

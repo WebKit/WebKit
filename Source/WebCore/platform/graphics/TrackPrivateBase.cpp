@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO)
 
 #include "Logging.h"
-#include <wtf/LoggerHelper.h>
 
 namespace WebCore {
 

@@ -97,18 +97,12 @@ static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::ApplePayErrorCode code)
     case WebCore::ApplePayErrorCode::AddressUnserviceable:
         return PKPaymentShippingAddressUnserviceableError;
 
+#if ENABLE(APPLE_PAY_COUPON_CODE)
     case WebCore::ApplePayErrorCode::CouponCodeInvalid:
-#if HAVE(PASSKIT_COUPON_CODE)
         return PKPaymentCouponCodeInvalidError;
-#else
-        break;
-#endif
 
     case WebCore::ApplePayErrorCode::CouponCodeExpired:
-#if HAVE(PASSKIT_COUPON_CODE)
         return PKPaymentCouponCodeExpiredError;
-#else
-        break;
 #endif
     }
 

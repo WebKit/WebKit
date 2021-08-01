@@ -33,7 +33,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutSource, CheckOutSpecificR
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
                    ValidatePatch, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
-                   InstallBuiltProduct)
+                   InstallBuiltProduct, VerifyGitHubIntegrity)
 
 
 class Factory(factory.BuildFactory):
@@ -289,6 +289,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
+        self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
         self.addStep(ValidateChangeLogAndReviewer())

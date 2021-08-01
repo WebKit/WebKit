@@ -110,13 +110,14 @@ private:
 
     CSSStyleSheet* parentStyleSheet() const final;
 
-    CSSRule* parentRule() const final { return m_parentRule;  }
+    CSSRule* parentRule() const final { return m_parentRule; }
 
     bool willMutate() final WARN_UNUSED_RETURN;
     void didMutate(MutationType) final;
     CSSParserContext cssParserContext() const final;
 
     unsigned m_refCount;
+    StyleRuleType m_parentRuleType;
     CSSRule* m_parentRule;
 };
 

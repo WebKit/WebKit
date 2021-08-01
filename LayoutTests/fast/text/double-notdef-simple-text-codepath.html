@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+This test makes sure that .notdef does not draw twice for a single character in the simple text codepath. The test passes if this text you're reading right now is the only thing you can see on the page.
+<div style="position: relative;">
+<div id="target" style="position: absolute; top: 0px; left: 0px; font-family: 'Hiragino Kaku Gothic Pro';">&#x224CA;</div>
+<div id="cover" style="position: absolute; top: 0px; left: 0px; width: 100px; height: 100px; background: white;"></div>
+</div>
+<script>
+var target = document.getElementById("target");
+var cover = document.getElementById("cover");
+cover.style.width = "" + target.offsetWidth + "px";
+cover.style.height = "" + target.offsetHeight + "px";
+</script>
+</body>
+</html>

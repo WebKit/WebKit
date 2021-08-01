@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +44,12 @@ public:
     {
     }
 
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) override
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) override
     {
         m_function.animate(targetElement, progress, repeatCount, m_list);
     }
 
-    void apply(SVGElement* targetElement) override
+    void apply(SVGElement& targetElement) override
     {
         applyAnimatedStylePropertyChange(targetElement, m_list->valueAsString());
     }
@@ -61,4 +61,4 @@ protected:
     RefPtr<ListType> m_list;
 };
 
-}
+} // namespace WebCore

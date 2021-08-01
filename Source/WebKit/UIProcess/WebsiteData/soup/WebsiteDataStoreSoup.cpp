@@ -41,8 +41,9 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     networkSessionParameters.persistentCredentialStorageEnabled = m_persistentCredentialStorageEnabled;
     networkSessionParameters.ignoreTLSErrors = m_ignoreTLSErrors;
     networkSessionParameters.proxySettings = m_networkProxySettings;
-
-    networkProcess().cookieManager().getCookiePersistentStorage(m_sessionID, networkSessionParameters.cookiePersistentStoragePath, networkSessionParameters.cookiePersistentStorageType);
+    networkSessionParameters.cookiePersistentStoragePath = m_cookiePersistentStoragePath;
+    networkSessionParameters.cookiePersistentStorageType = m_cookiePersistentStorageType;
+    networkSessionParameters.cookieAcceptPolicy = m_cookieAcceptPolicy;
 }
 
 void WebsiteDataStore::setPersistentCredentialStorageEnabled(bool enabled)
@@ -70,6 +71,25 @@ void WebsiteDataStore::setNetworkProxySettings(WebCore::SoupNetworkProxySettings
 {
     m_networkProxySettings = WTFMove(settings);
     networkProcess().send(Messages::NetworkProcess::SetNetworkProxySettings(m_sessionID, m_networkProxySettings), 0);
+}
+
+void WebsiteDataStore::setCookiePersistentStorage(const String& storagePath, SoupCookiePersistentStorageType storageType)
+{
+    if (m_cookiePersistentStoragePath == storagePath && m_cookiePersistentStorageType == storageType)
+        return;
+
+    m_cookiePersistentStoragePath = storagePath;
+    m_cookiePersistentStorageType = storageType;
+    networkProcess().cookieManager().setCookiePersistentStorage(m_sessionID, m_cookiePersistentStoragePath, m_cookiePersistentStorageType);
+}
+
+void WebsiteDataStore::setHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy)
+{
+    if (m_cookieAcceptPolicy == policy)
+        return;
+
+    m_cookieAcceptPolicy = policy;
+    networkProcess().cookieManager().setHTTPCookieAcceptPolicy(m_sessionID, policy, [] { });
 }
 
 } // namespace WebKit

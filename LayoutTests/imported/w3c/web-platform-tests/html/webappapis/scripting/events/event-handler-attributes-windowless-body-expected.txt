@@ -64,7 +64,7 @@ PASS drop is unaffected on a windowless body
 PASS durationchange is unaffected on a windowless body
 PASS emptied is unaffected on a windowless body
 PASS ended is unaffected on a windowless body
-FAIL formdata is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
+PASS formdata is unaffected on a windowless body
 PASS input is unaffected on a windowless body
 PASS invalid is unaffected on a windowless body
 PASS keydown is unaffected on a windowless body
@@ -171,7 +171,7 @@ PASS drop is unaffected on a windowless frameset
 PASS durationchange is unaffected on a windowless frameset
 PASS emptied is unaffected on a windowless frameset
 PASS ended is unaffected on a windowless frameset
-FAIL formdata is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+PASS formdata is unaffected on a windowless frameset
 PASS input is unaffected on a windowless frameset
 PASS invalid is unaffected on a windowless frameset
 PASS keydown is unaffected on a windowless frameset

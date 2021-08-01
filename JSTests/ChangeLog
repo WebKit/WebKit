@@ -1,3 +1,184 @@
+2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Partly implement Function.prototype.{caller,arguments} reflection proposal
+        https://bugs.webkit.org/show_bug.cgi?id=158116
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore/test/strict/19.function.baseline:
+        * ChakraCore/test/strict/22.callerCalleeArguments.baseline-jsc:
+        * microbenchmarks/function-prototype-get.js: Added.
+        * microbenchmarks/reflect-own-keys-function.js: Added.
+        * stress/for-in-shadow-non-enumerable.js:
+        * stress/function-hidden-as-caller.js:
+        * stress/has-own-property-arguments.js:
+        * stress/object-assign-fast-path.js:
+        * stress/put-to-proto-chain-overrides-put.js:
+        * stress/reflect-set.js:
+        * test262/config.yaml: Skip 3 test cases that are now incorrect.
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
+2021-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add Speedometer2 jQuery-TodoMVC RegExp microbenchmark
+        https://bugs.webkit.org/show_bug.cgi?id=228257
+
+        Reviewed by Mark Lam.
+
+        I instrumented JSC and extracted executed RegExp evaluations from Speedometer2/jQuery-TodoMVC
+        to easily test RegExp performance.
+
+        * microbenchmarks/jquery-todomvc-regexp.js: Added.
+        (x00.test):
+
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/custom-get-set-proto-chain-put.js:
+        * stress/getter-setter-globalobject-in-ic-2.js: Added.
+
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        JSTests/stress/test-out-of-memory shouldn't assume that we always OOM
+        https://bugs.webkit.org/show_bug.cgi?id=228213
+
+        Reviewed by Mark Lam.
+
+        * stress/test-out-of-memory.js:
+
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Reduce iteration of microbenchmarks/memcpy-typed-loop.js
+        https://bugs.webkit.org/show_bug.cgi?id=228214
+
+        Reviewed by Saam Barati.
+
+        Observing frequent timeout (e.g. https://ews-build.webkit.org/#/builders/1/builds/44698).
+        We do not need to have such a large # of iterations.
+
+        * microbenchmarks/memcpy-typed-loop.js:
+
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        AirStackSlot's uint16_t byte size is too small
+        https://bugs.webkit.org/show_bug.cgi?id=228193
+        <rdar://80888059>
+
+        Reviewed by Mark Lam.
+
+        * stress/stack-slot-needs-to-use-more-than-uint16.js: Added.
+
+2021-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] invalidParameterInstanceofSourceAppender should care direct call of Symbol.hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=228075
+        rdar://80762879
+
+        Reviewed by Frédéric Wang.
+
+        * stress/symbol-hasinstance-error.js: Added.
+        (shouldThrow):
+        (let.a):
+
+2021-07-19  Mark Lam  <mark.lam@apple.com>
+
+        DFG's parseIntResult() should check for negative zero.
+        https://bugs.webkit.org/show_bug.cgi?id=228068
+        rdar://80788603
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/dfg-parseIntResult-should-check-for-negative-zero.js: Added.
+
+2021-07-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] InByStatus / InByVariant should visit CacheableIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=228088
+        rdar://80794604
+
+        Reviewed by Mark Lam.
+
+        * stress/in-by-variant-should-mark-cacheable-identifier.js: Added.
+        (foo):
+        (let.handler.has):
+
+2021-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Simplify sampling-profiler-regexp.js test
+        https://bugs.webkit.org/show_bug.cgi?id=228040
+
+        Reviewed by Saam Barati.
+
+        In this new test case, only thing we care is regexp appears on sampling-profiler regardless of whether the other functions are inlined / tail-called or not.
+        We change the sampling-profiler/samplingProfiler.js runTest to add a mode which searches specific signature in the call tree.
+
+        * stress/sampling-profiler-regexp.js:
+        (platformSupportsSamplingProfiler):
+        * stress/sampling-profiler/samplingProfiler.js:
+        (doesTreeHaveStackTrace):
+        (runTest):
+
+2021-07-16  Saam Barati  <sbarati@apple.com>
+
+        Grab the lock in FTL::Thunks::keyForSlowPathCallThunk
+        https://bugs.webkit.org/show_bug.cgi?id=227988
+        <rdar://problem/80627901>
+
+        Reviewed by Mark Lam.
+
+        * stress/thunks-hash-map-should-grab-lock.js: Added.
+
+2021-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] RegExp::dumpToStream must not ref Strings since it is called concurrently
+        https://bugs.webkit.org/show_bug.cgi?id=228031
+        rdar://80686425
+
+        Reviewed by Mark Lam.
+
+        * stress/regexp-dump-concurrently.js: Added.
+        (let.code):
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] SamplingProfiler should recognize RegExp execution
+        https://bugs.webkit.org/show_bug.cgi?id=201702
+
+        Reviewed by Saam Barati.
+
+        * stress/sampling-profiler-regexp.js: Added.
+        (platformSupportsSamplingProfiler.getText):
+        (platformSupportsSamplingProfiler.test):
+        (platformSupportsSamplingProfiler.baz):
+        (platformSupportsSamplingProfiler):
+        * stress/sampling-profiler/samplingProfiler.js: Extend samplingProfiler to show better error information when VERBOSE = true.
+        (doesTreeHaveStackTrace):
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Harden defaultTimeZone retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=227996
+
+        Reviewed by Mark Lam.
+
+        * complex.yaml:
+        * complex/intl-timezone-check.js: Added.
+        (shouldBe):
+
+2021-07-15  Mark Lam  <mark.lam@apple.com>
+
+        JITWorklist::waitUntilAllPlansForVMAreReady() should also be notified when plans are cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=228003
+        rdar://78314543
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/waitUntilAllPlansForVMAreReady-should-be-notified-of-cancelled-plans-too.js: Added.
+
 2021-07-14  Devin Rousso  <drousso@apple.com>
 
         Implement Array.prototype.findLast and Array.prototype.findLastIndex

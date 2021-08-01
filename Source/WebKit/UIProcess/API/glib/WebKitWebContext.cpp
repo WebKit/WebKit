@@ -39,6 +39,8 @@
 #include "WebKitGeolocationManagerPrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitInjectedBundleClient.h"
+#include "WebKitMemoryPressureSettings.h"
+#include "WebKitMemoryPressureSettingsPrivate.h"
 #include "WebKitNotificationProvider.h"
 #include "WebKitPrivate.h"
 #include "WebKitProtocolHandler.h"
@@ -124,6 +126,7 @@ enum {
     PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS,
 #endif
 #endif
+    PROP_MEMORY_PRESSURE_SETTINGS,
     N_PROPERTIES,
 };
 
@@ -241,6 +244,8 @@ struct _WebKitWebContextPrivate {
 
     HashSet<String> dnsPrefetchedHosts;
     PAL::HysteresisActivity dnsPrefetchHystereris;
+
+    WebKitMemoryPressureSettings* memoryPressureSettings;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -376,6 +381,11 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         break;
 #endif
 #endif
+    case PROP_MEMORY_PRESSURE_SETTINGS: {
+        gpointer settings = g_value_get_boxed(value);
+        context->priv->memoryPressureSettings = settings ? webkit_memory_pressure_settings_copy(static_cast<WebKitMemoryPressureSettings*>(settings)) : nullptr;
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -399,6 +409,11 @@ static void webkitWebContextConstructed(GObject* object)
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
 #endif
 #endif
+    if (priv->memoryPressureSettings) {
+        configuration.setMemoryPressureHandlerConfiguration(webkitMemoryPressureSettingsGetMemoryPressureHandlerConfiguration(priv->memoryPressureSettings));
+        // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
+        g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
+    }
 
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
@@ -542,6 +557,21 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 #endif
 #endif
+
+    /**
+     * WebKitWebContext:memory-pressure-settings:
+     *
+     * The #WebKitMemoryPressureSettings applied to the web processes created by this context.
+     *
+     * Since: 2.34
+     */
+    sObjProperties[PROP_MEMORY_PRESSURE_SETTINGS] =
+        g_param_spec_boxed(
+            "memory-pressure-settings",
+            _("Memory Pressure Settings"),
+            _("The WebKitMemoryPressureSettings applied to the web processes created by this context"),
+            WEBKIT_TYPE_MEMORY_PRESSURE_SETTINGS,
+            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 

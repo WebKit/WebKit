@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,111 +25,11 @@
 
 #pragma once
 
-#include <wtf/HashFunctions.h>
-#include <wtf/HashTraits.h>
-#include <wtf/text/TextStream.h>
-#include <wtf/text/WTFString.h>
+#include "MonotonicObjectIdentifier.h"
 
 namespace WebKit {
-
-template<typename T> class MonotonicObjectIdentifier {
-public:
-    MonotonicObjectIdentifier() = default;
-
-    MonotonicObjectIdentifier(WTF::HashTableDeletedValueType)
-        : m_identifier(hashTableDeletedValue())
-    { }
-
-    bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
-
-    template<typename Encoder> void encode(Encoder& encoder) const
-    {
-        ASSERT(isValidIdentifier(m_identifier));
-        encoder << m_identifier;
-    }
-    template<typename Decoder> static std::optional<MonotonicObjectIdentifier> decode(Decoder& decoder)
-    {
-        std::optional<uint64_t> identifier;
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-        ASSERT(isValidIdentifier(*identifier));
-        return MonotonicObjectIdentifier { *identifier };
-    }
-
-    bool operator==(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier == other.m_identifier;
-    }
-
-    bool operator>(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier > other.m_identifier;
-    }
-
-    bool operator>=(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier >= other.m_identifier;
-    }
-
-    bool operator<(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier < other.m_identifier;
-    }
-
-    bool operator<=(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier <= other.m_identifier;
-    }
-
-    bool operator!=(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier != other.m_identifier;
-    }
-
-    MonotonicObjectIdentifier& increment()
-    {
-        ++m_identifier;
-        return *this;
-    }
-
-    MonotonicObjectIdentifier next() const
-    {
-        return MonotonicObjectIdentifier(m_identifier + 1);
-    }
-
-    uint64_t toUInt64() const { return m_identifier; }
-    explicit operator bool() const { return m_identifier; }
-
-    String loggingString() const
-    {
-        return String::number(m_identifier);
-    }
-
-private:
-    template<typename U> friend MonotonicObjectIdentifier<U> makeMonotonicObjectIdentifier(uint64_t);
-    friend struct HashTraits<MonotonicObjectIdentifier>;
-    template<typename U> friend struct MonotonicObjectIdentifierHash;
-
-    static uint64_t hashTableDeletedValue() { return std::numeric_limits<uint64_t>::max(); }
-    static bool isValidIdentifier(uint64_t identifier) { return identifier != hashTableDeletedValue(); }
-
-    explicit MonotonicObjectIdentifier(uint64_t identifier)
-        : m_identifier(identifier)
-    {
-    }
-
-    uint64_t m_identifier { 0 };
-};
-
-template<typename T>
-TextStream& operator<<(TextStream& ts, const MonotonicObjectIdentifier<T>& identifier)
-{
-    ts << identifier.toUInt64();
-    return ts;
-}
 
 enum TransactionIDType { };
 using TransactionID = MonotonicObjectIdentifier<TransactionIDType>;
 
-}
+} // namespace WebKit

@@ -28,6 +28,7 @@
 #if USE(AVFOUNDATION)
 // FIXME: Should be USE(COREMEDIA), but this isn't currently defined on Windows.
 
+#include <CoreAudio/CoreAudioTypes.h>
 #include <pal/spi/cf/CoreMediaSPI.h>
 #include <wtf/SoftLinking.h>
 
@@ -49,6 +50,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferCopyDataBytes, OSStat
 #define CMBlockBufferCopyDataBytes softLink_CoreMedia_CMBlockBufferCopyDataBytes
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferGetDataLength, size_t, (CMBlockBufferRef theBuffer), (theBuffer))
 #define CMBlockBufferGetDataLength softLink_CoreMedia_CMBlockBufferGetDataLength
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferIsRangeContiguous, Boolean, (CMBlockBufferRef theBuffer, size_t offset, size_t length), (theBuffer, offset, length))
+#define CMBlockBufferIsRangeContiguous softLink_CoreMedia_CMBlockBufferIsRangeContiguous
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferReplaceDataBytes, OSStatus, (const void* sourceBytes, CMBlockBufferRef destinationBuffer, size_t offsetIntoDestination, size_t dataLength), (sourceBytes, destinationBuffer, offsetIntoDestination, dataLength))
 #define CMBlockBufferReplaceDataBytes softLink_CoreMedia_CMBlockBufferReplaceDataBytes
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc))
@@ -59,6 +62,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetDataBuffer, CMBlo
 #define CMSampleBufferGetDataBuffer softLink_CoreMedia_CMSampleBufferGetDataBuffer
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
 #define CMSampleBufferGetFormatDescription softLink_CoreMedia_CMSampleBufferGetFormatDescription
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetAudioStreamPacketDescriptions, OSStatus, (CMSampleBufferRef sbuf, size_t packetDescriptionsSize, AudioStreamPacketDescription* packetDescriptionsOut, size_t* packetDescriptionsSizeNeededOut), (sbuf, packetDescriptionsSize, packetDescriptionsOut, packetDescriptionsSizeNeededOut))
+#define CMSampleBufferGetAudioStreamPacketDescriptions softLink_CoreMedia_CMSampleBufferGetAudioStreamPacketDescriptions
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetSampleTimingInfo, OSStatus, (CMSampleBufferRef sbuf, CMItemIndex sampleIndex, CMSampleTimingInfo* timingInfoOut), (sbuf, sampleIndex, timingInfoOut))
 #define CMSampleBufferGetSampleTimingInfo softLink_CoreMedia_CMSampleBufferGetSampleTimingInfo
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferDataIsReady, Boolean, (CMSampleBufferRef sbuf), (sbuf))
@@ -168,6 +173,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTextVerticalLayout_RightToLeft,
 
 #if PLATFORM(COCOA)
 
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferCreateContiguous, OSStatus, (CFAllocatorRef structureAllocator, CMBlockBufferRef sourceBuffer, CFAllocatorRef blockAllocator, const CMBlockBufferCustomBlockSource* customBlockSource, size_t offsetToData, size_t dataLength, CMBlockBufferFlags flags, CMBlockBufferRef* blockBufferOut), (structureAllocator, sourceBuffer, blockAllocator, customBlockSource, offsetToData, dataLength, flags, blockBufferOut))
+#define CMBlockBufferCreateContiguous softLink_CoreMedia_CMBlockBufferCreateContiguous
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetMediaSubType, FourCharCode, (CMFormatDescriptionRef desc), (desc))
 #define CMFormatDescriptionGetMediaSubType softLink_CoreMedia_CMFormatDescriptionGetMediaSubType
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetMediaType, CMMediaType, (CMFormatDescriptionRef desc), (desc))

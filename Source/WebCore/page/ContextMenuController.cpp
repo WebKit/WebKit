@@ -172,6 +172,12 @@ void ContextMenuController::showContextMenu(Event& event)
     event.setDefaultHandled();
 }
 
+void ContextMenuController::didDismissContextMenu()
+{
+    if (m_menuProvider)
+        m_menuProvider->didDismissContextMenu();
+}
+
 static void openNewWindow(const URL& urlToLoad, Frame& frame, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
 {
     Page* oldPage = frame.page();

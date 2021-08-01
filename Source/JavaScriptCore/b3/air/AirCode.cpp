@@ -163,7 +163,7 @@ BasicBlock* Code::addBlock(double frequency)
     return result;
 }
 
-StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind)
+StackSlot* Code::addStackSlot(uint64_t byteSize, StackSlotKind kind)
 {
     StackSlot* result = m_stackSlots.addNew(byteSize, kind);
     if (m_stackIsAllocated) {

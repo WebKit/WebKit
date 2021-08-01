@@ -36,6 +36,7 @@
 #include <string>
 #include <vector>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 extern FILE* testResult;
 
@@ -326,6 +327,10 @@ public:
     void addChromeInputField();
     void removeChromeInputField();
     void focusWebView();
+
+    void setTextInChromeInputField(const String&);
+    void selectChromeInputField();
+    String getSelectedTextInChromeInputField();
 
     void setBackingScaleFactor(double);
 

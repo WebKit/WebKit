@@ -76,7 +76,7 @@ Testing 'Referrer-Policy: origin-when-cross-origin' - referrer origin: https://1
 PASS actualReferrer is "https://127.0.0.1:8443/"
 
 Testing 'Referrer-Policy: invalid' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://localhost:8443/ - isMultipartResponse? false
-PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=invalid&destinationOrigin=https://localhost:8443/&isTestingMultipart=0&id=24"
+PASS actualReferrer is "https://127.0.0.1:8443/"
 
 Testing 'Referrer-Policy: invalid' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://127.0.0.1:8443/ - isMultipartResponse? false
 PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=invalid&destinationOrigin=https://127.0.0.1:8443/&isTestingMultipart=0&id=25"
@@ -85,7 +85,7 @@ Testing 'Referrer-Policy: invalid' - referrer origin: https://127.0.0.1:8443/ - 
 PASS actualReferrer is ""
 
 Testing 'Referrer-Policy: ' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://localhost:8443/ - isMultipartResponse? false
-PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=&destinationOrigin=https://localhost:8443/&isTestingMultipart=0&id=27"
+PASS actualReferrer is "https://127.0.0.1:8443/"
 
 Testing 'Referrer-Policy: ' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://127.0.0.1:8443/ - isMultipartResponse? false
 PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=&destinationOrigin=https://127.0.0.1:8443/&isTestingMultipart=0&id=28"

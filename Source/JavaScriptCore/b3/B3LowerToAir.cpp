@@ -499,6 +499,31 @@ private:
         return true;
     }
 
+    bool isMergeableValue(Value* v, B3::Opcode b3Opcode, bool checkCanBeInternal)
+    { 
+        if (v->opcode() != b3Opcode)
+            return false;
+        if (checkCanBeInternal && !canBeInternal(v))
+            return false;
+        if (m_locked.contains(v->child(0)))
+            return false;
+        return true;
+    }
+
+    template<typename Int, typename = Value::IsLegalOffset<Int>>
+    Arg indexArg(Tmp base, Value* index, unsigned scale, Int offset)
+    {
+#if CPU(ARM64)
+        // Maybe, the ideal approach is to introduce a decorator (Index@EXT) to the Air operand 
+        // to provide an extension opportunity for the specific form under the Air opcode.
+        if (isMergeableValue(index, ZExt32, false))
+            return Arg::index(base, tmp(index->child(0)), scale, offset, MacroAssembler::Extend::ZExt32);
+        if (isMergeableValue(index, SExt32, false))
+            return Arg::index(base, tmp(index->child(0)), scale, offset, MacroAssembler::Extend::SExt32);
+#endif
+        return Arg::index(base, tmp(index), scale, offset);
+    }
+
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     std::optional<unsigned> scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
@@ -549,7 +574,7 @@ private:
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
                     return Arg();
-                return Arg::index(tmp(base), tmp(index->child(0)), *scale, offset);
+                return indexArg(tmp(base), index->child(0), *scale, offset);
             };
 
             if (Arg result = tryIndex(left, right))
@@ -561,7 +586,7 @@ private:
                 || !Arg::isValidIndexForm(1, offset, width))
                 return fallback();
             
-            return Arg::index(tmp(left), tmp(right), 1, offset);
+            return indexArg(tmp(left), right, 1, offset);
         }
 
         case Shl: {
@@ -574,7 +599,7 @@ private:
                 || !Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
-            return Arg::index(tmp(left), tmp(left), 1, offset);
+            return indexArg(tmp(left), left, 1, offset);
         }
 
         case FramePointer:
@@ -594,7 +619,7 @@ private:
             // perhaps more importantly, it would allow us to avoid a truncating
             // move. See: https://bugs.webkit.org/show_bug.cgi?id=163465
 
-            return Arg::index(Tmp(wasmAddress->pinnedGPR()), tmp(pointer), 1, offset);
+            return indexArg(Tmp(wasmAddress->pinnedGPR()), pointer, 1, offset);
         }
 
         default:
@@ -799,6 +824,23 @@ private:
         ASSERT(value->type() == m_value->type());
         append(relaxedMoveForType(m_value->type()), tmp(value), result);
         append(opcode, result);
+    }
+
+    Air::Opcode opcodeBasedOnShiftKind(B3::Opcode b3Opcode, 
+        Air::Opcode shl32, Air::Opcode shl64, 
+        Air::Opcode sshr32, Air::Opcode sshr64, 
+        Air::Opcode zshr32, Air::Opcode zshr64)
+    {
+        switch (b3Opcode) {
+        case Shl:
+            return tryOpcodeForType(shl32, shl64, m_value->type());
+        case SShr:
+            return tryOpcodeForType(sshr32, sshr64, m_value->type());
+        case ZShr:
+            return tryOpcodeForType(zshr32, zshr64, m_value->type());
+        default:
+            return Air::Oops;
+        }
     }
 
     // Call this method when doing two-operand lowering of a commutative operation. You have a choice of
@@ -2117,7 +2159,7 @@ private:
             ASSERT(!m_locked.contains(shl->child(0)));
             ASSERT(!m_locked.contains(other));
             
-            append(leaOpcode, Arg::index(tmp(other), tmp(shl->child(0)), *scale, offset), tmp(m_value));
+            append(leaOpcode, indexArg(tmp(other), shl->child(0), *scale, offset), tmp(m_value));
             commitInternal(innerAdd);
             commitInternal(shl);
             return true;
@@ -2134,7 +2176,7 @@ private:
             return false;
         ASSERT(!m_locked.contains(value->child(0)));
         ASSERT(!m_locked.contains(value->child(1)));
-        append(leaOpcode, Arg::index(tmp(value->child(0)), tmp(value->child(1)), 1, offset), tmp(m_value));
+        append(leaOpcode, indexArg(tmp(value->child(0)), value->child(1), 1, offset), tmp(m_value));
         commitInternal(innerAdd);
         return true;
     }
@@ -2490,15 +2532,6 @@ private:
     void lower()
     {
         using namespace Air;
-
-        auto isMergeableB3Opcode = [&] (Value* v, B3::Opcode b3Opcode) -> bool { 
-            if (v->opcode() != b3Opcode || !canBeInternal(v))
-                return false;
-            if (m_locked.contains(v->child(0)))
-                return false;
-            return true;
-        };
-
         switch (m_value->opcode()) {
         case B3::Nop: {
             // Yes, we will totally see Nop's because some phases will replaceWithNop() instead of
@@ -2599,10 +2632,10 @@ private:
                         if (airOpcode != MultiplyAdd64)
                             return Air::Oops;
                         // SMADDL: d = SExt32(n) * SExt32(m) + a
-                        if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                        if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
                             return MultiplyAddSignExtend32;
                         // UMADDL: d = ZExt32(n) * ZExt32(m) + a
-                        if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                        if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
                             return MultiplyAddZeroExtend32;
                         return Air::Oops;
                     };
@@ -2633,20 +2666,10 @@ private:
 
             // add-with-shift Pattern: n + (m ShiftType amount)
             auto tryAppendAddWithShift = [&] (Value* left, Value* right) -> bool {
-                auto tryOpcode = [&] (B3::Opcode opcode) -> Air::Opcode {
-                    switch (opcode) {
-                    case Shl:
-                        return tryOpcodeForType(AddLeftShift32, AddLeftShift64, m_value->type());
-                    case SShr:
-                        return tryOpcodeForType(AddRightShift32, AddRightShift64, m_value->type());
-                    case ZShr:
-                        return tryOpcodeForType(AddUnsignedRightShift32, AddUnsignedRightShift64, m_value->type());
-                    default:
-                        return Air::Oops;
-                    }
-                };
-
-                Air::Opcode opcode = tryOpcode(right->opcode());
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(), 
+                    AddLeftShift32, AddLeftShift64, 
+                    AddRightShift32, AddRightShift64, 
+                    AddUnsignedRightShift32, AddUnsignedRightShift64);
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
                     return false;
                 if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
@@ -2687,10 +2710,10 @@ private:
                     if (airOpcode != MultiplySub64)
                         return Air::Oops;
                     // SMSUBL: d = a - SExt32(n) * SExt32(m)
-                    if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                    if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
                         return MultiplySubSignExtend32;
                     // UMSUBL: d = a - ZExt32(n) * ZExt32(m)
-                    if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                    if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
                         return MultiplySubZeroExtend32;
                     return Air::Oops;
                 };
@@ -2718,20 +2741,10 @@ private:
 
             // sub-with-shift Pattern: n - (m ShiftType amount)
             auto tryAppendSubAndShift = [&] () -> bool {
-                auto tryOpcode = [&] (B3::Opcode opcode) -> Air::Opcode {
-                    switch (opcode) {
-                    case Shl:
-                        return tryOpcodeForType(SubLeftShift32, SubLeftShift64, m_value->type());
-                    case SShr:
-                        return tryOpcodeForType(SubRightShift32, SubRightShift64, m_value->type());
-                    case ZShr:
-                        return tryOpcodeForType(SubUnsignedRightShift32, SubUnsignedRightShift64, m_value->type());
-                    default:
-                        return Air::Oops;
-                    }
-                };
-
-                Air::Opcode opcode = tryOpcode(right->opcode());
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(), 
+                    SubLeftShift32, SubLeftShift64, 
+                    SubRightShift32, SubRightShift64, 
+                    SubUnsignedRightShift32, SubUnsignedRightShift64);
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
                     return false;
                 if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
@@ -2766,10 +2779,10 @@ private:
                     if (airOpcode != MultiplyNeg64)
                         return Air::Oops;
                     // SMNEGL: d = -(SExt32(n) * SExt32(m))
-                    if (isMergeableB3Opcode(multiplyLeft, SExt32) && isMergeableB3Opcode(multiplyRight, SExt32)) 
+                    if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
                         return MultiplyNegSignExtend32;
                     // UMNEGL: d = -(ZExt32(n) * ZExt32(m))
-                    if (isMergeableB3Opcode(multiplyLeft, ZExt32) && isMergeableB3Opcode(multiplyRight, ZExt32)) 
+                    if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
                         return MultiplyNegZeroExtend32;
                     return Air::Oops;
                 };
@@ -3107,27 +3120,72 @@ private:
         }
 
         case BitXor: {
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
+
             // FIXME: If canBeInternal(child), we should generate this using the comparison path.
             // https://bugs.webkit.org/show_bug.cgi?id=152367
             
-            if (m_value->child(1)->isInt(-1)) {
-                appendUnOp<Not32, Not64>(m_value->child(0));
+            if (right->isInt(-1)) {
+                appendUnOp<Not32, Not64>(left);
                 return;
             }
             
             // This pattern is super useful on both x86 and ARM64, since the inversion of the CAS result
             // can be done with zero cost on x86 (just flip the set from E to NE) and it's a progression
             // on ARM64 (since STX returns 0 on success, so ordinarily we have to flip it).
-            if (m_value->child(1)->isInt(1)
-                && m_value->child(0)->opcode() == AtomicWeakCAS
-                && canBeInternal(m_value->child(0))) {
-                commitInternal(m_value->child(0));
-                appendCAS(m_value->child(0), true);
+            if (right->isInt(1) && left->opcode() == AtomicWeakCAS && canBeInternal(left)) {
+                commitInternal(left);
+                appendCAS(left, true);
                 return;
             }
-            
-            appendBinOp<Xor32, Xor64, XorDouble, XorFloat, Commutative>(
-                m_value->child(0), m_value->child(1));
+
+            // EON Pattern: d = n ^ (m ^ -1)
+            auto tryAppendEON = [&] (Value* left, Value* right) -> bool {
+                if (right->opcode() != BitXor)
+                    return false;
+                Value* nValue = left;
+                Value* minusOne = right->child(1);
+                if (m_locked.contains(nValue) || !minusOne->hasInt() || !minusOne->isInt(-1))
+                    return false;
+
+                // eon-with-shift Pattern: d = n ^ ((m ShiftType amount) ^ -1)
+                auto tryAppendEONWithShift = [&] (Value* shiftValue) -> bool {
+                    Air::Opcode opcode = opcodeBasedOnShiftKind(shiftValue->opcode(), 
+                        XorNotLeftShift32, XorNotLeftShift64, 
+                        XorNotRightShift32, XorNotRightShift64, 
+                        XorNotUnsignedRightShift32, XorNotUnsignedRightShift64);
+                    if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                        return false;
+                    Value* mValue = shiftValue->child(0);
+                    Value* amountValue = shiftValue->child(1);
+                    if (!canBeInternal(shiftValue) || m_locked.contains(mValue) || !imm(amountValue) || amountValue->asInt() < 0)
+                        return false;
+                    uint64_t amount = amountValue->asInt();
+                    uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+                    if (amount >= datasize)
+                        return false;
+
+                    append(opcode, tmp(nValue), tmp(mValue), imm(amountValue), tmp(m_value));
+                    commitInternal(shiftValue);
+                    return true;
+                };
+
+                if (tryAppendEONWithShift(right->child(0)))
+                    return true;
+
+                Value* mValue = right->child(0);
+                Air::Opcode opcode = opcodeForType(XorNot32, XorNot64, m_value->type());
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp) || m_locked.contains(mValue))
+                    return false;
+                append(opcode, tmp(nValue), tmp(mValue), tmp(m_value));
+                return true;
+            };
+
+            if (tryAppendEON(left, right) || tryAppendEON(right, left))
+                return;
+
+            appendBinOp<Xor32, Xor64, XorDouble, XorFloat, Commutative>(left, right);
             return;
         }
             

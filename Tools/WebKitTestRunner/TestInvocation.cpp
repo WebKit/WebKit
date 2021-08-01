@@ -357,7 +357,25 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         postPageMessage("CallRemoveChromeInputFieldCallback");
         return;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetTextInChromeInputField")) {
+        TestController::singleton().mainWebView()->setTextInChromeInputField(toWTFString(stringValue(messageBody)));
+        postPageMessage("CallSetTextInChromeInputFieldCallback");
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SelectChromeInputField")) {
+        TestController::singleton().mainWebView()->selectChromeInputField();
+        postPageMessage("CallSelectChromeInputFieldCallback");
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetSelectedTextInChromeInputField")) {
+        auto selectedText = TestController::singleton().mainWebView()->getSelectedTextInChromeInputField();
+        postPageMessage("CallGetSelectedTextInChromeInputFieldCallback", toWK(selectedText));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
         TestController::singleton().mainWebView()->makeWebViewFirstResponder();
         postPageMessage("CallFocusWebViewCallback");

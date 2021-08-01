@@ -863,6 +863,26 @@ const String& nullString()
     return nullString;
 }
 
+String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
+{
+    // Fast path for the case where there are no unpaired surrogates.
+    if (!hasUnpairedSurrogate(string))
+        return WTFMove(string);
+
+    // Slow path: https://infra.spec.whatwg.org/#javascript-string-convert
+    // Replaces unpaired surrogates with the replacement character.
+    StringBuilder result;
+    result.reserveCapacity(string.length());
+    StringView view { string };
+    for (auto codePoint : view.codePoints()) {
+        if (U_IS_SURROGATE(codePoint))
+            result.append(replacementCharacter);
+        else
+            result.appendCharacter(codePoint);
+    }
+    return result.toString();
+}
+
 } // namespace WTF
 
 #ifndef NDEBUG

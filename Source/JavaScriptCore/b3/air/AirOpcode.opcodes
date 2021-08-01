@@ -859,6 +859,30 @@ arm64: OrNot32 U:G:32, U:G:32, ZD:G:32
 arm64: OrNot64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
 
+arm64: XorNot32 U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Tmp
+
+arm64: XorNot64 U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Tmp
+
+arm64: XorNotLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorNotRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorNotUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorNotLeftShift64 U:G:64, U:G:64, U:G:32, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorNotRightShift64 U:G:64, U:G:64, U:G:32, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorNotUnsignedRightShift64 U:G:64, U:G:64, U:G:32, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
 arm64: ExtractInsertBitfieldAtLowEnd32 U:G:32, U:G:32, U:G:32, UZD:G:32
     Tmp, Imm, Imm, Tmp
 

@@ -972,6 +972,12 @@ void PageClientImpl::didRestoreScrollPosition()
     m_impl->didRestoreScrollPosition();
 }
 
+void PageClientImpl::requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
+{
+    // FIXME: Add additional logic to avoid Note Pip.
+    m_impl->scrollToRect(targetRect, origin);
+}
+
 bool PageClientImpl::windowIsFrontWindowUnderMouse(const NativeWebMouseEvent& event)
 {
     return m_impl->windowIsFrontWindowUnderMouse(event.nativeEvent());

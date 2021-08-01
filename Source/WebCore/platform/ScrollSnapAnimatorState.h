@@ -82,7 +82,7 @@ public:
     void transitionToDestinationReachedState();
 
 private:
-    std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float initialDelta) const;
+    std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, FloatPoint predictedOffset, float pageScale, float initialDelta) const;
     void teardownAnimationForState(ScrollSnapState);
     void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 

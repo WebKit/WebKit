@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -119,8 +119,8 @@ public:
         return m_state == JITCode || m_state == ByteCode;
     }
 
-    bool hasCodeFor(Yarr::YarrCharSize);
-    bool hasMatchOnlyCodeFor(Yarr::YarrCharSize);
+    bool hasCodeFor(Yarr::CharSize);
+    bool hasMatchOnlyCodeFor(Yarr::CharSize);
 
     void deleteCode();
 
@@ -136,6 +136,10 @@ public:
     DECLARE_INFO;
 
     RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
+
+    String escapedPattern() const;
+
+    String toSourceString() const;
 
 private:
     friend class RegExpCache;
@@ -153,11 +157,11 @@ private:
 
     void byteCodeCompileIfNecessary(VM*);
 
-    void compile(VM*, Yarr::YarrCharSize);
-    void compileIfNecessary(VM&, Yarr::YarrCharSize);
+    void compile(VM*, Yarr::CharSize);
+    void compileIfNecessary(VM&, Yarr::CharSize);
 
-    void compileMatchOnly(VM*, Yarr::YarrCharSize);
-    void compileIfNecessaryMatchOnly(VM&, Yarr::YarrCharSize);
+    void compileMatchOnly(VM*, Yarr::CharSize);
+    void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize);
 
 #if ENABLE(YARR_JIT_DEBUG)
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);

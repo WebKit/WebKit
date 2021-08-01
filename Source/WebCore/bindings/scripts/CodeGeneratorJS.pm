@@ -853,7 +853,7 @@ sub GenerateNamedGetterLambda
 {
     my ($outputArray, $interface, $className, $namedGetterOperation, $namedGetterFunctionName, $IDLType) = @_;
     
-    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "        ");
+    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "", "        ");
     push(@arguments, "propertyNameToAtomString(propertyName)");
 
     push(@$outputArray, "    auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<${IDLType}, ${className}>([] (${className}& thisObject, PropertyName propertyName) -> decltype(auto) {\n");
@@ -5350,6 +5350,14 @@ sub GenerateAttributeGetterDefinition
     push(@$outputArray, "#endif\n\n") if $conditional;
 }
 
+sub AttributeSetterNeedsPropertyName
+{
+    my $attribute = shift;
+
+    return $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName")
+        || $attribute->extendedAttributes->{Replaceable};
+}
+
 sub GenerateAttributeSetterBodyDefinition
 {
     my ($outputArray, $interface, $className, $attribute, $attributeSetterBodyName, $conditional) = @_;
@@ -5358,7 +5366,7 @@ sub GenerateAttributeSetterBodyDefinition
     push(@signatureArguments, "JSGlobalObject& lexicalGlobalObject");
     push(@signatureArguments, "${className}& thisObject") if !$attribute->isStatic;
     push(@signatureArguments, "JSValue value");
-    push(@signatureArguments, "PropertyName propertyName") if $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName");
+    push(@signatureArguments, "PropertyName propertyName") if AttributeSetterNeedsPropertyName($attribute);
 
     my $needSecurityCheck = $interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter};
     my $hasCustomSetter = HasCustomSetter($attribute);
@@ -5410,13 +5418,14 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isReplaceable) {
-        my $id = $attribute->name;
-        push(@$outputArray, "    // Shadowing a built-in property.\n");
-        if (AttributeShouldBeOnInstance($interface, $attribute)) {
-            push(@$outputArray, "    return replaceStaticPropertySlot(vm, &thisObject, Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"${id}\"), strlen(\"${id}\")), value);\n");
+        if ($needThrowScope) {
+            push(@$outputArray, "    throwScope.release();\n");
         } else {
-            push(@$outputArray, "    return thisObject.putDirect(vm, Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"${id}\"), strlen(\"${id}\")), value);\n");
+            push(@$outputArray, "    UNUSED_PARAM(vm);\n");
         }
+        push(@$outputArray, "    bool shouldThrow = true;\n");
+        push(@$outputArray, "    thisObject.createDataProperty(&lexicalGlobalObject, propertyName, value, shouldThrow);\n");
+        push(@$outputArray, "    return true;\n");
     } elsif ($attribute->extendedAttributes->{PutForwards}) {
         assert("[PutForwards] is not compatible with static attributes") if $attribute->isStatic;
         
@@ -5496,7 +5505,7 @@ sub GenerateAttributeSetterTrampolineDefinition
     
     my $callAttributeSetterName = "set";
     $callAttributeSetterName .= "Static" if $attribute->isStatic;
-    $callAttributeSetterName .= "PassingPropertyName" if $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName");
+    $callAttributeSetterName .= "PassingPropertyName" if AttributeSetterNeedsPropertyName($attribute);
 
     my @templateParameters = ();
     push(@templateParameters, $attributeSetterBodyName);
@@ -5888,10 +5897,9 @@ sub GenerateGetCallData
 
 sub GenerateCallWithUsingReferences
 {
-    my ($callWith, $outputArray, $returnValue, $thisReference, $indent) = @_;
+    my ($callWith, $outputArray, $returnValue, $thisReference, $callFrameReference, $indent) = @_;
 
-    my $callFramePointer = "callFrame";
-    my $callFrameReference = "*callFrame";
+    my $callFramePointer = $callFrameReference && "&$callFrameReference";
     my $globalObject = "jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)";
 
     return GenerateCallWith($callWith, $outputArray, $returnValue, $returnValue, $callFramePointer, $callFrameReference, $globalObject, $globalObject, $thisReference, $indent);
@@ -5971,15 +5979,15 @@ sub GenerateCallWith
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "activeDOMWindow(*$globalObject)");
     }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentWindow")) {
+        AddToImplIncludes("DOMWindow.h");
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@callWithArgs, "incumbentDOMWindow(*$globalObject" . ($callFrameReference ? ", " . $callFrameReference : "") . ")");
+    }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow")) {
         AddToImplIncludes("DOMWindow.h");
         AddToImplIncludes("JSDOMWindowBase.h");
         push(@callWithArgs, "firstDOMWindow(*$globalObject)");
-    }
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentWindow")) {
-        AddToImplIncludes("DOMWindow.h");
-        AddToImplIncludes("JSDOMWindowBase.h");
-        push(@callWithArgs, "incumbentDOMWindow(*$globalObject, $callFrameReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "RuntimeFlags")) {
         push(@callWithArgs, "${globalObject}->runtimeFlags()");

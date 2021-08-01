@@ -184,12 +184,10 @@ messages -> WebPageProxy {
     PluginScaleFactorDidChange(double zoomFactor)
     PluginZoomFactorDidChange(double zoomFactor)
 
-#if USE(ATK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     # Support for connecting the Accessibility worlds of the UI and the Web processes
     BindAccessibilityTree(String plugID)
-#endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
     SetInputMethodState(std::optional<WebKit::InputMethodState> state);
 #endif
 
@@ -415,6 +413,8 @@ messages -> WebPageProxy {
     ShowDataDetectorsUIForPositionInformation(struct WebKit::InteractionInformationAtPosition information)
 #endif
 
+    SetNeedsSiteSpecificViewportQuirks(bool value)
+
     DidChangeInspectorFrontendCount(uint64_t count)
 
     CreateInspectorTarget(String targetId, enum:uint8_t Inspector::InspectorTargetType type)
@@ -510,6 +510,8 @@ messages -> WebPageProxy {
 #endif
 
     DidRestoreScrollPosition()
+    
+    RequestScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
     GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, WebKit::CallbackID callbackID)
 

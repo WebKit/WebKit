@@ -76,6 +76,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/MessageNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NPObjectMessageReceiverMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkBroadcastChannelRegistryMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkBroadcastChannelRegistryMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkBroadcastChannelRegistryMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkConnectionToWebProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkConnectionToWebProcessMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/NetworkConnectionToWebProcessMessagesReplies.h
@@ -387,6 +390,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyMessageRec
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebAutomationSessionProxyScriptSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebBroadcastChannelRegistryMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebBroadcastChannelRegistryMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebBroadcastChannelRegistryMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebCacheStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebConnectionMessages.h

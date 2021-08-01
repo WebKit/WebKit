@@ -241,6 +241,7 @@ enum class ScrollbarButtonPressAction : uint8_t {
 enum class SelectionRevealMode : uint8_t  {
     Reveal,
     RevealUpToMainFrame, // Scroll overflow and iframes, but not the main frame.
+    DelegateMainFrameScroll, // Similar to RevealUpToMainFrame, but make sure to manually call the main frame scroll.
     DoNotReveal
 };
 

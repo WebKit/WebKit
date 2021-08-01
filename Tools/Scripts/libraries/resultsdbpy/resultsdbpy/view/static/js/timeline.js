@@ -204,7 +204,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
         },
         onScaleLeave: (event, canvas) => {
             const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
-            if (!ToolTip.isIn({x: event.x, y: event.y - scrollDelta}))
+            if (!ToolTip.isIn({x: event.pageX, y: event.pageY - scrollDelta}))
                 ToolTip.unset();
         },
         getLabelFunc: (commit) => {return commit && commit.label ? commit.label() : '?';},

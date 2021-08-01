@@ -1,3 +1,51 @@
+2021-07-26  Qiaosong Zhou  <qiaosong_zhou@apple.com>
+
+        FormDataEvent added. 
+        https://bugs.webkit.org/show_bug.cgi?id=227718
+
+        Reviewed by Chris Dumez.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.EventType.displayName):
+
+2021-07-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION(?): alpha slider doesn't match alpha input for `transparent` in color picker
+        https://bugs.webkit.org/show_bug.cgi?id=227941
+        <rdar://problem/80557438>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Slider.js:
+        (WI.Slider.prototype.set value):
+        When the initial value was set to 0, `set value` was exiting early when the passed value was 0.
+
+2021-07-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Elements: selecting a sibling node in the breadcrumb navigation doesn't do anything
+        https://bugs.webkit.org/show_bug.cgi?id=227893
+
+        Reviewed by Devin Rousso.
+
+        The `WI.HierarchicalPathComponent.Event.Clicked` event is only fired when there are no sibling path components
+        to select, therefor we must also listen for the `WI.HierarchicalPathComponent.Event.SiblingWasSelected` event to
+        be able to then reveal and highlight the correct DOM node in the tree.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype.get selectionPathComponents):
+        (WI.DOMTreeContentView.prototype._handlePathComponentSelected):
+        Drive-by to match our style of `_handle*` event handler naming.
+
+2021-07-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 15.0)
+        https://bugs.webkit.org/show_bug.cgi?id=228079
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Protocol/Legacy/15.0/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-15.0.json: Added.
+
 2021-07-15  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Regression (r278607) Jump to CSS variable declaration from Computed panel not working

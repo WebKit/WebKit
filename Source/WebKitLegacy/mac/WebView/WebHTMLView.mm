@@ -139,6 +139,7 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
@@ -6698,7 +6699,28 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // then we also execute it immediately, as there will be no other chance.
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
     if (event && shouldSaveCommand && !isFromInputMethod) {
-        event->keypressCommands().append(WebCore::KeypressCommand("insertText:", text));
+        auto isFunctionKeyCommandWithMatchingMenuItem = ([&] {
+#if PLATFORM(MAC)
+            auto menu = NSApp.mainMenu;
+            auto* platformKeyEvent = event->underlyingPlatformEvent();
+            if (!platformKeyEvent)
+                return NO;
+
+            NSEvent *nsEvent = platformKeyEvent->macEvent();
+            if (!(nsEvent.modifierFlags & NSEventModifierFlagFunction))
+                return NO;
+
+            if (![menu respondsToSelector:@selector(_containsItemMatchingEvent:includingDisabledItems:)])
+                return NO;
+
+            return [menu _containsItemMatchingEvent:nsEvent includingDisabledItems:YES];
+#else
+            return NO;
+#endif
+        })();
+
+        if (!isFunctionKeyCommandWithMatchingMenuItem)
+            event->keypressCommands().append(WebCore::KeypressCommand("insertText:", text));
         return;
     }
 

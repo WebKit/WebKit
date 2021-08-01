@@ -887,6 +887,7 @@ dom/BeforeLoadEvent.cpp
 dom/BeforeTextInsertedEvent.cpp
 dom/BeforeUnloadEvent.cpp
 dom/BoundaryPoint.cpp
+dom/BroadcastChannel.cpp
 dom/CDATASection.cpp
 dom/CharacterData.cpp
 dom/ChildListMutationScope.cpp
@@ -949,6 +950,7 @@ dom/EventTargetConcrete.cpp
 dom/ExceptionData.cpp
 dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp
+dom/FormDataEvent.cpp
 dom/FullscreenManager.cpp
 dom/GCReachableRef.cpp
 dom/HashChangeEvent.cpp
@@ -1297,6 +1299,7 @@ html/RubyElement.cpp
 html/RubyTextElement.cpp
 html/SearchInputType.cpp
 html/StepRange.cpp
+html/SubmitEvent.cpp
 html/SubmitInputType.cpp
 html/TelephoneInputType.cpp
 html/TextDocument.cpp
@@ -2853,6 +2856,7 @@ JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp
 JSBlobPropertyBag.cpp
+JSBroadcastChannel.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSSAnimation.cpp
@@ -3067,6 +3071,7 @@ JSFocusEvent.cpp
 JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
+JSFormDataEvent.cpp
 JSGPUBindGroupLayoutBinding.cpp
 JSGPUBindGroupLayoutDescriptor.cpp
 JSGPUBlendDescriptor.cpp
@@ -3205,6 +3210,7 @@ JSIDBObjectStore.cpp
 JSIDBOpenDBRequest.cpp
 JSIDBRequest.cpp
 JSIDBTransaction.cpp
+JSIDBTransactionDurability.cpp
 JSIDBTransactionMode.cpp
 JSIDBVersionChangeEvent.cpp
 JSIdleDeadline.cpp
@@ -3671,6 +3677,7 @@ JSStylePropertyMap.cpp
 JSStylePropertyMapReadOnly.cpp
 JSStyleSheet.cpp
 JSStyleSheetList.cpp
+JSSubmitEvent.cpp
 JSSubtleCrypto.cpp
 JSText.cpp
 JSTextDecoder.cpp

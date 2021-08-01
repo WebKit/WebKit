@@ -45,6 +45,7 @@ void EditorState::encode(IPC::Encoder& encoder) const
     encoder << isInPasswordField;
     encoder << isInPlugin;
     encoder << hasComposition;
+    encoder << triggeredByAccessibilitySelectionChange;
     encoder << isMissingPostLayoutData;
     if (!isMissingPostLayoutData)
         m_postLayoutData.encode(encoder);
@@ -83,6 +84,9 @@ bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
         return false;
 
     if (!decoder.decode(result.hasComposition))
+        return false;
+
+    if (!decoder.decode(result.triggeredByAccessibilitySelectionChange))
         return false;
 
     if (!decoder.decode(result.isMissingPostLayoutData))
@@ -281,6 +285,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
         ts.dumpProperty("isInPlugin", editorState.isInPlugin);
     if (editorState.hasComposition)
         ts.dumpProperty("hasComposition", editorState.hasComposition);
+    if (editorState.triggeredByAccessibilitySelectionChange)
+        ts.dumpProperty("triggeredByAccessibilitySelectionChange", editorState.triggeredByAccessibilitySelectionChange);
     if (editorState.isMissingPostLayoutData)
         ts.dumpProperty("isMissingPostLayoutData", editorState.isMissingPostLayoutData);
 

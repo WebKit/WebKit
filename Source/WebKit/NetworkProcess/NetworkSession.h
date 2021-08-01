@@ -58,6 +58,7 @@ class NetworkDataTask;
 class NetworkLoadScheduler;
 class NetworkProcess;
 class NetworkResourceLoader;
+class NetworkBroadcastChannelRegistry;
 class NetworkSocketChannel;
 class PrivateClickMeasurementManager;
 class WebPageNetworkParameters;
@@ -148,6 +149,7 @@ public:
     virtual void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
 
     WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }
+    NetworkBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
     bool allowsServerPreconnect() const { return m_allowsServerPreconnect; }
@@ -213,6 +215,7 @@ protected:
     RefPtr<NetworkCache::Cache> m_cache;
     std::unique_ptr<NetworkLoadScheduler> m_networkLoadScheduler;
     WebCore::BlobRegistryImpl m_blobRegistry;
+    UniqueRef<NetworkBroadcastChannelRegistry> m_broadcastChannelRegistry;
     unsigned m_testSpeedMultiplier { 1 };
     bool m_allowsServerPreconnect { true };
 

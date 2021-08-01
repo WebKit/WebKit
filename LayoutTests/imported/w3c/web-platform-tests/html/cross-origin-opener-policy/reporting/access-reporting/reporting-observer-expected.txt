@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: ReportingObserver
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Opener COOP Test timed out
+NOTRUN Openee COOP
+NOTRUN Access from same-origin iframe
+NOTRUN Access from cross-site iframe
+

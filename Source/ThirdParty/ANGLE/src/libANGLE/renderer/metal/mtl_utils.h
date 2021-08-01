@@ -105,7 +105,6 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(id<MTLDevice> metalDevice,
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromBinary(id<MTLDevice> metalDevice,
                                                           const uint8_t *binarySource,
                                                           size_t binarySourceLen,
-                                                          NSDictionary<NSString *, NSObject *> * substitutionDictionary,
                                                           AutoObjCPtr<NSError *> *error);
 
 bool SupportsIOSGPUFamily(id<MTLDevice> device, uint8_t iOSFamily);

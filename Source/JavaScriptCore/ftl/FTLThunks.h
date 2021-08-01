@@ -87,6 +87,7 @@ public:
 
     SlowPathCallKey keyForSlowPathCallThunk(MacroAssemblerCodePtr<JITThunkPtrTag> ptr)
     {
+        Locker locker { m_lock };
         return keyForThunk(m_slowPathCallThunks, ptr);
     }
     

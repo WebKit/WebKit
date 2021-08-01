@@ -83,7 +83,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #endif
     encoder << shouldNotUseIBeamInEditableContent;
     encoder << isImageOverlayText;
-    encoder << isHorizontalWritingMode;
+    encoder << isVerticalWritingMode;
     encoder << elementContext;
     encoder << imageElementContext;
 }
@@ -214,7 +214,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.isImageOverlayText))
         return false;
 
-    if (!decoder.decode(result.isHorizontalWritingMode))
+    if (!decoder.decode(result.isVerticalWritingMode))
         return false;
 
     if (!decoder.decode(result.elementContext))

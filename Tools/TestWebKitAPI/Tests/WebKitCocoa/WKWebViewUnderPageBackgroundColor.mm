@@ -276,6 +276,8 @@ TEST(WKWebViewUnderPageBackgroundColor, KVO)
 
 #if PLATFORM(IOS_FAMILY)
 
+constexpr CGFloat whiteColorComponents[4] = { 1, 1, 1, 1 };
+
 // There's no API/SPI to get the background color of the scroll area on macOS.
 
 TEST(WKWebViewUnderPageBackgroundColor, MatchesScrollView)
@@ -283,6 +285,7 @@ TEST(WKWebViewUnderPageBackgroundColor, MatchesScrollView)
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
     auto blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
+    auto whiteColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), whiteColorComponents));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     EXPECT_TRUE(CGColorEqualToColor([webView underPageBackgroundColor].CGColor, defaultBackgroundColor().get()));
@@ -291,11 +294,19 @@ TEST(WKWebViewUnderPageBackgroundColor, MatchesScrollView)
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style> body { background-color: red; } </style>"];
     EXPECT_TRUE(CGColorEqualToColor([webView underPageBackgroundColor].CGColor, redColor.get()));
     EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, redColor.get()));
+    EXPECT_EQ([webView scrollView].indicatorStyle, UIScrollViewIndicatorStyleWhite);
 
     [webView setUnderPageBackgroundColor:[CocoaColor colorWithCGColor:blueColor.get()]];
     [webView waitForNextPresentationUpdate];
     EXPECT_TRUE(CGColorEqualToColor([webView underPageBackgroundColor].CGColor, blueColor.get()));
     EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, blueColor.get()));
+    EXPECT_EQ([webView scrollView].indicatorStyle, UIScrollViewIndicatorStyleWhite);
+
+    [webView setUnderPageBackgroundColor:[CocoaColor colorWithCGColor:whiteColor.get()]];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(CGColorEqualToColor([webView underPageBackgroundColor].CGColor, whiteColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webView scrollView].backgroundColor.CGColor, whiteColor.get()));
+    EXPECT_EQ([webView scrollView].indicatorStyle, UIScrollViewIndicatorStyleWhite);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -185,6 +185,7 @@ IGNORE_WARNINGS_END
 - (void)dismissActiveMenu
 {
 #if PLATFORM(IOS_FAMILY)
+    [self _dismissAllContextMenuInteractions];
     [self resignFirstResponder];
 #else
     auto menu = retainPtr(self._activeMenu);
@@ -253,6 +254,11 @@ IGNORE_WARNINGS_END
 
     self.showingContextMenu = NO;
 
+    [self _dismissAllContextMenuInteractions];
+}
+
+- (void)_dismissAllContextMenuInteractions
+{
 #if PLATFORM(IOS)
     for (id <UIInteraction> interaction in self.contentView.interactions) {
         if ([interaction isKindOfClass:UIContextMenuInteraction.class])

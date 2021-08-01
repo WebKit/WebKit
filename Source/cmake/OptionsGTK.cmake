@@ -49,16 +49,10 @@ if ("${PC_HARFBUZZ_VERSION}" VERSION_LESS "1.3.3")
     add_definitions(-DENABLE_OPENTYPE_MATH=1)
 endif ()
 
-# Set the default value for ENABLE_GLES2 and USE_OPENGL_OR_ES.
-set(ENABLE_GLES2_DEFAULT OFF)
-set(USE_OPENGL_OR_ES_DEFAULT OFF)
-
 if (OPENGLES2_FOUND AND (NOT OPENGL_FOUND OR WTF_CPU_ARM OR WTF_CPU_ARM64))
     set(ENABLE_GLES2_DEFAULT ON)
-endif ()
-
-if (OPENGL_FOUND OR OPENGLES2_FOUND)
-    set(USE_OPENGL_OR_ES_DEFAULT ON)
+else ()
+    set(ENABLE_GLES2_DEFAULT OFF)
 endif ()
 
 # Public options specific to the GTK port. Do not add any options here unless
@@ -76,7 +70,7 @@ WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color managem
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notification implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_OPENGL_OR_ES "Whether to use OpenGL or ES." PUBLIC ${USE_OPENGL_OR_ES_DEFAULT})
+WEBKIT_OPTION_DEFINE(USE_OPENGL_OR_ES "Whether to use OpenGL or ES." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_SYSTEMD "Whether to enable journald logging" PUBLIC ON)
@@ -271,14 +265,12 @@ if (USER_AGENT_BRANDING)
     add_definitions(-DUSER_AGENT_BRANDING="${USER_AGENT_BRANDING}")
 endif ()
 
-if (EXISTS "${TOOLS_DIR}/glib/svn-revision")
-    execute_process(COMMAND ${TOOLS_DIR}/glib/svn-revision ERROR_QUIET OUTPUT_VARIABLE SVN_REVISION OUTPUT_STRIP_TRAILING_WHITESPACE)
-else ()
-    set(SVN_REVISION "tarball")
+if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
+    set(BUILD_REVISION "tarball")
 endif ()
-add_definitions(-DSVN_REVISION="${SVN_REVISION}")
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
+SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 
 # GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
 if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")
@@ -328,7 +320,7 @@ if (ENABLE_WEB_CRYPTO)
     if (NOT LIBTASN1_FOUND)
         message(FATAL_ERROR "libtasn1 is required to enable Web Crypto API support.")
     endif ()
-    if (LIBGCRYPT_VERSION VERSION_LESS 1.7.0)
+    if (LibGcrypt_VERSION VERSION_LESS 1.7.0)
         message(FATAL_ERROR "libgcrypt 1.7.0 is required to enable Web Crypto API support.")
     endif ()
 endif ()

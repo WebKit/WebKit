@@ -425,6 +425,11 @@
             (deny (with telemetry)
                 iokit-async-external-method
                 iokit-external-trap)
+            (allow iokit-async-external-method
+                    (iokit-method-number
+                        40
+                    )
+            )
             (deny (with telemetry) (with message "IOSurfaceRootUserClient")
                 iokit-external-method)
             (allow iokit-external-method
@@ -451,6 +456,9 @@
                     35
                     36
                     38
+                    39
+                    40
+                    41
                 )
             )
         )
@@ -1520,6 +1528,9 @@
 )
 
 (when (defined? 'syscall-mach)
+    (deny syscall-mach
+        (machtrap-number MSC_mach_wait_until)
+    )
     (deny syscall-mach (with telemetry))
     (allow syscall-mach
         (machtrap-number MSC__kernelrpc_mach_port_allocate_trap)

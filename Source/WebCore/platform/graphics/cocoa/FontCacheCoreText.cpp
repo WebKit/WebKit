@@ -1110,8 +1110,9 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
     if (equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")
         || equalLettersIgnoringASCIICase(family, ".sf ns mono")
         || equalLettersIgnoringASCIICase(family, ".sf ui mono")
+        || equalLettersIgnoringASCIICase(family, ".sf arabic")
         || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded")) {
-        // If you want to use these fonts, use ui-serif, ui-monospace, and ui-rounded.
+        // If you want to use these fonts, use system-ui, ui-serif, ui-monospace, or ui-rounded.
         return { nullptr };
     }
 

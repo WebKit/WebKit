@@ -66,7 +66,7 @@ TEST(WebKit, HTTPReferer)
             });
         });
         auto webView = adoptNS([WKWebView new]);
-        [webView loadHTMLString:[NSString stringWithFormat:@"<body onload='document.getElementById(\"formID\").submit()'><form id='formID' method='post' action='http://127.0.0.1:%d/'></form></body>", server.port()] baseURL:baseURL];
+        [webView loadHTMLString:[NSString stringWithFormat:@"<meta name='referrer' content='unsafe-url'><body onload='document.getElementById(\"formID\").submit()'><form id='formID' method='post' action='http://127.0.0.1:%d/'></form></body>", server.port()] baseURL:baseURL];
         Util::run(&done);
     };
     

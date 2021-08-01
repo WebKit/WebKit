@@ -1,22 +1,5 @@
-#.rst
-# FindLibGcrypt
-# -------------
-#
-# Finds the Libgcrypt library.
-#
-# This will define the following variables:
-#
-# ``LIBGCRYPT_FOUND``
-#     True if the requested version of gcrypt was found
-# ``LIBGCRYPT_VERSION``
-#     The version of gcrypt that was found
-# ``LIBGCRYPT_INCLUDE_DIRS``
-#     The gcrypt include directories
-# ``LIBGCRYPT_LIBRARIES``
-#     The linker libraries needed to use the gcrypt library
-
 # Copyright 2014 Nicolás Alvarez <nicolas.alvarez@gmail.com>
-# Copyright 2016 Igalia S.L
+# Copyright 2016, 2021 Igalia S.L
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,51 +24,94 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#[=======================================================================[.rst:
+FindGcrypt
+----------
+
+Find libgcrypt headers and libraries.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+``LibGcrypt::LibGcrypt``
+  The libgcrypt library, if found.
+
+#]=======================================================================]
+
+find_package(PkgConfig QUIET)
 find_program(LIBGCRYPTCONFIG_SCRIPT NAMES libgcrypt-config)
-if (LIBGCRYPTCONFIG_SCRIPT)
+if (PkgConfig_FOUND)
+    pkg_check_modules(PC_GCRYPT QUIET libgcrypt)
+    set(LibGcrypt_COMPILE_OPTIONS ${PC_GCRYPT_CFLAGS_OTHER})
+    set(LibGcrypt_VERSION ${PC_GCRYPT_VERSION})
+elseif (LIBGCRYPTCONFIG_SCRIPT)
     execute_process(
         COMMAND "${LIBGCRYPTCONFIG_SCRIPT}" --prefix
         RESULT_VARIABLE CONFIGSCRIPT_RESULT
-        OUTPUT_VARIABLE PREFIX
+        OUTPUT_VARIABLE LIBGCRYPT_PREFIX
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
     if (CONFIGSCRIPT_RESULT EQUAL 0)
-        set(LIBGCRYPT_LIB_HINT "${PREFIX}/lib")
-        set(LIBGCRYPT_INCLUDE_HINT "${PREFIX}/include")
+        set(LIBGCRYPT_SCRIPT_LIB_HINT "${LIBGCRYPT_PREFIX}/lib")
+        set(LIBGCRYPT_SCRIPT_INCLUDE_HINT "${LIBGCRYPT_PREFIX}/include")
+    endif ()
+
+    execute_process(
+        COMMAND "${LIBGCRYPTCONFIG_SCRIPT}" --cflags
+        RESULT_VARIABLE CONFIGSCRIPT_RESULT
+        OUTPUT_VARIABLE CONFIGSCRIPT_VALUE
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (CONFIGSCRIPT_RESULT EQUAL 0)
+        set(LibGcrypt_COMPILE_OPTIONS ${CONFIGSCRIPT_VALUE})
+    endif ()
+
+    execute_process(
+        COMMAND "${LIBGCRYPTCONFIG_SCRIPT}" --cflags
+        RESULT_VARIABLE CONFIGSCRIPT_RESULT
+        OUTPUT_VARIABLE CONFIGSCRIPT_VALUE
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (CONFIGSCRIPT_RESULT EQUAL 0)
+        string(REGEX MATCH "^([0-9]+\.[0-9]+\.[0-9]+)" LibGcrypt_VERSION "${CONFIGSCRIPT_VALUE}")
     endif ()
 endif ()
 
-find_library(LIBGCRYPT_LIBRARY
-    NAMES gcrypt
-    HINTS ${LIBGCRYPT_LIB_HINT}
-)
-find_path(LIBGCRYPT_INCLUDE_DIR
+find_path(LibGcrypt_INCLUDE_DIR
     NAMES gcrypt.h
-    HINTS ${LIBGCRYPT_INCLUDE_HINT}
+    HINTS ${PC_GCRYPT_INCLUDEDIR} ${PC_GCRYPT_INCLUDE_DIRS}
+          ${LIBGCRYPT_SCRIPT_INCLUDE_HINT} ${LibGcrypt_INCLUDE_DIR}
 )
 
-if (LIBGCRYPT_INCLUDE_DIR)
+find_library(LibGcrypt_LIBRARY
+    NAMES ${LibGcrypt_NAMES} gcrypt libgcrypt
+    HINTS ${PC_GCRYPT_LIBDIR} ${PC_GCRYPT_LIBRARY_DIRS} ${LIBGCRYPT_SCRIPT_LIB_HINT}
+)
+
+if (LibGcrypt_INCLUDE_DIR AND NOT LibGcrypt_VERSION)
     file(STRINGS ${LIBGCRYPT_INCLUDE_DIR}/gcrypt.h GCRYPT_H REGEX "^#define GCRYPT_VERSION ")
-    string(REGEX REPLACE "^#define GCRYPT_VERSION \"(.*)\".*$" "\\1" LIBGCRYPT_VERSION "${GCRYPT_H}")
+    string(REGEX REPLACE "^#define GCRYPT_VERSION \"(.*)\".*$" "\\1" LibGcrypt_VERSION "${GCRYPT_H}")
 endif ()
 
 include(FindPackageHandleStandardArgs)
-
 find_package_handle_standard_args(LibGcrypt
-    FOUND_VAR LIBGCRYPT_FOUND
-    REQUIRED_VARS LIBGCRYPT_LIBRARY LIBGCRYPT_INCLUDE_DIR
-    VERSION_VAR LIBGCRYPT_VERSION
+    FOUND_VAR LibGcrypt_FOUND
+    REQUIRED_VARS LibGcrypt_LIBRARY LibGcrypt_INCLUDE_DIR
+    VERSION_VAR LibGcrypt_VERSION
 )
-if (LIBGCRYPT_FOUND)
-    set(LIBGCRYPT_LIBRARIES ${LIBGCRYPT_LIBRARY})
-    set(LIBGCRYPT_INCLUDE_DIRS ${LIBGCRYPT_INCLUDE_DIR})
+
+if (LibGcrypt_LIBRARY AND NOT TARGET LibGcrypt::LibGcrypt)
+    add_library(LibGcrypt::LibGcrypt UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(LibGcrypt::LibGcrypt PROPERTIES
+        IMPORTED_LOCATION "${LibGcrypt_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${LibGcrypt_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${LibGcrypt_INCLUDE_DIR}"
+    )
 endif ()
 
-mark_as_advanced(LIBGCRYPT_LIBRARY LIBGCRYPT_INCLUDE_DIR LIBGCRYPTCONFIG_SCRIPT)
+mark_as_advanced(LibGcrypt_INCLUDE_DIR LibGcrypt_LIBRARY)
 
-include(FeatureSummary)
-set_package_properties(LibGcrypt PROPERTIES
-    DESCRIPTION "A general purpose cryptographic library based on the code from GnuPG."
-    URL "http://www.gnu.org/software/libgcrypt/"
-)
-
+if (LibGcrypt_FOUND)
+    set(LibGcrypt_LIBRARIES ${LibGcrypt_LIBRARY})
+    set(LibGcrypt_INCLUDE_DIRS ${LibGcrypt_INCLUDE_DIR})
+endif ()

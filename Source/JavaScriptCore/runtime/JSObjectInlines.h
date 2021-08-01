@@ -288,6 +288,13 @@ ALWAYS_INLINE bool JSObject::putInlineFast(JSGlobalObject* globalObject, Propert
     return true;
 }
 
+// https://tc39.es/ecma262/#sec-createdataproperty
+ALWAYS_INLINE bool JSObject::createDataProperty(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, bool shouldThrow)
+{
+    PropertyDescriptor descriptor(value, static_cast<unsigned>(PropertyAttribute::None));
+    return methodTable(getVM(globalObject))->defineOwnProperty(this, globalObject, propertyName, descriptor, shouldThrow);
+}
+
 // HasOwnProperty(O, P) from section 7.3.11 in the spec.
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasownproperty
 ALWAYS_INLINE bool JSObject::hasOwnProperty(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot) const

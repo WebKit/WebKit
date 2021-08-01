@@ -162,7 +162,7 @@ public:
 
     bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
 
-    virtual bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const { return false; }
+    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*) const;
 
     void layout() override;
 

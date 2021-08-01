@@ -30,7 +30,9 @@
     "unknown",
     "shippingContactInvalid",
     "billingContactInvalid",
-    "addressUnserviceable",
-    "couponCodeInvalid",
-    "couponCodeExpired"
+    "addressUnserviceable"
+#if defined(ENABLE_APPLE_PAY_COUPON_CODE) && ENABLE_APPLE_PAY_COUPON_CODE
+    , "couponCodeInvalid"
+    , "couponCodeExpired"
+#endif
 };

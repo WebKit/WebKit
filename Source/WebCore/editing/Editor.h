@@ -121,7 +121,9 @@ enum class TemporarySelectionOption : uint8_t {
     
     SmoothScroll = 1 << 4,
     
-    OverrideSmoothScrollFeatureEnablment = 1 << 5,
+    DelegateMainFrameScroll = 1 << 5,
+    
+    RevealSelectionBounds = 1 << 6,
 };
 
 class TemporarySelectionChange {

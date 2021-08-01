@@ -45,6 +45,33 @@ struct WTF::CFTypeTrait<CMSampleBufferRef> {
 
 namespace WebCore {
 
+MediaSampleAVFObjC::MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
+    : m_sample(WTFMove(sample))
+{
+}
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample)
+    : m_sample(sample)
+{
+}
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, AtomString trackID)
+    : m_sample(sample)
+    , m_id(trackID)
+{
+}
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
+    : m_sample(sample)
+    , m_id(AtomString::number(trackID))
+{
+}
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)
+    : m_sample(sample)
+    , m_rotation(rotation)
+    , m_mirrored(mirrored)
+{
+}
+
+MediaSampleAVFObjC::~MediaSampleAVFObjC() = default;
+
 RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& pixelBuffer)
 {
     auto size = pixelBuffer.size();

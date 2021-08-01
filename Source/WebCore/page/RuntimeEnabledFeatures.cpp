@@ -33,6 +33,7 @@
 #include "RuntimeEnabledFeatures.h"
 
 #include "MediaPlayer.h"
+#include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
 #include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
@@ -57,6 +58,22 @@ RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()
 bool RuntimeEnabledFeatures::touchEventsEnabled() const
 {
     return m_touchEventsEnabled.value_or(screenHasTouchDevice());
+}
+#endif
+
+#if ENABLE(VORBIS)
+void RuntimeEnabledFeatures::setVorbisDecoderEnabled(bool isEnabled)
+{
+    m_vorbisDecoderEnabled = isEnabled;
+    PlatformMediaSessionManager::setVorbisDecoderEnabled(isEnabled);
+}
+#endif
+
+#if ENABLE(OPUS)
+void RuntimeEnabledFeatures::setOpusDecoderEnabled(bool isEnabled)
+{
+    m_opusDecoderEnabled = isEnabled;
+    PlatformMediaSessionManager::setOpusDecoderEnabled(isEnabled);
 }
 #endif
 

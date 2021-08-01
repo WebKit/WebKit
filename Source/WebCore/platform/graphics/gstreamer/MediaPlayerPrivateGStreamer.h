@@ -485,7 +485,7 @@ private:
 
     Atomic<bool> m_isPlayerShuttingDown;
     GRefPtr<GstElement> m_textSink;
-    GstStructure* m_mediaLocations { nullptr };
+    GUniquePtr<GstStructure> m_mediaLocations;
     int m_mediaLocationCurrentIndex { 0 };
     bool m_isPlaybackRatePaused { false };
     MediaTime m_timeOfOverlappingSeek;

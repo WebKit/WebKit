@@ -488,9 +488,11 @@ WTF_EXTERN_C_END
 - (void)_setMIMEType:(NSString *)type;
 @end
 
-@interface NSURLSessionConfiguration ()
+@interface NSURLSessionConfiguration (SPI)
 // FIXME: Remove this once rdar://problem/40650244 is in a build.
 @property (copy) NSDictionary *_socketStreamProperties;
+// FIXME: Remove this once rdar://80550123 is in a build.
+@property (nonatomic) BOOL _allowsHSTSWithUntrustedRootCertificate;
 @end
 
 @interface NSURLSessionTask ()

@@ -40,7 +40,7 @@ function checkProperty(object, name, value, attributes = { writable: true, enume
         ok: 42
     });
 
-    shouldBe(JSON.stringify(Object.getOwnPropertyNames(result).sort()), `["arguments","caller","length","name","ok","prototype"]`);
+    shouldBe(JSON.stringify(Object.getOwnPropertyNames(result).sort()), `["length","name","ok","prototype"]`);
     checkProperty(result, "ok", 42);
 }
 {

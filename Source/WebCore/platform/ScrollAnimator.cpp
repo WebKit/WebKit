@@ -86,9 +86,9 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
         auto currentOffset = offsetFromPosition(currentPosition());
         auto newOffset = currentOffset + delta;
         if (orientation == HorizontalScrollbar)
-            newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset.x(), multiplier, currentOffset.x()));
+            newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset, multiplier, currentOffset.x()));
         else
-            newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset.y(), multiplier, currentOffset.y()));
+            newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset, multiplier, currentOffset.y()));
         auto newDelta = newOffset - currentOffset;
 
         if (orientation == HorizontalScrollbar)
@@ -397,26 +397,27 @@ FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoin
         return offset;
 
     FloatPoint newOffset = offset;
-    newOffset.setX(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, newOffset.x(), method));
-    newOffset.setY(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, newOffset.y(), method));
+    newOffset.setX(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, newOffset, method));
+    newOffset.setY(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, newOffset, method));
     return newOffset;
 }
 
-float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis, float newOffset, ScrollSnapPointSelectionMethod method)
+float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod method)
 {
     if (!m_scrollController.usesScrollSnap())
-        return newOffset;
+        return axis == ScrollEventAxis::Horizontal ? newOffset.x() : newOffset.y();
 
     std::optional<float> originalOffset;
-    float velocity = 0.;
+    float velocityInScrollAxis = 0.;
     if (method == ScrollSnapPointSelectionMethod::Directional) {
         FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());
         auto currentOffset = ScrollableArea::scrollOffsetFromPosition(this->currentPosition(), scrollOrigin);
+        auto velocity = newOffset - currentOffset;
         originalOffset = axis == ScrollEventAxis::Horizontal ? currentOffset.x() : currentOffset.y();
-        velocity = newOffset - (axis == ScrollEventAxis::Horizontal ? currentOffset.x() : currentOffset.y());
+        velocityInScrollAxis = axis == ScrollEventAxis::Horizontal ? velocity.width() : velocity.height();
     }
 
-    return m_scrollController.adjustScrollDestination(axis, newOffset, velocity, originalOffset);
+    return m_scrollController.adjustScrollDestination(axis, newOffset, velocityInScrollAxis, originalOffset);
 }
 
 

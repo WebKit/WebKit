@@ -1176,13 +1176,13 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     auto handler = makeBlockPtr(completionHandler);
 
     if (CGRectIsEmpty(rectInViewCoordinates) || !snapshotWidth) {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([handler = WTFMove(handler)] {
 #if USE(APPKIT)
             auto image = adoptNS([[NSImage alloc] initWithSize:NSMakeSize(0, 0)]);
 #else
             auto image = adoptNS([[UIImage alloc] init]);
 #endif
-            completionHandler(image.get(), nil);
+            handler(image.get(), nil);
         });
         return;
     }
@@ -1213,10 +1213,13 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         handler(image.get(), nil);
     });
 #else
-    CGFloat deviceScale = _page->deviceScaleFactor();
+    auto useIntrinsicDeviceScaleFactor = [[_customContentView class] web_requiresCustomSnapshotting];
+
+    CGFloat deviceScale = useIntrinsicDeviceScaleFactor ? UIScreen.mainScreen.scale : _page->deviceScaleFactor();
+    CGFloat imageWidth = useIntrinsicDeviceScaleFactor ? snapshotWidth : snapshotWidth * deviceScale;
     RetainPtr<WKWebView> strongSelf = self;
-    auto callSnapshotRect = [strongSelf, rectInViewCoordinates, snapshotWidth, deviceScale, handler] {
-        [strongSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:(snapshotWidth * deviceScale) completionHandler:[strongSelf, handler, deviceScale](CGImageRef snapshotImage) {
+    auto callSnapshotRect = [strongSelf, rectInViewCoordinates, imageWidth, deviceScale, handler] {
+        [strongSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:[strongSelf, handler, deviceScale](CGImageRef snapshotImage) {
             RetainPtr<NSError> error;
             RetainPtr<UIImage> image;
             
@@ -2516,6 +2519,11 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     // This is kept for binary compatibility with iOS 9.
     return true;
+}
+
+- (BOOL)_needsSiteSpecificViewportQuirks
+{
+    return _page && _page->needsSiteSpecificViewportQuirks();
 }
 
 - (pid_t)_webProcessIdentifier

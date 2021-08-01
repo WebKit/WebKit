@@ -235,6 +235,8 @@ public:
 #if ENABLE(MEDIA_SOURCE)
     void setWebMParserEnabled(bool isEnabled) { m_webMParserEnabled = isEnabled; }
     bool webMParserEnabled() const { return m_webMParserEnabled; }
+    void setWebMWebAudioEnabled(bool isEnabled) { m_webMWebAudioEnabled = isEnabled; }
+    bool webMWebAudioEnabled() const { return m_webMWebAudioEnabled; }
 #endif
 
 #if HAVE(CELESTIAL)
@@ -243,12 +245,12 @@ public:
 #endif
 
 #if ENABLE(VORBIS)
-    void setVorbisDecoderEnabled(bool isEnabled) { m_vorbisDecoderEnabled = isEnabled; }
+    WEBCORE_EXPORT void setVorbisDecoderEnabled(bool isEnabled);
     bool vorbisDecoderEnabled() const { return m_vorbisDecoderEnabled; }
 #endif
 
 #if ENABLE(OPUS)
-    void setOpusDecoderEnabled(bool isEnabled) { m_opusDecoderEnabled = isEnabled; }
+    WEBCORE_EXPORT void setOpusDecoderEnabled(bool isEnabled);
     bool opusDecoderEnabled() const { return m_opusDecoderEnabled; }
 #endif
 
@@ -371,6 +373,7 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     bool m_webMParserEnabled { false };
+    bool m_webMWebAudioEnabled { false };
 #endif
 
 #if HAVE(CELESTIAL)

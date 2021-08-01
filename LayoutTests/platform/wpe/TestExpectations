@@ -365,8 +365,8 @@ fast/events/touch/gesture/resources/drag-inside-iframe2.html [ Skip ]
 fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
 fast/text/selection-is-prevent-defaulted.html [ Skip ]
 
-# ENABLE_DARK_MODE_CSS is OFF in WPE.
-css-dark-mode [ Skip ]
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
 
 # Tests below are copied from wk2 expectations, because we've marked
 #  as passing the whole fast/events directory.
@@ -791,8 +791,6 @@ webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/187593 http/tests/cache/disk-cache/disk-cache-cancel.html [ Failure Pass ]
-
-webkit.org/b/187594 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm [ Failure Pass ]
 
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
 
@@ -1323,6 +1321,8 @@ webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-dat
 
 webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.py [ Failure ]
 
+webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Pass Crash ]
+
 # WEBGL2 is disabled
 webkit.org/b/208188 fast/canvas/webgl/webgl2 [ Skip ]
 webkit.org/b/208188 fast/canvas/webgl/bufferData-offset-length.html [ Skip ]
@@ -1442,6 +1442,8 @@ webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/
 Bug(WPE) media/crash-closing-page-with-media-as-plugin-fallback.html [ Timeout ]
 Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
 Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
+
+webkit.org/b/210226 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.

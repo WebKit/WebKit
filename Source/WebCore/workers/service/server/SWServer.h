@@ -220,7 +220,7 @@ public:
     LastNavigationWasAppInitiated clientIsAppInitiatedForRegistrableDomain(const RegistrableDomain&);
 
 private:
-    void validateRegistrationDomain(WebCore::RegistrableDomain, CompletionHandler<void(bool)>&&);
+    void validateRegistrationDomain(WebCore::RegistrableDomain, ServiceWorkerJobType, CompletionHandler<void(bool)>&&);
 
     void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
@@ -283,6 +283,7 @@ private:
     HashSet<WebCore::RegistrableDomain> m_appBoundDomains;
     bool m_hasServiceWorkerEntitlement { false };
     bool m_hasReceivedAppBoundDomains { false };
+    unsigned m_uniqueRegistrationCount { 0 };
 };
 
 } // namespace WebCore

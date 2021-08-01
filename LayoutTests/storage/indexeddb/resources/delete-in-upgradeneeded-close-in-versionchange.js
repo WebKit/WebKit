@@ -23,7 +23,6 @@ function initiallyDeleted(evt) {
     preamble(evt);
     evalAndLog("request = indexedDB.open(dbname, 1)");
     request.onupgradeneeded = upgradeNeededCallback;
-    request.onsuccess = unexpectedSuccessCallback;
 }
 
 function upgradeNeededCallback(evt)

@@ -244,6 +244,7 @@ onerror
 onfocus
 onfocusin
 onfocusout
+onformdata
 onhashchange
 oninput
 oninvalid

@@ -155,15 +155,15 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
     switch (stubInfo.cacheType()) {
     case CacheType::GetByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.u.byIdSelf.offset, stubInfo.inlineAccessBaseStructure.get());
+        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.u.byIdSelf.offset, stubInfo.m_inlineAccessBaseStructure.get());
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.u.byIdSelf.offset, stubInfo.inlineAccessBaseStructure.get());
+        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.u.byIdSelf.offset, stubInfo.m_inlineAccessBaseStructure.get());
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.u.byIdSelf.offset, stubInfo.inlineAccessBaseStructure.get());
+        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.u.byIdSelf.offset, stubInfo.m_inlineAccessBaseStructure.get());
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
@@ -1410,7 +1410,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     CCallHelpers& jit = *state.jit;
     VM& vm = state.m_vm;
     CodeBlock* codeBlock = jit.codeBlock();
-    JSGlobalObject* globalObject = state.m_globalObject;
     ECMAMode ecmaMode = state.m_ecmaMode;
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
@@ -1613,6 +1612,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             ASSERT(baseGPR != loadedValueGPR);
             ASSERT(m_type != Setter || valueRegsPayloadGPR != loadedValueGPR);
 
+            JSGlobalObject* globalObject = state.m_globalObject;
+
             // Create a JS call using a JS call inline cache. Assume that:
             //
             // - SP is aligned and represents the extent of the calling compiler's stack usage.
@@ -1747,6 +1748,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);
             ASSERT(!doesPropertyStorageLoads); // Or we need an extra register. We rely on propertyOwnerGPR being correct here.
+
+            JSGlobalObject* globalObject = hasAlternateBase() ? alternateBase()->globalObject(vm) : structure()->globalObject();
 
             // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
             // hard to track if someone did spillage or not, so we just assume that we always need

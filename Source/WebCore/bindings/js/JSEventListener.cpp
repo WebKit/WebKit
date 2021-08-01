@@ -134,7 +134,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             return;
     }
 
-    JSGlobalObject* lexicalGlobalObject = globalObject;
+    JSGlobalObject* lexicalGlobalObject = jsFunction->globalObject();
 
     JSValue handleEventFunction = jsFunction;
 
@@ -177,7 +177,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
             jsFunctionWindow->setCurrentEvent(&event);
     }
 
-    VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
+    VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : lexicalGlobalObject);
 
     JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 

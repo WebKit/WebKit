@@ -55,6 +55,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -93,6 +94,7 @@ class AlternativeTextClient;
 class ApplicationCacheStorage;
 class AuthenticatorCoordinator;
 class BackForwardController;
+class BroadcastChannelRegistry;
 class CacheStorageProvider;
 class Chrome;
 class ContextMenuController;
@@ -280,6 +282,9 @@ public:
     WEBCORE_EXPORT const String& groupName() const;
 
     PageGroup& group();
+
+    BroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry; }
+    WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
 
     WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
     static unsigned nonUtilityPageCount();
@@ -810,7 +815,7 @@ public:
     bool isUtilityPage() const { return m_isUtilityPage; }
 
     bool loadsSubresources() const { return m_loadsSubresources; }
-    bool allowsLoadFromURL(const URL&) const;
+    WEBCORE_EXPORT bool allowsLoadFromURL(const URL&) const;
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }
@@ -1083,8 +1088,9 @@ private:
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     Ref<UserContentProvider> m_userContentProvider;
     Ref<VisitedLinkStore> m_visitedLinkStore;
+    Ref<BroadcastChannelRegistry> m_broadcastChannelRegistry;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
-    HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
+    WeakHashSet<ActivityStateChangeObserver> m_activityStateChangeObservers;
 
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;

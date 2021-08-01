@@ -75,6 +75,13 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     }
 }
 
+- (BOOL)_shouldReceiveTouch:(UITouch *)touch forEvent:(UIEvent *)event recognizerView:(id)gestureOwner
+{
+    // FIXME: We should move off of this UIKit IPI method once we have a viable SPI or API alternative
+    // for opting a UIHoverGestureRecognizer subclass into receiving UITouches. See also: rdar://80700227.
+    return touch == _currentTouch;
+}
+
 - (WebKit::NativeWebMouseEvent *)lastMouseEvent
 {
     return _lastEvent.get();

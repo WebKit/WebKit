@@ -38,7 +38,7 @@
 namespace WebKit {
 
 template<typename BackendType>
-class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType>, public WebCore::DisplayList::Replayer::Delegate {
+class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
@@ -75,7 +75,9 @@ public:
 #endif
 
 private:
-    bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context) override
+    friend class RemoteRenderingBackend;
+
+    bool apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& context)
     {
         if (item.is<WebCore::DisplayList::GetPixelBuffer>()) {
             auto& getPixelBufferItem = item.get<WebCore::DisplayList::GetPixelBuffer>();
@@ -106,16 +108,6 @@ private:
         }
 
         return m_remoteRenderingBackend.applyMediaItem(item, context);
-    }
-
-    void didCreateMaskImageBuffer(WebCore::ImageBuffer& imageBuffer) final
-    {
-        m_remoteRenderingBackend.didCreateMaskImageBuffer(imageBuffer);
-    }
-
-    void didResetMaskImageBuffer() final
-    {
-        m_remoteRenderingBackend.didResetMaskImageBuffer();
     }
 
     RemoteRenderingBackend& m_remoteRenderingBackend;

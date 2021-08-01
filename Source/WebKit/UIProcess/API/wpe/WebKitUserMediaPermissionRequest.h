@@ -64,6 +64,9 @@ webkit_user_media_permission_is_for_audio_device (WebKitUserMediaPermissionReque
 WEBKIT_API gboolean
 webkit_user_media_permission_is_for_video_device (WebKitUserMediaPermissionRequest *request);
 
+WEBKIT_API gboolean
+webkit_user_media_permission_is_for_display_device (WebKitUserMediaPermissionRequest *request);
+
 G_END_DECLS
 
 #endif

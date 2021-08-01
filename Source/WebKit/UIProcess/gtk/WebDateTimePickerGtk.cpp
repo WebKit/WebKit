@@ -79,11 +79,11 @@ void WebDateTimePickerGtk::endPicker()
 static String timeToString(const WebCore::DateComponents& time, WebCore::SecondFormat secondFormat)
 {
     switch (secondFormat) {
-    case SecondFormat::None:
+    case WebCore::SecondFormat::None:
         return makeString(pad('0', 2, time.hour()), ':', pad('0', 2, time.minute()));
-    case SecondFormat::Second:
+    case WebCore::SecondFormat::Second:
         return makeString(pad('0', 2, time.hour()), ':', pad('0', 2, time.minute()), ':', pad('0', 2, time.second()));
-    case SecondFormat::Millisecond:
+    case WebCore::SecondFormat::Millisecond:
         return makeString(pad('0', 2, time.hour()), ':', pad('0', 2, time.minute()), ':', pad('0', 2, time.second()), '.', pad('0', 3, time.millisecond()));
     }
 

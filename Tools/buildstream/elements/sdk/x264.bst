@@ -7,9 +7,10 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 sources:
-- kind: tar
-  url: http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2
-  ref: 5d98e9e4faf6dd55e7193ed379aff477b8acbda6777758956ef7e5f05067be18
+- kind: git_tag
+  url: vlc:videolan/x264
+  track: master
+  ref: ae03d92b52bb7581df2e75d571989cb1ecd19cbd
 variables:
   conf-local: >-
     --enable-shared

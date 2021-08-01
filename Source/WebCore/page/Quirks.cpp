@@ -1338,15 +1338,15 @@ bool Quirks::needsBlackFullscreenBackgroundQuirk() const
 bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    // Facebook and Twitter will naively pause a <video> element that has scrolled out of the viewport,
+    // Facebook, Twitter, and Reddit will naively pause a <video> element that has scrolled out of the viewport,
     // regardless of whether that element is currently in PiP mode.
-    // We should remove the quirk once <rdar://problem/67273166> and <rdar://problem/73369869> have been fixed.
+    // We should remove the quirk once <rdar://problem/67273166>, <rdar://problem/73369869>, and <rdar://problem/80645747> have been fixed.
     if (!needsQuirks())
         return false;
 
     if (!m_requiresUserGestureToPauseInPictureInPicture) {
         auto domain = RegistrableDomain(m_document->topDocument().url()).string();
-        m_requiresUserGestureToPauseInPictureInPicture = domain == "facebook.com"_s || domain == "twitter.com"_s;
+        m_requiresUserGestureToPauseInPictureInPicture = domain == "facebook.com"_s || domain == "twitter.com"_s || domain == "reddit.com"_s;
     }
 
     return *m_requiresUserGestureToPauseInPictureInPicture;

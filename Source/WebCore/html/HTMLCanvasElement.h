@@ -123,6 +123,7 @@ public:
     SecurityOrigin* securityOrigin() const final;
 
     bool shouldAccelerate(const IntSize&) const;
+    bool shouldAccelerate(unsigned area) const;
 
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
     WEBCORE_EXPORT void setTracksDisplayListReplay(bool);

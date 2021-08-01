@@ -52,6 +52,10 @@
 #include <WebCore/PluginData.h>
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <wtf/MemoryPressureHandler.h>
+#endif
+
 namespace API {
 class Data;
 }
@@ -249,6 +253,10 @@ struct WebProcessCreationParameters {
 #endif
     
     AccessibilityPreferences accessibilityPreferences;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
+#endif
 };
 
 } // namespace WebKit

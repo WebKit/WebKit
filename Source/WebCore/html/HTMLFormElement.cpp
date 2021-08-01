@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "FormController.h"
 #include "FormData.h"
+#include "FormDataEvent.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -55,6 +56,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
+#include "SubmitEvent.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
@@ -257,6 +259,7 @@ bool HTMLFormElement::validateInteractively()
 
 void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* submitter, FormSubmissionTrigger trigger)
 {
+    // https://html.spec.whatwg.org/#form-submission-algorithm
     if (!isConnected())
         return;
 
@@ -268,7 +271,6 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_shouldSubmit = false;
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
-
     if (shouldValidate) {
         auto submitElement = makeRefPtr(submitter ? submitter : findSubmitter(event));
         if (submitElement && submitElement->formNoValidate())
@@ -289,7 +291,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
 
     auto protectedThis = makeRef(*this);
 
-    auto submitEvent = Event::create(eventNames().submitEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
+    auto submitEvent = SubmitEvent::create(submitter);
     dispatchEvent(submitEvent);
 
     // Event handling could have resulted in m_shouldSubmit becoming true as a side effect, too.
@@ -958,6 +960,34 @@ const AtomString& HTMLFormElement::autocomplete() const
     static MainThreadNeverDestroyed<const AtomString> off("off", AtomString::ConstructFromLiteral);
 
     return equalIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? off : on;
+}
+
+RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFormData, StringPairVector* formValues, IsMultipartForm isMultipartForm)
+{
+    // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-form-data-set
+    ASSERT(isMainThread());
+    
+    if (m_isConstructingEntryList)
+        return nullptr;
+    
+    SetForScope<bool> isConstructingEntryListScope(m_isConstructingEntryList, true);
+    
+    for (auto& control : this->copyAssociatedElementsVector()) {
+        auto& element = control->asHTMLElement();
+        if (!element.isDisabledFormControl())
+            control->appendFormData(domFormData.get(), isMultipartForm == IsMultipartForm::Yes);
+        if (formValues && is<HTMLInputElement>(element)) {
+            auto& input = downcast<HTMLInputElement>(element);
+            if (input.isTextField()) {
+                formValues->append({ input.name(), input.value() });
+                input.addSearchResult();
+            }
+        }
+    }
+    
+    dispatchEvent(FormDataEvent::create(eventNames().formdataEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::No, domFormData.copyRef()));
+    
+    return domFormData->clone();
 }
 
 } // namespace

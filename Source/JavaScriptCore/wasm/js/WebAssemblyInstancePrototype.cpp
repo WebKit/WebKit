@@ -35,7 +35,7 @@
 #include "WebAssemblyModuleRecord.h"
 
 namespace JSC {
-static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstanceProtoFuncExports);
+static JSC_DECLARE_CUSTOM_GETTER(webAssemblyInstanceProtoGetterExports);
 }
 
 #include "WebAssemblyInstancePrototype.lut.h"
@@ -46,7 +46,7 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance",
 
 /* Source for WebAssemblyInstancePrototype.lut.h
  @begin prototypeTableWebAssemblyInstance
- exports webAssemblyInstanceProtoFuncExports Accessor 0
+  exports webAssemblyInstanceProtoGetterExports ReadOnly|CustomAccessor
  @end
  */
 
@@ -62,12 +62,12 @@ static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalOb
     return result;
 }
 
-JSC_DEFINE_HOST_FUNCTION(webAssemblyInstanceProtoFuncExports, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(webAssemblyInstanceProtoGetterExports, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyInstance* instance = getInstance(globalObject, vm, callFrame->thisValue()); 
+    JSWebAssemblyInstance* instance = getInstance(globalObject, vm, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(throwScope, { });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(instance->moduleRecord()->exportsObject()));
 }

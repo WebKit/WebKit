@@ -28,6 +28,7 @@
 
 #if ENABLE(TOUCH_EVENTS)
 
+#include <WebCore/GtkVersioning.h>
 #include "WebEventFactory.h"
 #include <gdk/gdk.h>
 

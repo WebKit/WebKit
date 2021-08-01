@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "CacheModel.h"
 #include "WebsiteDataStore.h"
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -153,6 +154,11 @@ public:
     void setUserId(const int32_t userId) { m_userId = userId; }
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void setMemoryPressureHandlerConfiguration(const MemoryPressureHandler::Configuration& configuration) { m_memoryPressureHandlerConfiguration = configuration; }
+    const std::optional<MemoryPressureHandler::Configuration>& memoryPressureHandlerConfiguration() const { return m_memoryPressureHandlerConfiguration; }
+#endif
+
 private:
     WTF::String m_injectedBundlePath;
     Vector<WTF::String> m_customClassesForParameterCoder;
@@ -188,6 +194,9 @@ private:
     WTF::String m_webProcessPath;
     WTF::String m_networkProcessPath;
     int32_t m_userId { -1 };
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    std::optional<MemoryPressureHandler::Configuration> m_memoryPressureHandlerConfiguration;
 #endif
 };
 

@@ -106,7 +106,7 @@ CREATE TABLE commits (
     commit_revision_identifier varchar(64) DEFAULT NULL,
     commit_previous_commit integer REFERENCES commits ON DELETE CASCADE,
     commit_time timestamp,
-    commit_order integer,
+    commit_order bigint,
     commit_committer integer REFERENCES committers ON DELETE CASCADE,
     commit_message text,
     commit_reported boolean NOT NULL DEFAULT FALSE,

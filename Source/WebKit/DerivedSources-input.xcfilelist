@@ -56,6 +56,7 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/IndexedDB/WebIDBServer.messages.in
+$(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkContentRuleListManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkProcess.messages.in
@@ -72,11 +73,11 @@ $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCProvider.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in
 $(PROJECT_DIR)/PluginProcess/PluginProcess.messages.in
 $(PROJECT_DIR)/PluginProcess/WebProcessConnection.messages.in
 $(PROJECT_DIR)/PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in
+$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb
@@ -188,6 +189,7 @@ $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in
+$(PROJECT_DIR)/WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in

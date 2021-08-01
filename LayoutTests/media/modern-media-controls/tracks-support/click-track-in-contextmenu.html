@@ -43,14 +43,14 @@ function clickOnTracksButton(continuation)
 async function clickOnFrenchAudioTrack()
 {
     debug("Selecting 'French' track...");
-    await getTracksContextMenu();
+    await UIHelper.waitForContextMenuToShow();
     await UIHelper.chooseMenuAction("French Sound");
 }
 
 async function clickOnSpanishAudioTrack()
 {
     debug("Selecting 'Spanish' track...");
-    await getTracksContextMenu();
+    await UIHelper.waitForContextMenuToShow();
     await UIHelper.chooseMenuAction("Spanish Sound");
 }
 

@@ -26,8 +26,10 @@
 #include "config.h"
 #include "DeviceOrientationEvent.h"
 
+#include "DOMWindow.h"
 #include "DeviceOrientationAndMotionAccessController.h"
 #include "DeviceOrientationData.h"
+#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 

@@ -50,11 +50,11 @@ public:
     bool isSpill() const { return m_kind == StackSlotKind::Spill; }
     unsigned index() const { return m_index; }
 
-    void ensureSize(unsigned requestedSize)
+    void ensureSize(uint64_t requestedSize)
     {
         ASSERT(!m_offsetFromFP);
-        RELEASE_ASSERT(requestedSize <= std::numeric_limits<uint16_t>::max());
-        m_byteSize = std::max(m_byteSize, static_cast<uint16_t>(requestedSize));
+        RELEASE_ASSERT(requestedSize <= std::numeric_limits<uint32_t>::max());
+        m_byteSize = std::max(m_byteSize, static_cast<uint32_t>(requestedSize));
     }
 
     unsigned alignment() const
@@ -85,9 +85,9 @@ private:
     friend class Code;
     friend class SparseCollection<StackSlot>;
 
-    StackSlot(unsigned byteSize, StackSlotKind, intptr_t offsetFromFP = 0);
+    StackSlot(uint64_t byteSize, StackSlotKind, intptr_t offsetFromFP = 0);
     
-    uint16_t m_byteSize { 0 };
+    uint32_t m_byteSize { 0 };
     StackSlotKind m_kind { StackSlotKind::Locked };
     unsigned m_index { UINT_MAX };
     intptr_t m_offsetFromFP { 0 };

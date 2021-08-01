@@ -26,10 +26,11 @@
 #pragma once
 
 #include "ActivityState.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class ActivityStateChangeObserver {
+class ActivityStateChangeObserver : public CanMakeWeakPtr<ActivityStateChangeObserver> {
 public:
     virtual ~ActivityStateChangeObserver()
     {

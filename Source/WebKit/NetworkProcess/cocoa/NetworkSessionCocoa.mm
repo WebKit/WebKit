@@ -48,6 +48,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/VersionChecks.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
@@ -64,7 +65,6 @@
 #import <wtf/text/WTFString.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 
 #if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
 #import <Symptoms/SymptomAnalytics.h>
@@ -83,7 +83,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(SymptomPresentationLite, kSymptomAnalyticsServiceEnd
 #endif
 
 #else
-#define NETWORK_SESSION_COCOA_ADDITIONS_1
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
@@ -580,7 +579,10 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
         bool shouldIgnoreHSTS = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
-            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID())->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
+            auto* storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
+            NSURL *firstPartyForCookies = networkDataTask->isTopLevelNavigation() ? request.URL : request.mainDocumentURL;
+            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
+                && storageSession->shouldBlockCookies(firstPartyForCookies, request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
                 request = downgradeRequest(request);
                 ASSERT([request.URL.scheme isEqualToString:@"http"]);
@@ -618,7 +620,9 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
         bool shouldIgnoreHSTS = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
-            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID())->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
+            auto* storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
+            shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
+                && storageSession->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
                 request = downgradeRequest(request);
                 ASSERT([request.URL.scheme isEqualToString:@"http"]);
@@ -1096,7 +1100,13 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
 #endif
     } else
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    configuration._shouldSkipPreferredClientCertificateLookup = YES;
+
+#if PLATFORM(MAC)
+    bool preventCFNetworkClientCertificateLookup = linkedOnOrAfter(WebCore::SDKVersion::FirstWithoutClientCertificateLookup) || session.isEphemeral();
+#else
+    bool preventCFNetworkClientCertificateLookup = true;
+#endif
+    configuration._shouldSkipPreferredClientCertificateLookup = preventCFNetworkClientCertificateLookup;
 
 #if HAVE(LOGGING_PRIVACY_LEVEL)
     auto setLoggingPrivacyLevel = NSSelectorFromString(@"set_loggingPrivacyLevel:");
@@ -1185,9 +1195,14 @@ static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& 
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
-#if PLATFORM(IOS_FAMILY)
-    NETWORK_SESSION_COCOA_ADDITIONS_1
+
+    auto isFullBrowser = isParentProcessAFullWebBrowser(networkSession.networkProcess());
+#if PLATFORM(MAC)
+    isFullBrowser = WebCore::MacApplication::isSafari();
 #endif
+    if (!configuration._sourceApplicationSecondaryIdentifier && isFullBrowser)
+        configuration._sourceApplicationSecondaryIdentifier = @"com.apple.WebKit.InAppBrowser";
+
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
@@ -1246,6 +1261,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration._usesNWLoader = parameters.useNetworkLoader;
 #endif
 
+    if (parameters.allowsHSTSWithUntrustedRootCertificate && [configuration respondsToSelector:@selector(_allowsHSTSWithUntrustedRootCertificate)])
+        configuration._allowsHSTSWithUntrustedRootCertificate = YES;
+    
 #if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     configuration._preventsAppSSO = true;
 #endif
@@ -1691,6 +1709,16 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     }
     // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
+
+#if ENABLE(APP_PRIVACY_REPORT)
+    if (!request.isAppInitiated()) {
+        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
+        mutableRequest.get().attribution = NSURLRequestAttributionUser;
+        nsRequest = WTFMove(mutableRequest);
+    }
+
+    appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
+#endif
 
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     RetainPtr<NSURLSessionWebSocketTask> task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];

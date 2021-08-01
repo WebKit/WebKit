@@ -1,0 +1,3 @@
+
+FAIL Send binary data on a WebSocket - ArrayBuffer - Connection should be closed assert_equals: expected 0 but got 15
+

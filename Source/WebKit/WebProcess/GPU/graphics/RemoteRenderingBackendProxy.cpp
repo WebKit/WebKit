@@ -102,6 +102,9 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
     m_getPixelBufferSemaphore = std::nullopt;
     m_getPixelBufferSharedMemoryLength = 0;
     m_getPixelBufferSharedMemory = nullptr;
+    
+    m_renderingUpdateID = { };
+    m_didRenderingUpdateID = { };
 }
 
 IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
@@ -249,12 +252,19 @@ void RemoteRenderingBackendProxy::deleteAllFonts()
     send(Messages::RemoteRenderingBackend::DeleteAllFonts(), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
 {
     if (renderingResourceIdentifier == m_currentDestinationImageBufferIdentifier)
         m_currentDestinationImageBufferIdentifier = std::nullopt;
 
-    send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier, useCount), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
+{
+    send(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_remoteResourceCacheProxy.finalizeRenderingUpdate();
+    m_renderingUpdateID.increment();
 }
 
 void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -275,6 +285,12 @@ void RemoteRenderingBackendProxy::didFlush(DisplayList::FlushIdentifier flushIde
 {
     if (auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier))
         imageBuffer->didFlush(flushIdentifier);
+}
+
+void RemoteRenderingBackendProxy::didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID)
+{
+    ASSERT(didRenderingUpdateID <= m_renderingUpdateID);
+    m_didRenderingUpdateID = std::min(didRenderingUpdateID, m_renderingUpdateID);
 }
 
 void RemoteRenderingBackendProxy::willAppendItem(RenderingResourceIdentifier newDestinationIdentifier)

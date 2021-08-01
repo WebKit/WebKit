@@ -144,7 +144,8 @@ public:
     WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const final;
 #endif
 
-    void scrollRectIntoView(const WebCore::IntRect&) const final { }
+    void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final { }
+    void scrollMainFrameToRevealRect(const WebCore::IntRect&) const final { }
 
 #if ENABLE(VIDEO)
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) final;

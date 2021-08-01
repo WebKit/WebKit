@@ -4,6 +4,7 @@ depends:
 - qt5/qtdeclarative.bst
 
 sources:
-- kind: tar
-  url: qt:5.15/5.15.0/submodules/qtquickcontrols-everywhere-src-5.15.0.tar.xz
-  ref: 7072cf4cd27e9f18b36b1c48dec7c79608cf87ba847d3fc3de133f220ec1acee
+- kind: git_tag
+  url: kde:qtquickcontrols
+  track: kde/5.15
+  ref: v5.15.0-14-gcf3f6d7fec824cdf01f9b329ab3b92b1c0e0a420

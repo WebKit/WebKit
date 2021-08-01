@@ -318,13 +318,8 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers(API::ContentWor
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlersForWorlds({ world.identifier() }), identifier());
 
-    unsigned numberRemoved = 0;
     m_scriptMessageHandlers.removeIf([&](auto& entry) {
-        if (entry.value->world().identifier() == world.identifier()) {
-            ++numberRemoved;
-            return true;
-        }
-        return false;
+        return entry.value->world().identifier() == world.identifier();
     });
 }
 
@@ -332,6 +327,8 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
 {
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserScriptMessageHandlers(), identifier());
+
+    m_scriptMessageHandlers.clear();
 }
 
 void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference, Messages::WebUserContentControllerProxy::DidPostMessage::AsyncReply&& reply)

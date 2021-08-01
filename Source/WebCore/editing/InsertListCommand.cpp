@@ -74,11 +74,11 @@ HTMLElement* InsertListCommand::fixOrphanedListChild(Node& node)
 Ref<HTMLElement> InsertListCommand::mergeWithNeighboringLists(HTMLElement& list)
 {
     Ref<HTMLElement> protectedList = list;
-    Element* previousList = list.previousElementSibling();
-    if (canMergeLists(previousList, &list))
+    RefPtr previousList = list.previousElementSibling();
+    if (canMergeLists(previousList.get(), &list))
         mergeIdenticalElements(*previousList, list);
 
-    Element* sibling = ElementTraversal::nextSibling(list);
+    RefPtr sibling = ElementTraversal::nextSibling(list);
     if (!is<HTMLElement>(sibling))
         return protectedList;
 
@@ -277,8 +277,8 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
 
 void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart, HTMLElement* listNode, Node* listChildNode)
 {
-    Node* nextListChild;
-    Node* previousListChild;
+    RefPtr<Node> nextListChild;
+    RefPtr<Node> previousListChild;
     VisiblePosition start;
     VisiblePosition end;
 
@@ -339,21 +339,21 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     moveParagraphs(start, end, insertionPoint, true);
 }
 
-static Element* adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const QualifiedName& listTag)
+static RefPtr<Element> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const QualifiedName& listTag)
 {
-    Element* listNode = outermostEnclosingList(adjacentPos.deepEquivalent().deprecatedNode());
+    RefPtr<Element> listNode = outermostEnclosingList(adjacentPos.deepEquivalent().deprecatedNode());
 
     if (!listNode)
-        return 0;
+        return nullptr;
 
-    Node* previousCell = enclosingTableCell(pos.deepEquivalent());
-    Node* currentCell = enclosingTableCell(adjacentPos.deepEquivalent());
+    RefPtr previousCell = enclosingTableCell(pos.deepEquivalent());
+    RefPtr currentCell = enclosingTableCell(adjacentPos.deepEquivalent());
 
     if (!listNode->hasTagName(listTag)
         || listNode->contains(pos.deepEquivalent().deprecatedNode())
         || previousCell != currentCell
-        || enclosingList(listNode) != enclosingList(pos.deepEquivalent().deprecatedNode()))
-        return 0;
+        || enclosingList(listNode.get()) != enclosingList(pos.deepEquivalent().deprecatedNode()))
+        return nullptr;
 
     return listNode;
 }
@@ -372,13 +372,13 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     appendNode(placeholder.copyRef(), listItemElement.copyRef());
 
     // Place list item into adjoining lists.
-    Element* previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(CannotCrossEditingBoundary), listTag);
-    Element* nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag);
+    auto previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(CannotCrossEditingBoundary), listTag);
+    auto nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag);
     RefPtr<HTMLElement> listElement;
     if (previousList)
         appendNode(WTFMove(listItemElement), *previousList);
     else if (nextList)
-        insertNodeAt(WTFMove(listItemElement), positionBeforeNode(nextList));
+        insertNodeAt(WTFMove(listItemElement), positionBeforeNode(nextList.get()));
     else {
         // Create the list.
         listElement = createHTMLElement(document(), listTag);
@@ -400,9 +400,9 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
         // clean markup when inline elements are pushed down as far as possible.
         Position insertionPos(start.deepEquivalent().upstream());
         // Also avoid the containing list item.
-        Node* listChild = enclosingListChild(insertionPos.deprecatedNode());
+        RefPtr listChild = enclosingListChild(insertionPos.deprecatedNode());
         if (listChild && listChild->hasTagName(liTag))
-            insertionPos = positionInParentBeforeNode(listChild);
+            insertionPos = positionInParentBeforeNode(listChild.get());
 
         if (!isEditablePosition(insertionPos))
             return 0;
@@ -425,7 +425,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     if (listElement)
         return mergeWithNeighboringLists(*listElement);
 
-    if (canMergeLists(previousList, nextList))
+    if (canMergeLists(previousList.get(), nextList.get()))
         mergeIdenticalElements(*previousList, *nextList);
 
     return listElement;

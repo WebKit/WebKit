@@ -44,6 +44,7 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakObjCPtr.h>
 
 static bool isDoneWithNavigation;
 
@@ -1235,4 +1236,17 @@ TEST(WKUserContentController, WorldLifetime)
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
+}
+
+TEST(WKUserContentController, RemoveAllScriptMessageHandlers)
+{
+    WeakObjCPtr<ScriptMessageHandler> weakHandler;
+    auto handler = adoptNS([ScriptMessageHandler new]);
+    weakHandler = handler.get();
+    auto controller = adoptNS([WKUserContentController new]);
+    [controller addScriptMessageHandler:handler.get() name:@"testname"];
+    handler = nullptr;
+    EXPECT_NOT_NULL(weakHandler.get());
+    [controller removeAllScriptMessageHandlers];
+    EXPECT_NULL(weakHandler.get());
 }

@@ -326,7 +326,7 @@ EventHandler::EventHandler(Frame& frame)
     : m_frame(frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
 #if ENABLE(IMAGE_ANALYSIS)
-    , m_textRecognitionHoverTimer(*this, &EventHandler::m_textRecognitionHoverTimerFired, 250_ms)
+    , m_textRecognitionHoverTimer(*this, &EventHandler::textRecognitionHoverTimerFired, 250_ms)
 #endif
     , m_autoscrollController(makeUnique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
@@ -3392,7 +3392,7 @@ void EventHandler::hoverTimerFired()
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void EventHandler::m_textRecognitionHoverTimerFired()
+void EventHandler::textRecognitionHoverTimerFired()
 {
     if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
         return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal()->value());
     }
@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         bool& animated = m_animated->animVal();
         m_function.animate(targetElement, progress, repeatCount, animated);
@@ -93,7 +93,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         EnumType animated;
         m_function.animate(targetElement, progress, repeatCount, animated);
@@ -115,7 +115,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
     }
@@ -136,7 +136,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal()->value());
     }
@@ -157,7 +157,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
     }
@@ -176,7 +176,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
     }
@@ -193,7 +193,7 @@ public:
     }
     
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
     }
@@ -210,7 +210,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_animated->animVal()->pathByteStreamWillChange();
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal()->pathByteStream());
@@ -228,7 +228,7 @@ public:
     }
     
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
     }
@@ -247,7 +247,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         SVGMarkerOrientType animated;
         m_function.animate(targetElement, progress, repeatCount, animated);
@@ -266,7 +266,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         SVGPreserveAspectRatioValue& animated = m_animated->animVal()->value();
         m_function.animate(targetElement, progress, repeatCount, animated);
@@ -285,7 +285,7 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal()->value());
     }
@@ -307,20 +307,20 @@ private:
         return m_attributeName.matches(HTMLNames::classAttr);
     }
 
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         String& animated = m_animated->animVal();
         m_function.animate(targetElement, progress, repeatCount, animated);
     }
     
-    void apply(SVGElement* targetElement) final
+    void apply(SVGElement& targetElement) final
     {
         Base::apply(targetElement);
         if (isAnimatedStyleClassAniamtor())
             invalidateStyle(targetElement);
     }
     
-    void stop(SVGElement* targetElement) final
+    void stop(SVGElement& targetElement) final
     {
         if (!m_animated->isAnimating())
             return;
@@ -342,10 +342,10 @@ public:
     }
 
 private:
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
     }
 };
 
-}
+} // namespace WebCore

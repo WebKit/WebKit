@@ -126,7 +126,14 @@ void RenderingUpdateScheduler::displayRefreshFired()
     tracePoint(TriggerRenderingUpdate);
 
     clearScheduled();
-    triggerRenderingUpdate();
+    
+    if (m_page.chrome().client().shouldTriggerRenderingUpdate(m_rescheduledRenderingUpdateCount)) {
+        triggerRenderingUpdate();
+        m_rescheduledRenderingUpdateCount = 0;
+    } else {
+        scheduleRenderingUpdate();
+        ++m_rescheduledRenderingUpdateCount;
+    }
 }
 
 void RenderingUpdateScheduler::triggerRenderingUpdateForTesting()

@@ -33,8 +33,7 @@
     readonly attribute unsigned long long version;
     readonly attribute DOMStringList objectStoreNames;
 
-    // FIXME: 'transaction' should also take an optional 'IDBTransactionOptions' argument.
-    [NewObject] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly");
+    [NewObject] IDBTransaction transaction((DOMString or sequence<DOMString>) storeNames, optional IDBTransactionMode mode = "readonly", optional IDBTransactionOptions options);
     undefined close();
 
     [NewObject] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
@@ -54,4 +53,8 @@
 dictionary IDBObjectStoreParameters {
     (DOMString or sequence<DOMString>)? keyPath = null;
     boolean autoIncrement = false;
+};
+
+dictionary IDBTransactionOptions {
+    IDBTransactionDurability durability = "default";
 };

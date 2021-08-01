@@ -265,10 +265,12 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection)
         options.add(FrameSelection::DoNotSetFocus);
     if (m_options & TemporarySelectionOption::RevealSelection)
         options.add(FrameSelection::RevealSelection);
+    if (m_options & TemporarySelectionOption::DelegateMainFrameScroll)
+        options.add(FrameSelection::DelegateMainFrameScroll);
     if (m_options & TemporarySelectionOption::SmoothScroll)
         options.add(FrameSelection::SmoothScroll);
-    if (m_options & TemporarySelectionOption::OverrideSmoothScrollFeatureEnablment)
-        options.add(FrameSelection::OverrideSmoothScrollFeatureEnablement);
+    if (m_options & TemporarySelectionOption::RevealSelectionBounds)
+        options.add(FrameSelection::RevealSelectionBounds);
     m_document->selection().setSelection(selection, options);
 }
 

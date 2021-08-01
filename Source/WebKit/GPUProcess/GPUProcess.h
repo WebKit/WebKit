@@ -141,7 +141,7 @@ private:
     RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+#if ENABLE(MEDIA_SOURCE)
     void setWebMParserEnabled(bool);
 #endif
 
@@ -194,7 +194,7 @@ private:
     bool m_enableVP9Decoder { false };
     bool m_enableVP9SWDecoder { false };
 #endif
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+#if ENABLE(MEDIA_SOURCE)
     bool m_webMParserEnabled { false };
 #endif
 #if ENABLE(WEBM_FORMAT_READER)

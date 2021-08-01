@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlDateTimeFormatPrototypeGetterFormat);
+static JSC_DECLARE_CUSTOM_GETTER(IntlDateTimeFormatPrototypeGetterFormat);
 static JSC_DECLARE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncFormatRange);
 static JSC_DECLARE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncFormatRangeToParts);
 static JSC_DECLARE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncFormatToParts);
@@ -53,7 +53,7 @@ const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Intl.DateTimeFormat", &
 
 /* Source for IntlDateTimeFormatPrototype.lut.h
 @begin dateTimeFormatPrototypeTable
-  format                IntlDateTimeFormatPrototypeGetterFormat              DontEnum|Accessor
+  format                IntlDateTimeFormatPrototypeGetterFormat              DontEnum|ReadOnly|CustomAccessor
   formatRange           IntlDateTimeFormatPrototypeFuncFormatRange           DontEnum|Function 2
   formatToParts         IntlDateTimeFormatPrototypeFuncFormatToParts         DontEnum|Function 1
   resolvedOptions       IntlDateTimeFormatPrototypeFuncResolvedOptions       DontEnum|Function 0
@@ -113,14 +113,14 @@ JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
     RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlDateTimeFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 12.3.3 Intl.DateTimeFormat.prototype.format (ECMA-402 2.0)
     // 1. Let dtf be this DateTimeFormat object.
-    auto* dtf = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
+    auto* dtf = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(scope, { });
     // 2. ReturnIfAbrupt(dtf).
     if (UNLIKELY(!dtf))

@@ -3729,6 +3729,8 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-work
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/service-worker-cache-storage.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw-from-coop.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker.html [ Skip ]
@@ -4606,6 +4608,14 @@ fast/events/wheel/redispatched-wheel-event.html [ Timeout ]
 fast/inline/crash-when-negative-spacing-produce-nan.html [ Timeout ]
 imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Timeout ]
 
+
+webkit.org/b/227896 fast/text/pua-charactersTreatedAsSpace.html [ ImageOnlyFailure ]
+
+webkit.org/b/227802 imported/blink/dialog/top-layer-display-none.html [ ImageOnlyFailure ]
+
+webkit.org/b/228110 fast/forms/basic-selects.html [ Skip ]
+webkit.org/b/228110 fast/forms/indeterminate.html [ Skip ]
+
 # https://bugs.webkit.org/show_bug.cgi?id=223634
 editing/deleting/smart-delete-001.html [ Pass Failure ]
 editing/deleting/smart-delete-002.html [ Pass Failure ]
@@ -4629,6 +4639,9 @@ fast/forms/option-mouseevents.html [ Pass Failure ]
 fast/forms/password-doubleclick-selection.html [ Pass Failure ]
 fast/text/offsetForPosition-complex-fallback.html [ Pass Failure ]
 
+# testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() does not work with window.open() in DRT.
+fast/html/broadcast-channel-between-different-sessions.html [ Skip ]
+
 # This test is skipped because the necessary feature flag functionality specific to the Windows WebKit legacy port is
 # not implemented.  The feature flags in question are CSSCounterStyleAtRulesEnabled and CSSCounterStyleAtRuleImageSymbolsEnabled.
 webexposed/counter-style-image-symbols-not-exposed.html [ Skip ]
@@ -4650,3 +4663,8 @@ fast/workers/worker-script-error.html [ Pass Timeout ]
 fetch/fetch-worker-crash.html [ Pass Timeout ]
 webanimations/accelerated-transform-animation-to-scale-zero-with-implicit-from-keyframe.html [ Pass ImageOnlyFailure ]
 
+# webkit.org/b/228162 Multiple flaky crashes slowing down EWS results
+fast/events/dropzone-002.html [ Pass Crash ]
+fast/events/input-events-drag-and-drop.html [ Pass Crash ]
+fast/forms/number/number-l10n-input.html [ Pass Crash ]
+fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Crash ]

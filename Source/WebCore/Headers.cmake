@@ -66,6 +66,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/IDBOpenDBRequest.h
     Modules/indexeddb/IDBRequest.h
     Modules/indexeddb/IDBTransaction.h
+    Modules/indexeddb/IDBTransactionDurability.h
     Modules/indexeddb/IDBTransactionMode.h
     Modules/indexeddb/IDBValue.h
     Modules/indexeddb/IndexedDB.h
@@ -415,6 +416,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/AddEventListenerOptions.h
     dom/Attr.h
     dom/Attribute.h
+    dom/BroadcastChannel.h
+    dom/BroadcastChannelIdentifier.h
+    dom/BroadcastChannelRegistry.h
     dom/BoundaryPoint.h
     dom/CDATASection.h
     dom/CallbackResult.h
@@ -1331,6 +1335,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/angle/ANGLEHeaders.h
     platform/graphics/angle/ExtensionsGLANGLE.h
     platform/graphics/angle/GraphicsContextGLANGLEUtilities.h
+
+    platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h
 
     platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListDrawGlyphsRecorder.h

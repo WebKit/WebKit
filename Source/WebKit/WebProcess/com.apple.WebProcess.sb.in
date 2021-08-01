@@ -239,37 +239,31 @@
 )
 
 (define (AppleAVDUserClientMessageFilter)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (apply-message-filter
-            (allow (with telemetry) (with message "AppleAVDUserClient")
-                iokit-async-external-method
-                iokit-external-method
-                iokit-external-trap
-            )
+    (apply-message-filter
+        (allow (with telemetry) (with message "AppleAVDUserClient")
+            iokit-async-external-method
+            iokit-external-method
+            iokit-external-trap
         )
     )
 )
 
 (define (IOSurfaceAcceleratorClientMessageFilter)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (apply-message-filter
-            (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
-                iokit-async-external-method
-                iokit-external-method
-                iokit-external-trap
-            )
+    (apply-message-filter
+        (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
+            iokit-async-external-method
+            iokit-external-method
+            iokit-external-trap
         )
     )
 )
 
 (define (IOMobileFramebufferUserClientMessageFilter)
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (apply-message-filter
-            (allow (with telemetry) (with message "IOMobileFramebufferUserClient")
-                iokit-async-external-method
-                iokit-external-method
-                iokit-external-trap
-            )
+    (apply-message-filter
+        (allow (with telemetry-backtrace) (with message "IOMobileFramebufferUserClient")
+            iokit-async-external-method
+            iokit-external-method
+            iokit-external-trap
         )
     )
 )
@@ -288,9 +282,6 @@
         )
     )
     (deny mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
-#endif
         (require-all
             (require-not (extension "com.apple.webkit.extension.mach"))
             (global-name "com.apple.cvmsServ")
@@ -307,7 +298,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-connection "IOAccelerator")
             )
-            (with telemetry-backtrace)
             (IOAcceleratorMessageFilter)
         )
         ; else
@@ -324,7 +314,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "IOAccelerationUserClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-async-external-method
@@ -347,7 +336,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "IOSurfaceRootUserClient")
             )
-            (with telemetry-backtrace)
             (IOSurfaceRootUserClientMessageFilter)
         )
         ; else
@@ -371,7 +359,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "AppleIntelMEUserClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry) (with message "AppleIntelMEUserClient")
                     iokit-external-method
@@ -405,7 +392,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "AppleSNBFBUserClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry) (with message "AppleSNBFBUserClient")
                     iokit-external-method
@@ -439,7 +425,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "AGPMClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-async-external-method
@@ -462,7 +447,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "AppleGraphicsControlClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry) (with message "AppleGraphicsControlClient")
                     iokit-async-external-method
@@ -497,7 +481,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "AppleGraphicsPolicyClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-async-external-method
@@ -521,7 +504,6 @@
                 (extension "com.apple.webkit.extension.iokit")
                 (iokit-registry-entry-class "AppleMGPUPowerControlClient")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (deny (with telemetry) (with message "AppleMGPUPowerControlClient")
                     iokit-external-method
@@ -1057,7 +1039,7 @@
     (home-subpath "/Library/Preferences/com.apple.universalaccess.plist")
     (home-subpath "/Library/Preferences/edu.mit.Kerberos.plist")
     (home-subpath "/Library/Preferences/pbs.plist")
-    (home-regex "/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
+    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
 )
 #endif
 
@@ -1130,7 +1112,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AppleUpstreamUserClient")
         )
-        (with telemetry-backtrace)
         (apply-message-filter
             (deny (with telemetry) (with message "AppleUpstreamUserClient")
                 iokit-external-method
@@ -1167,7 +1148,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
         )
-        (with telemetry-backtrace)
         (apply-message-filter
             (deny (with telemetry) (with message "RootDomainUserClient")
                 iokit-external-method
@@ -1201,7 +1181,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AudioAUUC")
         )
-        (with telemetry-backtrace)
         (apply-message-filter
             (deny (with telemetry) (with message "AudioAUUC")
                 iokit-external-method
@@ -1238,7 +1217,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "IOAudioControlUserClient")
         )
-        (with telemetry-backtrace)
         (apply-message-filter
             (deny (with telemetry)
                 iokit-async-external-method
@@ -1262,7 +1240,6 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "IOAudioEngineUserClient")
         )
-        (with telemetry-backtrace)
         (apply-message-filter
             (deny (with telemetry)
                 iokit-async-external-method
@@ -1282,47 +1259,71 @@
 
 ;; <rdar://problem/60088861>
 (when (equal? (param "CPU") "arm64")
-    (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (AppleAVDUserClientMessageFilter)
 #endif
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class
-                "AppleAVDUserClient"
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (AppleAVDUserClientMessageFilter)
-#endif
     )
-    (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOMobileFramebufferUserClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (IOMobileFramebufferUserClientMessageFilter)
 #endif
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class
-                "IOMobileFramebufferUserClient"
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOMobileFramebufferUserClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (IOMobileFramebufferUserClientMessageFilter)
-#endif
     )
-    (allow iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-        (with telemetry-backtrace)
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (IOSurfaceAcceleratorClientMessageFilter)
 #endif
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class
-                "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient" ;; <rdar://problem/63696732>
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (IOSurfaceAcceleratorClientMessageFilter)
-#endif
     )
 )
 
@@ -1406,7 +1407,7 @@
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup
 #else
 (allow mach-lookup
 #endif
@@ -1422,10 +1423,7 @@
     )
 )
 ;; This is just for logging. Remove when GPU process is enabled by default.
-(allow mach-lookup (with report)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    (with telemetry-backtrace)
-#endif
+(allow mach-lookup
     (require-all
         (require-not (extension "com.apple.webkit.extension.mach"))
         (xpc-service-name "com.apple.MTLCompilerService")
@@ -1457,7 +1455,6 @@
 (allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
     (allow file-write*
-        (with report) (with telemetry-backtrace)
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
     (allow mach-lookup
        (global-name "com.apple.system.opendirectoryd.libinfo")
@@ -1481,7 +1478,6 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
 (deny mach-lookup
-    (with telemetry-backtrace)
     (global-name-regex #"^com.apple.distributed_notifications")
 )
 #else
@@ -1687,7 +1683,6 @@
                 (iokit-usb-interface-class kUSBVideoInterfaceClass)
                 (iokit-user-client-class "IOUSBDeviceUserClientV2")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-external-method
@@ -1713,7 +1708,6 @@
                 (iokit-usb-interface-class kUSBVideoInterfaceClass)
                 (iokit-user-client-class "IOUSBInterfaceUserClientV2")
             )
-            (with telemetry-backtrace)
             (apply-message-filter
                 (allow (with telemetry)
                     iokit-external-method
@@ -1746,7 +1740,7 @@
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-(deny mach-lookup (with telemetry-backtrace)
+(deny mach-lookup
     (global-name "com.apple.audio.SystemSoundServer-OSX")
     (global-name "com.apple.containermanagerd")
     (global-name "com.apple.cookied")
@@ -1836,7 +1830,7 @@
         (fcntl-command F_SETFL) ;; CMCapture uses when camera is enabled
         (fcntl-command F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
-    (allow system-fcntl (with telemetry-backtrace)
+    (allow system-fcntl
         (fcntl-command F_OFD_SETLK))
 
     (allow system-fcntl
@@ -2150,7 +2144,12 @@
     )
 )
 
-(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
+(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
+    (deny syscall-mach
+        (machtrap-number
+            MSC_mach_wait_until
+        )
+    )
     (deny syscall-mach (with telemetry))
 )
 
@@ -2201,7 +2200,6 @@
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
-        (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
             (iokit-registry-entry-class
@@ -2222,39 +2220,54 @@
 )
 
 (when (equal? (param "CPU") "arm64")
-    (allow iokit-open (with report)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-        (with telemetry-backtrace)
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (AppleAVDUserClientMessageFilter)
 #endif
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-user-client-class
-                "AppleAVDUserClient"
+        )
+        ; else
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "AppleAVDUserClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (AppleAVDUserClientMessageFilter)
-#endif
     )
-    (allow iokit-open (with report)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-        (with telemetry-backtrace)
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient"
+                )
+            )
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (IOSurfaceAcceleratorClientMessageFilter)
 #endif
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-user-client-class
-                "IOSurfaceAcceleratorClient"
+        )
+        ; else
+        (allow iokit-open (with report)
+            (require-all
+                (require-not (extension "com.apple.webkit.extension.iokit"))
+                (iokit-user-client-class
+                    "IOSurfaceAcceleratorClient"
+                )
             )
         )
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-        (IOSurfaceAcceleratorClientMessageFilter)
-#endif
     )
 )
 
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
-        (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.iokit"))
             (iokit-connection
@@ -2275,9 +2288,6 @@
 )
 
 (deny iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (with telemetry-backtrace)
-#endif
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
@@ -2289,9 +2299,6 @@
 )
 
 (deny iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (with telemetry-backtrace)
-#endif
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-registry-entry-class
@@ -2307,9 +2314,6 @@
 )
 
 (deny iokit-open
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (with telemetry-backtrace)
-#endif
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class

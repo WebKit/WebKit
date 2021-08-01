@@ -16,16 +16,11 @@ Starting worker: resources/deletedatabase-delayed-by-open-and-versionchange.js
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] h.createObjectStore('testObjectStore').put('bar', 'foo')
 [Worker]
-[Worker] onVersionChange():
-PASS [Worker] event.target.version is 1
-PASS [Worker] event.oldVersion is 1
-PASS [Worker] event.newVersion is null
-[Worker]
 [Worker] transactionOnComplete():
 [Worker] versionChangeComplete = true
 [Worker]
 [Worker] onOpenSuccess():
-PASS [Worker] blockedCalled is true
+PASS [Worker] blockedCalled is false
 [Worker] h = event.target.result
 [Worker] h.close()
 [Worker]

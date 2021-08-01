@@ -82,6 +82,7 @@
 #include "Color.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -231,6 +232,9 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
         break;
     case SelectionRevealMode::RevealUpToMainFrame:
         options.add(RevealSelectionUpToMainFrame);
+        break;
+    case SelectionRevealMode::DelegateMainFrameScroll:
+        options.add(DelegateMainFrameScroll);
         break;
     }
     setSelection(newSelection, options, newIntent);
@@ -432,6 +436,8 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
         m_selectionRevealMode = SelectionRevealMode::RevealUpToMainFrame;
     else if (options & RevealSelection)
         m_selectionRevealMode = SelectionRevealMode::Reveal;
+    else if (options & DelegateMainFrameScroll)
+        m_selectionRevealMode = SelectionRevealMode::DelegateMainFrameScroll;
     else
         m_selectionRevealMode = SelectionRevealMode::DoNotReveal;
     m_alwaysAlignCursorOnScrollWhenRevealingSelection = align == AlignCursorOnScrollAlways;
@@ -446,7 +452,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
-    updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(OverrideSmoothScrollFeatureEnablement) ? SmoothScrollFeatureEnablement::Override : SmoothScrollFeatureEnablement::Default);
+    updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent);
 
     if (options & IsUserTriggered) {
         if (auto* client = protectedDocument->editor().client())
@@ -473,7 +479,7 @@ void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMo
         view->selection().clear();
 }
 
-void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent, ScrollBehavior scrollBehavior, SmoothScrollFeatureEnablement overideFeatureEnablement)
+void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent, ScrollBehavior scrollBehavior, RevealExtentOption revealExtent)
 {
     if (!m_pendingSelectionUpdate)
         return;
@@ -490,7 +496,7 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
         else
             alignment = m_alwaysAlignCursorOnScrollWhenRevealingSelection ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
 
-        revealSelection(m_selectionRevealMode, alignment, RevealExtent, scrollBehavior, overideFeatureEnablement);
+        revealSelection(m_selectionRevealMode, alignment, revealExtent, scrollBehavior);
     }
 
     notifyAccessibilityForSelectionChange(intent);
@@ -2320,14 +2326,27 @@ FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleCont
     if (!renderView)
         return LayoutRect();
 
+    if (!m_selection.range())
+        return LayoutRect();
+    
+#if PLATFORM(IOS_FAMILY)
+    auto selectionGeometries = RenderObject::collectSelectionGeometries(m_selection.range().value());
+    IntRect visibleSelectionRect;
+    for (auto geometry : selectionGeometries)
+        visibleSelectionRect.unite(geometry.rect());
+    
+    if (clipToVisibleContent == ClipToVisibleContent::No)
+        return visibleSelectionRect;
+#else
     auto& selection = renderView->selection();
+    auto visibleSelectionRect = selection.boundsClippedToVisibleContent();
+    
+    if (clipToVisibleContent == ClipToVisibleContent::No)
+        return selection.bounds();
+#endif
+    
+    return intersection(visibleSelectionRect, renderView->frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
 
-    if (clipToVisibleContent == ClipToVisibleContent::Yes) {
-        auto selectionRect = selection.boundsClippedToVisibleContent();
-        return intersection(selectionRect, renderView->frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect));
-    }
-
-    return selection.bounds();
 }
 
 void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const
@@ -2390,7 +2409,7 @@ HTMLFormElement* FrameSelection::currentForm() const
     return scanForForm(start);
 }
 
-void FrameSelection::revealSelection(SelectionRevealMode revealMode, const ScrollAlignment& alignment, RevealExtentOption revealExtentOption, ScrollBehavior scrollBehavior, SmoothScrollFeatureEnablement overrideFeatureEnablement)
+void FrameSelection::revealSelection(SelectionRevealMode revealMode, const ScrollAlignment& alignment, RevealExtentOption revealExtentOption, ScrollBehavior scrollBehavior)
 {
     if (revealMode == SelectionRevealMode::DoNotReveal)
         return;
@@ -2413,7 +2432,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
             if (!m_scrollingSuppressCount) {
                 auto* scrollableArea = layer->ensureLayerScrollableArea();
                 scrollableArea->setAdjustForIOSCaretWhenScrolling(true);
-                layer->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior, overrideFeatureEnablement});
+                layer->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior});
                 scrollableArea->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_document->page())
@@ -2424,7 +2443,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior, overrideFeatureEnablement}))
+        if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior}))
             updateAppearance();
 #endif
     }

@@ -38,6 +38,16 @@ DEFINE_LOG_CHANNEL(MemoryPressure, LOG_CHANNEL_WEBKIT_SUBSYSTEM);
 
 WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
 
+#if PLATFORM(IOS_FAMILY)
+static const double s_conservativeThresholdFraction = 0.5;
+static const double s_strictThresholdFraction = 0.65;
+#else
+static const double s_conservativeThresholdFraction = 0.33;
+static const double s_strictThresholdFraction = 0.5;
+#endif
+static const std::optional<double> s_killThresholdFraction;
+static const Seconds s_pollInterval = 30_s;
+
 MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
     static LazyNeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
@@ -73,7 +83,7 @@ void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
 
     if (use) {
         m_measurementTimer = makeUnique<RunLoop::Timer<MemoryPressureHandler>>(RunLoop::main(), this, &MemoryPressureHandler::measurementTimerFired);
-        m_measurementTimer->startRepeating(30_s);
+        m_measurementTimer->startRepeating(m_configuration.pollInterval);
     } else
         m_measurementTimer = nullptr;
 }
@@ -110,6 +120,9 @@ void MemoryPressureHandler::setPageCount(unsigned pageCount)
 
 std::optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
 {
+    if (m_configuration.killThresholdFraction)
+        return m_configuration.baseThreshold * (*m_configuration.killThresholdFraction);
+
     switch (m_processState) {
     case WebsamProcessState::Inactive:
         return thresholdForMemoryKillOfInactiveProcess(m_pageCount);
@@ -119,32 +132,22 @@ std::optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
     return std::nullopt;
 }
 
-static size_t thresholdForPolicy(MemoryUsagePolicy policy)
+size_t MemoryPressureHandler::thresholdForPolicy(MemoryUsagePolicy policy)
 {
-    const size_t baseThresholdForPolicy = std::min(3 * GB, ramSize());
-
-#if PLATFORM(IOS_FAMILY)
-    const double conservativeThresholdFraction = 0.5;
-    const double strictThresholdFraction = 0.65;
-#else
-    const double conservativeThresholdFraction = 0.33;
-    const double strictThresholdFraction = 0.5;
-#endif
-
     switch (policy) {
     case MemoryUsagePolicy::Unrestricted:
         return 0;
     case MemoryUsagePolicy::Conservative:
-        return baseThresholdForPolicy * conservativeThresholdFraction;
+        return m_configuration.baseThreshold * m_configuration.conservativeThresholdFraction;
     case MemoryUsagePolicy::Strict:
-        return baseThresholdForPolicy * strictThresholdFraction;
+        return m_configuration.baseThreshold * m_configuration.strictThresholdFraction;
     default:
         ASSERT_NOT_REACHED();
         return 0;
     }
 }
 
-static MemoryUsagePolicy policyForFootprint(size_t footprint)
+MemoryUsagePolicy MemoryPressureHandler::policyForFootprint(size_t footprint)
 {
     if (footprint >= thresholdForPolicy(MemoryUsagePolicy::Strict))
         return MemoryUsagePolicy::Strict;
@@ -315,5 +318,23 @@ void MemoryPressureHandler::setDispatchQueue(OSObjectPtr<dispatch_queue_t>&& que
     m_dispatchQueue = WTFMove(queue);
 }
 #endif
+
+MemoryPressureHandler::Configuration::Configuration()
+    : baseThreshold(std::min(3 * GB, ramSize()))
+    , conservativeThresholdFraction(s_conservativeThresholdFraction)
+    , strictThresholdFraction(s_strictThresholdFraction)
+    , killThresholdFraction(s_killThresholdFraction)
+    , pollInterval(s_pollInterval)
+{
+}
+
+MemoryPressureHandler::Configuration::Configuration(size_t base, double conservative, double strict, std::optional<double> kill, Seconds interval)
+    : baseThreshold(base)
+    , conservativeThresholdFraction(conservative)
+    , strictThresholdFraction(strict)
+    , killThresholdFraction(kill)
+    , pollInterval(interval)
+{
+}
 
 } // namespace WebCore

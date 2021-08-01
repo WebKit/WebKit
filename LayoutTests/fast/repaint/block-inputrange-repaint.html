@@ -20,7 +20,7 @@
     if (window.internals) {
       repaintRects = window.internals.repaintRectsAsText();
       window.internals.stopTrackingRepaints();
-      shouldNotBe("repaintRects.indexOf('495 8 15 15')", "-1");
+      shouldNotBe("repaintRects.indexOf('493 8 17 17')", "-1");
     }
     finishJSTest();
   }

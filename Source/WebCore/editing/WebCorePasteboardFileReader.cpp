@@ -41,7 +41,7 @@ void WebCorePasteboardFileReader::readFilename(const String& filename)
 
 void WebCorePasteboardFileReader::readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&& buffer)
 {
-    files.append(File::create(context.get(), Blob::create(context.get(), buffer->takeData(), type), filename));
+    files.append(File::create(context.get(), Blob::create(context.get(), buffer->extractData(), type), filename));
 }
 
 }

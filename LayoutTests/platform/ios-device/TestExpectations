@@ -58,7 +58,6 @@ http/tests/preload/onerror_event.html [ Skip ]
 http/tests/preload/onload_event.html [ Skip ]
 http/tests/websocket/tests/hybi/multiple-connections.html [ Skip ]
 
-imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Failure ]
 imported/w3c/web-platform-tests/cssom-view/Screen-pixelDepth-Screen-colorDepth001.html [ Failure ]
 imported/w3c/web-platform-tests/cssom-view/scrolling-quirks-vs-nonquirks.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
@@ -67,7 +66,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-eleme
 imported/blink/compositing/child-transform-layer-with-foreground-layer.html [ ImageOnlyFailure ]
 imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-redirect-bogus-sync.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-send.htm [ Skip ]
 imported/w3c/web-platform-tests/cssom/ttwf-cssom-document-extension.html [ Skip ]

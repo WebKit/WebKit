@@ -103,6 +103,7 @@ class OpaqueICUTimeZone {
     WTF_MAKE_FAST_ALLOCATED(OpaqueICUTimeZone);
 public:
     std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> m_calendar;
+    String m_canonicalTimeZoneID;
 };
 #endif
 
@@ -334,22 +335,7 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
 String DateCache::defaultTimeZone()
 {
 #if HAVE(ICU_C_TIMEZONE_API)
-    auto& timeZone = *timeZoneCache();
-    Vector<UChar, 32> buffer;
-    auto status = callBufferProducingFunction(ucal_getTimeZoneID, timeZone.m_calendar.get(), buffer);
-    if (U_FAILURE(status))
-        return "UTC"_s;
-
-    Vector<UChar, 32> canonicalBuffer;
-    status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
-    if (U_FAILURE(status))
-        return "UTC"_s;
-
-    String canonical = String(canonicalBuffer);
-    if (isUTCEquivalent(canonical))
-        return "UTC"_s;
-
-    return canonical;
+    return timeZoneCache()->m_canonicalTimeZoneID;
 #else
     icu::UnicodeString timeZoneID;
     icu::UnicodeString canonicalTimeZoneID;
@@ -384,9 +370,21 @@ void DateCache::timeZoneCacheSlow()
     ASSERT(!m_timeZoneCache);
 #if HAVE(ICU_C_TIMEZONE_API)
     auto* cache = new OpaqueICUTimeZone;
+
+    String canonical;
     Vector<UChar, 32> timeZoneID;
     auto status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
-    ASSERT_UNUSED(status, U_SUCCESS(status));
+    if (U_SUCCESS(status)) {
+        Vector<UChar, 32> canonicalBuffer;
+        auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneID.data(), timeZoneID.size(), canonicalBuffer, nullptr);
+        if (U_SUCCESS(status))
+            canonical = String(canonicalBuffer);
+    }
+    if (canonical.isNull() || isUTCEquivalent(canonical))
+        canonical = "UTC"_s;
+    cache->m_canonicalTimeZoneID = WTFMove(canonical);
+
+    status = U_ZERO_ERROR;
     cache->m_calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(timeZoneID.data(), timeZoneID.size(), "", UCAL_DEFAULT, &status));
     ASSERT_UNUSED(status, U_SUCCESS(status));
     ucal_setGregorianChange(cache->m_calendar.get(), minECMAScriptTime, &status); // Ignore "unsupported" error.

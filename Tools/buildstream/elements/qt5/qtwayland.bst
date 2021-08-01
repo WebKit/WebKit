@@ -5,6 +5,7 @@ depends:
 - sdk/libdrm.bst
 
 sources:
-- kind: tar
-  url: qt:5.15/5.15.0/submodules/qtwayland-everywhere-src-5.15.0.tar.xz
-  ref: 084133e10bfbd32a28125639660c59975f23457bba6a79b30a25802cec76a9fb
+- kind: git_tag
+  url: kde:qtwayland
+  track: kde/5.15
+  ref: v5.15.0-58-gd4c41797b61a5a8da47c5821711aca72e756dcbf

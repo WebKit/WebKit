@@ -1424,7 +1424,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         return _focusedElementInformation.insideFixedPosition;
 
     auto& editorState = _page->editorState();
-    return !editorState.isMissingPostLayoutData && editorState.postLayoutData().insideFixedPosition;
+    return !editorState.isMissingPostLayoutData && editorState.selectionIsRange && editorState.postLayoutData().insideFixedPosition;
 }
 
 - (BOOL)isEditable
@@ -1758,9 +1758,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch)
         return NO;
 
-    if (gestureRecognizer == _mouseGestureRecognizer)
-        return [_mouseGestureRecognizer mouseTouch] == touch;
-
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
         return touch.type != UITouchTypeIndirectPointer;
 #endif
@@ -1783,10 +1780,6 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceivePress:(UIPress *)press
 {
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    if (gestureRecognizer == _mouseGestureRecognizer)
-        return NO;
-#endif
 #if ENABLE(HOVER_GESTURE_RECOGNIZER)
     if (gestureRecognizer == _hoverGestureRecognizer)
         return NO;
@@ -3079,6 +3072,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     ASSERT(!_potentialTapInProgress);
     [self _resetIsDoubleTapPending];
 
+    [_inputPeripheral setSingleTapShouldEndEditing:[_inputPeripheral isEditing]];
+
     bool shouldRequestMagnificationInformation = _page->preferences().fasterClicksEnabled();
     if (shouldRequestMagnificationInformation)
         RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p)", self);
@@ -3169,7 +3164,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         _hasTapHighlightForPotentialTap = NO;
     }
 
-    [_inputPeripheral endEditing];
+    if ([_inputPeripheral singleTapShouldEndEditing])
+        [_inputPeripheral endEditing];
 
     RELEASE_LOG(ViewGestures, "Single tap recognized - commit potential tap (%p)", self);
 
@@ -4818,7 +4814,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryClear
 {
-    _page->setFocusedElementValue({ });
+    _page->setFocusedElementValue(_focusedElementInformation.elementContext, { });
 }
 
 - (void)accessoryDone
@@ -4830,13 +4826,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)updateFocusedElementValueAsNumber:(double)value
 {
-    _page->setFocusedElementValueAsNumber(value);
+    _page->setFocusedElementValueAsNumber(_focusedElementInformation.elementContext, value);
     _focusedElementInformation.valueAsNumber = value;
 }
 
 - (void)updateFocusedElementValue:(NSString *)value
 {
-    _page->setFocusedElementValue(value);
+    _page->setFocusedElementValue(_focusedElementInformation.elementContext, value);
     _focusedElementInformation.value = value;
 }
 
@@ -4845,9 +4841,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     WebCore::Color color(value.CGColor);
     String valueAsString = WebCore::serializationForHTML(color);
 
-    _page->setFocusedElementValue(valueAsString);
+    _page->setFocusedElementValue(_focusedElementInformation.elementContext, valueAsString);
     _focusedElementInformation.value = valueAsString;
     _focusedElementInformation.colorValue = color;
+}
+
+- (void)updateFocusedElementSelectedIndex:(uint32_t)index allowsMultipleSelection:(bool)allowsMultipleSelection
+{
+    _page->setFocusedElementSelectedIndex(_focusedElementInformation.elementContext, index, allowsMultipleSelection);
 }
 
 - (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value
@@ -4938,12 +4939,21 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)beginSelectionChange
 {
+    _selectionChangeNestingLevel++;
+
     [self.inputDelegate selectionWillChange:self];
 }
 
 - (void)endSelectionChange
 {
     [self.inputDelegate selectionDidChange:self];
+
+    if (_selectionChangeNestingLevel) {
+        // FIXME (228083): Some layout tests end up triggering unbalanced calls to -endSelectionChange.
+        // We should investigate why this happens, (ideally) prevent it from happening, and then assert
+        // that `_selectionChangeNestingLevel` is nonzero when calling -endSelectionChange.
+        _selectionChangeNestingLevel--;
+    }
 }
 
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction
@@ -4973,7 +4983,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 #if ENABLE(DATALIST_ELEMENT)
     if ([textSuggestion isKindOfClass:[WKDataListTextSuggestion class]]) {
-        _page->setFocusedElementValue([textSuggestion inputText]);
+        _page->setFocusedElementValue(_focusedElementInformation.elementContext, [textSuggestion inputText]);
         return;
     }
 #endif
@@ -5612,11 +5622,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 - (UITextInteractionAssistant *)interactionAssistant
 {
     return _textInteractionAssistant.get();
-}
-
-- (id<UISelectionInteractionAssistant>)selectionInteractionAssistant
-{
-    return nil;
 }
 
 // NSRange support.  Would like to deprecate to the extent possible, although some support
@@ -6788,6 +6793,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 #if HAVE(QUICKBOARD_CONTROLLER)
     [context setAcceptsEmoji:YES];
     [context setShouldPresentModernTextInputUI:YES];
+    [context setPlaceholder:self.inputLabelText];
 #endif
     return context;
 }
@@ -6808,7 +6814,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 static bool canUseQuickboardControllerFor(UITextContentType type)
 {
-    return [type isEqualToString:UITextContentTypeUsername] || [type isEqualToString:UITextContentTypePassword] || [type isEqualToString:UITextContentTypeEmailAddress];
+    return [type isEqualToString:UITextContentTypePassword];
 }
 
 #endif // HAVE(QUICKBOARD_CONTROLLER)
@@ -7061,7 +7067,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)selectMenu:(WKSelectMenuListViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index
 {
     ASSERT(!_focusedElementInformation.isMultiSelect);
-    _page->setFocusedElementSelectedIndex(index, false);
+    [self updateFocusedElementSelectedIndex:index allowsMultipleSelection:false];
 }
 
 - (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuListViewController *)selectMenu
@@ -7094,7 +7100,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         return;
     }
 
-    _page->setFocusedElementSelectedIndex(index, true);
+    [self updateFocusedElementSelectedIndex:index allowsMultipleSelection:true];
     option.isSelected = checked;
 }
 
@@ -7203,6 +7209,12 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
         if (!_usingGestureForSelection && _focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words)
             [UIKeyboardImpl.sharedInstance clearShiftState];
+
+        if (!_usingGestureForSelection && !_selectionChangeNestingLevel && _page->editorState().triggeredByAccessibilitySelectionChange) {
+            // Force UIKit to reload all EditorState-based UI; in particular, this includes text candidates.
+            [self beginSelectionChange];
+            [self endSelectionChange];
+        }
     }
 }
 
@@ -7260,9 +7272,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     }
 
     if (postLayoutData.isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
-        [[self selectionInteractionAssistant] showSelectionCommands];
-
-        if (!_suppressSelectionAssistantReasons)
+        auto firstResponder = self.firstResponder;
+        if ((!firstResponder || self == firstResponder) && !_suppressSelectionAssistantReasons)
             [_textInteractionAssistant activateSelection];
 
         [_textInteractionAssistant didEndScrollingOverflow];
@@ -8005,6 +8016,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (gestureRecognizer == _mouseGestureRecognizer)
+        return NO;
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS)
     if (deferringGestureRecognizer == _imageAnalysisDeferringGestureRecognizer)
@@ -9676,8 +9692,8 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
     UIPointerStyle *(^iBeamCursor)(void) = ^{
         float beamLength = _positionInformation.caretLength * scaleFactor;
-        auto axisOrientation = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
-        UIAxis iBeamConstraintAxes = _positionInformation.isHorizontalWritingMode ? UIAxisVertical : UIAxisHorizontal;
+        auto axisOrientation = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
+        UIAxis iBeamConstraintAxes = _positionInformation.isVerticalWritingMode ? UIAxisHorizontal : UIAxisVertical;
 
         // If the I-beam is so large that the magnetism is hard to fight, we should not apply any magnetism.
         if (beamLength > [UITextInteraction _maximumBeamSnappingLength])
@@ -10254,7 +10270,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         WebCore::ElementContext elementContext = *information.imageElementContext;
 
         auto requestForTextSelection = [strongSelf createImageAnalysisRequest:VKAnalysisTypeText image:image.get()];
-        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode image:image.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image.get()];
 
         auto textAnalysisStartTime = MonotonicTime::now();
         [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, requestForContextMenu, gestureDeferralToken, textAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
@@ -10307,7 +10323,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                     UNUSED_PARAM(hasTextResults);
 #endif
 #if USE(UICONTEXTMENU)
-                    strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode] ? result.mrcMenu : nil;
+                    strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
 #endif
                     [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
                 }];
@@ -10359,7 +10375,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         // making redundant image analysis requests for the same image data.
 
         auto visualSearchAnalysisStartTime = MonotonicTime::now();
-        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode image:image.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image.get()];
         [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, location, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
@@ -10375,7 +10391,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif
 
 #if USE(UICONTEXTMENU)
-            strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode] ? result.mrcMenu : nil;
+            strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
             strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
             [strongSelf->_contextMenuInteraction _presentMenuAtLocation:location];
 #else

@@ -107,9 +107,15 @@ bool defaultWebMFormatReaderEnabled();
 bool defaultVP8DecoderEnabled();
 bool defaultVP9DecoderEnabled();
 bool defaultVP9SWDecoderEnabledOnBattery();
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
 bool defaultWebMParserEnabled();
+bool defaultWebMWebAudioEnabled();
 #endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+bool defaultMediaSessionCoordinatorEnabled();
 #endif
 
 } // namespace WebKit

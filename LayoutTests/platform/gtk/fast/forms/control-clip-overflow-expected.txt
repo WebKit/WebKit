@@ -28,7 +28,7 @@ layer at (8,94) size 100x50
     RenderText {#text} at (0,0) size 0x0
 layer at (8,164) size 100x50
   RenderBlock {DIV} at (0,156) size 100x50
-    RenderButton {BUTTON} at (0,2) size 80x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+    RenderButton {BUTTON} at (0,2) size 80x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
       RenderBlock (anonymous) at (8,4) size 64x18
         RenderText {#text} at (0,0) size 191x17
           text run at (0,0) width 191: "Lorem ipsum dolor sit amet"

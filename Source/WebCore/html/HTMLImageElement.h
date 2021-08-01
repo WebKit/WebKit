@@ -91,6 +91,9 @@ public:
 
     WEBCORE_EXPORT bool complete() const;
 
+    void setDecoding(String&&);
+    String decoding() const;
+
     DecodingMode decodingMode() const;
     
     WEBCORE_EXPORT void decode(Ref<DeferredPromise>&&);

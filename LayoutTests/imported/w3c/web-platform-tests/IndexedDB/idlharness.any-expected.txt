@@ -185,11 +185,11 @@ PASS IDBTransaction interface: existence and properties of interface prototype o
 PASS IDBTransaction interface: existence and properties of interface prototype object's @@unscopables property
 PASS IDBTransaction interface: attribute objectStoreNames
 PASS IDBTransaction interface: attribute mode
-FAIL IDBTransaction interface: attribute durability assert_true: The prototype object must have a property "durability" expected true got false
+PASS IDBTransaction interface: attribute durability
 PASS IDBTransaction interface: attribute db
 PASS IDBTransaction interface: attribute error
 PASS IDBTransaction interface: operation objectStore(DOMString)
-FAIL IDBTransaction interface: operation commit() assert_own_property: interface prototype object missing non-static operation expected property "commit" missing
+PASS IDBTransaction interface: operation commit()
 PASS IDBTransaction interface: operation abort()
 PASS IDBTransaction interface: attribute onabort
 PASS IDBTransaction interface: attribute oncomplete

@@ -1,3 +1,104 @@
+2021-07-23  Dean Jackson  <dino@apple.com>
+
+        3.5 MB system-wide footprint impact due to thread-locals in libANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=228240
+        rdar://79504783
+
+        Reviewed by Ken Russell and Geoff Garen.
+
+        Apple's dyld has a bug where thread_local variables are dirtied on
+        process launch, causing a memory regression. Work around this
+        temporarily in ANGLE by using pthread thread local storage.
+
+        I don't expect this to be upstreamed to ANGLE unless they
+        want it. If it isn't, this patch will have to be applied until
+        the dyld bug is fixed.
+
+        * src/libANGLE/Context.cpp: Implement some methods to get/set what was
+        the global variable gCurrentValidContext.
+        (gl::GetCurrentValidContextTLSIndex):
+        (gl::GetCurrentValidContextTLS):
+        (gl::SetCurrentValidContextTLS):
+        (gl::Context::setContextLost):
+        * src/libANGLE/Context.h:
+        * src/libGLESv2/global_state.cpp: Ditto, but for gCurrentThread.
+        (egl::GetCurrentThreadTLSIndex):
+        (egl::GetCurrentThreadTLS):
+        (egl::SetCurrentThreadTLS):
+        (egl::GetCurrentThread):
+        (egl::SetContextCurrent):
+        * src/libGLESv2/global_state.h:
+        (gl::GetGlobalContext):
+        (gl::GetValidGlobalContext):
+
+2021-07-16  Kyle Piddington  <kpiddington@apple.com>
+
+        Build Default Metal library offline
+        https://bugs.webkit.org/show_bug.cgi?id=227333
+
+        <rdar://79923371>
+
+        This patch compiles and creates a Metal library at build time, storing
+        the library as a compiled binary file. This library is baked into the dylib,
+        and is loaded at context creation time.
+
+        Unlike the previous version of this patch, this patch does not save or store the .metallib on disk, but rather
+        bakes it into a binary.
+
+        Fixed internal build breaks by skipping Metallib bake script.
+
+        Reviewed by Kenneth Russell.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeShaderLibrary):
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+
+2021-07-16  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r279980.
+
+        Broke Internal Builds
+
+        Reverted changeset:
+
+        "Build Default Metal library offline"
+        https://bugs.webkit.org/show_bug.cgi?id=227333
+        https://commits.webkit.org/r279980
+
+2021-07-16  Kyle Piddington  <kpiddington@apple.com>
+
+        Build Default Metal library offline
+        https://bugs.webkit.org/show_bug.cgi?id=227333
+
+        <rdar://79923371>
+
+        This patch compiles and creates a Metal library at build time, storing
+        the library as a compiled binary file. This library is baked into the dylib, 
+        and is loaded at context creation time.
+
+        Unlike the previous version of this patch, this patch does not save or store the .metallib on disk, but rather
+        bakes it into a binary.
+        
+        Reviewed by Kenneth Russell.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeShaderLibrary):
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+
+2021-07-15  Kyle Piddington  <kpiddington@apple.com>
+
+        WebGL2 demo doesn't work due to failing compilation to metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=226865
+	
+        Fix translation of struct-arrays to contain the array type as well.
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+
 2021-07-13  Kyle Piddington  <kpiddington@apple.com>
 
         rAF driven WebGL submits excessive amount of GPU work when frames are slow

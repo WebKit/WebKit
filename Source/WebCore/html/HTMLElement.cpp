@@ -289,6 +289,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onfocusAttr.get(),
         &onfocusinAttr.get(),
         &onfocusoutAttr.get(),
+        &onformdataAttr.get(),
         &ongesturechangeAttr.get(),
         &ongestureendAttr.get(),
         &ongesturestartAttr.get(),

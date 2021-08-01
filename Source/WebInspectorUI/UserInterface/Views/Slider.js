@@ -59,8 +59,10 @@ WI.Slider = class Slider extends WI.Object
     {
         value = Math.max(Math.min(value, 1), 0);
 
-        if (value === this._value)
+        if (value === this._value) {
+            this.recalculateKnobY();
             return;
+        }
 
         this.knobY = value;
 

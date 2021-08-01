@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,97 +32,92 @@
 
 namespace WebCore {
 
-bool SVGAttributeAnimator::isAnimatedStylePropertyAniamtor(const SVGElement* targetElement) const
+bool SVGAttributeAnimator::isAnimatedStylePropertyAniamtor(const SVGElement& targetElement) const
 {
-    return targetElement->isAnimatedStyleAttribute(m_attributeName);
+    return targetElement.isAnimatedStyleAttribute(m_attributeName);
 }
 
-void SVGAttributeAnimator::invalidateStyle(SVGElement* targetElement)
+void SVGAttributeAnimator::invalidateStyle(SVGElement& targetElement)
 {
-    SVGElement::InstanceInvalidationGuard guard(*targetElement);
-    targetElement->invalidateSVGPresentationalHintStyle();
+    SVGElement::InstanceInvalidationGuard guard(targetElement);
+    targetElement.invalidateSVGPresentationalHintStyle();
 }
 
-void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement* element, CSSPropertyID id, const String& value)
+void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& element, CSSPropertyID id, const String& value)
 {
-    ASSERT(element);
-    ASSERT(!element->m_deletionHasBegun);
+    ASSERT(!element.m_deletionHasBegun);
     ASSERT(id != CSSPropertyInvalid);
     
-    if (!element->ensureAnimatedSMILStyleProperties().setProperty(id, value, false))
+    if (!element.ensureAnimatedSMILStyleProperties().setProperty(id, value, false))
         return;
-    element->invalidateStyle();
+    element.invalidateStyle();
 }
 
-void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement* targetElement, const String& value)
+void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& targetElement, const String& value)
 {
-    ASSERT(targetElement);
     ASSERT(m_attributeName != anyQName());
     
     // FIXME: Do we really need to check both isConnected and !parentNode?
-    if (!targetElement->isConnected() || !targetElement->parentNode())
+    if (!targetElement.isConnected() || !targetElement.parentNode())
         return;
     
     CSSPropertyID id = cssPropertyID(m_attributeName.localName());
     
-    SVGElement::InstanceUpdateBlocker blocker(*targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     applyAnimatedStylePropertyChange(targetElement, id, value);
     
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances()))
-        applyAnimatedStylePropertyChange(instance.ptr(), id, value);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement.instances()))
+        applyAnimatedStylePropertyChange(instance, id, value);
 }
     
-void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* element, CSSPropertyID id)
+void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement& element, CSSPropertyID id)
 {
-    ASSERT(element);
-    ASSERT(!element->m_deletionHasBegun);
+    ASSERT(!element.m_deletionHasBegun);
     ASSERT(id != CSSPropertyInvalid);
 
-    element->ensureAnimatedSMILStyleProperties().removeProperty(id);
-    element->invalidateStyle();
+    element.ensureAnimatedSMILStyleProperties().removeProperty(id);
+    element.invalidateStyle();
 }
 
-void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* targetElement)
+void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement& targetElement)
 {
-    ASSERT(targetElement);
     ASSERT(m_attributeName != anyQName());
 
     // FIXME: Do we really need to check both isConnected and !parentNode?
-    if (!targetElement->isConnected() || !targetElement->parentNode())
+    if (!targetElement.isConnected() || !targetElement.parentNode())
         return;
 
     CSSPropertyID id = cssPropertyID(m_attributeName.localName());
 
-    SVGElement::InstanceUpdateBlocker blocker(*targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     removeAnimatedStyleProperty(targetElement, id);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances()))
-        removeAnimatedStyleProperty(instance.ptr(), id);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement.instances()))
+        removeAnimatedStyleProperty(instance, id);
 }
     
-void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* element, const QualifiedName& attributeName)
+void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement& element, const QualifiedName& attributeName)
 {
-    ASSERT(!element->m_deletionHasBegun);
-    element->svgAttributeChanged(attributeName);
+    ASSERT(!element.m_deletionHasBegun);
+    element.svgAttributeChanged(attributeName);
 }
 
-void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* targetElement)
+void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement& targetElement)
 {
-    ASSERT(targetElement);
     ASSERT(m_attributeName != anyQName());
 
     // FIXME: Do we really need to check both isConnected and !parentNode?
-    if (!targetElement->isConnected() || !targetElement->parentNode())
+    if (!targetElement.isConnected() || !targetElement.parentNode())
         return;
 
-    SVGElement::InstanceUpdateBlocker blocker(*targetElement);
+    SVGElement::InstanceUpdateBlocker blocker(targetElement);
     applyAnimatedPropertyChange(targetElement, m_attributeName);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement->instances()))
-        applyAnimatedPropertyChange(instance.ptr(), m_attributeName);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(targetElement.instances()))
+        applyAnimatedPropertyChange(instance, m_attributeName);
 }
 
-}
+} // namespace WebCore

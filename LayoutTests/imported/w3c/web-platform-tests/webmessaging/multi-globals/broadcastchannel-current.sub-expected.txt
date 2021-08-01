@@ -1,5 +1,5 @@
 Blocked access to external URL http://www.localhost:8800/webmessaging/multi-globals/support/current-document-domain.sub.html
 
 
-FAIL The current page being cross-origin must prevent the BroadcastChannel message from being seen promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new parent.frames[1].BroadcastChannel(...args)')"
+FAIL The current page being cross-origin must prevent the BroadcastChannel message from being seen assert_unreached: message event fired Reached unreachable code
 

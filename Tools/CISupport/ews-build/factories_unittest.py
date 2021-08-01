@@ -418,6 +418,7 @@ class TestCommitQueueFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSource, repourl='https://git.webkit.org/git/WebKit-https'),
             _BuildStepFactory(steps.FetchBranches),
             _BuildStepFactory(steps.ShowIdentifier),
+            _BuildStepFactory(steps.VerifyGitHubIntegrity),
             _BuildStepFactory(steps.UpdateWorkingDirectory),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.ValidateChangeLogAndReviewer),

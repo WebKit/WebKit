@@ -2405,7 +2405,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
     auto scrollPositionChangeOptionsForElement = [this, options](Element* element)
     {
         auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
-        if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element, options.overrideFeatureEnablement))
+        if (!renderer().frame().eventHandler().autoscrollInProgress() && element && useSmoothScrolling(options.behavior, element))
             scrollPositionOptions.animated = AnimatedScroll::Yes;
         return scrollPositionOptions;
     };
@@ -2477,6 +2477,11 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             if (options.revealMode == SelectionRevealMode::RevealUpToMainFrame && frameView.frame().isMainFrame())
                 return;
 
+            if (options.revealMode == SelectionRevealMode::DelegateMainFrameScroll && frameView.frame().isMainFrame()) {
+                page().chrome().scrollMainFrameToRevealRect(snappedIntRect(absoluteRect));
+                return;
+            }
+
             auto minScrollPosition = frameView.minimumScrollPosition();
             auto maxScrollPosition = frameView.maximumScrollPosition();
 
@@ -2512,11 +2517,11 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
             }
 
             // This is the outermost view of a web page, so after scrolling this view we
-            // scroll its container by calling Page::scrollRectIntoView.
+            // scroll its container by calling Page::scrollMainFrameToRevealRect.
             // This only has an effect on the Mac platform in applications
             // that put web views into scrolling containers, such as Mac OS X Mail.
             // The canAutoscroll function in EventHandler also knows about this.
-            page().chrome().scrollRectIntoView(snappedIntRect(absoluteRect));
+            page().chrome().scrollContainingScrollViewsToRevealRect(snappedIntRect(absoluteRect));
         }
     }
     

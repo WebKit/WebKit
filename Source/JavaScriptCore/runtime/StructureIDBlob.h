@@ -53,6 +53,10 @@ public:
     
     StructureID structureID() const { return u.fields.structureID; }
     IndexingType indexingModeIncludingHistory() const { return u.fields.indexingModeIncludingHistory; }
+    Dependency fencedIndexingModeIncludingHistory(IndexingType& indexingType)
+    {
+        return Dependency::loadAndFence(&u.fields.indexingModeIncludingHistory, indexingType);
+    }
     void setIndexingModeIncludingHistory(IndexingType indexingModeIncludingHistory) { u.fields.indexingModeIncludingHistory = indexingModeIncludingHistory; }
     JSType type() const { return u.fields.type; }
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return u.fields.inlineTypeFlags; }

@@ -59,7 +59,7 @@ public:
 
     bool isParsingFragment() const;
 
-    void constructTree(AtomicHTMLToken&&);
+    void constructTree(AtomHTMLToken&&);
 
     bool isParsingTemplateContents() const;
     bool hasParserBlockingScriptWork() const;
@@ -112,32 +112,32 @@ private:
     void linkifyPhoneNumbers(const String&);
 #endif
 
-    void processToken(AtomicHTMLToken&&);
+    void processToken(AtomHTMLToken&&);
 
-    void processDoctypeToken(AtomicHTMLToken&&);
-    void processStartTag(AtomicHTMLToken&&);
-    void processEndTag(AtomicHTMLToken&&);
-    void processComment(AtomicHTMLToken&&);
-    void processCharacter(AtomicHTMLToken&&);
-    void processEndOfFile(AtomicHTMLToken&&);
+    void processDoctypeToken(AtomHTMLToken&&);
+    void processStartTag(AtomHTMLToken&&);
+    void processEndTag(AtomHTMLToken&&);
+    void processComment(AtomHTMLToken&&);
+    void processCharacter(AtomHTMLToken&&);
+    void processEndOfFile(AtomHTMLToken&&);
 
-    bool processStartTagForInHead(AtomicHTMLToken&&);
-    void processStartTagForInBody(AtomicHTMLToken&&);
-    void processStartTagForInTable(AtomicHTMLToken&&);
-    void processEndTagForInBody(AtomicHTMLToken&&);
-    void processEndTagForInTable(AtomicHTMLToken&&);
-    void processEndTagForInTableBody(AtomicHTMLToken&&);
-    void processEndTagForInRow(AtomicHTMLToken&&);
-    void processEndTagForInCell(AtomicHTMLToken&&);
+    bool processStartTagForInHead(AtomHTMLToken&&);
+    void processStartTagForInBody(AtomHTMLToken&&);
+    void processStartTagForInTable(AtomHTMLToken&&);
+    void processEndTagForInBody(AtomHTMLToken&&);
+    void processEndTagForInTable(AtomHTMLToken&&);
+    void processEndTagForInTableBody(AtomHTMLToken&&);
+    void processEndTagForInRow(AtomHTMLToken&&);
+    void processEndTagForInCell(AtomHTMLToken&&);
 
-    void processHtmlStartTagForInBody(AtomicHTMLToken&&);
-    bool processBodyEndTagForInBody(AtomicHTMLToken&&);
+    void processHtmlStartTagForInBody(AtomHTMLToken&&);
+    bool processBodyEndTagForInBody(AtomHTMLToken&&);
     bool processTableEndTagForInTable();
     bool processCaptionEndTagForInCaption();
     bool processColgroupEndTagForInColumnGroup();
     bool processTrEndTagForInRow();
 
-    void processAnyOtherEndTagForInBody(AtomicHTMLToken&&);
+    void processAnyOtherEndTagForInBody(AtomHTMLToken&&);
 
     void processCharacterBuffer(ExternalCharacterTokenBuffer&);
     inline void processCharacterBufferForInBody(ExternalCharacterTokenBuffer&);
@@ -148,9 +148,9 @@ private:
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInButtonScope();
 
-    void processGenericRCDATAStartTag(AtomicHTMLToken&&);
-    void processGenericRawTextStartTag(AtomicHTMLToken&&);
-    void processScriptStartTag(AtomicHTMLToken&&);
+    void processGenericRCDATAStartTag(AtomHTMLToken&&);
+    void processGenericRawTextStartTag(AtomHTMLToken&&);
+    void processScriptStartTag(AtomHTMLToken&&);
 
     // Default processing for the different insertion modes.
     void defaultForInitial();
@@ -161,26 +161,26 @@ private:
     void defaultForAfterHead();
     void defaultForInTableText();
 
-    bool shouldProcessTokenInForeignContent(const AtomicHTMLToken&);
-    void processTokenInForeignContent(AtomicHTMLToken&&);
+    bool shouldProcessTokenInForeignContent(const AtomHTMLToken&);
+    void processTokenInForeignContent(AtomHTMLToken&&);
     
     HTMLStackItem& adjustedCurrentStackItem() const;
 
-    void callTheAdoptionAgency(AtomicHTMLToken&);
+    void callTheAdoptionAgency(AtomHTMLToken&);
 
     void closeTheCell();
 
-    template <bool shouldClose(const HTMLStackItem&)> void processCloseWhenNestedTag(AtomicHTMLToken&&);
+    template <bool shouldClose(const HTMLStackItem&)> void processCloseWhenNestedTag(AtomHTMLToken&&);
 
-    void parseError(const AtomicHTMLToken&);
+    void parseError(const AtomHTMLToken&);
 
     void resetInsertionModeAppropriately();
 
-    void insertGenericHTMLElement(AtomicHTMLToken&&);
+    void insertGenericHTMLElement(AtomHTMLToken&&);
 
-    void processTemplateStartTag(AtomicHTMLToken&&);
-    bool processTemplateEndTag(AtomicHTMLToken&&);
-    bool processEndOfFileForInTemplateContents(AtomicHTMLToken&&);
+    void processTemplateStartTag(AtomHTMLToken&&);
+    bool processTemplateEndTag(AtomHTMLToken&&);
+    bool processEndOfFileForInTemplateContents(AtomHTMLToken&&);
 
     class FragmentParsingContext {
     public:

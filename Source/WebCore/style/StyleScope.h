@@ -28,6 +28,7 @@
 #pragma once
 
 #include "StyleScopeOrdinal.h"
+#include "Timer.h"
 #include <memory>
 #include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
@@ -105,7 +106,6 @@ public:
 
     bool hasPendingUpdate() const { return m_pendingUpdate || m_hasDescendantWithPendingUpdate; }
     void flushPendingUpdate();
-    void insertedInDocument();
 
 #if ENABLE(XSLT)
     Vector<Ref<ProcessingInstruction>> collectXSLTransforms();
@@ -163,6 +163,9 @@ private:
     using ResolverSharingKey = std::tuple<Vector<RefPtr<StyleSheetContents>>, bool, bool>;
     ResolverSharingKey makeResolverSharingKey();
 
+    void pendingUpdateTimerFired();
+    void clearPendingUpdate();
+
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
@@ -170,6 +173,8 @@ private:
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
+
+    Timer m_pendingUpdateTimer;
 
     mutable std::unique_ptr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 

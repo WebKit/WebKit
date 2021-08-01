@@ -71,12 +71,17 @@ RetainPtr<CVPixelBufferRef> RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer(
     if (!rotation)
         return pixelBuffer;
 
-    if (!m_rotationSession || rotation != m_currentRotationSessionAngle) {
-        RELEASE_LOG_ERROR(WebRTC, "RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer creating rotation session for rotation %u", rotationToAngle(rotation));
-        IntSize size = { (int)CVPixelBufferGetWidth(pixelBuffer) , (int)CVPixelBufferGetHeight(pixelBuffer) };
+    auto pixelWidth = CVPixelBufferGetWidth(pixelBuffer);
+    auto pixelHeight = CVPixelBufferGetHeight(pixelBuffer);
+    if (!m_rotationSession || rotation != m_currentRotationSessionAngle || pixelWidth != m_rotatedWidth || pixelHeight != m_rotatedHeight) {
+        RELEASE_LOG_INFO(WebRTC, "RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer creating rotation session for rotation %u", rotationToAngle(rotation));
         AffineTransform transform;
         transform.rotate(rotationToAngle(rotation));
-        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), size, ImageRotationSessionVT::IsCGImageCompatible::No);
+        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), FloatSize { static_cast<float>(pixelWidth), static_cast<float>(pixelHeight) }, ImageRotationSessionVT::IsCGImageCompatible::No);
+
+        m_currentRotationSessionAngle = rotation;
+        m_rotatedWidth = pixelWidth;
+        m_rotatedHeight = pixelHeight;
     }
 
     return m_rotationSession->rotate(pixelBuffer);

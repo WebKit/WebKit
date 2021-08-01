@@ -56,6 +56,7 @@ public:
     void showContextMenu(Event&, ContextMenuProvider&);
 
     void populate();
+    WEBCORE_EXPORT void didDismissContextMenu();
     WEBCORE_EXPORT void contextMenuItemSelected(ContextMenuAction, const String& title);
     void addInspectElementItem();
 

@@ -7,7 +7,7 @@
 <body>
 <script>
 description("Basic tests for decodeAudioData function.");
-    
+
 window.jsTestIsAsync = true;
 
 var context = new AudioContext();
@@ -34,19 +34,19 @@ function runDecodeTest(index) {
     var request = new XMLHttpRequest();
     request.open("GET", decodeCaseArray[index].url, true);
     request.responseType = "arraybuffer";
-    
+
     request.onload = function() {
         context.decodeAudioData(request.response, successCallback, errorCallback);
-        
+
         function successCallback() {
             if (decodeCaseArray[index].result)
                 testPassed("The " + decodeCaseArray[index].url +  " test: successCallback has been called correctly.");
             else
                 testFailed("The " + decodeCaseArray[index].url + " test: successCallback was not called.");
-            
+
             runDecodeTest(++index);
         }
-        
+
         function errorCallback() {
             if (decodeCaseArray[index].result)
                 testFailed("The " + decodeCaseArray[index].url + " test: errorCallback was called incorrectly.");

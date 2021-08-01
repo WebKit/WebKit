@@ -45,13 +45,13 @@ XMLHttpRequestProgressEventThrottle::XMLHttpRequestProgressEventThrottle(XMLHttp
 
 XMLHttpRequestProgressEventThrottle::~XMLHttpRequestProgressEventThrottle() = default;
 
-void XMLHttpRequestProgressEventThrottle::dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total)
+void XMLHttpRequestProgressEventThrottle::updateProgress(bool isAsync, bool lengthComputable, unsigned long long loaded, unsigned long long total)
 {
     m_lengthComputable = lengthComputable;
     m_loaded = loaded;
     m_total = total;
 
-    if (!m_target.hasEventListeners(eventNames().progressEvent))
+    if (!isAsync || !m_target.hasEventListeners(eventNames().progressEvent))
         return;
 
     if (!m_shouldDeferEventsDueToSuspension && !m_dispatchThrottledProgressEventTimer.isActive()) {

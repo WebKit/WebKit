@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<body>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        document.designMode = "on";
+        document.body.innerHTML = `<div>ANCHOR</div><div><button>FOCUS</button></div>TEXT_AFTER`
+        const anchorNode = document.body.firstElementChild.firstChild;
+        const anchorOffset = 0;
+        const focusNode = document.getElementsByTagName("button")[0].lastChild;
+        const focusOffset = focusNode.textContent.length;
+        getSelection().setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+        getSelection().getRangeAt(0).deleteContents();
+        document.execCommand('FontSizeDelta', false, '1px');
+        document.body.textContent = 'The test PASS if it does not crash.';
+    </script>
+</body>

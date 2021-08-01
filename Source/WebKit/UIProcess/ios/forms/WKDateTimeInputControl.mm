@@ -525,7 +525,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
 - (void)reset:(id)sender
 {
     [self setDateTimePickerToInitialValue];
-    [_view page]->setFocusedElementValue(String());
+    [_view page]->setFocusedElementValue([_view focusedElementInformation].elementContext, String());
 }
 
 - (void)done:(id)sender

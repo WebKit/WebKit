@@ -11,10 +11,7 @@
 		<string>apple.com</string>
 		<string>sub.domain.webkit.org/road/to/nowhere/</string>
 		<string>webkit.org</string>
-		<string>localhost:8000</string>
-		<string>localhost/road/to/nowhere/</string>
 		<string>file:///some/file</string>
-		<string>127.0.0.1</string>
 		<string></string>
 		<string>   </string>
 		<string>https://sub.domain.webkit.org</string>
@@ -24,7 +21,9 @@
 		<string>http://www.example.com/</string>
 		<string>http://bar.com/</string>
 		<string>http://foo.com/</string>
+		<string>https://searchforlongboards.biz</string>
 		<string>app-bound-custom-scheme:</string>
+		<string>longboardshop.biz</string>
 		<string>should-not-be-included:</string>
 	</array>
 	<key>CFBundleName</key>

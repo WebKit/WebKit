@@ -184,16 +184,44 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
+RemoteRenderingBackend::ReplayerDelegate::ReplayerDelegate(WebCore::ImageBuffer& destination, RemoteRenderingBackend& remoteRenderingBackend)
+    : m_destination(destination)
+    , m_remoteRenderingBackend(remoteRenderingBackend)
+{
+}
+
+bool RemoteRenderingBackend::ReplayerDelegate::apply(WebCore::DisplayList::ItemHandle item, WebCore::GraphicsContext& graphicsContext)
+{
+    auto apply = [&](auto&& destination) {
+        return destination.apply(item, graphicsContext);
+    };
+
+    if (m_destination.renderingMode() == RenderingMode::Accelerated)
+        return apply(static_cast<AcceleratedRemoteImageBuffer&>(m_destination));
+    return apply(static_cast<UnacceleratedRemoteImageBuffer&>(m_destination));
+}
+
+void RemoteRenderingBackend::ReplayerDelegate::didCreateMaskImageBuffer(WebCore::ImageBuffer& imageBuffer)
+{
+    m_remoteRenderingBackend.didCreateMaskImageBuffer(imageBuffer);
+}
+
+void RemoteRenderingBackend::ReplayerDelegate::didResetMaskImageBuffer()
+{
+    m_remoteRenderingBackend.didResetMaskImageBuffer();
+}
+
+void RemoteRenderingBackend::ReplayerDelegate::recordResourceUse(RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    m_remoteRenderingBackend.remoteResourceCache().recordResourceUse(renderingResourceIdentifier);
+}
+
 DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
 {
     if (displayList.isEmpty())
         return { };
 
-    DisplayList::Replayer::Delegate* replayerDelegate = nullptr;
-    if (destination.renderingMode() == RenderingMode::Accelerated)
-        replayerDelegate = static_cast<AcceleratedRemoteImageBuffer*>(&destination);
-    else
-        replayerDelegate = static_cast<UnacceleratedRemoteImageBuffer*>(&destination);
+    ReplayerDelegate replayerDelegate(destination, *this);
 
     return WebCore::DisplayList::Replayer {
         destination.context(),
@@ -202,7 +230,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
         &remoteResourceCache().nativeImages(),
         &remoteResourceCache().fonts(),
         m_currentMaskImageBuffer.get(),
-        replayerDelegate
+        &replayerDelegate
     }.replay();
 }
 
@@ -483,11 +511,19 @@ void RemoteRenderingBackend::deleteAllFonts()
     m_remoteResourceCache.deleteAllFonts();
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier, uint64_t useCount)
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
+    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier, useCount);
+    MESSAGE_CHECK(success, "Resource is being released before being cached.");
     updateRenderingResourceRequest();
+}
+
+void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
+{
+    if (m_pendingWakeupInfo && m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->arguments.destinationImageBufferIdentifier))
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+    send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)

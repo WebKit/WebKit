@@ -31,6 +31,7 @@
 #import "TestUIDelegate.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
@@ -230,5 +231,34 @@ TEST(Preconnect, H2PingFromWebCoreNSURLSession)
 }
 
 #endif // HAVE(PRECONNECT_PING)
+
+TEST(Preconnect, DisablePreconnect)
+{
+    size_t connectionCount { 0 };
+    HTTPServer server([&](Connection) {
+        connectionCount++;
+    });
+    NSString *html = [NSString stringWithFormat:@"<link rel='preconnect' href='http://127.0.0.1:%d'>", server.port()];
+
+    {
+        auto configuration = adoptNS([WKWebViewConfiguration new]);
+        configuration.get()._allowedNetworkHosts = [NSSet set];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        [webView loadHTMLString:html baseURL:nil];
+        [webView _test_waitForDidFinishNavigation];
+        Util::spinRunLoop(10);
+        usleep(10000);
+        Util::spinRunLoop(10);
+        EXPECT_EQ(connectionCount, 0u);
+    }
+
+    {
+        auto webView = adoptNS([WKWebView new]);
+        [webView loadHTMLString:html baseURL:nil];
+        [webView _test_waitForDidFinishNavigation];
+        while (connectionCount != 1)
+            Util::spinRunLoop();
+    }
+}
 
 }

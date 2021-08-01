@@ -41,17 +41,31 @@ DOMFormData::DOMFormData(const TextEncoding& encoding)
 {
 }
 
-DOMFormData::DOMFormData(HTMLFormElement* form)
-    : m_encoding(UTF8Encoding())
+ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
 {
+    auto formData = adoptRef(*new DOMFormData);
     if (!form)
-        return;
+        return formData;
+    
+    auto result = form->constructEntryList(WTFMove(formData), nullptr, HTMLFormElement::IsMultipartForm::Yes);
+    
+    if (!result)
+        return Exception { InvalidStateError, "Already constructing Form entry list."_s };
+    
+    return result.releaseNonNull();
+}
 
-    ASSERT(isMainThread());
-    for (auto& element : form->copyAssociatedElementsVector()) {
-        if (!element->asHTMLElement().isDisabledFormControl())
-            element->appendFormData(*this, true);
-    }
+Ref<DOMFormData> DOMFormData::create(const TextEncoding& encoding)
+{
+    return adoptRef(*new DOMFormData(encoding));
+}
+
+Ref<DOMFormData> DOMFormData::clone() const
+{
+    auto newFormData = adoptRef(*new DOMFormData(this->encoding()));
+    newFormData->m_items = m_items;
+    
+    return newFormData;
 }
 
 // https://xhr.spec.whatwg.org/#create-an-entry

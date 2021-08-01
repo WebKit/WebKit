@@ -174,13 +174,14 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     m_nwListener = adoptNS(nw_listener_create(parameters.get()));
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueue());
 
-    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener.get(), connection = m_connection.copyRef(), protectedRTCProvider = makeRef(rtcProvider), identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
+    // The callback holds a reference to the nw_listener and we clear it when going in nw_listener_state_cancelled state, which is triggered when closing the socket.
+    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = makeRef(rtcProvider), identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
         switch (state) {
         case nw_listener_state_invalid:
         case nw_listener_state_waiting:
             break;
         case nw_listener_state_ready:
-            protectedRTCProvider->doSocketTaskOnRTCNetworkThread(identifier, [port = nw_listener_get_port(nwListener)](auto& socket) mutable {
+            protectedRTCProvider->doSocketTaskOnRTCNetworkThread(identifier, [port = nw_listener_get_port(nwListener.get())](auto& socket) mutable {
                 auto& udpSocket = static_cast<NetworkRTCUDPSocketCocoa&>(socket);
                 udpSocket.setListeningPort(port);
             });
@@ -193,6 +194,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
             connection->send(Messages::LibWebRTCNetwork::SignalClose(identifier, -1), 0);
             break;
         case nw_listener_state_cancelled:
+            nwListener.clear();
             break;
         }
     }).get());

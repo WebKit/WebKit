@@ -43,10 +43,6 @@ db.createObjectStore('some object store')
 transaction = event.target.transaction
 transaction.oncomplete = connection2TransactionComplete
 
-connection2VersionChangeCallback():
-PASS event.oldVersion is 2
-PASS event.newVersion is null
-
 connection2TransactionComplete():
 PASS db.version is 2
 

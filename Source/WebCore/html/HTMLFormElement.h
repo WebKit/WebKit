@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class DOMFormData;
 class Event;
 class FormAssociatedElement;
 class HTMLFormControlElement;
@@ -123,7 +124,11 @@ public:
     StringPairVector textFieldValues() const;
 
     static HTMLFormElement* findClosestFormAncestor(const Element&);
-
+    
+    enum class IsMultipartForm : bool { No, Yes };
+    
+    RefPtr<DOMFormData> constructEntryList(Ref<DOMFormData>&&, StringPairVector*, IsMultipartForm);
+    
 private:
     HTMLFormElement(const QualifiedName&, Document&);
 
@@ -189,6 +194,7 @@ private:
     bool m_isInResetFunction { false };
 
     bool m_wasDemoted { false };
+    bool m_isConstructingEntryList { false };
 };
 
 } // namespace WebCore

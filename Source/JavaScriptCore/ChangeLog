@@ -1,3 +1,1008 @@
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] load/store with BaseIndex is inefficient in ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228543
+
+        Reviewed by Mark Lam.
+
+        While we are frequently using load + BaseIndex (with offset) in RegExp code,
+        we emit 3 instructions in ARM64. This can be represented in 2 instructions.
+        This patch adds that path to make generated code tight in ARM64 RegExp.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        (JSC::MacroAssemblerARM64::tryFoldBaseAndOffsetPart):
+        * assembler/testmasm.cpp:
+        (JSC::testLoadBaseIndex):
+        (JSC::testStoreBaseIndex):
+
+2021-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
+        https://bugs.webkit.org/show_bug.cgi?id=228290
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformGTK.cmake: Expand ${BUILD_REVISION} with apply-build-revision-to-files.py for
+        non-tarball builds, or let CMake do it for tarball builds.
+        * javascriptcoregtk.pc.in: Switch revision var to ${} format, so that we can choose to
+        either let CMake expand it or do it ourselves.
+
+2021-07-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] "RemoteInspector XPC connection to relay failed." messages are confusing in StdErr
+        https://bugs.webkit.org/show_bug.cgi?id=228303
+
+        Reviewed by Darin Adler.
+
+        Remove overly verbose and confusing `WTFLogAlways` messages added in r278413, which can confuse applications
+        listening to stderr of a process using JavaScriptCore.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+
+2021-07-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ProxyObject callees should be skipped during Function.prototype.caller resolution
+        https://bugs.webkit.org/show_bug.cgi?id=228341
+
+        Reviewed by Yusuke Suzuki.
+
+        Just like a bound function, a Proxy with nullish "apply" handler merely forwards
+        [[Call]] to its target [1], without pushing onto the execution context stack.
+        This fact is also noted in Function.prototype.{caller,arguments} reflection proposal [2].
+
+        This patch aligns JSC with V8 and SpiderMonkey if Proxy's "apply" handler is userland
+        or nullish. However, since JSC implements proper tail calls, `Function.prototype.caller`
+        result is divergent from other engines if the handler is `Reflect.apply`, which performs
+        a tail call that gets optimized away [2] (unless called by another Proxy).
+
+        [1]: https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist (step 8)
+        [2]: https://github.com/claudepache/es-legacy-function-reflection/blob/master/spec.md#get-functionprototypecaller (see notes)
+
+        * runtime/FunctionPrototype.cpp:
+        (JSC::RetrieveCallerFunctionFunctor::operator() const):
+
+2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add Temporal to features.json
+        https://bugs.webkit.org/show_bug.cgi?id=228292
+
+        Reviewed by Myles C. Maxfield.
+
+        * features.json:
+
+2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Partly implement Function.prototype.{caller,arguments} reflection proposal
+        https://bugs.webkit.org/show_bug.cgi?id=158116
+
+        Reviewed by Yusuke Suzuki.
+
+        To ensure web-compatibility, only the safe subset of Function.prototype.{caller,arguments}
+        reflection proposal [1] is implemented, which is currently shipped in SpiderMonkey.
+
+        Complete list of differences from the proposed spec:
+
+          1. Cross-realm receiver function is allowed instead of throwing a TypeError.
+
+             Throwing is likely safe to ship, but #225997 needs to be fixed first for
+             custom properties to receive correct global object.
+
+          2. Cross-realm caller function is returned instead of `null`.
+
+             Hiding cross-realm caller may break things: we currently have a test for
+             the opposite behavior.
+
+          3. Defines "caller" and "arguments" setters that throw for disallowed receivers,
+             instead failing silently in sloppy mode.
+
+             This is actually more restrictive than the spec, which is preferable,
+             and aligns with V8 and SM.
+
+        Most importantly, this patch removes own "caller" and "arguments" properties from
+        sloppy mode ES5 functions. They were non-configurable, making it harder to use
+        their holder as a [[ProxyTarget]]. They were also non-writable, with a constantly
+        changing [[Value]], which violated the invariants of internal methods [2].
+
+        As a result, JSFunction methods are greatly simplified, especially defineOwnProperty()
+        and getOwnSpecialPropertyNames(). The latter is now 2.1x faster according to the
+        provided microbenchmark. Also, removes double "prototype" lookup from [[Get]],
+        which is a 10% progression.
+
+        [1]: https://github.com/claudepache/es-legacy-function-reflection
+        [2]: https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::materializeSpecials):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::isAllowedReceiverFunctionForCallerAndArguments):
+        (JSC::RetrieveArgumentsFunctor::RetrieveArgumentsFunctor):
+        (JSC::RetrieveArgumentsFunctor::result const):
+        (JSC::RetrieveArgumentsFunctor::operator() const):
+        (JSC::retrieveArguments):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor):
+        (JSC::RetrieveCallerFunctionFunctor::result const):
+        (JSC::RetrieveCallerFunctionFunctor::operator() const):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSC_DEFINE_CUSTOM_SETTER):
+        (JSC::FunctionPrototype::initRestrictedProperties): Deleted.
+        * runtime/FunctionPrototype.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnSpecialPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::RetrieveArgumentsFunctor::RetrieveArgumentsFunctor): Deleted.
+        (JSC::RetrieveArgumentsFunctor::result const): Deleted.
+        (JSC::RetrieveArgumentsFunctor::operator() const): Deleted.
+        (JSC::retrieveArguments): Deleted.
+        (JSC::JSC_DEFINE_CUSTOM_GETTER): Deleted.
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor): Deleted.
+        (JSC::RetrieveCallerFunctionFunctor::result const): Deleted.
+        (JSC::RetrieveCallerFunctionFunctor::operator() const): Deleted.
+        (JSC::retrieveCallerFunction): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        Remove unused m_throwTypeErrorGetterSetter and make [[ThrowTypeError]] lazily-created.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectCustomGetterSetterWithoutTransition):
+        * runtime/JSObject.h:
+
+2021-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Change most of enum in Yarr to enum-class
+        https://bugs.webkit.org/show_bug.cgi?id=228264
+
+        Reviewed by Mark Lam.
+
+        This patch simply changes most of enum to enum-class in Yarr.
+        We also remove YarrJIT YarrGenerator's template parameter since
+        it is not worth doubling code. We can just hold Yarr::JITCompileMode as m_compileMode.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::hasCodeFor):
+        (JSC::RegExp::compileIfNecessary):
+        (JSC::RegExp::matchInline):
+        (JSC::RegExp::hasMatchOnlyCodeFor):
+        (JSC::RegExp::compileIfNecessaryMatchOnly):
+        * yarr/Yarr.h:
+        (): Deleted.
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::backtrackPatternCharacter):
+        (JSC::Yarr::Interpreter::backtrackPatternCasedCharacter):
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        (JSC::Yarr::Interpreter::backtrackCharacterClass):
+        (JSC::Yarr::Interpreter::matchBackReference):
+        (JSC::Yarr::Interpreter::backtrackBackReference):
+        (JSC::Yarr::Interpreter::parenthesesDoBacktrack):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::matchParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceBegin):
+        (JSC::Yarr::Interpreter::backtrackParenthesesOnceEnd):
+        (JSC::Yarr::Interpreter::matchParenthesesTerminalBegin):
+        (JSC::Yarr::Interpreter::matchParenthesesTerminalEnd):
+        (JSC::Yarr::Interpreter::backtrackParenthesesTerminalBegin):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionBegin):
+        (JSC::Yarr::Interpreter::matchParentheticalAssertionEnd):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionBegin):
+        (JSC::Yarr::Interpreter::backtrackParentheticalAssertionEnd):
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::matchNonZeroDisjunction):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalBegin):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionBegin):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionEnd):
+        (JSC::Yarr::ByteCompiler::closeAlternative):
+        (JSC::Yarr::ByteCompiler::closeBodyAlternative):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        (JSC::Yarr::ByteCompiler::dumpDisjunction):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::BOL):
+        (JSC::Yarr::ByteTerm::CheckInput):
+        (JSC::Yarr::ByteTerm::UncheckInput):
+        (JSC::Yarr::ByteTerm::EOL):
+        (JSC::Yarr::ByteTerm::WordBoundary):
+        (JSC::Yarr::ByteTerm::BackReference):
+        (JSC::Yarr::ByteTerm::BodyAlternativeBegin):
+        (JSC::Yarr::ByteTerm::BodyAlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::BodyAlternativeEnd):
+        (JSC::Yarr::ByteTerm::AlternativeBegin):
+        (JSC::Yarr::ByteTerm::AlternativeDisjunction):
+        (JSC::Yarr::ByteTerm::AlternativeEnd):
+        (JSC::Yarr::ByteTerm::SubpatternBegin):
+        (JSC::Yarr::ByteTerm::SubpatternEnd):
+        (JSC::Yarr::ByteTerm::DotStarEnclosure):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::jitCompile):
+        * yarr/YarrJIT.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::CharacterClassParserDelegate):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBuiltInCharacterClass):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::end):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::YarrPatternConstructor::atomParentheticalAssertionBegin):
+        (JSC::Yarr::YarrPatternConstructor::atomBackReference):
+        (JSC::Yarr::YarrPatternConstructor::copyTerm):
+        (JSC::Yarr::YarrPatternConstructor::quantifyAtom):
+        (JSC::Yarr::YarrPatternConstructor::checkForTerminalParentheses):
+        (JSC::Yarr::YarrPatternConstructor::containsCapturingTerms):
+        (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+        (JSC::Yarr::PatternTerm::dumpQuantifier):
+        (JSC::Yarr::PatternTerm::dump):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternTerm::PatternTerm):
+        (JSC::Yarr::PatternTerm::ForwardReference):
+        (JSC::Yarr::PatternTerm::BOL):
+        (JSC::Yarr::PatternTerm::EOL):
+        (JSC::Yarr::PatternTerm::WordBoundary):
+        (JSC::Yarr::PatternTerm::isFixedWidthCharacterClass const):
+        (JSC::Yarr::PatternTerm::containsAnyCaptures):
+        (JSC::Yarr::PatternTerm::quantify):
+
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Properly validate and merge descriptors in [Replaceable] setter
+        https://bugs.webkit.org/show_bug.cgi?id=227662
+
+        Reviewed by Sam Weinig.
+
+        Extracts createDataProperty() method to keep WebIDL code generator as simple as possible,
+        and also to emphasize a subtle difference between
+        { [[Value]]: X } and
+        { [[Value]]: X, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true }.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::definePropertyOnReceiverSlow):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::createDataProperty):
+        * runtime/Lookup.h:
+        (JSC::replaceStaticPropertySlot): Deleted.
+
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        Just like JS built-ins, getter / setter functions of WebIDL attributes are created in realm
+        of their holder interface [1][2], which is their _current_ realm for throwing an error [3].
+
+        With this patch, custom properties get correct global object instead of lexical, including
+        when inline cached, aligning them with functions and regular accessors.
+
+        The latter allowed switching JS built-ins to CustomAccessor (e.g. Symbol#description),
+        which is slightly more efficient to call from C++, doesn't need reification on first access,
+        and has nicer signature.
+
+        Also, renames WASM accessors to drop "func" and removes unused function length parameter.
+
+        [1]: https://heycam.github.io/webidl/#dfn-attribute-getter (step 2)
+        [2]: https://heycam.github.io/webidl/#dfn-attribute-setter (step 5)
+        [3]: https://heycam.github.io/webidl/#ecmascript-throw
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * create_hash_table:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::globalObjectOfClosestCodeBlock):
+        * interpreter/CallFrame.h:
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineSlow):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter const):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::getValue const):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * tools/JSDollarVM.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::JSC_DEFINE_HOST_FUNCTION): Deleted.
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        AirStackSlot's uint16_t byte size is too small
+        https://bugs.webkit.org/show_bug.cgi?id=228193
+        <rdar://80888059>
+
+        Reviewed by Mark Lam.
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addStackSlot):
+        * b3/B3Procedure.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addStackSlot):
+        * b3/air/AirCode.h:
+        * b3/air/AirStackSlot.cpp:
+        (JSC::B3::Air::StackSlot::StackSlot):
+        * b3/air/AirStackSlot.h:
+        (JSC::B3::Air::StackSlot::ensureSize):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::lockedStackSlot):
+        * ftl/FTLOutput.h:
+
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        Fix uses of Dependency::fence with respect to the compiler outsmarting us
+        https://bugs.webkit.org/show_bug.cgi?id=227757
+        <rdar://problem/80280931>
+
+        Reviewed by Robin Morisset.
+
+        We were running into issues on arm64 with respect to the memory model
+        ordering of loads, and how the compiler optimized code around Dependency::fence.
+        The issue manifested as calls to isMarked incorrectly returning true.
+        
+        To see the issue, let's consider a program like this:
+        a = load(p1)
+        b = load(p2)
+        if (a != b) return;
+        d = Dependency::fence(b)
+        
+        At the point of defining the dependency, the compiler has proven
+        a == b. So, instead of building the dependency on the register used
+        for b, we end up using the register for a. So the actual compiled
+        code ends up with a dependency on load(p1), not load(p2).
+        
+        To fix this, we end up adding a new API, Dependency::loadEndFence(pointer,
+        result), which is defined as:
+        
+        template<typename T>
+        static Dependency loadAndFence(T* pointer, T& output)
+        {
+            T value = *opaque(pointer);
+            Dependency dependency = Dependency::fence(value);
+            output = opaque(value);
+            return dependency;
+        }
+        
+        The reason for this is that it split "b" in the above program into two values,
+        and the "b" the program compares against is not known to the compiler to be
+        the same value that we build a dependency on.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::aboutToMark):
+        (JSC::MarkedBlock::isMarked):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSObject.h:
+        (JSC::JSObject::fencedButterfly):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::getConcurrently):
+        (JSC::SparseArrayEntry::getConcurrently const): Deleted.
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.h:
+        (JSC::Structure::fencedIndexingMode):
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::fencedIndexingModeIncludingHistory):
+
+2021-07-22  Keith Miller  <keith_miller@apple.com>
+
+        useProfiler option should automatically disable concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=228152
+
+        Reviewed by Saam Barati.
+
+        The bytecode profiler is not thread safe so we should have
+        recomputeDependentOptions() disable concurrent JIT. Also, fix the
+        jsc CLI to set the useProfiler option rather than have its own
+        state. Note, we call Options::setOption() rather than setting the
+        Options::useProfiler() option directly as setOption calls
+        recomputeDependentOptions() for us.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        (runJSC):
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        (JSC::Options::ensureOptionsAreCoherent):
+
+2021-07-21  Yijia Huang  <yijia_huang@apple.com>
+
+        Fix type check error in testb3
+        https://bugs.webkit.org/show_bug.cgi?id=228166
+
+        Reviewed by Saam Barati.
+
+        * b3/testb3_2.cpp:
+        (testXorNotWithLeftShift32):
+        (testXorNotWithRightShift32):
+        (testXorNotWithUnsignedRightShift32):
+
+2021-07-21  Keith Miller  <keith_miller@apple.com>
+
+        speculateNeitherDoubleNorStringNorHeapBigInt should only have a single JSType branch
+        https://bugs.webkit.org/show_bug.cgi?id=228146
+
+        Reviewed by Robin Morisset.
+
+        Since StringType and HeapBigIntType are adjacent JSTypes
+        we can do an integer range check rather than two separate
+        JSType checks.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
+2021-07-20  Yijia Huang  <yijia_huang@apple.com>
+
+        Add ARM64 EON opcode and select it in AIR
+        https://bugs.webkit.org/show_bug.cgi?id=228057
+
+        Reviewed by Saam Barati.
+
+        EON Rd Rn Rm <shift> #amount
+
+        Bitwise Exclusive OR NOT (shifted register) performs a bitwise Exclusive OR NOT 
+        of a register value Rn and an optionally-shifted register value Rm, and writes the 
+        result to the destination register. The instruction selector can utilize this to 
+        lowering certain patterns in B3 IR before further Air optimization.
+
+        The equivalent pattern of EON Rd Rn Rm is d = n ^ (m ^ -1)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = -1
+        Int @3 = BitXor(@1, @2)
+        Int @4 = BitXor(@0, b@3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Not   %x1, %x1,      @3
+        Xor   %x0, %x1, %x0, @4
+        Ret   %x0,           @5
+
+        // New optimized AIR
+        XorNot %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        The equivalent pattern of EON-with-shift is d = n ^ ((m ShiftType amount) ^ -1)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = amount
+        Int @3 = -1
+        Int @4 = Shl(@1, @2)
+        Int @5 = BitXor(@4, @3)
+        Int @6 = BitXor(@0, @5)
+        Void b@7 = Return(b@6, Terminal)
+
+        // Old optimized AIR
+        Lshift   %x1, amount, %x1, @4
+        Not      %x1,    %x1,      @5
+        Xor      %x0,    %x1, %x0, @6
+        Ret      %x0,              @7
+
+        // New optimized AIR
+        XorNotLeftShift %x0, %x1, $63, %x0, @6
+        Ret             %x0,                @7
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::xorNot32):
+        (JSC::MacroAssemblerARM64::xorNot64):
+        (JSC::MacroAssemblerARM64::xorNotLeftShift32):
+        (JSC::MacroAssemblerARM64::xorNotRightShift32):
+        (JSC::MacroAssemblerARM64::xorNotUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::xorNotLeftShift64):
+        (JSC::MacroAssemblerARM64::xorNotRightShift64):
+        (JSC::MacroAssemblerARM64::xorNotUnsignedRightShift64):
+        * assembler/testmasm.cpp:
+        (JSC::testXorNot32):
+        (JSC::testXorNot64):
+        (JSC::testXorNotWithLeftShift32):
+        (JSC::testXorNotWithRightShift32):
+        (JSC::testXorNotWithUnsignedRightShift32):
+        (JSC::testXorNotWithLeftShift64):
+        (JSC::testXorNotWithRightShift64):
+        (JSC::testXorNotWithUnsignedRightShift64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testXorNot32):
+        (testXorNot64):
+        (testXorNotWithLeftShift32):
+        (testXorNotWithRightShift32):
+        (testXorNotWithUnsignedRightShift32):
+        (testXorNotWithLeftShift64):
+        (testXorNotWithRightShift64):
+        (testXorNotWithUnsignedRightShift64):
+        (addBitTests):
+
+2021-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] invalidParameterInstanceofSourceAppender should care direct call of Symbol.hasInstance
+        https://bugs.webkit.org/show_bug.cgi?id=228075
+        rdar://80762879
+
+        Reviewed by Frédéric Wang.
+
+        invalidParameterInstanceofSourceAppender can be invoked without `instanceof` expression since we can call
+        `[Symbol.hasInstance]` function directly, but the implementation did not assume that. This patch fixes
+        it to handle this direct call.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::invalidParameterInstanceofSourceAppender):
+
+2021-07-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] StructureStubInfo's m_identifier should follow to the same protocol of inlineAccessBaseStructure
+        https://bugs.webkit.org/show_bug.cgi?id=228092
+
+        Reviewed by Saam Barati.
+
+        In r279813, we fixed a race condition related to inlineAccessBaseStructure: while we clear inlineAccessBaseStructure,
+        we still run code relying on this field's value until stub version of the code is generated. As a result,
+        we run the code which relies on the cells that are already collected. And we have the same problem with
+        m_identifier field too. This patch makes m_identifier follow to the same protocol of inlineAccessBaseStructure
+        so that we fix this race issue too: both fields will be alive until we switch to the code that are not relying on these
+        fields.
+
+        We also make inlineAccessBaseStructure to m_inlineAccessBaseStructure to easily find that this is member field.
+        And we also use setWithoutWriteBarrier for m_inlineAccessBaseStructure since we emit codeBlock->vm().heap.writeBarrier(codeBlock)
+        immediately after that.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::fromStructureStubInfo):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InByStatus.cpp:
+        (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initArrayLength):
+        (JSC::StructureStubInfo::initStringLength):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitAggregateImpl):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        (JSC::StructureStubInfo::setCacheType): Deleted.
+        * bytecode/StructureStubInfo.h:
+
+2021-07-19  Mark Lam  <mark.lam@apple.com>
+
+        DFG's parseIntResult() should check for negative zero.
+        https://bugs.webkit.org/show_bug.cgi?id=228068
+        rdar://80788603
+
+        Reviewed by Yusuke Suzuki.
+
+        We have to check for negative zero explicitly because C++ evaluates 0.0 == -0.0
+        as true.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::parseIntResult):
+
+2021-07-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] InByStatus / InByVariant should visit CacheableIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=228088
+        rdar://80794604
+
+        Reviewed by Mark Lam.
+
+        After r278445, InByVariant holds CacheableIdentifier. And this can have
+        String/Symbol cells if this variant is generated by in_by_val. In that
+        case, we must visit this cell as GetByStatus / GetByVariant are doing.
+
+        * bytecode/InByStatus.cpp:
+        (JSC::InByStatus::visitAggregateImpl):
+        * bytecode/InByStatus.h:
+        * bytecode/InByVariant.cpp:
+        (JSC::InByVariant::visitAggregateImpl):
+        * bytecode/InByVariant.h:
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::visitAggregateImpl):
+
+2021-07-16  Yijia Huang  <yijia_huang@apple.com>
+
+        Add ExtendType to Air::Arg Index to fully utilize address computation in memory instruction for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=227970
+
+        Reviewed by Saam Barati.
+
+        The pattern recognition of address computation in the instructions, e.g., Load 
+        Resistor (LDR), Store Register (STR), etc., can benefit the instruction selector.
+        Then, the Air operand BaseIndex containing base, index, and scale is introduced 
+        to Air opcode. However, the <extend> option of index address is not fully leveraged 
+        in the previous implementation. 
+
+        To fill that gap, this patch adds a new member, MacroAssembler::Extend, to the current 
+        design of BaseIndex to trigger zero/sign extension on the Index address. And this is 
+        enabled for Store/Load with valid index address and shift amount.
+
+        Maybe, the ideal approach is to introduce a decorator (Index@EXT) to the Air operand 
+        to provide an extension opportunity for the specific form of the Air opcode.
+
+        Load Register (LDR) calculates an address from a base register value and an 
+        offset register value, loads a word from memory, and writes it to a register. 
+        The offset register value can optionally be shifted and extended.
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = Z/SExt32(Trunc(ArgumentReg(%x1)))
+        Int @2 = scale
+        Int @3 = Shl(@1, @2)
+        Int @4 = Add(@0, @3)
+        Int @5 = Load(@4, ControlDependent|Reads:Top)
+        Void@6 = Return(@5, Terminal)
+
+        // Old optimized AIR
+        Move               %x1, %x1, @1
+        Move (%x0,%x1,2^scale), %x0, @5
+        Ret                %x0,      @6
+
+        // New optimized AIR
+        Move (%x0,%x1,2^scale), %x0, @5
+        Ret                %x0,      @6
+
+        Store Register (STR) calculates an address from a base register value and an 
+        offset register value, and stores a 32-bit word or a 64-bit doubleword to the 
+        calculated address, from a register.
+
+        Given B3 IR:
+        Int @0 = value
+        Int @1 = ArgumentReg(%x0)
+        Int @2 = Z/SExt32(Trunc(ArgumentReg(%x1))
+        Int @3 = scale
+        Int @4 = Shl(@2, @3)
+        Int @5 = Add(@1, @4)
+        Void@6 = Store(@0, @5, ControlDependent|Writes:Top)
+        Void@7 = Return(@0, Terminal)
+
+        // Old optimized AIR
+        Move32    %x1,               %x1, @2
+        Store32  %xzr, (%x0,%x1,2^scale), @6
+        Move       $0,               %x0, @7
+        Ret32     %x0,                    @7
+
+        // New optimized AIR
+        Store32  %xzr, (%x0,%x1,2^scale), @6
+        Move       $0,               %x0, @7
+        Ret32     %x0,                    @7
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::BaseIndex::BaseIndex):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::indexExtendType):
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::load16):
+        (JSC::MacroAssemblerARM64::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::load8):
+        (JSC::MacroAssemblerARM64::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        (JSC::MacroAssemblerARM64::store16):
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::loadDouble):
+        (JSC::MacroAssemblerARM64::loadFloat):
+        (JSC::MacroAssemblerARM64::storeDouble):
+        (JSC::MacroAssemblerARM64::storeFloat):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::index):
+        (JSC::B3::Air::Arg::asBaseIndex const):
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testLoadZeroExtendIndexAddress):
+        (testLoadSignExtendIndexAddress):
+        (testStoreZeroExtendIndexAddress):
+        (testStoreSignExtendIndexAddress):
+        (addBitTests):
+
+2021-07-16  Saam Barati  <sbarati@apple.com>
+
+        Grab the lock in FTL::Thunks::keyForSlowPathCallThunk
+        https://bugs.webkit.org/show_bug.cgi?id=227988
+        <rdar://problem/80627901>
+
+        Reviewed by Mark Lam.
+
+        Both FTL::Thunks::keyForSlowPathCallThunk and FTL::Thunks::getSlowPathCallThunk
+        both touch the thunks hash map. In r278030, when I added the lock, I grabbed it
+        in getSlowPathCallThunk, but forgot to also grab it in keyForSlowPathCallThunk.
+
+        * ftl/FTLThunks.h:
+        (JSC::FTL::Thunks::keyForSlowPathCallThunk):
+
+2021-07-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r279916.
+        https://bugs.webkit.org/show_bug.cgi?id=228037
+
+        some of tests are timing out
+
+        Reverted changeset:
+
+        "Convert small JIT pool tests into executable fuzzing"
+        https://bugs.webkit.org/show_bug.cgi?id=226279
+        https://commits.webkit.org/r279916
+
+2021-07-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] RegExp::dumpToStream must not ref Strings since it is called concurrently
+        https://bugs.webkit.org/show_bug.cgi?id=228031
+        rdar://80686425
+
+        Reviewed by Mark Lam.
+
+        RegExp::dumpToStream's escapedPattern can return m_pattern. In that case, it is refed in the concurrent thread.
+        This is wrong since StringImpl must not be ref-ed concurrently. This patch just revert this function to the old behavior.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::dumpToStream):
+
+2021-07-15  Keith Miller  <keith_miller@apple.com>
+
+        Alias JSC graph dumping options
+        https://bugs.webkit.org/show_bug.cgi?id=228015
+
+        Reviewed by Yusuke Suzuki.
+
+        My brain seems to associate the phases with the tier we are compiling in
+        rather than the type of graph we are processing. At this point it's
+        probably easier to just add an alias rather than convince me otherwise.
+
+        * runtime/OptionsList.h:
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] SamplingProfiler should recognize RegExp execution
+        https://bugs.webkit.org/show_bug.cgi?id=201702
+
+        Reviewed by Saam Barati.
+
+        This patch extends SamplingProfiler to recognize RegExp execution. We record
+        executing RegExp in VM via MatchingContextHolder so that SamplingProfiler can detect it.
+        We use MatchingContextHolder even if the RegExp is interpreter mode so that we can still
+        catch non-JIT RegExp in SamplingProfiler.
+
+        The example output is the following.
+
+            Sampling rate: 1000.000000 microseconds. Total samples: 1830
+            Top functions as <numSamples  'functionName#hash:sourceID'>
+               466    'Exec#<nil>:4'
+               225    '/(^|[^\\])\"\\\/Qngr\((-?[0-9]+)\)\\\/\"/g#<nil>:-1'
+               173    'runBlock1#<nil>:4'
+                88    '/NQ_VQ/g#<nil>:-1'
+                83    '/d2/g#<nil>:-1'
+                78    '/d1/g#<nil>:-1'
+                70    '/\s?;\s?/#<nil>:-1'
+                68    'replace#<nil>:3'
+                50    '/(((\w+):\/\/)([^\/:]*)(:(\d+))?)?([^#?]*)(\?([^#]*))?(#(.*))?/#<nil>:-1'
+                49    'runBlock0#<nil>:4'
+                46    '#<nil>:-1'
+                24    '/^\s*|\s*$/g#<nil>:-1'
+
+
+            Sampling rate: 1000.000000 microseconds. Total samples: 1830
+
+            Tier breakdown:
+            -----------------------------------
+            LLInt:                    13  (0.710383%)
+            Baseline:                 54  (2.950820%)
+            DFG:                     187  (10.218579%)
+            FTL:                     612  (33.442623%)
+            js builtin:               73  (3.989071%)
+            Wasm:                      0  (0.000000%)
+            Host:                      0  (0.000000%)
+            RegExp:                  907  (49.562842%)
+            C/C++:                     0  (0.000000%)
+            Unknown Executable:       57  (3.114754%)
+
+
+            Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>
+               378    'Exec#<nil>:FTL:bc#27'
+               225    '/(^|[^\\])\"\\\/Qngr\((-?[0-9]+)\)\\\/\"/g#<nil>:RegExp:<nil>'
+                88    '/NQ_VQ/g#<nil>:RegExp:<nil>'
+                83    '/d2/g#<nil>:RegExp:<nil>'
+                78    '/d1/g#<nil>:RegExp:<nil>'
+                70    '/\s?;\s?/#<nil>:RegExp:<nil>'
+                62    'replace#<nil>:FTL:bc#63'
+                53    'Exec#<nil>:DFG:bc#27'
+                50    '/(((\w+):\/\/)([^\/:]*)(:(\d+))?)?([^#?]*)(\?([^#]*))?(#(.*))?/#<nil>:RegExp:<nil>'
+                46    '#<nil>:None:<nil>'
+                42    'runBlock1#<nil>:FTL:bc#1795'
+                29    'runBlock1#<nil>:FTL:bc#1849'
+                29    'runBlock1#<nil>:FTL:bc#1741'
+                24    '/^\s*|\s*$/g#<nil>:RegExp:<nil>'
+                17    'runBlock1#<nil>:DFG:bc#1741'
+                17    'runBlock1#<nil>:DFG:bc#1795'
+                16    '/\b\w+\b/g#<nil>:RegExp:<nil>'
+                14    '/TNQP=([^;]*)/i#<nil>:RegExp:<nil>'
+                13    '/%\w?$/#<nil>:RegExp:<nil>'
+                12    '/^ba/#<nil>:RegExp:<nil>'
+                11    '/^\s*(\S*(\s+\S+)*)\s*$/#<nil>:RegExp:<nil>'
+                10    'runBlock0#<nil>:FTL:bc#400'
+                10    'runBlock1#<nil>:DFG:bc#1849'
+                10    'Exec#<nil>:DFG:bc#16'
+                 9    '/(?:ZFVR.(\d+\.\d+))|(?:(?:Sversbk|TenaCnenqvfb|Vprjrnfry).(\d+\.\d+))|(?:Bcren.(\d+\.\d+))|(?:NccyrJroXvg.(\d+(?:\.\d+)?))/#<nil>:RegExp:<nil>'
+                 8    '/##yv18##/gi#<nil>:RegExp:<nil>'
+                 8    '/([a-zA-Z]|\s)+/#<nil>:RegExp:<nil>'
+                 7    '/JroXvg\/(\S+)/#<nil>:RegExp:<nil>'
+                 7    'runBlock0#<nil>:FTL:bc#2671'
+                 7    '/^([#.]?)((?:[\w\u0128-\uffff*_-]|\\.)*)/#<nil>:RegExp:<nil>'
+                 6    '/##oe##/gi#<nil>:RegExp:<nil>'
+                 6    'runBlock1#<nil>:FTL:bc#124'
+                 6    '/[+, ]/#<nil>:RegExp:<nil>'
+                 6    'runBlock1#<nil>:FTL:bc#1903'
+                 6    'replace#<nil>:DFG:bc#63'
+                 5    'runBlock0#<nil>:FTL:bc#3378'
+                 5    '/'/g#<nil>:RegExp:<nil>'
+                 5    '/##yv20##/gi#<nil>:RegExp:<nil>'
+                 4    '/\?[\w\W]*(sevraqvq|punaaryvq|tebhcvq)=([^\&\?#]*)/i#<nil>:RegExp:<nil>'
+                 4    'load#<nil>:None:<nil>'
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::matchCompareWithInterpreter):
+        (JSC::RegExp::dumpToStream):
+        (JSC::appendLineTerminatorEscape<LChar>):
+        (JSC::appendLineTerminatorEscape<UChar>):
+        (JSC::escapePattern):
+        (JSC::RegExp::escapedPattern const): Moved from RegExpPrototype.cpp to implement RegExp::toSourceString and RegExp::escapedPattern.
+        (JSC::RegExp::toSourceString const):
+        (JSC::regexpToSourceString): Deleted.
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::appendLineTerminatorEscape<LChar>): Deleted.
+        (JSC::appendLineTerminatorEscape<UChar>): Deleted.
+        (JSC::regExpProtoGetterSourceInternal): Deleted.
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::StackFrame::functionStartLine):
+        (JSC::SamplingProfiler::StackFrame::functionStartColumn):
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::StackFrame::url):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        (WTF::printInternal):
+        * runtime/SamplingProfiler.h:
+        * runtime/VM.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::MatchingContextHolder::MatchingContextHolder): Deleted.
+        (JSC::Yarr::MatchingContextHolder::~MatchingContextHolder): Deleted.
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::MatchingContextHolder::offsetOfStackLimit): Deleted.
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBuffer): Deleted.
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBufferSize): Deleted.
+        * yarr/YarrMatchingContextHolder.h: Added.
+        (JSC::Yarr::MatchingContextHolder::offsetOfStackLimit):
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBuffer):
+        (JSC::Yarr::MatchingContextHolder::offsetOfPatternContextBufferSize):
+        (JSC::Yarr::MatchingContextHolder::MatchingContextHolder):
+        (JSC::Yarr::MatchingContextHolder::~MatchingContextHolder):
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Harden defaultTimeZone retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=227996
+        rdar://80540300
+
+        Reviewed by Mark Lam.
+
+        We received the report that "UTC" can appear in Intl.DateTimeFormat's default timezone.
+        While we cannot reproduce it, this patch attempts to avoid using TimeZone from UCalendar
+        so that the code gets the same to the old defaultTimeZone implementation.
+
+        * runtime/JSDateMath.cpp:
+        (JSC::DateCache::defaultTimeZone):
+        (JSC::DateCache::timeZoneCacheSlow):
+
+2021-07-15  Mark Lam  <mark.lam@apple.com>
+
+        JITWorklist::waitUntilAllPlansForVMAreReady() should also be notified when plans are cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=228003
+        rdar://78314543
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, it only gets notified when plans are done compiling.  As a result, if
+        JITWorklist::waitUntilAllPlansForVMAreReady() found non-ready plans and started
+        waiting, and those plans were canceled, then JITWorklist::waitUntilAllPlansForVMAreReady()
+        can hang indefinitely.
+
+        This patch renames JITWorklist::::m_planCompiled to m_planCompiledOrCancelled,
+        and notifies it also when plans are cancelled.
+
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::waitUntilAllPlansForVMAreReady):
+        (JSC::JITWorklist::removeMatchingPlansForVM):
+        * jit/JITWorklist.h:
+        * jit/JITWorklistThread.cpp:
+        (JSC::JITWorklistThread::work):
+
+2021-07-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add samplingProfilerIgnoreExternalSourceID option
+        https://bugs.webkit.org/show_bug.cgi?id=227985
+
+        Reviewed by Mark Lam.
+
+        We can ignore sourceID when aggregating samples. By doing so, we can open Speedometer2 style iframes
+        and still aggregate all the functions even though each script in iframe has different source ID.
+
+        * runtime/OptionsList.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        * runtime/SamplingProfiler.h:
+
 2021-07-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid-July 2021 edition

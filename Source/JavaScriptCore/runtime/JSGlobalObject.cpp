@@ -781,12 +781,6 @@ void JSGlobalObject::init(VM& vm)
         });
 
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
-    m_throwTypeErrorGetterSetter.initLater(
-        [] (const Initializer<GetterSetter>& init) {
-            JSFunction* thrower = init.owner->throwTypeErrorFunction();
-            GetterSetter* getterSetter = GetterSetter::create(init.vm, init.owner, thrower, thrower);
-            init.set(getterSetter);
-        });
 
     m_nullGetterFunction.set(vm, this, NullGetterFunction::create(vm, NullGetterFunction::createStructure(vm, this, m_functionPrototype.get())));
     Structure* nullSetterFunctionStructure = NullSetterFunction::createStructure(vm, this, m_functionPrototype.get());
@@ -802,16 +796,15 @@ void JSGlobalObject::init(VM& vm)
     m_functionPrototype->structure(vm)->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     m_objectStructureForObjectConstructor.set(vm, this, vm.structureCache.emptyObjectStructureForPrototype(this, m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity()));
     m_objectProtoValueOfFunction.set(vm, this, jsCast<JSFunction*>(objectPrototype()->getDirect(vm, vm.propertyNames->valueOf)));
-    
-    JSFunction* thrower = JSFunction::create(vm, this, 0, emptyString(), globalFuncThrowTypeErrorArgumentsCalleeAndCaller);
-    thrower->freeze(vm);
-    GetterSetter* getterSetter = GetterSetter::create(vm, this, thrower, thrower);
-    m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter.set(vm, this, getterSetter);
-    
-    m_functionPrototype->initRestrictedProperties(vm, this);
 
     m_speciesGetterSetter.set(vm, this, GetterSetter::create(vm, this, JSFunction::create(vm, globalOperationsSpeciesGetterCodeGenerator(vm), this), nullptr));
 
+    m_throwTypeErrorArgumentsCalleeGetterSetter.initLater(
+        [] (const Initializer<GetterSetter>& init) {
+            JSFunction* thrower = JSFunction::create(init.vm, init.owner, 0, emptyString(), globalFuncThrowTypeErrorArgumentsCalleeAndCaller);
+            thrower->freeze(init.vm);
+            init.set(GetterSetter::create(init.vm, init.owner, thrower, thrower));
+        });
     m_typedArrayProto.initLater(
         [] (const Initializer<JSTypedArrayViewPrototype>& init) {
             init.set(JSTypedArrayViewPrototype::create(init.vm, init.owner, JSTypedArrayViewPrototype::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get())));
@@ -2108,9 +2101,8 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_objectProtoValueOfFunction);
     thisObject->m_numberProtoToStringFunction.visit(visitor);
     visitor.append(thisObject->m_functionProtoHasInstanceSymbolFunction);
-    thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
     visitor.append(thisObject->m_regExpProtoSymbolReplace);
-    visitor.append(thisObject->m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter);
+    thisObject->m_throwTypeErrorArgumentsCalleeGetterSetter.visit(visitor);
     thisObject->m_moduleLoader.visit(visitor);
 
     visitor.append(thisObject->m_objectPrototype);

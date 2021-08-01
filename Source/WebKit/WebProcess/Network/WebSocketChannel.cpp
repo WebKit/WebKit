@@ -224,7 +224,7 @@ void WebSocketChannel::fail(const String& reason)
     if (m_isClosing)
         return;
 
-    MessageSender::send(Messages::NetworkSocketChannel::Close { 0, reason });
+    MessageSender::send(Messages::NetworkSocketChannel::Close { WebCore::WebSocketChannel::CloseEventCodeGoingAway, reason });
     didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, { });
 }
 
@@ -235,10 +235,9 @@ void WebSocketChannel::disconnect()
     m_pendingTasks.clear();
     m_messageQueue.clear();
 
-
     m_inspector.didCloseWebSocket(m_document.get());
 
-    MessageSender::send(Messages::NetworkSocketChannel::Close { 0, { } });
+    MessageSender::send(Messages::NetworkSocketChannel::Close { WebCore::WebSocketChannel::CloseEventCodeGoingAway, { } });
 }
 
 void WebSocketChannel::didConnect(String&& subprotocol, String&& extensions)

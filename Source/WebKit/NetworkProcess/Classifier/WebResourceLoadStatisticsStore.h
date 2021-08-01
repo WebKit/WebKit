@@ -290,15 +290,6 @@ private:
     bool m_hasScheduledProcessStats { false };
 
     bool m_firstNetworkProcessCreated { false };
-    
-    enum class State {
-        Running,
-        WillSuspend,
-        Suspended
-    };
-    static Lock suspendedStateLock;
-    static State suspendedState WTF_GUARDED_BY_LOCK(suspendedStateLock);
-    static Condition suspendedStateChangeCondition;
 };
 
 } // namespace WebKit

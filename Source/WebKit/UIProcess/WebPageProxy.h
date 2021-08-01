@@ -836,9 +836,9 @@ public:
     void performActionOnElement(uint32_t action);
     void saveImageToLibrary(const SharedMemory::IPCHandle& imageHandle);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&& = [] { });
-    void setFocusedElementValue(const String&);
-    void setFocusedElementValueAsNumber(double);
-    void setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection = false);
+    void setFocusedElementValue(const WebCore::ElementContext&, const String&);
+    void setFocusedElementValueAsNumber(const WebCore::ElementContext&, double);
+    void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);
     void applicationDidEnterBackground();
     void applicationDidFinishSnapshottingAfterEnteringBackground();
     void applicationWillEnterForeground();
@@ -903,11 +903,14 @@ public:
 
     void setInputMethodState(std::optional<InputMethodState>&&);
 #endif
+        
+    void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin);
+    void scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin);
 
 #if PLATFORM(COCOA)
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
-
+        
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
@@ -962,7 +965,6 @@ public:
 #if PLATFORM(GTK)
     PlatformViewWidget viewWidget();
     bool makeGLContextCurrent();
-    void themeDidChange();
 #endif
 
     const std::optional<WebCore::Color>& backgroundColor() const { return m_backgroundColor; }
@@ -1312,6 +1314,8 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     // Called by the WebContextMenuProxy.
+    void didShowContextMenu();
+    void didDismissContextMenu();
     void contextMenuItemSelected(const WebContextMenuItemData&);
     void handleContextMenuKeyEvent();
 #endif
@@ -1908,6 +1912,7 @@ public:
     void restoreAppHighlightsAndScrollToIndex(const Vector<Ref<WebKit::SharedMemory>>& highlights, const std::optional<unsigned> index);
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
     bool appHighlightsVisibility();
+    CGRect appHighlightsOverlayRect();
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1957,6 +1962,9 @@ public:
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
+
+    bool needsSiteSpecificViewportQuirks() const { return m_needsSiteSpecificViewportQuirks; }
+    void setNeedsSiteSpecificViewportQuirks(bool value) { m_needsSiteSpecificViewportQuirks = value; }
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2213,8 +2221,11 @@ private:
     void getEditorCommandsForKeyEvent(const AtomString&, Vector<String>&);
 #endif
 
-#if USE(ATK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     void bindAccessibilityTree(const String&);
+#endif
+
+#if PLATFORM(GTK)
     void showEmojiPicker(const WebCore::IntRect&, CompletionHandler<void(String)>&&);
 #endif
 
@@ -3071,6 +3082,8 @@ private:
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
     RetainPtr<WKQuickLookPreviewController> m_quickLookPreviewController;
 #endif
+
+    bool m_needsSiteSpecificViewportQuirks { true };
 };
 
 #ifdef __OBJC__

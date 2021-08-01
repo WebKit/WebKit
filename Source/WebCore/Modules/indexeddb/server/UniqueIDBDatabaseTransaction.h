@@ -27,6 +27,7 @@
 
 #include "IDBError.h"
 #include "IDBTransactionInfo.h"
+#include <wtf/Deque.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -56,7 +57,7 @@ public:
 
     ~UniqueIDBDatabaseTransaction();
 
-    UniqueIDBDatabaseConnection& databaseConnection() { return *m_databaseConnection; }
+    UniqueIDBDatabaseConnection& databaseConnection();
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
     bool isVersionChange() const;
     bool isReadOnly() const;
@@ -65,7 +66,7 @@ public:
 
     void abort();
     void abortWithoutCallback();
-    void commit();
+    void commit(uint64_t pendingRequestCount);
 
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
@@ -92,7 +93,7 @@ public:
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
-    UniqueIDBDatabaseConnection* m_databaseConnection;
+    WeakPtr<UniqueIDBDatabaseConnection> m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
@@ -100,6 +101,7 @@ private:
     Vector<uint64_t> m_objectStoreIdentifiers;
 
     std::optional<IDBError> m_mainThreadAbortResult;
+    Deque<IDBError> m_requestResults;
 };
 
 } // namespace IDBServer

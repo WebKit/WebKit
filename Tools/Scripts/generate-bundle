@@ -40,9 +40,11 @@ import zipfile
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts', 'webkitpy'))
 import jhbuildutils
 import flatpakutils
-
+from binary_bundling.ldd import SharedObjectResolver
+from binary_bundling.bundle import BinaryBundler
 
 INSTALL_DEPS_SCRIPT_TEMPLATE = """\
 #!/bin/bash
@@ -127,7 +129,7 @@ class BundleCreator(object):
         self._bundle_type = bundle_type
         self._buildername = builder_name
         self._syslibs = syslibs
-        self._ldd = ldd
+        self._shared_object_resolver = SharedObjectResolver(ldd)
         self._should_strip_objects = should_strip_objects
         self._compression_type = compression_type
         self._tmpdir = None
@@ -151,76 +153,15 @@ class BundleCreator(object):
             return tempfile.mkdtemp(prefix=os.path.join(os.path.abspath(basedir), 'tmp'))
         return tempfile.mkdtemp()
 
+
     def _run_cmd_and_get_output(self, command):
-        command_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
+        _log.debug("EXEC %s" % command)
+        command_process = subprocess.Popen(command,
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.STDOUT,
+                                           encoding='utf-8')
         stdout, stderr = command_process.communicate()
         return command_process.returncode, stdout, stderr
-
-
-    def _get_interpreter_objname(self, object):
-        # Note: we use patchelf to get the object name (not the path!)
-        # of the interpreter because this works regardless of the
-        # architecture of the ELF file.
-        retcode, stdout, stderr = self._run_cmd_and_get_output(['patchelf', '--print-interpreter', object])
-        if retcode != 0:
-            _log.debug("patchelf stdout:\n%s\nPatchelf stderr:\n%s" % (stdout, stderr))
-            if 'cannot find section' in stdout:
-                # This is fine; we only expect an interpreter in the main binary.
-                return None
-            raise RuntimeError('The patchelf command returned non-zero status for object %s' % object)
-        interpreter_path = PurePath(stdout.strip())
-        return interpreter_path.name
-
-    def _get_libs_and_interpreter(self, object):
-        interpreter = None
-        retcode, stdout, stderr = self._run_cmd_and_get_output([self._ldd, object])
-        _log.debug("ldd stdout:\n%s" % stdout)
-        if retcode != 0:
-            raise RuntimeError('The %s command returned non-zero status for object %s' % (self._ldd, object))
-        libs = []
-        for line in stdout.splitlines():
-            line = line.strip()
-            if '=>' in line:
-                line = line.split('=>')[1].strip()
-                if 'not found' in line:
-                    raise RuntimeError('ldd can not resolve all dependencies for object %s.' % object)
-                line = line.split(' ')[0].strip()
-                if os.path.isfile(line):
-                    libs.append(line)
-            else:
-                line = line.split(' ')[0].strip()
-                if os.path.isfile(line):
-                    interpreter = line
-        if interpreter is None:
-            # This is the case for non-native binaries. For those, we
-            # can use a cross-ldd (xldd), but then the interpreter
-            # looks like any other shared object in the output of
-            # ldd. Try to identify it by looking at the object name
-            # from the interpreter string.
-            interpreter_objname = self._get_interpreter_objname(object)
-            for lib in libs:
-                if PurePath(lib).name == interpreter_objname:
-                    interpreter = lib
-                    break
-            # If we found an interpreter, remove it from the libs.
-            libs = [lib for lib in libs if lib != interpreter]
-        return libs, interpreter
-
-
-    def _ldd_recursive_get_libs_and_interpreter(self, object, already_checked_libs = []):
-        libs, interpreter = self._get_libs_and_interpreter(object)
-        if libs:
-            for lib in libs:
-                if lib in already_checked_libs:
-                    continue
-                # avoid recursion loops (libfreetype.so.6 <-> libharfbuzz.so.0)
-                already_checked_libs.append(lib)
-                sub_libs, sub_interpreter = self._ldd_recursive_get_libs_and_interpreter(lib, already_checked_libs)
-                libs.extend(sub_libs)
-                if sub_interpreter and interpreter and sub_interpreter != interpreter:
-                    raise RuntimeError('library %s has interpreter %s but object %s has interpreter %s' % (lib, sub_interpreter, object, interpreter))
-        return list(set(libs)), interpreter
-
 
     def _get_osprettyname(self):
         with open('/etc/os-release', 'r') as osrelease_handle:
@@ -258,37 +199,30 @@ class BundleCreator(object):
 
 
     def _generate_wrapper_script(self, interpreter, binary_to_wrap):
-        if not os.path.isfile(os.path.join(self._tmpdir, 'bin', binary_to_wrap)):
-            raise RuntimeError('Can not find binary to wrap for %s' % binary_to_wrap)
-        self._wrapper_scripts.append(binary_to_wrap)
-        _log.info('Generate wrapper script %s' % binary_to_wrap)
-        script_file = os.path.join(self._tmpdir, binary_to_wrap)
+        variables = dict()
+        mydir = self._bundler.VAR_MYDIR
+        if os.path.isdir(os.path.join(self._bundler.destination_dir(), 'gio')):
+            gio_var = 'GIO_MODULE_DIR' if self._syslibs == 'bundle-all' else 'GIO_EXTRA_MODULES'
+            variables[gio_var] = "${%s}/gio" % mydir
 
-        with open(script_file, 'w') as script_handle:
-            script_handle.write('#!/bin/sh\n')
-            script_handle.write('MYDIR="$(dirname $(readlink -f $0))"\n')
-            script_handle.write('export LD_LIBRARY_PATH="${MYDIR}/lib"\n')
-            if os.path.isdir(os.path.join(self._tmpdir, 'gio')):
-                gio_var = 'GIO_MODULE_DIR' if self._syslibs == 'bundle-all' else 'GIO_EXTRA_MODULES'
-                script_handle.write('export %s="${MYDIR}/gio"\n' % gio_var)
-            if os.path.isdir(os.path.join(self._tmpdir, 'gst')):
-                gst_var = 'GST_PLUGIN_SYSTEM_PATH_1_0' if self._syslibs == 'bundle-all' else 'GST_PLUGIN_PATH_1_0'
-                script_handle.write('export %s="${MYDIR}/gst"\n' % gst_var)
-                script_handle.write('export GST_REGISTRY_1_0="${MYDIR}/gst/gstreamer-1.0.registry"\n')
+        if os.path.isdir(os.path.join(self._bundler.destination_dir(), 'gst')):
+            gst_var = 'GST_PLUGIN_SYSTEM_PATH_1_0' if self._syslibs == 'bundle-all' else 'GST_PLUGIN_PATH_1_0'
+            variables[gst_var] = "${%s}/gst" % mydir
+            variables['GST_REGISTRY_1_0'] = "${%s}/gst/gstreamer-1.0.registry" % mydir
+        if binary_to_wrap != "jsc":
+            variables['WEBKIT_EXEC_PATH'] = "${%s}/bin" % mydir
+            variables['WEBKIT_INJECTED_BUNDLE_PATH'] = "${%s}/lib" % mydir
+        if self._syslibs == 'bundle-all':
             if binary_to_wrap != "jsc":
-                script_handle.write('export WEBKIT_EXEC_PATH="${MYDIR}/bin"\n')
-                script_handle.write('export WEBKIT_INJECTED_BUNDLE_PATH="${MYDIR}/lib"\n')
-            if self._syslibs == 'bundle-all':
-                script_handle.write('INTERPRETER="${MYDIR}/lib/%s"\n' % os.path.basename(interpreter))
-                if binary_to_wrap != "jsc":
-                    script_handle.write('export WEB_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
-                    script_handle.write('export PLUGIN_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
-                    script_handle.write('export NETWORK_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
-                    script_handle.write('export GPU_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
-                script_handle.write('exec "${INTERPRETER}" "${MYDIR}/bin/%s" "$@"\n' % binary_to_wrap)
-            else:
-                script_handle.write('exec "${MYDIR}/bin/%s" "$@"\n' % binary_to_wrap)
-        os.chmod(script_file, 0o755)
+                for var in ['WEB_PROCESS_CMD_PREFIX',
+                            'PLUGIN_PROCESS_CMD_PREFIX',
+                            'NETWORK_PROCESS_CMD_PREFIX',
+                            'GPU_PROCESS_CMD_PREFIX']:
+                    variables[var] = "${%s}" % self._bundler.VAR_INTERPRETER
+        else:
+            interpreter = None
+        self._bundler.generate_wrapper_script(interpreter, binary_to_wrap, variables)
+        self._wrapper_scripts.append(binary_to_wrap)
 
     def _generate_install_deps_script(self, system_packages_needed):
         if not system_packages_needed:
@@ -312,35 +246,6 @@ class BundleCreator(object):
             installdeps_handle.write(INSTALL_DEPS_SCRIPT_TEMPLATE % {'packages_needed' : ' '.join(system_packages_needed)} )
         os.chmod(installdeps_file, 0o755)
 
-
-    def _copy_and_remove_rpath(self, orig_file, type='bin', destination_dir=None):
-        if not destination_dir:
-            dir_suffix = 'lib' if type == 'interpreter' else type
-            destination_dir = os.path.join(self._tmpdir, dir_suffix)
-        if not os.path.isdir(destination_dir):
-            os.makedirs(destination_dir)
-
-        if not os.path.isfile(orig_file):
-            raise ValueError('Can not find file %s' % orig_file)
-
-        _log.info('Add to bundle [%s]: %s' % (type, orig_file))
-        shutil.copy(orig_file, destination_dir)
-
-        if shutil.which('patchelf'):
-            patch_elf_command = ['patchelf', '--remove-rpath', os.path.join(destination_dir, os.path.basename(orig_file))]
-            if subprocess.call(patch_elf_command) != 0:
-                _log.warning('The patchelf command returned non-zero status')
-        else:
-                _log.warning('patchelf not found. Not modifying rpath')
-
-        if self._should_strip_objects:
-            if shutil.which('strip'):
-                strip_command = ['strip', '--strip-unneeded', os.path.join(destination_dir, os.path.basename(orig_file))]
-                if subprocess.call(strip_command) != 0:
-                    _log.warning('The strip command returned non-zero status')
-            else:
-                _log.warning('strip not found. Not stripping object')
-
     def _remove_tempdir(self):
         if not self._tmpdir:
             return
@@ -349,6 +254,7 @@ class BundleCreator(object):
 
     def create(self):
         self._tmpdir = self._create_tempdir(self._buildpath)
+        self._bundler = BinaryBundler(self._tmpdir, self._should_strip_objects)
 
         if os.path.isfile(self._bundle_file_path):
             _log.info('Removing previous bundle %s' % self._bundle_file_path)
@@ -456,11 +362,11 @@ class BundleCreator(object):
     def _add_object_or_get_sysdep(self, object, object_type):
         provided_by_system_package = None
         if self._syslibs == 'bundle-all':
-            self._copy_and_remove_rpath(object, type=object_type)
+            self._bundler.copy_and_remove_rpath(object, type=object_type)
         else:
             provided_by_system_package = self._get_system_package_name(object)
             if not provided_by_system_package:
-                self._copy_and_remove_rpath(object, type=object_type)
+                self._bundler.copy_and_remove_rpath(object, type=object_type)
         return provided_by_system_package
 
     def _ensure_wpe_backend_symlink(self):
@@ -506,20 +412,20 @@ class BundleCreator(object):
                 if system_package:
                     system_packages_needed.add(system_package)
             elif object.endswith('.so'):
-                self._copy_and_remove_rpath(object, type='lib')
+                self._bundler.copy_and_remove_rpath(object, type='lib')
             else:
-                self._copy_and_remove_rpath(object, type='bin')
+                self._bundler.copy_and_remove_rpath(object, type='bin')
             # There is no need to examine the libraries linked with objects coming from a system package,
             # because system packages already declare dependencies between them.
             # However, if we are running with self._syslibs == 'bundle-all' then system_package will be None,
             # and everything will be examined and bundled as we don't account for system packages in that case.
             if not system_package:
-                libraries, interpreter = self._ldd_recursive_get_libs_and_interpreter(object)
+                libraries, interpreter = self._shared_object_resolver.get_libs_and_interpreter(object)
                 if interpreter is None:
                     raise RuntimeError("Could not determine interpreter for binary %s" % object)
                 if copied_interpreter is None:
                     if self._syslibs == 'bundle-all':
-                        self._copy_and_remove_rpath(interpreter, type='interpreter')
+                        self._bundler.copy_and_remove_rpath(interpreter, type='interpreter')
                     copied_interpreter = interpreter
                 elif copied_interpreter != interpreter:
                     raise RuntimeError('Detected binaries with different interpreters: %s != %s' %(copied_interpreter, interpreter))
@@ -659,7 +565,7 @@ def configure_logging(selected_log_level='info'):
         log_level = logging.getLevelName(LOG_MESSAGE)
 
     handler = LogHandler(sys.stdout)
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger()
     logger.addHandler(handler)
     logger.setLevel(log_level)
     return handler

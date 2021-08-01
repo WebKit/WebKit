@@ -1,8 +1,8 @@
 kind: cmake
 sources:
 - kind: tar
-  url: github_com:uclouvain/openjpeg/archive/v2.3.1.tar.gz
-  ref: 63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9
+  url: github_com:uclouvain/openjpeg/archive/v2.4.0.tar.gz
+  ref: 8702ba68b442657f11aaeb2b338443ca8d5fb95b0d845757968a7be31ef7f16d
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 depends:

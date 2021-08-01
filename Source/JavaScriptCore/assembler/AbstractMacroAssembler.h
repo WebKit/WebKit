@@ -124,7 +124,13 @@ public:
         TimesEight,
         ScalePtr = isAddress64Bit() ? TimesEight : TimesFour,
     };
-    
+
+    enum class Extend : uint8_t {
+        ZExt32,
+        SExt32,
+        None
+    };
+
     struct BaseIndex;
     
     static RegisterID withSwappedRegister(RegisterID original, RegisterID left, RegisterID right)
@@ -210,18 +216,23 @@ public:
     //
     // Describes a complex addressing mode.
     struct BaseIndex {
-        BaseIndex(RegisterID base, RegisterID index, Scale scale, int32_t offset = 0)
+        BaseIndex(RegisterID base, RegisterID index, Scale scale, int32_t offset = 0, Extend extend = Extend::None)
             : base(base)
             , index(index)
             , scale(scale)
             , offset(offset)
+            , extend(extend)
         {
+#if !CPU(ARM64)
+            ASSERT(extend == Extend::None);
+#endif
         }
         
         RegisterID base;
         RegisterID index;
         Scale scale;
         int32_t offset;
+        Extend extend;
         
         BaseIndex withOffset(int32_t additionalOffset)
         {

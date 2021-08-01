@@ -68,6 +68,10 @@ enum {
 
 #endif
 
+@interface NSMenu (Staging_81123724)
+- (BOOL)_containsItemMatchingEvent:(NSEvent *)event includingDisabledItems:(BOOL)includingDisabledItems;
+@end
+
 typedef NSUInteger NSPopUpMenuFlags;
 
 WTF_EXTERN_C_BEGIN

@@ -151,6 +151,7 @@ $(PROJECT_DIR)/Modules/indexeddb/IDBObjectStore.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBOpenDBRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransaction.idl
+$(PROJECT_DIR)/Modules/indexeddb/IDBTransactionDurability.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransactionMode.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBVersionChangeEvent.idl
 $(PROJECT_DIR)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl
@@ -808,6 +809,7 @@ $(PROJECT_DIR)/dom/AnimationEvent.idl
 $(PROJECT_DIR)/dom/Attr.idl
 $(PROJECT_DIR)/dom/BeforeLoadEvent.idl
 $(PROJECT_DIR)/dom/BeforeUnloadEvent.idl
+$(PROJECT_DIR)/dom/BroadcastChannel.idl
 $(PROJECT_DIR)/dom/CDATASection.idl
 $(PROJECT_DIR)/dom/CharacterData.idl
 $(PROJECT_DIR)/dom/ChildNode.idl
@@ -871,6 +873,7 @@ $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
 $(PROJECT_DIR)/dom/FocusOptions.idl
+$(PROJECT_DIR)/dom/FormDataEvent.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+PointerEvents.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+Selection.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers.idl
@@ -1050,6 +1053,7 @@ $(PROJECT_DIR)/html/MediaEncryptedEvent.idl
 $(PROJECT_DIR)/html/MediaError.idl
 $(PROJECT_DIR)/html/OffscreenCanvas.idl
 $(PROJECT_DIR)/html/RadioNodeList.idl
+$(PROJECT_DIR)/html/SubmitEvent.idl
 $(PROJECT_DIR)/html/TextMetrics.idl
 $(PROJECT_DIR)/html/TimeRanges.idl
 $(PROJECT_DIR)/html/URLSearchParams.idl

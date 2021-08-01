@@ -37,8 +37,6 @@ public:
 
     void addFunctionProperties(VM&, JSGlobalObject*, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction);
 
-    void initRestrictedProperties(VM&, JSGlobalObject*);
-
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
         return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info());

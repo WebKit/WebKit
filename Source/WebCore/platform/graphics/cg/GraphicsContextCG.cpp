@@ -179,6 +179,11 @@ static CGBlendMode selectCGBlendMode(CompositeOperator compositeOperator, BlendM
     return kCGBlendModeNormal;
 }
 
+static void setCGBlendMode(CGContextRef context, CompositeOperator op, BlendMode blendMode)
+{
+    CGContextSetBlendMode(context, selectCGBlendMode(op, blendMode));
+}
+
 GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext)
 {
     if (!cgContext)
@@ -334,7 +339,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
 
     auto oldCompositeOperator = compositeOperation();
     auto oldBlendMode = blendModeOperation();
-    setCompositeOperation(options.compositeOperator(), options.blendMode());
+    setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
     // Make the origin be at adjustedDestRect.location()
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
@@ -361,7 +366,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
 #if PLATFORM(IOS_FAMILY)
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
-        setCompositeOperation(oldCompositeOperator, oldBlendMode);
+        setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
     }
 
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImage " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
@@ -1095,7 +1100,7 @@ void GraphicsContextCG::updateState(const GraphicsContextState& state, GraphicsC
         CGContextSetAlpha(context, state.alpha);
 
     if (flags.containsAny({ GraphicsContextState::CompositeOperationChange, GraphicsContextState::BlendModeChange }))
-        CGContextSetBlendMode(context, selectCGBlendMode(state.compositeOperator, state.blendMode));
+        setCGBlendMode(context, state.compositeOperator, state.blendMode);
 
     if (flags.contains(GraphicsContextState::TextDrawingModeChange))
         CGContextSetTextDrawingMode(context, cgTextDrawingMode(state.textDrawingMode));

@@ -482,7 +482,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggered_by": ["macos-catalina-release-build-ews"],
-      "workernames": ["ews100", "ews101", "ews102", "ews103"]
+      "workernames": ["ews100", "ews101", "ews103"]
     },
     {
       "name": "macOS-Catalina-Release-WK2-Tests-EWS",

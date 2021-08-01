@@ -27,11 +27,13 @@
 @class UIView;
 
 @protocol WKFormPeripheral
+- (BOOL)isEditing;
 - (void)beginEditing;
 - (void)endEditing;
 - (UIView *)assistantView;
 @optional
 - (BOOL)handleKeyEvent:(UIEvent *)event;
+@property (nonatomic) BOOL singleTapShouldEndEditing;
 @end
 
 @protocol WKFormControl

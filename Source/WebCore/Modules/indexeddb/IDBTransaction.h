@@ -77,10 +77,12 @@ public:
     // IDBTransaction IDL
     Ref<DOMStringList> objectStoreNames() const;
     IDBTransactionMode mode() const { return m_info.mode(); }
+    IDBTransactionDurability durability() const { return m_info.durability(); }
     IDBDatabase* db();
     DOMException* error() const;
     ExceptionOr<Ref<IDBObjectStore>> objectStore(const String& name);
     ExceptionOr<void> abort();
+    ExceptionOr<void> commit();
 
     EventTargetInterface eventTargetInterface() const final { return IDBTransactionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -162,9 +164,8 @@ private:
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
 
-    void commit();
-
-    void internalAbort();
+    void commitInternal();
+    void abortInternal();
     void notifyDidAbort(const IDBError&);
     void finishAbortOrCommit();
     void abortInProgressOperations(const IDBError&);
@@ -181,7 +182,7 @@ private:
 
     Ref<IDBRequest> requestIndexRecord(JSC::JSGlobalObject&, IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
 
-    void commitOnServer(IDBClient::TransactionOperation&);
+    void commitOnServer(IDBClient::TransactionOperation&, uint64_t pendingRequestCount);
     void abortOnServerAndCancelRequests(IDBClient::TransactionOperation&);
 
     void createObjectStoreOnServer(IDBClient::TransactionOperation&, const IDBObjectStoreInfo&);
@@ -252,7 +253,6 @@ private:
     Deque<RefPtr<IDBClient::TransactionOperation>> m_abortQueue;
     Event* m_abortOrCommitEvent;
     HashMap<RefPtr<IDBClient::TransactionOperation>, IDBResultData> m_transactionOperationResultMap;
-
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::TransactionOperation>> m_transactionOperationMap;
 
     mutable Lock m_referencedObjectStoreLock;
@@ -266,6 +266,8 @@ private:
     bool m_didDispatchAbortOrCommit { false };
 
     uint64_t m_lastWriteOperationID { 0 };
+    std::optional<IDBResourceIdentifier> m_lastTransactionOperationBeforeCommit;
+    std::optional<IDBError> m_commitResult;
 };
 
 class TransactionActivator {

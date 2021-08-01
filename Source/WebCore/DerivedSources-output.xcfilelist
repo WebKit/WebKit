@@ -286,6 +286,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobPropertyBag.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobPropertyBag.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBroadcastChannel.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBroadcastChannel.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSByteLengthQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCDATASection.cpp
@@ -847,6 +849,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFormDataEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFormDataEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutBinding.cpp
@@ -1163,6 +1167,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBRequest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransaction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransaction.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionDurability.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionDurability.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp
@@ -2243,6 +2249,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleSheet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleSheet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleSheetList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleSheetList.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubmitEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubmitEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSubtleCrypto.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSText.cpp

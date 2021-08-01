@@ -56,6 +56,9 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return String();
 
+    if (mimeType.startsWith("text/plain"))
+        return String();
+
     String returnValue;
     char* extension;
     if (xdg_mime_get_simple_globs(mimeType.utf8().data(), &extension, 1)) {

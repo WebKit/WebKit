@@ -1,30 +1,30 @@
 
 PASS application/x-www-form-urlencoded: Basic test (normal form)
-FAIL application/x-www-form-urlencoded: Basic test (formdata event) assert_equals: expected "basic=test" but got ""
+PASS application/x-www-form-urlencoded: Basic test (formdata event)
 PASS application/x-www-form-urlencoded: Basic File test (normal form)
 FAIL application/x-www-form-urlencoded: Basic File test (formdata event) assert_equals: expected "basic=file-test.txt" but got ""
 FAIL application/x-www-form-urlencoded: 0x00 in name (normal form) assert_equals: expected "a%00b=c" but got "a\0b=c"
-FAIL application/x-www-form-urlencoded: 0x00 in name (formdata event) assert_equals: expected "a%00b=c" but got ""
+FAIL application/x-www-form-urlencoded: 0x00 in name (formdata event) assert_equals: expected "a%00b=c" but got "a\0b=c"
 FAIL application/x-www-form-urlencoded: 0x00 in value (normal form) assert_equals: expected "a=b%00c" but got "a=b\0c"
-FAIL application/x-www-form-urlencoded: 0x00 in value (formdata event) assert_equals: expected "a=b%00c" but got ""
+FAIL application/x-www-form-urlencoded: 0x00 in value (formdata event) assert_equals: expected "a=b%00c" but got "a=b\0c"
 FAIL application/x-www-form-urlencoded: 0x00 in filename (normal form) assert_equals: expected "a=b%00c" but got "a=b\0c"
 FAIL application/x-www-form-urlencoded: 0x00 in filename (formdata event) assert_equals: expected "a=b%00c" but got ""
 PASS application/x-www-form-urlencoded: \n in name (normal form)
-FAIL application/x-www-form-urlencoded: \n in name (formdata event) assert_equals: expected "a%0D%0Ab=c" but got ""
+PASS application/x-www-form-urlencoded: \n in name (formdata event)
 PASS application/x-www-form-urlencoded: \r in name (normal form)
-FAIL application/x-www-form-urlencoded: \r in name (formdata event) assert_equals: expected "a%0D%0Ab=c" but got ""
+PASS application/x-www-form-urlencoded: \r in name (formdata event)
 PASS application/x-www-form-urlencoded: \r\n in name (normal form)
-FAIL application/x-www-form-urlencoded: \r\n in name (formdata event) assert_equals: expected "a%0D%0Ab=c" but got ""
+PASS application/x-www-form-urlencoded: \r\n in name (formdata event)
 PASS application/x-www-form-urlencoded: \n\r in name (normal form)
-FAIL application/x-www-form-urlencoded: \n\r in name (formdata event) assert_equals: expected "a%0D%0A%0D%0Ab=c" but got ""
+PASS application/x-www-form-urlencoded: \n\r in name (formdata event)
 PASS application/x-www-form-urlencoded: \n in value (normal form)
-FAIL application/x-www-form-urlencoded: \n in value (formdata event) assert_equals: expected "a=b%0D%0Ac" but got ""
+PASS application/x-www-form-urlencoded: \n in value (formdata event)
 PASS application/x-www-form-urlencoded: \r in value (normal form)
-FAIL application/x-www-form-urlencoded: \r in value (formdata event) assert_equals: expected "a=b%0D%0Ac" but got ""
+PASS application/x-www-form-urlencoded: \r in value (formdata event)
 PASS application/x-www-form-urlencoded: \r\n in value (normal form)
-FAIL application/x-www-form-urlencoded: \r\n in value (formdata event) assert_equals: expected "a=b%0D%0Ac" but got ""
+PASS application/x-www-form-urlencoded: \r\n in value (formdata event)
 PASS application/x-www-form-urlencoded: \n\r in value (normal form)
-FAIL application/x-www-form-urlencoded: \n\r in value (formdata event) assert_equals: expected "a=b%0D%0A%0D%0Ac" but got ""
+PASS application/x-www-form-urlencoded: \n\r in value (formdata event)
 PASS application/x-www-form-urlencoded: \n in filename (normal form)
 FAIL application/x-www-form-urlencoded: \n in filename (formdata event) assert_equals: expected "a=b%0D%0Ac" but got ""
 PASS application/x-www-form-urlencoded: \r in filename (normal form)
@@ -34,29 +34,29 @@ FAIL application/x-www-form-urlencoded: \r\n in filename (formdata event) assert
 PASS application/x-www-form-urlencoded: \n\r in filename (normal form)
 FAIL application/x-www-form-urlencoded: \n\r in filename (formdata event) assert_equals: expected "a=b%0D%0A%0D%0Ac" but got ""
 PASS application/x-www-form-urlencoded: double quote in name (normal form)
-FAIL application/x-www-form-urlencoded: double quote in name (formdata event) assert_equals: expected "a%22b=c" but got ""
+PASS application/x-www-form-urlencoded: double quote in name (formdata event)
 PASS application/x-www-form-urlencoded: double quote in value (normal form)
-FAIL application/x-www-form-urlencoded: double quote in value (formdata event) assert_equals: expected "a=b%22c" but got ""
+PASS application/x-www-form-urlencoded: double quote in value (formdata event)
 PASS application/x-www-form-urlencoded: double quote in filename (normal form)
 FAIL application/x-www-form-urlencoded: double quote in filename (formdata event) assert_equals: expected "a=b%22c" but got ""
 PASS application/x-www-form-urlencoded: single quote in name (normal form)
-FAIL application/x-www-form-urlencoded: single quote in name (formdata event) assert_equals: expected "a%27b=c" but got ""
+PASS application/x-www-form-urlencoded: single quote in name (formdata event)
 PASS application/x-www-form-urlencoded: single quote in value (normal form)
-FAIL application/x-www-form-urlencoded: single quote in value (formdata event) assert_equals: expected "a=b%27c" but got ""
+PASS application/x-www-form-urlencoded: single quote in value (formdata event)
 PASS application/x-www-form-urlencoded: single quote in filename (normal form)
 FAIL application/x-www-form-urlencoded: single quote in filename (formdata event) assert_equals: expected "a=b%27c" but got ""
 PASS application/x-www-form-urlencoded: backslash in name (normal form)
-FAIL application/x-www-form-urlencoded: backslash in name (formdata event) assert_equals: expected "a%5Cb=c" but got ""
+PASS application/x-www-form-urlencoded: backslash in name (formdata event)
 PASS application/x-www-form-urlencoded: backslash in value (normal form)
-FAIL application/x-www-form-urlencoded: backslash in value (formdata event) assert_equals: expected "a=b%5Cc" but got ""
+PASS application/x-www-form-urlencoded: backslash in value (formdata event)
 PASS application/x-www-form-urlencoded: backslash in filename (normal form)
 FAIL application/x-www-form-urlencoded: backslash in filename (formdata event) assert_equals: expected "a=b%5Cc" but got ""
 PASS application/x-www-form-urlencoded: non-ASCII in name and value (normal form)
-FAIL application/x-www-form-urlencoded: non-ASCII in name and value (formdata event) assert_equals: expected "%C3%A1b=%C3%A7" but got ""
+PASS application/x-www-form-urlencoded: non-ASCII in name and value (formdata event)
 PASS application/x-www-form-urlencoded: non-ASCII in filename (normal form)
 FAIL application/x-www-form-urlencoded: non-ASCII in filename (formdata event) assert_equals: expected "a=%C9%99.txt" but got ""
 PASS application/x-www-form-urlencoded: characters not in encoding in name and value (normal form)
-FAIL application/x-www-form-urlencoded: characters not in encoding in name and value (formdata event) assert_equals: expected "a%26%23601%3Bb=c%26%2365533%3Bd" but got ""
+PASS application/x-www-form-urlencoded: characters not in encoding in name and value (formdata event)
 PASS application/x-www-form-urlencoded: character not in encoding in filename (normal form)
 FAIL application/x-www-form-urlencoded: character not in encoding in filename (formdata event) assert_equals: expected "%E1=%26%23128169%3B" but got ""
 

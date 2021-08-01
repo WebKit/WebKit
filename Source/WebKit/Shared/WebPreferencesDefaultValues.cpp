@@ -35,6 +35,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#import <wtf/cocoa/Entitlements.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)
@@ -145,29 +149,41 @@ bool defaultOfflineWebApplicationCacheEnabled()
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_canvas_rendering");
-#endif
-
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+#else
     return false;
+#endif
 }
 
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_dom_rendering");
-#endif
-
+#else
     return false;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+#else
+    return false;
+#endif
 }
 
 bool defaultUseGPUProcessForMediaEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_media");
-#endif
-
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+#else
     return false;
+#endif
 }
 
 bool defaultUseGPUProcessForWebGLEnabled()
@@ -185,14 +201,21 @@ bool defaultUseGPUProcessForWebGLEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+
+#if HAVE(SYSTEM_FEATURE_FLAGS)
 #if PLATFORM(MAC)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #elif PLATFORM(IOS_FAMILY)
     return isFeatureFlagEnabled("gpu_process_media");
 #endif
-#endif
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
+
+#else
     return false;
+#endif
 }
 
 bool defaultCaptureAudioInUIProcessEnabled()
@@ -206,8 +229,12 @@ bool defaultCaptureAudioInUIProcessEnabled()
 
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
 #else
     return false;
 #endif
@@ -219,8 +246,12 @@ bool defaultCaptureVideoInGPUProcessEnabled()
 
 bool defaultWebRTCCodecsInGPUProcess()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if ENABLE(GPU_PROCESS_BY_DEFAULT)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
+#else
+    return true;
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
 #else
     return false;
 #endif
@@ -257,7 +288,11 @@ bool defaultIncrementalPDFEnabled()
     return isFeatureFlagEnabled("incremental_pdf");
 #endif
 
+#if PLATFORM(MAC)
+    return true;
+#else
     return false;
+#endif
 }
 #endif
 
@@ -282,7 +317,11 @@ bool defaultWebMFormatReaderEnabled()
     return isFeatureFlagEnabled("webm_format_reader");
 #endif
 
+#if PLATFORM(MAC)
+    return true;
+#else
     return false;
+#endif
 }
 
 #endif // ENABLE(WEBM_FORMAT_READER)
@@ -315,6 +354,7 @@ bool defaultVP9SWDecoderEnabledOnBattery()
 
     return false;
 }
+#endif // ENABLE(VP9)
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -327,7 +367,27 @@ bool defaultWebMParserEnabled()
     return true;
 }
 
+bool defaultWebMWebAudioEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("webm_webaudio");
+#endif
+
+    return false;
+}
+
 #endif // ENABLE(MEDIA_SOURCE)
-#endif // ENABLE(VP9)
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+bool defaultMediaSessionCoordinatorEnabled()
+{
+    static dispatch_once_t onceToken;
+    static bool enabled { false };
+    dispatch_once(&onceToken, ^{
+        enabled = WTF::processHasEntitlement("com.apple.developer.group-session.urlactivity");
+    });
+    return enabled;
+}
+#endif
 
 } // namespace WebKit

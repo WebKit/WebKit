@@ -4366,6 +4366,8 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringVie
             restrictions |= MediaElementSession::RequirePlaybackToControlControlsManager;
         if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforvideoduetolowpowermode"))
             restrictions |= MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode;
+        if (equalLettersIgnoringASCIICase(restrictionString, "requirepagevisibilitytoplayaudio"))
+            restrictions |= MediaElementSession::RequirePageVisibilityToPlayAudio;
     }
     element.mediaSession().addBehaviorRestriction(restrictions);
 }
@@ -5030,6 +5032,11 @@ bool Internals::isMediaElementHidden(const HTMLMediaElement& media)
 {
     return media.elementIsHidden();
 }
+
+double Internals::elementEffectivePlaybackRate(const HTMLMediaElement& media)
+{
+    return media.effectivePlaybackRate();
+}
 #endif
 
 ExceptionOr<void> Internals::setIsPlayingToBluetoothOverride(std::optional<bool> isPlaying)
@@ -5682,6 +5689,26 @@ static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+void Internals::requestTextRecognition(Element& element, RefPtr<VoidCallback>&& callback)
+{
+    auto page = contextDocument()->page();
+    if (!page) {
+        if (callback)
+            callback->handleEvent();
+    }
+
+#if ENABLE(IMAGE_ANALYSIS)
+    page->chrome().client().requestTextRecognition(element, [callback = WTFMove(callback)] (auto&&) {
+        if (callback)
+            callback->handleEvent();
+    });
+#else
+    UNUSED_PARAM(element);
+    if (callback)
+        callback->handleEvent();
+#endif
+}
 
 void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
 {

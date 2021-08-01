@@ -661,6 +661,7 @@ public:
     double privatePlayerVolume(const HTMLMediaElement&);
     bool privatePlayerMuted(const HTMLMediaElement&);
     bool isMediaElementHidden(const HTMLMediaElement&);
+    double elementEffectivePlaybackRate(const HTMLMediaElement&);
 
     ExceptionOr<void> setOverridePreferredDynamicRangeMode(HTMLMediaElement&, const String&);
 #endif
@@ -898,6 +899,7 @@ public:
         ~ImageOverlayLine();
     };
     void installImageOverlay(Element&, Vector<ImageOverlayLine>&&);
+    void requestTextRecognition(Element&, RefPtr<VoidCallback>&&);
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;

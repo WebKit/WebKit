@@ -255,12 +255,14 @@ static bool processHasActiveRunTimeLimitation()
 typedef void(^RBSAssertionInvalidationCallbackType)();
 
 @interface WKRBSAssertionDelegate : NSObject<RBSAssertionObserving>
+@property (copy) RBSAssertionInvalidationCallbackType prepareForInvalidationCallback;
 @property (copy) RBSAssertionInvalidationCallbackType invalidationCallback;
 @end
 
 @implementation WKRBSAssertionDelegate
 - (void)dealloc
 {
+    [_prepareForInvalidationCallback release];
     [_invalidationCallback release];
     [super dealloc];
 }
@@ -268,6 +270,12 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 - (void)assertionWillInvalidate:(RBSAssertion *)assertion
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertionWillInvalidate", self);
+
+    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
+        auto strongSelf = weakSelf.get();
+        if (strongSelf && strongSelf.get().prepareForInvalidationCallback)
+            strongSelf.get().prepareForInvalidationCallback();
+    });
 }
 
 - (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error
@@ -297,8 +305,8 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
         return @"Foreground";
     case ProcessAssertionType::MediaPlayback:
         return @"MediaPlayback";
-    case ProcessAssertionType::FinishTaskUninterruptable:
-        return @"FinishTaskUninterruptable";
+    case ProcessAssertionType::FinishTaskInterruptable:
+        return @"FinishTaskInterruptable";
     }
 }
 
@@ -311,7 +319,7 @@ static NSString *runningBoardDomainForAssertionType(ProcessAssertionType asserti
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
         return @"com.apple.webkit";
-    case ProcessAssertionType::FinishTaskUninterruptable:
+    case ProcessAssertionType::FinishTaskInterruptable:
         return @"com.apple.common";
     }
 }
@@ -339,6 +347,10 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}@ assertion for process with PID=%d was invalidated", this, runningBoardAssertionName, pid);
         processAssertionWasInvalidated();
     };
+    m_delegate.get().prepareForInvalidationCallback = ^{
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, pid);
+        processAssertionWillBeInvalidated();
+    };
 }
 
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
@@ -346,11 +358,10 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
     ASSERT(isMainRunLoop());
     assertionsWorkQueue().dispatch([protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
-        if (completionHandler) {
-            RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+            if (completionHandler)
                 completionHandler();
-            });
-        }
+        });
     });
 }
 
@@ -373,10 +384,20 @@ ProcessAssertion::~ProcessAssertion()
 
     if (m_rbsAssertion) {
         m_delegate.get().invalidationCallback = nil;
+        m_delegate.get().prepareForInvalidationCallback = nil;
         [m_rbsAssertion removeObserver:m_delegate.get()];
         m_delegate = nil;
         [m_rbsAssertion invalidate];
     }
+}
+
+void ProcessAssertion::processAssertionWillBeInvalidated()
+{
+    ASSERT(RunLoop::isMain());
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWillBeInvalidated() PID=%d", this, m_pid);
+
+    if (m_prepareForInvalidationHandler)
+        m_prepareForInvalidationHandler();
 }
 
 void ProcessAssertion::processAssertionWasInvalidated()

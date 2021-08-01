@@ -83,6 +83,7 @@
 
 static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 static const Seconds delayBeforeNoCommitsLogging = 5_s;
+static const unsigned highlightMargin = 5;
 
 static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation orientation)
 {
@@ -475,7 +476,9 @@ static CGFloat contentZoomScale(WKWebView *webView)
     return scale;
 }
 
-static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
+enum class AllowPageBackgroundColorOverride : bool { No, Yes };
+
+static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView, AllowPageBackgroundColorOverride allowPageBackgroundColorOverride)
 {
     if (webView->_customContentView)
         return [webView->_customContentView backgroundColor].CGColor;
@@ -489,10 +492,10 @@ static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView)
     if (!webView->_page)
         return { };
 
-    return webView->_page->underPageBackgroundColor();
+    return allowPageBackgroundColorOverride == AllowPageBackgroundColorOverride::Yes ? webView->_page->underPageBackgroundColor() : webView->_page->pageExtendedBackgroundColor();
 }
 
-static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
+static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBackgroundColorOverride allowPageBackgroundColorOverride)
 {
     if (!webView.opaque)
         return WebCore::Color::transparentBlack;
@@ -501,7 +504,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     WebCore::LocalCurrentTraitCollection localTraitCollection(webView.traitCollection);
 #endif
 
-    WebCore::Color color = baseScrollViewBackgroundColor(webView);
+    WebCore::Color color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
 
     if (!color.isValid() && webView->_contentView)
         color = [webView->_contentView backgroundColor].CGColor;
@@ -527,18 +530,17 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 - (void)_updateScrollViewBackground
 {
-    WebCore::Color color = scrollViewBackgroundColor(self);
+    auto newScrollViewBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::Yes);
+    if (_scrollViewBackgroundColor != newScrollViewBackgroundColor) {
+        _scrollViewBackgroundColor = newScrollViewBackgroundColor;
 
-    if (_scrollViewBackgroundColor == color)
-        return;
-
-    _scrollViewBackgroundColor = color;
-
-    auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color)]);
-    [_scrollView setBackgroundColor:uiBackgroundColor.get()];
+        auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(newScrollViewBackgroundColor)]);
+        [_scrollView setBackgroundColor:uiBackgroundColor.get()];
+    }
 
     // Update the indicator style based on the lightness/darkness of the background color.
-    if (color.lightness() <= .5f && color.isVisible())
+    auto newPageBackgroundColor = scrollViewBackgroundColor(self, AllowPageBackgroundColorOverride::No);
+    if (newPageBackgroundColor.lightness() <= .5f && newPageBackgroundColor.isVisible())
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
     else
         [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleBlack];
@@ -1153,6 +1155,39 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     }
 }
 
+- (float)_adjustScrollRectToAvoidHighlightOverlay:(WebCore::FloatRect)targetRect
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    WebCore::FloatRect overlayRect = [self convertRect:_page->appHighlightsOverlayRect() fromCoordinateSpace:self.window.screen.coordinateSpace];
+    
+    if (CGRectIsNull(overlayRect))
+        return 0;
+        
+    overlayRect.expand(highlightMargin, highlightMargin);
+    
+    if (!targetRect.intersects(overlayRect))
+        return 0;
+    
+    float topGap = overlayRect.y() - [self bounds].origin.y;
+    float bottomGap = (self.bounds.size.height + self.bounds.origin.y) - overlayRect.maxY();
+    
+    float midScreen = self.center.y;
+
+    if (topGap > bottomGap) {
+        auto midGap = topGap / 2 + self.bounds.origin.y;
+        auto diff = midScreen - midGap;
+        return diff;
+    }
+    
+    auto midGap = bottomGap / 2 + self.bounds.origin.y;
+    auto diff = midGap - midScreen;
+    return diff;
+#else
+    return 0;
+#endif
+}
+
+
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance
 {
     if (![_scrollView isScrollEnabled])
@@ -1187,6 +1222,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     scrollViewOffsetDelta.scale(contentZoomScale(self));
 
     float scrollDistance = scrollViewOffsetDelta.diagonalLength();
+    
+    WebCore::FloatRect startRect = targetRect;
+    WebCore::FloatRect convertedStartRect = [self convertRect:startRect fromView:self._currentContentView];
+    convertedStartRect.move(-scrollViewOffsetDelta);
+
+    float additionalOffset = [self _adjustScrollRectToAvoidHighlightOverlay:convertedStartRect];
+
+    scrollViewOffsetDelta += WebCore::FloatSize(0, additionalOffset);
+    
     if (scrollDistance < minimumScrollDistance)
         return NO;
 
@@ -3095,6 +3139,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView updateSoftwareKeyboardSuppressionStateFromWebView];
 }
 
+// FIXME (<rdar://problem/80986330>): This method should be updated to take an image
+// width in points (for consistency) and a completion handler with a UIImage parameter
+// (to avoid redundant copies for PDFs), once it is no longer in use by internal clients.
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {

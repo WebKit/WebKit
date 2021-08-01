@@ -58,13 +58,13 @@ IndentOutdentCommand::IndentOutdentCommand(Document& document, EIndentType typeO
 bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const Position& end)
 {
     // If our selection is not inside a list, bail out.
-    Node* lastNodeInSelectedParagraph = start.deprecatedNode();
-    RefPtr<Element> listNode = enclosingList(lastNodeInSelectedParagraph);
+    RefPtr lastNodeInSelectedParagraph = start.deprecatedNode();
+    RefPtr<Element> listNode = enclosingList(lastNodeInSelectedParagraph.get());
     if (!listNode)
         return false;
 
     // Find the block that we want to indent.  If it's not a list item (e.g., a div inside a list item), we bail out.
-    RefPtr<Element> selectedListItem = enclosingBlock(lastNodeInSelectedParagraph);
+    RefPtr<Element> selectedListItem = enclosingBlock(lastNodeInSelectedParagraph.get());
 
     if (!selectedListItem || !selectedListItem->hasTagName(liTag))
         return false;
@@ -92,14 +92,14 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
 
 void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Position& end, RefPtr<Element>& targetBlockquote)
 {
-    Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
-    Node* nodeToSplitTo;
-    if (enclosingCell)
-        nodeToSplitTo = enclosingCell;
-    else if (enclosingList(start.containerNode()))
-        nodeToSplitTo = enclosingBlock(start.containerNode());
-    else
-        nodeToSplitTo = editableRootForPosition(start);
+    RefPtr enclosingCell = enclosingNodeOfType(start, &isTableCell);
+    auto nodeToSplitTo = [&]() -> RefPtr<Node> {
+        if (enclosingCell)
+            return enclosingCell;
+        if (enclosingList(start.containerNode()))
+            return enclosingBlock(start.containerNode());
+        return editableRootForPosition(start);
+    }();
 
     if (!nodeToSplitTo)
         return;
@@ -132,7 +132,7 @@ void IndentOutdentCommand::outdentParagraph()
     VisiblePosition visibleStartOfParagraph = startOfParagraph(endingSelection().visibleStart());
     VisiblePosition visibleEndOfParagraph = endOfParagraph(visibleStartOfParagraph);
 
-    auto* enclosingNode = downcast<HTMLElement>(enclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), &isListOrIndentBlockquote));
+    RefPtr enclosingNode = downcast<HTMLElement>(enclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), &isListOrIndentBlockquote));
     if (!enclosingNode || !enclosingNode->parentNode()->hasEditableStyle()) // We can't outdent if there is no place to go!
         return;
 
@@ -147,16 +147,16 @@ void IndentOutdentCommand::outdentParagraph()
     }
     
     // The selection is inside a blockquote i.e. enclosingNode is a blockquote
-    VisiblePosition positionInEnclosingBlock = VisiblePosition(firstPositionInNode(enclosingNode));
+    VisiblePosition positionInEnclosingBlock = VisiblePosition(firstPositionInNode(enclosingNode.get()));
     // If the blockquote is inline, the start of the enclosing block coincides with
     // positionInEnclosingBlock.
     VisiblePosition startOfEnclosingBlock = (enclosingNode->renderer() && enclosingNode->renderer()->isInline()) ? positionInEnclosingBlock : startOfBlock(positionInEnclosingBlock);
-    VisiblePosition lastPositionInEnclosingBlock = VisiblePosition(lastPositionInNode(enclosingNode));
+    VisiblePosition lastPositionInEnclosingBlock = VisiblePosition(lastPositionInNode(enclosingNode.get()));
     VisiblePosition endOfEnclosingBlock = endOfBlock(lastPositionInEnclosingBlock);
     if (visibleStartOfParagraph == startOfEnclosingBlock &&
         visibleEndOfParagraph == endOfEnclosingBlock) {
         // The blockquote doesn't contain anything outside the paragraph, so it can be totally removed.
-        Node* splitPoint = enclosingNode->nextSibling();
+        RefPtr splitPoint = enclosingNode->nextSibling();
         removeNodePreservingChildren(*enclosingNode);
         // outdentRegion() assumes it is operating on the first paragraph of an enclosing blockquote, but if there are multiply nested blockquotes and we've
         // just removed one, then this assumption isn't true. By splitting the next containing blockquote after this node, we keep this assumption true
@@ -180,14 +180,14 @@ void IndentOutdentCommand::outdentParagraph()
         return;
     }
 
-    auto* startOfParagraphNode = visibleStartOfParagraph.deepEquivalent().deprecatedNode();
-    auto* enclosingBlockFlow = enclosingBlock(startOfParagraphNode);
+    RefPtr startOfParagraphNode = visibleStartOfParagraph.deepEquivalent().deprecatedNode();
+    RefPtr enclosingBlockFlow = enclosingBlock(startOfParagraphNode.get());
     RefPtr<Node> splitBlockquoteNode = enclosingNode;
     if (enclosingBlockFlow != enclosingNode)
         splitBlockquoteNode = splitTreeToNode(*startOfParagraphNode, *enclosingNode, true);
     else {
         // We split the blockquote at where we start outdenting.
-        auto* highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow);
+        RefPtr highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow.get());
         splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
     auto placeholder = HTMLBRElement::create(document());

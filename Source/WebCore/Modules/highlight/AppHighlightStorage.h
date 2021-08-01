@@ -47,7 +47,7 @@ enum class RestoreWithTextSearch : bool { No, Yes };
 
 enum class ScrollToHighlight : bool { No, Yes };
 
-class AppHighlightStorage final : RefCounted<AppHighlightStorage> {
+class AppHighlightStorage final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AppHighlightStorage(Document&);

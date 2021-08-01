@@ -214,7 +214,9 @@ private:
     void scrollingNodeScrollViewDidScroll() override;
     void scrollingNodeScrollWillStartScroll() override;
     void scrollingNodeScrollDidEndScroll() override;
-
+        
+    void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
+        
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;

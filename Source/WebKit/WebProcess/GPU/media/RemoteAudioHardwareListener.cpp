@@ -60,9 +60,15 @@ RemoteAudioHardwareListener::~RemoteAudioHardwareListener()
     }
 }
 
-void RemoteAudioHardwareListener::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void RemoteAudioHardwareListener::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
     audioHardwareDidBecomeInactive();
+
+    ASSERT_UNUSED(connection, &connection == m_gpuProcessConnection);
+    if (m_gpuProcessConnection) {
+        m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
+        m_gpuProcessConnection = nullptr;
+    }
 }
 
 void RemoteAudioHardwareListener::audioHardwareDidBecomeActive()

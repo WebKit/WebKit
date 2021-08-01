@@ -34,16 +34,16 @@ namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncMaximize);
 static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncMinimize);
 static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncToString);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterBaseName);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterCalendar);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterCaseFirst);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterCollation);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterHourCycle);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterNumeric);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterNumberingSystem);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterLanguage);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterScript);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeGetterRegion);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterBaseName);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendar);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCaseFirst);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollation);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycle);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumeric);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystem);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterLanguage);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterScript);
+static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterRegion);
 
 }
 
@@ -58,16 +58,16 @@ const ClassInfo IntlLocalePrototype::s_info = { "Intl.Locale", &Base::s_info, &l
   maximize         IntlLocalePrototypeFuncMaximize           DontEnum|Function 0
   minimize         IntlLocalePrototypeFuncMinimize           DontEnum|Function 0
   toString         IntlLocalePrototypeFuncToString           DontEnum|Function 0
-  baseName         IntlLocalePrototypeGetterBaseName         DontEnum|Accessor
-  calendar         IntlLocalePrototypeGetterCalendar         DontEnum|Accessor
-  caseFirst        IntlLocalePrototypeGetterCaseFirst        DontEnum|Accessor
-  collation        IntlLocalePrototypeGetterCollation        DontEnum|Accessor
-  hourCycle        IntlLocalePrototypeGetterHourCycle        DontEnum|Accessor
-  numeric          IntlLocalePrototypeGetterNumeric          DontEnum|Accessor
-  numberingSystem  IntlLocalePrototypeGetterNumberingSystem  DontEnum|Accessor
-  language         IntlLocalePrototypeGetterLanguage         DontEnum|Accessor
-  script           IntlLocalePrototypeGetterScript           DontEnum|Accessor
-  region           IntlLocalePrototypeGetterRegion           DontEnum|Accessor
+  baseName         IntlLocalePrototypeGetterBaseName         DontEnum|ReadOnly|CustomAccessor
+  calendar         IntlLocalePrototypeGetterCalendar         DontEnum|ReadOnly|CustomAccessor
+  caseFirst        IntlLocalePrototypeGetterCaseFirst        DontEnum|ReadOnly|CustomAccessor
+  collation        IntlLocalePrototypeGetterCollation        DontEnum|ReadOnly|CustomAccessor
+  hourCycle        IntlLocalePrototypeGetterHourCycle        DontEnum|ReadOnly|CustomAccessor
+  numeric          IntlLocalePrototypeGetterNumeric          DontEnum|ReadOnly|CustomAccessor
+  numberingSystem  IntlLocalePrototypeGetterNumberingSystem  DontEnum|ReadOnly|CustomAccessor
+  language         IntlLocalePrototypeGetterLanguage         DontEnum|ReadOnly|CustomAccessor
+  script           IntlLocalePrototypeGetterScript           DontEnum|ReadOnly|CustomAccessor
+  region           IntlLocalePrototypeGetterRegion           DontEnum|ReadOnly|CustomAccessor
 @end
 */
 
@@ -142,12 +142,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncToString, (JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.baseName
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterBaseName, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterBaseName, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.baseName called on value that's not an object initialized as a Locale"_s);
 
@@ -156,12 +156,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterBaseName, (JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCalendar, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendar, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.calendar called on value that's not an object initialized as a Locale"_s);
 
@@ -170,12 +170,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCalendar, (JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.caseFirst
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCaseFirst, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCaseFirst, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.caseFirst called on value that's not an object initialized as a Locale"_s);
 
@@ -184,12 +184,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCaseFirst, (JSGlobalObject* gl
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.collation
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCollation, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollation, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.collation called on value that's not an object initialized as a Locale"_s);
 
@@ -198,12 +198,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterCollation, (JSGlobalObject* gl
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterHourCycle, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycle, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.hourCycle called on value that's not an object initialized as a Locale"_s);
 
@@ -212,12 +212,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterHourCycle, (JSGlobalObject* gl
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numeric
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterNumeric, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumeric, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.numeric called on value that's not an object initialized as a Locale"_s);
 
@@ -225,12 +225,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterNumeric, (JSGlobalObject* glob
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numberingSystem
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterNumberingSystem, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystem, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.numberingSystem called on value that's not an object initialized as a Locale"_s);
 
@@ -239,12 +239,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterNumberingSystem, (JSGlobalObje
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.language
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterLanguage, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterLanguage, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.language called on value that's not an object initialized as a Locale"_s);
 
@@ -253,12 +253,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterLanguage, (JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.script
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterScript, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterScript, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.script called on value that's not an object initialized as a Locale"_s);
 
@@ -267,12 +267,12 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterScript, (JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.region
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeGetterRegion, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterRegion, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.region called on value that's not an object initialized as a Locale"_s);
 

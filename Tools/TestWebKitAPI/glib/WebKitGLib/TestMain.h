@@ -142,6 +142,7 @@ public:
             "use-system-appearance-for-scrollbars", FALSE,
 #endif
 #endif
+            "memory-pressure-settings", s_memoryPressureSettings,
             nullptr)));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webContext.get()));
         g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebExtensionsCallback), this);
@@ -292,4 +293,5 @@ public:
     static GRefPtr<GDBusServer> s_dbusServer;
     static Vector<GRefPtr<GDBusConnection>> s_dbusConnections;
     static HashMap<uint64_t, GDBusConnection*> s_dbusConnectionPageMap;
+    static WebKitMemoryPressureSettings* s_memoryPressureSettings;
 };

@@ -36,6 +36,7 @@
 #include "RemoteRenderingBackendState.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
+#include "RenderingUpdateID.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
@@ -144,8 +145,23 @@ private:
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&);
     void deleteAllFonts();
-    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    void releaseRemoteResource(WebCore::RenderingResourceIdentifier, uint64_t useCount);
+    void finalizeRenderingUpdate(RenderingUpdateID);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
+
+    class ReplayerDelegate : public WebCore::DisplayList::Replayer::Delegate {
+    public:
+        ReplayerDelegate(WebCore::ImageBuffer&, RemoteRenderingBackend&);
+
+    private:
+        bool apply(WebCore::DisplayList::ItemHandle, WebCore::GraphicsContext&) final;
+        void didCreateMaskImageBuffer(WebCore::ImageBuffer&) final;
+        void didResetMaskImageBuffer() final;
+        void recordResourceUse(WebCore::RenderingResourceIdentifier) final;
+
+        WebCore::ImageBuffer& m_destination;
+        RemoteRenderingBackend& m_remoteRenderingBackend;
+    };
 
     struct PendingWakeupInformation {
         GPUProcessWakeupMessageArguments arguments;

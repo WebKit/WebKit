@@ -1,3 +1,31 @@
+2021-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Dependencies update - July 2021 round
+        https://bugs.webkit.org/show_bug.cgi?id=228275
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/freedesktop-sdk.bst: Update to latest 20.08 junction version.
+        * elements/qt5/qtbase.bst: Switch to KDE 5.15 branch.
+        * elements/qt5/qtdeclarative.bst: Ditto.
+        * elements/qt5/qtquickcontrols.bst: Ditto.
+        * elements/qt5/qtquickcontrols2.bst: Ditto.
+        * elements/qt5/qtwayland.bst: Ditto.
+        * elements/qt5/qtx11extras.bst: Ditto.
+        * elements/sdk-build-depends/rapidjson.bst: Update to latest git snapshot.
+        * elements/sdk-platform.bst: Add virtualenv, needed for WPT tests.
+        * elements/sdk/ccls.bst: Update to latest release.
+        * elements/sdk/clangd.bst: Bump to version 12.
+        * elements/sdk/ffmpeg.bst: Bump to version 4.4.
+        * elements/sdk/openjpeg.bst: Bump to version 2.4.
+        * elements/sdk/rr.bst: Update to latest git snapshot.
+        * elements/sdk/x264.bst: Ditto. Snapshot tarballs were discontinued years ago.
+        * patches/qtbase-make-sure-to-correctly-construct-base-platform-theme.patch: Removed.
+        * patches/qtbase-revert-correct-handling-for-xdg-runtime-dir.patch: Removed.
+        * patches/qtbase-revert-qstandardpaths-dont-change-permissions-on-xdg-runtime-dir.patch: Added.
+        * patches/qtdeclarative-use-python3.patch: Removed.
+        * project.conf:
+
 2021-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Flatpak SDK] Update to libsoup3 2.99.9

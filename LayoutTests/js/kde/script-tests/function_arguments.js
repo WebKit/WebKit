@@ -16,42 +16,12 @@ function mf(a,b) {
 mf(99);
 shouldBe("mf.arguments", "expected[expno++]");
 
-
-// check internal properties of arguments
-
-// Delete
-
-
-// DontEnum
-var foundArgs = false;
-
-var ReadOnlyOK = false;
-var DontDeleteOK = false;
-var DontEnumOK = false;
+// Check that sloppy mode ES5 function doesn't have own 'arguments' and 'caller' properties
 function f(a,b,c) {
-
-  // ReadOnly
-  var newargs = new Object();
-  f.arguments = newargs;
-  ReadOnlyOK = (f.arguments != newargs);
-
-  // DontDelete
-  DontDeleteOK = !delete(f.arguments);
-  if (f.arguments == undefined || !f.__proto__.hasOwnProperty("arguments"))
-    DontDeleteOK = false;
-
-  // DontEnum
-  var foundArgs = false;
-  for (i in f) {
-    if (f == "arguments")
-      foundArgs = true;
-  }
-  DontEnumOK = !foundArgs;
+  shouldBeFalse("f.hasOwnProperty('arguments')");
+  shouldBeFalse("f.hasOwnProperty('caller')");
 }
 f(1,2,3);
-shouldBeTrue("ReadOnlyOK");
-shouldBeTrue("DontDeleteOK");
-shouldBeTrue("DontEnumOK");
 
 // Check that parameter variables are bound to the corresponding
 // elements in the arguments array

@@ -1084,6 +1084,19 @@ void TestRunner::removeChromeInputField()
 #endif
 }
 
+void TestRunner::setTextInChromeInputField(const String&)
+{
+}
+
+void TestRunner::selectChromeInputField()
+{
+}
+
+String TestRunner::getSelectedTextInChromeInputField()
+{
+    return { };
+}
+
 void TestRunner::focusWebView()
 {
 #if !PLATFORM(IOS_FAMILY)

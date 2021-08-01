@@ -35,6 +35,7 @@
 #include "PageStorageSessionProvider.h"
 #include "WebApplicationCache.h"
 #include "WebBackForwardList.h"
+#include "WebBroadcastChannelRegistry.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
 #include "WebDatabaseManager.h"
@@ -3125,7 +3126,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<WebProgressTrackerClient>(),
         makeUniqueRef<WebFrameLoaderClient>(webFrame),
         makeUniqueRef<DummySpeechRecognitionProvider>(),
-        makeUniqueRef<MediaRecorderProvider>()
+        makeUniqueRef<MediaRecorderProvider>(),
+        WebBroadcastChannelRegistry::getOrCreate(false)
     );
     configuration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)
@@ -5315,6 +5317,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         WebFrameNetworkingContext::destroyPrivateBrowsingSession();
 #endif
     m_page->setSessionID(!!enabled ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID());
+    m_page->setBroadcastChannelRegistry(WebBroadcastChannelRegistry::getOrCreate(!!enabled));
 
     hr = preferences->sansSerifFontFamily(&str);
     if (FAILED(hr))

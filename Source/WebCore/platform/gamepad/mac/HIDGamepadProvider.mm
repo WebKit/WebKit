@@ -28,6 +28,7 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
+#import "GameControllerGamepadProvider.h"
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import "PlatformGamepad.h"

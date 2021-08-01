@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,24 +51,24 @@ public:
     }
 
 protected:
-    void start(SVGElement* targetElement) override
+    void start(SVGElement& targetElement) override
     {
         m_animatedPropertyAnimator1->start(targetElement);
         m_animatedPropertyAnimator2->start(targetElement);
     }
 
-    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) override
+    void animate(SVGElement& targetElement, float progress, unsigned repeatCount) override
     {
         m_animatedPropertyAnimator1->animate(targetElement, progress, repeatCount);
         m_animatedPropertyAnimator2->animate(targetElement, progress, repeatCount);
     }
 
-    void apply(SVGElement* targetElement) override
+    void apply(SVGElement& targetElement) override
     {
         applyAnimatedPropertyChange(targetElement);
     }
 
-    void stop(SVGElement* targetElement) override
+    void stop(SVGElement& targetElement) override
     {
         m_animatedPropertyAnimator1->stop(targetElement);
         m_animatedPropertyAnimator2->stop(targetElement);
@@ -78,4 +78,4 @@ protected:
     Ref<AnimatedPropertyAnimator2> m_animatedPropertyAnimator2;
 };
 
-}
+} // namespace WebCore

@@ -81,6 +81,7 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     undefined setCanStartMedia(boolean enabled);
     undefined setEditableRegionEnabled(boolean enabled);
     undefined setUseDarkAppearance(boolean enabled);
+    undefined setUseElevatedUserInterfaceLevel(boolean enabled);
 
     // ScrollView
     undefined setAllowUnclampedScrollPosition(boolean allowUnclamped);

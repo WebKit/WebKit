@@ -48,7 +48,7 @@ static String preprocessString(String string)
     // We don't replace '\r' and '\f' with '\n' as the specification suggests, instead
     // we treat them all the same in the isNewLine function below.
     string.replace('\0', replacementCharacter);
-    return stringToUSVString(WTFMove(string));
+    return replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
 }
 
 std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string)

@@ -1,0 +1,10 @@
+media/modern-media-controls/overflow-support [ Skip ]
+http/tests/media/modern-media-controls/overflow-support [ Skip ]
+media/modern-media-controls/tracks-support [ Skip ]
+
+fast/images/text-recognition [ Skip ]
+fast/images/text-recognition/ios [ Skip ]
+fast/images/text-recognition/mac [ Skip ]
+
+# Accessibility text recognition support tests.
+accessibility/ios-simulator/image-overlay-elements.html [ Skip ]

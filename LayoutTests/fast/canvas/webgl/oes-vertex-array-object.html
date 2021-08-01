@@ -478,10 +478,6 @@ function runDeleteTests() {
     for (var ii = 0; ii < colorBuffers.length; ++ii) {
       gl.deleteBuffer(colorBuffers[ii]);
       gl.deleteBuffer(elementBuffers[ii]);
-      // The buffers should still be valid at this point, since it was attached to the VAO
-      if(!gl.isBuffer(colorBuffers[ii])) {
-        testFailed("buffer removed too early");
-      }
     }
     gl.deleteBuffer(positionBuffer);
 

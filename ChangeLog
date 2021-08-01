@@ -1,3 +1,85 @@
+2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Use an imported target for the libgcrypt library
+        https://bugs.webkit.org/show_bug.cgi?id=228581
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/FindLibGcrypt.cmake: Replaced find module by a new one which defines a
+        LibGcrypt::LibGcrypt imported target, using more modern CMake constructs.
+        * Source/cmake/OptionsGTK.cmake: Use the LibGcrypt::LibGcrypt imported target.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
+2021-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
+        https://bugs.webkit.org/show_bug.cgi?id=228290
+
+        Reviewed by Michael Catanzaro.
+
+        The CMake configure_file() is now used only tarball builds for files requiring information
+        about the build revision. For developer builds a custom target now takes care of keeping
+        those files up-to-date.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-07-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add WTF_CPU_RISCV64
+        https://bugs.webkit.org/show_bug.cgi?id=228322
+
+        Reviewed by Adrian Perez de Castro.
+
+        Define the WTF_CPU_RISCV64 CMake macro when the specified system
+        processor name begins with 'riscv64'. This should also cover potential
+        RISC-V processor names ingrained with specific ISA extensions that are
+        then detectable at compile-time through specified C macros.
+
+        For WTF_CPU_RISCV64, default to disabling JIT and FTL features at the
+        CMake level until they are properly supported. Defaulting to system
+        malloc can already be avoided, but CLoop is necessary for now.
+
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-07-25  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] USE_OPENGL_OR_ES should not be an automagic feature
+        https://bugs.webkit.org/show_bug.cgi?id=228266
+
+        Reviewed by Fujii Hironori.
+
+        The USE_OPENGL_OR_ES feature flag added in r271220 is currently automagic: that is, if
+        neither OpenGL nor OpenGL ES is available at build time, it gets silently disabled. This is
+        not OK because it makes it easy for distributors to accidentally fail to enable OpenGL
+        support. We should require manually disabling the feature with -DUSE_OPENGL_OR_ES=OFF in
+        order to build with OpenGL disabled.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-07-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Remove libportal dependency
+        https://bugs.webkit.org/show_bug.cgi?id=228056
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/FindLIBPORTAL.cmake: Removed.
+        * Source/cmake/GStreamerChecks.cmake:
+
+2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support color-schemes CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208204
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        Enable HAVE_OS_DARK_MODE_SUPPORT.
+        * Source/cmake/OptionsWPE.cmake:
+        Enable ENABLE_DARK_MODE_CSS and HAVE_OS_DARK_MODE_SUPPORT.
+
 2021-07-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, CMake fix-up after r279940

@@ -231,9 +231,13 @@ void findEndWordBoundary(StringView text, int position, int* end)
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {   
 #if USE(APPKIT)
+    String textWithoutUnpairedSurrogates;
+    if (hasUnpairedSurrogate(text)) {
+        textWithoutUnpairedSurrogates = replaceUnpairedSurrogatesWithReplacementCharacter(text.toStringWithoutCopying());
+        text = textWithoutUnpairedSurrogates;
+    }
     auto attributedString = adoptNS([[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]);
-    int result = [attributedString nextWordFromIndex:position forward:forward];
-    return result;
+    return [attributedString nextWordFromIndex:position forward:forward];
 #else
     // This very likely won't behave exactly like the non-iPhone version, but it works
     // for the contexts in which it is used on iPhone, and in the future will be

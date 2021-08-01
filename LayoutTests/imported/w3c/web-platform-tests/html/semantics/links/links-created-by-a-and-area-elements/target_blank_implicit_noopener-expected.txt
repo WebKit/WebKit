@@ -1,16 +1,16 @@
 Click me Click me Click me Click me Click me Click me Click me Click me
 
-FAIL Anchor element with target=_blank with rel=noopener Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with rel=opener Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with implicit rel=noopener Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with rel=opener+noopener Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with rel=noopener+opener Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with rel=noreferrer Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with rel=opener+noreferrer Can't find variable: BroadcastChannel
-FAIL Anchor element with target=_blank with rel=noopener+opener+noreferrer Can't find variable: BroadcastChannel
-FAIL Area element with target=_blank with rel=noopener Can't find variable: BroadcastChannel
-FAIL Area element with target=_blank with rel=opener Can't find variable: BroadcastChannel
-FAIL Area element with target=_blank with implicit rel=noopener Can't find variable: BroadcastChannel
-FAIL Area element with target=_blank with rel=opener+noopener Can't find variable: BroadcastChannel
-FAIL Area element with target=_blank with rel=noopener+opener Can't find variable: BroadcastChannel
+PASS Anchor element with target=_blank with rel=noopener
+PASS Anchor element with target=_blank with rel=opener
+PASS Anchor element with target=_blank with implicit rel=noopener
+FAIL Anchor element with target=_blank with rel=opener+noopener assert_equals: expected false but got true
+FAIL Anchor element with target=_blank with rel=noopener+opener assert_equals: expected false but got true
+PASS Anchor element with target=_blank with rel=noreferrer
+FAIL Anchor element with target=_blank with rel=opener+noreferrer assert_equals: expected false but got true
+FAIL Anchor element with target=_blank with rel=noopener+opener+noreferrer assert_equals: expected false but got true
+PASS Area element with target=_blank with rel=noopener
+PASS Area element with target=_blank with rel=opener
+PASS Area element with target=_blank with implicit rel=noopener
+FAIL Area element with target=_blank with rel=opener+noopener assert_equals: expected false but got true
+FAIL Area element with target=_blank with rel=noopener+opener assert_equals: expected false but got true
 

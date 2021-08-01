@@ -1204,11 +1204,11 @@ var symbol = Symbol();
 (function functionCase() {
     var func = function () { };
     shouldBe(Reflect.get(func, 'arguments'), null);
-    shouldBe(Reflect.set(func, 'arguments', 42), false);
+    shouldBe(Reflect.set(func, 'arguments', 42), true);
     shouldBe(Reflect.get(func, 'arguments'), null);
 
     shouldBe(Reflect.get(func, 'caller'), null);
-    shouldBe(Reflect.set(func, 'caller', 42), false);
+    shouldBe(Reflect.set(func, 'caller', 42), true);
     shouldBe(Reflect.get(func, 'caller'), null);
 
     receiverTest(function () {}, function () {});
@@ -1219,11 +1219,16 @@ var symbol = Symbol();
     receiverTestIndexed(function () {}, {});
 
     var receiver = {};
-    shouldBe(Reflect.set(func, 'arguments', 'V', receiver), false);
+    shouldThrow(() => {
+        Reflect.set(func, 'arguments', 'V', receiver);
+    }, `TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.`);
     shouldBe(Reflect.get(receiver, 'arguments'), undefined);
     shouldBe(receiver.hasOwnProperty('arguments'), false);
     shouldBe(Reflect.get(func, 'arguments'), null);
-    shouldBe(Reflect.set(func, 'caller', 'V', receiver), false);
+
+    shouldThrow(() => {
+        Reflect.set(func, 'caller', 'V', receiver);
+    }, `TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.`);
     shouldBe(Reflect.get(receiver, 'caller'), undefined);
     shouldBe(receiver.hasOwnProperty('caller'), false);
     shouldBe(Reflect.get(func, 'caller'), null);

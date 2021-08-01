@@ -105,6 +105,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(GTK) && !USE(GTK4)
     setUseSystemAppearanceForScrollbars(parameters.useSystemAppearanceForScrollbars);
 #endif
+
+    if (parameters.memoryPressureHandlerConfiguration)
+        MemoryPressureHandler::singleton().setConfiguration(WTFMove(*parameters.memoryPressureHandlerConfiguration));
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)

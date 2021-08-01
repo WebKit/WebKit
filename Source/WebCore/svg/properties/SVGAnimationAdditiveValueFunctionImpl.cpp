@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,22 +32,22 @@
 
 namespace WebCore {
 
-Color SVGAnimationColorFunction::colorFromString(SVGElement* targetElement, const String& string)
+Color SVGAnimationColorFunction::colorFromString(SVGElement& targetElement, const String& string)
 {
     static MainThreadNeverDestroyed<const AtomString> currentColor("currentColor", AtomString::ConstructFromLiteral);
 
     if (string != currentColor.get())
         return SVGPropertyTraits<Color>::fromString(string);
 
-    if (auto* renderer = targetElement->renderer())
+    if (auto* renderer = targetElement.renderer())
         return renderer->style().visitedDependentColor(CSSPropertyColor);
 
     return { };
 }
 
-std::optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement*, const String& from, const String& to) const
+std::optional<float> SVGAnimationIntegerFunction::calculateDistance(SVGElement&, const String& from, const String& to) const
 {
     return std::abs(parseInteger<int>(to).value_or(0) - parseInteger<int>(from).value_or(0));
 }
 
-}
+} // namespace WebCore

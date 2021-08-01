@@ -56,6 +56,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
@@ -1067,9 +1068,6 @@ static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const Ren
     if (renderer->fragmentedFlowState() == RenderObject::NotInsideFragmentedFlow)
         return nullptr;
 
-    if (is<RenderFragmentedFlow>(*renderer))
-        return downcast<RenderFragmentedFlow>(renderer);
-
     if (is<RenderBlock>(*renderer))
         return downcast<RenderBlock>(*renderer).cachedEnclosingFragmentedFlow();
 
@@ -1078,23 +1076,38 @@ static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const Ren
 
 void RenderObject::outputRegionsInformation(TextStream& stream) const
 {
-    const RenderFragmentedFlow* ftcb = enclosingFragmentedFlowFromRenderer(this);
+    if (is<RenderFragmentedFlow>(*this)) {
+        const auto& fragmentedFlow = downcast<RenderFragmentedFlow>(*this);
+        auto fragmentContainers = fragmentedFlow.renderFragmentContainerList();
 
-    if (!ftcb) {
+        stream << " [fragment containers ";
+        bool first = true;
+        for (const auto* fragment : fragmentContainers) {
+            if (!first)
+                stream << ", ";
+            first = false;
+            stream << fragment;
+        }
+        stream << "]";
+    }
+
+    const RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlowFromRenderer(this);
+
+    if (!fragmentedFlow) {
         // Only the boxes have region range information.
         // Try to get the flow thread containing block information
         // from the containing block of this box.
         if (is<RenderBox>(*this))
-            ftcb = enclosingFragmentedFlowFromRenderer(containingBlock());
+            fragmentedFlow = enclosingFragmentedFlowFromRenderer(containingBlock());
     }
 
-    if (!ftcb)
+    if (!fragmentedFlow || !is<RenderBox>(*this))
         return;
 
-    RenderFragmentContainer* startRegion = nullptr;
-    RenderFragmentContainer* endRegion = nullptr;
-    ftcb->getFragmentRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
-    stream << " [Rs:" << startRegion << " Re:" << endRegion << "]";
+    RenderFragmentContainer* startContainer = nullptr;
+    RenderFragmentContainer* endContainer = nullptr;
+    fragmentedFlow->getFragmentRangeForBox(downcast<RenderBox>(this), startContainer, endContainer);
+    stream << " [spans fragment containers in flow " << fragmentedFlow << " from " << startContainer << " to " << endContainer << "]";
 }
 
 void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) const
@@ -1234,7 +1247,13 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         }
     }
 
+    if (is<RenderMultiColumnSet>(*this)) {
+        const auto& multicolSet = downcast<RenderMultiColumnSet>(*this);
+        stream << " (column count " << multicolSet.computedColumnCount() << ", size " << multicolSet.computedColumnWidth() << "x" << multicolSet.computedColumnHeight() << ", gap " << multicolSet.columnGap() << ")";
+    }
+
     outputRegionsInformation(stream);
+
     if (needsLayout()) {
         stream << " layout->";
         if (selfNeedsLayout())

@@ -633,6 +633,24 @@ bool HTMLImageElement::complete() const
     return m_imageLoader->imageComplete();
 }
 
+void HTMLImageElement::setDecoding(String&& decodingMode)
+{
+    setAttributeWithoutSynchronization(decodingAttr, WTFMove(decodingMode));
+}
+
+String HTMLImageElement::decoding() const
+{
+    switch (decodingMode()) {
+    case DecodingMode::Synchronous:
+        return "sync"_s;
+    case DecodingMode::Asynchronous:
+        return "async"_s;
+    case DecodingMode::Auto:
+        break;
+    }
+    return "auto"_s;
+}
+
 DecodingMode HTMLImageElement::decodingMode() const
 {
     const AtomString& decodingMode = attributeWithoutSynchronization(decodingAttr);

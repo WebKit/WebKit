@@ -316,8 +316,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // To trigger onchange events programmatically we need to go through this
         // SPI which mimics a user action on the <select>. Normally programmatic
         // changes do not trigger "change" events on such selects.
-    
-        [_contentView page]->setFocusedElementSelectedIndex(itemIndex, true);
+        [_contentView updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:true];
         OptionItem& item = [_contentView focusedSelectElementOptions][itemIndex];
         item.isSelected = newStateIsSelected;
     } else {
@@ -349,8 +348,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             
             _singleSelectionIndex = indexPath.row;
             _singleSelectionSection = indexPath.section;
- 
-            [_contentView page]->setFocusedElementSelectedIndex(itemIndex);
+
+            [_contentView updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:false];
             OptionItem& newItem = [_contentView focusedSelectElementOptions][itemIndex];
             newItem.isSelected = true;
         }

@@ -118,7 +118,7 @@ static void webkitUserMediaPermissionRequestDispose(GObject* object)
  */
 gboolean webkit_user_media_permission_is_for_audio_device(WebKitUserMediaPermissionRequest* request)
 {
-    g_return_val_if_fail(request->priv->request, FALSE);
+    g_return_val_if_fail(WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request), FALSE);
     return request->priv->request->requiresAudioCapture();
 }
 
@@ -132,8 +132,22 @@ gboolean webkit_user_media_permission_is_for_audio_device(WebKitUserMediaPermiss
  */
 gboolean webkit_user_media_permission_is_for_video_device(WebKitUserMediaPermissionRequest* request)
 {
-    g_return_val_if_fail(request->priv->request, FALSE);
+    g_return_val_if_fail(WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request), FALSE);
     return request->priv->request->requiresVideoCapture();
+}
+
+/**
+ * webkit_user_media_permission_is_for_display_device:
+ * @request: a #WebKitUserMediaPermissionRequest
+ *
+ * Returns: %TRUE if access to a display device was requested.
+ *
+ * Since: 2.34
+ */
+gboolean webkit_user_media_permission_is_for_display_device(WebKitUserMediaPermissionRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(request), FALSE);
+    return request->priv->request->requiresDisplayCapture();
 }
 
 static void webkitUserMediaPermissionRequestGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)

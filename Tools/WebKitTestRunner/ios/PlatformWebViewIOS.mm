@@ -321,17 +321,39 @@ void PlatformWebView::didInitializeClients()
     setWindowFrame(wkFrame);
 }
 
+static UITextField *chromeInputField(UIWindow *window)
+{
+    return (UITextField *)[window viewWithTag:1];
+}
+
 void PlatformWebView::addChromeInputField()
 {
-    auto textField = adoptNS([[UITextField alloc] initWithFrame:CGRectMake(0, 0, 100, 20)]);
+    auto textField = adoptNS([[UITextField alloc] initWithFrame:CGRectMake(0, 0, 320, 64)]);
     [textField setTag:1];
     [m_window addSubview:textField.get()];
 }
 
+void PlatformWebView::setTextInChromeInputField(const String& text)
+{
+    chromeInputField(m_window).text = text;
+}
+
+void PlatformWebView::selectChromeInputField()
+{
+    auto textField = chromeInputField(m_window);
+    [textField becomeFirstResponder];
+    [textField selectAll:nil];
+}
+
+String PlatformWebView::getSelectedTextInChromeInputField()
+{
+    auto textField = chromeInputField(m_window);
+    return [textField textInRange:textField.selectedTextRange];
+}
+
 void PlatformWebView::removeChromeInputField()
 {
-    UITextField* textField = (UITextField*)[m_window viewWithTag:1];
-    if (textField) {
+    if (auto textField = chromeInputField(m_window)) {
         [textField removeFromSuperview];
         makeWebViewFirstResponder();
     }

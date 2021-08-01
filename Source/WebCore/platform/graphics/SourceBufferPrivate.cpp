@@ -891,7 +891,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
         // 1.3 If mode equals "sequence" and group start timestamp is set, then run the following steps:
         if (m_appendMode == SourceBufferAppendMode::Sequence && m_groupStartTimestamp.isValid()) {
             // 1.3.1 Set timestampOffset equal to group start timestamp - presentation timestamp.
-            m_timestampOffset = m_groupStartTimestamp;
+            m_timestampOffset = m_groupStartTimestamp - presentationTimestamp;
 
             for (auto& trackBuffer : m_trackBufferMap.values()) {
                 trackBuffer.get().lastFrameTimescale = 0;

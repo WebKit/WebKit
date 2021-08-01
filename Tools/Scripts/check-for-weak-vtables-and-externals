@@ -68,6 +68,9 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
             # ASan compiler-rt calls into __asan_mapping_offset and __asan_mapping_scale
             next if /\b___asan/;
 
+            # Ignore weak symbols present when compiling with coverage enabled.
+            next if /\b(___llvm_profile_filename|___llvm_profile_raw_version|_lprofDirMode)/ && coverageIsEnabled();
+
             if (/weak external vtable for (.*)$/) {
                 push @weakVTableClasses, $1;
             } elsif (/weak external (.*)$/) {

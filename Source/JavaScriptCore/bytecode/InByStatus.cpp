@@ -139,7 +139,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
         return InByStatus(NoInformation);
 
     case CacheType::InByIdSelf: {
-        Structure* structure = stubInfo->inlineAccessBaseStructure.get();
+        Structure* structure = stubInfo->m_inlineAccessBaseStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return InByStatus(TakesSlowPath);
         CacheableIdentifier identifier = stubInfo->identifier();
@@ -260,6 +260,15 @@ void InByStatus::filter(const StructureSet& structureSet)
     if (m_variants.isEmpty())
         m_state = NoInformation;
 }
+
+template<typename Visitor>
+void InByStatus::visitAggregateImpl(Visitor& visitor)
+{
+    for (InByVariant& variant : m_variants)
+        variant.visitAggregate(visitor);
+}
+
+DEFINE_VISIT_AGGREGATE(InByStatus);
 
 template<typename Visitor>
 void InByStatus::markIfCheap(Visitor& visitor)

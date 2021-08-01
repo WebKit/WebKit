@@ -1,3 +1,483 @@
+2021-07-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement IDBTransaction.durability
+        https://bugs.webkit.org/show_bug.cgi?id=228289
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any-expected.txt:
+        * web-platform-tests/IndexedDB/transaction-relaxed-durability.tentative.any.worker-expected.txt:
+
+2021-07-28  Sihui Liu  <sihui_liu@apple.com>
+
+        IDBFactory.databases should not return databases with invalid version
+        https://bugs.webkit.org/show_bug.cgi?id=228554
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/IndexedDB/get-databases.any-expected.txt:
+        * web-platform-tests/IndexedDB/get-databases.any.worker-expected.txt:
+
+2021-07-28  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r280402.
+
+        Wrong baseline set.
+
+        Reverted changeset:
+
+        "[ iPad ] Rebaseline 2 imported/w3c/web-platform-tests/html
+        tests."
+        https://bugs.webkit.org/show_bug.cgi?id=228568
+        https://commits.webkit.org/r280402
+
+2021-07-28  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ] Rebaseline 2 imported/w3c/web-platform-tests/html tests.
+        https://bugs.webkit.org/show_bug.cgi?id=228568
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt:
+
+2021-07-26  Chris Dumez  <cdumez@apple.com>
+
+        Location.href setter uses wrong window to resolve relative URLs
+        https://bugs.webkit.org/show_bug.cgi?id=228287
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a few WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/083-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/084-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-1-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-2-expected.txt:
+
+2021-07-26  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Added FormDataEvent support.
+        https://bugs.webkit.org/show_bug.cgi?id=227718
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/FormDataEvent.window-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/constructing-form-data-set-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/text-plain.window-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/urlencoded2.window-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-windowless-body-expected.txt:
+        * web-platform-tests/xhr/formdata-expected.txt:
+
+2021-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Call custom accessors / values with their holder's global object
+        https://bugs.webkit.org/show_bug.cgi?id=225997
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value-cross-realm-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value-cross-realm.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/invalid-this-value-cross-realm-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/invalid-this-value-cross-realm.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/support/create-realm.js: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/support/dummy-iframe.html: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/window-location-and-location-href-cross-realm-set-expected.txt: Added.
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/window-location-and-location-href-cross-realm-set.html: Added.
+
+        * web-platform-tests/html/webappapis/scripting/events/compile-event-handler-settings-objects-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/promise-job-incumbent-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-cross-origin.https-expected.txt:
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html:
+        All these are confirmed progressions.
+
+        * web-platform-tests/performance-timeline/supportedEntryTypes-cross-realm-access-expected.txt: Added.
+        * web-platform-tests/performance-timeline/supportedEntryTypes-cross-realm-access.html: Added.
+
+2021-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        XHR.send(Document) should replace mismatched surrogates with replacement character before sending
+        https://bugs.webkit.org/show_bug.cgi?id=228170
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/xhr/send-entity-body-document-bogus-expected.txt:
+
+2021-07-22  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS Debug] Layout Test imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=172044
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/IndexedDB/open-request-queue-expected.txt:
+
+2021-07-21  Rob Buis  <rbuis@igalia.com>
+
+        [AspectRatio] Fix select-element-001.html
+        https://bugs.webkit.org/show_bug.cgi?id=228144
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Import fixed select-element-001.html based on SHA c2ddbb6.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001-expected.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
+2021-07-20  Chris Lord  <clord@igalia.com>
+
+        Canvas and OffscreenCanvas getContext should check if argument is an object before trying to convert it to a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=227792
+
+        Reviewed by Sam Weinig.
+
+        Synchronise with upstream WPT 2d canvas getContext tests.
+
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.js: Added.
+        (test.const.options.get alpha):
+        (test.const.options.get willReadFrequently):
+        (test.const.options.get desynchronized):
+        (test.const.options.get colorSpace):
+        (test):
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d-getcontext-options.any.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.cache.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.create.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker.js: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d-getcontext-options-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d-getcontext-options.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.cache-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.cache.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.html.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.create-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d.getcontext.extraargs.create.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+
+2021-07-20  Sam Sneddon  <gsnedders@apple.com>
+
+        Change referrer-policy default to strict-origin-when-cross-origin
+        https://bugs.webkit.org/show_bug.cgi?id=218909
+
+        Reviewed by Chris Dumez.
+
+        This matches the behavior of other browsers. Update all our tests to deal with the origin now being shorter.
+
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.worker-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-src-about-blank-expected.txt:
+        * web-platform-tests/html/browsers/windows/browsing-context-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+
+2021-07-20  Ziran Sun  <zsun@igalia.com>
+
+        Images as grid items should use the overridingLogicalWidth when defined to compute the logical Height
+        https://bugs.webkit.org/show_bug.cgi?id=228022
+
+        Reviewed by Javier Fernandez.
+
+        Update test expectations as the sub-tests are now passing.
+
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-029-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-030-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-031-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-035-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-036-expected.txt:
+
+2021-07-20  Rob Buis  <rbuis@igalia.com>
+
+        Fix grid aspect-ratio tests
+        https://bugs.webkit.org/show_bug.cgi?id=225860
+
+        Reviewed by Javier Fernandez.
+
+        Import aspect-ratio tests based on 56bf98c5c0.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-013-expected.xht: Removed.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-013.html: Removed.
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-018.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-019.html:
+
+2021-07-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Implement IDBTransaction.commit()
+        https://bugs.webkit.org/show_bug.cgi?id=227815
+        <rdar://problem/80651270>
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/IndexedDB/idb-explicit-commit-throw.any-expected.txt:
+        * web-platform-tests/IndexedDB/idb-explicit-commit-throw.any.worker-expected.txt:
+        * web-platform-tests/IndexedDB/idb-explicit-commit.any-expected.txt: Some test is timed out as our backend does
+        not support running multiple transactions simultaneously now.
+        * web-platform-tests/IndexedDB/idb-explicit-commit.any.worker-expected.txt: Ditto.
+        * web-platform-tests/IndexedDB/idlharness.any-expected.txt:
+        * web-platform-tests/IndexedDB/idlharness.any.worker-expected.txt:
+
+2021-07-19  Chris Dumez  <cdumez@apple.com>
+
+        HTMLImageElement.decoding should reflect the decoding content attribute, limited to only known values
+        https://bugs.webkit.org/show_bug.cgi?id=228081
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
+2021-07-19  Chris Dumez  <cdumez@apple.com>
+
+        FetchResponse.formData() should not reject promise if the body is null and the MIME Type is "application/x-www-form-urlencoded"
+        https://bugs.webkit.org/show_bug.cgi?id=228085
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/fetch/api/request/request-consume-empty.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.any.worker-expected.txt:
+
+2021-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land test baselines for cross-origin-opener-policy tests
+        https://bugs.webkit.org/show_bug.cgi?id=228080
+
+        * web-platform-tests/html/cross-origin-opener-policy/blob-popup.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/coep-redirect.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/coep.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/coop-coep-sandbox.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox-navigate.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/header-parsing.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/coep-navigate-popup-unsafe-inherit.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-unsafe-allow-outgoing-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-site-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/javascript-url.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw-from-coop.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-meta-http-equiv.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-redirect-cache.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/popup-redirect-same-origin-allow-popups.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-same-site.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/popup-with-structured-header.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-openee_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-openee_coop-ro_cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-opener_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-opener_coop-ro_cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-other_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-from-coop-page-to-other_coop-ro_cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-openee_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-openee_coop-ro_cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-opener_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-opener_coop-ro_cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-other_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/access-to-coop-page-from-other_coop-ro_cross-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-blur.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-close.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-closed.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-focus.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-frames.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-indexed-getter.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-length.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-location-get.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-location-set.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-named-getter.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-opener-get.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-opener-set.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-postmessage-1.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-postmessage-2.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-self.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-top.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/property-window.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/report-to-both_coop-ro.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/reporting-observer-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-from-unsafe-none.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-report-to.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-with-coep-report-only.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-with-coep.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-allow-popups-report-to.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-coep-report-to.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-report-to.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unsafe-none-report-to.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-redirect-with-same-origin-allow-popups.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-opener-policy/resource-popup.https-expected.txt: Added.
+
+2021-07-19  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Images as grid items should use the overridingLogicalHeight when defined to compute the logical width
+        https://bugs.webkit.org/show_bug.cgi?id=227984
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-011-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-012-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-013-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-014-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-017-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-implies-size-change-018-expected.txt:
+
+2021-07-19  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Use correct block-size to resolve min-content
+        https://bugs.webkit.org/show_bug.cgi?id=227167
+
+        Reviewed by Javier Fernandez.
+
+        The following test is passing -
+        
+        * web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Implement 'SubmitEvent' interface
+        https://bugs.webkit.org/show_bug.cgi?id=202978
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/semantics/forms/form-submission-0/SubmitEvent.window-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional-expected.txt:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for BroadcastChannel behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227924
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT tests now that more tests are running and we are passing more checks.
+
+        * web-platform-tests/FileAPI/url/url-in-tags-revoke.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-open-noreferrer-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/report-only-require-corp.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp.https-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/broadcastchannel-success.https-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-base-target-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-button-target-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-form-target-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-target/rel-input-target-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base-expected.txt:
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure-expected.txt:
+        * web-platform-tests/wasm/serialization/module/broadcastchannel-success-expected.txt:
+        * web-platform-tests/webmessaging/MessageEvent-trusted.any-expected.txt:
+        * web-platform-tests/webmessaging/MessageEvent-trusted.any.worker-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/basics-expected.txt: Removed.
+        * web-platform-tests/webmessaging/broadcastchannel/basics.any-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/basics.any.worker-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/blobs-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/interface-expected.txt: Removed.
+        * web-platform-tests/webmessaging/broadcastchannel/interface.any-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/interface.any.worker-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/sandbox-expected.txt:
+        * web-platform-tests/webmessaging/broadcastchannel/workers-expected.txt: Added.
+        * web-platform-tests/webmessaging/multi-globals/broadcastchannel-current.sub-expected.txt:
+        * web-platform-tests/webstorage/storage_session_window_noopener.window-expected.txt:
+        * web-platform-tests/workers/semantics/interface-objects/001.worker-expected.txt:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        FetchResponse.formData() should reject promise with a TypeError if the body is null
+        https://bugs.webkit.org/show_bug.cgi?id=228007
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/fetch/api/request/request-consume-empty.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.any.worker-expected.txt:
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Sync XHR 'load' event is always has total/loaded=0
+        https://bugs.webkit.org/show_bug.cgi?id=228004
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/xhr/send-sync-response-event-order-expected.txt:
+
+2021-07-15  Tim Nguyen  <ntim@apple.com>
+
+        <dialog> element: do not perform close() method steps when removing open attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=227872
+
+        Reviewed by Chris Dumez.
+
+        Test: web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open.html
+
+        The close function now follows the steps at: https://html.spec.whatwg.org/multipage/interactive-elements.html#close-the-dialog
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-open-expected.txt:
+
 2021-07-15  Tim Nguyen  <ntim@apple.com>
 
         Re-import html/semantics/interactive-elements/the-dialog-element WPT

@@ -34,21 +34,36 @@
 
 #include "AudioBus.h"
 #include "AudioFileReader.h"
+#include "AudioSampleDataSource.h"
+#include "AudioTrackPrivate.h"
 #include "FloatConversion.h"
+#include "InbandTextTrackPrivate.h"
 #include "Logging.h"
+#include "MediaSampleAVFObjC.h"
+#include "VideoTrackPrivate.h"
+#include "WebMAudioUtilitiesCocoa.h"
+#include <AudioToolbox/AudioConverter.h>
 #include <AudioToolbox/ExtendedAudioFile.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <pal/cf/AudioToolboxSoftLink.h>
+#include <SourceBufferParserWebM.h>
+#include <limits>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Function.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Scope.h>
+#include <wtf/Vector.h>
+#include <pal/cf/AudioToolboxSoftLink.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
 static WARN_UNUSED_RETURN AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers)
 {
+    if (!numberOfBuffers)
+        return nullptr;
     CheckedSize bufferListSize = sizeof(AudioBufferList) - sizeof(AudioBuffer);
-    bufferListSize += numberOfBuffers * sizeof(AudioBuffer);
+    bufferListSize += WTF::checkedProduct<size_t>(numberOfBuffers, sizeof(AudioBuffer));
     if (bufferListSize.hasOverflowed())
         return nullptr;
 
@@ -87,10 +102,55 @@ static bool validateAudioBufferList(AudioBufferList* bufferList)
     return true;
 }
 
+// On stack RAII class that will free the allocated AudioBufferList* as needed.
+class AudioBufferListHolder {
+public:
+    explicit AudioBufferListHolder(size_t numberOfChannels)
+        : m_bufferList(tryCreateAudioBufferList(numberOfChannels))
+    {
+    }
+
+    ~AudioBufferListHolder()
+    {
+        if (m_bufferList)
+            destroyAudioBufferList(m_bufferList);
+    }
+
+    explicit operator bool() const { return !!m_bufferList; }
+    AudioBufferList* operator->() const { return m_bufferList; }
+    operator AudioBufferList*() const { return m_bufferList; }
+    AudioBufferList& operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
+    bool isValid() const { return validateAudioBufferList(m_bufferList); }
+private:
+    AudioBufferList* m_bufferList;
+};
+
+class AudioFileReaderWebMData {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+#if ENABLE(MEDIA_SOURCE)
+    SourceBufferParserWebM::InitializationSegment m_initSegment;
+#endif
+    MediaTime m_duration;
+    Vector<Ref<MediaSampleAVFObjC>> m_samples;
+};
+
 AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
     : m_data(data)
     , m_dataSize(dataSize)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(Logger::create(this))
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
+#endif
 {
+#if ENABLE(MEDIA_SOURCE)
+    if (isMaybeWebM(static_cast<const uint8_t*>(data), dataSize)) {
+        m_webmData = demuxWebMData(static_cast<const uint8_t*>(data), dataSize);
+        if (m_webmData)
+            return;
+    }
+#endif
     if (PAL::AudioFileOpenWithCallbacks(this, readProc, 0, getSizeProc, 0, 0, &m_audioFileID) != noErr)
         return;
 
@@ -110,6 +170,194 @@ AudioFileReader::~AudioFileReader()
 
     m_audioFileID = 0;
 }
+
+#if ENABLE(MEDIA_SOURCE)
+bool AudioFileReader::isMaybeWebM(const uint8_t* data, size_t dataSize) const
+{
+    // From https://mimesniff.spec.whatwg.org/#signature-for-webm
+    return dataSize >= 4 && data[0] == 0x1A && data[1] == 0x45 && data[2] == 0xDF && data[3] == 0xA3;
+}
+
+std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const uint8_t* data, size_t dataSize) const
+{
+    auto parser = adoptRef(new SourceBufferParserWebM());
+    bool error = false;
+    std::optional<uint64_t> audioTrackId;
+    MediaTime duration;
+    SourceBufferParserWebM::InitializationSegment initSegment;
+    Vector<Ref<MediaSampleAVFObjC>> samples;
+    parser->setDidEncounterErrorDuringParsingCallback([&](uint64_t) {
+        error = true;
+    });
+    parser->setDidParseInitializationDataCallback([&](SourceBufferParserWebM::InitializationSegment&& init) {
+        for (auto& audioTrack : init.audioTracks) {
+            if (audioTrack.track && audioTrack.track->trackUID()) {
+                duration = init.duration;
+                audioTrackId = audioTrack.track->trackUID();
+                initSegment = WTFMove(init);
+                return;
+            }
+        }
+    });
+    parser->setDidProvideMediaDataCallback([&](Ref<MediaSample>&& sample, uint64_t trackID, const String&) {
+        if (!audioTrackId || trackID != *audioTrackId)
+            return;
+        samples.append(static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample)));
+    });
+    parser->setCallOnClientThreadCallback([](auto&& function) {
+        function();
+    });
+    SourceBufferParser::Segment segment({ data, dataSize });
+    parser->appendData(WTFMove(segment));
+    if (!audioTrackId)
+        return nullptr;
+    parser->flushPendingAudioBuffers();
+    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(initSegment), WTFMove(duration), WTFMove(samples) });
+}
+
+struct PassthroughUserData {
+    UInt32 m_channels;
+    UInt32 m_dataSize;
+    const void* m_data;
+    UInt32 m_index;
+    Vector<AudioStreamPacketDescription>& m_packets;
+};
+
+// Error value we pass through the decoder to signal that nothing
+// has gone wrong during decoding and we're done processing the packet.
+const uint32_t kNoMoreDataErr = 'MOAR';
+
+static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataPackets, AudioBufferList* data, AudioStreamPacketDescription** packetDesc, void* inUserData)
+{
+    ASSERT(numDataPackets && data && inUserData);
+    if (!numDataPackets || !data || !inUserData)
+        return kAudioConverterErr_UnspecifiedError;
+
+    auto* userData = static_cast<PassthroughUserData*>(inUserData);
+    if (userData->m_index == userData->m_packets.size()) {
+        *numDataPackets = 0;
+        return kNoMoreDataErr;
+    }
+
+    if (packetDesc) {
+        if (userData->m_index >= userData->m_packets.size()) {
+            *numDataPackets = 0;
+            return kAudioConverterErr_RequiresPacketDescriptionsError;
+        }
+        *packetDesc = &userData->m_packets[userData->m_index];
+    }
+
+    data->mBuffers[0].mNumberChannels = userData->m_channels;
+    data->mBuffers[0].mDataByteSize = userData->m_dataSize;
+    data->mBuffers[0].mData = const_cast<void*>(userData->m_data);
+
+    *numDataPackets = 1;
+    userData->m_index++;
+
+    return noErr;
+}
+
+Vector<AudioStreamPacketDescription> AudioFileReader::getPacketDescriptions(CMSampleBufferRef sampleBuffer) const
+{
+    size_t packetDescriptionsSize;
+    if (PAL::CMSampleBufferGetAudioStreamPacketDescriptions(sampleBuffer, 0, nullptr, &packetDescriptionsSize) != noErr) {
+        RELEASE_LOG_FAULT(WebAudio, "Unable to get packet description list size");
+        return { };
+    }
+    size_t numDescriptions = packetDescriptionsSize / sizeof(AudioStreamPacketDescription);
+    if (!numDescriptions) {
+        RELEASE_LOG_FAULT(WebAudio, "No packet description found.");
+        return { };
+    }
+    Vector<AudioStreamPacketDescription> descriptions(numDescriptions);
+    if (PAL::CMSampleBufferGetAudioStreamPacketDescriptions(sampleBuffer, packetDescriptionsSize, descriptions.data(), nullptr) != noErr) {
+        RELEASE_LOG_FAULT(WebAudio, "Unable to get packet description list");
+        return { };
+    }
+    auto numPackets = PAL::CMSampleBufferGetNumSamples(sampleBuffer);
+    if (numDescriptions != size_t(numPackets)) {
+        RELEASE_LOG_FAULT(WebAudio, "Unhandled CMSampleBuffer structure");
+        return { };
+    }
+    return descriptions;
+}
+
+std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferList, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const
+{
+    AudioConverterRef converter;
+    if (PAL::AudioConverterNew(&inFormat, &outFormat, &converter) != noErr) {
+        RELEASE_LOG_FAULT(WebAudio, "Unable to create decoder");
+        return { };
+    }
+    auto cleanup = makeScopeExit([&] {
+        PAL::AudioConverterDispose(converter);
+    });
+    ASSERT(m_webmData && !m_webmData->m_samples.isEmpty() && m_webmData->m_samples[0]->sampleBuffer(), "Structure integrity was checked in numberOfFrames");
+    auto formatDescription = PAL::CMSampleBufferGetFormatDescription(m_webmData->m_samples[0]->sampleBuffer());
+    if (!formatDescription) {
+        RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve format description from first sample");
+        return { };
+    }
+    size_t magicCookieSize = 0;
+    const void* magicCookie = PAL::CMAudioFormatDescriptionGetMagicCookie(formatDescription, &magicCookieSize);
+    if (magicCookie && magicCookieSize)
+        PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, magicCookieSize, magicCookie);
+
+    AudioBufferListHolder decodedBufferList(inFormat.mChannelsPerFrame);
+    if (!decodedBufferList) {
+        RELEASE_LOG_FAULT(WebAudio, "Unable to create decoder");
+        return { };
+    }
+
+    size_t decodedFrames = 0;
+    OSStatus status;
+    for (auto& sample : m_webmData->m_samples) {
+        CMSampleBufferRef sampleBuffer = sample->sampleBuffer();
+        auto buffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
+        ASSERT(PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0));
+        if (!PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0)) {
+            RELEASE_LOG_FAULT(WebAudio, "Unable to read sample content (not contiguous)");
+            return { };
+        }
+
+        size_t srcSize = PAL::CMBlockBufferGetDataLength(buffer);
+        char* srcData = nullptr;
+        if (PAL::CMBlockBufferGetDataPointer(buffer, 0, nullptr, nullptr, &srcData) != noErr) {
+            RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve data");
+            return { };
+        }
+
+        auto descriptions = getPacketDescriptions(sampleBuffer);
+        if (descriptions.isEmpty())
+            return { };
+
+        PassthroughUserData userData = { inFormat.mChannelsPerFrame, UInt32(srcSize), srcData, 0, descriptions };
+
+        do {
+            if (numberOfFrames < decodedFrames) {
+                RELEASE_LOG_FAULT(WebAudio, "Decoded more frames than first calculated");
+                return { };
+            }
+            // in: the max number of packets we can handle from the decoder.
+            // out: the number of packets the decoder is actually returning.
+            UInt32 numFrames = std::min<uint32_t>(std::numeric_limits<int32_t>::max() / sizeof(float), numberOfFrames - decodedFrames);
+
+            for (UInt32 i = 0; i < inFormat.mChannelsPerFrame; i++) {
+                decodedBufferList->mBuffers[i].mNumberChannels = 1;
+                decodedBufferList->mBuffers[i].mDataByteSize = numFrames * sizeof(float);
+                decodedBufferList->mBuffers[i].mData = static_cast<float*>(bufferList.mBuffers[i].mData) + decodedFrames;
+            }
+            status = PAL::AudioConverterFillComplexBuffer(converter, passthroughInputDataCallback, &userData, &numFrames, decodedBufferList, nullptr);
+            if (status && status != kNoMoreDataErr) {
+                RELEASE_LOG_FAULT(WebAudio, "Error decoding data");
+                return { };
+            }
+            decodedFrames += numFrames;
+        } while (status != kNoMoreDataErr);
+    }
+    return decodedFrames;
+}
+#endif
 
 OSStatus AudioFileReader::readProc(void* clientData, SInt64 position, UInt32 requestCount, void* buffer, UInt32* actualCount)
 {
@@ -136,66 +384,136 @@ SInt64 AudioFileReader::getSizeProc(void* clientData)
     return static_cast<AudioFileReader*>(clientData)->dataSize();
 }
 
-RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
+ssize_t AudioFileReader::numberOfFrames() const
 {
-    if (!m_extAudioFileRef)
-        return nullptr;
+    SInt64 numberOfFramesIn64 = 0;
 
-    // Get file's data format
-    UInt32 size = sizeof(m_fileDataFormat);
-    if (PAL::ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &m_fileDataFormat) != noErr)
-        return nullptr;
+    if (!m_webmData) {
+        if (!m_extAudioFileRef)
+            return -1;
 
-    size_t numberOfChannels = m_fileDataFormat.mChannelsPerFrame;
+        UInt32 size = sizeof(numberOfFramesIn64);
+        if (PAL::ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFramesIn64) != noErr || numberOfFramesIn64 <= 0) {
+            RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve number of frames in content (unsupported?");
+            return -1;
+        }
 
-    // Number of frames
-    SInt64 numberOfFrames64 = 0;
-    size = sizeof(numberOfFrames64);
-    if (PAL::ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64) != noErr || numberOfFrames64 <= 0)
-        return nullptr;
+        return numberOfFramesIn64;
+    }
+#if ENABLE(MEDIA_SOURCE)
+    if (m_webmData->m_samples.isEmpty()) {
+        RELEASE_LOG_FAULT(WebAudio, "No sample demuxed from webm container");
+        return -1;
+    }
 
-    double fileSampleRate = m_fileDataFormat.mSampleRate;
+    // Calculate the total number of decoded samples that were demuxed.
+    // This code only handle the CMSampleBuffer as generated by the SourceBufferParserWebM
+    // where a AudioStreamPacketDescriptions array is always provided even with
+    // Constant bitrate and constant frames-per-packet audio.
+    for (auto& sample : m_webmData->m_samples) {
+        auto sampleBuffer = sample->sampleBuffer();
+        if (!sampleBuffer) {
+            RELEASE_LOG_FAULT(WebAudio, "Impossible memory corruption encountered");
+            return -1;
+        }
+        const auto formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
+        if (!formatDescription) {
+            RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve format descriptiong from sample");
+            return -1;
+        }
+        const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+        if (!asbd) {
+            RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve asbd from format description");
+            return -1;
+        }
 
+        auto descriptions = getPacketDescriptions(sampleBuffer);
+        if (descriptions.isEmpty())
+            return -1;
+
+        for (const auto& description : descriptions) {
+            uint32_t fpp = description.mVariableFramesInPacket ? description.mVariableFramesInPacket : asbd->mFramesPerPacket;
+            numberOfFramesIn64 += fpp;
+        }
+    }
+    return numberOfFramesIn64;
+#else
+    return 0;
+#endif
+}
+
+std::optional<AudioStreamBasicDescription> AudioFileReader::fileDataFormat() const
+{
+    if (!m_webmData) {
+        AudioStreamBasicDescription format;
+        UInt32 size = sizeof(format);
+        if (PAL::ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &format) != noErr)
+            return { };
+        return format;
+    }
+
+    if (m_webmData->m_samples.isEmpty())
+        return { };
+
+    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(m_webmData->m_samples[0]->sampleBuffer());
+    if (!formatDescription)
+        return { };
+
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    return *asbd;
+}
+
+AudioStreamBasicDescription AudioFileReader::clientDataFormat(const AudioStreamBasicDescription& inFormat, float sampleRate) const
+{
     // Make client format same number of channels as file format, but tweak a few things.
     // Client format will be linear PCM (canonical), and potentially change sample-rate.
-    m_clientDataFormat = m_fileDataFormat;
+    AudioStreamBasicDescription outFormat = inFormat;
 
     const int bytesPerFloat = sizeof(Float32);
     const int bitsPerByte = 8;
-    m_clientDataFormat.mFormatID = kAudioFormatLinearPCM;
-    m_clientDataFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
-    m_clientDataFormat.mBytesPerPacket = bytesPerFloat;
-    m_clientDataFormat.mFramesPerPacket = 1;
-    m_clientDataFormat.mBytesPerFrame = bytesPerFloat;
-    m_clientDataFormat.mChannelsPerFrame = numberOfChannels;
-    m_clientDataFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
+    outFormat.mFormatID = kAudioFormatLinearPCM;
+    outFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+    outFormat.mBytesPerPacket = outFormat.mBytesPerFrame = bytesPerFloat;
+    outFormat.mFramesPerPacket = 1;
+    outFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
 
     if (sampleRate)
-        m_clientDataFormat.mSampleRate = sampleRate;
+        outFormat.mSampleRate = sampleRate;
 
-    if (PAL::ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &m_clientDataFormat) != noErr)
+    return outFormat;
+}
+
+RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
+{
+    SInt64 numberOfFramesIn64 = numberOfFrames();
+    if (numberOfFramesIn64 <= 0)
         return nullptr;
 
-    // Change numberOfFrames64 to destination sample-rate
-    numberOfFrames64 = numberOfFrames64 * (m_clientDataFormat.mSampleRate / fileSampleRate);
-    size_t numberOfFrames = static_cast<size_t>(numberOfFrames64);
+    auto inFormat = fileDataFormat();
+    if (!inFormat)
+        return nullptr;
 
+    AudioStreamBasicDescription outFormat = clientDataFormat(*inFormat, sampleRate);
+    size_t numberOfChannels = inFormat->mChannelsPerFrame;
+    double fileSampleRate = inFormat->mSampleRate;
+    SInt64 numberOfFramesOut64 = numberOfFramesIn64 * (outFormat.mSampleRate / fileSampleRate);
+    size_t numberOfFrames = static_cast<size_t>(numberOfFramesOut64);
     size_t busChannelCount = mixToMono ? 1 : numberOfChannels;
 
     // Create AudioBus where we'll put the PCM audio data
     auto audioBus = AudioBus::create(busChannelCount, numberOfFrames);
-    audioBus->setSampleRate(narrowPrecisionToFloat(m_clientDataFormat.mSampleRate)); // save for later
+    audioBus->setSampleRate(narrowPrecisionToFloat(outFormat.mSampleRate)); // save for later
 
-    // Only allocated in the mixToMono case; deallocated on destruction.
-    AudioFloatArray leftChannel;
-    AudioFloatArray rightChannel;
-
-    AudioBufferList* bufferList = tryCreateAudioBufferList(numberOfChannels);
+    AudioBufferListHolder bufferList(numberOfChannels);
     if (!bufferList) {
         RELEASE_LOG_FAULT(WebAudio, "tryCreateAudioBufferList(%ld) returned null", numberOfChannels);
         return nullptr;
     }
     const size_t bufferSize = numberOfFrames * sizeof(float);
+
+    // Only allocated in the mixToMono case; deallocated on destruction.
+    AudioFloatArray leftChannel;
+    AudioFloatArray rightChannel;
 
     RELEASE_ASSERT(bufferList->mNumberBuffers == numberOfChannels);
     if (mixToMono && numberOfChannels == 2) {
@@ -222,18 +540,30 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
         }
     }
 
-    if (!validateAudioBufferList(bufferList)) {
+    if (!bufferList.isValid()) {
         RELEASE_LOG_FAULT(WebAudio, "Generated buffer in AudioFileReader::createBus() did not pass validation");
         ASSERT_NOT_REACHED();
-        destroyAudioBufferList(bufferList);
         return nullptr;
     }
 
-    // Read from the file (or in-memory version)
-    UInt32 framesToRead = numberOfFrames;
-    if (PAL::ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr) {
-        destroyAudioBufferList(bufferList);
-        return nullptr;
+    if (m_webmData) {
+#if ENABLE(MEDIA_SOURCE)
+        auto decodedFrames = decodeWebMData(*bufferList, numberOfFrames, *inFormat, outFormat);
+        if (!decodedFrames)
+            return nullptr;
+        // The actual decoded number of frames may not match the number of frames calculated
+        // while demuxing as frames can be trimmed. It will always be lower.
+        audioBus->setLength(*decodedFrames);
+        numberOfFrames = *decodedFrames;
+#endif
+    } else {
+        if (PAL::ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &outFormat) != noErr)
+            return nullptr;
+
+        // Read from the file (or in-memory version)
+        UInt32 framesToRead = numberOfFrames;
+        if (PAL::ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr)
+            return nullptr;
     }
 
     if (mixToMono && numberOfChannels == 2) {
@@ -243,9 +573,6 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
             destL[i] = 0.5f * (leftChannel[i] + rightChannel[i]);
     }
 
-    // Cleanup
-    destroyAudioBufferList(bufferList);
-
     return audioBus;
 }
 
@@ -254,6 +581,13 @@ RefPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSiz
     AudioFileReader reader(data, dataSize);
     return reader.createBus(sampleRate, mixToMono);
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& AudioFileReader::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 } // WebCore
 

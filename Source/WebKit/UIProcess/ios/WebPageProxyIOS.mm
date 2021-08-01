@@ -968,19 +968,19 @@ void WebPageProxy::focusNextFocusedElement(bool isForward, CompletionHandler<voi
     });
 }
 
-void WebPageProxy::setFocusedElementValue(const String& value)
+void WebPageProxy::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)
 {
-    send(Messages::WebPage::SetFocusedElementValue(value));
+    send(Messages::WebPage::SetFocusedElementValue(context, value));
 }
 
-void WebPageProxy::setFocusedElementValueAsNumber(double value)
+void WebPageProxy::setFocusedElementValueAsNumber(const WebCore::ElementContext& context, double value)
 {
-    send(Messages::WebPage::SetFocusedElementValueAsNumber(value));
+    send(Messages::WebPage::SetFocusedElementValueAsNumber(context, value));
 }
 
-void WebPageProxy::setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
+void WebPageProxy::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
 {
-    send(Messages::WebPage::SetFocusedElementSelectedIndex(index, allowMultipleSelection));
+    send(Messages::WebPage::SetFocusedElementSelectedIndex(context, index, allowMultipleSelection));
 }
 
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)

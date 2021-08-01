@@ -330,7 +330,7 @@ public:
         } byIdSelf;
         PolymorphicAccess* stub;
     } u;
-    WriteBarrier<Structure> inlineAccessBaseStructure;
+    WriteBarrier<Structure> m_inlineAccessBaseStructure;
 private:
     CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.

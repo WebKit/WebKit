@@ -78,6 +78,9 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_networkProcessPath = this->m_networkProcessPath;
     copy->m_userId = this->m_userId;
 #endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    copy->m_memoryPressureHandlerConfiguration = this->m_memoryPressureHandlerConfiguration;
+#endif
     return copy;
 }
 

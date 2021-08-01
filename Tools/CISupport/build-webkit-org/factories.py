@@ -108,7 +108,7 @@ class TestFactory(Factory):
         if platform.startswith('win') or platform.startswith('mac') or platform.startswith('ios-simulator'):
             self.addStep(RunAPITests())
 
-        if platform.startswith('mac'):
+        if platform.startswith('mac') and (platform != 'mac-catalina'):
             self.addStep(RunLLDBWebKitTests())
 
         self.addStep(RunWebKitPyTests())

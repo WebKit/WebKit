@@ -192,6 +192,31 @@ void SQLiteDatabase::enableAutomaticWALTruncation()
     sqlite3_wal_hook(m_db, walAutomaticTruncationHook, nullptr);
 }
 
+static int checkpointModeValue(SQLiteDatabase::CheckpointMode mode)
+{
+    switch (mode) {
+    case SQLiteDatabase::CheckpointMode::Full:
+        return SQLITE_CHECKPOINT_FULL;
+    case SQLiteDatabase::CheckpointMode::Truncate:
+        return SQLITE_CHECKPOINT_TRUNCATE;
+    }
+}
+
+void SQLiteDatabase::checkpoint(CheckpointMode mode)
+{
+    SQLiteTransactionInProgressAutoCounter transactionCounter;
+    int result = sqlite3_wal_checkpoint_v2(m_db, nullptr, checkpointModeValue(mode), nullptr, nullptr);
+    if (result == SQLITE_OK)
+        return;
+
+    if (result == SQLITE_BUSY) {
+        LOG(SQLDatabase, "SQLite database checkpoint is blocked");
+        return;
+    }
+
+    LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
+}
+
 void SQLiteDatabase::useWALJournalMode()
 {
     m_useWAL = true;
@@ -207,15 +232,7 @@ void SQLiteDatabase::useWALJournalMode()
             LOG_ERROR("SQLite database failed to set journal_mode to WAL, error: %s", lastErrorMsg());
     }
 
-    {
-        SQLiteTransactionInProgressAutoCounter transactionCounter;
-        auto checkpointStatement = prepareStatement("PRAGMA wal_checkpoint(TRUNCATE)"_s);
-        if (checkpointStatement && checkpointStatement->step() == SQLITE_ROW) {
-            if (checkpointStatement->columnInt(0))
-                LOG(SQLDatabase, "SQLite database checkpoint is blocked");
-        } else
-            LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
-    }
+    checkpoint(CheckpointMode::Truncate);
 }
 
 void SQLiteDatabase::close(ShouldSetErrorState shouldSetErrorState)

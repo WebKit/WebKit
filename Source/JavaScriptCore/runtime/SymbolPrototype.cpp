@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(symbolProtoGetterDescription);
+static JSC_DECLARE_CUSTOM_GETTER(symbolProtoGetterDescription);
 static JSC_DECLARE_HOST_FUNCTION(symbolProtoFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(symbolProtoFuncValueOf);
 
@@ -47,7 +47,7 @@ const ClassInfo SymbolPrototype::s_info = { "Symbol", &Base::s_info, &symbolProt
 
 /* Source for SymbolPrototype.lut.h
 @begin symbolPrototypeTable
-  description       symbolProtoGetterDescription    DontEnum|Accessor 0
+  description       symbolProtoGetterDescription    DontEnum|ReadOnly|CustomAccessor
   toString          symbolProtoFuncToString         DontEnum|Function 0
   valueOf           symbolProtoFuncValueOf          DontEnum|Function 0
 @end
@@ -87,12 +87,12 @@ inline Symbol* tryExtractSymbol(VM& vm, JSValue thisValue)
     return asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
 }
 
-JSC_DEFINE_HOST_FUNCTION(symbolProtoGetterDescription, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_CUSTOM_GETTER(symbolProtoGetterDescription, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Symbol* symbol = tryExtractSymbol(vm, callFrame->thisValue());
+    Symbol* symbol = tryExtractSymbol(vm, JSValue::decode(thisValue));
     if (!symbol)
         return throwVMTypeError(globalObject, scope, SymbolDescriptionTypeError);
     scope.release();

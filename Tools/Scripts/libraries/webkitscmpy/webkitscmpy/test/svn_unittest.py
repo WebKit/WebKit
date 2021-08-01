@@ -247,6 +247,18 @@ class TestLocalSvn(testing.PathTestCase):
                 svn.commit(revision='r1'),
             ]), Commit.Encoder().default(list(svn.commits(begin=dict(argument='r1'), end=dict(argument='r7')))))
 
+    def test_revision_cache(self):
+        with mocks.local.Svn(self.path), LoggerCapture():
+            svn = local.Svn(self.path)
+            self.assertEqual(svn.cache.to_revision(identifier='1@trunk'), 1)
+            self.assertEqual(svn.cache.to_revision(identifier='2.1@branch-a'), 3)
+            self.assertEqual(svn.cache.to_revision(identifier='2.-1@branch-a'), 1)
+            self.assertEqual(svn.cache.to_identifier(revision='r6'), '4@trunk')
+            self.assertEqual(svn.cache.to_identifier(revision='r3', branch='branch-a'), '2.1@branch-a')
+
+            self.assertEqual(svn.cache.to_identifier(revision=100), None)
+            self.assertEqual(svn.cache.to_revision(hash='badc0dd1f'), None)
+            self.assertEqual(svn.cache.to_revision(identifier='6@trunk'), None)
 
 class TestRemoteSvn(testing.TestCase):
     remote = 'https://svn.example.org/repository/webkit'

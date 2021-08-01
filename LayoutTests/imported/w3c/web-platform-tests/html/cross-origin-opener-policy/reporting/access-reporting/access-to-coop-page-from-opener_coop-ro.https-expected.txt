@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT access-to-coop-page-from-opener, same-origin Test timed out
+NOTRUN access-to-coop-page-from-opener, same-origin + redirect
+

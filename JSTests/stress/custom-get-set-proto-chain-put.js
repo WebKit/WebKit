@@ -99,8 +99,8 @@ function getBases() {
 (() => {
     for (let base of getBases()) {
         for (let i = 0; i < 100; ++i)
-            shouldThrow(() => { base.customAccessorGlobalObject = {}; }, "TypeError: Attempted to assign to readonly property.");
-        assert(!Reflect.set(Object(base), "customAccessorGlobalObject", {}));
+            shouldThrow(() => { base.customAccessorReadOnly = {}; }, "TypeError: Attempted to assign to readonly property.");
+        assert(!Reflect.set(Object(base), "customAccessorReadOnly", {}));
     }
 })();
 
@@ -108,21 +108,21 @@ function getBases() {
 (() => {
     for (let primitive of primitives) {
         for (let i = 0; i < 100; ++i)
-            shouldThrow(() => { primitive.customValueGlobalObject = {}; }, "TypeError: Attempted to assign to readonly property.");
+            shouldThrow(() => { primitive.customValueNoSetter = {}; }, "TypeError: Attempted to assign to readonly property.");
     }
 
     for (let object of getObjects()) {
         for (let i = 0; i < 100; ++i)
-            object.customValueGlobalObject = {};
-        assert(object.hasOwnProperty("customValueGlobalObject"));
-        assert(Reflect.set(object, "customValueGlobalObject", {}));
+            object.customValueNoSetter = {};
+        assert(object.hasOwnProperty("customValueNoSetter"));
+        assert(Reflect.set(object, "customValueNoSetter", {}));
     }
 
     for (let object of getObjects()) {
         Object.preventExtensions(object);
         for (let i = 0; i < 100; ++i) {
-            shouldThrow(() => { object.customValueGlobalObject = {}; }, "TypeError: Attempted to assign to readonly property.");
-            assert(!Reflect.set(object, "customValueGlobalObject", {}));
+            shouldThrow(() => { object.customValueNoSetter = {}; }, "TypeError: Attempted to assign to readonly property.");
+            assert(!Reflect.set(object, "customValueNoSetter", {}));
         }
     }
 })();

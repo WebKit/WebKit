@@ -28,7 +28,6 @@
 
 #include "NetworkProcessProxy.h"
 #include "WebCookieManagerMessages.h"
-#include "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -38,11 +37,4 @@ void WebCookieManagerProxy::setCookiePersistentStorage(PAL::SessionID sessionID,
         m_networkProcess->send(Messages::WebCookieManager::SetCookiePersistentStorage(sessionID, storagePath, storageType), 0);
 }
 
-void WebCookieManagerProxy::getCookiePersistentStorage(PAL::SessionID sessionID, String& storagePath, SoupCookiePersistentStorageType& storageType) const
-{
-    auto pair = m_cookiePersistentStorageMap.get(sessionID);
-    storagePath = pair.first;
-    storageType = pair.second;
-}
-
-}
+} // namespace WebKit

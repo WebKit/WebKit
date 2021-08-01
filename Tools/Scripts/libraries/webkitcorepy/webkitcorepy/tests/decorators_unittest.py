@@ -120,3 +120,16 @@ class TestMemoize(unittest.TestCase):
         self.assertEqual(TestMemoize.increment_with_arg(arg='x'), 1)
         self.assertEqual(TestMemoize.increment_with_arg(arg='x'), 2)
         self.assertEqual(TestMemoize.increment_with_arg(arg='x', cached=True), 2)
+
+
+class TestHybrid(unittest.TestCase):
+
+    @decorators.hybridmethod
+    def is_type(context):
+        return isinstance(context, type)
+
+    def test_type(self):
+        self.assertTrue(TestHybrid.is_type())
+
+    def test_instance(self):
+        self.assertFalse(self.is_type())

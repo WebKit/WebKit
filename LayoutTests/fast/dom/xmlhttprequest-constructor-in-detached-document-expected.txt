@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: InvalidStateError: Document is not fully active
 Text for bug 25290: Crash when constructing XMLHttpRequest in a detached document.
 
 PASS

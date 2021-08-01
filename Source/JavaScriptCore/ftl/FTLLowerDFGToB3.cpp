@@ -249,7 +249,7 @@ public:
         m_out.initializeConstants(m_proc, prologue);
         createPhiVariables();
 
-        size_t sizeOfCaptured = sizeof(JSValue) * m_graph.m_nextMachineLocal;
+        uint64_t sizeOfCaptured = sizeof(JSValue) * m_graph.m_nextMachineLocal;
         B3::SlotBaseValue* capturedBase = m_out.lockedStackSlot(sizeOfCaptured);
         m_captured = m_out.add(capturedBase, m_out.constIntPtr(sizeOfCaptured));
         state->capturedValue = capturedBase->slot();
@@ -18665,8 +18665,9 @@ private:
         m_out.branch(isCell(value, provenType(edge)), unsure(isCellBlock), unsure(continuation));
 
         m_out.appendTo(isCellBlock, continuation);
-        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecString, isString(value));
-        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecHeapBigInt, isHeapBigInt(value));
+
+        static_assert(StringType + 1 == HeapBigIntType);
+        FTL_TYPE_CHECK(jsValueValue(value), edge, ~(SpecString | SpecHeapBigInt), isType(value, JSTypeRange { StringType, HeapBigIntType }));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -19007,11 +19008,23 @@ private:
             m_out.constInt32(MasqueradesAsUndefined | OverridesGetCallData));
     }
 
+    LValue isType(LValue cell, JSTypeRange range)
+    {
+        if (range.last == range.first) {
+            return m_out.equal(
+                m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
+                m_out.constInt32(range.first));
+        }
+
+        ASSERT(range.last > range.first);
+        return m_out.belowOrEqual(
+            m_out.sub(m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType), m_out.constInt32(range.first)),
+            m_out.constInt32(range.last - range.first));
+    }
+
     LValue isType(LValue cell, JSType type)
     {
-        return m_out.equal(
-            m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt32(type));
+        return isType(cell, JSTypeRange { type, type });
     }
     
     LValue isNotType(LValue cell, JSType type)

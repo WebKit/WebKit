@@ -365,31 +365,29 @@ type: function
 description: function () { console.log(arguments); }
 
 OWN PROPERTIES:
-    arguments
-    caller
+    prototype
     length
     name
-    prototype
     __proto__
 
 DISPLAYABLE PROPERTIES:
-    arguments
-    caller
+    prototype
     length
     name
-    prototype
+    arguments
+    caller
     __proto__
 
 ALL PROPERTIES:
-    arguments
-    caller
+    prototype
     length
     name
-    prototype
     toString
     apply
     call
     bind
+    arguments
+    caller
     constructor
     Symbol(Symbol.hasInstance)
     toLocaleString
@@ -422,8 +420,8 @@ OWN PROPERTIES:
 DISPLAYABLE PROPERTIES:
     length
     name
-    caller
     arguments
+    caller
     __proto__
     targetFunction
     boundThis
@@ -436,8 +434,8 @@ ALL PROPERTIES:
     apply
     call
     bind
-    caller
     arguments
+    caller
     constructor
     Symbol(Symbol.hasInstance)
     toLocaleString

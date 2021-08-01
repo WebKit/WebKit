@@ -147,10 +147,10 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
         
     case CacheType::PutByIdReplace: {
         PropertyOffset offset =
-            stubInfo->inlineAccessBaseStructure->getConcurrently(uid);
+            stubInfo->m_inlineAccessBaseStructure->getConcurrently(uid);
         if (isValidOffset(offset)) {
             return PutByIdVariant::replace(
-                stubInfo->inlineAccessBaseStructure.get(), offset);
+                stubInfo->m_inlineAccessBaseStructure.get(), offset);
         }
         return PutByIdStatus(JSC::slowVersion(summary));
     }

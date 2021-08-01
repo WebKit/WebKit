@@ -34,7 +34,8 @@ typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
-bool isVorbisDecoderAvailable();
+WEBCORE_EXPORT bool isVorbisDecoderAvailable();
+WEBCORE_EXPORT bool registerVorbisDecoderIfNeeded();
 RetainPtr<CMFormatDescriptionRef> createVorbisAudioFormatDescription(size_t, const void*);
 
 struct OpusCookieContents {
@@ -52,7 +53,8 @@ struct OpusCookieContents {
     bool hasPadding { false };
 };
 
-bool isOpusDecoderAvailable();
+WEBCORE_EXPORT bool isOpusDecoderAvailable();
+WEBCORE_EXPORT bool registerOpusDecoderIfNeeded();
 bool parseOpusPrivateData(size_t privateDataSize, const void* privateData, size_t frameDataSize, const void* frameData, OpusCookieContents&);
 RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(const OpusCookieContents&);
 

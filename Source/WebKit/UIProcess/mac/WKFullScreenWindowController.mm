@@ -641,7 +641,8 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 
 - (void)didEnterPictureInPicture
 {
-    [self requestExitFullScreen];
+    if ([self isFullScreen])
+        [self requestExitFullScreen];
 }
 
 - (void)didExitPictureInPicture

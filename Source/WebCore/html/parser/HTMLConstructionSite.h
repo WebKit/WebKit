@@ -79,7 +79,7 @@ enum WhitespaceMode {
     WhitespaceUnknown
 };
 
-class AtomicHTMLToken;
+class AtomHTMLToken;
 struct CustomElementConstructionData;
 class Document;
 class Element;
@@ -98,25 +98,25 @@ public:
     void setDefaultCompatibilityMode();
     void finishedParsing();
 
-    void insertDoctype(AtomicHTMLToken&&);
-    void insertComment(AtomicHTMLToken&&);
-    void insertCommentOnDocument(AtomicHTMLToken&&);
-    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&&);
-    void insertHTMLElement(AtomicHTMLToken&&);
-    std::unique_ptr<CustomElementConstructionData> insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&&);
+    void insertDoctype(AtomHTMLToken&&);
+    void insertComment(AtomHTMLToken&&);
+    void insertCommentOnDocument(AtomHTMLToken&&);
+    void insertCommentOnHTMLHtmlElement(AtomHTMLToken&&);
+    void insertHTMLElement(AtomHTMLToken&&);
+    std::unique_ptr<CustomElementConstructionData> insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&&);
     void insertCustomElement(Ref<Element>&&, const AtomString& localName, Vector<Attribute>&&);
-    void insertSelfClosingHTMLElement(AtomicHTMLToken&&);
-    void insertFormattingElement(AtomicHTMLToken&&);
-    void insertHTMLHeadElement(AtomicHTMLToken&&);
-    void insertHTMLBodyElement(AtomicHTMLToken&&);
-    void insertHTMLFormElement(AtomicHTMLToken&&, bool isDemoted = false);
-    void insertScriptElement(AtomicHTMLToken&&);
+    void insertSelfClosingHTMLElement(AtomHTMLToken&&);
+    void insertFormattingElement(AtomHTMLToken&&);
+    void insertHTMLHeadElement(AtomHTMLToken&&);
+    void insertHTMLBodyElement(AtomHTMLToken&&);
+    void insertHTMLFormElement(AtomHTMLToken&&, bool isDemoted = false);
+    void insertScriptElement(AtomHTMLToken&&);
     void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
-    void insertForeignElement(AtomicHTMLToken&&, const AtomString& namespaceURI);
+    void insertForeignElement(AtomHTMLToken&&, const AtomString& namespaceURI);
 
-    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&&);
-    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&&);
-    void insertHTMLBodyStartTagInBody(AtomicHTMLToken&&);
+    void insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&&);
+    void insertHTMLHtmlStartTagInBody(AtomHTMLToken&&);
+    void insertHTMLBodyStartTagInBody(AtomHTMLToken&&);
 
     void reparent(HTMLElementStack::ElementRecord& newParent, HTMLElementStack::ElementRecord& child);
     // insertAlreadyParsedChild assumes that |child| has already been parsed (i.e., we're just
@@ -186,11 +186,11 @@ private:
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
-    RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&, JSCustomElementInterface**);
-    Ref<Element> createHTMLElement(AtomicHTMLToken&);
-    Ref<Element> createElement(AtomicHTMLToken&, const AtomString& namespaceURI);
+    RefPtr<Element> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&, JSCustomElementInterface**);
+    Ref<Element> createHTMLElement(AtomHTMLToken&);
+    Ref<Element> createElement(AtomHTMLToken&, const AtomString& namespaceURI);
 
-    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&&, Element&);
+    void mergeAttributesFromTokenIntoElement(AtomHTMLToken&&, Element&);
     void dispatchDocumentElementAvailableIfNeeded();
 
     Document& m_document;

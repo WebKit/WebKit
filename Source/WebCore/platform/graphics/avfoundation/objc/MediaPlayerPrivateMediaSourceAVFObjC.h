@@ -204,6 +204,8 @@ private:
     void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
     bool seeking() const override;
     void setRateDouble(double) override;
+    double rate() const override;
+    double effectiveRate() const override;
 
     void setPreservesPitch(bool) override;
 

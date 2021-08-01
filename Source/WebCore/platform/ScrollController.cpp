@@ -127,19 +127,20 @@ void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, std
     m_scrollSnapState->setActiveSnapIndexForAxis(axis, index);
 }
 
-void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, int offset)
+void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, ScrollOffset scrollOffset)
 {
     if (!usesScrollSnap())
         return;
 
     float scaleFactor = m_client.pageScaleFactor();
+    LayoutPoint layoutScrollOffset(scrollOffset.x() / scaleFactor, scrollOffset.y() / scaleFactor);
     ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
 
     auto snapOffsets = snapState.snapOffsetsForAxis(axis);
     LayoutSize viewportSize(m_client.viewportSize().width(), m_client.viewportSize().height());
     std::optional<unsigned> activeIndex;
     if (snapOffsets.size())
-        activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, LayoutUnit(offset / scaleFactor), 0).second;
+        activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutScrollOffset, 0).second;
 
     if (activeIndex == activeScrollSnapIndexForAxis(axis))
         return;
@@ -148,22 +149,24 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     setActiveScrollSnapIndexForAxis(axis, activeIndex);
 }
 
-float ScrollController::adjustScrollDestination(ScrollEventAxis axis, float destinationOffset, float velocity, std::optional<float> originalOffset)
+float ScrollController::adjustScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset)
 {
     if (!usesScrollSnap())
-        return destinationOffset;
+        return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
 
     ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
     auto snapOffsets = snapState.snapOffsetsForAxis(axis);
     if (!snapOffsets.size())
-        return destinationOffset;
+        return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
 
+    float scaleFactor = m_client.pageScaleFactor();
     std::optional<LayoutUnit> originalOffsetInLayoutUnits;
     if (originalOffset)
-        originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / m_client.pageScaleFactor());
+        originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / scaleFactor);
     LayoutSize viewportSize(m_client.viewportSize().width(), m_client.viewportSize().height());
-    LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, LayoutUnit(destinationOffset / m_client.pageScaleFactor()), velocity, originalOffsetInLayoutUnits).first;
-    return offset * m_client.pageScaleFactor();
+    LayoutPoint layoutDestinationOffset(destinationOffset.x() / scaleFactor, destinationOffset.y() / scaleFactor);
+    LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits).first;
+    return offset * scaleFactor;
 }
 
 
@@ -173,8 +176,8 @@ void ScrollController::updateActiveScrollSnapIndexForClientOffset()
         return;
 
     ScrollOffset offset = roundedIntPoint(m_client.scrollOffset());
-    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset.x());
-    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset.y());
+    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset);
+    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset);
 }
 
 void ScrollController::resnapAfterLayout()
@@ -188,11 +191,11 @@ void ScrollController::resnapAfterLayout()
 
     auto activeHorizontalIndex = m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     if (!activeHorizontalIndex || *activeHorizontalIndex >= snapState.snapOffsetsForAxis(ScrollEventAxis::Horizontal).size())
-        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset.x());
+        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset);
 
     auto activeVerticalIndex = m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical);
     if (!activeVerticalIndex || *activeVerticalIndex >= snapState.snapOffsetsForAxis(ScrollEventAxis::Vertical).size())
-        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset.y());
+        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset);
 
 }
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding

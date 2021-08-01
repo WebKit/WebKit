@@ -62,7 +62,7 @@ static inline void setAttributes(Element& element, Vector<Attribute>& attributes
     element.parserSetAttributes(attributes);
 }
 
-static inline void setAttributes(Element& element, AtomicHTMLToken& token, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element& element, AtomHTMLToken& token, ParserContentPolicy parserContentPolicy)
 {
     setAttributes(element, token.attributes(), parserContentPolicy);
 }
@@ -273,7 +273,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
         frame->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 }
 
-void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&& token)
 {
     auto element = HTMLHtmlElement::create(m_document);
     setAttributes(element, token, m_parserContentPolicy);
@@ -285,7 +285,7 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&& to
     dispatchDocumentElementAvailableIfNeeded();
 }
 
-void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken&& token, Element& element)
+void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& token, Element& element)
 {
     if (token.attributes().isEmpty())
         return;
@@ -296,7 +296,7 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken&&
     }
 }
 
-void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomHTMLToken&& token)
 {
     // Fragments do not have a root HTML element, so any additional HTML elements
     // encountered during fragment parsing should be ignored.
@@ -306,7 +306,7 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomicHTMLToken&& token)
     mergeAttributesFromTokenIntoElement(WTFMove(token), m_openElements.htmlElement());
 }
 
-void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomHTMLToken&& token)
 {
     mergeAttributesFromTokenIntoElement(WTFMove(token), m_openElements.bodyElement());
 }
@@ -419,7 +419,7 @@ void HTMLConstructionSite::finishedParsing()
     m_document.finishedParsing();
 }
 
-void HTMLConstructionSite::insertDoctype(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::DOCTYPE);
 
@@ -443,26 +443,26 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken&& token)
         setCompatibilityModeFromDoctype(token.name(), publicId, systemId);
 }
 
-void HTMLConstructionSite::insertComment(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertComment(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
     attachLater(currentNode(), Comment::create(ownerDocumentForCurrentNode(), token.comment()));
 }
 
-void HTMLConstructionSite::insertCommentOnDocument(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertCommentOnDocument(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
     attachLater(m_attachmentRoot, Comment::create(m_document, token.comment()));
 }
 
-void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
     ContainerNode& parent = m_openElements.rootNode();
     attachLater(parent, Comment::create(parent.document(), token.comment()));
 }
 
-void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLHeadElement(AtomHTMLToken&& token)
 {
     ASSERT(!shouldFosterParent());
     m_head = HTMLStackItem::create(createHTMLElement(token), WTFMove(token));
@@ -470,7 +470,7 @@ void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken&& token)
     m_openElements.pushHTMLHeadElement(*m_head);
 }
 
-void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLBodyElement(AtomHTMLToken&& token)
 {
     ASSERT(!shouldFosterParent());
     auto body = createHTMLElement(token);
@@ -478,7 +478,7 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken&& token)
     m_openElements.pushHTMLBodyElement(HTMLStackItem::create(WTFMove(body), WTFMove(token)));
 }
 
-void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken&& token, bool isDemoted)
+void HTMLConstructionSite::insertHTMLFormElement(AtomHTMLToken&& token, bool isDemoted)
 {
     auto element = createHTMLElement(token);
     auto& formElement = downcast<HTMLFormElement>(element.get());
@@ -491,14 +491,14 @@ void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken&& token, bool i
     m_openElements.push(HTMLStackItem::create(formElement, WTFMove(token)));
 }
 
-void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 {
     auto element = createHTMLElement(token);
     attachLater(currentNode(), element.copyRef());
     m_openElements.push(HTMLStackItem::create(WTFMove(element), WTFMove(token)));
 }
 
-std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomicHTMLToken&& token)
+std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&& token)
 {
     JSCustomElementInterface* elementInterface = nullptr;
     RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, &elementInterface);
@@ -517,7 +517,7 @@ void HTMLConstructionSite::insertCustomElement(Ref<Element>&& element, const Ato
     executeQueuedTasks();
 }
 
-void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
     // Normally HTMLElementStack is responsible for calling finishParsingChildren,
@@ -528,7 +528,7 @@ void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken&& token)
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#acknowledge-self-closing-flag
 }
 
-void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertFormattingElement(AtomHTMLToken&& token)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#the-stack-of-open-elements
     // Possible active formatting elements include:
@@ -538,7 +538,7 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken&& token)
     m_activeFormattingElements.append(currentStackItem());
 }
 
-void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken&& token)
+void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/scripting-1.html#already-started
     // http://html5.org/specs/dom-parsing.html#dom-range-createcontextualfragment
@@ -554,7 +554,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken&& token)
     m_openElements.push(HTMLStackItem::create(WTFMove(element), WTFMove(token)));
 }
 
-void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken&& token, const AtomString& namespaceURI)
+void HTMLConstructionSite::insertForeignElement(AtomHTMLToken&& token, const AtomString& namespaceURI)
 {
     ASSERT(token.type() == HTMLToken::StartTag);
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
@@ -635,7 +635,7 @@ void HTMLConstructionSite::takeAllChildrenAndReparent(HTMLStackItem& newParent, 
     m_taskQueue.append(WTFMove(task));
 }
 
-Ref<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, const AtomString& namespaceURI)
+Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
     QualifiedName tagName(nullAtom(), token.name(), namespaceURI);
     auto element = ownerDocumentForCurrentNode().createElement(tagName, true);
@@ -663,7 +663,7 @@ static inline JSCustomElementInterface* findCustomElementInterface(Document& own
     return registry->findInterface(localName);
 }
 
-RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomicHTMLToken& token, JSCustomElementInterface** customElementInterface)
+RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token, JSCustomElementInterface** customElementInterface)
 {
     auto& localName = token.name();
     // FIXME: This can't use HTMLConstructionSite::createElement because we
@@ -706,7 +706,7 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
     return element;
 }
 
-Ref<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& token)
+Ref<Element> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
 {
     RefPtr<Element> element = createHTMLElementOrFindCustomElementInterface(token, nullptr);
     ASSERT(element);
@@ -716,7 +716,7 @@ Ref<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& token)
 Ref<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackItem& item)
 {
     // NOTE: Moving from item -> token -> item copies the Attribute vector twice!
-    AtomicHTMLToken fakeToken(HTMLToken::StartTag, item.localName(), Vector<Attribute>(item.attributes()));
+    AtomHTMLToken fakeToken(HTMLToken::StartTag, item.localName(), Vector<Attribute>(item.attributes()));
     ASSERT(item.namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     ASSERT(isFormattingTag(item.localName()));
     return HTMLStackItem::create(createHTMLElement(fakeToken), WTFMove(fakeToken), item.namespaceURI());

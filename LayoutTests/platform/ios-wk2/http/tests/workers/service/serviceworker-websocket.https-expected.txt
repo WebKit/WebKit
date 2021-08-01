@@ -1,0 +1,4 @@
+
+PASS Setup worker
+FAIL Open a WebSocket in service worker promise_test: Unhandled rejection with value: "FAIL: websocket had an error: [object Event]"
+

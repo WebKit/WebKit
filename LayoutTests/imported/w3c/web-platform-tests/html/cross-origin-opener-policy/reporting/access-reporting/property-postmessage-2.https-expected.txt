@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unable to post message to http://localhost:8800. Recipient has origin https://localhost:9443.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT same-origin > w => w.postMessage("") Test timed out
+NOTRUN cross-origin > w => w.postMessage("")
+

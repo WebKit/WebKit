@@ -14,6 +14,10 @@
 #include "libANGLE/Thread.h"
 #include "libANGLE/features.h"
 
+#if defined(ANGLE_PLATFORM_APPLE)
+#include "common/tls.h"
+#endif
+
 #include <mutex>
 
 namespace angle
@@ -89,7 +93,12 @@ namespace egl
 class Debug;
 class Thread;
 
+#if defined(ANGLE_PLATFORM_APPLE)
+extern Thread *GetCurrentThreadTLS();
+extern void SetCurrentThreadTLS(Thread *thread);
+#else
 extern thread_local Thread *gCurrentThread;
+#endif
 
 angle::GlobalMutex &GetGlobalMutex();
 Thread *GetCurrentThread();
@@ -112,8 +121,13 @@ ANGLE_INLINE Context *GetGlobalContext()
     }
 #endif
 
-    ASSERT(egl::gCurrentThread);
-    return egl::gCurrentThread->getContext();
+#if defined(ANGLE_PLATFORM_APPLE)
+    egl::Thread *currentThread = egl::GetCurrentThreadTLS();
+#else
+    egl::Thread *currentThread = egl::gCurrentThread;
+#endif
+    ASSERT(currentThread);
+    return currentThread->getContext();
 }
 
 ANGLE_INLINE Context *GetValidGlobalContext()
@@ -131,7 +145,11 @@ ANGLE_INLINE Context *GetValidGlobalContext()
     }
 #endif
 
+#if defined(ANGLE_PLATFORM_APPLE)
+    return GetCurrentValidContextTLS();
+#else
     return gCurrentValidContext;
+#endif
 }
 
 // Generate a context lost error on the context if it is non-null and lost.

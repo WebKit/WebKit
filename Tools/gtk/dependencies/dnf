@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/dnf"
+
+PACKAGES+=(
+    # These are dependencies necessary for building WebKitGTK.
+    atk-devel
+    cairo-devel
+    enchant-devel
+    geoclue2-devel
+    gettext-devel
+    gobject-introspection-devel
+    gtk3-devel
+    hyphen-devel
+    json-glib-devel
+    libedit-devel
+    libffi-devel
+    libgcrypt-devel
+    libgudev1-devel
+    libmount-devel
+    libnotify-devel
+    libsecret-devel
+    libsoup-devel
+    libsrtp-devel
+    libtheora-devel
+    libv4l-devel
+    libvorbis-devel
+    libvpx-devel
+    libwayland-client-devel
+    libwayland-server-devel
+    libXt-devel
+    libXtst-devel
+    mesa-libGL-devel
+    nasm
+    openssl-devel
+    opus-devel
+    pcre-devel
+    perl-Switch
+    pulseaudio-libs-devel
+    python-devel
+    redhat-rpm-config
+    upower-devel
+    woff2-devel
+
+    # These are dependencies necessary for running tests.
+    cups
+    dbus-x11
+    hunspell-en
+    hunspell-en-GB
+    pygobject3-base
+    python2-yaml
+    weston-devel
+    xorg-x11-server-Xvfb
+
+    # These are dependencies necessary for building the jhbuild.
+    bison
+    cups-devel
+    docbook-utils
+    flex
+    gnutls-devel
+    gobject-introspection
+    icon-naming-utils
+    itstool
+    libcroco-devel
+    libdrm-devel
+    libepoxy-devel
+    libevdev-dev
+    libgpg-error-devel
+    libinput-devel
+    libp11-devel
+    libpciaccess-devel
+    libtiff-devel
+    libunistring-devel
+    libXfont2-devel
+    libxkbcommon-x11-devel
+    libxkbfile-devel
+    mtdev-devel
+    ragel
+    xorg-x11-font-utils
+    xorg-x11-proto-devel
+    xorg-x11-util-macros
+    xorg-x11-xtrans-devel
+)

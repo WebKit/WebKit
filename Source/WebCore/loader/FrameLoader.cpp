@@ -3922,7 +3922,7 @@ ReferrerPolicy FrameLoader::effectiveReferrerPolicy() const
         return parentFrame->document()->referrerPolicy();
     if (m_opener)
         return m_opener->document()->referrerPolicy();
-    return ReferrerPolicy::NoReferrerWhenDowngrade;
+    return ReferrerPolicy::Default;
 }
 
 String FrameLoader::referrer() const

@@ -29,36 +29,27 @@
 
 namespace WebCore {
 
-template<typename T> class EventSender;
-using DialogEventSender = EventSender<HTMLDialogElement>;
-
 class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDialogElement);
 public:
     template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }
-    ~HTMLDialogElement();
-    
-    bool isOpen() const;
 
-    const String& returnValue();
-    void setReturnValue(String&&);
+    bool isOpen() const { return hasAttribute(HTMLNames::openAttr); }
+
+    const String& returnValue() const { return m_returnValue; }
+    void setReturnValue(String&& value) { m_returnValue = WTFMove(value); }
 
     void show();
     ExceptionOr<void> showModal();
     void close(const String&);
 
-    void dispatchPendingEvent(DialogEventSender*);
-
-    bool isModal() const;
+    bool isModal() const { return m_isModal; };
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
 
-    void parseAttribute(const QualifiedName&, const AtomString&) final;
-
     String m_returnValue;
     bool m_isModal { false };
-    bool m_isOpen { false };
 };
 
 } // namespace WebCore

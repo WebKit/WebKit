@@ -69,7 +69,7 @@ if (shift @ARGV) {
     die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
 }
 
-open (my $testInput, "$commandString --useExecutableAllocationFuzz=true --verboseExecutableAllocationFuzz=true |") or fail("Cannot execute initial command when getting check count");
+open (my $testInput, "$commandString --useExecutableAllocationFuzz=true |") or fail("Cannot execute initial command when getting check count");
 while (my $inputLine = <$testInput>) {
     chomp($inputLine);
     my $handled = 0;

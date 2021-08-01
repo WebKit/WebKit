@@ -263,6 +263,7 @@ namespace JSC  {
         inline void setCodeBlock(CodeBlock*);
         void setReturnPC(void* value) { callerFrameAndPC().returnPC = value; }
 
+        JS_EXPORT_PRIVATE static JSGlobalObject* globalObjectOfClosestCodeBlock(VM&, CallFrame*);
         String friendlyFunctionName();
 
         // CallFrame::iterate() expects a Functor that implements the following method:

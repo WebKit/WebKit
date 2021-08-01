@@ -121,6 +121,7 @@ inline JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world) { return
 // FIXME: Make this work for an "author function or script that originally scheduled the currently-running callback."
 // See <https://bugs.webkit.org/show_bug.cgi?id=163412>.
 DOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&, JSC::CallFrame&);
+DOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&);
 
 DOMWindow& activeDOMWindow(JSC::JSGlobalObject&);
 DOMWindow& firstDOMWindow(JSC::JSGlobalObject&);

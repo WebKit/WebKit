@@ -37,6 +37,8 @@
 #import "WKTypeRefWrapper.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -203,7 +205,10 @@ bool WebProcessProxy::shouldEnableRemoteInspector()
 #if PLATFORM(IOS_FAMILY)
     return CFPreferencesGetAppIntegerValue(WIRRemoteInspectorEnabledKey, WIRRemoteInspectorDomainName, nullptr);
 #else
-    return CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), CFSTR("com.apple.Safari.SandboxBroker"), nullptr);
+    auto sandboxBrokerBundleIdentifier = CFSTR("com.apple.Safari.SandboxBroker");
+    if (WebCore::applicationBundleIdentifier() == "com.apple.SafariTechnologyPreview"_s)
+        sandboxBrokerBundleIdentifier = CFSTR("com.apple.SafariTechnologyPreview.SandboxBroker");
+    return CFPreferencesGetAppIntegerValue(CFSTR("ShowDevelopMenu"), sandboxBrokerBundleIdentifier, nullptr);
 #endif
 }
 
@@ -291,6 +296,9 @@ void WebProcessProxy::sendAudioComponentRegistrations()
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [protectedThis = makeRef(*this)] () mutable {
         CFDataRef registrations { nullptr };
+
+        WebCore::registerOpusDecoderIfNeeded();
+        WebCore::registerVorbisDecoderIfNeeded();
         if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
             return;
 

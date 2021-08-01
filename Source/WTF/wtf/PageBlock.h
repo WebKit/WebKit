@@ -48,7 +48,7 @@ namespace WTF {
 constexpr size_t CeilingOnPageSize = 16 * KB;
 #elif CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(UNKNOWN)
 constexpr size_t CeilingOnPageSize = 64 * KB;
-#elif OS(WINDOWS) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
+#elif OS(WINDOWS) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
 constexpr size_t CeilingOnPageSize = 4 * KB;
 #else
 #error Must set CeilingOnPageSize in PageBlock.h when adding a new CPU architecture!

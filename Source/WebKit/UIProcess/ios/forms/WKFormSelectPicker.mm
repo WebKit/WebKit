@@ -298,7 +298,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     }
 
     if ([self allowsMultipleSelection]) {
-        [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex], true);
+        [_view updateFocusedElementSelectedIndex:[self findItemIndexAt:rowIndex] allowsMultipleSelection:true];
         item.isSelected = isChecked;
     } else if (isChecked) {
         // Single selection.
@@ -309,7 +309,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
         // This private delegate often gets called for multiple rows in the picker,
         // so we only activate and set as selected the checked item in single selection.
-        [_view page]->setFocusedElementSelectedIndex([self findItemIndexAt:rowIndex]);
+        [_view updateFocusedElementSelectedIndex:[self findItemIndexAt:rowIndex] allowsMultipleSelection:false];
         item.isSelected = true;
     } else
         item.isSelected = false;
@@ -391,7 +391,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
     if (_selectedIndex < (NSInteger)[_view focusedSelectElementOptions].size()) {
         [_view focusedSelectElementOptions][_selectedIndex].isSelected = true;
-        [_view page]->setFocusedElementSelectedIndex(_selectedIndex);
+        [_view updateFocusedElementSelectedIndex:_selectedIndex allowsMultipleSelection:false];
     }
 }
 
@@ -544,7 +544,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
         optionIndex++;
     }
 
-    [_view page]->setFocusedElementSelectedIndex(index);
+    [_view updateFocusedElementSelectedIndex:index allowsMultipleSelection:false];
 }
 
 #if USE(UICONTEXTMENU)
@@ -1107,7 +1107,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     else
         cell.imageView.image = [[UIImage systemImageNamed:@"circle"] imageWithTintColor:UIColor.tertiaryLabelColor renderingMode:UIImageRenderingModeAlwaysOriginal];
 
-    [_contentView page]->setFocusedElementSelectedIndex([self findItemIndexAt:indexPath], true);
+    [_contentView updateFocusedElementSelectedIndex:[self findItemIndexAt:indexPath] allowsMultipleSelection:true];
     option->isSelected = !option->isSelected;
 }
 

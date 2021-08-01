@@ -25,7 +25,6 @@
 #include "GStreamerCaptureDeviceManager.h"
 
 #include "GStreamerCommon.h"
-#include <wtf/text/IntegerToStringConversion.h>
 
 namespace WebCore {
 
@@ -61,12 +60,6 @@ GStreamerAudioCaptureDeviceManager& GStreamerAudioCaptureDeviceManager::singleto
 GStreamerVideoCaptureDeviceManager& GStreamerVideoCaptureDeviceManager::singleton()
 {
     static NeverDestroyed<GStreamerVideoCaptureDeviceManager> manager;
-    return manager;
-}
-
-GStreamerDisplayCaptureDeviceManager& GStreamerDisplayCaptureDeviceManager::singleton()
-{
-    static NeverDestroyed<GStreamerDisplayCaptureDeviceManager> manager;
     return manager;
 }
 
@@ -201,97 +194,6 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
         addDevice(GST_DEVICE_CAST(devices->data));
         devices = g_list_delete_link(devices, devices);
     }
-}
-
-GStreamerDisplayCaptureDeviceManager::GStreamerDisplayCaptureDeviceManager()
-{
-#if USE(PIPEWIRE)
-    m_portal = adoptGRef(xdp_portal_new());
-#endif
-}
-
-GStreamerDisplayCaptureDeviceManager::~GStreamerDisplayCaptureDeviceManager()
-{
-#if USE(PIPEWIRE)
-    if (m_session) {
-        xdp_session_close(m_session.get());
-        m_session = nullptr;
-    }
-#endif
-}
-
-void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
-{
-#if USE(PIPEWIRE)
-    m_callback = WTFMove(callback);
-    xdp_portal_create_screencast_session(m_portal.get(), static_cast<XdpOutputType>(XDP_OUTPUT_MONITOR | XDP_OUTPUT_WINDOW), XDP_SCREENCAST_FLAG_NONE, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
-        GUniqueOutPtr<GError> error;
-        auto* session = xdp_portal_create_screencast_session_finish(XDP_PORTAL(source), result, &error.outPtr());
-        if (!session) {
-            WTFLogAlways("Failed to create screencast session: %s", error->message);
-            return;
-        }
-        auto& manager = *reinterpret_cast<GStreamerDisplayCaptureDeviceManager*>(userData);
-        manager.setSession(session);
-    }, this);
-#else
-    ASSERT_NOT_REACHED();
-    callback();
-#endif
-}
-
-#if USE(PIPEWIRE)
-void GStreamerDisplayCaptureDeviceManager::setSession(XdpSession* session)
-{
-    ASSERT(session);
-    m_session = adoptGRef(session);
-
-    g_signal_connect_swapped(m_session.get(), "closed", G_CALLBACK(+[](GStreamerDisplayCaptureDeviceManager* manager, XdpSession*) {
-        manager->sessionWasClosed();
-    }), this);
-    xdp_session_start(m_session.get(), nullptr, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
-        auto* session = XDP_SESSION(source);
-        GUniqueOutPtr<GError> error;
-        auto& manager = *reinterpret_cast<GStreamerDisplayCaptureDeviceManager*>(userData);
-        if (!xdp_session_start_finish(session, result, &error.outPtr())) {
-            WTFLogAlways("Failed to start screencast session: %s", error->message);
-            manager.notifyClient();
-            return;
-        }
-
-        manager.sessionStarted();
-    }, this);
-}
-#endif
-
-void GStreamerDisplayCaptureDeviceManager::sessionStarted()
-{
-    m_devices.clear();
-#if USE(PIPEWIRE)
-    int fd = xdp_session_open_pipewire_remote(m_session.get());
-
-    // FIXME: The libportal API doesn't seem to expose which XdpOutputType was selected by the
-    // user, so hardcode Screen here. 🤷
-    CaptureDevice captureDevice(WTF::numberToStringUnsigned<String>(fd), CaptureDevice::DeviceType::Screen, makeString("Capture Display"));
-    captureDevice.setEnabled(true);
-    m_devices.append(WTFMove(captureDevice));
-#endif
-    notifyClient();
-}
-
-void GStreamerDisplayCaptureDeviceManager::notifyClient()
-{
-    if (m_callback)
-        m_callback();
-}
-
-void GStreamerDisplayCaptureDeviceManager::sessionWasClosed()
-{
-#if USE(PIPEWIRE)
-    m_session = nullptr;
-#endif
-    m_devices.clear();
-    deviceChanged();
 }
 
 } // namespace WebCore

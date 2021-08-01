@@ -33,7 +33,7 @@
 @interface WKCompositingLayer : CALayer
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-@property (nonatomic, retain, setter=_setWKContentsDisplayList:) __attribute__((NSObject)) CFDataRef _wkContentsDisplayList;
+- (void)_setWKContents:(id)contents withDisplayList:(CFDataRef)data;
 #endif
 
 @end

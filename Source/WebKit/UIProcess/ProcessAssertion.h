@@ -51,7 +51,7 @@ enum class ProcessAssertionType {
     UnboundedNetworking,
     Foreground,
     MediaPlayback,
-    FinishTaskUninterruptable,
+    FinishTaskInterruptable,
 };
 
 class ProcessAssertion : public ThreadSafeRefCounted<ProcessAssertion>, public CanMakeWeakPtr<ProcessAssertion, WeakPtrFactoryInitialization::Eager> {
@@ -72,6 +72,7 @@ public:
     }
     virtual ~ProcessAssertion();
 
+    void setPrepareForInvalidationHandler(Function<void()>&& handler) { m_prepareForInvalidationHandler = WTFMove(handler); }
     void setInvalidationHandler(Function<void()>&& handler) { m_invalidationHandler = WTFMove(handler); }
 
     ProcessAssertionType type() const { return m_assertionType; }
@@ -86,6 +87,7 @@ protected:
     void acquireSync();
 
 #if PLATFORM(IOS_FAMILY)
+    void processAssertionWillBeInvalidated();
     virtual void processAssertionWasInvalidated();
 #endif
 
@@ -98,6 +100,7 @@ private:
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
     bool m_wasInvalidated { false };
 #endif
+    Function<void()> m_prepareForInvalidationHandler;
     Function<void()> m_invalidationHandler;
 };
 

@@ -204,7 +204,7 @@ void JITWorklist::waitUntilAllPlansForVMAreReady(VM& vm)
         if (allAreCompiled)
             break;
 
-        m_planCompiled.wait(*m_lock);
+        m_planCompiledOrCancelled.wait(*m_lock);
     }
 }
 
@@ -333,6 +333,7 @@ void JITWorklist::removeMatchingPlansForVM(VM& vm, const MatchFunction& matches)
         RELEASE_ASSERT(plan->stage() != JITPlanStage::Canceled);
         deadPlanKeys.add(plan->key());
     }
+    bool didCancelPlans = !deadPlanKeys.isEmpty();
     for (JITCompilationKey key : deadPlanKeys)
         m_plans.take(key)->cancel();
     for (auto& queue : m_queues) {
@@ -350,6 +351,8 @@ void JITWorklist::removeMatchingPlansForVM(VM& vm, const MatchFunction& matches)
         m_readyPlans[i--] = m_readyPlans.last();
         m_readyPlans.removeLast();
     }
+    if (didCancelPlans)
+        m_planCompiledOrCancelled.notifyAll();
 }
 
 } // namespace JSC

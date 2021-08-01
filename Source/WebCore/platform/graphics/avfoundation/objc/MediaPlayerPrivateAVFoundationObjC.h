@@ -197,6 +197,7 @@ private:
     void checkPlayability();
     void setRateDouble(double) final;
     double rate() const final;
+    double effectiveRate() const final;
     void setPreservesPitch(bool) final;
     void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
     void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;

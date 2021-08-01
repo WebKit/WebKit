@@ -701,6 +701,7 @@ enum AutoplayPolicy {
     [Conditional=VIDEO] boolean privatePlayerMuted(HTMLMediaElement media);
     [Conditional=VIDEO] boolean isMediaElementHidden(HTMLMediaElement media);
     [Conditional=VIDEO] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
+    [Conditional=VIDEO] double elementEffectivePlaybackRate(HTMLMediaElement media);
 
     undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
 
@@ -920,6 +921,7 @@ enum AutoplayPolicy {
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
+    undefined requestTextRecognition(Element element, VoidCallback callback);
     undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines);
 
     boolean usingAppleInternalSDK();

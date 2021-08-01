@@ -3,12 +3,12 @@ layer at (0,0) size 785x604
 layer at (0,0) size 785x604
   RenderBlock {HTML} at (0,0) size 785x604
     RenderBody {BODY} at (8,8) size 769x588
-      RenderMenuList {SELECT} at (2,2) size 71x30 [color=#808080] [bgcolor=#FFFFFF] [border: (1px solid #808080)]
+      RenderMenuList {SELECT} at (2,2) size 71x30 [color=#929595] [bgcolor=#FFFFFF] [border: (1px solid #929595)]
         RenderBlock (anonymous) at (1,1) size 69x28
           RenderText at (5,5) size 43x17
             text run at (5,5) width 43: "PASS"
       RenderBR {BR} at (75,8) size 0x17
-      RenderMenuList {SELECT} at (2,36) size 71x30 [color=#808080] [bgcolor=#FFFFFF] [border: (1px solid #808080)]
+      RenderMenuList {SELECT} at (2,36) size 71x30 [color=#929595] [bgcolor=#FFFFFF] [border: (1px solid #929595)]
         RenderBlock (anonymous) at (1,1) size 69x28
           RenderText at (5,5) size 43x17
             text run at (5,5) width 43: "PASS"
@@ -23,9 +23,9 @@ layer at (0,0) size 785x604
           RenderText at (5,5) size 43x17
             text run at (5,5) width 43: "PASS"
       RenderBR {BR} at (75,110) size 0x17
-      RenderListBox {SELECT} at (2,138) size 64x73 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,138) size 64x73 [color=#929595] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (68,192) size 0x17
-      RenderListBox {SELECT} at (2,215) size 64x73 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderListBox {SELECT} at (2,215) size 64x73 [color=#929595] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (68,269) size 0x17
       RenderListBox {SELECT} at (2,292) size 64x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (68,346) size 0x17

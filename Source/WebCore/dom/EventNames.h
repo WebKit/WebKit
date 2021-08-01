@@ -134,6 +134,7 @@ namespace WebCore {
     macro(focus) \
     macro(focusin) \
     macro(focusout) \
+    macro(formdata) \
     macro(gamepadconnected) \
     macro(gamepaddisconnected) \
     macro(gesturechange) \

@@ -135,7 +135,7 @@ public:
     std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void updateScrollSnapState(const ScrollableArea&);
     void updateGestureInProgressState(const PlatformWheelEvent&);
-    float adjustScrollDestination(ScrollEventAxis, float destinationOffset, float velocity, std::optional<float> originalOffset);
+    float adjustScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset);
 
 #if PLATFORM(MAC)
     // Returns true if handled.
@@ -159,7 +159,7 @@ public:
 #endif
 
 private:
-    void setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis, int);
+    void setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis, ScrollOffset);
 
     void updateScrollSnapAnimatingState(MonotonicTime);
     void updateRubberBandAnimatingState(MonotonicTime);

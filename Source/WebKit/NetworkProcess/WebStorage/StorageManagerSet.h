@@ -100,14 +100,10 @@ private:
     HashSet<IPC::Connection::UniqueID> m_connections;
     Ref<WorkQueue> m_queue;
 
-    enum class State {
-        Running,
-        WillSuspend,
-        Suspended
-    };
-    State m_state { State::Running };
-    Lock m_stateLock;
-    Condition m_stateChangeCondition;
+    Lock m_suspensionLock;
+    Condition m_suspensionCondition;
+    bool m_shouldSuspend WTF_GUARDED_BY_LOCK(m_suspensionLock) { false };
+    uint64_t m_suspensionIdentifier WTF_GUARDED_BY_LOCK(m_suspensionLock) { 0 };
 };
 
 } // namespace WebKit

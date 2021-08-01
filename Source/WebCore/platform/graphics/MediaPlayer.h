@@ -411,6 +411,8 @@ public:
 
     double rate() const;
     void setRate(double);
+    double effectiveRate() const;
+
     double requestedRate() const;
 
     bool supportsPlayAtHostTime() const;

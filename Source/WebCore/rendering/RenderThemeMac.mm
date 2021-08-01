@@ -2103,15 +2103,20 @@ int RenderThemeMac::sliderTickOffsetFromTrackCenter() const
 }
 #endif
 
-const int sliderThumbWidth = 15;
-const int sliderThumbHeight = 15;
+// FIXME (<rdar://problem/80870479>): Ideally, this constant should be obtained from AppKit using -[NSSliderCell knobThickness].
+// However, the method currently returns an incorrect value, both with and without a control view associated with the cell.
+#if HAVE(LARGE_CONTROL_SIZE)
+constexpr int sliderThumbThickness = 17;
+#else
+constexpr int sliderThumbThickness = 15;
+#endif
 
 void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
     float zoomLevel = style.effectiveZoom();
     if (style.appearance() == SliderThumbHorizontalPart || style.appearance() == SliderThumbVerticalPart) {
-        style.setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), LengthType::Fixed));
-        style.setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), LengthType::Fixed));
+        style.setWidth(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
+        style.setHeight(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
     }
 }
 

@@ -1,3 +1,303 @@
+2021-07-28  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/opus container support
+        https://bugs.webkit.org/show_bug.cgi?id=227110
+        <rdar://problem/79437067>
+
+        Reviewed by Jer Noble.
+
+        Add WebMWebAudioEnabled preference to make canPlayType return probably for mimetype:
+        "audio/webm; codecs=opus"
+        Disabled by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        makeWeakPtr should support Ref and RefPtr as the argument
+        https://bugs.webkit.org/show_bug.cgi?id=228574
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds variants of makeWeakPtr<T> which take Ref<T> and RefPtr<T>.
+
+        Tests: TestWebKitAPI.WTF_WeakPtr.MakeWeakPtrTakesRef
+               TestWebKitAPI.WTF_WeakPtr.MakeWeakPtrTakesRefPtr
+
+        * wtf/WeakPtr.h:
+        (WTF::makeWeakPtr):
+
+2021-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] macOS Monterey and parallel OSes no longer need r280103
+        https://bugs.webkit.org/show_bug.cgi?id=228539
+
+        Reviewed by Alan Bujtas.
+
+        Core Text's behavior changed on these OSes.
+
+        * wtf/PlatformUse.h:
+
+2021-07-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, speculative revert of r280193
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::shrinkCapacity):
+        (WTF::Malloc>::shrinkToBestFit): Deleted.
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::BufferFromStaticDataTranslator::equal):
+        * wtf/text/StringView.h:
+        (WTF::StringView::stripLeadingMatchedCharacters): Deleted.
+
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] WebKit is making GroupActivities API calls for all WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=228299
+        <rdar://80802982>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-07-26  Per Arne  <pvollan@apple.com>
+
+        The layout test fast/images/heic-as-background-image.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=228195
+        <rdar://80334724>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add HAVE macro for the system function CMPhotoIsTileDecoderAvailable.
+
+        * wtf/PlatformHave.h:
+
+2021-07-26  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] All home screen web apps resume when any home screen web app is foregrounded
+        https://bugs.webkit.org/show_bug.cgi?id=228246
+        <rdar://72949281>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-07-23  Chris Dumez  <cdumez@apple.com>
+
+        SharedBuffer::takeData() is a bit dangerous
+        https://bugs.webkit.org/show_bug.cgi?id=228161
+
+        Reviewed by Darin Adler.
+
+        Add Vector::uncheckedAppend() overload that takes in a Span.
+
+        * wtf/Vector.h:
+        (WTF::Vector::uncheckedAppend):
+        (WTF::Malloc>::uncheckedAppend):
+
+2021-07-23  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r280205.
+
+        Broke multiple WebAuthn tests.
+
+        Reverted changeset:
+
+        "REGRESSION (r278877) [Cocoa] WebAuthn stopped working for
+        non-Safari browsers"
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        https://commits.webkit.org/r280205
+
+2021-07-23  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Remove libportal dependency
+        https://bugs.webkit.org/show_bug.cgi?id=228056
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable screen capture on GStreamer
+        ports. The PIPEWIRE ifdef is redundant.
+
+2021-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        <rdar://problem/80693607>
+
+        Reviewed by Per Arne Vollan.
+
+        Add new SPI header for code signing features.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/cocoa/SecuritySPI.h: Move some SecTask calls out of PLATFORM(MAC).
+        * wtf/spi/darwin/CodeSignSPI.h: Added.
+
+2021-07-22  Saam Barati  <sbarati@apple.com>
+
+        Fix uses of Dependency::fence with respect to the compiler outsmarting us
+        https://bugs.webkit.org/show_bug.cgi?id=227757
+        <rdar://problem/80280931>
+
+        Reviewed by Robin Morisset.
+
+        * wtf/Atomics.h:
+        (WTF::opaque):
+        (WTF::Dependency::loadAndFence):
+
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, follow-up after r280193
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        I accidentally reverted auto change when switching branches.
+
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::BufferFromStaticDataTranslator::equal):
+
+2021-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Micro-optimize innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=228142
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::shrinkToBestFit): This shrinks the backing storage to "appropriate for the living Vector".
+        * wtf/text/AtomStringImpl.cpp:
+        (WTF::UCharBufferTranslator::equal): WTF::equal for String does not check hash. This is because computing hash is expensive
+        and we would like to avoid that if it is not necessary. But when inserting string into AtomStringTable, we can use hash value
+        since they must be already computed because of HashMap's requirement. So let's use it before calling WTF::equal.
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::BufferFromStaticDataTranslator::equal):
+        * wtf/text/StringView.h:
+        (WTF::StringView::stripLeadingMatchedCharacters): Add this and use it in HTMLTreeBuilder.
+
+2021-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        XHR.send(Document) should replace mismatched surrogates with replacement character before sending
+        https://bugs.webkit.org/show_bug.cgi?id=228170
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::replaceUnpairedSurrogatesWithReplacementCharacter):
+        * wtf/text/WTFString.h:
+        Move from WebCore, rename as suggested, update spec link to one that works.
+
+2021-07-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=228178
+
+        Reviewed by Adrian Perez de Castro.
+
+        Detect when compiling for the RISC-V 64-bit architecture and define
+        the WTF_CPU_RISCV64 macro under that condition, enabling use of
+        CPU(RISCV64) build guards.
+
+        * wtf/PageBlock.h: Use 4 kB as the page size ceiling for CPU(RISCV64).
+        * wtf/PlatformCPU.h:
+
+2021-07-21  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Allow the user to configure the MemoryPressureHandler inside the web process
+        https://bugs.webkit.org/show_bug.cgi?id=222738
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a configuration structure to MemoryPressureHandler, with the methods to encode/decode it. Also
+        add a method to set a configuration structure to a MemoryPressureHandler instance, and modify the
+        behavior so the the configuration is used when checking the memory used by the process.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::thresholdForPolicy):
+        (WTF::MemoryPressureHandler::policyForFootprint):
+        (WTF::MemoryPressureHandler::Configuration::Configuration):
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::Configuration::encode const):
+        (WTF::MemoryPressureHandler::Configuration::decode):
+        (WTF::MemoryPressureHandler::setConfiguration):
+
+2021-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r280129.
+
+        Broke the internal Monterey build bots
+
+        Reverted changeset:
+
+        "GetIdentifierStringForPreferredVoiceInListWithLocale() is
+        deprecated in Monterey"
+        https://bugs.webkit.org/show_bug.cgi?id=228066
+        https://commits.webkit.org/r280129
+
+2021-07-21  David Kilzer  <ddkilzer@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/PlatformHave.h:
+        - Add HAVE(SPEECHSYNTHESIS_MONTEREY_SPI).
+
+2021-07-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        r280103 is not necessary on all operating systems
+        https://bugs.webkit.org/show_bug.cgi?id=228136
+
+        Reviewed by Alan Bujtas.
+
+        * wtf/PlatformUse.h:
+
+2021-07-16  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support color-schemes CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208204
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/PlatformHave.h:
+        Enable HAVE_OS_DARK_MODE_SUPPORT for GTK and WPE.
+
+2021-07-15  Jean-Yves Avenard  <jya@apple.com>
+
+        [Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure (Enable VP8/VP9/Vorbis/Opus in WebKitLegacy)
+        https://bugs.webkit.org/show_bug.cgi?id=228005
+        rdar://80346720
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Enable VP8/VP9/Vorbis/Opus
+        codecs for WebKitLegacy, no reasons they weren't already enabled.
+
+2021-07-15  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Fix the build warning below since r279895.
+        warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+
+        * wtf/URL.cpp:
+        (WTF::URL::setPath):
+
+2021-07-15  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for BroadcastChannel behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=227924
+
+        Reviewed by Sam Weinig.
+
+        Add experimental feature flag for BroadcastChannel, off by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-07-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][Pipewire] Implement getDisplayMedia() backend

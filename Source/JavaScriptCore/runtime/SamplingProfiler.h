@@ -75,9 +75,12 @@ public:
         Executable,
         Wasm,
         Host,
+        RegExp,
         C,
         Unknown,
     };
+    static constexpr intptr_t internalSourceID = -1;
+    static constexpr intptr_t aggregatedExternalSourceID = -2;
 
     struct StackFrame {
         StackFrame(ExecutableBase* executable)
@@ -92,6 +95,7 @@ public:
         const void* cCodePC { nullptr };
         ExecutableBase* executable { nullptr };
         JSObject* callee { nullptr };
+        RegExp* regExp { nullptr };
 #if ENABLE(WEBASSEMBLY)
         std::optional<Wasm::IndexOrName> wasmIndexOrName;
 #endif
@@ -120,6 +124,7 @@ public:
             BytecodeIndex bytecodeIndex;
             CodeBlockHash codeBlockHash;
             JITType jitType { JITType::None };
+            bool isRegExp { false };
         };
 
         CodeLocation semanticLocation;
@@ -152,6 +157,7 @@ public:
         void* topPC;
         bool topFrameIsLLInt;
         void* llintPC;
+        RegExp* regExp;
         Vector<UnprocessedStackFrame> frames;
     };
 

@@ -19,6 +19,7 @@ ExtendableMessageEvent conditional=SERVICE_WORKER
 ErrorEvent
 FetchEvent conditional=SERVICE_WORKER
 FocusEvent
+FormDataEvent
 HashChangeEvent
 InputEvent
 InputEvents interfaceName=InputEvent
@@ -35,6 +36,7 @@ PageTransitionEvent
 PopStateEvent
 ProgressEvent
 PromiseRejectionEvent
+SubmitEvent
 TextEvent
 TransitionEvent
 UIEvent

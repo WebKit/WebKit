@@ -76,6 +76,7 @@
 #include "WebAlternativeTextClient.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
+#include "WebBroadcastChannelRegistry.h"
 #include "WebCacheStorageProvider.h"
 #include "WebChromeClient.h"
 #include "WebColorChooser.h"
@@ -309,6 +310,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "GtkSettingsManagerProxy.h"
 #include "WebPrintOperationGtk.h"
 #include <WebCore/SelectionData.h>
 #include <gtk/gtk.h>
@@ -560,7 +562,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebProgressTrackerClient>(*this),
         makeUniqueRef<WebFrameLoaderClient>(m_mainFrame.copyRef()),
         makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
-        makeUniqueRef<MediaRecorderProvider>(*this)
+        makeUniqueRef<MediaRecorderProvider>(*this),
+        WebProcess::singleton().broadcastChannelRegistry()
     );
     pageConfiguration.chromeClient = new WebChromeClient(*this);
 #if ENABLE(CONTEXT_MENUS)
@@ -732,7 +735,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setPaginationLineGridEnabled(parameters.paginationLineGridEnabled);
 
 #if PLATFORM(GTK)
-    themeDidChange(WTFMove(parameters.themeName));
+    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
 #endif
 
     effectiveAppearanceDidChange(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
@@ -967,6 +970,10 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
 
+#if PLATFORM(GTK)
+    GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+#endif
+
     platformReinitialize();
 }
 
@@ -1194,6 +1201,11 @@ WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL&
 }
 #endif
 
+bool WebPage::hasPendingEditorStateUpdate() const
+{
+    return m_pendingEditorStateUpdateStatus != PendingEditorStateUpdateStatus::NotScheduled;
+}
+
 EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
 {
     // Ref the frame because this function may perform layout, which may cause frame destruction.
@@ -1221,6 +1233,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     result.isInPasswordField = selection.isInPasswordField();
     result.hasComposition = editor.hasComposition();
     result.shouldIgnoreSelectionChanges = editor.ignoreSelectionChanges() || (editor.client() && !editor.client()->shouldRevealCurrentSelectionAfterInsertion());
+    result.triggeredByAccessibilitySelectionChange = m_pendingEditorStateUpdateStatus == PendingEditorStateUpdateStatus::ScheduledDuringAccessibilitySelectionChange || m_isChangingSelectionForAccessibility;
 
     Ref<Document> document = *frame->document();
     result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
@@ -2844,6 +2857,20 @@ private:
     const WebEvent* m_previousCurrentEvent;
 };
 
+#if ENABLE(CONTEXT_MENUS)
+
+void WebPage::didShowContextMenu()
+{
+    m_waitingForContextMenuToShow = false;
+}
+
+void WebPage::didDismissContextMenu()
+{
+    corePage()->contextMenuController().didDismissContextMenu();
+}
+
+#endif // ENABLE(CONTEXT_MENUS)
+
 #if ENABLE(CONTEXT_MENU_EVENT)
 static bool isContextClick(const PlatformMouseEvent& event)
 {
@@ -2949,7 +2976,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<SandboxE
 
 #if ENABLE(CONTEXT_MENUS)
     // Don't try to handle any pending mouse events if a context menu is showing.
-    if (m_isShowingContextMenu)
+    if (m_waitingForContextMenuToShow)
         shouldHandleEvent = false;
 #endif
 #if ENABLE(DRAG_SUPPORT)
@@ -4119,9 +4146,9 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     m_pendingPageExtendedBackgroundColorChange = false;
     m_pendingSampledPageTopColorChange = false;
 
-    if (m_hasPendingEditorStateUpdate) {
+    if (hasPendingEditorStateUpdate()) {
         layerTransaction.setEditorState(editorState());
-        m_hasPendingEditorStateUpdate = false;
+        m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;
     }
 }
 
@@ -4159,12 +4186,26 @@ void WebPage::didUpdateRendering()
     send(Messages::WebPageProxy::DidUpdateRenderingAfterCommittingLoad());
 }
 
+bool WebPage::shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const
+{
+#if ENABLE(GPU_PROCESS)
+    static constexpr unsigned maxRescheduledRenderingUpdateCount = FullSpeedFramesPerSecond;
+    if (rescheduledRenderingUpdateCount >= maxRescheduledRenderingUpdateCount)
+        return true;
+
+    static constexpr unsigned maxDelayedRenderingUpdateCount = 2;
+    if (m_remoteRenderingBackendProxy && m_remoteRenderingBackendProxy->delayedRenderingUpdateCount() > maxDelayedRenderingUpdateCount)
+        return false;
+#endif
+    return true;
+}
+
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
     m_page->finalizeRenderingUpdate(flags);
 #if ENABLE(GPU_PROCESS)
     if (m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy->remoteResourceCacheProxy().didFinalizeRenderingUpdate();
+        m_remoteRenderingBackendProxy->finalizeRenderingUpdate();
 #endif
 }
 
@@ -6260,6 +6301,12 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
+    bool needsSiteSpecificViewportQuirks = frame->coreFrame()->settings().needsSiteSpecificQuirks();
+    if (m_needsSiteSpecificViewportQuirks != needsSiteSpecificViewportQuirks) {
+        m_needsSiteSpecificViewportQuirks = needsSiteSpecificViewportQuirks;
+        send(Messages::WebPageProxy::SetNeedsSiteSpecificViewportQuirks(needsSiteSpecificViewportQuirks));
+    }
+
     if (m_drawingArea)
         m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 
@@ -6443,7 +6490,7 @@ void WebPage::sendEditorStateUpdate()
     if (frame.editor().ignoreSelectionChanges())
         return;
 
-    m_hasPendingEditorStateUpdate = false;
+    m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;
 
     // If we immediately dispatch an EditorState update to the UI process, layout may not be up to date yet.
     // If that is the case, just send what we have (i.e. don't include post-layout data) and wait until the
@@ -6457,10 +6504,17 @@ void WebPage::sendEditorStateUpdate()
 
 void WebPage::scheduleFullEditorStateUpdate()
 {
-    if (m_hasPendingEditorStateUpdate)
+    if (hasPendingEditorStateUpdate()) {
+        if (m_isChangingSelectionForAccessibility)
+            m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::ScheduledDuringAccessibilitySelectionChange;
         return;
+    }
 
-    m_hasPendingEditorStateUpdate = true;
+    if (m_isChangingSelectionForAccessibility)
+        m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::ScheduledDuringAccessibilitySelectionChange;
+    else
+        m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::Scheduled;
+
     // FIXME: Scheduling a compositing layer flush here can be more expensive than necessary.
     // Instead, we should just compute and send post-layout editor state during the next frame.
     m_drawingArea->triggerRenderingUpdate();
@@ -6520,7 +6574,7 @@ void WebPage::flushPendingSampledPageTopColorChange()
 
 void WebPage::flushPendingEditorStateUpdate()
 {
-    if (!m_hasPendingEditorStateUpdate)
+    if (!hasPendingEditorStateUpdate())
         return;
 
     Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -7435,7 +7489,8 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         completionHandlers.append(WTFMove(completion));
     m_elementsPendingTextRecognition.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
 
-    auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+    auto cachedImage = renderImage.cachedImage();
+    auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
     sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
         auto protectedPage = makeRefPtr(webPage.get());
         if (!protectedPage)
@@ -7676,6 +7731,11 @@ void WebPage::modelElementPreviewDidObtainContextId(const WebCore::ElementContex
         downcast<WebCore::HTMLModelElement>(*element).inlinePreviewDidObtainContextId(uuid, contextId);
 }
 #endif
+
+void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
+{
+    mainFrameView()->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
+}
 
 } // namespace WebKit
 

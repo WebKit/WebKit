@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
+class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject, public CanMakeWeakPtr<FetchBodyOwner> {
 public:
     FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
     ~FetchBodyOwner();

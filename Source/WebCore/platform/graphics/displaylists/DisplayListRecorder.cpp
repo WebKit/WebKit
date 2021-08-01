@@ -71,7 +71,7 @@ void Recorder::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRe
     append<GetPixelBuffer>(outputFormat, sourceRect);
 }
 
-void Recorder::putPixelBuffer(const WebCore::PixelBuffer& pixelBuffer, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void Recorder::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     append<PutPixelBuffer>(pixelBuffer, srcRect, destPoint, destFormat);
 }
@@ -101,10 +101,10 @@ static bool containsOnlyInlineStateChanges(const GraphicsContextStateChange& cha
     return true;
 }
 
-void Recorder::cacheNativeImage(NativeImage& image)
+void Recorder::recordNativeImageUse(NativeImage& image)
 {
     if (m_delegate)
-        m_delegate->cacheNativeImage(image);
+        m_delegate->recordNativeImageUse(image);
     m_displayList.cacheNativeImage(image);
 }
 
@@ -112,9 +112,9 @@ void Recorder::appendStateChangeItem(const GraphicsContextStateChange& changes, 
 {
     if (!containsOnlyInlineStateChanges(changes, changeFlags)) {
         if (auto pattern = changes.m_state.strokePattern)
-            cacheNativeImage(pattern->tileImage());
+            recordNativeImageUse(pattern->tileImage());
         if (auto pattern = changes.m_state.fillPattern)
-            cacheNativeImage(pattern->tileImage());
+            recordNativeImageUse(pattern->tileImage());
         append<SetState>(changes.m_state, changeFlags);
         return;
     }
@@ -193,30 +193,32 @@ void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, cons
 void Recorder::appendDrawGlyphsItemWithCachedFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
     if (m_delegate)
-        m_delegate->cacheFont(const_cast<Font&>(font));
+        m_delegate->recordFontUse(const_cast<Font&>(font));
     m_displayList.cacheFont(const_cast<Font&>(font));
     append<DrawGlyphs>(font, glyphs, advances, count, localAnchor, smoothingMode);
 }
 
-void Recorder::drawImageBuffer(WebCore::ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     if (!canDrawImageBuffer(imageBuffer)) {
         GraphicsContext::drawImageBuffer(imageBuffer, destRect, srcRect, options);
         return;
     }
+    if (m_delegate)
+        m_delegate->recordImageBufferUse(imageBuffer);
     m_displayList.cacheImageBuffer(imageBuffer);
     append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
 }
 
 void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    cacheNativeImage(image);
+    recordNativeImageUse(image);
     append<DrawNativeImage>(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
 void Recorder::drawPattern(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    cacheNativeImage(image);
+    recordNativeImageUse(image);
     append<DrawPattern>(image.renderingResourceIdentifier(), imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
@@ -465,6 +467,8 @@ IntRect Recorder::clipBounds() const
 
 void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect)
 {
+    if (m_delegate)
+        m_delegate->recordImageBufferUse(imageBuffer);
     m_displayList.cacheImageBuffer(imageBuffer);
     append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect);
 }

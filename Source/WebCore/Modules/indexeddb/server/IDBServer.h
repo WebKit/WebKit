@@ -62,7 +62,7 @@ public:
     WEBCORE_EXPORT void openDatabase(const IDBRequestData&);
     WEBCORE_EXPORT void deleteDatabase(const IDBRequestData&);
     WEBCORE_EXPORT void abortTransaction(const IDBResourceIdentifier&);
-    WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&);
+    WEBCORE_EXPORT void commitTransaction(const IDBResourceIdentifier&, uint64_t pendingRequestCount);
     WEBCORE_EXPORT void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&);
     WEBCORE_EXPORT void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     WEBCORE_EXPORT void renameObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName);
@@ -107,6 +107,7 @@ public:
     StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
     WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
 
+    WEBCORE_EXPORT bool hasDatabaseActivitiesOnMainThread() const;
     WEBCORE_EXPORT void stopDatabaseActivitiesOnMainThread();
 
 private:

@@ -526,7 +526,7 @@ bool RenderLayerCompositor::updateCompositingPolicy()
     static constexpr auto memoryPolicyCachingDuration = 2_s;
     auto now = MonotonicTime::now();
     if (now - cachedMemoryPolicyTime > memoryPolicyCachingDuration) {
-        cachedMemoryPolicy = MemoryPressureHandler::currentMemoryUsagePolicy();
+        cachedMemoryPolicy = MemoryPressureHandler::singleton().currentMemoryUsagePolicy();
         cachedMemoryPolicyTime = now;
     }
 

@@ -91,6 +91,7 @@ public:
 
     virtual bool supportsSimultaneousTransactions() = 0;
     virtual bool isEphemeral() = 0;
+    virtual String fullDatabasePath() const = 0;
 
     virtual void close() = 0;
 

@@ -11,14 +11,11 @@ layer at (0,0) size 800x72
           RenderFlexibleBox {DIV} at (3,3) size 201x18
             RenderBlock {DIV} at (201,9) size 0x0
             RenderBlock {DIV} at (16,0) size 185x18
-            RenderImage {DIV} at (0,1) size 16x16
         RenderText {#text} at (410,5) size 4x17
           text run at (410,5) width 4 RTL: " "
         RenderTextControl {INPUT} at (185,2) size 223x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 217x18
-            RenderImage {DIV} at (201,1) size 16x16
             RenderBlock {DIV} at (16,0) size 185x18
-            RenderImage {DIV} at (0,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,28) size 784x28
         RenderText {#text} at (0,5) size 159x17
@@ -27,14 +24,11 @@ layer at (0,0) size 800x72
           RenderFlexibleBox {DIV} at (3,3) size 202x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 186x18
-            RenderImage {DIV} at (186,1) size 16x16
         RenderText {#text} at (371,5) size 4x17
           text run at (371,5) width 4: " "
         RenderTextControl {INPUT} at (377,2) size 224x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 218x18
-            RenderImage {DIV} at (0,1) size 16x16
             RenderBlock {DIV} at (16,0) size 186x18
-            RenderImage {DIV} at (202,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
 layer at (443,13) size 185x18
   RenderBlock {DIV} at (0,0) size 185x18
@@ -52,3 +46,15 @@ layer at (404,41) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
     RenderText {#text} at (0,0) size 45x17
       text run at (0,0) width 45: "foobar"
+layer at (427,14) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (397,14) size 16x16
+  RenderBlock {DIV} at (201,1) size 16x16 [bgcolor=#000000]
+layer at (196,14) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (358,42) size 16x16
+  RenderBlock {DIV} at (186,1) size 16x16 [bgcolor=#000000]
+layer at (388,42) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (590,42) size 16x16
+  RenderBlock {DIV} at (202,1) size 16x16 [bgcolor=#000000]

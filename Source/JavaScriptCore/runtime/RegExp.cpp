@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001, 2004 Harri Porten (porten@kde.org)
- *  Copyright (c) 2007-2020 Apple Inc. All rights reserved.
+ *  Copyright (c) 2007-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
@@ -23,6 +23,7 @@
 #include "config.h"
 #include "RegExp.h"
 
+#include "Lexer.h"
 #include "RegExpCache.h"
 #include "RegExpInlines.h"
 #include "YarrJIT.h"
@@ -226,7 +227,7 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
     }
 }
 
-void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
+void RegExp::compile(VM* vm, Yarr::CharSize charSize)
 {
     Locker locker { cellLock() };
     
@@ -250,7 +251,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 #endif
         ) {
         auto& jitCode = ensureRegExpJITCode();
-        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode);
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::JITCompileMode::IncludeSubpatterns);
         if (!jitCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -281,7 +282,7 @@ bool RegExp::matchConcurrently(
 {
     Locker locker { cellLock() };
 
-    if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
+    if (!hasCodeFor(s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16))
         return false;
 
     position = matchInline<Vector<int>&, Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset, ovector);
@@ -290,7 +291,7 @@ bool RegExp::matchConcurrently(
     return true;
 }
 
-void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
+void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize)
 {
     Locker locker { cellLock() };
     
@@ -314,7 +315,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 #endif
         ) {
         auto& jitCode = ensureRegExpJITCode();
-        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::MatchOnly);
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::JITCompileMode::MatchOnly);
         if (!jitCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -344,7 +345,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
 {
     Locker locker { cellLock() };
 
-    if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
+    if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16))
         return false;
 
     result = matchInline<Yarr::MatchFrom::CompilerThread>(nullptr, vm, s, startOffset);
@@ -392,7 +393,7 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
             differences++;
 
     if (differences) {
-        dataLogF("RegExp Discrepency for /%s/\n    string input ", pattern().utf8().data());
+        dataLog("RegExp Discrepency for ", toSourceString(), "\n    string input ");
         unsigned segmentLen = s.length() - static_cast<unsigned>(startOffset);
 
         dataLogF((segmentLen < 150) ? "\"%s\"\n" : "\"%148s...\"\n", s.utf8().data() + startOffset);
@@ -468,14 +469,129 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
     }
 #endif
 
-static CString regexpToSourceString(const RegExp* regExp)
-{
-    return toCString("/", regExp->pattern().impl(), "/", Yarr::flagsString(regExp->flags()).data());
-}
-
 void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    out.print(regexpToSourceString(jsCast<const RegExp*>(cell)));
+    // This function can be called concurrently. So we must not ref m_pattern.
+    auto* regExp = jsCast<const RegExp*>(cell);
+    out.print(toCString("/", regExp->pattern().impl(), "/", Yarr::flagsString(regExp->flags()).data()));
+}
+
+template <typename CharacterType>
+static inline void appendLineTerminatorEscape(StringBuilder&, CharacterType);
+
+template <>
+inline void appendLineTerminatorEscape<LChar>(StringBuilder& builder, LChar lineTerminator)
+{
+    if (lineTerminator == '\n')
+        builder.append('n');
+    else
+        builder.append('r');
+}
+
+template <>
+inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar lineTerminator)
+{
+    if (lineTerminator == '\n')
+        builder.append('n');
+    else if (lineTerminator == '\r')
+        builder.append('r');
+    else if (lineTerminator == 0x2028)
+        builder.append("u2028");
+    else
+        builder.append("u2029");
+}
+
+template <typename CharacterType>
+static inline String escapePattern(const String& pattern, const CharacterType* characters, unsigned length)
+{
+    bool previousCharacterWasBackslash = false;
+    bool inBrackets = false;
+    bool shouldEscape = false;
+
+    // 15.10.6.4 specifies that RegExp.prototype.toString must return '/' + source + '/',
+    // and also states that the result must be a valid RegularExpressionLiteral. '//' is
+    // not a valid RegularExpressionLiteral (since it is a single line comment), and hence
+    // source cannot ever validly be "". If the source is empty, return a different Pattern
+    // that would match the same thing.
+    if (!length)
+        return "(?:)"_s;
+
+    // early return for strings that don't contain a forwards slash and LineTerminator
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType ch = characters[i];
+        if (!previousCharacterWasBackslash) {
+            if (inBrackets) {
+                if (ch == ']')
+                    inBrackets = false;
+            } else {
+                if (ch == '/') {
+                    shouldEscape = true;
+                    break;
+                }
+                if (ch == '[')
+                    inBrackets = true;
+            }
+        }
+
+        if (Lexer<CharacterType>::isLineTerminator(ch)) {
+            shouldEscape = true;
+            break;
+        }
+
+        if (previousCharacterWasBackslash)
+            previousCharacterWasBackslash = false;
+        else
+            previousCharacterWasBackslash = ch == '\\';
+    }
+
+    if (!shouldEscape)
+        return pattern;
+
+    previousCharacterWasBackslash = false;
+    inBrackets = false;
+    StringBuilder result;
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType ch = characters[i];
+        if (!previousCharacterWasBackslash) {
+            if (inBrackets) {
+                if (ch == ']')
+                    inBrackets = false;
+            } else {
+                if (ch == '/')
+                    result.append('\\');
+                else if (ch == '[')
+                    inBrackets = true;
+            }
+        }
+
+        // escape LineTerminator
+        if (Lexer<CharacterType>::isLineTerminator(ch)) {
+            if (!previousCharacterWasBackslash)
+                result.append('\\');
+
+            appendLineTerminatorEscape<CharacterType>(result, ch);
+        } else
+            result.append(ch);
+
+        if (previousCharacterWasBackslash)
+            previousCharacterWasBackslash = false;
+        else
+            previousCharacterWasBackslash = ch == '\\';
+    }
+
+    return result.toString();
+}
+
+String RegExp::escapedPattern() const
+{
+    if (m_patternString.is8Bit())
+        return escapePattern(m_patternString, m_patternString.characters8(), m_patternString.length());
+    return escapePattern(m_patternString, m_patternString.characters16(), m_patternString.length());
+}
+
+String RegExp::toSourceString() const
+{
+    return makeString('/', escapedPattern(), '/', Yarr::flagsString(flags()).data());
 }
 
 } // namespace JSC

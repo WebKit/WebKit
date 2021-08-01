@@ -95,9 +95,9 @@ void WebIDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& tra
     send(Messages::WebIDBServer::AbortTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
 {
-    send(Messages::WebIDBServer::CommitTransaction(transactionIdentifier));
+    send(Messages::WebIDBServer::CommitTransaction(transactionIdentifier, pendingRequestCount));
 }
 
 void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)

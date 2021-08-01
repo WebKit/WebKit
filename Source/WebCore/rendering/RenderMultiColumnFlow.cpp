@@ -43,15 +43,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnFlow);
 RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& style)
     : RenderFragmentedFlow(document, WTFMove(style))
     , m_spannerMap(makeUnique<SpannerMap>())
-    , m_lastSetWorkedOn(nullptr)
-    , m_columnCount(1)
-    , m_columnWidth(0)
-    , m_columnHeightAvailable(0)
-    , m_inLayout(false)
-    , m_inBalancingPass(false)
-    , m_needsHeightsRecalculation(false)
-    , m_progressionIsInline(false)
-    , m_progressionIsReversed(false)
 {
     setFragmentedFlowState(InsideInFragmentedFlow);
 }

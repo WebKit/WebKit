@@ -30,6 +30,13 @@ media.addEventListener("play", function() {
             checkedItems = contextmenu[0].children.filter((item) => item.checked);
             shouldBe("checkedItems.length", "1");
             shouldBeEqualToString("checkedItems[0].title", `1${multiplicationSign}`);
+
+            await new Promise((resolve, reject) => {
+                testRunner.runUIScript(`
+                    uiController.dismissMenu();
+                    uiController.uiScriptComplete();
+                `, resolve);
+            });
             await UIHelper.waitForContextMenuToHide();
 
             debug("Changing playback speed via JavaScript...");

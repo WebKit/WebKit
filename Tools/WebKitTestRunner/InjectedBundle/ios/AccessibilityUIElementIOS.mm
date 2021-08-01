@@ -58,6 +58,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSAttributedString *)attributedStringForElement;
 - (NSArray *)elementsForRange:(NSRange)range;
 - (NSString *)selectionRangeString;
+- (NSArray *)lineRectsAndText;
 - (CGPoint)accessibilityClickPoint;
 - (void)accessibilityModifySelection:(WebCore::TextGranularity)granularity increase:(BOOL)increase;
 - (NSRange)_accessibilitySelectedTextRange;
@@ -571,6 +572,11 @@ double AccessibilityUIElement::clickPointX()
 double AccessibilityUIElement::clickPointY()
 {
     return [m_element accessibilityClickPoint].y;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const
+{
+    return [[[m_element lineRectsAndText] componentsJoinedByString:@"|"] createJSStringRef];
 }
 
 double AccessibilityUIElement::intValue() const

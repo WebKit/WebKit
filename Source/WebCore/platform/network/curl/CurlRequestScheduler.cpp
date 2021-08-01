@@ -49,7 +49,7 @@ bool CurlRequestScheduler::add(CurlRequestSchedulerClient* client)
         return false;
 
     startTransfer(client);
-    startThreadIfNeeded();
+    startOrWakeUpThread();
 
     return true;
 }
@@ -71,17 +71,19 @@ void CurlRequestScheduler::callOnWorkerThread(WTF::Function<void()>&& task)
         m_taskQueue.append(WTFMove(task));
     }
 
-    startThreadIfNeeded();
+    startOrWakeUpThread();
 }
 
-void CurlRequestScheduler::startThreadIfNeeded()
+void CurlRequestScheduler::startOrWakeUpThread()
 {
     ASSERT(isMainThread());
 
     {
         Locker locker { m_mutex };
-        if (m_runThread)
+        if (m_runThread) {
+            wakeUpThreadIfPossible();
             return;
+        }
     }
 
     if (m_thread)
@@ -94,10 +96,16 @@ void CurlRequestScheduler::startThreadIfNeeded()
 
     m_thread = Thread::create("curlThread", [this] {
         workerThread();
-
-        Locker locker { m_mutex };
-        m_runThread = false;
     }, ThreadType::Network);
+}
+
+void CurlRequestScheduler::wakeUpThreadIfPossible()
+{
+    Locker locker { m_multiHandleMutex };
+    if (!m_curlMultiHandle)
+        return;
+
+    m_curlMultiHandle->wakeUp();
 }
 
 void CurlRequestScheduler::stopThreadIfNoMoreJobRunning()
@@ -119,6 +127,7 @@ void CurlRequestScheduler::stopThread()
     }
 
     if (m_thread) {
+        wakeUpThreadIfPossible();
         m_thread->waitForCompletion();
         m_thread = nullptr;
     }
@@ -143,10 +152,13 @@ void CurlRequestScheduler::workerThread()
 {
     ASSERT(!isMainThread());
 
-    m_curlMultiHandle = makeUnique<CurlMultiHandle>();
-    m_curlMultiHandle->setMaxConnects(m_maxConnects);
-    m_curlMultiHandle->setMaxTotalConnections(m_maxTotalConnections);
-    m_curlMultiHandle->setMaxHostConnections(m_maxHostConnections);
+    {
+        Locker locker { m_multiHandleMutex };
+        m_curlMultiHandle.emplace();
+        m_curlMultiHandle->setMaxConnects(m_maxConnects);
+        m_curlMultiHandle->setMaxTotalConnections(m_maxTotalConnections);
+        m_curlMultiHandle->setMaxHostConnections(m_maxHostConnections);
+    }
 
     while (true) {
         {
@@ -157,28 +169,8 @@ void CurlRequestScheduler::workerThread()
 
         executeTasks();
 
-        // Retry 'select' if it was interrupted by a process signal.
-        int rc = 0;
-        do {
-            fd_set fdread;
-            fd_set fdwrite;
-            fd_set fdexcep;
-            int maxfd = 0;
-
-            const int selectTimeoutMS = 5;
-
-            struct timeval timeout;
-            timeout.tv_sec = 0;
-            timeout.tv_usec = selectTimeoutMS * 1000; // select waits microseconds
-
-            m_curlMultiHandle->getFdSet(fdread, fdwrite, fdexcep, maxfd);
-
-            // When the 3 file descriptors are empty, winsock will return -1
-            // and bail out, stopping the file download. So make sure we
-            // have valid file descriptors before calling select.
-            if (maxfd >= 0)
-                rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
-        } while (rc == -1 && errno == EINTR);
+        const int selectTimeoutMS = INT_MAX;
+        m_curlMultiHandle->poll({ }, selectTimeoutMS);
 
         int activeCount = 0;
         while (m_curlMultiHandle->perform(activeCount) == CURLM_CALL_MULTI_PERFORM) { }
@@ -199,7 +191,10 @@ void CurlRequestScheduler::workerThread()
         stopThreadIfNoMoreJobRunning();
     }
 
-    m_curlMultiHandle = nullptr;
+    {
+        Locker locker { m_multiHandleMutex };
+        m_curlMultiHandle.reset();
+    }
 }
 
 void CurlRequestScheduler::startTransfer(CurlRequestSchedulerClient* client)
