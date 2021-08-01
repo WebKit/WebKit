@@ -308,6 +308,16 @@
          "lypanov"
       ]
    },
+   "Alexander Mikhaylenko" : {
+      "emails" : [
+         "alexm@gnome.org"
+      ],
+      "expertise" : "WebkitGTK, Epiphany",
+      "nicks" : [
+         "alexm"
+      ],
+      "status" : "committer"
+   },
    "Alexander Pavlov" : {
       "emails" : [
          "apavlov@chromium.org",
