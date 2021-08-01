@@ -90,6 +90,8 @@ class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactor
 public:
     RTCSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&&);
 
+    void disableRelay() final { m_isRelayDisabled = true; }
+
 private:
     // SuspendableSocketFactory
     rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
@@ -98,7 +100,6 @@ private:
     rtc::AsyncResolverInterface* CreateAsyncResolver() final;
     void suspend() final;
     void resume() final;
-    void disableRelay() final { m_isRelayDisabled = true; }
 
 private:
     String m_userAgent;
@@ -126,7 +127,7 @@ rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::Socke
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions& options)
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options);
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options, m_isRelayDisabled);
 }
 
 rtc::AsyncResolverInterface* RTCSocketFactory::CreateAsyncResolver()
@@ -159,7 +160,13 @@ void LibWebRTCProvider::startedNetworkThread()
 
 std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&& domain)
 {
-    return makeUnique<RTCSocketFactory>(WTFMove(userAgent), isFirstParty, WTFMove(domain));
+    auto factory = makeUnique<RTCSocketFactory>(WTFMove(userAgent), isFirstParty, WTFMove(domain));
+
+    auto* page = m_webPage.corePage();
+    if (!page || !page->settings().webRTCSocketsProxyingEnabled())
+        factory->disableRelay();
+
+    return factory;
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> LibWebRTCProvider::createRTCDataChannelRemoteHandlerConnection()

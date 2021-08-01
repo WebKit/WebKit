@@ -177,9 +177,9 @@ rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::Socket
 }
 #endif
 
-void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options)
+void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options, bool isRelayDisabled)
 {
-    callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, localAddress, remoteAddress, userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
+    callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, localAddress, remoteAddress, userAgent = WTFMove(userAgent).isolatedCopy(), options, isRelayDisabled]() mutable {
         if (!m_connection)
             return;
 
@@ -188,10 +188,10 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
             m_connection->connection().send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
             return;
         }
-        callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
+        callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options, isRelayDisabled]() mutable {
 #if PLATFORM(COCOA)
             if (m_platformTCPSocketsEnabled) {
-                if (auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress, options, m_ipcConnection.copyRef())) {
+                if (auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress, options, isRelayDisabled, m_ipcConnection.copyRef())) {
                     addSocket(identifier, WTFMove(socket));
                     return;
                 }

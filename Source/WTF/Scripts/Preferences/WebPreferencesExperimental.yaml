@@ -1357,6 +1357,19 @@ WebRTCPlatformUDPSocketsEnabled:
     WebKit:
       default: false
 
+WebRTCSocketsProxyingEnabled:
+  type: bool
+  humanReadableName: "WebRTC Sockets Proxying"
+  humanReadableDescription: "Enable WebRTC Sockets Proxying"
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebRTCVP9Profile0CodecEnabled:
   type: bool
   humanReadableName: "WebRTC VP9 profile 0 codec"

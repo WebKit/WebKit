@@ -114,7 +114,7 @@ private:
     void startListeningForIPC();
 
     void createUDPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t, uint16_t, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&&);
-    void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int);
+    void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int, bool isRelayDisabled);
     void createServerTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t minPort, uint16_t maxPort, int);
     void wrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier);
     void sendToSocket(WebCore::LibWebRTCSocketIdentifier, const IPC::DataReference&, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);

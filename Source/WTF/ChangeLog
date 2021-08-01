@@ -1,3 +1,12 @@
+2021-08-01  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an experimental feature to toggle WebRTC socket proxying
+        https://bugs.webkit.org/show_bug.cgi?id=228681
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Move JIT_UNICODE_EXPRESSIONS to ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) in PlatformEnable.h

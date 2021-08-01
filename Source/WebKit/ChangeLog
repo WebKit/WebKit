@@ -1,3 +1,29 @@
+2021-08-01  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an experimental feature to toggle WebRTC socket proxying
+        https://bugs.webkit.org/show_bug.cgi?id=228681
+
+        Reviewed by Eric Carlson.
+
+        Decide whether to disable proxying based on experimental feature in WebProcess.
+        Send the disable relay value from WebProcess to NetworkProcess for TCP sockets.
+        Manually tested.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::createClientTCPSocket):
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2021-07-31  Youenn Fablet  <youenn@apple.com>
 
         Improve LocalSampleBufferDisplayLayer logging

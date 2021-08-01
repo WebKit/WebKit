@@ -104,7 +104,7 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(const void* sock
     return socket.release();
 }
 
-rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions& options)
+rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions& options, bool isRelayDisabled)
 {
     ASSERT(!WTF::isMainRunLoop());
 
@@ -113,13 +113,13 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void
 
     // FIXME: We only transfer options.opts but should also handle other members.
     if (m_connection)
-        m_connection->send(Messages::NetworkRTCProvider::CreateClientTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, options.opts), 0);
+        m_connection->send(Messages::NetworkRTCProvider::CreateClientTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, options.opts,  isRelayDisabled), 0);
     else {
         callOnMainRunLoop([] {
             WebProcess::singleton().ensureNetworkProcessConnection();
         });
-        m_pendingMessageTasks.append([identifier = socket->identifier(), localAddress = RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), remoteAddress = RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, opts = options.opts](auto& connection) {
-            connection.send(Messages::NetworkRTCProvider::CreateClientTCPSocket(identifier, localAddress, remoteAddress, userAgent, opts), 0);
+        m_pendingMessageTasks.append([identifier = socket->identifier(), localAddress = RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), remoteAddress = RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, opts = options.opts, isRelayDisabled](auto& connection) {
+            connection.send(Messages::NetworkRTCProvider::CreateClientTCPSocket(identifier, localAddress, remoteAddress, userAgent, opts, isRelayDisabled), 0);
         });
     }
 
