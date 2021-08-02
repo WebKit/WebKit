@@ -824,7 +824,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                     }
                     canvasRef.element.style.cursor = "pointer";
                 } else {
-                    if (onScaleEnter)
+                    if (onScaleLeave)
                         onScaleLeave(e, canvasRef.element.getBoundingClientRect());
                     canvasRef.element.style.cursor = "default";
                 }
