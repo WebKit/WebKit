@@ -1,3 +1,14 @@
+2021-08-02  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r273072): Images do not layout correctly on walmart.com/grocery
+        https://bugs.webkit.org/show_bug.cgi?id=228656
+        <rdar://80418083>
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/flexbox/flex-with-min-max-height-expected.html: Added.
+        * fast/flexbox/flex-with-min-max-height.html: Added.
+
 2021-08-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for [WebAccessibilityObjectWrapper lineRectsAndText] to properly handle replacement nodes and SVG text.

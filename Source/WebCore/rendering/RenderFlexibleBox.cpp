@@ -1630,10 +1630,25 @@ bool RenderFlexibleBox::setStaticPositionForPositionedLayout(const RenderBox& ch
 // This refers to https://drafts.csswg.org/css-flexbox-1/#definite-sizes, section 1).
 LayoutUnit RenderFlexibleBox::computeCrossSizeForChildUsingContainerCrossSize(const RenderBox& child) const
 {
-    auto containerCrossSizeLength = isHorizontalFlow() ? style().height() : style().width();
     // Keep this sync'ed with childCrossSizeShouldUseContainerCrossSize().
-    ASSERT(containerCrossSizeLength.isFixed());
-    return std::max(0_lu, valueForLength(containerCrossSizeLength, -1_lu) - crossAxisMarginExtentForChild(child));
+    auto definiteSizeValue = [&] {
+        // Let's compute the definite size value for the flex item (value that we can resolve without running layout).
+        auto isHorizontal = isHorizontalFlow();
+        auto size = isHorizontal ? style().height() : style().width();
+        ASSERT(size.isFixed());
+        auto definiteValue = LayoutUnit { size.value() };
+
+        auto maximumSize = isHorizontal ? style().maxHeight() : style().maxWidth();
+        if (maximumSize.isFixed())
+            definiteValue = std::min(definiteValue, LayoutUnit { maximumSize.value() });
+
+        auto minimumSize = isHorizontal ? style().minHeight() : style().minWidth();
+        if (minimumSize.isFixed())
+            definiteValue = std::max(definiteValue, LayoutUnit { minimumSize.value() });
+
+        return definiteValue;
+    };
+    return std::max(0_lu, definiteSizeValue() - crossAxisMarginExtentForChild(child));
 }
 
 void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox& child)

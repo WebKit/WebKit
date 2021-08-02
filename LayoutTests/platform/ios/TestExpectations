@@ -2488,6 +2488,7 @@ webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-alig
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-004.xhtml [ ImageOnlyFailure ]
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml [ ImageOnlyFailure ]
 webkit.org/b/211891 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-002.xhtml [ ImageOnlyFailure ]
+webkit.org/b/211891 fast/flexbox/flex-with-min-max-height.html [ ImageOnlyFailure ]
 
 # min-width: auto issues.
 webkit.org/b/221600 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-003.html [ ImageOnlyFailure ]
