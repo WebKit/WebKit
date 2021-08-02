@@ -118,6 +118,8 @@ public:
 
     MediaTime currentMediaTime() const final;
 
+    void outputMediaDataWillChange();
+
 private:
 #if ENABLE(ENCRYPTED_MEDIA)
     void cdmInstanceAttached(CDMInstance&) final;

@@ -1,3 +1,73 @@
+2021-08-02  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+
+        Reviewed by Eric Carlson.
+
+        AVAssetImageGenerator is used when there is not yet an available image from
+        AVPlayerItemVideoOutput. However, AVAssetImageGenerator is a synchronous API call; if data
+        for the current time is not available, the generator will cause a request for that data to
+        be issued, and if the main thread is blocked in a synchronous call to the generator, that
+        request can never be completed, causing a deadlock.
+
+        Instead, always block moving to a readyState >= HAVE_CURRENT_DATA until either the
+        AVPlayerLayer or the AVPlayerItemVideoOutput report having an available frame. This
+        prevents clients from attempting to paint until a frame is available, and ensures that we
+        will always have an available frame for painting, removing the need for the synchronous
+        generator call.
+
+        To ensure the readyState is updated when AVPlayerItemVideoOutput has an available image,
+        register with the output at creation time for a notification as soon as an image is
+        available. And in the existing delegate object, send a message back to the
+        MediaPlayerPrivateAVFoundationObjC when that occurs.
+
+        No tests needed; this should reduce flakiness of existing tests and cause no regression in
+        behavior.
+
+        Note, changes from last attempt:
+
+        AVPlayerLayer will fail to move to the -readyForDisplay state if it's not attached to a
+        layer tree, so when we remove the HTMLMediaElement from the DOM, we must send MediaPlayer a
+        acceleratedRenderingStateChanged() notification. This will cause the
+        MediaPlayerPrivateAVFoundationObjC to throw away its AVPlayerLayer, and will not block
+        moving to HAVE_CURRENT_DATA waiting for the layer to become readyForDisplay.
+
+        When we throw away (or create) the AVPlayerLayer, we must conditionally call updateStates
+        () to recalculate the readyState; but because updateStates() may try to create or destroy
+        an AVPlayerLayer, we must do this on a task to avoid re-entrancy. Adopt these changes
+        inside MediaPlayerPrivateAVFoundationCF as well.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pauseAfterDetachedTask):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareForRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::renderingModeChanged):
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleUpdateStates):
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasContextRenderer const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (-[WebCoreAVFPullDelegate setParent:]):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::destroyVideoLayer):
+
 2021-08-02  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r273072): Images do not layout correctly on walmart.com/grocery

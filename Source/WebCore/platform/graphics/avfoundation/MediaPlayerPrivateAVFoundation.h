@@ -271,6 +271,7 @@ protected:
     static const HashSet<String, ASCIICaseInsensitiveHash>& staticMIMETypeList();
 
 protected:
+    void scheduleUpdateStates();
     void updateStates();
 
     void setHasVideo(bool);
@@ -320,6 +321,8 @@ protected:
     void setResolvedURL(URL&&);
     const URL& resolvedURL() const { return m_resolvedURL; }
 
+    void renderingModeChanged();
+
 private:
     MediaPlayer* m_player;
 
@@ -368,6 +371,7 @@ private:
     bool m_characteristicsChanged;
     bool m_shouldMaintainAspectRatio;
     bool m_seeking;
+    bool m_delayingReadyState { false };
 };
 
 } // namespace WebCore

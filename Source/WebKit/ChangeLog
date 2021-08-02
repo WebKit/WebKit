@@ -1,3 +1,18 @@
+2021-08-02  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+        <rdar://problem/81336280>
+
+        Reviewed by Eric Carlson.
+
+        Drive-by fix: Passing the wrong value down to the GPU process when the acceleratedRenderingStateChanged().
+        We should be passing the results of MediaPlayer::renderingCanBeAccelerated() which comes down from HTMLMediaElement,
+        not MediaPlayer::supportsAcceleratedRendering(), which comes up from the GPU process.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+
 2021-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         [css-scroll-snap] Consider all snap areas at a given snap offset when snapping
