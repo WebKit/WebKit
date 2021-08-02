@@ -1618,17 +1618,27 @@ static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
             webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(data), "text/html");
         }, nullptr, nullptr);
 
-    char html[] = "<html><script>let foo = 0; fetch('foo://bar/baz').then(response => { if (response.status === 200) foo = 42});</script></html>";
-    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
-    test->waitUntilLoadFinished();
+    char html[] = "<html><script>let foo = 0; fetch('foo://bar/baz').then(response => { foo = response.status; }).catch(err => { foo = -1; });</script></html>";
+
+    auto waitForFooChanged = [&test]() {
+        GUniqueOutPtr<GError> error;
+        WebKitJavascriptResult* result;
+        JSCValue* jscvalue;
+        int value;
+        do {
+            result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
+            g_assert_no_error(error.get());
+            jscvalue = webkit_javascript_result_get_js_value(result);
+            value = jsc_value_to_int32(jscvalue);
+            webkit_javascript_result_unref(result);
+        } while (!value);
+        return value;
+    };
 
     // Request is not allowed, foo should be 0.
-    GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
-    g_assert_no_error(error.get());
-    JSCValue* value = webkit_javascript_result_get_js_value(result);
-    g_assert_cmpint(jsc_value_to_int32(value), ==, 0);
-    webkit_javascript_result_unref(result);
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    g_assert_cmpint(waitForFooChanged(), ==, -1);
 
     // Allowlisting host alone does not work. Path is also required. foo should remain 0.
     GUniquePtr<char*> allowlist(g_new(char*, 2));
@@ -1638,11 +1648,7 @@ static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
 
     webkit_web_view_load_html(test->m_webView, html, "http://example.com");
     test->waitUntilLoadFinished();
-    result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
-    g_assert_no_error(error.get());
-    value = webkit_javascript_result_get_js_value(result);
-    g_assert_cmpint(jsc_value_to_int32(value), ==, 0);
-    webkit_javascript_result_unref(result);
+    g_assert_cmpint(waitForFooChanged(), ==, -1);
 
     // Finally let's properly allow our scheme. foo should now change to 42 when the request succeeds.
     allowlist.reset(g_new(char*, 2));
@@ -1652,11 +1658,7 @@ static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
 
     webkit_web_view_load_html(test->m_webView, html, "http://example.com");
     test->waitUntilLoadFinished();
-    result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
-    g_assert_no_error(error.get());
-    value = webkit_javascript_result_get_js_value(result);
-    g_assert_cmpint(jsc_value_to_int32(value), ==, 42);
-    webkit_javascript_result_unref(result);
+    g_assert_cmpint(waitForFooChanged(), ==, 200);
 }
 
 #if USE(SOUP2)

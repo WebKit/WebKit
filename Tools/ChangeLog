@@ -1,3 +1,21 @@
+2021-08-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Make CORS allowlist test wait for promise resolution
+        https://bugs.webkit.org/show_bug.cgi?id=228695
+
+        Reviewed by Michael Catanzaro.
+
+        r278456 introduced a CORS allow list test that tries to fetch a
+        resource using the fetch() function, which returns a promise. This is
+        working on GTK but in WPE the test fails as the promise is not yet
+        resolved by the time the test variable is checked.
+
+        This commit changes the test to actually report the promise failure
+        through catch() and wait for its resolution before checking the values.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewCORSAllowlist):
+
 2021-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][DumpRenderTree] Clean up IndexedDB files between tests
