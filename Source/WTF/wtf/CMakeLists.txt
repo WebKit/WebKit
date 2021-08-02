@@ -30,6 +30,7 @@ set(WTF_PUBLIC_HEADERS
     CheckedArithmetic.h
     CheckedBoolean.h
     CheckedPtr.h
+    CheckedRef.h
     ClockType.h
     CommaPrinter.h
     CompactPointerTuple.h

@@ -1,3 +1,23 @@
+2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedRef
+        https://bugs.webkit.org/show_bug.cgi?id=227164
+
+        Reviewed by Geoffrey Garen.
+
+        Added some unit tests for CheckedRef and updated the unit tests
+        for CheckedPtr per the removal of makeCheckedPtr.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CheckedPtr.cpp:
+        (WTF_CheckedPtr.CheckedRef): Added
+        * TestWebKitAPI/Tests/WTF/CheckedRef.cpp: Added.
+        (TestWebKitAPI..CheckedObject): Added.
+        (TestWebKitAPI..DerivedCheckedObject): Added.
+        (WTF_CheckedRef.Basic): Added.
+        (WTF_CheckedRef.DerivedClass): Added.
+        (WTF_CheckedRef.HashSet): Added.
+
 2021-08-02  Russell Epstein  <repstein@apple.com>
 
         Add basestring compatibility for Python3 in webkitcorepy.

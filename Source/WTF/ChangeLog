@@ -1,3 +1,59 @@
+2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedRef
+        https://bugs.webkit.org/show_bug.cgi?id=227164
+
+        Reviewed by Geoffrey Garen.
+
+        Like r278344, this patch introduces a new type of smart pointer, CheckedRef,
+        which lets each object keep track of pointers pointing to the object.
+
+        As with CheckedPtr, the purpose of the internal counter for CheckedRef is
+        to release assert that there is no outstanding pointer at the time of destruction
+        instead of keeping the object alive when there is one.
+
+        This patch also removes makeCheckedPtr in favor of using CheckedPtr with
+        template argument deduction in C++17.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CheckedPtr.h:
+        (WTF::CheckedPtr::CheckedPtr): Added variants which take CheckedRef as arguments.
+        (WTF::makeCheckedPtr): Deleted.
+        (WTF::CanMakeCheckedPtr): Moved to CheckedRef.h
+        * wtf/CheckedRef.h: Added.
+        (WTF::CheckedRef::~CheckedRef): Added.
+        (WTF::CheckedRef::CheckedRef): Added.
+        (WTF::CheckedRef::isHashTableDeletedValue const): Added.
+        (WTF::CheckedRef::isHashTableEmptyValue const): Added.
+        (WTF::CheckedRef::hashTableEmptyValue): Added.
+        (WTF::CheckedRef::ptrAllowingHashTableEmptyValue const): Added.
+        (WTF::CheckedRef::ptrAllowingHashTableEmptyValue): Added.
+        (WTF::CheckedRef::ptr const): Added.
+        (WTF::CheckedRef::ptr): Added.
+        (WTF::CheckedRef::get const): Added.
+        (WTF::CheckedRef::get): Added.
+        (WTF::CheckedRef::operator-> const): Added.
+        (WTF::CheckedRef::operator->): Added.
+        (WTF::CheckedRef::operator const T& const): Added.
+        (WTF::CheckedRef::operator T&): Added.
+        (WTF::CheckedRef::operator! const): Added.
+        (WTF::CheckedRef::operator=): Added.
+        (WTF::CheckedRef::releasePtr): Added. Returns m_ptr without calling decrementPtrCount.
+        This is equivalent of leakPtr in Ref but we don't call this that since CheckedRef or
+        CheckedPtr is generally not used to manage the object lifetime.
+        (WTF::CheckedRef::poison): Added.
+        (WTF::CheckedRef::unpoison): Added.
+        (WTF::is): Added.
+        (WTF::CheckedRefHashTraits): Added.
+        (WTF::CheckedRefHashTraits::emptyValue): Added.
+        (WTF::CheckedRefHashTraits::constructEmptyValue): Added.
+        (WTF::CheckedRefHashTraits::isEmptyValue): Added.
+        (WTF::CheckedRefHashTraits::peek): Added.
+        (WTF::CheckedRefHashTraits::take): Added.
+        (WTF::CanMakeCheckedPtr): Moved from CheckedPtr.h
+        * wtf/Forward.h:
+
 2021-08-02  Devin Rousso  <drousso@apple.com>
 
         [Live Text] SPI for machine readable codes is only available on iOS

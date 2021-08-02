@@ -51,7 +51,7 @@ TEST(WTF_CheckedPtr, Basic)
         CheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
         {
-            auto ptr = makeCheckedPtr(checkedObject);
+            CheckedPtr ptr { &checkedObject };
             EXPECT_TRUE(!!ptr);
             EXPECT_EQ(ptr.get(), &checkedObject);
             EXPECT_EQ(ptr->someFunction(), -7);
@@ -64,7 +64,7 @@ TEST(WTF_CheckedPtr, Basic)
         CheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
 
-        auto ptr = makeCheckedPtr(checkedObject);
+        CheckedPtr ptr = { &checkedObject };
         EXPECT_TRUE(!!ptr);
         EXPECT_EQ(ptr.get(), &checkedObject);
         EXPECT_EQ(ptr->someFunction(), -7);
@@ -80,19 +80,19 @@ TEST(WTF_CheckedPtr, Basic)
         CheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
 
-        auto ptr1 = makeCheckedPtr(checkedObject);
+        CheckedPtr ptr1 { &checkedObject };
         EXPECT_TRUE(!!ptr1);
         EXPECT_EQ(ptr1.get(), &checkedObject);
         EXPECT_EQ(ptr1->someFunction(), -7);
         EXPECT_EQ(checkedObject.ptrCount(), 1);
 
-        const CheckedPtr<CheckedObject> ptr2 = makeCheckedPtr(&checkedObject);
+        const CheckedPtr ptr2 { &checkedObject };
         EXPECT_TRUE(!!ptr2);
         EXPECT_EQ(ptr2.get(), &checkedObject);
         EXPECT_EQ(ptr2->someFunction(), -7);
         EXPECT_EQ(checkedObject.ptrCount(), 2);
 
-        CheckedPtr<CheckedObject> ptr3 = ptr2;
+        CheckedPtr ptr3 = ptr2;
         EXPECT_TRUE(!!ptr3);
         EXPECT_EQ(ptr3.get(), &checkedObject);
         EXPECT_EQ(checkedObject.ptrCount(), 3);
@@ -111,6 +111,79 @@ TEST(WTF_CheckedPtr, Basic)
     }
 }
 
+TEST(WTF_CheckedPtr, CheckedRef)
+{
+    {
+        CheckedObject checkedObject;
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+        {
+            CheckedRef ref { checkedObject };
+            EXPECT_EQ(ref.ptr(), &checkedObject);
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 1);
+            CheckedPtr ptr { ref };
+            EXPECT_EQ(ref.ptr(), &checkedObject);
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(ptr.get(), &checkedObject);
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 2);
+        }
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+    }
+
+    {
+        DerivedCheckedObject checkedObject;
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+        {
+            CheckedRef<DerivedCheckedObject> ref { checkedObject };
+            EXPECT_EQ(ref.ptr(), &checkedObject);
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 1);
+            CheckedPtr<CheckedObject> ptr { ref };
+            EXPECT_EQ(ref.ptr(), &checkedObject);
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(ptr.get(), &checkedObject);
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 2);
+        }
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+    }
+
+    {
+        CheckedObject checkedObject;
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+        {
+            CheckedRef ref { checkedObject };
+            EXPECT_EQ(ref.ptr(), &checkedObject);
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 1);
+            CheckedPtr ptr { WTFMove(ref) };
+            EXPECT_EQ(ref.ptr(), nullptr);
+            EXPECT_EQ(ptr.get(), &checkedObject);
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 1);
+        }
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+    }
+
+    {
+        DerivedCheckedObject checkedObject;
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+        {
+            CheckedRef<DerivedCheckedObject> ref { checkedObject };
+            EXPECT_EQ(ref.ptr(), &checkedObject);
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 1);
+            CheckedPtr<CheckedObject> ptr { WTFMove(ref) };
+            EXPECT_EQ(ref.ptr(), nullptr);
+            EXPECT_EQ(ptr.get(), &checkedObject);
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject.ptrCount(), 1);
+        }
+        EXPECT_EQ(checkedObject.ptrCount(), 0);
+    }
+}
+
 TEST(WTF_CheckedPtr, DerivedClass)
 {
     {
@@ -122,7 +195,7 @@ TEST(WTF_CheckedPtr, DerivedClass)
         DerivedCheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
         {
-            auto ptr = makeCheckedPtr(checkedObject);
+            CheckedPtr ptr = { &checkedObject };
             EXPECT_TRUE(!!ptr);
             EXPECT_EQ(ptr.get(), &checkedObject);
             EXPECT_EQ(ptr->someFunction(), -7);
@@ -135,7 +208,7 @@ TEST(WTF_CheckedPtr, DerivedClass)
         CheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
 
-        CheckedPtr<CheckedObject> ptr = makeCheckedPtr(checkedObject);
+        CheckedPtr<CheckedObject> ptr { &checkedObject };
         EXPECT_TRUE(!!ptr);
         EXPECT_EQ(ptr.get(), &checkedObject);
         EXPECT_EQ(ptr->someFunction(), -7);
@@ -151,7 +224,7 @@ TEST(WTF_CheckedPtr, DerivedClass)
         DerivedCheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
 
-        CheckedPtr<DerivedCheckedObject> ptr1 = makeCheckedPtr(checkedObject);
+        CheckedPtr<DerivedCheckedObject> ptr1 { &checkedObject };
         EXPECT_TRUE(!!ptr1);
         EXPECT_EQ(ptr1.get(), &checkedObject);
         EXPECT_EQ(ptr1->someFunction(), -7);
@@ -189,7 +262,7 @@ TEST(WTF_CheckedPtr, HashSet)
         CheckedObject checkedObject;
         EXPECT_EQ(checkedObject.ptrCount(), 0);
 
-        auto ptr = makeCheckedPtr(checkedObject);
+        CheckedPtr ptr = { &checkedObject };
         EXPECT_EQ(ptr.get(), &checkedObject);
         EXPECT_EQ(checkedObject.ptrCount(), 1);
 

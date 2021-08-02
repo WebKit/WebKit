@@ -72,6 +72,8 @@ template<typename> class OptionSet;
 template<typename> class Packed;
 template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename> struct RawPtrTraits;
+template<typename T, typename = RawPtrTraits<T>> class CheckedRef;
+template<typename T, typename = RawPtrTraits<T>> class CheckedPtr;
 template<typename T, typename = RawPtrTraits<T>> class Ref;
 template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
 template<typename> class RetainPtr;
