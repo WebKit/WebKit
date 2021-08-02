@@ -1,3 +1,10 @@
+2021-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-07-31  Martin Robinson  <mrobinson@webkit.org>
 
         REGRESSION(r279564): [GTK] Mouse wheel scrolling scrolls too little (take two)
