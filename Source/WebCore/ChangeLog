@@ -1,3 +1,23 @@
+2021-08-01  Rob Buis  <rbuis@igalia.com>
+
+        Migrate GlyphOverflow to LayoutUnits instead of ints
+        https://bugs.webkit.org/show_bug.cgi?id=133040
+
+        Reviewed by Darin Adler.
+
+        Migrate GlyphOverflow to LayoutUnits instead of ints. This
+        is another step in the direction of subpixel layout/rendering.
+
+        * platform/graphics/FontCascade.h:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::ascentAndDescentForBox const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::extendIntToFloat):
+
 2021-07-31  Maciej Stachowiak  <mjs@apple.com>
 
         ListAttributeTargetObserver is needlessly created even when there is no list attribute

@@ -933,20 +933,20 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? nullptr : &it->value.second;
     bool isFlippedLine = lineStyle.isFlippedLinesWritingMode();
 
-    int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;
-    int bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0;
-    int leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0;
-    int rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0;
+    auto topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0_lu;
+    auto bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0_lu;
+    auto leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0_lu;
+    auto rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0_lu;
 
     auto viewportSize = textBox.renderer().frame().view() ? textBox.renderer().frame().view()->size() : IntSize();
-    int strokeOverflow = std::ceil(lineStyle.computedStrokeWidth(viewportSize) / 2.0f);
-    int topGlyphOverflow = -strokeOverflow - topGlyphEdge;
-    int bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
-    int leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
-    int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
+    LayoutUnit strokeOverflow(std::ceil(lineStyle.computedStrokeWidth(viewportSize) / 2.0f));
+    auto topGlyphOverflow = -strokeOverflow - topGlyphEdge;
+    auto bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
+    auto leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
+    auto rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
     if (std::optional<bool> markExistsAndIsAbove = textBox.emphasisMarkExistsAndIsAbove(lineStyle)) {
-        int emphasisMarkHeight = lineStyle.fontCascade().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
+        LayoutUnit emphasisMarkHeight = lineStyle.fontCascade().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
         if (*markExistsAndIsAbove == !lineStyle.isFlippedLinesWritingMode())
             topGlyphOverflow = std::min(topGlyphOverflow, -emphasisMarkHeight);
         else
