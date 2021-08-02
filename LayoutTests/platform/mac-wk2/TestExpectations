@@ -1417,6 +1417,9 @@ webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout
 
 webkit.org/b/224690 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/228713 [ Catalina Release ] compositing/video/video-object-fit.html [ Pass Timeout ] 
+webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.html [ Pass Timeout ] 
+
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
 
 webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]

@@ -1,3 +1,12 @@
+2021-08-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ MacOS wk2 ] compositing/video/video-object-fit.html is a flaky timeout on EWS.
+        https://bugs.webkit.org/show_bug.cgi?id=228713
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Calling unobserve on ResizeObserver should not clear existing observations in active targets
