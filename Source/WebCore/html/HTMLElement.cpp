@@ -1424,7 +1424,6 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
         return;
 
     auto shadowRoot = makeRef(ensureUserAgentShadowRoot());
-    bool hasUserSelectNone = renderer() && renderer()->style().userSelect() == UserSelect::None;
     if (!textRecognitionElements.root) {
         auto rootContainer = HTMLDivElement::create(document());
         rootContainer->setIdAttribute(imageOverlayElementIdentifier());
@@ -1489,6 +1488,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
         return quad;
     };
 
+    bool applyUserSelectAll = document().isImageDocument() || renderer->style().userSelect() != UserSelect::None;
     for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
         auto& lineElements = textRecognitionElements.lines[lineIndex];
         auto& lineContainer = lineElements.line;
@@ -1572,8 +1572,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
                 "scale("_s, targetSize.width() / sizeBeforeTransform.width(), ", "_s, targetSize.height() / sizeBeforeTransform.height(), ") "_s
             ));
 
-            if (!hasUserSelectNone || document().isImageDocument())
-                textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueAll);
+            textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, applyUserSelectAll ? CSSValueAll : CSSValueNone);
         }
 
         if (document().isImageDocument())

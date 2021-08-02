@@ -1,3 +1,28 @@
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Use iBeam cursor when hovering over selectable text inside image links
+        https://bugs.webkit.org/show_bug.cgi?id=228700
+        rdar://81210248
+
+        Reviewed by Tim Horton.
+
+        Make a couple of small adjustments to allow the cursor to change to an I-beam when hovering over selectable Live
+        Text inside images in links, but only in the case where the computed cursor type is Auto. Currently, this always
+        results in a Hand cursor type because of the link ancestor, despite the injected Live Text being selectable.
+
+        Test: fast/images/text-recognition/mac/cursor-types-for-recognized-text.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+
+        Drive-by fix an adjacent bug, wherein we try to check whether the image element has `user-select: none;` before
+        the style has been resolved, which results in injecting selectable Live Text even when the page has explicitly
+        disabled text selection on the image element. Instead, move this code to right after we update layout after
+        ensuring the UA shadow DOM structure for Live Text, so that the bool flag is meaningful.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel

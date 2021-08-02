@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+img {
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    display: block;
+}
+
+a {
+    display: block;
+}
+
+#cursor-zoom-in {
+    top: 100px;
+    cursor: zoom-in;
+}
+
+#user-select-none-in-link {
+    top: 200px;
+    -webkit-user-select: none;
+}
+</style>
+<script>
+addEventListener("load", () => {
+    document.querySelectorAll("img").forEach(image => {
+        internals.installImageOverlay(image, [
+            {
+                topLeft : new DOMPointReadOnly(0, 0.3),
+                topRight : new DOMPointReadOnly(1, 0.3),
+                bottomRight : new DOMPointReadOnly(1, 0.7),
+                bottomLeft : new DOMPointReadOnly(0, 0.7),
+                children: [{
+                    text : "Hello",
+                    topLeft : new DOMPointReadOnly(0, 0.3),
+                    topRight : new DOMPointReadOnly(1, 0.3),
+                    bottomRight : new DOMPointReadOnly(1, 0.7),
+                    bottomLeft : new DOMPointReadOnly(0, 0.7),
+                }],
+            }
+        ]);
+    });
+
+    function testImage(imageID, expectedResult) {
+        let image = document.getElementById(imageID);
+        let rect = image.getBoundingClientRect();
+        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        cursor = internals.getCurrentCursorInfo().match(/type=(\w+)\s/).pop();
+        debug(`\nTesting &lt;img id="${imageID}"&gt;`);
+        shouldBeEqualToString("cursor", expectedResult);
+    }
+
+    testImage("inside-link", "IBeam");
+    testImage("cursor-zoom-in", "ZoomIn");
+    testImage("user-select-none-in-link", "Hand");
+});
+</script>
+</head>
+<body>
+<a href="#">
+    <img id="inside-link" src="../../resources/green-400x400.png"></img>
+</a>
+<img id="cursor-zoom-in" src="../../resources/green-400x400.png"></img>
+<a href="#">
+    <img id="user-select-none-in-link" src="../../resources/green-400x400.png"></img>
+</a>
+</body>
+</html>

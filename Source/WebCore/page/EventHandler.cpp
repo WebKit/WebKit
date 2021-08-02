@@ -1509,6 +1509,12 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
 
     switch (style ? style->cursor() : CursorType::Auto) {
     case CursorType::Auto: {
+        if (HTMLElement::isImageOverlayText(node.get())) {
+            auto* renderer = node->renderer();
+            if (renderer && renderer->style().userSelect() != UserSelect::None)
+                return iBeam;
+        }
+
         bool editable = node->hasEditableStyle();
 
         if (useHandCursor(node.get(), result.isOverLink(), shiftKey))

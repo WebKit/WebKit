@@ -1,3 +1,17 @@
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Use iBeam cursor when hovering over selectable text inside image links
+        https://bugs.webkit.org/show_bug.cgi?id=228700
+        rdar://81210248
+
+        Reviewed by Tim Horton.
+
+        Add a layout test that hovers over Live Text in several different image elements, and checks their respective
+        cursor types.
+
+        * fast/images/text-recognition/mac/cursor-types-for-recognized-text-expected.txt: Added.
+        * fast/images/text-recognition/mac/cursor-types-for-recognized-text.html: Added.
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
