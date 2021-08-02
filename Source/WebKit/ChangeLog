@@ -1,3 +1,26 @@
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        Crash in -[WKFullScreenWindowController windowDidExitFullScreen:]
+        https://bugs.webkit.org/show_bug.cgi?id=228694
+        rdar://79569881
+
+        Reviewed by Jer Noble.
+
+        It appears that [WKFullScreenWindowController finishedEnterFullScreenAnimation] can
+        cause the retain count to be decreased (this is the only explanation that makes any
+        sense considering the crash and when the regression started following bug 227243).
+        No test, can't reproduce.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController setVideoFullscreenManagerClient:]): Add utility method
+        to remove duplicated code.
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        (-[WKFullScreenWindowController windowDidEnterFullScreen:]):
+        (-[WKFullScreenWindowController windowDidFailToExitFullScreen:]):
+        (-[WKFullScreenWindowController windowDidExitFullScreen:]):
+        (-[WKFullScreenWindowController _manager]): fly-by make style consistent with other
+        similar methods.
+
 2021-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Add log when experimental network loader is used
