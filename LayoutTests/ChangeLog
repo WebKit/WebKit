@@ -1,3 +1,52 @@
+2021-08-02  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280549. rdar://problem/81427001
+
+    Source/WebCore:
+    REGRESSION(r279800): IntersectionObserver may never get a delivery of an observation if the element
+    has been unobserved and is disconnected
+    https://bugs.webkit.org/show_bug.cgi?id=228679
+    
+    Reviewed by Chris Dumez.
+    
+    The bug was caused by the elements of the pending entries not being considered as opaque roots
+    of the intersection observer. If the intersection observer is no longer observing those elements,
+    the JS wrapper of the intersection observer may be collected erroneously.
+    
+    This patch addresses this issue by explicitly treating the elements of pending entries as
+    opaque roots of the intersection observer in IntersectionObserver::isReachableFromOpaqueRoots.
+    
+    Test: intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive.html
+    
+    * page/IntersectionObserver.cpp:
+    (WebCore::IntersectionObserver::isReachableFromOpaqueRoots const):
+    
+    LayoutTests:
+    REGRESSION(r279800): IntersectionObserver may never get a delivery of an observation if the element has been unobserved and is disconnected
+    https://bugs.webkit.org/show_bug.cgi?id=228679
+    
+    Reviewed by Chris Dumez.
+    
+    Added a regression test.
+    
+    * intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive-expected.txt: Added.
+    * intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280549 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r279800): IntersectionObserver may never get a delivery of an observation if the element has been unobserved and is disconnected
+            https://bugs.webkit.org/show_bug.cgi?id=228679
+
+            Reviewed by Chris Dumez.
+
+            Added a regression test.
+
+            * intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive-expected.txt: Added.
+            * intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive.html: Added.
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ☂️ [GPU Process] Defer removal of resources in the GPU Process until we've executed all display list items which reference them

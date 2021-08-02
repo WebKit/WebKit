@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IntersectionObserverEnabled=true ] -->
+<html>
+<body>
+<pre id="log">This tests observing an element with an IntersectionObserver and removing the element from the document while it is queued for delivery.
+
+</pre>
+<script src="../resources/gc.js"></script>
+<script>
+
+let initialNodeCount;
+function runTest()
+{
+    if (!window.testRunner || !window.internals) {
+        log.textContent += 'FAIL - This test requires internals'; 
+        return;
+    }
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    const promises = [];
+    for (let i = 0; i < 5; ++i)
+        promises.push(createIntersectionObserver());
+
+    Promise.all(promises).then(() => testRunner.notifyDone());
+}
+
+function createIntersectionObserver()
+{
+    let element = document.createElement('div');
+    element.style.position = 'absolute';
+    element.style.width = '100px';
+    element.style.height = '100px';
+
+    let stopped = false;
+    let testing = false;
+    let intersectionObservers = [];
+
+    function helper(observer) {
+        if (!testing)
+            return;
+        if (stopped) {
+            log.textContent += observer.alive ? 'PASS - IntersectionObserver wrapper is alive\n' : 'FAIL - IntersectionObserver wrapper is dead\n';
+            return;
+        }
+        stopped = true;
+        for (const observer of intersectionObservers)
+            observer.unobserve(element);
+        intersectionObservers = [];
+        element.remove();
+        element = null;
+    }
+
+    (() => {
+        for (let i = 0; i < 5; ++i) {
+            const observer = new IntersectionObserver(function () {
+                helper(this);
+                gc();
+            });
+            observer.alive = true;
+            observer.observe(element);
+            intersectionObservers.push(observer);
+        }
+    })();
+
+    document.body.appendChild(element);
+
+    return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                testing = true;
+                element.style.top = '10000px';
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, 0);
+                });
+            }, 0);
+        });
+    });
+}
+
+onload = runTest;
+
+</script>
+</body>
+</html>

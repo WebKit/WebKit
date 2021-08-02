@@ -290,6 +290,10 @@ bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& 
         if (auto* element = target.get(); element && visitor.containsOpaqueRoot(element->opaqueRoot()))
             return true;
     }
+    for (auto& target : m_pendingTargets) {
+        if (visitor.containsOpaqueRoot(target->opaqueRoot()))
+            return true;
+    }
     return false;
 }
 
