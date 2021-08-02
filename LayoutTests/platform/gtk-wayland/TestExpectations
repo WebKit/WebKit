@@ -26,6 +26,9 @@ webkit.org/b/217159 http/wpt/service-workers/file-upload.html [ Pass ]
 # ask for triaging.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# GStreamer
+webkit.org/b/132262 [ Release ] http/tests/media/video-redirect.html [ Timeout Pass Crash ]
+
 # WebRTC
 webkit.org/b/212892 webrtc/peer-connection-audio-mute2.html [ Failure Timeout Pass Crash ]
 

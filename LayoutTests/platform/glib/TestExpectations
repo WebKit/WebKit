@@ -1714,6 +1714,17 @@ fast/url/data-url-mediatype.html [ Skip ]
 # Needs Cocoa specific features
 editing/pasteboard/copy-paste-data-detected-links.html [ Skip ]
 
+# PDF as image source
+fast/hidpi/pdf-image-scaled.html [ Skip ]
+fast/images/displaced-non-cached-pdf.html [ Skip ]
+fast/images/pdf-as-background.html [ Skip ]
+fast/images/pdf-as-image-landscape.html [ Skip ]
+fast/images/pdf-as-image.html [ Skip ]
+fast/images/pdf-as-tiled-background.html [ Skip ]
+fast/images/pdf-in-canvas.html [ Skip ]
+fast/replaced/pdf-as-image.html [ Skip ]
+webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////

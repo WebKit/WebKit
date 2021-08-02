@@ -1,3 +1,17 @@
+2021-08-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures and removing deprecated baseline.
+
+        Unreviewed test gardening.
+
+        Also unified skips for tests loading pdf as img.src.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution-expected.txt: Removed.
+
 2021-08-02  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk2 ] compositing/video/video-object-fit.html is a flaky timeout on EWS.

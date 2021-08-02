@@ -199,6 +199,10 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
 webkit.org/b/223414 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml [ ImageOnlyFailure ]
 
+# GStreamer
+webkit.org/b/132262 [ Release ] http/tests/media/video-redirect.html [ Timeout Pass Crash ]
+webkit.org/b/132262 [ Debug ] http/tests/media/video-redirect.html [ Pass ]
+
 # Hyphenation
 webkit.org/b/221377 [ Debug ] fast/text/hyphenation-unknown-locale.html [ Skip ]
 
@@ -448,22 +452,13 @@ webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Ski
 webkit.org/b/204001 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 webkit.org/b/204001 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html [ Skip ]
 
-Bug(WPE) fast/images/displaced-non-cached-pdf.html [ Skip ]
 Bug(WPE) fast/images/embed-image.html [ Skip ]
 Bug(WPE) fast/images/object-image.html [ Skip ]
-Bug(WPE) fast/images/pdf-as-background.html [ Skip ]
-Bug(WPE) fast/images/pdf-as-image.html [ Skip ]
-Bug(WPE) fast/images/pdf-as-image-landscape.html [ Skip ]
-Bug(WPE) fast/images/pdf-as-image-with-annotations.html [ Skip ]
-Bug(WPE) fast/images/pdf-as-tiled-background.html [ Skip ]
 
 Bug(WPE) fast/replaced/invalid-object-with-fallback.html [ Skip ]
 Bug(WPE) fast/replaced/no-focus-ring-embed.html [ Skip ]
 Bug(WPE) fast/replaced/no-focus-ring-object.html [ Skip ]
-Bug(WPE) fast/replaced/pdf-as-image.html [ Skip ]
 Bug(WPE) fast/replaced/pdf-as-object-and-embed.html [ Skip ]
-
-Bug(WPE) fast/hidpi/pdf-image-scaled.html [ Skip ]
 
 Bug(WPE) fast/fixed-layout [ Skip ]
 

@@ -149,6 +149,8 @@ webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Fail
 
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Pass ]
+webkit.org/b/132262 [ Release ] http/tests/media/video-redirect.html [ Timeout Pass ]
+webkit.org/b/132262 [ Debug ] http/tests/media/video-redirect.html [ Pass ]
 
 # Layout
 webkit.org/b/218510 fast/dom/Range/getBoundingClientRect.html [ Failure ]
@@ -292,15 +294,6 @@ Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass 
 # Mac Safari under certain circumstances automatically places
 # a caret in editable document even when none was requested programatically.
 editing/selection/designmode-no-caret.html [ Skip ]
-
-# These tests require loading a PDF as an image, which we do not support (via Chromium).
-fast/images/pdf-as-image-landscape.html [ WontFix Failure ]
-fast/replaced/pdf-as-image.html [ WontFix Failure ]
-
-# These pass while they're marked as WontFix - check it.
-fast/images/pdf-as-background.html [ WontFix Pass ]
-fast/images/pdf-as-image.html [ WontFix Pass ]
-fast/images/pdf-as-tiled-background.html [ WontFix Pass ]
 
 # Features that we want eventually:
 # DeviceMotion and DeviceOrientation are not enabled by default.
@@ -741,10 +734,6 @@ webkit.org/b/85262 fast/css/image-resolution [ Skip ]
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
 webkit.org/b/168366 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html
-
-# No embedded PDF support
-fast/hidpi/pdf-image-scaled.html [ Skip ]
-fast/images/displaced-non-cached-pdf.html [ Skip ]
 
 # We render the focus ring differently
 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
@@ -1599,9 +1588,6 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-float-border-padding.xml [ Failure ]
-
-# About using <img> to display PDF with annotations
-webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
 
 # PasteBoard::plainText() does not support file names.
 webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element-as-attachment.html [ Skip ]
