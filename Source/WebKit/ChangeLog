@@ -1,3 +1,16 @@
+2021-08-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove unneeded sandbox extension member
+        https://bugs.webkit.org/show_bug.cgi?id=228584
+
+        Reviewed by Darin Adler.
+
+        Remove unneeded sandbox extension handle member, since this extension is never revoked.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::switchFromStaticFontRegistryToUserFontRegistry):
+
 2021-08-02  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Remove support for AVAssetImageGenerator

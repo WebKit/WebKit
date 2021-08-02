@@ -1264,10 +1264,7 @@ void WebProcess::revokeAccessToAssetServices()
 
 void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle)
 {
-    if (m_fontMachExtension)
-        return;
-    m_fontMachExtension = SandboxExtension::create(WTFMove(fontMachExtensionHandle));
-    m_fontMachExtension->consume();
+    SandboxExtension::consumePermanently(fontMachExtensionHandle);
 #if HAVE(STATIC_FONT_REGISTRY)
     CTFontManagerEnableAllUserFonts(true);
 #endif
