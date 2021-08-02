@@ -1,3 +1,16 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that is no longer flaky.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (Safari 15): Unable to repaint canvases with software filters when GPU Process is enabled

@@ -57,6 +57,7 @@ class SharedBuffer;
 template<typename> class ExceptionOr;
 
 using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
+class BlobInternalURL;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob>, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
@@ -92,7 +93,7 @@ public:
 
     virtual ~Blob();
 
-    const URL& url() const { return m_internalURL; }
+    WEBCORE_EXPORT URL url() const;
     const String& type() const { return m_type; }
 
     WEBCORE_EXPORT unsigned long long size() const;
@@ -110,16 +111,25 @@ public:
     // URLRegistrable
     URLRegistry& registry() const override;
 
-    Ref<Blob> slice(ScriptExecutionContext& context, long long start, long long end, const String& contentType) const
-    {
-        auto blob = adoptRef(*new Blob(&context, m_internalURL, start, end, contentType));
-        blob->suspendIfNeeded();
-        return blob;
-    }
+    Ref<Blob> slice(ScriptExecutionContext&, long long start, long long end, const String& contentType) const;
 
     void text(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     void arrayBuffer(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     ExceptionOr<Ref<ReadableStream>> stream(ScriptExecutionContext&);
+
+    class Handle {
+    public:
+        explicit Handle(Ref<BlobInternalURL>&&);
+        ~Handle();
+        Handle(Handle&&);
+        Handle(const Handle&);
+        URL url() const;
+    private:
+        Ref<BlobInternalURL> m_internalURL;
+    };
+
+    // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
+    Handle handle() const;
 
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
@@ -144,14 +154,14 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;
 
+    String m_type;
+    mutable std::optional<unsigned long long> m_size;
+
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
-    URL m_internalURL;
+    Ref<BlobInternalURL> m_internalURL;
 
-    String m_type;
-
-    mutable std::optional<unsigned long long> m_size;
     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };
 

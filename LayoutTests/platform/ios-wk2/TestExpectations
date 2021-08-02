@@ -1994,8 +1994,6 @@ webkit.org/b/228082 fast/canvas/canvas-overloads-setShadow.html [ Pass Timeout ]
 
 webkit.org/b/228114 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Pass Failure ]
 
-webkit.org/b/228168 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html [ Pass Failure ]
-
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
 
 webkit.org/b/227762 [ Debug ] imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]

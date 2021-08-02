@@ -34,6 +34,7 @@
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
+#include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
@@ -95,8 +96,14 @@ ExceptionOr<void> BroadcastChannel::postMessage(JSC::JSGlobalObject& globalObjec
     ASSERT(ports.isEmpty());
 
     ensureOnMainThread([origin = crossThreadCopy(m_origin), name = crossThreadCopy(m_name), identifier = m_identifier, messageData = messageData.releaseReturnValue()](auto& document) mutable {
-        if (auto* page = document.page())
-            page->broadcastChannelRegistry().postMessage(origin, name, identifier, WTFMove(messageData));
+        auto* page = document.page();
+        if (!page)
+            return;
+
+        auto blobHandles = messageData->blobHandles();
+        page->broadcastChannelRegistry().postMessage(origin, name, identifier, WTFMove(messageData), [blobHandles = WTFMove(blobHandles)] {
+            // Keeps Blob data inside messageData alive until the message has been delivered.
+        });
     });
 
     return { };
@@ -115,14 +122,15 @@ void BroadcastChannel::close()
     });
 }
 
-void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdentifier, Ref<SerializedScriptValue>&& message)
+void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdentifier, Ref<SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainThread());
     auto contextIdentifier = channelToContextIdentifier().get(channelIdentifier);
     if (!contextIdentifier)
-        return;
+        return completionHandler();
 
-    ScriptExecutionContext::postTaskTo(contextIdentifier, [channelIdentifier, message = WTFMove(message)](auto&) mutable {
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    ScriptExecutionContext::postTaskTo(contextIdentifier, [channelIdentifier, message = WTFMove(message), callbackAggregator = WTFMove(callbackAggregator)](auto&) mutable {
         RefPtr<BroadcastChannel> channel;
         {
             Locker locker { allBroadcastChannelsLock };
@@ -130,6 +138,8 @@ void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdent
         }
         if (channel)
             channel->dispatchMessage(WTFMove(message));
+
+        callOnMainThread([callbackAggregator = WTFMove(callbackAggregator)] { });
     });
 }
 

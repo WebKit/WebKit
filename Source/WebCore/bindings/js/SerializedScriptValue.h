@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "Blob.h"
 #include "DetachedRTCDataChannel.h"
 #include "ExceptionOr.h"
 #include <JavaScriptCore/ArrayBuffer.h>
@@ -95,9 +96,10 @@ public:
     WEBCORE_EXPORT JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
     const Vector<uint8_t>& data() const { return m_data; }
-    bool hasBlobURLs() const { return !m_blobURLs.isEmpty(); }
+    bool hasBlobURLs() const { return !m_blobHandles.isEmpty(); }
 
-    Vector<String> blobURLsIsolatedCopy() const;
+    Vector<String> blobURLs() const;
+    const Vector<Blob::Handle>& blobHandles() const { return m_blobHandles; }
     void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
@@ -121,7 +123,7 @@ private:
 #endif
         );
 
-    SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
+    SerializedScriptValue(Vector<unsigned char>&&, const Vector<Blob::Handle>& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
 #endif
@@ -150,7 +152,7 @@ private:
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
     std::unique_ptr<WasmMemoryHandleArray> m_wasmMemoryHandlesArray;
 #endif
-    Vector<String> m_blobURLs;
+    Vector<Blob::Handle> m_blobHandles;
     size_t m_memoryCost { 0 };
 };
 

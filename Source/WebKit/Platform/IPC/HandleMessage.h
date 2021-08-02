@@ -200,15 +200,20 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
 template<typename T, typename C, typename MF>
 void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder, C* object, MF function)
 {
+    std::optional<uint64_t> listenerID;
+    decoder >> listenerID;
+    if (!listenerID)
+        return;
+
     std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return;
 
-    typename T::AsyncReply completionHandler = [listenerID = decoder.destinationID(), connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
         auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
         T::send(WTFMove(encoder), WTFMove(connection), args...);
-    };
+    }, T::callbackThread };
     callMemberFunction(connection, WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 

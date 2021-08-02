@@ -1,3 +1,70 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        The test was flaky because it is trying to send a Blob via BroadcastChannel.postMessage()
+        without keeping the blob alive. When GC triggers, the Blob would go away and trying to
+        decode the Blob upon receiving would fail.
+
+        To address the issue, I introduced a Blob::Handle class that wraps the Blob's internal URL
+        and keeps the Blob data alive as long as as someone is holding such handle. Previously,
+        the Blob destructor would unregister the internal URL and the Blob data would go away.
+
+        I then updated SerializedScriptValue to hold on to Blob::Handle objects instead of Blob
+        URLs. This guarantees that when using postMessage() to send a message to a worker, the
+        Blob data will stay alive until we dispatch the message event on the worker side and try
+        and deserialized the SerializedScriptValue.
+
+        For BroadcastChannel.postMessage() though, we end up going via the network process and
+        the SerializedScriptValue ends up getting serialized/deserialized over IPC. I added a
+        CompletionHandler to BroadcastChannelRegistry::postMessage() which only gets called
+        once the message event has successfully been dispatched. I use this completion handler
+        to make sure the SerializedScriptValue's Blob URLs stay valid until the the message has
+        been dispatched by holding on to the Blob::Handles.
+
+        No new tests, unskipped existing test.
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::computeMemoryCost const):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::blobURLs const):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::hasBlobURLs const):
+        (WebCore::SerializedScriptValue::blobHandles const):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * dom/BroadcastChannel.cpp:
+        (WebCore::BroadcastChannel::postMessage):
+        (WebCore::BroadcastChannel::dispatchMessageTo):
+        * dom/BroadcastChannel.h:
+        * dom/BroadcastChannelRegistry.h:
+        * fileapi/Blob.cpp:
+        (WebCore::BlobInternalURL::create):
+        (WebCore::BlobInternalURL::~BlobInternalURL):
+        (WebCore::BlobInternalURL::url const):
+        (WebCore::BlobInternalURL::BlobInternalURL):
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::~Blob):
+        (WebCore::Blob::url const):
+        (WebCore::Blob::slice const):
+        (WebCore::Blob::size const):
+        (WebCore::Blob::handle const):
+        (WebCore::Blob::Handle::Handle):
+        (WebCore::Blob::Handle::url const):
+        * fileapi/Blob.h:
+        * loader/EmptyClients.cpp:
+
 2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (Safari 15): Unable to repaint canvases with software filters when GPU Process is enabled

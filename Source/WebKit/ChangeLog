@@ -1,3 +1,27 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkBroadcastChannelRegistry.cpp:
+        (WebKit::NetworkBroadcastChannelRegistry::postMessage):
+        * NetworkProcess/NetworkBroadcastChannelRegistry.h:
+        * NetworkProcess/NetworkBroadcastChannelRegistry.messages.in:
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsyncWantsConnection):
+        handleMessageAsyncWantsConnection() had gotten out of sync with handleMessageAsync(). This was causing IPC decoding
+        failures when using both "Async" and "WantsConnection" for the IPC message.
+
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebKit::WebBroadcastChannelRegistry::postMessage):
+        (WebKit::WebBroadcastChannelRegistry::postMessageToRemote):
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.h:
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in:
+
 2021-08-02  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove unneeded sandbox extension member

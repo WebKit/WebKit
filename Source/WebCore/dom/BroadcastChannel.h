@@ -62,7 +62,7 @@ public:
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message);
     void close();
 
-    WEBCORE_EXPORT static void dispatchMessageTo(BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&);
+    WEBCORE_EXPORT static void dispatchMessageTo(BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&);
 
 private:
     BroadcastChannel(ScriptExecutionContext&, const String& name);
