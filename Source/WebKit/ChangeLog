@@ -1,3 +1,18 @@
+2021-08-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add log when experimental network loader is used
+        https://bugs.webkit.org/show_bug.cgi?id=227932
+
+        Reviewed by Chris Dumez.
+
+        We are seeing some reports of serious loading issues in bugs related to rdar://80330028
+        and we think they are because of problems related to the experimental network loader, which can be
+        enabled in experimental features but is not ready for use on the internet yet.
+        Add a log so we can determine for sure that is what is going on in those cases.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2021-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] ASSERTION FAILED: evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent in WebView::interpretKeyEvent since r280492

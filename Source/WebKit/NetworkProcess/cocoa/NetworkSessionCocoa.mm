@@ -1258,6 +1258,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 #endif
 
 #if HAVE(NETWORK_LOADER)
+    RELEASE_LOG_IF(parameters.useNetworkLoader, NetworkSession, "Using experimental network loader.");
     configuration._usesNWLoader = parameters.useNetworkLoader;
 #endif
 
