@@ -1,5 +1,55 @@
 2021-08-02  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280551. rdar://problem/81427001
+
+    Calling unobserve on ResizeObserver should not clear existing observations in active targets
+    https://bugs.webkit.org/show_bug.cgi?id=228693
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    The bug was caused by ResizeObserver::removeObservation removing it from the active targets.
+    
+    Note that there is nothing in the specification which alludes to this behavior,
+    and the new behavior is consistent with Firefox and the way IntersectionObserver works:
+    https://drafts.csswg.org/resize-observer/#dom-resizeobserver-unobserve
+    
+    To keep elements alive while they're in the active targets but not in the observation targets,
+    this patch also makes each element of the active observation as opaque roots of ResizeObserver
+    in ResizeObserver::isReachableFromOpaqueRoots.
+    
+    Test: resize-observer/resize-observer-keeps-element-of-queued-entry-alive.html
+    
+    * page/ResizeObserver.cpp:
+    (WebCore::ResizeObserver::deliverObservations):
+    (WebCore::ResizeObserver::isReachableFromOpaqueRoots const):
+    (WebCore::ResizeObserver::removeObservation):
+    
+    LayoutTests:
+    
+    Added a regression test.
+    
+    * resize-observer/resize-observer-keeps-element-of-queued-entry-alive-expected.txt: Added.
+    * resize-observer/resize-observer-keeps-element-of-queued-entry-alive.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280551 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Calling unobserve on ResizeObserver should not clear existing observations in active targets
+            https://bugs.webkit.org/show_bug.cgi?id=228693
+
+            Reviewed by Chris Dumez.
+
+            Added a regression test.
+
+            * resize-observer/resize-observer-keeps-element-of-queued-entry-alive-expected.txt: Added.
+            * resize-observer/resize-observer-keeps-element-of-queued-entry-alive.html: Added.
+
+2021-08-02  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r280549. rdar://problem/81427001
 
     Source/WebCore:
