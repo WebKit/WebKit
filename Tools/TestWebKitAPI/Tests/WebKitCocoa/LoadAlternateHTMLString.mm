@@ -195,6 +195,7 @@ TEST(WebKit, LoadHTMLStringWithInvalidBaseURL)
 
     [webView loadHTMLString:@"test" baseURL:[NSURL URLWithString:@"invalid"]];
     TestWebKitAPI::Util::run(&didFinishNavigation);
+    EXPECT_WK_STREQ([webView URL].absoluteString, "invalid");
 
     EXPECT_FALSE(didCrash);
 }

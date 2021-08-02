@@ -1759,11 +1759,8 @@ void WebPage::loadData(LoadParameters&& loadParameters)
         baseURL = aboutBlankURL();
     else {
         baseURL = URL(URL(), loadParameters.baseURLString);
-        if (baseURL.isValid()) {
-            if (!baseURL.protocolIsInHTTPFamily())
-                LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(baseURL.protocol().toString());
-        } else
-            baseURL = aboutBlankURL();
+        if (baseURL.isValid() && !baseURL.protocolIsInHTTPFamily())
+            LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(baseURL.protocol().toString());
     }
 
     ResourceResponse response(URL(), loadParameters.MIMEType, sharedBuffer->size(), loadParameters.encodingName);
