@@ -1,3 +1,14 @@
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (Safari 15): Unable to repaint canvases with software filters when GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228682
+        rdar://79699997
+
+        Reviewed by Simon Fraser.
+
+        * css3/filters/canvas-with-filter-after-repaint-expected.html: Added.
+        * css3/filters/canvas-with-filter-after-repaint.html: Added.
+
 2021-08-02  Eric Hutchison  <ehutchison@apple.com>
 
         [ Mac wk1 ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html is a flaky failure.

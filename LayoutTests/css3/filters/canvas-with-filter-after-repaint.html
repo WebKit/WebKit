@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0px 0px 4px black) drop-shadow(0px 0px 4px black);
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    let context = document.querySelector("canvas").getContext("2d");
+
+    context.lineWidth = 5;
+    context.moveTo(150, 150);
+    context.lineTo(250, 250);
+    context.moveTo(250, 150);
+    context.lineTo(150, 250);
+    context.strokeStyle = "red";
+    context.stroke();
+
+    await UIHelper.renderingUpdate();
+    context.clearRect(0, 0, 400, 400);
+
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<canvas width="400" height="400"></canvas>
+<p>The above canvas should be completely blank shortly after page load.</p>
+</body>
+</html>

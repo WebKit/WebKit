@@ -145,6 +145,26 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
     return m_surface->bytesPerRow();
 }
 
+void ImageBufferIOSurfaceBackend::prepareToDrawIntoContext(GraphicsContext& destContext)
+{
+    auto currentSeed = m_surface->seed();
+    if (std::exchange(m_lastSeedWhenDrawingImage, currentSeed) == currentSeed)
+        return;
+
+    if (destContext.renderingMode() == RenderingMode::Unaccelerated)
+        invalidateCachedNativeImage();
+}
+
+void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
+{
+    // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
+    // This is necessary in cases where we know (a priori) that the IOSurface has been
+    // modified, but QuartzCore may have a cached CGImageRef that does not reflect the
+    // current state of the IOSurface.
+    // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
+    context().fillRect({ });
+}
+
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
 {
     return NativeImage::create(m_surface->createImage());
@@ -157,6 +177,8 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
 
 void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
+    prepareToDrawIntoContext(destContext);
+
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(resolutionScale());
 
@@ -168,9 +190,7 @@ void ImageBufferIOSurfaceBackend::drawConsuming(GraphicsContext& destContext, co
 RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution preserveResolution) const
 {
     if (m_requiresDrawAfterPutPixelBuffer) {
-        // Force recreating the IOSurface cached image.
-        // See https://bugs.webkit.org/show_bug.cgi?id=157966 for explaining why this is necessary.
-        context().fillRect(FloatRect(1, 1, 0, 0));
+        invalidateCachedNativeImage();
         m_requiresDrawAfterPutPixelBuffer = false;
     }
     return ImageBufferCGBackend::copyCGImageForEncoding(destinationUTI, preserveResolution);
