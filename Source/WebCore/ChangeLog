@@ -1,3 +1,15 @@
+2021-08-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion is not acquired in network process when opening a SQLite database
+        https://bugs.webkit.org/show_bug.cgi?id=228705
+
+        Reviewed by Chris Dumez.
+
+        Opening database may require database file lock.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2021-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Calling unobserve on ResizeObserver should not clear existing observations in active targets
