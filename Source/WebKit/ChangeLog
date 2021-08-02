@@ -1,3 +1,50 @@
+2021-08-02  Youenn Fablet  <youenn@apple.com>
+
+        Attribute nw connections to the page bundle identifier
+        https://bugs.webkit.org/show_bug.cgi?id=228649
+
+        Reviewed by Eric Carlson.
+
+        Send page identifier from WebProcess to NetworkProcess when creating a WebRTC socket.
+        Use page identifier to get the attributed bundle identifier.
+        For that purpose, we need to hop to main thread to get it, then go back to rtc thread to create it.
+        We do so by using callOnMainRunLoopAndWait when NetworkRTCProvider does not have the information for the provided page identifier.
+        We then make use of nw_parameters_set_source_application_by_bundle_id to set the bundle identifier on TCP and UDP connections.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::attributedBundleIdentifierFromPageIdentifier const):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::addWebPageNetworkParameters):
+        (WebKit::NetworkSessionCocoa::removeWebPageNetworkParameters):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::createClientTCPSocket):
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::create):
+        (WebKit::NetworkRTCUDPSocketCocoa::createUDPSocket):
+        (WebKit::NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::configureParameters):
+        * Platform/spi/Cocoa/NWParametersSPI.h:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::RTCSocketFactory):
+        (WebKit::RTCSocketFactory::CreateUdpSocket):
+        (WebKit::RTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel

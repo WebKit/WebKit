@@ -1760,11 +1760,14 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 #endif
     initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
     addResult1.iterator->value = makeWeakPtr(addResult2.iterator->value.get());
+
+    m_attributedBundleIdentifierFromPageIdentifiers.add(pageID, parameters.attributedBundleIdentifier());
 }
 
 void NetworkSessionCocoa::removeWebPageNetworkParameters(WebPageProxyIdentifier pageID)
 {
     m_perPageSessionSets.remove(pageID);
+    m_attributedBundleIdentifierFromPageIdentifiers.remove(pageID);
 }
 
 size_t NetworkSessionCocoa::countNonDefaultSessionSets() const

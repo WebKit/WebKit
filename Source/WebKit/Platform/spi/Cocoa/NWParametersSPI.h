@@ -35,6 +35,7 @@ WTF_EXTERN_C_BEGIN
 
 void nw_parameters_set_account_id(nw_parameters_t, const char * account_id);
 void nw_parameters_set_source_application(nw_parameters_t, audit_token_t);
+void nw_parameters_set_source_application_by_bundle_id(nw_parameters_t, const char*);
 nw_endpoint_t nw_endpoint_create_host_with_numeric_port(const char* hostname, uint16_t port_host_order);
 
 #if HAVE(NWPARAMETERS_TRACKER_API)

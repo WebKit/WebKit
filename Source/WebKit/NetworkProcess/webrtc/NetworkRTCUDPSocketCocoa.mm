@@ -56,7 +56,7 @@ using namespace WebCore;
 
 class NetworkRTCUDPSocketCocoaConnections : public ThreadSafeRefCounted<NetworkRTCUDPSocketCocoaConnections> {
 public:
-    static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection), isFirstParty, isRelayDisabled, domain)); }
+    static Ref<NetworkRTCUDPSocketCocoaConnections> create(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& provider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain) { return adoptRef(*new NetworkRTCUDPSocketCocoaConnections(identifier, provider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain)); }
 
     void close();
     void setOption(int option, int value);
@@ -64,7 +64,7 @@ public:
     void setListeningPort(int);
 
 private:
-    NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
+    NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, Ref<IPC::Connection>&&, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
 
     RetainPtr<nw_connection_t> createNWConnection(const rtc::SocketAddress&);
     void setupNWConnection(nw_connection_t, const rtc::SocketAddress&);
@@ -79,6 +79,7 @@ private:
     bool m_shouldBypassRelay { false };
 
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
+    String m_attributedBundleIdentifier;
 
     rtc::SocketAddress m_address;
     RetainPtr<nw_listener_t> m_nwListener;
@@ -97,15 +98,15 @@ static dispatch_queue_t udpSocketQueue()
     return queue;
 }
 
-std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCUDPSocketCocoa::createUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
+std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCUDPSocketCocoa::createUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
 {
-    return makeUnique<NetworkRTCUDPSocketCocoa>(identifier, rtcProvider, address, WTFMove(connection), isFirstParty, isRelayDisabled, domain);
+    return makeUnique<NetworkRTCUDPSocketCocoa>(identifier, rtcProvider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain);
 }
 
-NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
+NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_rtcProvider(rtcProvider)
     , m_identifier(identifier)
-    , m_nwConnections(NetworkRTCUDPSocketCocoaConnections::create(identifier, rtcProvider, address, WTFMove(connection), isFirstParty, isRelayDisabled, domain))
+    , m_nwConnections(NetworkRTCUDPSocketCocoaConnections::create(identifier, rtcProvider, address, WTFMove(connection), WTFMove(attributedBundleIdentifier), isFirstParty, isRelayDisabled, domain))
 {
 }
 
@@ -157,7 +158,7 @@ static bool isKnownTracker(const WebCore::RegistrableDomain& domain)
 }
 #endif
 
-NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
+NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_identifier(identifier)
     , m_connection(WTFMove(connection))
 #if HAVE(NWPARAMETERS_TRACKER_API)
@@ -166,6 +167,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
 #endif
     , m_shouldBypassRelay(isRelayDisabled)
     , m_sourceApplicationAuditToken(rtcProvider.sourceApplicationAuditToken())
+    , m_attributedBundleIdentifier(WTFMove(attributedBundleIdentifier))
 {
     auto parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     {
@@ -242,6 +244,8 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
 
     if (m_sourceApplicationAuditToken)
         nw_parameters_set_source_application(parameters, *m_sourceApplicationAuditToken);
+    if (!m_attributedBundleIdentifier.isEmpty())
+        nw_parameters_set_source_application_by_bundle_id(parameters, m_attributedBundleIdentifier.utf8().data());
 
     nw_parameters_set_reuse_local_address(parameters, true);
 }
