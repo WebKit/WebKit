@@ -101,3 +101,6 @@ LayoutTraits.Mode = {
     Inline     : 0,
     Fullscreen : 1
 };
+
+// LayoutTraits subclasses should "register" themselves by adding themselves to this map.
+window.layoutTraitsClasses = { };

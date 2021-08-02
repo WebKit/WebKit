@@ -99,7 +99,7 @@ class MediaController
         let mode = this.isFullscreen ? LayoutTraits.Mode.Fullscreen : LayoutTraits.Mode.Inline;
     
         if (this.host) {
-            let LayoutTraitsClass = eval(this.host.layoutTraitsClassName);
+            let LayoutTraitsClass = window.layoutTraitsClasses[this.host.layoutTraitsClassName];
             return new LayoutTraitsClass(mode);
         }
         
