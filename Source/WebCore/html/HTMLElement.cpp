@@ -566,11 +566,7 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
         return { };
     }
 
-    // FIXME: Do we need to be able to detect preserveNewline style even when there's no renderer?
-    // FIXME: Can the renderer be out of date here? Do we need to call updateStyleIfNeeded?
-    // For example, for the contents of textarea elements that are display:none?
-    auto* r = renderer();
-    if ((r && r->style().preserveNewline()) || (isConnected() && isTextControlInnerTextElement())) {
+    if (isConnected() && isTextControlInnerTextElement()) {
         if (!text.contains('\r')) {
             stringReplaceAll(text);
             return { };

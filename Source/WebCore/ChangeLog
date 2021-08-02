@@ -1,3 +1,24 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+        <rdar://problem/81333038>
+
+        Reviewed by Darin Adler.
+
+        HTMLElement.innerText setter should convert new lines to <br>:
+        - https://html.spec.whatwg.org/multipage/dom.html#the-innertext-idl-attribute:dom-innertext-3
+        - https://html.spec.whatwg.org/multipage/dom.html#rendered-text-fragment
+
+        Our innerText setter had some logic that was specific to render styles that isn't part of
+        the specification. It was causing us to not replace the new lines with <br> in some
+        web-observable cases. I dropped this logic to align with Blink and Gecko.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+
 2021-08-02  Sam Weinig  <weinig@apple.com>
 
         [Modern Media Controls] Address additional feedback on LayoutTraits refactor

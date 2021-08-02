@@ -1,3 +1,17 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+        <rdar://problem/81333038>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing. Those tests were already passing in Chrome and Firefox.
+
+        * web-platform-tests/html/dom/elements/the-innertext-and-outertext-properties/innertext-setter-expected.txt:
+        * web-platform-tests/html/dom/elements/the-innertext-idl-attribute/setter-expected.txt:
+        * web-platform-tests/innerText/setter-expected.txt:
+
 2021-08-02  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Remove support for AVAssetImageGenerator
