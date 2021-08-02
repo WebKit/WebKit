@@ -1,3 +1,29 @@
+2021-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for [WebAccessibilityObjectWrapper lineRectsAndText] to properly handle replacement nodes and SVG text.
+        https://bugs.webkit.org/show_bug.cgi?id=228336
+        <rdar://problem/81172124>
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        Test: LayoutTests/accessibility/ios-simulator/element-line-rects-and-text.html
+
+        - Renamed stringsForSimpleRange to better reflect the fact that this
+        method can return strings and AXObjects.
+        - Handles the case where contentForSimpleRange returns AXObjects
+        corresponding to replacement objects. This fixes the cases of images and
+        SVG text.
+        - Fixed the problem with soft linebreaks where the start of the next
+        line was skipping the first character in the line.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper contentForSimpleRange:attributed:]):
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        (-[WebAccessibilityObjectWrapper lineRectsAndText]):
+        (-[WebAccessibilityObjectWrapper stringsForSimpleRange:attributed:]):
+        Renamed to contentForSimpleRange since it is returns an array of strings
+        and AXObjects.
+
 2021-08-02  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Consider all snap areas at a given snap offset when snapping

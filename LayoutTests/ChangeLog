@@ -1,3 +1,17 @@
+2021-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for [WebAccessibilityObjectWrapper lineRectsAndText] to properly handle replacement nodes and SVG text.
+        https://bugs.webkit.org/show_bug.cgi?id=228336
+        <rdar://problem/81172124>
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        - Expanded this test to cover the case of an image element and SVG text.
+        - Added the test case of a paragraph with soft linebreaks.
+
+        * accessibility/ios-simulator/element-line-rects-and-text-expected.txt:
+        * accessibility/ios-simulator/element-line-rects-and-text.html:
+
 2021-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

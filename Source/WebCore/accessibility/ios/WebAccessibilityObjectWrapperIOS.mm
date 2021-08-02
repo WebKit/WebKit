@@ -2347,7 +2347,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
 }
 
-- (NSArray *)stringsForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
+// Returns an array of strings and AXObject wrappers corresponding to the text
+// runs and replacement nodes included in the given range.
+- (NSArray *)contentForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
 {
     auto array = adoptNS([[NSMutableArray alloc] init]);
 
@@ -2389,7 +2391,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         } else {
             if (Node* replacedNode = it.node()) {
                 auto* object = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
-                if (object && !object->accessibilityIsIgnored())
+                if (object)
                     [self _addAccessibilityObject:object toTextMarkerArray:array.get()];
             }
         }
@@ -2415,7 +2417,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
 
     auto range = makeSimpleRange([startMarker visiblePosition], [endMarker visiblePosition]);
-    return range ? [self stringsForSimpleRange:*range attributed:attributed] : nil;
+    return range ? [self contentForSimpleRange:*range attributed:attributed] : nil;
 }
 
 // FIXME: No reason for this to be a method instead of a function.
@@ -2850,29 +2852,53 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     auto* backingObject = self.axBackingObject;
 
     auto range = backingObject->elementRange();
-    if (!range || range->collapsed())
+    if (!range)
         return nil;
 
-    Vector<std::pair<IntRect, RetainPtr<id>>> lines;
+    Vector<std::pair<IntRect, RetainPtr<NSAttributedString>>> lines;
     auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
     auto rangeEnd = VisiblePosition { makeContainerOffsetPosition(range->end) };
-    while (!start.isNull() && start < rangeEnd) {
+    while (!start.isNull() && start <= rangeEnd) {
         auto end = backingObject->nextLineEndPosition(start);
         if (end <= start)
             break;
 
         auto rect = backingObject->boundsForVisiblePositionRange({start, end});
-        NSArray *content = [self stringsForSimpleRange:*makeSimpleRange(start, end) attributed:YES];
+
+        auto lineRange = makeSimpleRange(start, end);
+        if (!lineRange)
+            break;
+
+        NSArray *content = [self contentForSimpleRange:*lineRange attributed:YES];
         auto text = adoptNS([[NSMutableAttributedString alloc] init]);
         for (id item in content) {
             if ([item isKindOfClass:NSAttributedString.class])
                 [text appendAttributedString:item];
+            else if ([item isKindOfClass:WebAccessibilityObjectWrapper.class]) {
+                NSString *label = static_cast<WebAccessibilityObjectWrapper *>(item).accessibilityLabel;
+                if (!label)
+                    continue;
+
+                auto attributedLabel = adoptNS([[NSAttributedString alloc] initWithString:label]);
+                [text appendAttributedString:attributedLabel.get()];
+            }
         }
         lines.append({rect, text});
 
         start = end;
-        while (isEndOfLine(start))
-            start = start.next();
+        // If start is at a hard breakline "\n", move to the beginning of the next line.
+        while (isEndOfLine(start)) {
+            end = start.next();
+            auto endOfLineRange = makeSimpleRange(start, end);
+            if (!endOfLineRange)
+                break;
+
+            TextIterator it(*endOfLineRange);
+            if (it.atEnd() || it.text().length() != 1 || it.text()[0] != '\n')
+                break;
+
+            start = end;
+        }
     }
 
     if (lines.isEmpty())
