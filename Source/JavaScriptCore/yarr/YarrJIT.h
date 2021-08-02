@@ -61,6 +61,7 @@ enum class JITFailureReason : uint8_t {
 };
 
 class BoyerMooreBitmap {
+    WTF_MAKE_NONCOPYABLE(BoyerMooreBitmap);
     WTF_MAKE_FAST_ALLOCATED(BoyerMooreBitmap);
 public:
     static constexpr unsigned mapSize = 128;
@@ -75,6 +76,8 @@ public:
 
     void add(UChar32 character)
     {
+        if (isAllSet())
+            return;
         unsigned position = character & mapMask;
         if (position != static_cast<unsigned>(character))
             m_isMaskEffective = true;
@@ -83,6 +86,43 @@ public:
             ++m_count;
         }
     }
+
+    void addCharacters(const Vector<UChar32>& characters)
+    {
+        if (isAllSet())
+            return;
+        if (characters.size() >= mapSize) {
+            setAll();
+            return;
+        }
+        for (UChar character : characters)
+            add(character);
+    }
+
+    void addRanges(const Vector<CharacterRange>& ranges)
+    {
+        if (ranges.size() >= mapSize) {
+            setAll();
+            return;
+        }
+        for (CharacterRange range : ranges) {
+            if (isAllSet())
+                return;
+            if (static_cast<unsigned>(range.end - range.begin + 1) >= mapSize) {
+                setAll();
+                return;
+            }
+            for (UChar32 character = range.begin; character <= range.end; ++character)
+                add(character);
+        }
+    }
+
+    void setAll()
+    {
+        m_count = mapSize;
+    }
+
+    bool isAllSet() const { return m_count == mapSize; }
 
 private:
     Map m_map { };

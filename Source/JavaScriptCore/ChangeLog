@@ -1,3 +1,69 @@
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr BoyerMoore search should support character-class
+        https://bugs.webkit.org/show_bug.cgi?id=228613
+
+        Reviewed by Saam Barati.
+
+        This patch adds character-class support for BoyerMoore lookahead search in Yarr.
+        Currently, we only support fixed-sized character-class. We can extend it for repeat cases in the future.
+
+        To apply this character-class thing to jQuery's RegExp, we also allow non-fixed-sized disjunction.
+        For example, /aaaa.*|bbbb/'s disjunction is not fixed-sized. But still we can use (aaaa|bbbb) prefix since
+        this part is fixed-sized and we know minimum-size of this disjunction is 4.
+
+        Plus, instead of giving up BoyerMoore search when we found non-supported terms, we shorten BoyerMoore search
+        length not to include this term so that we can still have a chance to leverage BoyerMoore search. In the case
+        of /aaaa|bbbb|ccc(d|e|f)/, we previously gave up since it finds `(d|e|f)`. But now, instead we shorten the length
+        from 4 to 3, and construct search pattern with `aaa|bbb|ccc`.
+
+        This patch improves jquery-todomvc-regexp by 20%.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      545.3561+-0.6968     ^    451.6117+-0.4613        ^ definitely 1.2076x faster
+
+        This improves Speedometer2/jQuery-TodoMVC by 2%.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |123.470833   |123.550000   |1.000641  | 0.841600                                         |
+            | VueJS-TodoMVC                        |26.883333    |26.950000    |1.002480  | 0.846732                                         |
+            | EmberJS-TodoMVC                      |127.708333   |127.754167   |1.000359  | 0.934206                                         |
+            | BackboneJS-TodoMVC                   |50.545833    |50.445833    |0.998022  | 0.679610                                         |
+            | Preact-TodoMVC                       |20.879167    |20.791667    |0.995809  | 0.796541                                         |
+            | AngularJS-TodoMVC                    |137.479167   |137.275000   |0.998515  | 0.729817                                         |
+            | Vanilla-ES2015-TodoMVC               |69.079167    |68.912500    |0.997587  | 0.524325                                         |
+            | Inferno-TodoMVC                      |65.604167    |66.120833    |1.007876  | 0.145549                                         |
+            | Flight-TodoMVC                       |77.029167    |76.708333    |0.995835  | 0.518562                                         |
+            | Angular2-TypeScript-TodoMVC          |40.516667    |40.812500    |1.007302  | 0.513386                                         |
+            | VanillaJS-TodoMVC                    |54.762500    |54.895833    |1.002435  | 0.647381                                         |
+            | jQuery-TodoMVC                       |255.950000   |250.425000   |0.978414  | 0.000000 (significant)                           |
+            | EmberJS-Debug-TodoMVC                |341.745833   |342.804167   |1.003097  | 0.219937                                         |
+            | React-TodoMVC                        |88.854167    |88.700000    |0.998265  | 0.568405                                         |
+            | React-Redux-TodoMVC                  |151.266667   |150.804167   |0.996942  | 0.256403                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |65.783333    |65.645833    |0.997910  | 0.437464                                         |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 246.52898
+            b mean = 246.85128
+            pValue = 0.3927330278
+            (Bigger means are better.)
+            1.001 times better
+            Results ARE NOT significant
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::BoyerMooreInfo::shortenLength):
+        (JSC::Yarr::BoyerMooreInfo::setAll):
+        (JSC::Yarr::BoyerMooreInfo::addCharacters):
+        (JSC::Yarr::BoyerMooreInfo::addRanges):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::BoyerMooreBitmap::add):
+        (JSC::Yarr::BoyerMooreBitmap::addCharacters):
+        (JSC::Yarr::BoyerMooreBitmap::addRanges):
+        (JSC::Yarr::BoyerMooreBitmap::setAll):
+        (JSC::Yarr::BoyerMooreBitmap::isAllSet const):
+
 2021-08-02  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Make C files in testapi compile with a C standard rather than C++ one

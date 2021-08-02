@@ -63,10 +63,30 @@ public:
     }
 
     unsigned length() const { return m_characters.size(); }
+    void shortenLength(unsigned length)
+    {
+        ASSERT(length <= this->length());
+        m_characters.shrink(length);
+    }
 
     void set(unsigned index, UChar32 character)
     {
         m_characters[index].add(character);
+    }
+
+    void setAll(unsigned index)
+    {
+        m_characters[index].setAll();
+    }
+
+    void addCharacters(unsigned index, const Vector<UChar32>& characters)
+    {
+        m_characters[index].addCharacters(characters);
+    }
+
+    void addRanges(unsigned index, const Vector<CharacterRange>& range)
+    {
+        m_characters[index].addRanges(range);
     }
 
     static UniqueRef<BoyerMooreInfo> create(unsigned length)
@@ -124,6 +144,7 @@ std::optional<std::tuple<unsigned, unsigned>> BoyerMooreInfo::findWorthwhileChar
     unsigned begin = 0;
     unsigned end = 0;
     constexpr unsigned maxCandidatesPerCharacter = 32;
+    static_assert(maxCandidatesPerCharacter < BoyerMooreBitmap::mapSize);
     for (unsigned limit = 4; limit < maxCandidatesPerCharacter; limit *= 2) {
         auto [newPoint, newBegin, newEnd] = findBestCharacterSequence(limit);
         if (newPoint > biggestPoint) {
@@ -2381,6 +2402,12 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         auto [map, isMaskEffective] = op.m_bmInfo->createCandidateBitmap(beginIndex, endIndex);
                         unsigned mapCount = map.count();
                         // If candiate characters are <= 2, checking each is better than using vector.
+                        JumpList outOfLengthFailure;
+                        JumpList matched;
+                        dataLogLnIf(YarrJITInternal::verbose, "BM Bitmap is ", map);
+                        // Patterns like /[]/ have zero candidates. Since it is rare, we do not do nothing for now.
+                        if (!mapCount)
+                            break;
                         if (mapCount <= 2) {
                             UChar32 character1 = map.findBit(0, true);
                             ASSERT(character1 != BoyerMooreBitmap::Map::size());
@@ -2391,7 +2418,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             }
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found 1-or-2 characters lookahead character:(0x", hex(character1), "),character2:(", hex(character2), "),isMaskEffective:(", isMaskEffective,"),range:[", beginIndex, ", ", endIndex, ")");
 
-                            JumpList matched;
                             auto loopHead = label();
                             readCharacter(m_checkedOffset - endIndex + 1, regT0);
                             if (isMaskEffective)
@@ -2399,9 +2425,8 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             matched.append(branch32(Equal, regT0, TrustedImm32(character1)));
                             if (mapCount == 2)
                                 matched.append(branch32(Equal, regT0, TrustedImm32(character2)));
-                            op.m_jumps.append(jumpIfNoAvailableInput(endIndex - beginIndex));
+                            outOfLengthFailure.append(jumpIfNoAvailableInput(endIndex - beginIndex));
                             jump().linkTo(loopHead, this);
-                            matched.link(this);
                         } else {
                             const auto* pointer = getBoyerMooreBitmap(map);
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found bitmap lookahead count:(", mapCount, "),range:[", beginIndex, ", ", endIndex, ")");
@@ -2416,7 +2441,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             extractUnsignedBitfield32(regT0, TrustedImm32(6), TrustedImm32(1), regT2); // Extract 1 bit for index.
                             load64(BaseIndex(regT1, regT2, TimesEight), regT2);
                             urshift64(regT0, regT2); // We can ignore upper bits and only lower 6bits are effective.
-                            auto matched = branchTest64(NonZero, regT2, TrustedImm32(1));
+                            matched.append(branchTest64(NonZero, regT2, TrustedImm32(1)));
 #elif CPU(X86_64)
                             static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint64_t));
                             static_assert(1 << 6 == 64);
@@ -2425,7 +2450,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             urshift32(TrustedImm32(6), regT2);
                             and32(TrustedImm32(1), regT2);
                             load64(BaseIndex(regT1, regT2, TimesEight), regT2);
-                            auto matched = branchTestBit64(NonZero, regT2, regT0); // We can ignore upper bits since modulo-64 is performed.
+                            matched.append(branchTestBit64(NonZero, regT2, regT0)); // We can ignore upper bits since modulo-64 is performed.
 #else
                             static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint32_t));
                             static_assert(1 << 5 == 32);
@@ -2435,14 +2460,30 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             and32(TrustedImm32(0b11), regT2);
                             load32(BaseIndex(regT1, regT2, TimesFour), regT2);
                             urshift32(regT0, regT2); // We can ignore upper bits and only lower 5bits are effective.
-                            auto matched = branchTest32(NonZero, regT2, TrustedImm32(1));
+                            matched.append(branchTest32(NonZero, regT2, TrustedImm32(1)));
 #endif
-                            op.m_jumps.append(jumpIfNoAvailableInput(endIndex - beginIndex));
+                            outOfLengthFailure.append(jumpIfNoAvailableInput(endIndex - beginIndex));
                             jump().linkTo(loopHead, this);
-                            matched.link(this);
                         }
 
                         // If the pattern size is not fixed, then store the start index for use if we match.
+                        // This is used for adjusting match-start when we failed to find the start with BoyerMoore search.
+                        if (!m_pattern.m_body->m_hasFixedSize) {
+                            outOfLengthFailure.link(this);
+                            if (alternative->m_minimumSize) {
+                                move(index, regT0);
+                                sub32(Imm32(alternative->m_minimumSize), regT0);
+                                setMatchStart(regT0);
+                            } else
+                                setMatchStart(index);
+                            op.m_jumps.append(jump());
+                        } else
+                            op.m_jumps.append(outOfLengthFailure);
+
+                        matched.link(this);
+                        // If the pattern size is not fixed, then store the start index for use if we match.
+                        // This is used for adjusting match-start when we start pattern matching with the updated index
+                        // by BoyerMoore search.
                         if (!m_pattern.m_body->m_hasFixedSize) {
                             if (alternative->m_minimumSize) {
                                 move(index, regT0);
@@ -3842,7 +3883,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         // it fails when the body alternatives fail to match with the current offset.
         // FIXME: Support unicode flag.
         // https://bugs.webkit.org/show_bug.cgi?id=228611
-        if (disjunction->m_minimumSize && disjunction->m_hasFixedSize && !m_pattern.sticky() && !m_pattern.unicode()) {
+        if (disjunction->m_minimumSize && !m_pattern.sticky() && !m_pattern.unicode()) {
             auto bmInfo = BoyerMooreInfo::create(std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
             if (collectBoyerMooreInfo(disjunction, currentAlternativeIndex, bmInfo.get())) {
                 m_ops.last().m_bmInfo = bmInfo.ptr();
@@ -3890,13 +3931,10 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         // We first collect possible characters for each character position. Then, apply heuristics to extract good character sequence from
         // that and construct fast searching with long stride.
 
-        ASSERT(disjunction->m_hasFixedSize); // We only support fixed-sized lookahead for BoyerMoore search.
         ASSERT(disjunction->m_minimumSize);
 
         // FIXME: Support nested disjunctions (e.g. /(?:abc|def|g(?:hi|jk))/).
         // https://bugs.webkit.org/show_bug.cgi?id=228614
-        // FIXME: Support character-class (e.g. /[\d]test/).
-        // https://bugs.webkit.org/show_bug.cgi?id=228613
         // FIXME: Support non-fixed-sized lookahead (e.g. /.*abc/ and extract "abc" sequence).
         // https://bugs.webkit.org/show_bug.cgi?id=228612
         auto& alternatives = disjunction->m_alternatives;
@@ -3909,20 +3947,46 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 case PatternTerm::Type::AssertionBOL:
                 case PatternTerm::Type::AssertionEOL:
                 case PatternTerm::Type::AssertionWordBoundary:
-                case PatternTerm::Type::CharacterClass:
                 case PatternTerm::Type::BackReference:
                 case PatternTerm::Type::ForwardReference:
                 case PatternTerm::Type::ParenthesesSubpattern:
                 case PatternTerm::Type::ParentheticalAssertion:
                 case PatternTerm::Type::DotStarEnclosure:
-                    return false;
+                    break;
+                case PatternTerm::Type::CharacterClass: {
+                    if (term.quantityType != QuantifierType::FixedCount || term.quantityMaxCount != 1)
+                        break;
+                    if (term.inputPosition != index)
+                        break;
+                    auto& characterClass = *term.characterClass;
+                    if (term.invert() || characterClass.m_anyCharacter) {
+                        bmInfo.setAll(cursor);
+                        ++cursor;
+                        continue;
+                    }
+                    if (characterClass.m_table) {
+                        bmInfo.setAll(cursor);
+                        ++cursor;
+                        continue;
+                    }
+                    if (!characterClass.m_rangesUnicode.isEmpty())
+                        bmInfo.addRanges(cursor, characterClass.m_rangesUnicode);
+                    if (!characterClass.m_matchesUnicode.isEmpty())
+                        bmInfo.addCharacters(cursor, characterClass.m_matchesUnicode);
+                    if (!characterClass.m_ranges.isEmpty())
+                        bmInfo.addRanges(cursor, characterClass.m_ranges);
+                    if (!characterClass.m_matches.isEmpty())
+                        bmInfo.addCharacters(cursor, characterClass.m_matches);
+                    ++cursor;
+                    continue;
+                }
                 case PatternTerm::Type::PatternCharacter: {
                     if (term.quantityType != QuantifierType::FixedCount || term.quantityMaxCount != 1)
-                        return false;
+                        break;
                     if (term.inputPosition != index)
-                        return false;
+                        break;
                     if (U16_LENGTH(term.patternCharacter) != 1 && m_decodeSurrogatePairs)
-                        return false;
+                        break;
                     // For case-insesitive compares, non-ascii characters that have different
                     // upper & lower case representations are already converted to a character class.
                     ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(term.patternCharacter) || isCanonicallyUnique(term.patternCharacter, m_canonicalMode));
@@ -3932,13 +3996,15 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     } else
                         bmInfo.set(cursor, term.patternCharacter);
                     ++cursor;
-                    break;
+                    continue;
                 }
                 }
+                dataLogLnIf(YarrJITInternal::verbose, "Shortening to ", cursor);
+                bmInfo.shortenLength(cursor);
+                break;
             }
         }
-        dataLogLnIf(YarrJITInternal::verbose, "Characters collected");
-        return true;
+        return bmInfo.length();
     }
 
     const BoyerMooreBitmap::Map::WordType* getBoyerMooreBitmap(const BoyerMooreBitmap::Map& map)
