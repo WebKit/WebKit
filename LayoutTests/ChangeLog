@@ -1,3 +1,12 @@
+2021-08-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228672
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-02  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r273072): Images do not layout correctly on walmart.com/grocery
