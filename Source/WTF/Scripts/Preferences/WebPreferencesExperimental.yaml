@@ -1355,7 +1355,7 @@ WebRTCPlatformUDPSocketsEnabled:
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 WebRTCSocketsProxyingEnabled:
   type: bool
