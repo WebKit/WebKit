@@ -43,7 +43,8 @@ template <typename T>
 struct SnapOffset {
     T offset;
     ScrollSnapStop stop;
-    size_t snapAreaIndex;
+    bool hasSnapAreaLargerThanViewport;
+    Vector<size_t> snapAreaIndices;
 };
 
 template <typename UnitType, typename RectType>
@@ -73,6 +74,11 @@ struct ScrollSnapOffsetsInfo {
     template<typename SizeType, typename PointType>
     WEBCORE_EXPORT std::pair<UnitType, std::optional<unsigned>> closestSnapOffset(ScrollEventAxis, const SizeType& viewportSize, PointType scrollDestinationOffset, float velocity, std::optional<UnitType> originalPositionForDirectionalSnapping = std::nullopt) const;
 };
+
+template<typename UnitType> inline bool operator==(const SnapOffset<UnitType>& a, const SnapOffset<UnitType>& b)
+{
+    return a.offset == b.offset && a.stop == b.stop && a.snapAreaIndices == b.snapAreaIndices;
+}
 
 using LayoutScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<LayoutUnit, LayoutRect>;
 using FloatScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<float, FloatRect>;

@@ -1,3 +1,31 @@
+2021-08-02  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Consider all snap areas at a given snap offset when snapping
+        https://bugs.webkit.org/show_bug.cgi?id=228141
+
+        Reviewed by Frédéric Wang.
+
+        When deciding whether to snap to snap areas that overflow the snap port, don't
+        just consider the first snap area at a given snap offset. Instead, keep information
+        about all snap areas in the ScrolSnapOffsetInfo. In order to avoid iterating over
+        arrays of hundreds of rectangles, also record whether any of them are larger than
+        the viewport. This will avoid extra work on the most common usecase of large sets
+        of snap areas (gridded table layouts).
+
+        This change is tested by extending an existing WPT test.
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::rangeForAxis): Added this helper.
+        (WebCore::searchForPotentialSnapPoints): When deciding if a particular snap area
+        overflows the snap port, look at all available snap areas instead of just the
+        first one.
+        (WebCore::updateSnapOffsetsForScrollableArea): Instead of only recording the first
+        snap area, record all of them in the list of snap area rectangles.
+        (WebCore::convertOffsetInfo): Convert the list of snap ares.
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        (WebCore::operator==): Added this operator which is necessary now that snapAreaIndices
+        is a vector.
+
 2021-08-01  Rob Buis  <rbuis@igalia.com>
 
         Migrate GlyphOverflow to LayoutUnits instead of ints

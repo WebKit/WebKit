@@ -40,6 +40,12 @@
 
 namespace WebCore {
 
+template <typename UnitType, typename RectType>
+static std::pair<UnitType, UnitType> rangeForAxis(RectType rect, ScrollEventAxis axis)
+{
+    return axis == ScrollEventAxis::Horizontal ? std::make_pair(rect.x(), rect.maxX()) : std::make_pair(rect.y(), rect.maxY());
+}
+
 template <typename UnitType>
 struct PotentialSnapPointSearchResult {
     std::optional<std::pair<UnitType, unsigned>> previous;
@@ -67,13 +73,17 @@ static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(con
     };
 
     for (unsigned i = 0; i < snapOffsets.size(); i++) {
+        if (!landedInsideSnapAreaThatConsumesViewport && snapOffsets[i].hasSnapAreaLargerThanViewport) {
+            for (auto snapAreaIndices : snapOffsets[i].snapAreaIndices) {
+                auto [snapAreaMin, snapAreaMax] = rangeForAxis<UnitType>(info.snapAreas[snapAreaIndices], axis);
+                if (snapAreaMin <= destinationOffset && snapAreaMax >= (destinationOffset + viewportLength)) {
+                    landedInsideSnapAreaThatConsumesViewport = true;
+                    break;
+                }
+            }
+        }
+
         UnitType potentialSnapOffset = snapOffsets[i].offset;
-
-        const auto& snapArea = info.snapAreas[snapOffsets[i].snapAreaIndex];
-        auto snapAreaMin = axis == ScrollEventAxis::Horizontal ? snapArea.x() : snapArea.y();
-        auto snapAreaMax = axis == ScrollEventAxis::Horizontal ? snapArea.maxX() : snapArea.maxY();
-        landedInsideSnapAreaThatConsumesViewport |= snapAreaMin <= destinationOffset && snapAreaMax >= (destinationOffset + viewportLength);
-
         if (potentialSnapOffset == destinationOffset)
             exact = std::make_pair(potentialSnapOffset, i);
         else if (potentialSnapOffset < destinationOffset)
@@ -219,12 +229,18 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         return;
     }
 
-    auto addOrUpdateStopForSnapOffset = [](HashMap<float, SnapOffset<LayoutUnit>>& offsets, SnapOffset<LayoutUnit> newOffset)
+    auto addOrUpdateStopForSnapOffset = [](HashMap<float, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, size_t snapAreaIndices)
     {
+        auto offset = offsets.ensure(newOffset, [&] {
+            return SnapOffset<LayoutUnit> { newOffset, stop, hasSnapAreaLargerThanViewport, { } };
+        });
+
         // If the offset already exists, we ensure that it has ScrollSnapStop::Always, when appropriate.
-        auto addResult = offsets.add(newOffset.offset, newOffset);
-        if (newOffset.stop == ScrollSnapStop::Always)
-            addResult.iterator->value.stop = ScrollSnapStop::Always;
+        if (stop == ScrollSnapStop::Always)
+            offset.iterator->value.stop = ScrollSnapStop::Always;
+
+        offset.iterator->value.hasSnapAreaLargerThanViewport |= hasSnapAreaLargerThanViewport;
+        offset.iterator->value.snapAreaIndices.append(snapAreaIndices);
     };
 
     HashMap<float, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
@@ -293,12 +309,12 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         if (snapsHorizontally) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
-            addOrUpdateStopForSnapOffset(horizontalSnapOffsetsMap, { absoluteScrollOffset, stop, snapAreas.size() - 1 });
+            addOrUpdateStopForSnapOffset(horizontalSnapOffsetsMap, absoluteScrollOffset, stop, scrollSnapAreaAsOffsets.width() > scrollSnapPort.width(), snapAreas.size() - 1);
         }
         if (snapsVertically) {
             auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.maxY(), yAlign, areaYAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.maxY(), yAlign, areaYAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ 0, roundToInt(absoluteScrollYPosition) }).y(), 0, maxScrollOffset.y());
-            addOrUpdateStopForSnapOffset(verticalSnapOffsetsMap, { absoluteScrollOffset, stop, snapAreas.size() - 1 });
+            addOrUpdateStopForSnapOffset(verticalSnapOffsetsMap, absoluteScrollOffset, stop, scrollSnapAreaAsOffsets.height() > scrollSnapPort.height(), snapAreas.size() - 1);
         }
 
         if (!snapAreas.isEmpty())
@@ -348,7 +364,7 @@ static ScrollSnapOffsetsInfo<OutputType, OutputRectType> convertOffsetInfo(const
         Vector<SnapOffset<OutputType>> output;
         output.reserveInitialCapacity(input.size());
         for (auto& offset : input)
-            output.uncheckedAppend({ convertOffsetUnit(offset.offset, scaleFactor), offset.stop, offset.snapAreaIndex });
+            output.uncheckedAppend({ convertOffsetUnit(offset.offset, scaleFactor), offset.stop, offset.hasSnapAreaLargerThanViewport, offset.snapAreaIndices });
         return output;
     };
 

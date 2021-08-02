@@ -1,3 +1,14 @@
+2021-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Consider all snap areas at a given snap offset when snapping
+        https://bugs.webkit.org/show_bug.cgi?id=228141
+
+        Reviewed by Frédéric Wang.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<SnapOffset<float>>::encode): Serialize new members.
+        (ArgumentCoder<SnapOffset<float>>::decode): Deserialize new members.
+
 2021-08-01  Youenn Fablet  <youenn@apple.com>
 
         Introduce an experimental feature to toggle WebRTC socket proxying

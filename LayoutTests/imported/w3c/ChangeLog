@@ -1,3 +1,13 @@
+2021-08-02  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Consider all snap areas at a given snap offset when snapping
+        https://bugs.webkit.org/show_bug.cgi?id=228141
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas-expected.txt:
+        * web-platform-tests/css/css-scroll-snap/overflowing-snap-areas.html:
+
 2021-07-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r280488.
