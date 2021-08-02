@@ -128,7 +128,7 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 
 @interface VKImageAnalysis (WebKitSPI)
 @property (nonatomic, readonly) NSArray<VKWKLineInfo *> *allLines;
-#if PLATFORM(IOS)
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 @property (nonatomic) UIMenu *mrcMenu;
 #endif
 @end

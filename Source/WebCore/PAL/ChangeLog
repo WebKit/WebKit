@@ -1,3 +1,12 @@
+2021-08-02  Devin Rousso  <drousso@apple.com>
+
+        [Live Text] SPI for machine readable codes is only available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=228711
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/VisionKitCoreSPI.h:
+
 2021-07-29  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
