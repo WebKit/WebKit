@@ -1,3 +1,36 @@
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should use Bitmap instead of ByteVector for BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228676
+
+        Reviewed by Saam Barati.
+
+        We observed that using Bitmap instead of ByteVector does not pose performance
+        issue. It was neutral in jquery-todomvc-regexp.js. In that case, we should use
+        Bitmap since it is 8x smaller.
+
+        We also search reusable Bitmap from Vector since comparing 128bit Bitmap is
+        super fast so we do not need to bother about linear search here (# of Bitmap
+        is currently up to 4).
+
+        To make code simplified, we add regT2 to ARMv7 and MIPS backend of YarrJIT.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      555.9566+-0.8856          555.0737+-0.9717
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::BoyerMooreInfo::index const): Deleted.
+        (JSC::Yarr::BoyerMooreInfo::setIndex): Deleted.
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::tryReuseBoyerMooreBitmap const):
+        (JSC::Yarr::BoyerMooreByteVector::BoyerMooreByteVector): Deleted.
+        (JSC::Yarr::YarrCodeBlock::tryReuseBoyerMooreByteVector const): Deleted.
+
 2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Move JIT_UNICODE_EXPRESSIONS to ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) in PlatformEnable.h

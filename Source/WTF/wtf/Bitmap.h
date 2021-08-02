@@ -33,12 +33,14 @@ namespace WTF {
 template<size_t size>
 using BitmapWordType = std::conditional_t<(size <= 32 && sizeof(UCPURegister) > sizeof(uint32_t)), uint32_t, UCPURegister>;
 
-template<size_t bitmapSize, typename WordType = BitmapWordType<bitmapSize>>
+template<size_t bitmapSize, typename PassedWordType = BitmapWordType<bitmapSize>>
 class Bitmap final {
     WTF_MAKE_FAST_ALLOCATED;
     
-    static_assert(sizeof(WordType) <= sizeof(UCPURegister), "WordType must not be bigger than the CPU atomic word size");
 public:
+    using WordType = PassedWordType;
+
+    static_assert(sizeof(WordType) <= sizeof(UCPURegister), "WordType must not be bigger than the CPU atomic word size");
     constexpr Bitmap();
 
     static constexpr size_t size()
@@ -132,6 +134,9 @@ public:
     unsigned hash() const;
 
     void dump(PrintStream& out) const;
+
+    WordType* storage() { return bits.data(); }
+    const WordType* storage() const { return bits.data(); }
 
 private:
     static constexpr unsigned wordSize = sizeof(WordType) * 8;

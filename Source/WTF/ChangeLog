@@ -1,3 +1,12 @@
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should use Bitmap instead of ByteVector for BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228676
+
+        Reviewed by Saam Barati.
+
+        * wtf/Bitmap.h:
+
 2021-08-01  Youenn Fablet  <youenn@apple.com>
 
         Introduce an experimental feature to toggle WebRTC socket proxying

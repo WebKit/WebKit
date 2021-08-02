@@ -69,12 +69,6 @@ public:
         m_characters[index].add(character);
     }
 
-    unsigned index() const { return m_index; }
-    void setIndex(unsigned index)
-    {
-        m_index = index;
-    }
-
     static UniqueRef<BoyerMooreInfo> create(unsigned length)
     {
         return makeUniqueRef<BoyerMooreInfo>(length);
@@ -87,7 +81,6 @@ private:
     std::tuple<int, unsigned, unsigned> findBestCharacterSequence(unsigned numberOfCandidatesLimit) const;
 
     Vector<BoyerMooreBitmap> m_characters;
-    unsigned m_index { 0 };
 };
 
 std::tuple<int, unsigned, unsigned> BoyerMooreInfo::findBestCharacterSequence(unsigned numberOfCandidatesLimit) const
@@ -166,7 +159,11 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
     static constexpr RegisterID regT0 = ARMRegisters::r4;
     static constexpr RegisterID regT1 = ARMRegisters::r5;
-    static constexpr RegisterID initialStart = ARMRegisters::r8;
+    // r6 is reserved for MacroAssemblerARMv7,
+    // r7 is fp.
+    static constexpr RegisterID regT2 = ARMRegisters::r8;
+    // r9 is sb in EABI.
+    static constexpr RegisterID initialStart = ARMRegisters::r10; // r10 is SL, but no longer a special register.
 
     static constexpr RegisterID returnRegister = ARMRegisters::r0;
     static constexpr RegisterID returnRegister2 = ARMRegisters::r1;
@@ -204,9 +201,12 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
     static constexpr RegisterID length = MIPSRegisters::a2;
     static constexpr RegisterID output = MIPSRegisters::a3;
 
-    static constexpr RegisterID regT0 = MIPSRegisters::t4;
-    static constexpr RegisterID regT1 = MIPSRegisters::t5;
-    static constexpr RegisterID initialStart = MIPSRegisters::t6;
+    // t0 is reserved for MacroAssemblerMIPS.
+    // t1 is reserved for MacroAssemblerMIPS.
+    static constexpr RegisterID regT0 = MIPSRegisters::t2;
+    static constexpr RegisterID regT1 = MIPSRegisters::t3;
+    static constexpr RegisterID regT2 = MIPSRegisters::t4;
+    static constexpr RegisterID initialStart = MIPSRegisters::t5;
 
     static constexpr RegisterID returnRegister = MIPSRegisters::v0;
     static constexpr RegisterID returnRegister2 = MIPSRegisters::v1;
@@ -2403,14 +2403,40 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             jump().linkTo(loopHead, this);
                             matched.link(this);
                         } else {
-                            const uint8_t* pointer = getBoyerMooreByteVector(op.m_bmInfo->index(), map);
+                            const auto* pointer = getBoyerMooreBitmap(map);
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found bitmap lookahead count:(", mapCount, "),range:[", beginIndex, ", ", endIndex, ")");
 
                             move(TrustedImmPtr(pointer), regT1);
                             auto loopHead = label();
                             readCharacter(m_checkedOffset - endIndex + 1, regT0);
-                            and32(TrustedImm32(BoyerMooreBitmap::mapMask), regT0, regT0);
-                            auto matched = branchTest8(NonZero, BaseIndex(regT1, regT0, TimesOne));
+#if CPU(ARM64)
+                            static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint64_t));
+                            static_assert(1 << 6 == 64);
+                            static_assert(1 << (6 + 1) == BoyerMooreBitmap::Map::size());
+                            extractUnsignedBitfield32(regT0, TrustedImm32(6), TrustedImm32(1), regT2); // Extract 1 bit for index.
+                            load64(BaseIndex(regT1, regT2, TimesEight), regT2);
+                            urshift64(regT0, regT2); // We can ignore upper bits and only lower 6bits are effective.
+                            auto matched = branchTest64(NonZero, regT2, TrustedImm32(1));
+#elif CPU(X86_64)
+                            static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint64_t));
+                            static_assert(1 << 6 == 64);
+                            static_assert(1 << (6 + 1) == BoyerMooreBitmap::Map::size());
+                            move(regT0, regT2);
+                            urshift32(TrustedImm32(6), regT2);
+                            and32(TrustedImm32(1), regT2);
+                            load64(BaseIndex(regT1, regT2, TimesEight), regT2);
+                            auto matched = branchTestBit64(NonZero, regT2, regT0); // We can ignore upper bits since modulo-64 is performed.
+#else
+                            static_assert(sizeof(BoyerMooreBitmap::Map::WordType) == sizeof(uint32_t));
+                            static_assert(1 << 5 == 32);
+                            static_assert(1 << (5 + 2) == BoyerMooreBitmap::Map::size());
+                            move(regT0, regT2);
+                            urshift32(TrustedImm32(5), regT2);
+                            and32(TrustedImm32(0b11), regT2);
+                            load32(BaseIndex(regT1, regT2, TimesFour), regT2);
+                            urshift32(regT0, regT2); // We can ignore upper bits and only lower 5bits are effective.
+                            auto matched = branchTest32(NonZero, regT2, TrustedImm32(1));
+#endif
                             op.m_jumps.append(jumpIfNoAvailableInput(endIndex - beginIndex));
                             jump().linkTo(loopHead, this);
                             matched.link(this);
@@ -3820,7 +3846,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             auto bmInfo = BoyerMooreInfo::create(std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
             if (collectBoyerMooreInfo(disjunction, currentAlternativeIndex, bmInfo.get())) {
                 m_ops.last().m_bmInfo = bmInfo.ptr();
-                bmInfo->setIndex(m_bmInfos.size());
                 m_bmInfos.append(WTFMove(bmInfo));
             }
         }
@@ -3916,13 +3941,13 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         return true;
     }
 
-    const uint8_t* getBoyerMooreByteVector(unsigned index, const BoyerMooreBitmap::Map& map)
+    const BoyerMooreBitmap::Map::WordType* getBoyerMooreBitmap(const BoyerMooreBitmap::Map& map)
     {
-        auto vector = makeUniqueRef<BoyerMooreByteVector>(map);
-        if (const auto* existingPointer = m_codeBlock.tryReuseBoyerMooreByteVector(index, vector.get()))
+        if (const auto* existingPointer = m_codeBlock.tryReuseBoyerMooreBitmap(map))
            return existingPointer;
-        const uint8_t* pointer = vector->data();
-        m_bmVector.append(WTFMove(vector));
+        auto heapMap = makeUniqueRef<BoyerMooreBitmap::Map>(map);
+        const auto* pointer = heapMap->storage();
+        m_bmMaps.append(WTFMove(heapMap));
         return pointer;
     }
 
@@ -3991,6 +4016,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         push(ARMRegisters::r5);
         push(ARMRegisters::r6);
         push(ARMRegisters::r8);
+        push(ARMRegisters::r10);
 #elif CPU(MIPS)
         // Do nothing.
 #endif
@@ -4033,6 +4059,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 popPair(framePointerRegister, linkRegister);
         }
 #elif CPU(ARM_THUMB2)
+        pop(ARMRegisters::r10);
         pop(ARMRegisters::r8);
         pop(ARMRegisters::r6);
         pop(ARMRegisters::r5);
@@ -4203,14 +4230,14 @@ public:
 
         if (m_compileMode == JITCompileMode::MatchOnly) {
             if (m_charSize == CharSize::Char8)
-                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"), WTFMove(m_bmVector));
+                codeBlock.set8BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly8BitPtrTag, "Match-only 8-bit regular expression"), WTFMove(m_bmMaps));
             else
-                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"), WTFMove(m_bmVector));
+                codeBlock.set16BitCodeMatchOnly(FINALIZE_REGEXP_CODE(linkBuffer, YarrMatchOnly16BitPtrTag, "Match-only 16-bit regular expression"), WTFMove(m_bmMaps));
         } else {
             if (m_charSize == CharSize::Char8)
-                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"), WTFMove(m_bmVector));
+                codeBlock.set8BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr8BitPtrTag, "8-bit regular expression"), WTFMove(m_bmMaps));
             else
-                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"), WTFMove(m_bmVector));
+                codeBlock.set16BitCode(FINALIZE_REGEXP_CODE(linkBuffer, Yarr16BitPtrTag, "16-bit regular expression"), WTFMove(m_bmMaps));
         }
         if (m_failureReason)
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
@@ -4449,7 +4476,7 @@ private:
     // The regular expression expressed as a linear sequence of operations.
     Vector<YarrOp, 128> m_ops;
     Vector<UniqueRef<BoyerMooreInfo>, 4> m_bmInfos;
-    Vector<UniqueRef<BoyerMooreByteVector>> m_bmVector;
+    Vector<UniqueRef<BoyerMooreBitmap::Map>> m_bmMaps;
 
     // This records the current input offset being applied due to the current
     // set of alternatives we are nested within. E.g. when matching the
