@@ -1,3 +1,19 @@
+2021-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] Clean up IndexedDB files between tests
+        https://bugs.webkit.org/show_bug.cgi?id=228692
+
+        Reviewed by Ryosuke Niwa.
+
+        storage/indexeddb/getdatabases.html was failing because it counted
+        up the remaining databases of previous tests.
+
+        Mac DRT removes IndexedDB after the testing (Bug 192796, r240358).
+        Win DRT also should do it.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Call TestRunner::clearAllDatabases after the testing.
+
 2021-07-31  Alexander Mikhaylenko  <alexm@gnome.org>
 
         Add myself (Alexander Mikhaylenko) to contributors.json as a committer

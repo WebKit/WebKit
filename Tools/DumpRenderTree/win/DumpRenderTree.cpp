@@ -1249,6 +1249,8 @@ static void runTest(const string& inputLine)
     ::gTestRunner->setIconDatabaseEnabled(false);
     ::gTestRunner->clearAllApplicationCaches();
 
+    ::gTestRunner->clearAllDatabases();
+
     if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
         ::gTestRunner->setDumpFrameLoadCallbacks(true);
 
