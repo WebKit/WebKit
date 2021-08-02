@@ -122,6 +122,7 @@ void ResizeObserver::deliverObservations()
         entries.append(ResizeObserverEntry::create(observation->target(), observation->computeContentRect()));
     }
     m_activeObservations.clear();
+    auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
 
     auto* context = m_callback->scriptExecutionContext();
     if (!context)
@@ -136,6 +137,10 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
 {
     for (auto& observation : m_observations) {
         if (auto* target = observation->target(); target && visitor.containsOpaqueRoot(target->opaqueRoot()))
+            return true;
+    }
+    for (auto& target : m_activeObservationTargets) {
+        if (visitor.containsOpaqueRoot(target->opaqueRoot()))
             return true;
     }
     return false;
@@ -164,14 +169,6 @@ void ResizeObserver::removeAllTargets()
 
 bool ResizeObserver::removeObservation(const Element& target)
 {
-    m_activeObservationTargets.removeFirstMatching([&target](auto& pendingTarget) {
-        return pendingTarget.ptr() == &target;
-    });
-
-    m_activeObservations.removeFirstMatching([&target](auto& observation) {
-        return observation->target() == &target;
-    });
-
     return m_observations.removeFirstMatching([&target](auto& observation) {
         return observation->target() == &target;
     });

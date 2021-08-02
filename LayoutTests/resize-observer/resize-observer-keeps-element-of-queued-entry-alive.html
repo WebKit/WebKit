@@ -1,0 +1,88 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ResizeObserverEnabled=true ] -->
+<html>
+<body>
+<pre id="log">This tests observing an element with an ResizeObserver and removing the element from the document while it is queued for delivery.
+
+</pre>
+<script src="../resources/gc.js"></script>
+<script>
+
+let initialNodeCount;
+function runTest()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    const promises = [];
+    for (let i = 0; i < 5; ++i)
+        promises.push(createResizeObserver());
+
+    Promise.all(promises).then(() => {
+        log.textContent += '\nDone\n';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}
+
+function createResizeObserver()
+{
+    let element = document.createElement('div');
+    element.style.width = '100px';
+    element.style.height = '100px';
+
+    let anotherElement = document.createElement('div');
+
+    let stopped = false;
+    let testing = false;
+    let resizeObservers = [];
+
+    function helper(observer) {
+        if (!testing)
+            return;
+        if (stopped) {
+            log.textContent += observer.alive ? 'PASS - ResizeObserver wrapper is alive\n' : 'FAIL - ResizeObserver wrapper is dead\n';
+            return;
+        }
+        stopped = true;
+        for (const observer of resizeObservers)
+            observer.unobserve(element);
+        resizeObservers = [];
+        element.remove();
+        element = null;
+    }
+
+    (() => {
+        for (let i = 0; i < 5; ++i) {
+            const observer = new ResizeObserver(function () {
+                helper(this);
+                gc();
+            });
+            observer.alive = true;
+            observer.observe(element);
+            observer.observe(anotherElement);
+            resizeObservers.push(observer);
+        }
+    })();
+
+    document.body.appendChild(element);
+
+    return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                testing = true;
+                element.style.width = '200px';
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, 0);
+                });
+            }, 0);
+        });
+    });
+}
+
+onload = runTest;
+
+</script>
+</body>
+</html>
