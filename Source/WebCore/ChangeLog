@@ -1,3 +1,40 @@
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] webm; properly trim frames according to the codec delay information
+        https://bugs.webkit.org/show_bug.cgi?id=228140
+        rdar://problem/80883882
+
+        Reviewed by Eric Carlson.
+
+        Add frame-perfect decoding for Opus and Vorbis in WebM container.
+        Unfortunately, due to a vorbis decoder bug, it is not possible to test that
+        vorbis decoding returns the right number of frames.
+        Amend Opus test to ensure the right amount of frames are returned.
+
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::AudioFileReader::demuxWebMData const):
+        (WebCore::passthroughInputDataCallback): AudioToolbox internal logging could overflow
+        if we used packet descriptions with offsets, so we take the most commonly used scenario
+        where we have a single packet to decode at a time.
+        (WebCore::AudioFileReader::decodeWebMData const):
+        * platform/graphics/cocoa/AudioTrackPrivateWebM.cpp:
+        (WebCore::AudioTrackPrivateWebM::codecDelay const):
+        (WebCore::AudioTrackPrivateWebM::setDiscardPadding):
+        (WebCore::AudioTrackPrivateWebM::discardPadding const):
+        * platform/graphics/cocoa/AudioTrackPrivateWebM.h:
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::OnElementEnd): Fly-by, ensure m_didParseInitializationDataCallback
+        only ever accessed on client thread.
+        (WebCore::SourceBufferParserWebM::OnBlockGroupEnd):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h: Add trimming data callback.
+        Only mark WEBCORE_EXPORT the methods that need it.
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::setDidParseTrimmingDataCallback):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType const): Make canPlayType(webm/audio; codecs=vorbis)
+        returns maybe if feature flag set.
+
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Cross-Origin-Opener-Policy header parsing fails when report-to parameter is present

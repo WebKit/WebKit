@@ -1070,7 +1070,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     // Temporarily work around bug 226922. For now claim that the opus and vorbis codecs aren't supported
     // so that sites relying on this test to determine if webaudio use of opus or vorbis won't error.
     auto codecs = contentType.codecs();
-    if (support == MediaPlayer::SupportsType::IsSupported && ((codecs.contains("opus") && !webMWebAudioEnabled()) || codecs.contains("vorbis")))
+    if (support == MediaPlayer::SupportsType::IsSupported && ((codecs.contains("opus") || codecs.contains("vorbis")) && !webMWebAudioEnabled()))
         support = MediaPlayer::SupportsType::IsNotSupported;
 #endif
 

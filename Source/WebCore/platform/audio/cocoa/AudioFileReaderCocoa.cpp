@@ -35,7 +35,7 @@
 #include "AudioBus.h"
 #include "AudioFileReader.h"
 #include "AudioSampleDataSource.h"
-#include "AudioTrackPrivate.h"
+#include "AudioTrackPrivateWebM.h"
 #include "FloatConversion.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
@@ -130,7 +130,7 @@ class AudioFileReaderWebMData {
 
 public:
 #if ENABLE(MEDIA_SOURCE)
-    SourceBufferParserWebM::InitializationSegment m_initSegment;
+    Ref<AudioTrackPrivateWebM> m_track;
 #endif
     MediaTime m_duration;
     Vector<Ref<MediaSampleAVFObjC>> m_samples;
@@ -184,7 +184,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     bool error = false;
     std::optional<uint64_t> audioTrackId;
     MediaTime duration;
-    SourceBufferParserWebM::InitializationSegment initSegment;
+    RefPtr<AudioTrackPrivateWebM> track;
     Vector<Ref<MediaSampleAVFObjC>> samples;
     parser->setDidEncounterErrorDuringParsingCallback([&](uint64_t) {
         error = true;
@@ -194,7 +194,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
             if (audioTrack.track && audioTrack.track->trackUID()) {
                 duration = init.duration;
                 audioTrackId = audioTrack.track->trackUID();
-                initSegment = WTFMove(init);
+                track = static_pointer_cast<AudioTrackPrivateWebM>(audioTrack.track);
                 return;
             }
         }
@@ -207,20 +207,27 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     parser->setCallOnClientThreadCallback([](auto&& function) {
         function();
     });
+    parser->setDidParseTrimmingDataCallback([&](uint64_t trackID, const MediaTime& discardPadding) {
+        if (!audioTrackId || !track || trackID != *audioTrackId)
+            return;
+        track->setDiscardPadding(discardPadding);
+    });
     SourceBufferParser::Segment segment({ data, dataSize });
     parser->appendData(WTFMove(segment));
-    if (!audioTrackId)
+    if (!track)
         return nullptr;
     parser->flushPendingAudioBuffers();
-    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(initSegment), WTFMove(duration), WTFMove(samples) });
+    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
 }
 
 struct PassthroughUserData {
-    UInt32 m_channels;
-    UInt32 m_dataSize;
-    const void* m_data;
+    const UInt32 m_channels;
+    const UInt32 m_dataSize;
+    const char* m_data;
+    const bool m_eos;
+    const Vector<AudioStreamPacketDescription>& m_packets;
     UInt32 m_index;
-    Vector<AudioStreamPacketDescription>& m_packets;
+    AudioStreamPacketDescription m_packet;
 };
 
 // Error value we pass through the decoder to signal that nothing
@@ -236,21 +243,29 @@ static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataP
     auto* userData = static_cast<PassthroughUserData*>(inUserData);
     if (userData->m_index == userData->m_packets.size()) {
         *numDataPackets = 0;
-        return kNoMoreDataErr;
+        return userData->m_eos ? noErr : kNoMoreDataErr;
+    }
+
+    if (userData->m_index >= userData->m_packets.size()) {
+        *numDataPackets = 0;
+        return kAudioConverterErr_RequiresPacketDescriptionsError;
     }
 
     if (packetDesc) {
-        if (userData->m_index >= userData->m_packets.size()) {
-            *numDataPackets = 0;
-            return kAudioConverterErr_RequiresPacketDescriptionsError;
-        }
-        *packetDesc = &userData->m_packets[userData->m_index];
+        userData->m_packet = userData->m_packets[userData->m_index];
+        userData->m_packet.mStartOffset = 0;
+        *packetDesc = &userData->m_packet;
     }
 
     data->mBuffers[0].mNumberChannels = userData->m_channels;
-    data->mBuffers[0].mDataByteSize = userData->m_dataSize;
-    data->mBuffers[0].mData = const_cast<void*>(userData->m_data);
+    data->mBuffers[0].mDataByteSize = userData->m_packets[userData->m_index].mDataByteSize;
+    data->mBuffers[0].mData = const_cast<char*>(userData->m_data + userData->m_packets[userData->m_index].mStartOffset);
 
+    // Sanity check
+    if (static_cast<char*>(data->mBuffers[0].mData) + data->mBuffers[0].mDataByteSize > userData->m_data + userData->m_dataSize) {
+        RELEASE_LOG_FAULT(WebAudio, "Nonsensical data structure, aborting");
+        return kAudioConverterErr_UnspecifiedError;
+    }
     *numDataPackets = 1;
     userData->m_index++;
 
@@ -303,6 +318,12 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
     if (magicCookie && magicCookieSize)
         PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, magicCookieSize, magicCookie);
 
+    AudioConverterPrimeInfo primeInfo = { UInt32(m_webmData->m_track->codecDelay().value_or(MediaTime()).toDouble() * outFormat.mSampleRate), 0 };
+    INFO_LOG(LOGIDENTIFIER, "Will drop %u leading frames out of %llu", primeInfo.leadingFrames, numberOfFrames);
+    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeInfo, sizeof(primeInfo), &primeInfo);
+    UInt32 primeMethod = kConverterPrimeMethod_None;
+    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeMethod, sizeof(primeMethod), &primeMethod);
+
     AudioBufferListHolder decodedBufferList(inFormat.mChannelsPerFrame);
     if (!decodedBufferList) {
         RELEASE_LOG_FAULT(WebAudio, "Unable to create decoder");
@@ -311,7 +332,8 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
 
     size_t decodedFrames = 0;
     OSStatus status;
-    for (auto& sample : m_webmData->m_samples) {
+    for (size_t i = 0; i < m_webmData->m_samples.size(); i++) {
+        auto& sample = m_webmData->m_samples[i];
         CMSampleBufferRef sampleBuffer = sample->sampleBuffer();
         auto buffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
         ASSERT(PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0));
@@ -331,7 +353,7 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
         if (descriptions.isEmpty())
             return { };
 
-        PassthroughUserData userData = { inFormat.mChannelsPerFrame, UInt32(srcSize), srcData, 0, descriptions };
+        PassthroughUserData userData = { inFormat.mChannelsPerFrame, UInt32(srcSize), srcData, i == m_webmData->m_samples.size() - 1, descriptions, 0, { } };
 
         do {
             if (numberOfFrames < decodedFrames) {
@@ -353,9 +375,12 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
                 return { };
             }
             decodedFrames += numFrames;
-        } while (status != kNoMoreDataErr);
+        } while (status != kNoMoreDataErr && status != noErr);
     }
-    return decodedFrames;
+    size_t paddingFrames = m_webmData->m_track->discardPadding().value_or(MediaTime()).toDouble() * outFormat.mSampleRate;
+    if (decodedFrames > paddingFrames)
+        return decodedFrames - paddingFrames;
+    return 0;
 }
 #endif
 

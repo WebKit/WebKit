@@ -1,3 +1,15 @@
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=228140
+        rdar://problem/80883882
+
+        Reviewed by Eric Carlson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=228140
+
+        * webaudio/decode-audio-data-webm-opus-expected.txt:
+        * webaudio/decode-audio-data-webm-opus.html:
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Cross-Origin-Opener-Policy header parsing fails when report-to parameter is present

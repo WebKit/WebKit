@@ -43,10 +43,14 @@ public:
     int trackIndex() const final;
     std::optional<uint64_t> trackUID() const final;
     std::optional<bool> defaultEnabled() const final;
+    std::optional<MediaTime> codecDelay() const;
+    void setDiscardPadding(const MediaTime&);
+    std::optional<MediaTime> discardPadding() const;
 
 private:
     AudioTrackPrivateWebM(webm::TrackEntry&&);
     webm::TrackEntry m_track;
+    MediaTime m_discardPadding { MediaTime::invalidTime() };
     mutable AtomString m_trackID;
     mutable AtomString m_label;
     mutable AtomString m_language;

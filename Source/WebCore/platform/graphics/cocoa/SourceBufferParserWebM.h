@@ -55,7 +55,7 @@ namespace WebCore {
 
 class MediaSampleAVFObjC;
 
-class WEBCORE_EXPORT SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
+class SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class StreamingVectorReader;
@@ -63,7 +63,7 @@ public:
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
     static const HashSet<String, ASCIICaseInsensitiveHash>& webmMIMETypes();
-    static RefPtr<SourceBufferParserWebM> create(const ContentType&);
+    WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
     ~SourceBufferParserWebM();
@@ -73,7 +73,7 @@ public:
     const webm::Status& status() const { return m_status; }
 
     Type type() const { return Type::WebM; }
-    void appendData(Segment&&, CompletionHandler<void()>&& = [] { }, AppendFlags = AppendFlags::None) final;
+    WEBCORE_EXPORT void appendData(Segment&&, CompletionHandler<void()>&& = [] { }, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
     void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
     bool shouldProvideMediadataForTrackID(uint64_t) final;
@@ -83,9 +83,14 @@ public:
     void flushPendingAudioBuffers();
     void setMinimumAudioSampleDuration(float);
     
-    void setLogger(const WTF::Logger&, const void* identifier) final;
+    WEBCORE_EXPORT void setLogger(const WTF::Logger&, const void* identifier) final;
 
     void provideMediaData(RetainPtr<CMSampleBufferRef>, uint64_t, std::optional<size_t> byteRangeOffset);
+    using DidParseTrimmingDataCallback = WTF::Function<void(uint64_t trackID, const MediaTime& discardPadding)>;
+    void setDidParseTrimmingDataCallback(DidParseTrimmingDataCallback&& callback)
+    {
+        m_didParseTrimmingDataCallback = WTFMove(callback);
+    }
 
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
@@ -287,6 +292,7 @@ private:
     RefPtr<const WTF::Logger> m_logger;
     const void* m_logIdentifier { nullptr };
     uint64_t m_nextChildIdentifier { 0 };
+    DidParseTrimmingDataCallback m_didParseTrimmingDataCallback;
 };
 
 }

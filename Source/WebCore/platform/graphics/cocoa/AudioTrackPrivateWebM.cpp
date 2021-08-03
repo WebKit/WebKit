@@ -86,6 +86,26 @@ int AudioTrackPrivateWebM::trackIndex() const
     return 0;
 }
 
+std::optional<MediaTime> AudioTrackPrivateWebM::codecDelay() const
+{
+    if (!m_track.codec_delay.is_present())
+        return { };
+    constexpr uint32_t k_us_in_seconds = 1000000000;
+    return MediaTime(m_track.codec_delay.value(), k_us_in_seconds);
+}
+
+void AudioTrackPrivateWebM::setDiscardPadding(const MediaTime& discardPadding)
+{
+    m_discardPadding = discardPadding;
+}
+
+std::optional<MediaTime> AudioTrackPrivateWebM::discardPadding() const
+{
+    if (m_discardPadding.isInvalid() || m_discardPadding < MediaTime())
+        return { };
+    return m_discardPadding;
+}
+
 }
 
 #endif // ENABLE(MEDIA_SOURCE)

@@ -264,6 +264,8 @@ static const char* logClassName() { return "SourceBufferParserWebM"; }
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
 constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
 
+constexpr uint32_t k_us_in_seconds = 1000000000;
+
 static bool isWebmParserAvailable()
 {
     return !!webm::swap;
@@ -779,9 +781,10 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
             return Status(Status::Code(ErrorCode::ContentEncrypted));
         }
 
-        if (m_initializationSegmentEncountered && m_didParseInitializationDataCallback) {
+        if (m_initializationSegmentEncountered) {
             m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
-                m_didParseInitializationDataCallback(WTFMove(initializationSegment));
+                if (m_didParseInitializationDataCallback)
+                    m_didParseInitializationDataCallback(WTFMove(initializationSegment));
             });
         }
         m_initializationSegmentEncountered = false;
@@ -847,7 +850,7 @@ Status SourceBufferParserWebM::OnInfo(const ElementMetadata& metadata, const Inf
     }
 
     auto timecodeScale = info.timecode_scale.is_present() ? info.timecode_scale.value() : 1000000;
-    m_timescale = 1000000000 / timecodeScale;
+    m_timescale = k_us_in_seconds / timecodeScale;
     m_initializationSegment->duration = info.duration.is_present() ? MediaTime(info.duration.value(), m_timescale) : MediaTime::indefiniteTime();
 
     return Status(Status::kOkCompleted);
@@ -1023,8 +1026,21 @@ webm::Status SourceBufferParserWebM::OnBlockGroupBegin(const webm::ElementMetada
 webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata& metadata, const webm::BlockGroup& blockGroup)
 {
     UNUSED_PARAM(metadata);
-    UNUSED_PARAM(blockGroup);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (blockGroup.block.is_present() && blockGroup.discard_padding.is_present()) {
+        auto trackNumber = blockGroup.block.value().track_number;
+        auto* trackData = trackDataForTrackNumber(trackNumber);
+        if (!trackData) {
+            ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Ignoring unknown track number ", trackNumber);
+            return Status(Status::kOkCompleted);
+        }
+        if (trackData->track().track_uid.is_present() && blockGroup.discard_padding.value() > 0) {
+            m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), trackID = trackData->track().track_uid.value(), padding = MediaTime(blockGroup.discard_padding.value(), k_us_in_seconds)]() {
+                if (m_didParseTrimmingDataCallback)
+                    m_didParseTrimmingDataCallback(trackID, padding);
+            });
+        }
+    }
     return Status(Status::kOkCompleted);
 }
 
@@ -1212,7 +1228,7 @@ void SourceBufferParserWebM::VideoTrackData::createSampleBuffer(const CMTime& pr
 
     uint64_t duration = 0;
     if (track.default_duration.is_present())
-        duration = track.default_duration.value() * presentationTime.timescale / 1000000000;
+        duration = track.default_duration.value() * presentationTime.timescale / k_us_in_seconds;
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
     size_t frameSize = PAL::CMBlockBufferGetDataLength(m_currentBlockBuffer.get());
