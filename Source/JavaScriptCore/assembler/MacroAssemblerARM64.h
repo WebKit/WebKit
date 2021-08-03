@@ -1473,6 +1473,27 @@ public:
         return label;
     }
 
+    void loadPair32(RegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src, TrustedImm32(0), dest1, dest2);
+    }
+
+    void loadPair32(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
+    {
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPImm<32>(offset.m_value)) {
+            m_assembler.ldp<32>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        if (src == dest1) {
+            load32(Address(src, offset.m_value + 4), dest2);
+            load32(Address(src, offset.m_value), dest1);
+        } else {
+            load32(Address(src, offset.m_value), dest1);
+            load32(Address(src, offset.m_value + 4), dest2);
+        }
+    }
+
     void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
     {
         loadPair64(src, TrustedImm32(0), dest1, dest2);
@@ -1480,7 +1501,18 @@ public:
 
     void loadPair64(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
     {
-        m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPImm<64>(offset.m_value)) {
+            m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        if (src == dest1) {
+            load64(Address(src, offset.m_value + 8), dest2);
+            load64(Address(src, offset.m_value), dest1);
+        } else {
+            load64(Address(src, offset.m_value), dest1);
+            load64(Address(src, offset.m_value + 8), dest2);
+        }
     }
 
     void loadPair64WithNonTemporalAccess(RegisterID src, RegisterID dest1, RegisterID dest2)
@@ -1490,7 +1522,18 @@ public:
 
     void loadPair64WithNonTemporalAccess(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
     {
-        m_assembler.ldnp<64>(dest1, dest2, src, offset.m_value);
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPImm<64>(offset.m_value)) {
+            m_assembler.ldnp<64>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        if (src == dest1) {
+            load64(Address(src, offset.m_value + 8), dest2);
+            load64(Address(src, offset.m_value), dest1);
+        } else {
+            load64(Address(src, offset.m_value), dest1);
+            load64(Address(src, offset.m_value + 8), dest2);
+        }
     }
 
     void loadPair64(RegisterID src, FPRegisterID dest1, FPRegisterID dest2)
@@ -1500,7 +1543,13 @@ public:
 
     void loadPair64(RegisterID src, TrustedImm32 offset, FPRegisterID dest1, FPRegisterID dest2)
     {
-        m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPFPImm<64>(offset.m_value)) {
+            m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        loadDouble(Address(src, offset.m_value), dest1);
+        loadDouble(Address(src, offset.m_value + 8), dest2);
     }
 
     void abortWithReason(AbortReason reason)
@@ -1824,6 +1873,21 @@ public:
         return label;
     }
 
+    void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        storePair32(src1, src2, dest, TrustedImm32(0));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        if (ARM64Assembler::isValidSTPImm<32>(offset.m_value)) {
+            m_assembler.stp<32>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        store32(src1, Address(dest, offset.m_value));
+        store32(src2, Address(dest, offset.m_value + 4));
+    }
+
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair64(src1, src2, dest, TrustedImm32(0));
@@ -1831,7 +1895,12 @@ public:
 
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+        if (ARM64Assembler::isValidSTPImm<64>(offset.m_value)) {
+            m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        store64(src1, Address(dest, offset.m_value));
+        store64(src2, Address(dest, offset.m_value + 8));
     }
 
     void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest)
@@ -1841,7 +1910,12 @@ public:
 
     void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        m_assembler.stnp<64>(src1, src2, dest, offset.m_value);
+        if (ARM64Assembler::isValidSTPImm<64>(offset.m_value)) {
+            m_assembler.stnp<64>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        store64(src1, Address(dest, offset.m_value));
+        store64(src2, Address(dest, offset.m_value + 8));
     }
 
     void storePair64(FPRegisterID src1, FPRegisterID src2, RegisterID dest)
@@ -1851,7 +1925,12 @@ public:
 
     void storePair64(FPRegisterID src1, FPRegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+        if (ARM64Assembler::isValidSTPFPImm<64>(offset.m_value)) {
+            m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        storeDouble(src1, Address(dest, offset.m_value));
+        storeDouble(src2, Address(dest, offset.m_value + 8));
     }
 
     void store32(RegisterID src, ImplicitAddress address)

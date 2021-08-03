@@ -1,5 +1,43 @@
 2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use loadPair / storePair in YarrJIT
+        https://bugs.webkit.org/show_bug.cgi?id=228687
+
+        Reviewed by Mark Lam.
+
+        Use loadPair / storePair if possible in YarrJIT. Currently, we are not
+        deploying Spooler in YarrJIT, but we should do that in the future too.
+
+        In this patch, we also add appropriate fallback code in loadPair / storePair:
+        the offset of these functions are small enough so that we should consider
+        overflowing case. If it overflows, we use two loads or stores.
+
+        This patch also adds loadPair32 and storePair32 to all macro assembler so that
+        we can call it without CPU(ARM64). Internally, two loads or stores are combined.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadPair32):
+        (JSC::MacroAssemblerARM64::loadPair64):
+        (JSC::MacroAssemblerARM64::loadPair64WithNonTemporalAccess):
+        (JSC::MacroAssemblerARM64::storePair32):
+        (JSC::MacroAssemblerARM64::storePair64):
+        (JSC::MacroAssemblerARM64::storePair64WithNonTemporalAccess):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadPair32):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::loadPair32):
+        (JSC::MacroAssemblerMIPS::storePair32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadPair32):
+        (JSC::MacroAssemblerX86Common::storePair32):
+        * assembler/testmasm.cpp:
+        (JSC::testLoadStorePair32):
+        (JSC::testLoadStorePair64Int64):
+        * yarr/YarrJIT.cpp:
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, fix accidental narrowing
         https://bugs.webkit.org/show_bug.cgi?id=228613
 

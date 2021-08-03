@@ -299,8 +299,10 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
     struct ParenContext {
         struct ParenContext* next;
-        uint32_t begin;
-        uint32_t matchAmount;
+        struct BeginAndMatchAmount {
+            uint32_t begin;
+            uint32_t matchAmount;
+        } beginAndMatchAmount;
         uintptr_t returnAddress;
         struct Subpatterns {
             unsigned start;
@@ -313,27 +315,27 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             return sizeof(ParenContext) + sizeof(Subpatterns) * parenContextSizes.numSubpatterns() + sizeof(uintptr_t) * parenContextSizes.frameSlots();
         }
 
-        static ptrdiff_t nextOffset()
+        static constexpr ptrdiff_t nextOffset()
         {
             return offsetof(ParenContext, next);
         }
 
-        static ptrdiff_t beginOffset()
+        static constexpr ptrdiff_t beginOffset()
         {
-            return offsetof(ParenContext, begin);
+            return offsetof(ParenContext, beginAndMatchAmount) + offsetof(BeginAndMatchAmount, begin);
         }
 
-        static ptrdiff_t matchAmountOffset()
+        static constexpr ptrdiff_t matchAmountOffset()
         {
-            return offsetof(ParenContext, matchAmount);
+            return offsetof(ParenContext, beginAndMatchAmount) + offsetof(BeginAndMatchAmount, matchAmount);
         }
 
-        static ptrdiff_t returnAddressOffset()
+        static constexpr ptrdiff_t returnAddressOffset()
         {
             return offsetof(ParenContext, returnAddress);
         }
 
-        static ptrdiff_t subpatternOffset(size_t subpattern)
+        static constexpr ptrdiff_t subpatternOffset(size_t subpattern)
         {
             return offsetof(ParenContext, subpatterns) + (subpattern - 1) * sizeof(Subpatterns);
         }
@@ -395,17 +397,30 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         move(headPtrRegister, freelistRegister);
     }
 
+
+    void storeBeginAndMatchAmountToParenContext(RegisterID beginGPR, RegisterID matchAmountGPR, RegisterID parenContextGPR)
+    {
+        static_assert(ParenContext::beginOffset() + 4 == ParenContext::matchAmountOffset());
+        storePair32(beginGPR, matchAmountGPR, parenContextGPR, TrustedImm32(ParenContext::beginOffset()));
+    }
+
+    void loadBeginAndMatchAmountFromParenContext(RegisterID parenContextGPR, RegisterID beginGPR, RegisterID matchAmountGPR)
+    {
+        static_assert(ParenContext::beginOffset() + 4 == ParenContext::matchAmountOffset());
+        loadPair32(parenContextGPR, TrustedImm32(ParenContext::beginOffset()), beginGPR, matchAmountGPR);
+    }
+
     void saveParenContext(RegisterID parenContextReg, RegisterID tempReg, unsigned firstSubpattern, unsigned lastSubpattern, unsigned subpatternBaseFrameLocation)
     {
-        store32(index, Address(parenContextReg, ParenContext::beginOffset()));
         loadFromFrame(subpatternBaseFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), tempReg);
-        store32(tempReg, Address(parenContextReg, ParenContext::matchAmountOffset()));
+        storeBeginAndMatchAmountToParenContext(index, tempReg, parenContextReg);
         loadFromFrame(subpatternBaseFrameLocation + BackTrackInfoParentheses::returnAddressIndex(), tempReg);
         storePtr(tempReg, Address(parenContextReg, ParenContext::returnAddressOffset()));
         if (m_compileMode == JITCompileMode::IncludeSubpatterns) {
             for (unsigned subpattern = firstSubpattern; subpattern <= lastSubpattern; subpattern++) {
-                loadPtr(Address(output, (subpattern << 1) * sizeof(unsigned)), tempReg);
-                storePtr(tempReg, Address(parenContextReg, ParenContext::subpatternOffset(subpattern)));
+                static_assert(is64Bit());
+                load64(Address(output, (subpattern << 1) * sizeof(unsigned)), tempReg);
+                store64(tempReg, Address(parenContextReg, ParenContext::subpatternOffset(subpattern)));
                 clearSubpatternStart(subpattern);
             }
         }
@@ -418,16 +433,16 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
     void restoreParenContext(RegisterID parenContextReg, RegisterID tempReg, unsigned firstSubpattern, unsigned lastSubpattern, unsigned subpatternBaseFrameLocation)
     {
-        load32(Address(parenContextReg, ParenContext::beginOffset()), index);
+        loadBeginAndMatchAmountFromParenContext(parenContextReg, index, tempReg);
         storeToFrame(index, subpatternBaseFrameLocation + BackTrackInfoParentheses::beginIndex());
-        load32(Address(parenContextReg, ParenContext::matchAmountOffset()), tempReg);
         storeToFrame(tempReg, subpatternBaseFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
         loadPtr(Address(parenContextReg, ParenContext::returnAddressOffset()), tempReg);
         storeToFrame(tempReg, subpatternBaseFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
         if (m_compileMode == JITCompileMode::IncludeSubpatterns) {
             for (unsigned subpattern = firstSubpattern; subpattern <= lastSubpattern; subpattern++) {
-                loadPtr(Address(parenContextReg, ParenContext::subpatternOffset(subpattern)), tempReg);
-                storePtr(tempReg, Address(output, (subpattern << 1) * sizeof(unsigned)));
+                static_assert(is64Bit());
+                load64(Address(parenContextReg, ParenContext::subpatternOffset(subpattern)), tempReg);
+                store64(tempReg, Address(output, (subpattern << 1) * sizeof(unsigned)));
             }
         }
         subpatternBaseFrameLocation += YarrStackSpaceForBackTrackInfoParentheses;
@@ -1296,8 +1311,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         JumpList matches;
 
         if (term->quantityType != QuantifierType::NonGreedy) {
-            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
-            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+            loadSubPattern(output, subpatternId, patternIndex, patternTemp);
 
             // An empty match is successful without consuming characters
             if (term->quantityType != QuantifierType::FixedCount || term->quantityMaxCount != 1) {
@@ -1328,8 +1342,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 add32(TrustedImm32(1), characterOrTemp);
                 storeToFrame(characterOrTemp, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
                 matches.append(branch32(Equal, Imm32(term->quantityMaxCount), characterOrTemp));
-                load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
-                load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+                loadSubPattern(output, subpatternId, patternIndex, patternTemp);
                 jump(outerLoop);
             }
             matches.link(this);
@@ -1352,8 +1365,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             storeToFrame(characterOrTemp, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
             if (term->quantityMaxCount != quantifyInfinite)
                 matches.append(branch32(Equal, Imm32(term->quantityMaxCount), characterOrTemp));
-            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
-            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+            loadSubPattern(output, subpatternId, patternIndex, patternTemp);
 
             // Store current index in frame for restoring after a partial match
             storeToFrame(index, parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex());
@@ -1374,8 +1386,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 
             op.m_reentry = label();
 
-            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternIndex);
-            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternTemp);
+            loadSubPattern(output, subpatternId, patternIndex, patternTemp);
 
             // An empty match is successful without consuming characters
             Jump zeroLengthMatch = branch32(Equal, TrustedImm32(-1), patternIndex);
@@ -1429,8 +1440,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
             loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex(), matchAmount);
             failures.append(branchTest32(Zero, matchAmount));
 
-            load32(Address(output, (subpatternId << 1) * sizeof(int)), patternStartIndex);
-            load32(Address(output, ((subpatternId << 1) + 1) * sizeof(int)), patternEndIndexOrLen);
+            loadSubPattern(output, subpatternId, patternStartIndex, patternEndIndexOrLen);
             sub32(patternStartIndex, patternEndIndexOrLen);
             sub32(patternEndIndexOrLen, index);
 
@@ -2515,11 +2525,12 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     if (priorAlternative->m_minimumSize)
                         sub32(Imm32(priorAlternative->m_minimumSize), returnRegister);
                     if (m_compileMode == JITCompileMode::IncludeSubpatterns)
-                        store32(returnRegister, output);
-                } else
+                        storePair32(returnRegister, index, output, TrustedImm32(0));
+                } else {
                     getMatchStart(returnRegister);
-                if (m_compileMode == JITCompileMode::IncludeSubpatterns)
-                    store32(index, Address(output, 4));
+                    if (m_compileMode == JITCompileMode::IncludeSubpatterns)
+                        store32(index, Address(output, 4));
+                }
                 move(index, returnRegister2);
 
                 generateReturn();
@@ -4143,6 +4154,11 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
 #endif
     }
 
+    void loadSubPattern(RegisterID outputGPR, unsigned subpatternId, RegisterID startIndexGPR, RegisterID endIndexOrLenGPR)
+    {
+        loadPair32(outputGPR, TrustedImm32((subpatternId << 1) * sizeof(int)), startIndexGPR, endIndexOrLenGPR);
+    }
+
 public:
     YarrGenerator(VM* vm, YarrPattern& pattern, String& patternString, YarrCodeBlock& codeBlock, CharSize charSize, JITCompileMode compileMode)
         : m_vm(vm)
@@ -4241,13 +4257,21 @@ public:
             move(TrustedImm32(matchLimit), remainingMatchCount);
 #endif
 
+        // Initialize subpatterns' starts. And initialize matchStart if `!m_pattern.m_body->m_hasFixedSize`.
+        // If the mode is JITCompileMode::IncludeSubpatterns, then matchStart is subpatterns[0]'s start.
         if (m_compileMode == JITCompileMode::IncludeSubpatterns) {
-            for (unsigned i = 0; i < m_pattern.m_numSubpatterns + 1; ++i)
-                store32(TrustedImm32(-1), Address(output, (i << 1) * sizeof(int)));
+            unsigned subpatternId = 0;
+            // First subpatternId's start is configured to `index` if !m_pattern.m_body->m_hasFixedSize.
+            if (!m_pattern.m_body->m_hasFixedSize) {
+                setMatchStart(index);
+                ++subpatternId;
+            }
+            for (; subpatternId < m_pattern.m_numSubpatterns + 1; ++subpatternId)
+                store32(TrustedImm32(-1), Address(output, (subpatternId << 1) * sizeof(int)));
+        } else {
+            if (!m_pattern.m_body->m_hasFixedSize)
+                setMatchStart(index);
         }
-
-        if (!m_pattern.m_body->m_hasFixedSize)
-            setMatchStart(index);
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
         if (m_containsNestedSubpatterns) {

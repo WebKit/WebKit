@@ -1300,6 +1300,23 @@ public:
         m_assembler.movswl_mr(address.offset, address.base, dest);
     }
 
+    void loadPair32(RegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src, TrustedImm32(0), dest1, dest2);
+    }
+
+    void loadPair32(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
+    {
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (src == dest1) {
+            load32(Address(src, offset.m_value + 4), dest2);
+            load32(Address(src, offset.m_value), dest1);
+        } else {
+            load32(Address(src, offset.m_value), dest1);
+            load32(Address(src, offset.m_value + 4), dest2);
+        }
+    }
+
     void zeroExtend16To32(RegisterID src, RegisterID dest)
     {
         m_assembler.movzwl_rr(src, dest);
@@ -1347,6 +1364,17 @@ public:
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         m_assembler.movb_i8m(imm8.m_value, address.offset, address.base, address.index, address.scale);
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        storePair32(src1, src2, dest, TrustedImm32(0));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        store32(src1, Address(dest, offset.m_value));
+        store32(src2, Address(dest, offset.m_value + 4));
     }
 
     static ALWAYS_INLINE RegisterID getUnusedRegister(BaseIndex address)
