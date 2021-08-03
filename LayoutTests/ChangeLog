@@ -1,3 +1,12 @@
+2021-08-03  Eric Hutchison  <ehutchison@apple.com>
+
+        Re-baseline imported/w3c/web-platform-tests/html/dom/idlharness.https.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228198.
+
+        Unreviewed re-baseline.
+
+        * platform/ipad/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-08-03  Tim Horton  <timothy_horton@apple.com>
 
         fast/dom/navigator-iOS-userAgent.html fails on iPad because the platform is not "iPhone" or "iPad"
