@@ -2528,7 +2528,24 @@ private:
         }
         reloopBlock->setSuccessors(doneBlock, reloopBlock);
     }
-    
+
+    bool tryAppendBitOpWithShift(Value* left, Value* right, Air::Opcode opcode)
+    {
+        if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp))
+            return false;
+        if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
+            return false;
+
+        uint64_t amount = right->child(1)->asInt();
+        uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
+        if (amount >= datasize)
+            return false;
+
+        append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
+        commitInternal(right);
+        return true;
+    }
+
     void lower()
     {
         using namespace Air;
@@ -2704,25 +2721,13 @@ private:
             if (tryMultiplyAdd())
                 return;
 
-            // add-with-shift Pattern: n + (m ShiftType amount)
+            // add-with-shift Pattern: left + (right ShiftType amount)
             auto tryAppendAddWithShift = [&] (Value* left, Value* right) -> bool {
-                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(), 
-                    AddLeftShift32, AddLeftShift64, 
-                    AddRightShift32, AddRightShift64, 
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(),
+                    AddLeftShift32, AddLeftShift64,
+                    AddRightShift32, AddRightShift64,
                     AddUnsignedRightShift32, AddUnsignedRightShift64);
-                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
-                    return false;
-                if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
-                    return false;
-
-                uint64_t amount = right->child(1)->asInt();
-                uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
-                if (amount >= datasize)
-                    return false;
-
-                append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
-                commitInternal(right);
-                return true;
+                return tryAppendBitOpWithShift(left, right, opcode);
             };
 
             if (tryAppendAddWithShift(left, right) || tryAppendAddWithShift(right, left))
@@ -2779,28 +2784,12 @@ private:
             if (tryAppendMultiplySub())
                 return;
 
-            // sub-with-shift Pattern: n - (m ShiftType amount)
-            auto tryAppendSubAndShift = [&] () -> bool {
-                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(), 
-                    SubLeftShift32, SubLeftShift64, 
-                    SubRightShift32, SubRightShift64, 
-                    SubUnsignedRightShift32, SubUnsignedRightShift64);
-                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
-                    return false;
-                if (!canBeInternal(right) || !imm(right->child(1)) || right->child(1)->asInt() < 0)
-                    return false;
-
-                uint64_t amount = right->child(1)->asInt();
-                uint64_t datasize = m_value->type() == Int32 ? 32 : 64;
-                if (amount >= datasize)
-                    return false;
-
-                append(opcode, tmp(left), tmp(right->child(0)), imm(right->child(1)), tmp(m_value));
-                commitInternal(right);
-                return true;
-            };
-
-            if (tryAppendSubAndShift())
+            // sub-with-shift Pattern: left - (right ShiftType amount)
+            Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(),
+                SubLeftShift32, SubLeftShift64,
+                SubRightShift32, SubRightShift64,
+                SubUnsignedRightShift32, SubUnsignedRightShift64);
+            if (tryAppendBitOpWithShift(left, right, opcode))
                 return;
 
             appendBinOp<Sub32, Sub64, SubDouble, SubFloat>(left, right);
@@ -2988,6 +2977,18 @@ private:
             if (tryAppendBIC(left, right) || tryAppendBIC(right, left))
                 return;
 
+            // and-with-shift Pattern: left & (right ShiftType amount)
+            auto tryAppendAndWithShift = [&] (Value* left, Value* right) -> bool {
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(),
+                    AndLeftShift32, AndLeftShift64,
+                    AndRightShift32, AndRightShift64,
+                    AndUnsignedRightShift32, AndUnsignedRightShift64);
+                return tryAppendBitOpWithShift(left, right, opcode);
+            };
+
+            if (tryAppendAndWithShift(left, right) || tryAppendAndWithShift(right, left))
+                return;
+
             appendBinOp<And32, And64, AndDouble, AndFloat, Commutative>(left, right);
             return;
         }
@@ -3155,6 +3156,18 @@ private:
             if (tryAppendORN(left, right) || tryAppendORN(right, left))
                 return;
 
+            // orr-with-shift Pattern: left | (right ShiftType amount)
+            auto tryAppendOrWithShift = [&] (Value* left, Value* right) -> bool {
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(),
+                    OrLeftShift32, OrLeftShift64,
+                    OrRightShift32, OrRightShift64,
+                    OrUnsignedRightShift32, OrUnsignedRightShift64);
+                return tryAppendBitOpWithShift(left, right, opcode);
+            };
+
+            if (tryAppendOrWithShift(left, right) || tryAppendOrWithShift(right, left))
+                return;
+
             appendBinOp<Or32, Or64, OrDouble, OrFloat, Commutative>(left, right);
             return;
         }
@@ -3223,6 +3236,18 @@ private:
             };
 
             if (tryAppendEON(left, right) || tryAppendEON(right, left))
+                return;
+
+            // eor-with-shift Pattern: left ^ (right ShiftType amount)
+            auto tryAppendXorWithShift = [&] (Value* left, Value* right) -> bool {
+                Air::Opcode opcode = opcodeBasedOnShiftKind(right->opcode(),
+                    XorLeftShift32, XorLeftShift64,
+                    XorRightShift32, XorRightShift64,
+                    XorUnsignedRightShift32, XorUnsignedRightShift64);
+                return tryAppendBitOpWithShift(left, right, opcode);
+            };
+
+            if (tryAppendXorWithShift(left, right) || tryAppendXorWithShift(right, left))
                 return;
 
             appendBinOp<Xor32, Xor64, XorDouble, XorFloat, Commutative>(left, right);

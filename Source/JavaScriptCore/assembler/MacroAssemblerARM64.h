@@ -649,6 +649,96 @@ public:
         m_assembler.sub<64>(d, n, m, Assembler::LSR, amount.m_value);
     }
 
+    void andLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void andRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void andUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void andLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void andRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void andUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void xorLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void xorRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void xorUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void xorLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void xorRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void xorUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void orLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void orRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void orUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void orLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void orRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void orUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
         if (scratchForMask == InvalidGPRReg)

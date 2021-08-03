@@ -1,3 +1,144 @@
+2021-08-02  Yijia Huang  <yijia_huang@apple.com>
+
+        Add new patterns to instruction selector to utilize AND/EOR/ORR-with-shift supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228675
+
+        Reviewed by Saam Barati.
+
+        Bitwise AND (shifted register) performs a bitwise AND of a register value and an optionally-shifted 
+        register value, and writes the result to the destination register.
+
+            and wd wn wm ShiftType #amount
+
+        The equivalent pattern is: n & (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = Const32(63)
+        Int @3 = Shl(@1, $63(@2))
+        Int @4 = BitAnd(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Lshift %x1, $63, %x1, @3
+        And    %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        // New optimized AIR
+        AndLeftShift %x0, %x1, $63, %x0, @4
+        Ret          %x0,                @5
+
+        Bitwise Exclusive OR (shifted register) performs a bitwise Exclusive OR of a register value and an 
+        optionally-shifted register value, and writes the result to the destination register.
+
+            eor wd wn wm ShiftType #amount
+
+        The equivalent pattern is: n ^ (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = Const32(63)
+        Int @3 = Shl(@1, $63(@2))
+        Int @4 = BitXor(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Lshift %x1, $63, %x1, @3
+        Xor    %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        // New optimized AIR
+        XorLeftShift %x0, %x1, $63, %x0, @4
+        Ret          %x0,                @5
+
+        Bitwise OR (shifted register) performs a bitwise (inclusive) OR of a register value and an 
+        optionally-shifted register value, and writes the result to the destination register.
+
+            orr wd wn wm ShiftType #amount
+
+        The equivalent pattern is: n | (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = Const32(63)
+        Int @3 = Shl(@1, $63(@2))
+        Int @4 = BitOr(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Lshift %x1, $63, %x1, @3
+        Or     %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        // New optimized AIR
+        OrLeftShift %x0, %x1, $63, %x0, @4
+        Ret         %x0,                @5
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::andLeftShift32):
+        (JSC::MacroAssemblerARM64::andRightShift32):
+        (JSC::MacroAssemblerARM64::andUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::andLeftShift64):
+        (JSC::MacroAssemblerARM64::andRightShift64):
+        (JSC::MacroAssemblerARM64::andUnsignedRightShift64):
+        (JSC::MacroAssemblerARM64::xorLeftShift32):
+        (JSC::MacroAssemblerARM64::xorRightShift32):
+        (JSC::MacroAssemblerARM64::xorUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::xorLeftShift64):
+        (JSC::MacroAssemblerARM64::xorRightShift64):
+        (JSC::MacroAssemblerARM64::xorUnsignedRightShift64):
+        (JSC::MacroAssemblerARM64::orLeftShift32):
+        (JSC::MacroAssemblerARM64::orRightShift32):
+        (JSC::MacroAssemblerARM64::orUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::orLeftShift64):
+        (JSC::MacroAssemblerARM64::orRightShift64):
+        (JSC::MacroAssemblerARM64::orUnsignedRightShift64):
+        * assembler/testmasm.cpp:
+        (JSC::testAndLeftShift32):
+        (JSC::testAndRightShift32):
+        (JSC::testAndUnsignedRightShift32):
+        (JSC::testAndLeftShift64):
+        (JSC::testAndRightShift64):
+        (JSC::testAndUnsignedRightShift64):
+        (JSC::testXorLeftShift32):
+        (JSC::testXorRightShift32):
+        (JSC::testXorUnsignedRightShift32):
+        (JSC::testXorLeftShift64):
+        (JSC::testXorRightShift64):
+        (JSC::testXorUnsignedRightShift64):
+        (JSC::testOrLeftShift32):
+        (JSC::testOrRightShift32):
+        (JSC::testOrUnsignedRightShift32):
+        (JSC::testOrLeftShift64):
+        (JSC::testOrRightShift64):
+        (JSC::testOrUnsignedRightShift64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testAndLeftShift32):
+        (testAndRightShift32):
+        (testAndUnsignedRightShift32):
+        (testAndLeftShift64):
+        (testAndRightShift64):
+        (testAndUnsignedRightShift64):
+        (testXorLeftShift32):
+        (testXorRightShift32):
+        (testXorUnsignedRightShift32):
+        (testXorLeftShift64):
+        (testXorRightShift64):
+        (testXorUnsignedRightShift64):
+        (testOrLeftShift32):
+        (testOrRightShift32):
+        (testOrUnsignedRightShift32):
+        (testOrLeftShift64):
+        (testOrRightShift64):
+        (testOrUnsignedRightShift64):
+        (addBitTests):
+
 2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use loadPair / storePair in YarrJIT

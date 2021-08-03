@@ -955,6 +955,60 @@ arm64: SubRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
 arm64: SubUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Imm, Tmp
 
+arm64: AndLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
 # The first operand is rax.
 # FIXME: This formulation means that the boolean result cannot be put in eax, even though all users
 # of this would be OK with that.
