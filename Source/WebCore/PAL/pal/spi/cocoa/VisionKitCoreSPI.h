@@ -130,6 +130,7 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 @property (nonatomic, readonly) NSArray<VKWKLineInfo *> *allLines;
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 @property (nonatomic) UIMenu *mrcMenu;
+@property (nonatomic, nullable, weak) UIViewController *presentingViewControllerForMrcAction;
 #endif
 @end
 
