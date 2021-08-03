@@ -1,4 +1,4 @@
-<html>
+<html><!-- webkit-test-runner [ contentMode=mobile ] -->
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -9,8 +9,8 @@
 description("Verify the user-agent string does not have the 'Simulator' device name.");
 
 var userAgent = navigator.userAgent;
-var isIPadUserAgent = userAgent.indexOf("Mozilla/5.0 (iPhone;") == 0;
-var isIPhoneUserAgent = userAgent.indexOf("Mozilla/5.0 (iPad;") == 0;
+var isIPadUserAgent = userAgent.indexOf("Mozilla/5.0 (iPad;") == 0;
+var isIPhoneUserAgent = userAgent.indexOf("Mozilla/5.0 (iPhone;") == 0;
 
 function test(str, condition) {
     var func = condition ? testPassed : testFailed;

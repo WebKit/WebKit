@@ -1,5 +1,19 @@
 2021-08-03  Tim Horton  <timothy_horton@apple.com>
 
+        fast/dom/navigator-iOS-userAgent.html fails on iPad because the platform is not "iPhone" or "iPad"
+        https://bugs.webkit.org/show_bug.cgi?id=228750
+
+        Reviewed by Dean Jackson.
+
+        * fast/dom/navigator-iOS-userAgent.html:
+        * platform/ipad/fast/dom/navigator-iOS-userAgent-expected.txt: Removed.
+        This test fails on iPad in the default configuration because navigator.platform is MacIntel
+        due to desktop-class browsing. To maintain previous behavior of the test, revert to mobile mode.
+        This lets us delete the iPad-specific results.
+        Also, fix a typo in the variable names.
+
+2021-08-03  Tim Horton  <timothy_horton@apple.com>
+
         [ iPad ] fast/dom/collection-iterators.html fails
         https://bugs.webkit.org/show_bug.cgi?id=228657
 
