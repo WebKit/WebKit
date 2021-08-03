@@ -486,6 +486,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
+        m_testRunner->forceImmediateCompletion();
+        return;
+    }
+
     postPageMessage("Error", "Unknown");
 }
 

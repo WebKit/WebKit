@@ -1,3 +1,31 @@
+2021-08-03  Jer Noble  <jer.noble@apple.com>
+
+        WebKitTestRunner should dump current results in the case of a timeout
+        https://bugs.webkit.org/show_bug.cgi?id=228706
+        <rdar://79154019>
+
+        Reviewed by Jonathan Bedard.
+
+        When WKTR encounters a timeout, it current prints a "PID UNRESPONSIVE" and "FAIL: timed out" message,
+        but the WebContent process may not actually be unresponsive; it may just be waiting for an event
+        which hasn't fired, or a condition to become true. In these cases, it would be very helpful to see
+        the results of the test so far, so as to diagnose what is keeping the test from running to completion.
+
+        When, in the WKTR process, TestInvocation's "waitToDumpWatchdogTimer" fires, first try sending a message
+        to the InjectedBundle, requesting it to "ForceImmediateCompletion". Only if this message fails to be
+        acted upon will WKTR print the "PID UNRESPONSIVE" message.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::waitToDumpWatchdogTimerFired):
+        (WTR::TestInvocation::initializeWaitForPostDumpWatchdogTimerIfNeeded):
+        (WTR::TestInvocation::invalidateWaitForPostDumpWatchdogTimer):
+        (WTR::TestInvocation::waitForPostDumpWatchdogTimerFired):
+        (WTR::TestInvocation::done):
+        * WebKitTestRunner/TestInvocation.h:
+
 2021-08-03  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Narrow set of terminated simulator processes

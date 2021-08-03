@@ -80,6 +80,7 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     : m_options(options)
     , m_url(url)
     , m_waitToDumpWatchdogTimer(RunLoop::main(), this, &TestInvocation::waitToDumpWatchdogTimerFired)
+    , m_waitForPostDumpWatchdogTimer(RunLoop::main(), this, &TestInvocation::waitForPostDumpWatchdogTimerFired)
 {
     m_urlString = toWTFString(adoptWK(WKURLCopyString(m_url.get())).get());
 
@@ -1635,13 +1636,36 @@ void TestInvocation::invalidateWaitToDumpWatchdogTimer()
 void TestInvocation::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
+    
+    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
+
+    postPageMessage("ForceImmediateCompletion");
+
+    initializeWaitForPostDumpWatchdogTimerIfNeeded();
+}
+
+void TestInvocation::initializeWaitForPostDumpWatchdogTimerIfNeeded()
+{
+    if (m_waitForPostDumpWatchdogTimer.isActive())
+        return;
+
+    m_waitForPostDumpWatchdogTimer.startOneShot(shortTimeout());
+}
+
+void TestInvocation::invalidateWaitForPostDumpWatchdogTimer()
+{
+    m_waitForPostDumpWatchdogTimer.stop();
+}
+
+void TestInvocation::waitForPostDumpWatchdogTimerFired()
+{
+    invalidateWaitForPostDumpWatchdogTimer();
 
 #if PLATFORM(COCOA)
     char buffer[1024];
     snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
     outputText(buffer);
 #endif
-    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
     done();
 }
 
@@ -1656,6 +1680,7 @@ void TestInvocation::done()
 {
     m_gotFinalMessage = true;
     invalidateWaitToDumpWatchdogTimer();
+    invalidateWaitForPostDumpWatchdogTimer();
     RunLoop::main().dispatch([] {
         TestController::singleton().notifyDone();
     });
