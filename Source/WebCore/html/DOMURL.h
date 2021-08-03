@@ -29,6 +29,7 @@
 #include "ExceptionOr.h"
 #include "URLDecomposition.h"
 #include <wtf/URL.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -37,7 +38,7 @@ class ScriptExecutionContext;
 class URLRegistrable;
 class URLSearchParams;
 
-class DOMURL final : public RefCounted<DOMURL>, public URLDecomposition {
+class DOMURL final : public RefCounted<DOMURL>, public CanMakeWeakPtr<DOMURL>, public URLDecomposition {
 public:
     static ExceptionOr<Ref<DOMURL>> create(const String& url, const String& base);
     static ExceptionOr<Ref<DOMURL>> create(const String& url, const DOMURL& base);

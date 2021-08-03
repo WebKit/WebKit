@@ -27,6 +27,7 @@
 #include "ExceptionOr.h"
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +42,6 @@ public:
         return adoptRef(*new URLSearchParams(string, associatedURL));
     }
 
-    void associatedURLDestroyed() { m_associatedURL = nullptr; }
     void append(const String& name, const String& value);
     void remove(const String& name);
     String get(const String& name) const;
@@ -69,7 +69,7 @@ private:
     URLSearchParams(const Vector<WTF::KeyValuePair<String, String>>&);
     void updateURL();
 
-    DOMURL* m_associatedURL { nullptr };
+    WeakPtr<DOMURL> m_associatedURL;
     Vector<WTF::KeyValuePair<String, String>> m_pairs;
 };
 

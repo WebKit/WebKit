@@ -67,11 +67,7 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const DOMURL& base)
     return create(url, base.href());
 }
 
-DOMURL::~DOMURL()
-{
-    if (m_searchParams)
-        m_searchParams->associatedURLDestroyed();
-}
+DOMURL::~DOMURL() = default;
 
 ExceptionOr<void> DOMURL::setHref(const String& url)
 {

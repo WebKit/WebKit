@@ -1,3 +1,20 @@
+2021-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Use WeakPtr instead of manual raw pointer management in URLSearchParams
+        https://bugs.webkit.org/show_bug.cgi?id=228723
+
+        Reviewed by Chris Dumez.
+
+        This is less error prone.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::~DOMURL): Deleted.
+        * html/DOMURL.h:
+        * html/URLSearchParams.cpp:
+        (WebCore::URLSearchParams::URLSearchParams):
+        * html/URLSearchParams.h:
+        (WebCore::URLSearchParams::associatedURLDestroyed): Deleted.
+
 2021-08-03  Youenn Fablet  <youenn@apple.com>
 
         ReadableStream's pipeTo() and pipeThrough() don't handle options in spec-perfect way
