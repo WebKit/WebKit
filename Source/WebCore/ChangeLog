@@ -1,3 +1,21 @@
+2021-08-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r279050): Crash under CSSImageValue::createDeprecatedCSSOMWrapper with cursor images
+        https://bugs.webkit.org/show_bug.cgi?id=228735
+
+        Reviewed by Alex Christensen.
+
+        CSSCursorImageValue is not a CSSImageValue. This used to work before r279050 because they had
+        the URL field in the same offset.
+
+        Test: fast/css/cursor-image-cssvalue.html
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::createDeprecatedCSSOMWrapper const):
+
+        Don't do any special handling for CSSCursorImageValue. They are exposed as generic (deprecated)
+        CSS values with cssText only.
+
 2021-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Use WeakPtr instead of manual raw pointer management in URLSearchParams

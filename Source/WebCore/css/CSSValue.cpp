@@ -493,7 +493,7 @@ void CSSValue::destroy()
 
 Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const
 {
-    if (isImageValue() || isCursorImageValue())
+    if (isImageValue())
         return downcast<CSSImageValue>(this)->createDeprecatedCSSOMWrapper(styleDeclaration);
     if (isPrimitiveValue())
         return DeprecatedCSSOMPrimitiveValue::create(downcast<CSSPrimitiveValue>(*this), styleDeclaration);

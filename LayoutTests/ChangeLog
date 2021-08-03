@@ -1,3 +1,13 @@
+2021-08-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r279050): Crash under CSSImageValue::createDeprecatedCSSOMWrapper with cursor images
+        https://bugs.webkit.org/show_bug.cgi?id=228735
+
+        Reviewed by Alex Christensen.
+
+        * fast/css/cursor-image-cssvalue-expected.txt: Added.
+        * fast/css/cursor-image-cssvalue.html: Added.
+
 2021-08-03  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/css-sizing/aspect-ratio tests from WPT
