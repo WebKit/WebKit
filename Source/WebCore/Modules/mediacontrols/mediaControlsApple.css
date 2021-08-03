@@ -411,7 +411,7 @@ audio::-webkit-media-controls-closed-captions-container h3 {
     margin: 0;
     color: rgb(140, 140, 140);
     text-shadow: 0 1px 0 black;
-    -webkit-margin-start: 16px;
+    margin-inline-start: 16px;
     padding-top: 4px;
     font-size: 11px;
 }

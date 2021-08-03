@@ -319,7 +319,7 @@ audio::-webkit-media-controls-closed-captions-container h3 {
     margin: 0;
     color: rgb(117, 117, 117);
     text-shadow: 0 1px 0 black;
-    -webkit-margin-start: 23px;
+    margin-inline-start: 23px;
     padding-top: 4px;
     font-weight: bold;
     font-size: 10pt;
@@ -373,7 +373,7 @@ audio::-webkit-media-controls-closed-captions-container li.selected::before {
     top: 0.25em;
     width: 1.1em;
     height: 1.1em;
-    -webkit-margin-start: -20px;
+    margin-inline-start: -20px;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><polygon fill="rgb(163, 163, 163)" points="252.301,4.477 126.667,194.104 43.358,108.3 6.868,161.408 132.515,290.814 297.732,49.926"/></svg>');
     background-repeat: no-repeat;
 }

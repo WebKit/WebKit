@@ -1,3 +1,43 @@
+2021-08-02  Sonia Singla  <soniasingla.1812@gmail.com>
+
+        [css-cleanup] Replace webkit- prefix properties with Standard CSS Properties in Source/**
+        https://bugs.webkit.org/show_bug.cgi?id=228697
+
+        Reviewed by Frédéric Wang.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-closed-captions-container h3,):
+        * Modules/mediacontrols/mediaControlsBase.css:
+        (video::-webkit-media-controls-closed-captions-container h3,):
+        (video::-webkit-media-controls-closed-captions-container li.selected::before,):
+        * css/html.css:
+        (p):
+        (blockquote):
+        (figure):
+        (hr):
+        (h1):
+        (:is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (h2):
+        (h3):
+        (h4):
+        (h5):
+        (h6):
+        (ul, menu, dir):
+        (ol):
+        (dd):
+        (dl):
+        (ol ul, ul ol, ul ul, ol ol):
+        (legend):
+        (fieldset):
+        * css/mathml.css:
+        (mi):
+        (msub > mi:first-child, msubsup > mi:first-child):
+        (msubsup > mi:first-child + * + *):
+
 2021-08-02  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion is not acquired in network process when opening a SQLite database
