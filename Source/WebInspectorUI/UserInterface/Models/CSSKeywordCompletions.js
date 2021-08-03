@@ -461,8 +461,23 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "baseline-shift": [
         "baseline", "sub", "super"
     ],
+    "block-size": [
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()",
+    ],
+    "border-block-end-width": [
+        "medium", "thick", "thin", "calc()",
+    ],
+    "border-block-start-width": [
+        "medium", "thick", "thin", "calc()",
+    ],
     "border-bottom-width": [
         "medium", "thick", "thin", "calc()"
+    ],
+    "border-inline-end-width": [
+        "medium", "thick", "thin", "calc()",
+    ],
+    "border-inline-start-width": [
+        "medium", "thick", "thin", "calc()",
     ],
     "font-stretch": [
         "normal", "wider", "narrower", "ultra-condensed", "extra-condensed", "condensed", "semi-condensed",
@@ -529,14 +544,35 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "hanging-punctuation": [
         "none", "first", "last", "allow-end", "force-end"
     ],
+    "inline-size": [
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()",
+    ],
     "overflow": [
         "hidden", "auto", "visible", "scroll", "marquee", "-webkit-paged-x", "-webkit-paged-y"
     ],
     "-webkit-box-reflect": [
         "none", "left", "right", "above", "below"
     ],
+    "margin-block": [
+        "auto",
+    ],
+    "margin-block-end": [
+        "auto",
+    ],
+    "margin-block-start": [
+        "auto",
+    ],
     "margin-bottom": [
         "auto"
+    ],
+    "margin-inline": [
+        "auto",
+    ],
+    "margin-inline-end": [
+        "auto",
+    ],
+    "margin-inline-start": [
+        "auto",
     ],
     "font-weight": [
         "normal", "bold", "bolder", "lighter", "100", "200", "300", "400", "500", "600", "700", "800", "900"
@@ -644,11 +680,23 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "min-width": [
         "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
     ],
+    "max-block-size": [
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()",
+    ],
     "max-height": [
         "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()"
     ],
+    "max-inline-size": [
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "none", "calc()",
+    ],
+    "min-block-size": [
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()",
+    ],
     "min-height": [
         "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()"
+    ],
+    "min-inline-size": [
+        "auto", "intrinsic", "min-intrinsic", "min-content", "-webkit-min-content", "max-content", "-webkit-max-content", "-webkit-fill-available", "fit-content", "-webkit-fit-content", "calc()",
     ],
     "letter-spacing": [
         "normal", "calc()"
