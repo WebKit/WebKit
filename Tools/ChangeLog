@@ -1,3 +1,13 @@
+2021-08-02  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] RemoteAudioSession::setPreferredBufferSize() does not change its preferredBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=228720
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        (TEST_F):
+
 2021-08-02  Alex Christensen  <achristensen@webkit.org>
 
         Don't change invalid baseURLs from loadData or loadHTMLString to about:blank

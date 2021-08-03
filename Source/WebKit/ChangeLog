@@ -1,3 +1,19 @@
+2021-08-02  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] RemoteAudioSession::setPreferredBufferSize() does not change its preferredBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=228720
+
+        Reviewed by Jer Noble.
+
+        `RemoteAudioSession` should update its `preferredBufferSize` in
+        `setPreferredBufferSize()`. Otherwise, the `preferredBufferSize`
+        will become inconsistent with the value in the GPU process.
+
+        No new tests. Fix API test failures.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setPreferredBufferSize):
+
 2021-08-02  Kate Cheney  <katherine_cheney@apple.com>
 
         [App Privacy Report] Domains are deleted for ephemeral website data stores
