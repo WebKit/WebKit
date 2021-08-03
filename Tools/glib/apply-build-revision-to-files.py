@@ -26,17 +26,32 @@ from webkitpy.common.checkout.scm.detection import SCMDetector  # nopep8
 from webkitpy.common.system.executive import Executive  # nopep8
 from webkitpy.common.system.filesystem import FileSystem  # nopep8
 
-
 def main(args):
     scm = SCMDetector(FileSystem(), Executive()).default_scm()
     svn_revision = scm.head_svn_revision()
     build_revision = "r{}".format(svn_revision)
 
     for in_file in args:
-        with open(in_file) as fd:
-            data = fd.read().replace('${BUILD_REVISION}', build_revision)
+        filename = os.path.basename(in_file)
+        _, extension = os.path.splitext(filename)
+        if filename == "BuildRevision.h":
+            with open("Source/WebKit/Shared/glib/BuildRevision.h.in") as template:
+                data = template.read()
+        elif extension == '.pc':
+            # Restore a valid BUILD_REVISION template.
+            lines = []
+            with open(in_file) as fd:
+                for line in fd.readlines():
+                    if line.startswith("revision"):
+                        line = "revision=${BUILD_REVISION}\n"
+                    lines.append(line)
+            data = "".join(lines)
+        else:
+            print("Support for expanding $BUILD_REVISION in {} is missing.".format(in_file))
+            return 1
+
         with open(in_file, 'w') as fd:
-            fd.write(data)
+            fd.write(data.replace('${BUILD_REVISION}', build_revision))
 
     return 0
 
