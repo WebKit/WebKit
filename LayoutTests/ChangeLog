@@ -1,3 +1,15 @@
+2021-08-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden some passing tests
+
+        Unreviewed test gardening.
+
+        Covering latest WPE expected to fail but passing tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-08-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash while reading WebGL drawing buffer if canvas image buffer allocation fails

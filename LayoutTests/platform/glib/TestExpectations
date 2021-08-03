@@ -278,7 +278,7 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-per
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-005.html [ Pass ]
 
 # GLIB PASS since 238990@main
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-east-asian.html [ ImageOnlyFailure ]
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-east-asian.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
@@ -810,8 +810,6 @@ webkit.org/b/224118 perf/array-reverse.html [ Failure Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # ResourceTiming API bugs
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/222756 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Failure ]
 
 webkit.org/b/224657 imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html [ Failure ]
 
@@ -2243,7 +2241,8 @@ webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
 
-webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Crash Timeout ]
+webkit.org/b/198113 [ Release ] fast/mediastream/media-stream-page-muted.html [ Pass ]
+webkit.org/b/198113 [ Debug ] fast/mediastream/media-stream-page-muted.html [ Timeout ]
 
 webkit.org/b/213506 webrtc/audio-video-element-playing.html [ Crash Pass ]
 webkit.org/b/213506 webrtc/remove-track.html [ Crash Pass ]
@@ -2292,9 +2291,6 @@ webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/backgrou
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-9.html [ ImageOnlyFailure ]
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-7.html [ ImageOnlyFailure ]
 webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html [ ImageOnlyFailure ]
-
-# Failing after r277077.
-webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-system-colors.html [ Failure ]
 
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]

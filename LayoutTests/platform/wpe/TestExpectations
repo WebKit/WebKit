@@ -256,7 +256,6 @@ webkit.org/b/222895 imported/w3c/web-platform-tests/svg/text/reftests/dominant-b
 
 # WebGL
 webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
-webkit.org/b/220720 fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
 
 # Workers
 webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
@@ -503,8 +502,6 @@ fast/history/page-cache-notification-showing.html [ Skip ]
 
 # IsLoggedIn is an experimental feature (Introduced in r250944)
 http/tests/is-logged-in/ [ Skip ]
-
-webkit.org/b/172811 fast/css/input-search-padding.html [ Failure ]
 
 webkit.org/b/177527 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
 
@@ -1318,8 +1315,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctua
 webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
 
 webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
-
-webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.py [ Failure ]
 
 webkit.org/b/202229 css-dark-mode/older-syntax/supported-color-schemes-css.html [ Pass Crash ]
 

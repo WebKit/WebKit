@@ -1928,8 +1928,6 @@ webkit.org/b/99036 pointer-lock/pointerlockchange-pointerlockerror-events.html [
 
 webkit.org/b/206264 imported/w3c/web-platform-tests/css/css-multicol/multicol-gap-percentage-001.html [ Failure ]
 
-webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.py [ Failure ]
-
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
