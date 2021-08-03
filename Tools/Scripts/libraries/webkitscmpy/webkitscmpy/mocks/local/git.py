@@ -28,7 +28,7 @@ import time
 from datetime import datetime
 from mock import patch
 
-from webkitcorepy import mocks, OutputCapture, StringIO
+from webkitcorepy import decorators, mocks, OutputCapture, StringIO
 from webkitscmpy import local, Commit, Contributor
 from webkitscmpy.program.canonicalize.committer import main as committer_main
 from webkitscmpy.program.canonicalize.message import main as message_main
@@ -340,6 +340,21 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(returncode=0),
             ), mocks.Subprocess.Route(
+                self.executable, 'config', '-l',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout='\n'.join(['{}={}'.format(key, value) for key, value in self.config().items()])
+                    ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'config', '-l', '--global',
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout='\n'.join(['{}={}'.format(key, value) for key, value in Git.config().items()])
+                    ),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -570,3 +585,39 @@ nothing to commit, working tree clean
             for commit in reversed(self.commits[self.default_branch]):
                 if previous.branch_point == commit.identifier:
                     end = commit.hash
+
+    @decorators.hybridmethod
+    def config(context):
+        if isinstance(context, type):
+            return {
+                'user.name': 'tapple@webkit.org',
+                'sendemail.transferencoding': 'base64',
+            }
+
+        # Parse a .git/config that looks like this
+        # [core]
+        #     repositoryformatversion = 0
+        # [branch "main"]
+        #     remote = origin
+        # 	  merge = refs/heads/main
+        RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
+        RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
+        RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>\S+)')
+
+        top = None
+        result = Git.config()
+        with open(os.path.join(context.path, '.git', 'config'), 'r') as configfile:
+            for line in configfile.readlines():
+                match = RE_MULTI_TOP.match(line)
+                if match:
+                    top = '{}.{}'.format(match.group('keya'), match.group('keyb'))
+                    continue
+                match = RE_SINGLE_TOP.match(line)
+                if match:
+                    top = match.group('key')
+                    continue
+
+                match = RE_ELEMENT.match(line)
+                if top and match:
+                    result['{}.{}'.format(top, match.group('key'))] = match.group('value')
+        return result

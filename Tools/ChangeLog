@@ -1,5 +1,22 @@
 2021-08-03  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitscmpy] Add access to `git config`
+        https://bugs.webkit.org/show_bug.cgi?id=228597
+        <rdar://problem/81283644>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.config): Return git configuration as dictionary.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (test_config): Test repository configuration.
+        (test_global_config): Test global configuration.
+
+2021-08-03  Jonathan Bedard  <jbedard@apple.com>
+
         [check-github-mirror-integrity] Handle slow Svn query
         https://bugs.webkit.org/show_bug.cgi?id=228741
 

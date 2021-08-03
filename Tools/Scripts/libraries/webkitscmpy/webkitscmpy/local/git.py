@@ -266,6 +266,30 @@ class Git(Scm):
     def is_checkout(cls, path):
         return run([cls.executable(), 'rev-parse', '--show-toplevel'], cwd=path, capture_output=True).returncode == 0
 
+    @decorators.hybridmethod
+    def config(context):
+        args = [context.executable(), 'config', '-l']
+        kwargs = dict(capture_output=True, encoding='utf-8')
+
+        if isinstance(context, type):
+            args += ['--global']
+        else:
+            kwargs['cwd'] = context.root_path
+
+        command = run(args, **kwargs)
+        if command.returncode:
+            sys.stderr.write("Failed to run '{}'{}\n".format(
+                ' '.join(args),
+                '' if isinstance(context, type) else ' in {}'.format(context.root_path),
+            ))
+            return {}
+
+        result = {}
+        for line in command.stdout.splitlines():
+            parts = line.split('=')
+            result[parts[0]] = '='.join(parts[1:])
+        return result
+
     def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None, cached=sys.version_info > (3, 0)):
         super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
         self._branch = None
