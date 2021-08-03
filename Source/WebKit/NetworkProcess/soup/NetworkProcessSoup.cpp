@@ -171,14 +171,4 @@ void NetworkProcess::setPersistentCredentialStorageEnabled(PAL::SessionID sessio
         static_cast<NetworkSessionSoup&>(*session).setPersistentCredentialStorageEnabled(enabled);
 }
 
-void NetworkProcess::platformProcessDidTransitionToForeground()
-{
-    notImplemented();
-}
-
-void NetworkProcess::platformProcessDidTransitionToBackground()
-{
-    notImplemented();
-}
-
 } // namespace WebKit

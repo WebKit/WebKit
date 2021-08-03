@@ -82,9 +82,6 @@ private:
     void initializeWebAuthnProcess(WebAuthnProcessCreationParameters&&);
     void createWebAuthnConnectionToWebProcess(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::Attachment>&&)>&&);
 
-    void processDidTransitionToForeground();
-    void processDidTransitionToBackground();
-
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<WebAuthnConnectionToWebProcess>> m_webProcessConnections;
 

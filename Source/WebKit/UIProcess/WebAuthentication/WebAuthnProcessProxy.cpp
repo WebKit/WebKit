@@ -168,14 +168,12 @@ void WebAuthnProcessProxy::updateProcessAssertion()
     if (hasAnyForegroundWebProcesses) {
         if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses)) {
             m_activityFromWebProcesses = throttler().foregroundActivity("WebAuthn for foreground view(s)"_s);
-            send(Messages::WebAuthnProcess::ProcessDidTransitionToForeground(), 0);
         }
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
             m_activityFromWebProcesses = throttler().backgroundActivity("WebAuthn for background view(s)"_s);
-            send(Messages::WebAuthnProcess::ProcessDidTransitionToBackground(), 0);
         }
         return;
     }

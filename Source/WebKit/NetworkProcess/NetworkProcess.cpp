@@ -2196,16 +2196,6 @@ void NetworkProcess::terminate()
     AuxiliaryProcess::terminate();
 }
 
-void NetworkProcess::processDidTransitionToForeground()
-{
-    platformProcessDidTransitionToForeground();
-}
-
-void NetworkProcess::processDidTransitionToBackground()
-{
-    platformProcessDidTransitionToBackground();
-}
-
 void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
 {
     prepareToSuspend(true, WTFMove(completionHandler));

@@ -243,12 +243,4 @@ void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHa
         completionHandler();
 }
 
-void NetworkProcess::platformProcessDidTransitionToBackground()
-{
-}
-
-void NetworkProcess::platformProcessDidTransitionToForeground()
-{
-}
-
 } // namespace WebKit

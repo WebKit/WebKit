@@ -113,14 +113,6 @@ void WebAuthnProcess::resume()
 {
 }
 
-void WebAuthnProcess::processDidTransitionToForeground()
-{
-}
-
-void WebAuthnProcess::processDidTransitionToBackground()
-{
-}
-
 WebAuthnConnectionToWebProcess* WebAuthnProcess::webProcessConnection(ProcessIdentifier identifier) const
 {
     return m_webProcessConnections.get(identifier);

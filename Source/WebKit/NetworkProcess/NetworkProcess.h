@@ -398,11 +398,6 @@ private:
 
     void lowMemoryHandler(Critical);
     
-    void processDidTransitionToForeground();
-    void processDidTransitionToBackground();
-    void platformProcessDidTransitionToForeground();
-    void platformProcessDidTransitionToBackground();
-
     // AuxiliaryProcess
     void initializeProcess(const AuxiliaryProcessInitializationParameters&) override;
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;

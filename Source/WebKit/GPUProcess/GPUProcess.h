@@ -119,8 +119,6 @@ private:
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
 
-    void processDidTransitionToForeground();
-    void processDidTransitionToBackground();
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
     void setOrientationForMediaCapture(uint64_t orientation);

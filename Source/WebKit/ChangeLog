@@ -1,3 +1,42 @@
+2021-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused processDidTransitionTo{Foreground,Background} IPC
+        https://bugs.webkit.org/show_bug.cgi?id=228328
+
+        Reviewed by Wenson Hsieh.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::processDidTransitionToForeground): Deleted.
+        (WebKit::GPUProcess::processDidTransitionToBackground): Deleted.
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processDidTransitionToForeground): Deleted.
+        (WebKit::NetworkProcess::processDidTransitionToBackground): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground): Deleted.
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground): Deleted.
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground): Deleted.
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground): Deleted.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground): Deleted.
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::updateProcessAssertion):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::updateProcessAssertion):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        (WebKit::WebAuthnProcessProxy::updateProcessAssertion):
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::processDidTransitionToForeground): Deleted.
+        (WebKit::WebAuthnProcess::processDidTransitionToBackground): Deleted.
+        * WebAuthnProcess/WebAuthnProcess.h:
+        * WebAuthnProcess/WebAuthnProcess.messages.in:
+        These messages do nothing.
+
 2021-08-03  Per Arne  <pvollan@apple.com>
 
         [iOS] Fix sandbox violation in GPU process

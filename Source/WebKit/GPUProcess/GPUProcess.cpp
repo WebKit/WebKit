@@ -275,14 +275,6 @@ void GPUProcess::resume()
 {
 }
 
-void GPUProcess::processDidTransitionToForeground()
-{
-}
-
-void GPUProcess::processDidTransitionToBackground()
-{
-}
-
 GPUConnectionToWebProcess* GPUProcess::webProcessConnection(ProcessIdentifier identifier) const
 {
     return m_webProcessConnections.get(identifier);

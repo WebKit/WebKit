@@ -70,9 +70,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel)
     SetCacheModelSynchronouslyForTesting(enum:uint8_t WebKit::CacheModel cacheModel) -> () Synchronous
 
-    ProcessDidTransitionToBackground()
-    ProcessDidTransitionToForeground()
-
     ProcessWillSuspendImminentlyForTestingSync() -> () Synchronous
     PrepareToSuspend(bool isSuspensionImminent) -> () Async
     ProcessDidResume()

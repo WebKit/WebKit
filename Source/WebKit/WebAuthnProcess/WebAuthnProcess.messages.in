@@ -28,9 +28,6 @@ messages -> WebAuthnProcess {
 
     # Creates a connection for communication with a WebProcess
     CreateWebAuthnConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier) -> (std::optional<IPC::Attachment> connectionIdentifier) Async
-
-    ProcessDidTransitionToForeground()
-    ProcessDidTransitionToBackground()
 }
 
 #endif // ENABLE(WEB_AUTHN)

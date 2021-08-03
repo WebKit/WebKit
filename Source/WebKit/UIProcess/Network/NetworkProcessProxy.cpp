@@ -1517,14 +1517,12 @@ void NetworkProcessProxy::updateProcessAssertion()
     if (anyProcessPoolHasForegroundWebProcesses()) {
         if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses)) {
             m_activityFromWebProcesses = throttler().foregroundActivity("Networking for foreground view(s)"_s);
-            send(Messages::NetworkProcess::ProcessDidTransitionToForeground(), 0);
         }
         return;
     }
     if (anyProcessPoolHasBackgroundWebProcesses()) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
             m_activityFromWebProcesses = throttler().backgroundActivity("Networking for background view(s)"_s);
-            send(Messages::NetworkProcess::ProcessDidTransitionToBackground(), 0);
         }
         return;
     }
