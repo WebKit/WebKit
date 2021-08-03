@@ -1,3 +1,15 @@
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/vorbis container support
+        https://bugs.webkit.org/show_bug.cgi?id=228139
+        rdar://80883073
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/TestExpectations:
+        * webaudio/decode-audio-data-webm-vorbis-expected.txt: Added.
+        * webaudio/decode-audio-data-webm-vorbis.html: Added.
+
 2021-08-02  Eric Hutchison  <ehutchison@apple.com>
 
         [ iOS iPad ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html is a flaky failure.

@@ -1716,6 +1716,7 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 [ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
 [ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
 [ Catalina Mojave BigSur ] webaudio/decode-audio-data-webm-opus.html [ Skip ]
+[ Catalina Mojave BigSur ] webaudio/decode-audio-data-webm-vorbis.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 

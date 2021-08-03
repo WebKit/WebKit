@@ -81,6 +81,7 @@
 #import <WebCore/SystemSoundManager.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
+#import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <mach/mach.h>
@@ -743,6 +744,9 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     // Need to override the default, because service has a different bundle ID.
     auto webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
+
+    // We need to initialize the Vorbis decoder before the sandbox gets setup; this is a one off action.
+    WebCore::registerVorbisDecoderIfNeeded();
 
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
 

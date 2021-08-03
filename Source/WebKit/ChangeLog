@@ -1,5 +1,22 @@
 2021-08-02  Jean-Yves Avenard  <jya@apple.com>
 
+        [WebAudio] Add webm/vorbis container support
+        https://bugs.webkit.org/show_bug.cgi?id=228139
+        rdar://80883073
+
+        Reviewed by Jer Noble.
+
+        Access to the com.apple.audio.AudioComponentRegistrar is denied by the sandbox which
+        prevents registering the Vorbis Audio Component. So we instantiate the decoder right before
+        setting up the sandbox.
+        This is a workaround for rdar://81137953.
+        Test: webaudio/decode-audio-data-webm-vorbis.html
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
         Crash in -[WKFullScreenWindowController windowDidExitFullScreen:]
         https://bugs.webkit.org/show_bug.cgi?id=228694
         rdar://79569881
