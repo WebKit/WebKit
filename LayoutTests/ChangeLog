@@ -1,3 +1,15 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        [COOP] Cross-Origin-Opener-Policy header parsing fails when report-to parameter is present
+        https://bugs.webkit.org/show_bug.cgi?id=228719
+
+        Reviewed by Geoff Garen.
+
+        Add layout test coverage.
+
+        * http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https-expected.txt: Added.
+        * http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html: Added.
+
 2021-08-02  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Garden some passing tests

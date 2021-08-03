@@ -38,6 +38,7 @@
 #include "ParsedContentType.h"
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -618,20 +619,46 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
                 break;
             ++index;
         }
-        String key = header.substring(keyStart, index - keyStart).toStringWithoutCopying();
+        String key = header.substring(keyStart, index - keyStart).toString();
         String value = "true";
         if (index < header.length() && header[index] == '=') {
             ++index; // Consume '='.
-            if (!isASCIIAlpha(header[index]) && header[index] != '*')
+            if (isASCIIAlpha(header[index]) || header[index] == '*') {
+                // https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.6
+                size_t valueStart = index++;
+                while (index < header.length()) {
+                    UChar c = header[index];
+                    if (!RFC7230::isTokenCharacter(c) && c != ':' && c != '/')
+                        break;
+                    ++index;
+                }
+                value = header.substring(valueStart, index - valueStart).toString();
+            } else if (header[index] == '"') {
+                // https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.5
+                StringBuilder valueBuilder;
+                ++index; // Skip DQUOTE.
+                while (index < header.length()) {
+                    if (header[index] == '\\') {
+                        ++index;
+                        if (index == header.length())
+                            return std::nullopt;
+                        if (header[index] != '\\' && header[index] != '"')
+                            return std::nullopt;
+                        valueBuilder.append(header[index]);
+                    } else if (header[index] == '\"') {
+                        value = valueBuilder.toString();
+                        break;
+                    } else if ((header[index] >= 0x00 && header[index] <= 0x1F) || (header[index] >= 0x7F && header[index] <= 0xFF)) // Not in VCHAR or SP.
+                        return std::nullopt;
+                    else
+                        valueBuilder.append(header[index]);
+                    ++index;
+                }
+                if (index == header.length())
+                    return std::nullopt;
+                ++index; // Skip DQUOTE.
+            } else
                 return std::nullopt;
-            size_t valueStart = index++;
-            while (index < header.length()) {
-                UChar c = header[index];
-                if (!RFC7230::isTokenCharacter(c) && c != ':' && c != '/')
-                    break;
-                ++index;
-            }
-            value = header.substring(valueStart, index - valueStart).toStringWithoutCopying();
         }
         parameters.set(WTFMove(key), WTFMove(value));
     }
