@@ -1,3 +1,20 @@
+2021-08-03  Cathie Chen  <cathiechen@igalia.com>
+
+        Import css/css-sizing/aspect-ratio tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=228734
+
+        Reviewed by Rob Buis.
+
+        Import css/css-sizing/aspect-ratio tests from WPT commit f76ae81001.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-021-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/abspos-021.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-027-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-027.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-028-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-028.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Cross-Origin-Opener-Policy header parsing fails when report-to parameter is present

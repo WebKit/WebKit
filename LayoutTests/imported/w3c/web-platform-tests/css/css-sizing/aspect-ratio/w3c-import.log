@@ -54,6 +54,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-019.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-020-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-021-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/auto-margins-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/auto-margins-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-001-expected.xht
@@ -181,6 +183,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-027-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-028-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-028.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/grid-aspect-ratio-002-expected.xht
