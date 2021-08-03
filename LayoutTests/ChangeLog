@@ -1,3 +1,13 @@
+2021-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        [ iPad ] fast/dom/collection-iterators.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=228657
+
+        Unreviewed rebaseline.
+
+        * platform/ipad/fast/dom/collection-iterators-expected.txt:
+        Actually land the expected file, not a diff like in r280494.
+
 2021-08-03  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Garden some passing tests
