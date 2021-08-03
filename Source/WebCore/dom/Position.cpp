@@ -967,6 +967,7 @@ Node* Position::rootUserSelectAllForNode(Node* node)
     return candidateRoot;
 }
 
+// This function should be kept in sync with PositionIterator::isCandidate().
 bool Position::isCandidate() const
 {
     if (isNull())
@@ -997,7 +998,7 @@ bool Position::isCandidate() const
         return false;
 
     if (is<RenderBlockFlow>(*renderer) || is<RenderGrid>(*renderer) || is<RenderFlexibleBox>(*renderer)) {
-        RenderBlock& block = downcast<RenderBlock>(*renderer);
+        auto& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
                 return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(deprecatedNode());

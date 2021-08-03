@@ -1,3 +1,27 @@
+2021-08-02  Frédéric Wang  <fwang@igalia.com>
+
+        Align implementation of PositionIterator::isCandidate() on Position::isCandidate()
+        https://bugs.webkit.org/show_bug.cgi?id=228635
+
+        Reviewed by Darin Adler.
+
+        The bug fixed in r280381 was due to the fact that PositionIterator::isCandidate() and
+        Position::isCandidate() had gone out of sync. To prevent future bugs of this kind, this patch
+        modifies PositionIterator::isCandidate() so that it is aligned with
+        PositionIterator::isCandidate() (except when an m_anchorType check is needed) and add code
+        comments in both functions to ensure the same changes are always applied to them.
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate const): Add a comment to make sure we update PositionIterator
+        when changing that function. Also use auto for a local variable like in PositionIterator.
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate const): Add a comment to make sure we update Position
+        when changing that function. Rearrange the code to use positionBeforeOrAfterNodeIsCandidate
+        and early return when the node is a <html> element (these are not behavior changes). For
+        block flow / grid / flexbox renderers, add a special handling when the anchor node is a root
+        editable element ; also change the fallback value returned at the end of the function (these
+        are two behavior changes).
+
 2021-08-02  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] webm; properly trim frames according to the codec delay information
