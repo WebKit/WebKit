@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL canvas "image buffer" OOM during document paint test</title>
+</head>
+<body>
+<!--
+At the time of writing printing or snapshotting would access the "image buffer" of the WebGL canvas.
+This would leading to crash if the allocation was denied.
+To ensure expected behavior, e.g. to observe the failure, the canvas should not be visible.
+To assert this, use div with border as indicator. Background cannot be used as printing
+disables the backgrounds and -webkit-print-color-adjust: exact is not respected in
+WTR printing mode.
+-->
+<div style="position: absolute; width: 300px; height: 150px; border:55px solid green;"></div>
+<canvas style="position: absolute;" id="gl"></canvas>
+</div>
+<script>
+"use strict";
+var canvasGL = document.getElementById('gl');
+let gl = canvasGL.getContext('webgl');
+gl.clearColor(0, 1, 0, 1);
+gl.clear(gl.COLOR_BUFFER_BIT);
+if (window.internals)
+    window.internals.setMaxCanvasPixelMemory(7);
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>
+</body>
+</html>

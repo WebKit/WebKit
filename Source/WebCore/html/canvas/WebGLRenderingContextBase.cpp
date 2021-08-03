@@ -1218,11 +1218,13 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
             auto& base = canvasBase();
             base.clearCopiedImage();
             m_markedCanvasDirty = false;
-            // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
-            // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
-            // canvas element repeatedly.
-            base.buffer()->flushDrawingContext();
-            m_context->paintCompositedResultsToCanvas(*base.buffer());
+            if (auto buffer = base.buffer()) {
+                // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
+                // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
+                // canvas element repeatedly.
+                buffer->flushDrawingContext();
+                m_context->paintCompositedResultsToCanvas(*buffer);
+            }
         }
         return;
     }
@@ -1236,11 +1238,13 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     base.clearCopiedImage();
 
     m_markedCanvasDirty = false;
-    // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
-    // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
-    // canvas element repeatedly.
-    base.buffer()->flushDrawingContext();
-    m_context->paintRenderingResultsToCanvas(*base.buffer());
+    if (auto buffer = base.buffer()) {
+        // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
+        // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
+        // canvas element repeatedly.
+        buffer->flushDrawingContext();
+        m_context->paintRenderingResultsToCanvas(*buffer);
+    }
 }
 
 std::optional<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer()

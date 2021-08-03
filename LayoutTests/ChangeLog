@@ -1,3 +1,22 @@
+2021-08-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Crash while reading WebGL drawing buffer if canvas image buffer allocation fails
+        https://bugs.webkit.org/show_bug.cgi?id=228737
+        <rdar://81150042>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test for failure to paint the WebGL canvas to document.
+        Trigger the mode by using printing.
+
+        Other code-paths that invoke CanvasBase::makeRenderingResultsAvailable,
+        e.g. toDataURL and drawImage will check for the buffer before, and
+        as such are not testable in the sense that adding the test would trigger
+        the bug.
+
+        * webgl/webgl-oom-paint-document-no-crash-expected.html: Added.
+        * webgl/webgl-oom-paint-document-no-crash.html: Added.
+
 2021-08-03  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r279050): Crash under CSSImageValue::createDeprecatedCSSOMWrapper with cursor images
