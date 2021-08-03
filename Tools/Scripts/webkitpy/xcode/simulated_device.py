@@ -422,7 +422,7 @@ class SimulatedDeviceManager(object):
 
             SimulatedDeviceManager._boot_device(device, host)
 
-        if simulator_ui and host.executive.run_command(['killall', '-0', 'Simulator'], return_exit_code=True) != 0:
+        if simulator_ui and host.executive.run_command(['killall', '-0', 'Simulator.app'], return_exit_code=True) != 0:
             SimulatedDeviceManager._managing_simulator_app = not host.executive.run_command(['open', '-g', '-b', SimulatedDeviceManager.simulator_bundle_id, '--args', '-PasteboardAutomaticSync', '0'], return_exit_code=True)
 
         deadline = time.time() + timeout
@@ -489,7 +489,7 @@ class SimulatedDeviceManager(object):
     def tear_down(host=None, timeout=SIMULATOR_BOOT_TIMEOUT):
         host = host or SystemHost()
         if SimulatedDeviceManager._managing_simulator_app:
-            host.executive.run_command(['killall', '-9', 'Simulator'], return_exit_code=True)
+            host.executive.run_command(['killall', '-9', 'Simulator.app'], return_exit_code=True)
             SimulatedDeviceManager._managing_simulator_app = False
 
         if SimulatedDeviceManager.INITIALIZED_DEVICES is None:
@@ -504,10 +504,6 @@ class SimulatedDeviceManager(object):
             device.platform_device._tear_down(deadline - time.time())
 
         SimulatedDeviceManager.INITIALIZED_DEVICES = None
-
-        if SimulatedDeviceManager._managing_simulator_app:
-            for pid in host.executive.running_pids(lambda name: 'CoreSimulator.framework' in name):
-                host.executive.kill_process(pid)
 
         # If we were managing the simulator, there are some cache files we need to remove
         for directory in host.filesystem.glob('/tmp/com.apple.CoreSimulator.SimDevice.*'):
@@ -607,7 +603,8 @@ class SimulatedDevice(object):
         deadline = time.time() + timeout
         self._shut_down(deadline - time.time())
         _log.debug(u"Removing device '{}'".format(self.name))
-        self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'delete', self.udid])
+        if self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'delete', self.udid], return_exit_code=True):
+            _log.error(u"Failed to remove '{},' error is not fatal, continuing".format(self.name))
 
         # This will (by design) fail if run more than once on the same SimulatedDevice
         SimulatedDeviceManager.AVAILABLE_DEVICES.remove(self)

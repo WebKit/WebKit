@@ -1,5 +1,18 @@
 2021-08-03  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Narrow set of terminated simulator processes
+        https://bugs.webkit.org/show_bug.cgi?id=228752
+        <rdar://problem/81479508>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager.initialize_devices): Only check Simulator.app.
+        (SimulatedDeviceManager.tear_down): Only kill Simulator.app processes.
+        (SimulatedDevice._delete): Print error if `simctl delete` fails, but continue.
+
+2021-08-03  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Add access to `git config`
         https://bugs.webkit.org/show_bug.cgi?id=228597
         <rdar://problem/81283644>
