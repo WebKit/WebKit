@@ -600,7 +600,9 @@
 
 (with-filter (system-attribute apple-internal)
     (allow sysctl-read sysctl-write
-           (sysctl-name "vm.footprint_suspend")))
+           (sysctl-name "vm.footprint_suspend"))
+    (allow nvram-get (nvram-variable "emu")) ;; <rdar://problem/78363040>
+)
 
 (allow mach-lookup (with report) (with telemetry)
        (global-name "com.apple.system.logger"))

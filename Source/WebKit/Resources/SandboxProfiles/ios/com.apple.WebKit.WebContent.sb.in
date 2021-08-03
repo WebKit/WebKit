@@ -382,6 +382,7 @@
     (with-filter (system-attribute apple-internal)
         (allow file-read* file-write-data file-ioctl
             (literal "/dev/dtracehelper"))
+        (allow nvram-get (nvram-variable "emu")) ;; <rdar://problem/78363040>
     )
 
     (allow file-read*

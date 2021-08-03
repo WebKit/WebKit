@@ -1,3 +1,17 @@
+2021-08-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow check for nvram "emu" state on internal OS builds
+        https://bugs.webkit.org/show_bug.cgi?id=228745
+        <rdar://problem/78363040>
+
+        Reviewed by Per Arne Vollan.
+
+        Allow access to the 'emu' nvram variable when running on an Apple Internal OS build. This
+        reduces spurious sandbox violation reports, and improves the performance of test systems.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-08-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused processDidTransitionTo{Foreground,Background} IPC
