@@ -1,3 +1,26 @@
+2021-08-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        [App Privacy Report] Domains are deleted for ephemeral website data stores
+        https://bugs.webkit.org/show_bug.cgi?id=228708
+        <rdar://problem/81282432>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. Since this data is not stored in WebKit, we have no
+        way to test when it gets deleted or not. I tested manually and requested
+        an automated test at the correct networking layer.
+
+        Only clear Privacy Report data if the website data store is
+        persistent. Safari calls the SPI to remove website data for ephemeral
+        data stores in some cases that are unrelated to a user clearing
+        website data or history and thus should not clear App Privacy Report
+        data. Additionally, it is unexpected that clearing an ephemeral data
+        store would clear disk data, as website data is only stored in memory
+        in this case.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::removeNetworkWebsiteData):
+
 2021-08-02  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/vorbis container support

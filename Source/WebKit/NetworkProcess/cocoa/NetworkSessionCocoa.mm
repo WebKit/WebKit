@@ -1831,6 +1831,12 @@ static bool isActingOnBehalfOfAFullWebBrowser(const String& bundleID)
 void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modifiedSince, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)
+    // FIXME: Add automated test for this once rdar://81420753 is resolved.
+    if (sessionID().isEphemeral()) {
+        completionHandler();
+        return;
+    }
+
     auto bundleID = WebCore::applicationBundleIdentifier();
     if (!isParentProcessAFullWebBrowser(networkProcess()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
         return completionHandler();
