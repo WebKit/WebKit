@@ -28,6 +28,7 @@ import os, sys
 import getpass
 import re
 import subprocess
+import tempfile
 
 def listAllWebKitPrograms(builddir_bin):
     foundWebKitPrograms = []
@@ -172,8 +173,8 @@ def main(user=None):
             os.system("xcrun simctl shutdown booted")
         # Kill all instances of python executing run-webkit-tests
         os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
-        # Remove stale simulator temp files
-        os.system('find /private/var/folders -name "Deleting-*" -maxdepth 4 -exec sudo rm -rf {} +')
+        # FIXME: <rdar://problem/81476546> Remove stale simulator temp files
+        os.system('find {} -name "Deleting-*" -maxdepth 1 -exec sudo rm -rf {{}} +'.format(tempfile.gettempdir()))
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
         for task in tasksToKill + tasksToKillWin:
             os.system("taskkill /t /f /im " + task)

@@ -1,3 +1,14 @@
+2021-08-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Simulator temp files filling up disk (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=228335
+        <rdar://problem/81171840>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/kill-old-processes:
+        (main): Use tempdir environment variable, link to underlying bug.
+
 2021-08-03  Jer Noble  <jer.noble@apple.com>
 
         WebKitTestRunner should dump current results in the case of a timeout
