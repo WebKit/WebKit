@@ -95,7 +95,7 @@ public:
             setAll();
             return;
         }
-        for (UChar character : characters)
+        for (UChar32 character : characters)
             add(character);
     }
 
