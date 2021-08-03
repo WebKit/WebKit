@@ -75,9 +75,9 @@ my $targetResourcePath = File::Spec->catdir($ENV{'TARGET_BUILD_DIR'}, $ENV{'UNLO
 my $protocolDir = File::Spec->catdir($targetResourcePath, 'Protocol');
 
 # Copy over dynamically loaded files from other frameworks, even if we aren't combining resources.
-my $jsFrom = File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorBackendCommands.js');
+my $jsFrom = File::Spec->catfile(File::Spec->catdir($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'inspector'), 'InspectorBackendCommands.js');
 my $jsTo = File::Spec->catfile($protocolDir, 'InspectorBackendCommands.js');
-print "Copying Inspector bindings from $jsFrom to $jsTo\n";
+print "Inspector bindings will be copied from $jsFrom to $jsTo\n";
 
 my $copyResourcesCommand = File::Spec->catfile($XSRCROOT, 'Scripts', 'copy-user-interface-resources.pl');
 do $copyResourcesCommand;
