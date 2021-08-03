@@ -1,3 +1,17 @@
+2021-08-03  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeMediaSource::audioSamplesAvailable is calling malloc as part of locking in audio thread
+        https://bugs.webkit.org/show_bug.cgi?id=228688
+
+        Reviewed by Eric Carlson.
+
+        Allow allocations in lockSlow since allocations might happen in rare case and not for each lockSlow call.
+
+        * wtf/Lock.cpp:
+        (WTF::Lock::lockSlow):
+        (WTF::Lock::unlockSlow):
+        (WTF::Lock::unlockFairlySlow):
+
 2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CheckedRef

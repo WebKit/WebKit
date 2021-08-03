@@ -43,13 +43,18 @@ void Lock::lockSlow()
 {
     if (profileLockContention)
         STACK_SHOT_PROFILE(4, 2, 5);
+
+    // Heap allocations are forbidden on certain threads (e.g. audio rendering thread) for performance reasons so we need to
+    // explicitly allow the following allocation(s). In some rare cases, the lockSlow() algorithm may cause allocations.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
     DefaultLockAlgorithm::lockSlow(m_byte);
 }
 
 void Lock::unlockSlow()
 {
-    // Heap allocations are forbidden on the certain threads (e.g. audio rendering thread) for performance reasons so we need to
-    // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorith may cause allocations.
+    // Heap allocations are forbidden on certain threads (e.g. audio rendering thread) for performance reasons so we need to
+    // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorithm may cause allocations.
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
     DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Unfair);
@@ -57,8 +62,8 @@ void Lock::unlockSlow()
 
 void Lock::unlockFairlySlow()
 {
-    // Heap allocations are forbidden on the certain threads (e.g. audio rendering thread) for performance reasons so we need to
-    // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorith may cause allocations.
+    // Heap allocations are forbidden on certain threads (e.g. audio rendering thread) for performance reasons so we need to
+    // explicitly allow the following allocation(s). In some rare cases, the unlockSlow() algorithm may cause allocations.
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
     DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Fair);
