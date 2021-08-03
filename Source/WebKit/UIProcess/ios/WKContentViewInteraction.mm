@@ -10156,6 +10156,16 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return [self createImageAnalysisRequest:analysisTypes image:image imageURL:_positionInformation.imageURL];
 }
 
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
+- (void)_updateContextMenuForMachineReadableCodeForImageAnalysis:(VKImageAnalysis *)analysis
+{
+    analysis.presentingViewControllerForMrcAction = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    _contextMenuForMachineReadableCode = [analysis hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? analysis.mrcMenu : nil;
+}
+
+#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
 - (BOOL)validateImageAnalysisRequestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)identifier
 {
     if (_pendingImageAnalysisRequestIdentifier == identifier)
@@ -10323,7 +10333,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                     UNUSED_PARAM(hasTextResults);
 #endif
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-                    strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
+                    [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
                     [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
                 }];
@@ -10392,7 +10402,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if USE(UICONTEXTMENU)
 #if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-            strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
+            [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
 #endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
             strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
             [strongSelf->_contextMenuInteraction _presentMenuAtLocation:location];
