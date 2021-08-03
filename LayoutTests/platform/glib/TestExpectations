@@ -270,6 +270,16 @@ webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradien
 
 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
 
+# GLIB PASS since 238591@main
+webkit.org/b/203531 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow.html [ Pass ]
+
+# GLIB PASS since 239765@main
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-007.html [ Pass ]
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-005.html [ Pass ]
+
+# GLIB PASS since 238990@main
+webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-east-asian.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -754,8 +764,6 @@ webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-TransferToImageBitmap-offscreen.html [ Failure ]
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-null-offscreen.html [ Failure ]
 
-webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
-
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
 
@@ -802,8 +810,6 @@ webkit.org/b/224118 perf/array-reverse.html [ Failure Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # ResourceTiming API bugs
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/214442 imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content_redirect.html [ Failure ]
 
 webkit.org/b/222756 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Failure ]
 
@@ -2030,7 +2036,6 @@ webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
 webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Timeout ]
 webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
-webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
 webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]

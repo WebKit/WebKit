@@ -158,6 +158,13 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-destinationnode-inter
 http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
 http/tests/xmlhttprequest/state-after-network-error.html [ DumpJSConsoleLogInStdErr ]
 
+# Still failing in GTK
+webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Pass ]
+
+# WPE passing since (237579@main - 237582@main]. GTK back failing after revert.
+imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Triaged Expectations
 # * KEEP THE SECTIONS SORTED ALPHABETICALLY.
@@ -833,8 +840,6 @@ webkit.org/b/212082 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 webkit.org/b/207711 imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Failure Pass ]
 webkit.org/b/212158 imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/212352 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html [ Failure ]
-
 webkit.org/b/152908 pageoverlay/overlay-small-frame-mouse-events.html [ Failure Pass ]
 
 webkit.org/b/212959 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass Timeout ]
@@ -1345,7 +1350,6 @@ webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Failure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Failure ]
-webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html [ Failure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002.html [ Failure ]
 
