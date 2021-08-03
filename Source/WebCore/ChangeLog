@@ -1,3 +1,17 @@
+2021-08-03  Rob Buis  <rbuis@igalia.com>
+
+        Check that shadow root is connected in invalidateStyleAfterStyleSheetChange
+        https://bugs.webkit.org/show_bug.cgi?id=227383
+
+        Reviewed by Antti Koivisto.
+
+        Check that shadow root is connected in invalidateStyleAfterStyleSheetChange.
+
+        Test: fast/shadow-dom/shadow-tree-removal-crash.html
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+
 2021-08-02  Frédéric Wang  <fwang@igalia.com>
 
         Align implementation of PositionIterator::isCandidate() on Position::isCandidate()

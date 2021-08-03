@@ -1,3 +1,15 @@
+2021-08-03  Rob Buis  <rbuis@igalia.com>
+
+        Check that shadow root is connected in invalidateStyleAfterStyleSheetChange
+        https://bugs.webkit.org/show_bug.cgi?id=227383
+
+        Reviewed by Antti Koivisto.
+
+        Add test for this.
+
+        * fast/shadow-dom/shadow-tree-removal-crash-expected.txt: Added.
+        * fast/shadow-dom/shadow-tree-removal-crash.html: Added.
+
 2021-08-02  Jean-Yves Avenard  <jya@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=228140
