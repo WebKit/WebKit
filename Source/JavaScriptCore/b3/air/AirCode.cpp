@@ -90,9 +90,6 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
-    if (auto reg = pinnedExtendedOffsetAddrRegister())
-        pinRegister(*reg);
-
     m_pinnedRegs.set(MacroAssembler::framePointerRegister);
 }
 

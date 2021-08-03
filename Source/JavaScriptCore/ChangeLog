@@ -1,3 +1,26 @@
+2021-08-03  Yijia Huang  <yijia_huang@apple.com>
+
+        [ARM64] Use link register instead of pinning a register for materializing big load constants
+        https://bugs.webkit.org/show_bug.cgi?id=228710
+
+        Reviewed by Mark Lam.
+
+        Previously, we pin a register as a temp for materializing a large constant that cannot fit in
+        Load/Store imm form. This is not efficient since the register allocator has one less register
+        to allocate from. To solve this problem, we should switch to using the link register as the temp
+        on ARM64.
+
+        * b3/B3Common.cpp:
+        (JSC::B3::linkRegister):
+        (JSC::B3::pinnedExtendedOffsetAddrRegister): Deleted.
+        * b3/B3Common.h:
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp:
+        (JSC::B3::Air::callFrameAddr):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+
 2021-08-02  Yijia Huang  <yijia_huang@apple.com>
 
         Add a new pattern to instruction selector to utilize UMULL supported by ARM64
