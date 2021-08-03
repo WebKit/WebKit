@@ -220,6 +220,7 @@ pas_bitfit_directory_get_first_free_view(pas_bitfit_directory* directory,
                     PAS_ASSERT((unsigned)found_index.index == found_index.index);
                     view = pas_bitfit_view_create(global_directory,
                                                   (unsigned)found_index.index);
+                    pas_store_store_fence();
                     pas_compact_atomic_bitfit_view_ptr_store(
                         pas_bitfit_directory_get_view_ptr(directory, found_index.index), view);
                 }

@@ -1,3 +1,16 @@
+2021-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        pas_segmented_vector's iterate functions should handle memory ordering correctly
+        https://bugs.webkit.org/show_bug.cgi?id=228746
+
+        Reviewed by Mark Lam.
+
+        Also fixed a missing store-store fence in bitfit_directory's use of a segmented vector.
+
+        * libpas/src/libpas/pas_bitfit_directory.c:
+        (pas_bitfit_directory_get_first_free_view):
+        * libpas/src/libpas/pas_segmented_vector.h:
+
 2021-07-14  Michael Saboff  <msaboff@apple.com>
 
         [BMalloc] Lazily allocate physical pages

@@ -163,7 +163,7 @@ PAS_BEGIN_EXTERN_C;
         segment_index = start_index % (segment_size); \
         \
         size = vector->size; \
-        spine = name##_spine_ptr_load(&vector->spine); \
+        spine = name##_spine_ptr_load(&vector[pas_depend(size)].spine); \
         \
         for (; spine_index * segment_size < size; spine_index++) { \
             type* segment; \
@@ -255,7 +255,7 @@ PAS_BEGIN_EXTERN_C;
         spine_index = start_index / (segment_size); \
         segment_index = start_index % (segment_size); \
         \
-        spine = name##_spine_ptr_load(&vector->spine); \
+        spine = name##_spine_ptr_load(&vector[pas_depend(size)].spine); \
         \
         spine_index++; \
         \
