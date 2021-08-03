@@ -499,7 +499,7 @@ private:
         return true;
     }
 
-    bool isMergeableValue(Value* v, B3::Opcode b3Opcode, bool checkCanBeInternal)
+    bool isMergeableValue(Value* v, B3::Opcode b3Opcode, bool checkCanBeInternal = false)
     { 
         if (v->opcode() != b3Opcode)
             return false;
@@ -516,9 +516,9 @@ private:
 #if CPU(ARM64)
         // Maybe, the ideal approach is to introduce a decorator (Index@EXT) to the Air operand 
         // to provide an extension opportunity for the specific form under the Air opcode.
-        if (isMergeableValue(index, ZExt32, false))
+        if (isMergeableValue(index, ZExt32))
             return Arg::index(base, tmp(index->child(0)), scale, offset, MacroAssembler::Extend::ZExt32);
-        if (isMergeableValue(index, SExt32, false))
+        if (isMergeableValue(index, SExt32))
             return Arg::index(base, tmp(index->child(0)), scale, offset, MacroAssembler::Extend::SExt32);
 #endif
         return Arg::index(base, tmp(index), scale, offset);
@@ -2689,10 +2689,10 @@ private:
                         if (airOpcode != MultiplyAdd64)
                             return Air::Oops;
                         // SMADDL: d = SExt32(n) * SExt32(m) + a
-                        if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
+                        if (isMergeableValue(multiplyLeft, SExt32) && isMergeableValue(multiplyRight, SExt32))
                             return MultiplyAddSignExtend32;
                         // UMADDL: d = ZExt32(n) * ZExt32(m) + a
-                        if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
+                        if (isMergeableValue(multiplyLeft, ZExt32) && isMergeableValue(multiplyRight, ZExt32))
                             return MultiplyAddZeroExtend32;
                         return Air::Oops;
                     };
@@ -2700,8 +2700,6 @@ private:
                     Air::Opcode newAirOpcode = tryNewAirOpcode();
                     if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                         append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(right), tmp(m_value));
-                        commitInternal(multiplyLeft);
-                        commitInternal(multiplyRight);
                         commitInternal(left);
                         return true;
                     }
@@ -2755,10 +2753,10 @@ private:
                     if (airOpcode != MultiplySub64)
                         return Air::Oops;
                     // SMSUBL: d = a - SExt32(n) * SExt32(m)
-                    if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
+                    if (isMergeableValue(multiplyLeft, SExt32) && isMergeableValue(multiplyRight, SExt32))
                         return MultiplySubSignExtend32;
                     // UMSUBL: d = a - ZExt32(n) * ZExt32(m)
-                    if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
+                    if (isMergeableValue(multiplyLeft, ZExt32) && isMergeableValue(multiplyRight, ZExt32))
                         return MultiplySubZeroExtend32;
                     return Air::Oops;
                 };
@@ -2766,8 +2764,6 @@ private:
                 Air::Opcode newAirOpcode = tryNewAirOpcode();
                 if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                     append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(left), tmp(m_value));
-                    commitInternal(multiplyLeft);
-                    commitInternal(multiplyRight);
                     commitInternal(right);
                     return true;
                 }
@@ -2808,10 +2804,10 @@ private:
                     if (airOpcode != MultiplyNeg64)
                         return Air::Oops;
                     // SMNEGL: d = -(SExt32(n) * SExt32(m))
-                    if (isMergeableValue(multiplyLeft, SExt32, true) && isMergeableValue(multiplyRight, SExt32, true)) 
+                    if (isMergeableValue(multiplyLeft, SExt32) && isMergeableValue(multiplyRight, SExt32))
                         return MultiplyNegSignExtend32;
                     // UMNEGL: d = -(ZExt32(n) * ZExt32(m))
-                    if (isMergeableValue(multiplyLeft, ZExt32, true) && isMergeableValue(multiplyRight, ZExt32, true)) 
+                    if (isMergeableValue(multiplyLeft, ZExt32) && isMergeableValue(multiplyRight, ZExt32))
                         return MultiplyNegZeroExtend32;
                     return Air::Oops;
                 };
@@ -2819,8 +2815,6 @@ private:
                 Air::Opcode newAirOpcode = tryNewAirOpcode();
                 if (isValidForm(newAirOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                     append(newAirOpcode, tmp(multiplyLeft->child(0)), tmp(multiplyRight->child(0)), tmp(m_value));
-                    commitInternal(multiplyLeft);
-                    commitInternal(multiplyRight);
                     commitInternal(m_value->child(0));
                     return true;
                 }
@@ -2842,29 +2836,34 @@ private:
         }
 
         case Mul: {
-            if (m_value->type() == Int64
-                && isValidForm(MultiplySignExtend32, Arg::Tmp, Arg::Tmp, Arg::Tmp)
-                && m_value->child(0)->opcode() == SExt32
-                && !m_locked.contains(m_value->child(0))) {
-                Value* opLeft = m_value->child(0);
-                Value* left = opLeft->child(0);
-                Value* opRight = m_value->child(1);
-                Value* right = nullptr;
+            Value* left = m_value->child(0);
+            Value* right = m_value->child(1);
 
-                if (opRight->opcode() == SExt32 && !m_locked.contains(opRight->child(0))) {
-                    right = opRight->child(0);
-                } else if (m_value->child(1)->isRepresentableAs<int32_t>() && !m_locked.contains(m_value->child(1))) {
-                    // We just use the 64-bit const int as a 32 bit const int directly
-                    right = opRight;
-                }
+            auto tryAppendMultiplyWithExtend = [&] () -> bool {
+                auto tryAirOpcode = [&] () -> Air::Opcode {
+                    if (m_value->type() != Int64)
+                        return Air::Oops;
+                    // SMULL: d = SExt32(n) * SExt32(m)
+                    if (isMergeableValue(left, SExt32) && isMergeableValue(right, SExt32)) 
+                        return MultiplySignExtend32;
+                    // UMULL: d = ZExt32(n) * ZExt32(m)
+                    if (isMergeableValue(left, ZExt32) && isMergeableValue(right, ZExt32)) 
+                        return MultiplyZeroExtend32;
+                    return Air::Oops;
+                };
 
-                if (right) {
-                    append(MultiplySignExtend32, tmp(left), tmp(right), tmp(m_value));
-                    return;
+                Air::Opcode opcode = tryAirOpcode();
+                if (isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+                    append(opcode, tmp(left->child(0)), tmp(right->child(0)), tmp(m_value));
+                    return true;
                 }
-            }
-            appendBinOp<Mul32, Mul64, MulDouble, MulFloat, Commutative>(
-                m_value->child(0), m_value->child(1));
+                return false;
+            };
+
+            if (tryAppendMultiplyWithExtend())
+                return;
+
+            appendBinOp<Mul32, Mul64, MulDouble, MulFloat, Commutative>(left, right);
             return;
         }
 
@@ -3002,7 +3001,7 @@ private:
             //        mask = (1 << lowWidth) - 1
             auto tryAppendEXTR = [&] (Value* left, Value* right) -> bool {
                 Air::Opcode opcode = opcodeForType(ExtractRegister32, ExtractRegister64, m_value->type());
-                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp))
                     return false;
                 if (left->opcode() != Shl || left->child(0)->opcode() != BitAnd || right->opcode() != ZShr)
                     return false;
@@ -3208,7 +3207,7 @@ private:
                         XorNotLeftShift32, XorNotLeftShift64, 
                         XorNotRightShift32, XorNotRightShift64, 
                         XorNotUnsignedRightShift32, XorNotUnsignedRightShift64);
-                    if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp)) 
+                    if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp))
                         return false;
                     Value* mValue = shiftValue->child(0);
                     Value* amountValue = shiftValue->child(1);

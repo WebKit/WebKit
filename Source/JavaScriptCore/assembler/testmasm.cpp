@@ -921,6 +921,26 @@ void testMultiplySignExtend32()
     }
 }
 
+void testMultiplyZeroExtend32()
+{
+    for (auto nOperand : int32Operands()) {
+        auto mul = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            jit.multiplyZeroExtend32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        for (auto mOperand : int32Operands()) {
+            uint32_t n = nOperand;
+            uint32_t m = mOperand;
+            CHECK_EQ(invoke<uint64_t>(mul, n, m), static_cast<uint64_t>(n) * static_cast<uint64_t>(m));
+        }
+    }
+}
+
 void testMultiplyAddSignExtend32()
 {
     // d = SExt32(n) * SExt32(m) + a
@@ -5649,6 +5669,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testLoadStorePair64Int64());
     RUN(testLoadStorePair64Double());
     RUN(testMultiplySignExtend32());
+    RUN(testMultiplyZeroExtend32());
 
     RUN(testSub32Args());
     RUN(testSub32Imm());

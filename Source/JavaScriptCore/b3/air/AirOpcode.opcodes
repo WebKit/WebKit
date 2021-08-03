@@ -284,6 +284,9 @@ arm64: MultiplyNegZeroExtend32 U:G:32, U:G:32, D:G:64
 arm64: MultiplySignExtend32 U:G:32, U:G:32, D:G:64
     Tmp, Tmp, Tmp
 
+arm64: MultiplyZeroExtend32 U:G:32, U:G:32, D:G:64
+    Tmp, Tmp, Tmp
+
 arm64: Div32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp
 

@@ -953,6 +953,11 @@ public:
         m_assembler.smull(dest, left, right);
     }
 
+    void multiplyZeroExtend32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.umull(dest, left, right);
+    }
+
     void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
     {
         m_assembler.sdiv<32>(dest, dividend, divisor);

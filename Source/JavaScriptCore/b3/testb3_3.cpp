@@ -3730,10 +3730,8 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testMulArgs32(1, 2));
     RUN(testMulArgs32(0xFFFFFFFF, 0xFFFFFFFF));
     RUN(testMulArgs32(0xFFFFFFFE, 0xFFFFFFFF));
-    RUN(testMulArgs32SignExtend(1, 1));
-    RUN(testMulArgs32SignExtend(1, 2));
-    RUN(testMulArgs32SignExtend(0xFFFFFFFF, 0xFFFFFFFF));
-    RUN(testMulArgs32SignExtend(0xFFFFFFFE, 0xFFFFFFFF));
+    RUN(testMulArgs32SignExtend());
+    RUN(testMulArgs32ZeroExtend());
     RUN(testMulLoadTwice());
     RUN(testMulAddArgsLeft());
     RUN(testMulAddArgsRight());

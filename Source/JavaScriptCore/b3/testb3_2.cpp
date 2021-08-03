@@ -1228,10 +1228,10 @@ void testMulArgs32(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == a * b);
 }
 
-void testMulArgs32SignExtend(int a, int b)
+void testMulArgs32SignExtend()
 {
     Procedure proc;
-    if (proc.optLevel() < 1)
+    if (proc.optLevel() < 2)
         return;
     BasicBlock* root = proc.addBlock();
     Value* arg1 = root->appendNew<Value>(
@@ -1246,8 +1246,46 @@ void testMulArgs32SignExtend(int a, int b)
     root->appendNewControlValue(proc, Return, Origin(), mul);
 
     auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "smull");
 
-    CHECK(invoke<long int>(*code, a, b) == ((long int) a) * ((long int) b));
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            int32_t n = nOperand.value;
+            int32_t m = mOperand.value;
+            CHECK_EQ(invoke<int64_t>(*code, n, m), static_cast<int64_t>(n) * static_cast<int64_t>(m));
+        }
+    }
+}
+
+void testMulArgs32ZeroExtend()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* left = root->appendNew<Value>(proc, ZExt32, Origin(), arg1);
+    Value* right = root->appendNew<Value>(proc, ZExt32, Origin(), arg2);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), left, right);
+    root->appendNewControlValue(proc, Return, Origin(), mul);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "umull");
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            uint32_t n = nOperand.value;
+            uint32_t m = mOperand.value;
+            CHECK_EQ(invoke<uint64_t>(*code, n, m), static_cast<uint64_t>(n) * static_cast<uint64_t>(m));
+        }
+    }
 }
 
 void testMulImm32SignExtend(const int a, int b)

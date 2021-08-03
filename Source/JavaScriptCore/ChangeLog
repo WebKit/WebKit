@@ -1,5 +1,52 @@
 2021-08-02  Yijia Huang  <yijia_huang@apple.com>
 
+        Add a new pattern to instruction selector to utilize UMULL supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228721
+
+        Reviewed by Saam Barati.
+
+        Unsigned Multiply Long (UMULL) multiplies two 32-bit register values, and writes the 
+        result to the destination register. This instruction is an alias of the UMADDL instruction.
+
+            umull xd wn wm
+
+        The equivalent pattern is: d = ZExt32(n) * ZExt32(m)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = Trunc(@0)
+        Int @2 = ArgumentReg(%x1)
+        Int @3 = Trunc(@2)
+        Int @4 = ZExt32(@1)
+        Int @5 = ZExt32(@3)
+        Int @6 = Mul(@4, @5)
+        Void@7 = Return(@6, Terminal)
+
+        // Old optimized AIR
+        Move   %x0, %x0,      @4
+        Move   %x1, %x1,      @5
+        Mul    %x0, %x1, %x0, @6
+        Ret    %x0,           @7
+
+        // New optimized AIR
+        MultiplyZeroExtend %x0, %x1, %x0, @6
+        Ret                %x0,           @7
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::multiplyZeroExtend32):
+        * assembler/testmasm.cpp:
+        (JSC::testMultiplyZeroExtend32):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testMulArgs32SignExtend):
+        (testMulArgs32ZeroExtend):
+        * b3/testb3_3.cpp:
+        (addArgTests):
+
+2021-08-02  Yijia Huang  <yijia_huang@apple.com>
+
         Add new patterns to instruction selector to utilize AND/EOR/ORR-with-shift supported by ARM64
         https://bugs.webkit.org/show_bug.cgi?id=228675
 
