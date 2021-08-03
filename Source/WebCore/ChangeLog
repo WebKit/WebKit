@@ -1,3 +1,14 @@
+2021-08-03  Youenn Fablet  <youenn@apple.com>
+
+        Update FirstWithDOMWindowReuseRestriction linked-on-or-after check to latest MacOS/iOS betas
+        https://bugs.webkit.org/show_bug.cgi?id=228736
+        <rdar://81419036>
+
+        Reviewed by Chris Dumez.
+
+        * platform/cocoa/VersionChecks.h:
+        Delay enabling new behavior to MacOS 12 and iOS 15 SDK since new behavior is enabled for those OS versions.
+
 2021-08-03  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r280531): multiple modern-media-controls tests have become flaky timeouts
