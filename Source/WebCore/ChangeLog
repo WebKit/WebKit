@@ -1,3 +1,62 @@
+2021-08-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280587. rdar://problem/81473679
+
+    Crash in webgl/1.0.x/conformance/textures/misc/texture-with-flip-y-and-premultiply-alpha.html
+    https://bugs.webkit.org/show_bug.cgi?id=223920
+    <rdar://problem/76261913>
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2021-08-03
+    Reviewed by Kenneth Russell.
+    
+    After enabling WEBGL_depth_texture, the getDataFormat would assert for case of
+    format == RGBA, type == UNSIGNED_SHORT. UNSIGNED_SHORT is intended for
+    format == DEPTH_COMPONENT.
+    
+    Instead, return error if the data conversion cannot be done. This is better in all
+    cases than doing non-expected data conversion in release build and assertion in
+    debug builds.
+    
+    Tested by webgl/1.0.x/conformance/textures/misc/texture-with-flip-y-and-premultiply-alpha.html
+    (disabled for now).
+    
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::texImageArrayBufferViewHelper):
+    * platform/graphics/GraphicsContextGL.cpp:
+    (WebCore::getDataFormat):
+    (WebCore::packPixels):
+    (WebCore::GraphicsContextGL::extractTextureData):
+    * platform/graphics/GraphicsContextGL.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280587 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Crash in webgl/1.0.x/conformance/textures/misc/texture-with-flip-y-and-premultiply-alpha.html
+            https://bugs.webkit.org/show_bug.cgi?id=223920
+            <rdar://problem/76261913>
+
+            Reviewed by Kenneth Russell.
+
+            After enabling WEBGL_depth_texture, the getDataFormat would assert for case of
+            format == RGBA, type == UNSIGNED_SHORT. UNSIGNED_SHORT is intended for
+            format == DEPTH_COMPONENT.
+
+            Instead, return error if the data conversion cannot be done. This is better in all
+            cases than doing non-expected data conversion in release build and assertion in
+            debug builds.
+
+            Tested by webgl/1.0.x/conformance/textures/misc/texture-with-flip-y-and-premultiply-alpha.html
+            (disabled for now).
+
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::texImageArrayBufferViewHelper):
+            * platform/graphics/GraphicsContextGL.cpp:
+            (WebCore::getDataFormat):
+            (WebCore::packPixels):
+            (WebCore::GraphicsContextGL::extractTextureData):
+            * platform/graphics/GraphicsContextGL.h:
+
 2021-08-02  Sonia Singla  <soniasingla.1812@gmail.com>
 
         [css-cleanup] Replace webkit- prefix properties with Standard CSS Properties in Source/**

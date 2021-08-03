@@ -748,7 +748,8 @@ public:
         D32,
         D32F,
         DS24_8,
-        NumFormats
+        NumFormats,
+        Invalid = NumFormats
     };
 
     enum class ChannelBits : uint8_t {
