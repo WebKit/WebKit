@@ -1,3 +1,4 @@
+SAFARITOOLS_MODULE =
 WEBINSPECTORUI_MODULE =
 
 TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
@@ -10,6 +11,9 @@ ifneq (,$(SDKROOT))
 		WEBINSPECTORUI_MODULE = WebInspectorUI
 	endif
 else
+	ifeq ($(MAKECMDGOALS),installsrc)
+		SAFARITOOLS_MODULE = cmake
+	endif
 	WEBINSPECTORUI_MODULE = WebInspectorUI
 endif
 
@@ -17,7 +21,7 @@ ifeq (iosmac,$(SDK_VARIANT))
 	WEBINSPECTORUI_MODULE =
 endif
 
-MODULES = bmalloc WTF JavaScriptCore ThirdParty WebCore $(WEBINSPECTORUI_MODULE) WebKitLegacy WebKit
+MODULES = $(SAFARITOOLS_MODULE) bmalloc WTF JavaScriptCore ThirdParty WebCore $(WEBINSPECTORUI_MODULE) WebKitLegacy WebKit $(SAFARITOOLS_MODULE)
 
 define build_target_for_each_module
 	for dir in $(MODULES); do \
