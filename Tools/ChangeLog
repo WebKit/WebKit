@@ -1,5 +1,17 @@
 2021-08-03  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Handle case where no existing simulators are defined
+        https://bugs.webkit.org/show_bug.cgi?id=228758
+        <rdar://problem/81484040>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._disambiguate_device_type): If there are no available devices,
+        find the newest device identifier which matches the requested type.
+
+2021-08-03  Jonathan Bedard  <jbedard@apple.com>
+
         [build.webkit.org] Simulator temp files filling up disk (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=228335
         <rdar://problem/81171840>
