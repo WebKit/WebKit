@@ -832,6 +832,7 @@
         "hw.physicalcpu"
         "hw.physicalcpu_max"
         "hw.physmem" ;; <rdar://problem/76782530>
+        "hw.product" ;; <rdar://problem/81334849>
         "hw.vectorunit" ;; <rdar://problem/76782530>
         "kern.bootargs"
         "kern.hostname"

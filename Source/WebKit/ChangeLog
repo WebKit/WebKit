@@ -1,3 +1,15 @@
+2021-08-03  Per Arne  <pvollan@apple.com>
+
+        [iOS] Fix sandbox violation in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=228743
+        <rdar://problem/81334849>
+
+        Reviewed by Brent Fulgham.
+
+        Allow reading "hw.product" in the GPU process' sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-08-03  Devin Rousso  <drousso@apple.com>
 
         [Live Text] [iOS] Provide a presenting `UIViewController` for machine readable code actions so that they are related to the same view
