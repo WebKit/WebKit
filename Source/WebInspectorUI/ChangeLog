@@ -1,3 +1,16 @@
+2021-08-02  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [AppleWin] Speculative internal build fix for copying `InspectorBackendCommands.js`
+        https://bugs.webkit.org/show_bug.cgi?id=228716
+
+        Reviewed by Maciej Stachowiak.
+
+        Speculative fix for AppleWin port internal build by using the correct directory for JSC headers. Also update the
+        logging message to reflect that the file will by copied later in the build.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.make:
+        * WebInspectorUI.vcxproj/build-webinspectorui.pl:
+
 2021-08-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Network: sorting of transfer size for failed requests is causing the ordering to change every layout
