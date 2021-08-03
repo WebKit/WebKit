@@ -1,3 +1,23 @@
+2021-08-03  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r280531): multiple modern-media-controls tests have become flaky timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=228714
+        <rdar://problem/81426715>
+
+        Reviewed by Eric Carlson.
+
+        Update preferredRenderingMode() to reflect what setUpVideoRendering() actually does: use
+        MediaRenderingToContext whenever possible. This will cause setUpVideoRendering() to be
+        called from updateStates() to create the context, even if the element has been marked as
+        !isVisible() by RenderVideo upon removal from the DOM.
+
+        Also, in renderingModeChanged(), don't attempt to deduce whether scheduleUpdateStates()
+        should be called; just call it universally.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::preferredRenderingMode const):
+        (WebCore::MediaPlayerPrivateAVFoundation::renderingModeChanged):
+
 2021-08-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash in webgl/1.0.x/conformance/textures/misc/texture-with-flip-y-and-premultiply-alpha.html

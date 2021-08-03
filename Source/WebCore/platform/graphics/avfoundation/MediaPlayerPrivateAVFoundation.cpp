@@ -105,7 +105,7 @@ MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundatio
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::preferredRenderingMode() const
 {
-    if (!m_visible || assetStatus() == MediaPlayerAVAssetStatusUnknown)
+    if (assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaRenderingNone;
 
     if (supportsAcceleratedRendering() && m_player->renderingCanBeAccelerated())
@@ -468,8 +468,7 @@ void MediaPlayerPrivateAVFoundation::setResolvedURL(URL&& resolvedURL)
 
 void MediaPlayerPrivateAVFoundation::renderingModeChanged()
 {
-    if (m_delayingReadyState && m_cachedHasVideo && hasAvailableVideoFrame())
-        scheduleUpdateStates();
+    scheduleUpdateStates();
     m_player->renderingModeChanged();
 }
 
