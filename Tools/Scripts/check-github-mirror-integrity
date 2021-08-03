@@ -30,11 +30,11 @@ from webkitscmpy import remote
 
 
 def main():
-    repository = remote.Svn('https://svn.webkit.org/repository/webkit')
     mirror = remote.GitHub('https://github.com/WebKit/WebKit')
+    repository = remote.Svn('https://svn.webkit.org/repository/webkit')    
 
-    canonical_tip = repository.commit(branch='trunk')
     mirror_tip = mirror.commit(branch='main')
+    canonical_tip = repository.commit(branch='trunk')
 
     if mirror_tip.identifier == canonical_tip.identifier:
         print('GitHub and svn.webkit.org are in sync')

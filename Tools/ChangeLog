@@ -1,3 +1,12 @@
+2021-08-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [check-github-mirror-integrity] Handle slow Svn query
+        https://bugs.webkit.org/show_bug.cgi?id=228741
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/check-github-mirror-integrity: Pull commit from GitHub before Subversion.
+
 2021-08-03  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] SVN_REVISION drifting away if bots don't re-run cmake
