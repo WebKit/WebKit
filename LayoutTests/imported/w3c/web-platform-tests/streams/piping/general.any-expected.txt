@@ -12,5 +12,5 @@ PASS an undefined rejection from pull should cause pipeTo() to reject when preve
 PASS an undefined rejection from write should cause pipeTo() to reject when preventCancel is true
 PASS an undefined rejection from write should cause pipeTo() to reject when preventCancel is false
 PASS pipeTo() should reject if an option getter grabs a writer
-FAIL pipeTo() promise should resolve if null is passed null is not an Object.
+PASS pipeTo() promise should resolve if null is passed
 

@@ -1,3 +1,21 @@
+2021-08-03  Youenn Fablet  <youenn@apple.com>
+
+        ReadableStream's pipeTo() and pipeThrough() don't handle options in spec-perfect way
+        https://bugs.webkit.org/show_bug.cgi?id=227690
+        <rdar://problem/80482144>
+
+        Reviewed by Alexey Shvayka .
+
+        * web-platform-tests/streams/piping/general.any-expected.txt:
+        * web-platform-tests/streams/piping/general.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any.js:
+        (tryPipeThrough):
+        (test.get assert_equals):
+        * web-platform-tests/streams/piping/pipe-through.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/throwing-options.any-expected.txt:
+        * web-platform-tests/streams/piping/throwing-options.any.worker-expected.txt:
+
 2021-08-03  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/css-sizing/aspect-ratio tests from WPT

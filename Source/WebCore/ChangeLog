@@ -1,5 +1,24 @@
 2021-08-03  Youenn Fablet  <youenn@apple.com>
 
+        ReadableStream's pipeTo() and pipeThrough() don't handle options in spec-perfect way
+        https://bugs.webkit.org/show_bug.cgi?id=227690
+        <rdar://problem/80482144>
+
+        Reviewed by Alexey Shvayka.
+
+        Order getters as per spec for pipeTo and pipeThrough.
+        Handle the case of null dictionaries as if they are undefined
+        Use getter instead of using 'in' as per WebIDL spec.
+        If options is undefined, skip calling any getter.
+
+        Covered by updated test.
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+        (pipeTo):
+
+2021-08-03  Youenn Fablet  <youenn@apple.com>
+
         Update FirstWithDOMWindowReuseRestriction linked-on-or-after check to latest MacOS/iOS betas
         https://bugs.webkit.org/show_bug.cgi?id=228736
         <rdar://81419036>

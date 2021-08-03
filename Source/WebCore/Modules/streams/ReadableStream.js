@@ -116,12 +116,6 @@ function pipeThrough(streams, options)
     "use strict";
 
     if (@writableStreamAPIEnabled()) {
-        if (!@isReadableStream(this))
-            throw @makeThisTypeError("ReadableStream", "pipeThrough");
-
-        if (@isReadableStreamLocked(this))
-            throw @makeTypeError("ReadableStream is locked");
-
         const transforms = streams;
 
         const readable = transforms["readable"];
@@ -132,19 +126,28 @@ function pipeThrough(streams, options)
         if (!@isWritableStream(writable))
             throw @makeTypeError("writable should be WritableStream");
 
-        if (options === @undefined)
-            options = { };
-
+        let preventClose = false;
+        let preventAbort = false;
+        let preventCancel = false;
         let signal;
-        if ("signal" in options) {
+        if (!@isUndefinedOrNull(options)) {
+            if (!@isObject(options))
+                throw @makeTypeError("options must be an object");
+
+            preventAbort = !!options["preventAbort"];
+            preventCancel = !!options["preventCancel"];
+            preventClose = !!options["preventClose"];
+
             signal = options["signal"];
-            if (!(signal instanceof @AbortSignal))
+            if (signal !== @undefined && !(signal instanceof @AbortSignal))
                 throw @makeTypeError("options.signal must be AbortSignal");
         }
 
-        const preventClose = !!options["preventClose"];
-        const preventAbort = !!options["preventAbort"];
-        const preventCancel = !!options["preventCancel"];
+        if (!@isReadableStream(this))
+            throw @makeThisTypeError("ReadableStream", "pipeThrough");
+
+        if (@isReadableStreamLocked(this))
+            throw @makeTypeError("ReadableStream is locked");
 
         if (@isWritableStreamLocked(writable))
             throw @makeTypeError("WritableStream is locked");
@@ -171,26 +174,33 @@ function pipeTo(destination)
     let options = arguments[1];
 
     if (@writableStreamAPIEnabled()) {
-        if (!@isReadableStream(this))
-            return @Promise.@reject(@makeThisTypeError("ReadableStream", "pipeTo"));
+        let preventClose = false;
+        let preventAbort = false;
+        let preventCancel = false;
+        let signal;
+        if (!@isUndefinedOrNull(options)) {
+            if (!@isObject(options))
+                return @Promise.@reject(@makeTypeError("options must be an object"));
+
+            try {
+                preventAbort = !!options["preventAbort"];
+                preventCancel = !!options["preventCancel"];
+                preventClose = !!options["preventClose"];
+
+                signal = options["signal"];
+            } catch(e) {
+                return @Promise.@reject(e);
+            }
+
+            if (signal !== @undefined && !(signal instanceof @AbortSignal))
+                return @Promise.@reject(@makeTypeError("options.signal must be AbortSignal"));
+        }
 
         if (!@isWritableStream(destination))
             return @Promise.@reject(@makeTypeError("ReadableStream pipeTo requires a WritableStream"));
 
-        if (options === @undefined)
-            options = { };
-
-        // FIXME. We should catch exceptions and reject.
-        let signal;
-        if ("signal" in options) {
-            signal = options["signal"];
-            if (!(signal instanceof @AbortSignal))
-                return @Promise.@reject(@makeTypeError("options.signal must be AbortSignal"));
-        }
-
-        const preventClose = !!options["preventClose"];
-        const preventAbort = !!options["preventAbort"];
-        const preventCancel = !!options["preventCancel"];
+        if (!@isReadableStream(this))
+            return @Promise.@reject(@makeThisTypeError("ReadableStream", "pipeTo"));
 
         if (@isReadableStreamLocked(this))
             return @Promise.@reject(@makeTypeError("ReadableStream is locked"));
