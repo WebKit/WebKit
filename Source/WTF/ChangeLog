@@ -1,3 +1,20 @@
+2021-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Tweak the formatting for passing NSArrays to TextStreams
+        https://bugs.webkit.org/show_bug.cgi?id=228766
+
+        Reviewed by Simon Fraser.
+
+        Instead of using -[NSArray description], which puts its output on multiple lines,
+        instead use the same formatting as WTF::Vector, which puts its output on a single line.
+
+        We can also use this opportunity to tweak the implementation of operator<<(id) to
+        allow it to be called with Core Foundation types in raw C++ code.
+
+        * wtf/text/TextStream.h:
+        * wtf/text/cocoa/TextStreamCocoa.mm:
+        (WTF::TextStream::operator<<):
+
 2021-08-03  Risul Islam  <risul_islam@apple.com>
 
         Add functions for parsing URL query string

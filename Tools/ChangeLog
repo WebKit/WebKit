@@ -1,3 +1,16 @@
+2021-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Tweak the formatting for passing NSArrays to TextStreams
+        https://bugs.webkit.org/show_bug.cgi?id=228766
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/cocoa/TextStreamCocoa.cpp: Added.
+        (TEST):
+        * TestWebKitAPI/Tests/WTF/cocoa/TextStreamCocoa.mm: Added.
+        (TEST):
+
 2021-08-04  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add shared terminal input code

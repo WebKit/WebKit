@@ -78,8 +78,11 @@ public:
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
+#if PLATFORM(COCOA)
+    WTF_EXPORT_PRIVATE TextStream& operator<<(id);
 #ifdef __OBJC__
-    WTF_EXPORT_PRIVATE TextStream& operator<<(id<NSObject>);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(NSArray *);
+#endif
 #endif
 
     OptionSet<Formatting> formattingFlags() const { return m_formattingFlags; }

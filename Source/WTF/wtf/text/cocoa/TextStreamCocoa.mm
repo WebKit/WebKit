@@ -25,10 +25,30 @@
 
 namespace WTF {
 
-TextStream& TextStream::operator<<(id<NSObject> object)
+TextStream& TextStream::operator<<(id object)
 {
-    m_text.append([object description]);
+    if ([object isKindOfClass:[NSArray class]])
+        return *this << static_cast<NSArray *>(object);
+
+    if ([object conformsToProtocol:@protocol(NSObject)])
+        m_text.append([object description]);
+    else
+        m_text.append("(id)");
     return *this;
+}
+
+TextStream& TextStream::operator<<(NSArray *array)
+{
+    *this << "[";
+
+    for (NSUInteger i = 0; i < array.count; ++i) {
+        id item = array[i];
+        *this << item;
+        if (i < array.count - 1)
+            *this << ", ";
+    }
+
+    return *this << "]";
 }
 
 }
