@@ -32,7 +32,7 @@ PASS invalid values of signal should throw; specifically '0'
 PASS invalid values of signal should throw; specifically 'NaN'
 PASS invalid values of signal should throw; specifically 'true'
 PASS invalid values of signal should throw; specifically 'AbortSignal'
-FAIL invalid values of signal should throw; specifically '[object AbortSignal]' assert_throws_js: pipeThrough should throw function "() => rs.pipeThrough(uninterestingReadableWritablePair(), { signal })" did not throw
+PASS invalid values of signal should throw; specifically '[object AbortSignal]'
 PASS pipeThrough should accept a real AbortSignal
 PASS pipeThrough should throw if this is locked
 PASS pipeThrough should throw if writable is locked

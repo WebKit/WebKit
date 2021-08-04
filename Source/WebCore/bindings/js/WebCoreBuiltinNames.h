@@ -347,6 +347,7 @@ namespace WebCore {
     macro(inFlightWriteRequest) \
     macro(indexedDB) \
     macro(initializeWith) \
+    macro(isAbortSignal) \
     macro(isDisturbed) \
     macro(isLoading) \
     macro(isSecureContext) \

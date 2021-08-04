@@ -139,7 +139,7 @@ function pipeThrough(streams, options)
             preventClose = !!options["preventClose"];
 
             signal = options["signal"];
-            if (signal !== @undefined && !(signal instanceof @AbortSignal))
+            if (signal !== @undefined && !@isAbortSignal(signal))
                 throw @makeTypeError("options.signal must be AbortSignal");
         }
 
@@ -192,7 +192,7 @@ function pipeTo(destination)
                 return @Promise.@reject(e);
             }
 
-            if (signal !== @undefined && !(signal instanceof @AbortSignal))
+            if (signal !== @undefined && !@isAbortSignal(signal))
                 return @Promise.@reject(@makeTypeError("options.signal must be AbortSignal"));
         }
 

@@ -1,3 +1,15 @@
+2021-08-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ReadableStream's pipeTo() and pipeThrough() don't properly check for AbortSignal
+        https://bugs.webkit.org/show_bug.cgi?id=227693
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/streams/piping/abort.any-expected.txt:
+        * web-platform-tests/streams/piping/abort.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any.worker-expected.txt:
+
 2021-08-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r280531 and r280589.

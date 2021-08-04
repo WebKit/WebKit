@@ -144,7 +144,7 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
     @assert(@isWritableStream(destination));
     @assert(!@isReadableStreamLocked(source));
     @assert(!@isWritableStreamLocked(destination));
-    @assert(signal === @undefined || signal instanceof @AbortSignal);
+    @assert(signal === @undefined || @isAbortSignal(signal));
 
     if (@getByIdDirectPrivate(source, "underlyingByteSource") !== @undefined)
         return @Promise.@reject("Piping of readable by strean is not supported");

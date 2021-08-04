@@ -1,3 +1,28 @@
+2021-08-03  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        ReadableStream's pipeTo() and pipeThrough() don't properly check for AbortSignal
+        https://bugs.webkit.org/show_bug.cgi?id=227693
+
+        Reviewed by Sam Weinig.
+
+        This patch introduces @isAbortSignal global private function to replace `instanceof`
+        checks that a) were false positive for `Object.create(AbortSignal.prototype)` and
+        b) observably performed [[GetPrototypeOf]] and Symbol.hasInstance lookup / call.
+
+        Aligns WebKit with Blink and the spec (https://heycam.github.io/webidl/#implements).
+
+        Test: imported/w3c/web-platform-tests/streams/piping/abort.any.js
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+        (pipeTo):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamPipeToWritableStream):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2021-08-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r280531 and r280589.

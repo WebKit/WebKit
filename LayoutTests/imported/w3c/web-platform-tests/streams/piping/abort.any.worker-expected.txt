@@ -5,7 +5,7 @@ PASS a signal argument 'null' should cause pipeTo() to reject
 PASS a signal argument 'AbortSignal' should cause pipeTo() to reject
 PASS a signal argument 'true' should cause pipeTo() to reject
 PASS a signal argument '-1' should cause pipeTo() to reject
-FAIL a signal argument '[object AbortSignal]' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
+PASS a signal argument '[object AbortSignal]' should cause pipeTo() to reject
 PASS an aborted signal should cause the writable stream to reject with an AbortError
 PASS all the AbortError objects should be the same object
 PASS preventCancel should prevent canceling the readable
