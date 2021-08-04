@@ -1,3 +1,18 @@
+2021-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Null check self.session after calling _cancel instead of before
+        https://bugs.webkit.org/show_bug.cgi?id=228757
+        <rdar://79224868>
+
+        Reviewed by Geoffrey Garen.
+
+        _cancel already null checks self.session before using it.
+        It seems to be setting self.session to null after the null check, so move the null check to before we use it.
+        This should fix an occasional crash during teardown.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionDataTask _restart]):
+
 2021-08-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Crash while reading WebGL drawing buffer if canvas image buffer allocation fails
