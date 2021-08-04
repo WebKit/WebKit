@@ -1,3 +1,26 @@
+2021-08-04  Cathie Chen  <cathiechen@igalia.com>
+
+        REGRESSION (r277997) Images get stretched with aspect-ratio and max-width: x%
+        https://bugs.webkit.org/show_bug.cgi?id=228076
+
+        Reviewed by Antti Koivisto.
+
+        The image get stretched because constrainLogicalWidthInFragmentByMinMax returns the intrinsic width while computing MinSize.
+        According to [1], the box's minimum width is its min-content size not the MinIntrinsic width which is used because of
+        the recursion. To break the recursion, computeIntrinsicLogicalWidthUsing calls computeLogicalWidthFromAspectRatioInternal instead,
+        then checks children's width.
+
+        [1] https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::constrainLogicalWidthInFragmentByMinMax const): If shouldComputeLogicalWidthFromAspectRatio,
+        the length should be treated as MinContent not MinIntrinsic.
+        (WebCore::RenderBox::computeIntrinsicLogicalWidthUsing const): To break the loop, call computeLogicalWidthFromAspectRatioInternal instead
+        to get the width from aspect-ratio and if there is child, make sure the min/max logical width not less than content's width.
+        (WebCore::RenderBox::computeLogicalWidthFromAspectRatioInternal const):
+        (WebCore::RenderBox::computeLogicalWidthFromAspectRatio const):
+        * rendering/RenderBox.h:
+
 2021-08-04  Tim Horton  <timothy_horton@apple.com>
 
         fast/canvas/canvas-crash.html doesn't test what it intends to on iOS

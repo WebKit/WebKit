@@ -709,6 +709,7 @@ protected:
 
     bool shouldIgnoreAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatio() const;
+    LayoutUnit computeLogicalWidthFromAspectRatioInternal() const;
     LayoutUnit computeLogicalWidthFromAspectRatio(RenderFragmentContainer* = nullptr) const;
     std::pair<LayoutUnit, LayoutUnit> computeMinMaxLogicalWidthFromAspectRatio() const;
 
