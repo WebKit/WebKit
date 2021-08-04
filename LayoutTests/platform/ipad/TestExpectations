@@ -59,10 +59,6 @@ fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]
 # <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
 webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-001.html [ Pass ]
 
-webkit.org/b/228285 [ Debug ] editing/pasteboard/smart-paste-paragraph-002.html [ Pass Failure ]
-webkit.org/b/228285 [ Debug ] editing/pasteboard/smart-paste-paragraph-003.html [ Pass Failure ]
-webkit.org/b/228285 [ Debug ] editing/pasteboard/smart-paste-paragraph-004.html [ Pass Failure ]
-
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
 

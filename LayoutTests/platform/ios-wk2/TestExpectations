@@ -1319,9 +1319,9 @@ webkit.org/b/203256 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-ice
 
 # <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
 webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-001.html [ Pass Failure ]
-webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-002.html [ Pass Failure ]
-webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-003.html [ Pass Failure ]
-webkit.org/b/203264 [ Release ] editing/pasteboard/smart-paste-paragraph-004.html [ Pass Failure ]
+webkit.org/b/228285 editing/pasteboard/smart-paste-paragraph-002.html [ Pass Failure ]
+webkit.org/b/228285 editing/pasteboard/smart-paste-paragraph-003.html [ Pass Failure ]
+webkit.org/b/228285 editing/pasteboard/smart-paste-paragraph-004.html [ Pass Failure ]
 
 # Timeout running prompt() because mock implementation is absent.
 webkit.org/b/203572 media/remoteplayback-prompt.html [ Skip ]
