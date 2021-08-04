@@ -1,3 +1,12 @@
+2021-08-04  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION: [ BigSur wk2 rosetta ] compositing/contents-scale/hidpi-compositing-layer-positioned-on-scaled-context.html is a flaky failure
+        <rdar://68957822>
+
+        Uneviewed test expectation removal.
+
+        * platform/mac/TestExpectationsRosetta:
+
 2021-08-04  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS ] webaudio/silent-audio-interrupted-in-background.html is flaky timing out.
