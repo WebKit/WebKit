@@ -1,3 +1,42 @@
+2021-08-04  Jean-Yves Avenard  <jya@apple.com>
+
+        Use Observer in place of VideoFullscreenManagerProxyClient
+        https://bugs.webkit.org/show_bug.cgi?id=228761
+        rdar://problem/81489026
+
+        Reviewed by Jer Noble.
+
+        Use an Observer member rather than creating a child class that would be used
+        when the PiP state change. This prevents having to deal with lifetime and
+        potentially setting it up multiple times.
+        No change in observable behaviour, covered with existing tests.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h: Remove VideoFullscreenManagerProxyClient
+        class. Use WeakHashSet to store observers.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::addVideoInPictureInPictureDidChangeObserver):
+        Method added, replace older setClient
+        (WebKit::VideoFullscreenManagerProxy::hasVideoInPictureInPictureDidChange):
+        Iterate over all observers and call accordingly.
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController initWithWebView:]): Remove no longer necessary
+        code.
+        (-[WKFullScreenWindowController dealloc]): Remove no longer necessary
+        code.
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        set PiP change observer if none already exists.
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]): Remove no longer necessary
+        code.
+        (-[WKFullScreenWindowController dealloc]): Remove no longer necessary
+        code.
+        (-[WKFullScreenWindowController clearVideoFullscreenManagerObserver]):
+        (-[WKFullScreenWindowController setVideoFullscreenManagerObserver]):
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        (-[WKFullScreenWindowController windowDidEnterFullScreen:]):
+        (-[WKFullScreenWindowController windowDidFailToExitFullScreen:]):
+        (-[WKFullScreenWindowController windowDidExitFullScreen:]):
+
 2021-08-04  Tim Horton  <timothy_horton@apple.com>
 
         RemoteLayerBackingStore: Adopt a new bifurcated layer switch

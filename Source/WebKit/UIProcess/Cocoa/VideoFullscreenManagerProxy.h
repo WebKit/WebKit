@@ -37,8 +37,10 @@
 #include <WebCore/VideoFullscreenModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -123,13 +125,6 @@ private:
     bool m_hasVideo { false };
 };
 
-class VideoFullscreenManagerProxyClient : public CanMakeWeakPtr<VideoFullscreenManagerProxyClient> {
-public:
-    virtual ~VideoFullscreenManagerProxyClient() { };
-
-    virtual void hasVideoInPictureInPictureDidChange(bool value) = 0;
-};
-
 class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
 public:
     static Ref<VideoFullscreenManagerProxy> create(WebPageProxy&, PlaybackSessionManagerProxy&);
@@ -150,8 +145,8 @@ public:
     bool isPlayingVideoInEnhancedFullscreen() const;
 
     PlatformVideoFullscreenInterface* controlsManagerInterface();
-    void setClient(VideoFullscreenManagerProxyClient* client) { m_client = makeWeakPtr(client); }
-    VideoFullscreenManagerProxyClient* client() const { return m_client.get(); }
+    using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
+    void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&&);
 
@@ -212,8 +207,8 @@ private:
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
-    WeakPtr<VideoFullscreenManagerProxyClient> m_client;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
+    WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
 };
 
 } // namespace WebKit

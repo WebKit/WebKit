@@ -59,23 +59,6 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 - (void)didExitPictureInPicture;
 @end
 
-class WKFullScreenWindowControllerVideoFullscreenManagerProxyClient : public WebKit::VideoFullscreenManagerProxyClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
-
-private:
-    void hasVideoInPictureInPictureDidChange(bool value) final
-    {
-        if (value)
-            [m_parent didEnterPictureInPicture];
-        else
-            [m_parent didExitPictureInPicture];
-    }
-
-    WKFullScreenWindowController *m_parent { nullptr };
-};
-
 enum FullScreenState : NSInteger {
     NotInFullScreen,
     WaitingToEnterFullScreen,
@@ -104,7 +87,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 }
 
 @implementation WKFullScreenWindowController {
-    WKFullScreenWindowControllerVideoFullscreenManagerProxyClient _videoFullscreenManagerProxyClient;
+    std::unique_ptr<WebKit::VideoFullscreenManagerProxy::VideoInPictureInPictureDidChangeObserver> _pipObserver;
 }
 
 #pragma mark -
@@ -141,8 +124,6 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     _webView = webView;
     _page = page.ptr();
 
-    _videoFullscreenManagerProxyClient.setParent(self);
-
     [self videoControlsManagerDidChange];
 
     return self;
@@ -155,8 +136,6 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    _videoFullscreenManagerProxyClient.setParent(nullptr);
 
     [super dealloc];
 }
@@ -639,23 +618,40 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 {
 }
 
+- (void)clearVideoFullscreenManagerObserver
+{
+    _pipObserver = nullptr;
+}
+
+- (void)setVideoFullscreenManagerObserver
+{
+    auto* videoFullscreenManager = self._videoFullscreenManager;
+    if (!videoFullscreenManager)
+        return;
+
+    ASSERT(!_pipObserver);
+    if (_pipObserver)
+        return;
+
+    _pipObserver = WTF::makeUnique<WebKit::VideoFullscreenManagerProxy::VideoInPictureInPictureDidChangeObserver>([self] (bool inPiP) {
+        if (inPiP)
+            [self didEnterPictureInPicture];
+        else
+            [self didExitPictureInPicture];
+    });
+
+    videoFullscreenManager->addVideoInPictureInPictureDidChangeObserver(*_pipObserver);
+}
+
 - (void)didEnterPictureInPicture
 {
     if ([self isFullScreen])
         [self requestExitFullScreen];
 }
 
-- (void)setVideoFullscreenManagerClient:(WebKit::VideoFullscreenManagerProxyClient *)client
-{
-    if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-        ASSERT((client && !videoFullscreenManager->client()) || (!client && videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient));
-        videoFullscreenManager->setClient(client);
-    }
-}
-
 - (void)didExitPictureInPicture
 {
-    [self setVideoFullscreenManagerClient:nullptr];
+    [self clearVideoFullscreenManagerObserver];
 }
 
 #pragma mark -
@@ -690,21 +686,21 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedEnterFullScreenAnimation:YES];
-    [self setVideoFullscreenManagerClient:&_videoFullscreenManagerProxyClient];
+    [self setVideoFullscreenManagerObserver];
 }
 
 - (void)windowDidFailToExitFullScreen:(NSWindow *)window
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedExitFullScreenAnimation:NO];
-    [self setVideoFullscreenManagerClient:nullptr];
+    [self clearVideoFullscreenManagerObserver];
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedExitFullScreenAnimation:YES];
-    [self setVideoFullscreenManagerClient:nullptr];
+    [self clearVideoFullscreenManagerObserver];
 }
 
 - (NSWindow *)destinationWindowToExitFullScreenForWindow:(NSWindow *)window
