@@ -262,9 +262,6 @@ imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html 
 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-overlapping-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ Pass ]
 
-# CSS color. Passing after WPT re-import in r277077.
-imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ Pass ]
-
 # Conic gradient. Marked as failure in root expectations
 webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
 

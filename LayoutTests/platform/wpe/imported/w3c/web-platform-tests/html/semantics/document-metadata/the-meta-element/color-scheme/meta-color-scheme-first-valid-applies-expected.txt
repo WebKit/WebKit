@@ -1,3 +1,0 @@
-
-FAIL Tree order decides which meta color-scheme applies. assert_equals: expected (string) "dark" but got (undefined) undefined
-
