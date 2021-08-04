@@ -1,5 +1,17 @@
 2021-08-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
+        [GLIB] Unreviewed test gardening, update baselines after r280017
+        https://bugs.webkit.org/show_bug.cgi?id=228783
+
+        * platform/glib/fast/multicol/client-rects-expected.txt:
+        * platform/glib/fast/multicol/client-rects-spanners-complex-expected.txt:
+        * platform/glib/fast/multicol/client-rects-spanners-expected.txt:
+        * platform/glib/fast/multicol/newmulticol/client-rects-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.png:
+        * platform/gtk/fast/multicol/newmulticol/client-rects-expected.png:
+
+2021-08-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
         [GLIB] Mark mhtml tests as flaky. Unreviewed test gardening.
         https://bugs.webkit.org/show_bug.cgi?id=228778
 

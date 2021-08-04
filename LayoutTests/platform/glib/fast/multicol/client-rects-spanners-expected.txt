@@ -358,8 +358,10 @@ layer at (551,101) size 25x25
   RenderBlock (positioned) {DIV} at (550,101) size 26x25 [border: (3px solid #0000FF80)]
 layer at (669,101) size 25x25
   RenderBlock (positioned) {DIV} at (668,101) size 26x25 [border: (3px solid #0000FF80)]
-layer at (69,208) size 25x25
-  RenderBlock (positioned) {DIV} at (68,208) size 26x25 [border: (3px solid #0000FF80)]
+layer at (16,258) size 25x10
+  RenderBlock (positioned) {DIV} at (16,258) size 25x10 [border: (3px solid #0000FF80)]
+layer at (69,218) size 25x15
+  RenderBlock (positioned) {DIV} at (68,218) size 26x15 [border: (3px solid #0000FF80)]
 layer at (181,178) size 25x25
   RenderBlock (positioned) {DIV} at (181,178) size 25x25 [border: (3px solid #0000FF80)]
 layer at (156,231) size 25x25
@@ -386,8 +388,10 @@ layer at (558,233) size 25x25
   RenderBlock (positioned) {DIV} at (558,232) size 25x26 [border: (3px solid #0000FF80)]
 layer at (656,231) size 25x25
   RenderBlock (positioned) {DIV} at (656,230) size 25x26 [border: (3px solid #0000FF80)]
-layer at (26,351) size 25x25
-  RenderBlock (positioned) {DIV} at (26,350) size 25x26 [border: (3px solid #0000FF80)]
+layer at (76,298) size 10x25
+  RenderBlock (positioned) {DIV} at (76,298) size 10x25 [border: (3px solid #0000FF80)]
+layer at (36,351) size 15x25
+  RenderBlock (positioned) {DIV} at (36,350) size 15x26 [border: (3px solid #0000FF80)]
 layer at (126,298) size 25x25
   RenderBlock (positioned) {DIV} at (126,298) size 25x25 [border: (3px solid #0000FF80)]
 layer at (151,351) size 25x25
@@ -414,5 +418,7 @@ layer at (549,353) size 25x25
   RenderBlock (positioned) {DIV} at (549,352) size 25x26 [border: (3px solid #0000FF80)]
 layer at (651,351) size 25x25
   RenderBlock (positioned) {DIV} at (651,350) size 25x26 [border: (3px solid #0000FF80)]
-layer at (61,471) size 25x25
-  RenderBlock (positioned) {DIV} at (61,470) size 25x26 [border: (3px solid #0000FF80)]
+layer at (26,418) size 10x25
+  RenderBlock (positioned) {DIV} at (26,418) size 10x25 [border: (3px solid #0000FF80)]
+layer at (61,471) size 15x25
+  RenderBlock (positioned) {DIV} at (61,470) size 15x26 [border: (3px solid #0000FF80)]
