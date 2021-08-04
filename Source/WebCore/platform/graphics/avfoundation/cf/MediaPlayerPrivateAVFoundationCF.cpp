@@ -460,8 +460,6 @@ void MediaPlayerPrivateAVFoundationCF::createVideoLayer()
 
     if (m_avfWrapper)
         m_avfWrapper->createAVCFVideoLayer();
-
-    renderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationCF::destroyVideoLayer()
@@ -470,8 +468,6 @@ void MediaPlayerPrivateAVFoundationCF::destroyVideoLayer()
     LOG(Media, "MediaPlayerPrivateAVFoundationCF::destroyVideoLayer(%p) - destroying %p", this, videoLayer(m_avfWrapper));
     if (m_avfWrapper)
         m_avfWrapper->destroyVideoLayer();
-
-    renderingModeChanged();
 }
 
 bool MediaPlayerPrivateAVFoundationCF::hasAvailableVideoFrame() const

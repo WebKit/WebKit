@@ -26,7 +26,7 @@ function test_computed_style(width, height, expected) {
 
 t.step(function() {
   var video = document.getElementById("contained");
-  video.src = getVideoURI('/media/16x16-green');
+  video.src = getVideoURI('/media/2x2-green');
   assert_ratio(video, 2.5);
 }, "contain:size aspect ratio");
 
@@ -37,7 +37,7 @@ t.step(function() {
   video = document.createElement("video");
   video.setAttribute("width", "250");
   video.setAttribute("height", "100");
-  video.src = getVideoURI('/media/16x16-green');
+  video.src = getVideoURI('/media/2x2-green');
   document.body.appendChild(video);
   // Videos default to a size of 300x150px and calculate their aspect ratio
   // based on that before the video is loaded. So this should be 2, ignoring

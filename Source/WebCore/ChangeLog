@@ -1,3 +1,20 @@
+2021-08-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r280531 and r280589.
+
+        caused
+
+        Reverted changesets:
+
+        "[Cocoa] Remove support for AVAssetImageGenerator"
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+        https://commits.webkit.org/r280531
+
+        "REGRESSION (r280531): multiple modern-media-controls tests
+        have become flaky timeouts"
+        https://bugs.webkit.org/show_bug.cgi?id=228714
+        https://commits.webkit.org/r280589
+
 2021-08-03  Alex Christensen  <achristensen@webkit.org>
 
         Null check self.session after calling _cancel instead of before

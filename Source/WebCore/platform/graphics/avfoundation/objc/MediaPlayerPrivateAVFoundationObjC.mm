@@ -67,6 +67,7 @@
 #import "WebCoreCALayerExtras.h"
 #import "WebCoreNSURLExtras.h"
 #import "WebCoreNSURLSession.h"
+#import <AVFoundation/AVAssetImageGenerator.h>
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVMetadataItem.h>
@@ -195,7 +196,6 @@ enum MediaPlayerAVFoundationObservationContext {
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
     BinarySemaphore m_semaphore;
 }
-- (void)setParent:(WebCore::MediaPlayerPrivateAVFoundationObjC&)parent;
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
 
@@ -561,7 +561,7 @@ bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
 
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 {
-    return m_videoOutput;
+    return m_videoOutput || m_imageGenerator;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
@@ -569,9 +569,35 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
     createVideoOutput();
 }
 
+void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
+{
+    INFO_LOG(LOGIDENTIFIER);
+
+    if (!m_avAsset || m_imageGenerator)
+        return;
+
+    m_imageGenerator = [PAL::getAVAssetImageGeneratorClass() assetImageGeneratorWithAsset:m_avAsset.get()];
+
+    [m_imageGenerator.get() setApertureMode:AVAssetImageGeneratorApertureModeCleanAperture];
+    [m_imageGenerator.get() setAppliesPreferredTrackTransform:YES];
+    [m_imageGenerator.get() setRequestedTimeToleranceBefore:PAL::kCMTimeZero];
+    [m_imageGenerator.get() setRequestedTimeToleranceAfter:PAL::kCMTimeZero];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
 {
     destroyVideoOutput();
+    destroyImageGenerator();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator()
+{
+    if (!m_imageGenerator)
+        return;
+
+    INFO_LOG(LOGIDENTIFIER);
+
+    m_imageGenerator = 0;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
@@ -593,7 +619,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         if (!m_videoOutput)
             createVideoOutput();
 
-        renderingModeChanged();
+        player()->renderingModeChanged();
     });
 }
 
@@ -632,8 +658,6 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     m_videoLayerManager->didDestroyVideoLayer();
 
     m_videoLayer = nil;
-
-    renderingModeChanged();
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
@@ -1789,6 +1813,8 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     // the video output, too.
     if (videoOutputHasAvailableFrame() || (m_videoOutput && m_lastPixelBuffer))
         paintWithVideoOutput(context, rect);
+    else
+        paintWithImageGenerator(context, rect);
 
     END_BLOCK_OBJC_EXCEPTIONS
     setDelayCallbacks(false);
@@ -1810,6 +1836,38 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext& context, const F
         return;
 
     paintCurrentFrameInContext(context, rect);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext& context, const FloatRect& rect)
+{
+    INFO_LOG(LOGIDENTIFIER);
+
+    RetainPtr<CGImageRef> image = createImageForTimeInRect(currentTime(), rect);
+    if (image) {
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(rect.x(), rect.y() + rect.height());
+        context.scale(FloatSize(1.0f, -1.0f));
+        context.setImageInterpolationQuality(InterpolationQuality::Low);
+        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
+        CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
+    }
+}
+
+RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const FloatRect& rect)
+{
+    if (!m_imageGenerator)
+        createImageGenerator();
+    ASSERT(m_imageGenerator);
+
+    MonotonicTime start = MonotonicTime::now();
+
+    [m_imageGenerator.get() setMaximumSize:CGSize(rect.size())];
+    RetainPtr<CGImageRef> rawImage = adoptCF([m_imageGenerator.get() copyCGImageAtTime:PAL::CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawImage.get(), sRGBColorSpaceRef()));
+
+    INFO_LOG(LOGIDENTIFIER, "creating image took ", (MonotonicTime::now() - start).seconds());
+
+    return image;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes)
@@ -2382,16 +2440,9 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     }
 
     m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] init]);
-    [m_videoOutputDelegate setParent:*this];
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
-    [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
 
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
-}
-
-void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
-{
-    updateStates();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
@@ -2488,6 +2539,12 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
 
     FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
     context.drawNativeImage(*m_lastImage, imageRect.size(), outputRect, imageRect);
+
+    // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
+    // video frame, destroy it now that it is no longer needed.
+    if (m_imageGenerator)
+        destroyImageGenerator();
+
 }
 
 RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::pixelBufferForCurrentTime()
@@ -3842,25 +3899,14 @@ NSArray* playerKVOProperties()
 
 @end
 
-@implementation WebCoreAVFPullDelegate {
-    WeakPtr<WebCore::MediaPlayerPrivateAVFoundationObjC> _parent;
-}
+@implementation WebCoreAVFPullDelegate
 
 @synthesize semaphore = m_semaphore;
-
-- (void)setParent:(WebCore::MediaPlayerPrivateAVFoundationObjC&)parent
-{
-    _parent = makeWeakPtr(parent);
-}
 
 - (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
 {
     UNUSED_PARAM(output);
     m_semaphore.signal();
-    RunLoop::main().dispatch([parent = _parent] {
-        if (parent)
-            parent->outputMediaDataWillChange();
-    });
 }
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output

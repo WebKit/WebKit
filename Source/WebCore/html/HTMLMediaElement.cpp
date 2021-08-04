@@ -819,8 +819,6 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     if (!m_player)
         return;
 
-    m_player->acceleratedRenderingStateChanged();
-
     size_t extraMemoryCost = m_player->extraMemoryCost();
     if (extraMemoryCost > m_reportedExtraMemoryCost) {
         JSC::VM& vm = commonVM();
@@ -5055,9 +5053,6 @@ bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated()
     // destroy the video layer.
     if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture)
         return true;
-
-    if (!m_inActiveDocument)
-        return false;
 
     auto* renderer = this->renderer();
     return is<RenderVideo>(renderer)
