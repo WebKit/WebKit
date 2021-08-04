@@ -937,7 +937,6 @@ enum AutoplayPolicy {
     undefined markContextAsInsecure();
 
     undefined setMaxCanvasPixelMemory(unsigned long size);
-    undefined setMaxCanvasArea(unsigned long size);
 
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
 

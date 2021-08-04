@@ -600,8 +600,7 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::MediaRecorder::setCustomPrivateRecorderCreator(nullptr);
 #endif
 
-    HTMLCanvasElement::setMaxPixelMemoryForTesting(std::nullopt);
-    HTMLCanvasElement::setMaxCanvasAreaForTesting(std::nullopt);
+    HTMLCanvasElement::setMaxPixelMemoryForTesting(0); // This means use the default value.
     DOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
 #if PLATFORM(IOS)
@@ -6008,11 +6007,6 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
 void Internals::setMaxCanvasPixelMemory(unsigned size)
 {
     HTMLCanvasElement::setMaxPixelMemoryForTesting(size);
-}
-
-void Internals::setMaxCanvasArea(unsigned size)
-{
-    HTMLCanvasElement::setMaxCanvasAreaForTesting(size);
 }
 
 int Internals::processIdentifier() const

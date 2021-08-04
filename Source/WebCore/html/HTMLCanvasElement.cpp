@@ -111,8 +111,16 @@ using namespace HTMLNames;
 const int defaultWidth = 300;
 const int defaultHeight = 150;
 
-static std::optional<size_t> maxCanvasAreaForTesting;
-static std::optional<size_t> maxActivePixelMemoryForTesting;
+// Firefox limits width/height to 32767 pixels, but slows down dramatically before it
+// reaches that limit. We limit by area instead, giving us larger maximum dimensions,
+// in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
+#if PLATFORM(IOS_FAMILY)
+const unsigned maxCanvasArea = 4096 * 4096;
+#else
+const unsigned maxCanvasArea = 16384 * 16384;
+#endif
+
+static size_t maxActivePixelMemoryForTesting = 0;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
@@ -204,7 +212,7 @@ void HTMLCanvasElement::setSize(const IntSize& newSize)
 static inline size_t maxActivePixelMemory()
 {
     if (maxActivePixelMemoryForTesting)
-        return *maxActivePixelMemoryForTesting;
+        return maxActivePixelMemoryForTesting;
 
     static size_t maxPixelMemory;
     static std::once_flag onceFlag;
@@ -219,29 +227,9 @@ static inline size_t maxActivePixelMemory()
     return maxPixelMemory;
 }
 
-void HTMLCanvasElement::setMaxPixelMemoryForTesting(std::optional<size_t> size)
+void HTMLCanvasElement::setMaxPixelMemoryForTesting(size_t size)
 {
     maxActivePixelMemoryForTesting = size;
-}
-
-static inline size_t maxCanvasArea()
-{
-    if (maxCanvasAreaForTesting)
-        return *maxCanvasAreaForTesting;
-
-    // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
-    // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
-    // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
-#if PLATFORM(IOS_FAMILY)
-    return 4096 * 4096;
-#else
-    return 16384 * 16384;
-#endif
-}
-
-void HTMLCanvasElement::setMaxCanvasAreaForTesting(std::optional<size_t> size)
-{
-    maxCanvasAreaForTesting = size;
 }
 
 ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlobalObject& state, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
@@ -878,8 +866,8 @@ void HTMLCanvasElement::createImageBuffer() const
 
     auto checkedArea = size().area<RecordOverflow>();
 
-    if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea()) {
-        auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea(), ").");
+    if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea) {
+        auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea, ").");
         document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return;
     }
