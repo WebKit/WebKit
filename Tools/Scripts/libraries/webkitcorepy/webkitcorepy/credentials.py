@@ -25,7 +25,7 @@ import getpass
 import sys
 
 from subprocess import CalledProcessError
-from webkitcorepy import OutputCapture
+from webkitcorepy import OutputCapture, Terminal
 
 _cache = dict()
 
@@ -64,7 +64,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
                 raise OSError('No tty to prompt user for username')
             sys.stderr.write("Authentication required to use {}\n".format(prompt or name))
             sys.stderr.write('Username: ')
-            username = (input if sys.version_info > (3, 0) else raw_input)()
+            username = Terminal.input()
             username_prompted = True
 
     if not key:
@@ -85,7 +85,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
 
     if keyring and (username_prompted or key_prompted):
         sys.stderr.write('Store username and {} in system keyring for {}? (Y/N): '.format(key_name, url))
-        response = (input if sys.version_info > (3, 0) else raw_input)()
+        response = Terminal.input()
         if response.lower() in ['y', 'yes', 'ok']:
             sys.stderr.write('Storing credentials...\n')
             keyring.set_password(url, 'username', username)

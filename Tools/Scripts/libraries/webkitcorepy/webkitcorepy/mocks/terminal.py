@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,9 +20,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitcorepy.mocks.context_stack import ContextStack
-from webkitcorepy.mocks.time_ import Time
-from webkitcorepy.mocks.subprocess import ProcessCompletion, Subprocess
+import sys
 
-from webkitcorepy.mocks.requests_ import Response, Requests
-from webkitcorepy.mocks.terminal import Terminal
+
+class Terminal(object):
+    index = 0
+
+    @classmethod
+    def input(cls, *args):
+        from mock import patch
+
+        cls.index = 0
+
+        def function(output):
+            print(output)
+            cls.index += 1
+            return args[cls.index - 1]
+
+        if sys.version_info > (3, 0):
+            return patch('builtins.input', new=function)
+
+        import __builtin__
+        return patch.object(__builtin__, 'raw_input', new=function)

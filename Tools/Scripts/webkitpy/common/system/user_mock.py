@@ -29,20 +29,19 @@
 import logging
 import sys
 
-_log = logging.getLogger(__name__)
+from webkitcorepy import Terminal
 
-if sys.version_info < (3, 0):
-    input = raw_input
+_log = logging.getLogger(__name__)
 
 
 class MockUser(object):
 
     @classmethod
-    def prompt(cls, message, repeat=1, raw_input=input):
+    def prompt(cls, message, repeat=1, raw_input=Terminal.input):
         return "Mock user response"
 
     @classmethod
-    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=input):
+    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=Terminal.input):
         pass
 
     def __init__(self):

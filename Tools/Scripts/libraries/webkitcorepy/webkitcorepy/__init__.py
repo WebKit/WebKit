@@ -35,11 +35,12 @@ from webkitcorepy.timeout import Timeout
 from webkitcorepy.subprocess_utils import TimeoutExpired, CompletedProcess, run
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 from webkitcorepy.task_pool import TaskPool
+from webkitcorepy.terminal import Terminal
 from webkitcorepy.credentials import credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 
-version = Version(0, 7, 4)
+version = Version(0, 8, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

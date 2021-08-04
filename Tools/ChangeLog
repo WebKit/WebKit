@@ -1,3 +1,40 @@
+2021-08-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add shared terminal input code
+        https://bugs.webkit.org/show_bug.cgi?id=226024
+        <rdar://problem/78261645>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Export Terminal object, bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Use Terminal.input.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/terminal.py: Added.
+        (Terminal):
+        (Terminal.input): Mocking input and raw_input requires so specialized knowledge,
+        so we should generalize it.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/terminal.py: Added.
+        (Terminal):
+        (Terminal.input): Python 2/3 compatible input function.
+        (Terminal.choose): Generic multiple-choice input prompt.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/terminal_unittest.py: Added.
+        (TerminalTests):
+        (TerminalTests.test_choose_basic):
+        (TerminalTests.test_choose_strict):
+        (TerminalTests.test_choose_default):
+        (TerminalTests.test_choose_triple):
+        (TerminalTests.test_choose_number):
+        * Scripts/webkitpy/common/system/user.py:
+        (User.prompt): Use Terminal.input.
+        (User.prompt_with_multiple_lists): Ditto.
+        (User.prompt_with_list): Ditto.
+        (User.confirm): Ditto.
+        * Scripts/webkitpy/common/system/user_mock.py:
+        (MockUser.prompt): Use Terminal.input.
+        (MockUser.prompt_with_list): Ditto.
+
 2021-08-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Add contributor to accessibility watchlist.

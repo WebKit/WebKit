@@ -30,7 +30,7 @@ def readme():
 
 setup(
     name='webkitcorepy',
-    version='0.7.4',
+    version='0.8.0',
     description='Library containing various Python support classes and functions.',
     long_description=readme(),
     classifiers=[
