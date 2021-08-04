@@ -194,10 +194,10 @@ ExceptionOr<void> TextTrackCueGeneric::setPosition(const LineAndPositionSetting&
 
 void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bool important)
 {
-    if (!hasDisplayTree() || !fontSize)
+    if (!fontSize)
         return;
     
-    if (important || !baseFontSizeRelativeToVideoHeight()) {
+    if (important || !hasDisplayTree() || !baseFontSizeRelativeToVideoHeight()) {
         VTTCue::setFontSize(fontSize, videoSize, important);
         return;
     }
