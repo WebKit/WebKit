@@ -66,6 +66,7 @@ private:
 
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
     Ref<WTF::WorkQueue> m_workQueue;
+    WeakHashSet<InterruptionObserver> m_interruptionObservers;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };
 

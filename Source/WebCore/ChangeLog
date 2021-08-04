@@ -1,3 +1,50 @@
+2021-08-04  Peng Liu  <peng.liu6@apple.com>
+
+        [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228589
+
+        Reviewed by Jer Noble.
+
+        When "Media in GPU Process" is enabled, `AudioSession[IOS|Mac]` runs in
+        the GPU process. `HTMLMediaElement`, which is an observer of audio session,
+        runs in a WebContent process. It cannot get its AudioSession's configuration
+        directly. We need a mechanism to "push" the latest audio session configuration
+        from the GPU process to the WebContent process.
+
+        This patch replaces the `MutedStateObserver` with an audio session configuration
+        change observer interface, so that an audio session will notify its observers
+        after changing its configurations, including buffer size, muted state, sample rate.
+        Currently, this observer interface is used on macOS only.
+
+        No new tests. Fix an API test failure.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::initializeMediaSession):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::hardwareMutedStateDidChange):
+        * html/HTMLMediaElement.h:
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::addConfigurationChangeObserver):
+        (WebCore::AudioSession::removeConfigurationChangeObserver):
+        * platform/audio/AudioSession.h:
+        * platform/audio/ios/AudioSessionIOS.h:
+        Move `m_interruptionObservers` to this class because only `AudioSessionIOS`
+        supports interruption observers.
+        * platform/audio/mac/AudioSessionMac.h:
+        * platform/audio/mac/AudioSessionMac.mm:
+        (WebCore::AudioSessionMac::handleSampleRateChange):
+        (WebCore::AudioSessionMac::handleSampleRateChange const):
+        (WebCore::AudioSessionMac::handleBufferSizeChange):
+        (WebCore::AudioSessionMac::handleBufferSizeChange const):
+        (WebCore::AudioSessionMac::sampleRate const):
+        (WebCore::AudioSessionMac::setPreferredBufferSize):
+        (WebCore::AudioSessionMac::handleMutedStateChange):
+        (WebCore::AudioSessionMac::addConfigurationChangeObserver):
+        (WebCore::AudioSessionMac::removeConfigurationChangeObserver):
+        (WebCore::AudioSessionMac::addMutedStateObserver): Deleted.
+        (WebCore::AudioSessionMac::removeMutedStateObserver): Deleted.
+
 2021-08-04  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Elliptic radial gradients are not working

@@ -201,6 +201,16 @@ void AudioSession::audioOutputDeviceChanged()
     notImplemented();
 }
 
+void AudioSession::addConfigurationChangeObserver(ConfigurationChangeObserver&)
+{
+    notImplemented();
+}
+
+void AudioSession::removeConfigurationChangeObserver(ConfigurationChangeObserver&)
+{
+    notImplemented();
+}
+
 void AudioSession::setIsPlayingToBluetoothOverride(std::optional<bool>)
 {
     notImplemented();

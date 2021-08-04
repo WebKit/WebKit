@@ -57,6 +57,7 @@ public:
     size_t preferredBufferSize() const { return m_preferredBufferSize; }
     bool isActive() const { return m_active; }
 
+    void configurationChanged();
     void beginInterruption();
     void endInterruption(WebCore::AudioSession::MayResume);
 

@@ -513,7 +513,7 @@ void HTMLMediaElement::initializeMediaSession()
     registerWithDocument(document);
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    AudioSession::sharedSession().addMutedStateObserver(this);
+    AudioSession::sharedSession().addConfigurationChangeObserver(*this);
 #endif
 
     m_mediaSession->clientWillBeginAutoplaying();
@@ -530,7 +530,7 @@ HTMLMediaElement::~HTMLMediaElement()
     unregisterWithDocument(document());
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    AudioSession::sharedSession().removeMutedStateObserver(this);
+    AudioSession::sharedSession().removeConfigurationChangeObserver(*this);
 #endif
 
     if (m_audioTracks)
@@ -3808,9 +3808,9 @@ void HTMLMediaElement::setMuted(bool muted)
 }
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
-void HTMLMediaElement::hardwareMutedStateDidChange(AudioSession* session)
+void HTMLMediaElement::hardwareMutedStateDidChange(const AudioSession& session)
 {
-    if (!session->isMuted())
+    if (!session.isMuted())
         return;
 
     if (!hasAudio())

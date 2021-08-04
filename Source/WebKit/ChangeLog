@@ -1,3 +1,36 @@
+2021-08-04  Peng Liu  <peng.liu6@apple.com>
+
+        [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228589
+
+        Reviewed by Jer Noble.
+
+        When an audio session's configuration changes, let `RemoteAudioSessionProxy`
+        in the GPU process send the latest audio session configuration to `RemoteAudioSession`
+        in the WebContent process through an IPC message (`RemoteAudioSession::ConfigurationChanged`).
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::configurationChanged):
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager):
+        (WebKit::RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager):
+        (WebKit::RemoteAudioSessionProxyManager::beginAudioSessionInterruption):
+        (WebKit::RemoteAudioSessionProxyManager::endAudioSessionInterruption):
+        (WebKit::RemoteAudioSessionProxyManager::hardwareMutedStateDidChange):
+        (WebKit::RemoteAudioSessionProxyManager::bufferSizeDidChange):
+        (WebKit::RemoteAudioSessionProxyManager::sampleRateDidChange):
+        (WebKit::RemoteAudioSessionProxyManager::configurationDidChange):
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::addConfigurationChangeObserver):
+        (WebKit::RemoteAudioSession::removeConfigurationChangeObserver):
+        (WebKit::RemoteAudioSession::configurationChanged):
+        * WebProcess/GPU/media/RemoteAudioSession.h:
+        * WebProcess/GPU/media/RemoteAudioSession.messages.in:
+
 2021-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Crash in DisplayLink::notifyObserversDisplayWasRefreshed() on macOS

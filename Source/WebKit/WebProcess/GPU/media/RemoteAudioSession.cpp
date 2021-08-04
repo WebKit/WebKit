@@ -122,6 +122,16 @@ bool RemoteAudioSession::tryToSetActiveInternal(bool active)
     return succeeded;
 }
 
+void RemoteAudioSession::addConfigurationChangeObserver(ConfigurationChangeObserver& observer)
+{
+    m_configurationChangeObservers.add(observer);
+}
+
+void RemoteAudioSession::removeConfigurationChangeObserver(ConfigurationChangeObserver& observer)
+{
+    m_configurationChangeObservers.remove(observer);
+}
+
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
 #if PLATFORM(COCOA)
@@ -129,6 +139,26 @@ AudioSession::CategoryType RemoteAudioSession::category() const
 #else
     return AudioSession::CategoryType::None;
 #endif
+}
+
+void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& configuration)
+{
+    bool mutedStateChanged = !m_configuration || configuration.isMuted != (*m_configuration).isMuted;
+    bool bufferSizeChanged = !m_configuration || configuration.bufferSize != (*m_configuration).bufferSize;
+    bool sampleRateCahnged = !m_configuration || configuration.sampleRate != (*m_configuration).sampleRate;
+
+    m_configuration = WTFMove(configuration);
+
+    m_configurationChangeObservers.forEach([&](auto& observer) {
+        if (mutedStateChanged)
+            observer.hardwareMutedStateDidChange(*this);
+
+        if (bufferSizeChanged)
+            observer.bufferSizeDidChange(*this);
+
+        if (sampleRateCahnged)
+            observer.sampleRateDidChange(*this);
+    });
 }
 
 }

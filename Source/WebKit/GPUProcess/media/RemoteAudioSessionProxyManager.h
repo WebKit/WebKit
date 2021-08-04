@@ -37,7 +37,8 @@ class GPUProcess;
 class RemoteAudioSessionProxy;
 
 class RemoteAudioSessionProxyManager
-    : public WebCore::AudioSession::InterruptionObserver {
+    : private WebCore::AudioSession::InterruptionObserver
+    , private WebCore::AudioSession::ConfigurationChangeObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteAudioSessionProxyManager();
@@ -57,6 +58,11 @@ public:
 private:
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
+
+    void hardwareMutedStateDidChange(const WebCore::AudioSession&) final;
+    void bufferSizeDidChange(const WebCore::AudioSession&) final;
+    void sampleRateDidChange(const WebCore::AudioSession&) final;
+    void configurationDidChange(const WebCore::AudioSession&);
 
     UniqueRef<WebCore::AudioSession> m_session;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;

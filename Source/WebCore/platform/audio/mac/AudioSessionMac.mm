@@ -125,7 +125,19 @@ OSStatus AudioSessionMac::handleSampleRateChange(AudioObjectID device, UInt32, c
         return result;
 
     session->m_sampleRate = narrowPrecisionToFloat(nominalSampleRate);
+
+    callOnMainThread([session] {
+        session->handleSampleRateChange();
+    });
+
     return noErr;
+}
+
+void AudioSessionMac::handleSampleRateChange() const
+{
+    m_configurationChangeObservers.forEach([this](auto& observer) {
+        observer.sampleRateDidChange(*this);
+    });
 }
 
 void AudioSessionMac::addBufferSizeObserverIfNeeded() const
@@ -163,7 +175,19 @@ OSStatus AudioSessionMac::handleBufferSizeChange(AudioObjectID device, UInt32, c
         return result;
 
     session->m_bufferSize = bufferSize;
+
+    callOnMainThread([session] {
+        session->handleBufferSizeChange();
+    });
+
     return noErr;
+}
+
+void AudioSessionMac::handleBufferSizeChange() const
+{
+    m_configurationChangeObservers.forEach([this](auto& observer) {
+        observer.bufferSizeDidChange(*this);
+    });
 }
 
 void AudioSessionMac::audioOutputDeviceChanged()
@@ -272,6 +296,8 @@ float AudioSessionMac::sampleRate() const
             RELEASE_LOG_ERROR(Media, "AudioSessionMac::sampleRate() - AudioObjectGetPropertyData() return an invalid sample rate");
             m_sampleRate = 44100;
         }
+
+        handleSampleRateChange();
     }
     return *m_sampleRate;
 }
@@ -406,8 +432,10 @@ void AudioSessionMac::setPreferredBufferSize(size_t bufferSize)
 
     result = AudioObjectSetPropertyData(defaultDevice(), &preferredBufferSizeAddress, 0, 0, sizeof(bufferSizeOut), (void*)&bufferSizeOut);
 
-    if (!result)
+    if (!result) {
         m_bufferSize = bufferSizeOut;
+        handleBufferSizeChange();
+    }
 
 #if !LOG_DISABLED
     if (result)
@@ -459,17 +487,18 @@ void AudioSessionMac::handleMutedStateChange()
     if (m_lastMutedState && *m_lastMutedState == isCurrentlyMuted)
         return;
 
-    for (auto* observer : m_observers)
-        observer->hardwareMutedStateDidChange(this);
-
     m_lastMutedState = isCurrentlyMuted;
+
+    m_configurationChangeObservers.forEach([this](auto& observer) {
+        observer.hardwareMutedStateDidChange(*this);
+    });
 }
 
-void AudioSessionMac::addMutedStateObserver(MutedStateObserver* observer)
+void AudioSessionMac::addConfigurationChangeObserver(ConfigurationChangeObserver& observer)
 {
-    m_observers.add(observer);
+    m_configurationChangeObservers.add(observer);
 
-    if (m_observers.size() > 1)
+    if (m_configurationChangeObservers.computeSize() > 1)
         return;
 
     AudioObjectPropertyAddress muteAddress = {
@@ -486,9 +515,9 @@ void AudioSessionMac::addMutedStateObserver(MutedStateObserver* observer)
     AudioObjectAddPropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
 }
 
-void AudioSessionMac::removeMutedStateObserver(MutedStateObserver* observer)
+void AudioSessionMac::removeConfigurationChangeObserver(ConfigurationChangeObserver& observer)
 {
-    if (m_observers.size() == 1) {
+    if (m_configurationChangeObservers.computeSize() == 1) {
         AudioObjectPropertyAddress muteAddress = {
             kAudioDevicePropertyMute,
             kAudioDevicePropertyScopeOutput,
@@ -503,7 +532,7 @@ void AudioSessionMac::removeMutedStateObserver(MutedStateObserver* observer)
         AudioObjectRemovePropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
     }
 
-    m_observers.remove(observer);
+    m_configurationChangeObservers.remove(observer);
 }
 
 }

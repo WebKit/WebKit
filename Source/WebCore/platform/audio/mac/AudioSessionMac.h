@@ -44,7 +44,9 @@ private:
     void addBufferSizeObserverIfNeeded() const;
 
     static OSStatus handleSampleRateChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
+    void handleSampleRateChange() const;
     static OSStatus handleBufferSizeChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
+    void handleBufferSizeChange() const;
 
     // AudioSession
     CategoryType category() const final { return m_category; }
@@ -64,10 +66,11 @@ private:
     void setPreferredBufferSize(size_t) final;
     bool isMuted() const final;
     void handleMutedStateChange() final;
-    void addMutedStateObserver(MutedStateObserver*) final;
-    void removeMutedStateObserver(MutedStateObserver*) final;
+    void addConfigurationChangeObserver(ConfigurationChangeObserver&) final;
+    void removeConfigurationChangeObserver(ConfigurationChangeObserver&) final;
 
     std::optional<bool> m_lastMutedState;
+    mutable WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
     AudioSession::CategoryType m_category { AudioSession::CategoryType::None };
 #if ENABLE(ROUTING_ARBITRATION)
     bool m_setupArbitrationOngoing { false };

@@ -93,6 +93,11 @@ void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& 
     completion(m_active);
 }
 
+void RemoteAudioSessionProxy::configurationChanged()
+{
+    connection().send(Messages::RemoteAudioSession::ConfigurationChanged(configuration()), { });
+}
+
 void RemoteAudioSessionProxy::beginInterruption()
 {
     connection().send(Messages::RemoteAudioSession::BeginInterruption(), { });

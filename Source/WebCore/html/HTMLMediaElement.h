@@ -128,7 +128,7 @@ class HTMLMediaElement
     , private TextTrackClient
     , private VideoTrackClient
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    , private AudioSession::MutedStateObserver
+    , private AudioSession::ConfigurationChangeObserver
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     , private CDMClient
@@ -882,7 +882,7 @@ private:
     void pageMutedStateDidChange() override;
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
-    void hardwareMutedStateDidChange(AudioSession*) final;
+    void hardwareMutedStateDidChange(const AudioSession&) final;
 #endif
 
     bool processingUserGestureForMedia() const;

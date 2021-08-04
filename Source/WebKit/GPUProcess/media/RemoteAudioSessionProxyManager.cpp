@@ -47,11 +47,13 @@ RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager()
     : m_session(AudioSession::create())
 {
     m_session->addInterruptionObserver(*this);
+    m_session->addConfigurationChangeObserver(*this);
 }
 
 RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager()
 {
     m_session->removeInterruptionObserver(*this);
+    m_session->removeConfigurationChangeObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy)
@@ -173,18 +175,40 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
 
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()
 {
-    for (auto& proxy : m_proxies) {
+    m_proxies.forEach([](auto& proxy) {
         if (proxy.isActive())
             proxy.beginInterruption();
-    }
+    });
 }
 
 void RemoteAudioSessionProxyManager::endAudioSessionInterruption(AudioSession::MayResume mayResume)
 {
-    for (auto& proxy : m_proxies) {
+    m_proxies.forEach([mayResume](auto& proxy) {
         if (proxy.isActive())
             proxy.endInterruption(mayResume);
-    }
+    });
+}
+
+void RemoteAudioSessionProxyManager::hardwareMutedStateDidChange(const AudioSession& session)
+{
+    configurationDidChange(session);
+}
+
+void RemoteAudioSessionProxyManager::bufferSizeDidChange(const AudioSession& session)
+{
+    configurationDidChange(session);
+}
+
+void RemoteAudioSessionProxyManager::sampleRateDidChange(const AudioSession& session)
+{
+    configurationDidChange(session);
+}
+
+void RemoteAudioSessionProxyManager::configurationDidChange(const WebCore::AudioSession&)
+{
+    m_proxies.forEach([](auto& proxy) {
+        proxy.configurationChanged();
+    });
 }
 
 }

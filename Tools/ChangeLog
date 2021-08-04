@@ -1,3 +1,13 @@
+2021-08-04  Peng Liu  <peng.liu6@apple.com>
+
+        [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228589
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AudioBufferSize.mm:
+        (TestWebKitAPI::TEST):
+
 2021-08-04  Jonathan Bedard  <jbedard@apple.com>
 
         [check-github-mirror-integrity] Store remote cache in checkout
