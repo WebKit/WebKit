@@ -2432,7 +2432,7 @@ void Node::defaultEventHandler(Event& event)
     if (event.target() != this)
         return;
     const AtomString& eventType = event.type();
-    if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent || eventType == eventNames().keyupEvent) {
+    if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent) {
         if (is<KeyboardEvent>(event)) {
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));

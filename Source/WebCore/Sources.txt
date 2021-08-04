@@ -1747,7 +1747,6 @@ platform/FileHandle.cpp
 platform/FileMonitor.cpp
 platform/FileStream.cpp
 platform/FrameRateMonitor.cpp
-platform/KeyboardScrollingAnimator.cpp
 platform/LayoutUnit.cpp
 platform/LegacySchemeRegistry.cpp
 platform/Length.cpp
