@@ -67,7 +67,7 @@ public:
 
     ~RuleSet();
 
-    typedef Vector<RuleData, 1, CrashOnOverflow, 16, RuleMalloc> RuleDataVector;
+    typedef Vector<RuleData, 1> RuleDataVector;
     typedef HashMap<AtomString, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
     struct DynamicMediaQueryRules {

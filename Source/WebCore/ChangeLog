@@ -1,5 +1,17 @@
 2021-08-04  Antti Koivisto  <antti@apple.com>
 
+        Use fast malloc for RuleData vectors
+        https://bugs.webkit.org/show_bug.cgi?id=228770
+
+        Reviewed by Chris Dumez.
+
+        Revert the change that enabled probabilistic guard malloc as it is not needed anymore.
+
+        * style/RuleFeature.h:
+        * style/RuleSet.h:
+
+2021-08-04  Antti Koivisto  <antti@apple.com>
+
         Reduce Vector<> wasted capacity in some RuleSet code
         https://bugs.webkit.org/show_bug.cgi?id=224160
         <rdar://problem/76369555>
