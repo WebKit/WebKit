@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ScrollController.h"
 
-#include "KeyboardScrollingAnimator.h"
 #include "LayoutSize.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
@@ -44,16 +43,15 @@ ScrollController::ScrollController(ScrollControllerClient& client)
 
 void ScrollController::animationCallback(MonotonicTime currentTime)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap << "isAnimatingKeyboardScrolling" << m_isAnimatingKeyboardScrolling);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap);
 
     updateScrollSnapAnimatingState(currentTime);
     updateRubberBandAnimatingState(currentTime);
-    updateKeyboardScrollingAnimatingState(currentTime);
 }
 
 void ScrollController::startOrStopAnimationCallbacks()
 {
-    bool needsCallbacks = m_isAnimatingRubberBand || m_isAnimatingScrollSnap || m_isAnimatingKeyboardScrolling;
+    bool needsCallbacks = m_isAnimatingRubberBand || m_isAnimatingScrollSnap;
     if (needsCallbacks == m_isRunningAnimatingCallback)
         return;
 
@@ -65,16 +63,6 @@ void ScrollController::startOrStopAnimationCallbacks()
 
     m_client.stopAnimationCallback(*this);
     m_isRunningAnimatingCallback = false;
-}
-
-void ScrollController::beginKeyboardScrolling()
-{
-    setIsAnimatingKeyboardScrolling(true);
-}
-
-void ScrollController::stopKeyboardScrolling()
-{
-    setIsAnimatingKeyboardScrolling(false);
 }
 
 void ScrollController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
@@ -92,15 +80,6 @@ void ScrollController::setIsAnimatingScrollSnap(bool isAnimatingScrollSnap)
         return;
         
     m_isAnimatingScrollSnap = isAnimatingScrollSnap;
-    startOrStopAnimationCallbacks();
-}
-
-void ScrollController::setIsAnimatingKeyboardScrolling(bool isAnimatingKeyboardScrolling)
-{
-    if (isAnimatingKeyboardScrolling == m_isAnimatingKeyboardScrolling)
-        return;
-
-    m_isAnimatingKeyboardScrolling = isAnimatingKeyboardScrolling;
     startOrStopAnimationCallbacks();
 }
 
@@ -219,15 +198,6 @@ void ScrollController::resnapAfterLayout()
         setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset);
 
 }
-
-void ScrollController::updateKeyboardScrollingAnimatingState(MonotonicTime currentTime)
-{
-    if (!m_isAnimatingKeyboardScrolling)
-        return;
-
-    m_client.keyboardScrollingAnimator()->updateKeyboardScrollPosition(currentTime);
-}
-
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding
 // so all of these methods are a noop on non-Mac platforms.
 #if !PLATFORM(MAC)

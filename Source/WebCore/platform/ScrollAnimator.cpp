@@ -33,7 +33,6 @@
 #include "ScrollAnimator.h"
 
 #include "FloatPoint.h"
-#include "KeyboardScrollingAnimator.h"
 #include "LayoutSize.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimationSmooth.h"
@@ -68,7 +67,6 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
         [this] {
             m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
         }))
-    , m_keyboardScrollingAnimator(makeUnique<KeyboardScrollingAnimator>(*this, m_scrollController))
 {
 }
 
@@ -334,7 +332,7 @@ void ScrollAnimator::startAnimationCallback(ScrollController&)
 {
     if (m_scrollControllerAnimationTimer.isActive())
         return;
-
+        
     m_scrollControllerAnimationTimer.startRepeating(1_s / 60.);
 }
 

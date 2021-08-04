@@ -34,6 +34,7 @@
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollController.h"
+#include "ScrollTypes.h"
 #include "Timer.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
@@ -42,7 +43,6 @@
 namespace WebCore {
 
 class FloatPoint;
-class KeyboardScrollingAnimator;
 class PlatformTouchEvent;
 class ScrollAnimation;
 class ScrollableArea;
@@ -80,8 +80,6 @@ public:
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
-
-    KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
 
 #if ENABLE(TOUCH_EVENTS)
     virtual bool handleTouchEvent(const PlatformTouchEvent&);
@@ -180,7 +178,6 @@ protected:
     FloatPoint m_currentPosition;
 
     std::unique_ptr<ScrollAnimation> m_scrollAnimation;
-    std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;
 };
 
 } // namespace WebCore
