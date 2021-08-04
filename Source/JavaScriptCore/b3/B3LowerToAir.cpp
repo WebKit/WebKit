@@ -3207,7 +3207,7 @@ private:
                         XorNotLeftShift32, XorNotLeftShift64, 
                         XorNotRightShift32, XorNotRightShift64, 
                         XorNotUnsignedRightShift32, XorNotUnsignedRightShift64);
-                    if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp))
+                    if (!isValidForm(opcode, Arg::Tmp, Arg::Tmp, Arg::Imm, Arg::Tmp) || !canBeInternal(right))
                         return false;
                     Value* mValue = shiftValue->child(0);
                     Value* amountValue = shiftValue->child(1);
@@ -3219,6 +3219,7 @@ private:
                         return false;
 
                     append(opcode, tmp(nValue), tmp(mValue), imm(amountValue), tmp(m_value));
+                    commitInternal(right);
                     commitInternal(shiftValue);
                     return true;
                 };
