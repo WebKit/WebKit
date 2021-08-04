@@ -195,6 +195,9 @@ static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float an
 
 RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineTransform& gradientSpaceTransform)
 {
+    cairo_matrix_t matrix = toCairoMatrix(gradientSpaceTransform);
+    cairo_matrix_invert(&matrix);
+
     auto gradient = WTF::switchOn(m_data,
         [&] (const LinearData& data) {
             auto gradient = adoptRef(cairo_pattern_create_linear(data.point0.x(), data.point0.y(), data.point1.x(), data.point1.y()));
@@ -206,6 +209,13 @@ RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineT
             auto gradient = adoptRef(cairo_pattern_create_radial(data.point0.x(), data.point0.y(), data.startRadius, data.point1.x(), data.point1.y(), data.endRadius));
             for (auto& stop : stops())
                 addColorStopRGBA(gradient.get(), stop, globalAlpha);
+
+            if (data.aspectRatio != 1) {
+                cairo_matrix_translate(&matrix, data.point0.x(), data.point0.y());
+                cairo_matrix_scale(&matrix, 1.0, data.aspectRatio);
+                cairo_matrix_translate(&matrix, -data.point0.x(), -data.point0.y());
+            }
+
             return gradient;
         },
         [&] (const ConicData& data) {
@@ -230,8 +240,6 @@ RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineT
         break;
     }
 
-    cairo_matrix_t matrix = toCairoMatrix(gradientSpaceTransform);
-    cairo_matrix_invert(&matrix);
     cairo_pattern_set_matrix(gradient.get(), &matrix);
 
     return gradient;
