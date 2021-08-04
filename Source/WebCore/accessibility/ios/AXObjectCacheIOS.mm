@@ -57,6 +57,9 @@ String AXObjectCache::notificationPlatformName(AXNotification notification)
     case AXPageScrolled:
         name = "AXPageScrolled";
         break;
+    case AXSelectedStateChanged:
+        name = "AXSelectedCellsChanged";
+        break;
     case AXSelectedTextChanged:
         name = "AXSelectedTextChanged";
         break;

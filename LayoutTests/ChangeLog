@@ -1,3 +1,14 @@
+2021-08-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add support for aria-selected value changes in table cells.
+        https://bugs.webkit.org/show_bug.cgi?id=228756
+        <rdar://problem/81483071>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/selected-state-changed-notifications-expected.txt: Added.
+        * accessibility/selected-state-changed-notifications.html: Added.
+
 2021-08-04  Cathie Chen  <cathiechen@igalia.com>
 
         REGRESSION (r277997) Images get stretched with aspect-ratio and max-width: x%

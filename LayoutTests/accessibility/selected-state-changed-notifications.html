@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table role="grid">
+    <tbody>
+        <tr role="row">
+            <td id="selectable" role="gridcell" aria-selected="false">This cell is not aria-selected.</td>
+            <td role="gridcell">XYZ</td>
+        </tr>
+    </tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test ensures that the AXSelectedStateChanged notification is fired when the value for the aria-selected attribute changes in grid cells.");
+
+    function toggleAriaSelectedState() {
+        var selectable = document.getElementById("selectable");
+        var isSelected = selectable.getAttribute('aria-selected') === 'true';
+        selectable.setAttribute('aria-selected', !isSelected);
+        selectable.textContent = isSelected ? "This is not aria-selected." : "This is aria-selected.";
+    };
+    selectable.addEventListener('click', toggleAriaSelectedState);
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var notificationCount = 0;
+        accessibilityController.addNotificationListener((axElement, notification) => {
+            if (notification != "AXSelectedCellsChanged")
+                return;
+
+            debug(`${++notificationCount} ${notification} for element ${axElement.domIdentifier}`);
+        });
+
+        var axSelectable = accessibilityController.accessibleElementById("selectable");
+        shouldBeFalse("axSelectable.isSelected");
+
+        axSelectable.press();
+        setTimeout(async () => {
+            await waitFor(() => {
+                return notificationCount == 1;
+            });
+            shouldBeTrue("axSelectable.isSelected");
+
+            axSelectable.press();
+            await waitFor(() => {
+                return notificationCount == 2;
+            });
+            shouldBeFalse("axSelectable.isSelected");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

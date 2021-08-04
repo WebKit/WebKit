@@ -1299,6 +1299,17 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
     postNotification(renderer, AXSelectedChildrenChanged, PostTarget::ObservableParent);
 }
 
+void AXObjectCache::selectedStateChanged(Node* node)
+{
+    // For a table cell, post AXSelectedStateChanged on the cell itself.
+    // For any other element, post AXSelectedChildrenChanged on the parent.
+    if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "cell")
+        || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
+        postNotification(node, AXSelectedStateChanged);
+    else
+        selectedChildrenChanged(node);
+}
+
 #ifndef NDEBUG
 void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
 {
@@ -1806,7 +1817,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     else if (attrName == aria_checkedAttr)
         checkedStateChanged(element);
     else if (attrName == aria_selectedAttr)
-        selectedChildrenChanged(element);
+        selectedStateChanged(element);
     else if (attrName == aria_expandedAttr)
         handleAriaExpandedChange(element);
     else if (attrName == aria_hiddenAttr) {
