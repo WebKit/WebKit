@@ -3809,12 +3809,8 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         if (event.charCode() == ' ')
             defaultSpaceEventHandler(event);
     }
-    if (event.type() == eventNames().keyupEvent) {
-        m_frame.editor().handleKeyboardEvent(event);
-        if (event.defaultHandled())
-            return;
+    if (event.type() == eventNames().keyupEvent)
         stopKeyboardScrolling();
-    }
 }
 
 #if ENABLE(DRAG_SUPPORT)

@@ -1,3 +1,15 @@
+2021-08-04  Dana Estra  <destra@apple.com>
+
+        REGRESSION (r280492): Clicking backspace on sign in fields results in deleting two characters instead of one.
+        https://bugs.webkit.org/show_bug.cgi?id=228802
+
+        Reviewed by Tim Horton.
+
+        No tests yet.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+
 2021-08-04  Peng Liu  <peng.liu6@apple.com>
 
         [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
