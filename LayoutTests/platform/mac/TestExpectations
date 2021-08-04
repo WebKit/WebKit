@@ -1573,6 +1573,8 @@ webkit.org/b/205361 [ Release ] crypto/workers/subtle/aes-indexeddb.html [ Pass 
 
 webkit.org/b/205403 accessibility/presentation-role-iframe.html [ Pass Failure ]
 
+webkit.org/b/228744 [ BigSur+ Debug ] accessibility/roles-computedRoleString.html [ Timeout ]
+
 # Disabled temporarily since it is causing other tests to fail.
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 

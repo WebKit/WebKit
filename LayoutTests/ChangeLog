@@ -1,5 +1,14 @@
 2021-08-04  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ BigSur Debug ] accessibility/roles-computedRoleString.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=228744
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-08-04  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         Removed testexpectations from iPad and updated them in ios-wk2 for 3 editing/pasteboard/smart-paste-paragraph tests.
         https://bugs.webkit.org/show_bug.cgi?id=228285
 
