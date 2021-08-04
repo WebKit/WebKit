@@ -1350,6 +1350,9 @@ webkit.org/b/228091 [ Release ] media/modern-media-controls/scrubber-support/scr
 
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/228796 [ BigSur+ ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
+webkit.org/b/228796 [ Catalina Debug ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
+
 webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
 
 webkit.org/b/228084 [ BigSur Release ] media/video-restricted-no-preload-auto.html [ Pass Failure ]
