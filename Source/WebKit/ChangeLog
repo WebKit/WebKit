@@ -1,3 +1,26 @@
+2021-08-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] "Look Up" action is sometimes missing after force pressing images
+        https://bugs.webkit.org/show_bug.cgi?id=228774
+        rdar://78040734
+
+        Reviewed by Devin Rousso.
+
+        On iOS devices that support both 3D Touch and Visual Look Up (i.e., iPhone XS and iPhone XS Max), it's currently
+        possible to skip the image analysis preflight gesture entirely when showing the context menu over images in the
+        case where the user triggers the interaction by exceeding the force press threshold in under 100 ms (the current
+        delay of the image analysis long press gesture).
+
+        Mitigate this by teaching WKImageAnalysisGestureRecognizer to trigger image analysis preflight slightly ahead of
+        the context menu interaction when performing a force press by transitioning to Began state early under
+        `-touchesBegan:withEvent:` and `-touchesMoved:withEvent:`, if the touch's force exceeds a certain (relatively
+        low) threshold.
+
+        * UIProcess/ios/WKImageAnalysisGestureRecognizer.mm:
+        (-[WKImageAnalysisGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKImageAnalysisGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKImageAnalysisGestureRecognizer beginAfterExceedingForceThresholdIfNeeded:]):
+
 2021-08-04  Per Arne  <pvollan@apple.com>
 
         [macOS] Update message filters

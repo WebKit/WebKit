@@ -45,6 +45,35 @@
     return self;
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+
+    [self beginAfterExceedingForceThresholdIfNeeded:touches];
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [super touchesMoved:touches withEvent:event];
+
+    [self beginAfterExceedingForceThresholdIfNeeded:touches];
+}
+
+- (void)beginAfterExceedingForceThresholdIfNeeded:(NSSet<UITouch *> *)touches
+{
+    if (self.state != UIGestureRecognizerStatePossible)
+        return;
+
+    if (touches.count > 1)
+        return;
+
+    constexpr CGFloat forceThreshold = 1.5;
+    if (touches.anyObject.force < forceThreshold)
+        return;
+
+    self.state = UIGestureRecognizerStateBegan;
+}
+
 - (void)setState:(UIGestureRecognizerState)state
 {
     auto previousState = self.state;
