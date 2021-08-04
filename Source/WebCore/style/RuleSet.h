@@ -76,6 +76,13 @@ public:
         RuleFeatureVector ruleFeatures;
         bool requiresFullReset { false };
         bool result { true };
+
+        void shrinkToFit()
+        {
+            mediaQuerySets.shrinkToFit();
+            affectedRulePositions.shrinkToFit();
+            ruleFeatures.shrinkToFit();
+        }
     };
 
     struct MediaQueryCollector {
@@ -153,7 +160,6 @@ private:
 
     template<typename Function> void traverseRuleDatas(Function&&);
 
-
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagLocalNameRules;
@@ -169,13 +175,13 @@ private:
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
+    RuleFeatureSet m_features;
+    Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
+    HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
     unsigned m_ruleCount { 0 };
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_autoShrinkToFitEnabled { true };
-    RuleFeatureSet m_features;
     bool m_hasViewportDependentMediaQueries { false };
-    Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
-    HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const

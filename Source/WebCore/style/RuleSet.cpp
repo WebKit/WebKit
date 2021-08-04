@@ -313,6 +313,9 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, const MediaQueryEvalu
 {
     auto mediaQueryCollector = MediaQueryCollector { evaluator };
     addRulesFromSheet(sheet, mediaQueryCollector, nullptr, AddRulesMode::Normal);
+
+    if (m_autoShrinkToFitEnabled)
+        shrinkToFit();
 }
 
 void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQuerySet* sheetQuery, const MediaQueryEvaluator& evaluator, Style::Resolver& resolver)
@@ -333,14 +336,16 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQuerySet* sheetQ
 
     m_hasViewportDependentMediaQueries = mediaQueryCollector.hasViewportDependentMediaQueries;
 
-    if (mediaQueryCollector.dynamicMediaQueryRules.isEmpty())
-        return;
+    if (!mediaQueryCollector.dynamicMediaQueryRules.isEmpty()) {
+        auto firstNewIndex = m_dynamicMediaQueryRules.size();
+        m_dynamicMediaQueryRules.appendVector(WTFMove(mediaQueryCollector.dynamicMediaQueryRules));
 
-    auto firstNewIndex = m_dynamicMediaQueryRules.size();
-    m_dynamicMediaQueryRules.appendVector(WTFMove(mediaQueryCollector.dynamicMediaQueryRules));
+        // Set the initial values.
+        evaluateDynamicMediaQueryRules(evaluator, firstNewIndex);
+    }
 
-    // Set the initial values.
-    evaluateDynamicMediaQueryRules(evaluator, firstNewIndex);
+    if (m_autoShrinkToFitEnabled)
+        shrinkToFit();
 }
 
 void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& mediaQueryCollector, Resolver* resolver, AddRulesMode mode)
@@ -355,9 +360,6 @@ void RuleSet::addRulesFromSheet(StyleSheetContents& sheet, MediaQueryCollector& 
     }
 
     addChildRules(sheet.childRules(), mediaQueryCollector, resolver, mode);
-
-    if (m_autoShrinkToFitEnabled && mode == AddRulesMode::Normal)
-        shrinkToFit();
 }
 
 void RuleSet::addStyleRule(const StyleRule& rule, MediaQueryCollector& mediaQueryCollector)
@@ -415,6 +417,7 @@ std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQ
             for (auto& feature : *featureVector)
                 ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
         }
+        ruleSet->shrinkToFit();
         return ruleSet;
     }).iterator->value;
 
@@ -472,6 +475,14 @@ static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
         vector->shrinkToFit();
 }
 
+static inline void shrinkDynamicRules(Vector<RuleSet::DynamicMediaQueryRules>& dynamicRules)
+{
+    for (auto& rule : dynamicRules)
+        rule.shrinkToFit();
+
+    dynamicRules.shrinkToFit();
+}
+
 void RuleSet::shrinkToFit()
 {
     shrinkMapVectorsToFit(m_idRules);
@@ -479,16 +490,21 @@ void RuleSet::shrinkToFit()
     shrinkMapVectorsToFit(m_tagLocalNameRules);
     shrinkMapVectorsToFit(m_tagLowercaseLocalNameRules);
     shrinkMapVectorsToFit(m_shadowPseudoElementRules);
+
     m_linkPseudoClassRules.shrinkToFit();
 #if ENABLE(VIDEO)
     m_cuePseudoRules.shrinkToFit();
 #endif
     m_hostPseudoClassRules.shrinkToFit();
     m_slottedPseudoElementRules.shrinkToFit();
+    m_partPseudoElementRules.shrinkToFit();
     m_focusPseudoClassRules.shrinkToFit();
     m_universalRules.shrinkToFit();
+
     m_pageRules.shrinkToFit();
     m_features.shrinkToFit();
+
+    shrinkDynamicRules(m_dynamicMediaQueryRules);
 }
 
 RuleSet::MediaQueryCollector::~MediaQueryCollector() = default;
