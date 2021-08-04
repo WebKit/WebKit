@@ -342,12 +342,10 @@ if (window.testRunner && window.accessibilityController) {
         expectation = expectedRole;
         matchedResults = (computedAriaRole == expectedRole)
 
-        result = document.getElementById('console');
-        if (matchedResults) {
-            result.innerText += "PASS: " + output + "\n";
-        } else {
-            result.innerText += "FAIL: " + output + "Expected: " + expectation + ".\n";
-        }
+        if (matchedResults)
+            testPassed(output);
+        else
+            testFailed(output + "Expected: " + expectation);
     }
 
     // Once tests are complete, hide all the example markup.
