@@ -240,7 +240,7 @@
 
 (define (AppleAVDUserClientMessageFilter)
     (apply-message-filter
-        (allow (with telemetry) (with message "AppleAVDUserClient")
+        (deny (with telemetry) (with message "AppleAVDUserClient")
             iokit-async-external-method
             iokit-external-method
             iokit-external-trap
@@ -250,20 +250,33 @@
 
 (define (IOSurfaceAcceleratorClientMessageFilter)
     (apply-message-filter
-        (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
+        (deny (with telemetry) (with message "IOSurfaceAcceleratorClient")
             iokit-async-external-method
-            iokit-external-method
             iokit-external-trap
+        )
+        (allow iokit-external-method
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (iokit-method-number
+                1
+            )
+#endif
         )
     )
 )
 
 (define (IOMobileFramebufferUserClientMessageFilter)
     (apply-message-filter
-        (allow (with telemetry-backtrace) (with message "IOMobileFramebufferUserClient")
+        (deny (with telemetry) (with message "IOMobileFramebufferUserClient")
             iokit-async-external-method
-            iokit-external-method
             iokit-external-trap
+        )
+        (allow (with telemetry-backtrace) iokit-external-method
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (iokit-method-number
+                8
+                28
+            )
+#endif
         )
     )
 )
