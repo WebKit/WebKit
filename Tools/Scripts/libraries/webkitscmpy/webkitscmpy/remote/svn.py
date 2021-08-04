@@ -46,7 +46,7 @@ class Svn(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, cache_path=None):
         if url[-1] != '/':
             url += '/'
         if not self.is_webserver(url):
@@ -58,6 +58,14 @@ class Svn(Scm):
             contributors=contributors,
             id=id or url.split('/')[-2].lower(),
         )
+
+        if not cache_path:
+            from webkitscmpy.mocks import remote
+            host = 'svn.{}'.format(self.URL_RE.match(self.url).group('host'))
+            if host in remote.Svn.remotes:
+                host = 'mock-{}'.format(host)
+            cache_path = os.path.join(tempfile.gettempdir(), host, 'webkitscmpy-cache.json')
+        self._cache_path = cache_path
 
         if os.path.exists(self._cache_path):
             try:
@@ -193,15 +201,6 @@ class Svn(Scm):
     @property
     def tags(self):
         return self.list('tags')
-
-    @property
-    @decorators.Memoize()
-    def _cache_path(self):
-        from webkitscmpy.mocks import remote
-        host = 'svn.{}'.format(self.URL_RE.match(self.url).group('host'))
-        if host in remote.Svn.remotes:
-            host = 'mock-{}'.format(host)
-        return os.path.join(tempfile.gettempdir(), host, 'webkitscmpy-cache.json')
 
     def _cache_lock(self):
         return fasteners.InterProcessLock(os.path.join(os.path.dirname(self._cache_path), 'cache.lock'))

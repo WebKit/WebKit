@@ -27,12 +27,19 @@ import sys
 import time
 
 from webkitpy import webkitscmpy
-from webkitscmpy import remote
+from webkitscmpy import local, remote
 
 
 def main():
+    cache_path = None
+    try:
+        repo = local.Scm.from_path(os.path.dirname(__file__))
+        cache_path = os.path.join(repo.root_path, '.git' if repo.is_git else '.svn', 'svn-webkit-org-cache.json')
+    except OSError:
+        pass
+
     mirror = remote.GitHub('https://github.com/WebKit/WebKit')
-    repository = remote.Svn('https://svn.webkit.org/repository/webkit')    
+    repository = remote.Svn('https://svn.webkit.org/repository/webkit', cache_path=cache_path)
 
     mirror_tip = mirror.commit(branch='main')
     canonical_tip = repository.commit(branch='trunk')
