@@ -1,3 +1,17 @@
+2021-08-03  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION (r280568): ASSERTION FAILED: videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient
+        https://bugs.webkit.org/show_bug.cgi?id=228740
+        rdar://problem/81464301
+
+        Reviewed by Jer Noble.
+
+        Fix assertion to reflect that the code can be code in two ways.
+        This will all go away following bug 228761.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController setVideoFullscreenManagerClient:]):
+
 2021-08-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r280531 and r280589.

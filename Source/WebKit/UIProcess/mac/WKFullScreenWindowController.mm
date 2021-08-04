@@ -648,7 +648,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 - (void)setVideoFullscreenManagerClient:(WebKit::VideoFullscreenManagerProxyClient *)client
 {
     if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-        ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient);
+        ASSERT((client && !videoFullscreenManager->client()) || (!client && videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient));
         videoFullscreenManager->setClient(client);
     }
 }
