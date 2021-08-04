@@ -55,6 +55,14 @@ static int contentsY(Frame* frame)
     return frameView->scrollY() / frame->pageZoomFactor() / frame->frameScaleFactor();
 }
 
+static LayoutPoint scaledLocation(Frame* frame, int pageX, int pageY)
+{
+    if (!frame)
+        return { pageX, pageY };
+    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+    return { pageX * scaleFactor, pageY * scaleFactor };
+}
+
 Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force)
     : m_target(target)
     , m_identifier(identifier)
@@ -68,9 +76,8 @@ Touch::Touch(Frame* frame, EventTarget* target, unsigned identifier, int screenX
     , m_radiusY(radiusY)
     , m_rotationAngle(rotationAngle)
     , m_force(force)
+    , m_absoluteLocation(scaledLocation(frame, pageX, pageY))
 {
-    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
-    m_absoluteLocation = LayoutPoint(pageX * scaleFactor, pageY * scaleFactor);
 }
 
 Touch::Touch(EventTarget* target, unsigned identifier, int clientX, int clientY, int screenX, int screenY, int pageX, int pageY, int radiusX, int radiusY, float rotationAngle, float force, LayoutPoint absoluteLocation)
