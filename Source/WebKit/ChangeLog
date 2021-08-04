@@ -1,3 +1,16 @@
+2021-08-04  Tim Horton  <timothy_horton@apple.com>
+
+        RemoteLayerBackingStore: Adopt a new bifurcated layer switch
+        https://bugs.webkit.org/show_bug.cgi?id=228800
+        <rdar://problem/81534641>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        Let CA know that we're going to hand it both a display list and
+        backing store ahead of time by setting a new bit.
+
 2021-08-04  Peng Liu  <peng.liu6@apple.com>
 
         [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
