@@ -1,3 +1,21 @@
+2021-08-03  Risul Islam  <risul_islam@apple.com>
+
+        Add functions for parsing URL query string
+        https://bugs.webkit.org/show_bug.cgi?id=228122
+
+        Reviewed by Darin Adler.
+        
+        Added parsing of URL query strings.
+        
+        * wtf/KeyValuePair.h:
+        (WTF::operator== const):
+        * wtf/URL.cpp:
+        (WTF::URL::differingQueryParameters):
+        (WTF::lengthOfURLIgnoringQueryAndFragments):
+        (WTF::URL::isEqualIgnoringQueryAndFragments):
+        (WTF::URL::removeQueryParameters):
+        * wtf/URL.h:
+
 2021-08-03  Youenn Fablet  <youenn@apple.com>
 
         RealtimeMediaSource::audioSamplesAvailable is calling malloc as part of locking in audio thread

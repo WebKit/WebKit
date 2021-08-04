@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <unicode/uidna.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
@@ -1165,5 +1166,87 @@ bool URL::hostIsIPAddress(StringView host)
 }
 
 #endif
+
+Vector<KeyValuePair<String, String>> differingQueryParameters(const URL& firstURL, const URL& secondURL)
+{
+    auto firstQueryParameters = URLParser::parseURLEncodedForm(firstURL.query());
+    auto secondQueryParameters = URLParser::parseURLEncodedForm(secondURL.query());
+    
+    if (firstQueryParameters.isEmpty())
+        return secondQueryParameters;
+
+    if (secondQueryParameters.isEmpty())
+        return firstQueryParameters;
+    
+    auto compare = [] (const KeyValuePair<String, String>& a, const KeyValuePair<String, String>& b) {
+        if (int result = codePointCompare(a.key, b.key))
+            return result;
+        return codePointCompare(a.value, b.value);
+        
+    };
+    auto comparesLessThan = [compare] (const KeyValuePair<String, String>& a, const KeyValuePair<String, String>& b) {
+        return compare(a, b) < 0;
+    };
+    
+    std::sort(firstQueryParameters.begin(), firstQueryParameters.end(), comparesLessThan);
+    std::sort(secondQueryParameters.begin(), secondQueryParameters.end(), comparesLessThan);
+    size_t totalFirstQueryParameters = firstQueryParameters.size();
+    size_t totalSecondQueryParameters = secondQueryParameters.size();
+    size_t indexInFirstQueryParameters = 0;
+    size_t indexInSecondQueryParameters = 0;
+    Vector<KeyValuePair<String, String>> differingQueryParameters;
+    while (indexInFirstQueryParameters < totalFirstQueryParameters && indexInSecondQueryParameters < totalSecondQueryParameters) {
+        int comparison = compare(firstQueryParameters[indexInFirstQueryParameters], secondQueryParameters[indexInSecondQueryParameters]);
+        if (comparison < 0) {
+            differingQueryParameters.append(firstQueryParameters[indexInFirstQueryParameters]);
+            indexInFirstQueryParameters++;
+        } else if (comparison > 0) {
+            differingQueryParameters.append(secondQueryParameters[indexInSecondQueryParameters]);
+            indexInSecondQueryParameters++;
+        } else {
+            indexInFirstQueryParameters++;
+            indexInSecondQueryParameters++;
+        }
+    }
+    
+    while (indexInFirstQueryParameters < totalFirstQueryParameters) {
+        differingQueryParameters.append(firstQueryParameters[indexInFirstQueryParameters]);
+        indexInFirstQueryParameters++;
+    }
+    
+    while (indexInSecondQueryParameters < totalSecondQueryParameters) {
+        differingQueryParameters.append(secondQueryParameters[indexInSecondQueryParameters]);
+        indexInSecondQueryParameters++;
+    }
+    
+    return differingQueryParameters;
+}
+
+static StringView substringIgnoringQueryAndFragments(const URL& url)
+{
+    if (!url.isValid())
+        return StringView(url.string());
+    
+    return StringView(url.string()).left(url.pathEnd());
+}
+
+bool isEqualIgnoringQueryAndFragments(const URL& a, const URL& b)
+{
+    return substringIgnoringQueryAndFragments(a) == substringIgnoringQueryAndFragments(b);
+}
+
+void removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
+{
+    if (keysToRemove.isEmpty())
+        return;
+    
+    StringBuilder queryWithoutRemovalKeys;
+    for (auto& parameter : URLParser::parseURLEncodedForm(url.query())) {
+        if (!keysToRemove.contains(parameter.key))
+            queryWithoutRemovalKeys.append(queryWithoutRemovalKeys.isEmpty() ? "" : "&", parameter.key, '=', parameter.value);
+    }
+    
+    url.setQuery(queryWithoutRemovalKeys);
+}
 
 } // namespace WTF

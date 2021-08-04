@@ -70,6 +70,11 @@ inline KeyValuePair<typename std::decay<K>::type, typename std::decay<V>::type> 
     return KeyValuePair<typename std::decay<K>::type, typename std::decay<V>::type> { std::forward<K>(key), std::forward<V>(value) };
 }
 
+template<typename KeyType, typename ValueType> constexpr bool operator==(const KeyValuePair<KeyType, ValueType>& a, const KeyValuePair<KeyType, ValueType>& b)
+{
+    return a.key == b.key && a.value == b.value;
+}
+
 }
 
 using WTF::KeyValuePair;

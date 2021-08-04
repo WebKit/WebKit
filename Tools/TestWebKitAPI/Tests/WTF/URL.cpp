@@ -25,10 +25,12 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
+#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
 
@@ -355,6 +357,214 @@ TEST_F(WTF_URL, PrintStream)
     StringPrintStream out;
     out.print(url);
     EXPECT_EQ(out.toString(), urlString);
+}
+
+TEST_F(WTF_URL, URLDifferingQueryParameters)
+{
+    URL url1 = createURL("www.webkit.org/?");
+    URL url2 = createURL("http://www.webkit.org/?key1=val1");
+    Vector<KeyValuePair<String, String>> testVector12 {{"key1", "val1"}};
+    EXPECT_EQ(differingQueryParameters(url1, url2), testVector12);
+    
+    URL url33 = createURL("http://www.webkit.org/?key1=val1");
+    URL url34 = createURL("webkit.org/?");
+    EXPECT_EQ(differingQueryParameters(url33, url34), testVector12);
+    
+    URL url35 = createURL(".org/path/?key1=val1");
+    URL url36 = createURL("/path/?key1=val1");
+    Vector<KeyValuePair<String, String>> testVector { };
+    EXPECT_EQ(differingQueryParameters(url35, url36), testVector);
+    
+    URL url = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_EQ(differingQueryParameters(url, url), testVector);
+    
+    URL url9 = createURL("http://www.webkit.org/?key1=val1");
+    URL url10 = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_EQ(differingQueryParameters(url9, url10) , testVector);
+    
+    URL url7 = createURL("http://www.webkit.org/?");
+    URL url8 = createURL("http://www.webkit.org/?");
+    EXPECT_EQ(differingQueryParameters(url7, url8), testVector);
+    
+    URL url3 = createURL("http://www.webkit.org/?");
+    URL url4 = createURL("http://www.webkit.org/?key1=val1");
+    Vector<KeyValuePair<String, String>> testVector34 {{"key1", "val1"}};
+    EXPECT_EQ(differingQueryParameters(url3, url4), testVector34);
+    
+    URL url5 = createURL("http://www.webkit.org/?key1=val1");
+    URL url6 = createURL("http://www.webkit.org/?");
+    Vector<KeyValuePair<String, String>> testVector56 {{"key1", "val1"}};
+    EXPECT_EQ(differingQueryParameters(url5, url6), testVector56);
+    
+    URL url13 = createURL("http://www.webkit.org/?key1=val1&key2=val2");
+    URL url14 = createURL("http://www.webkit.org/?key1=val1&key1=val1");
+    Vector<KeyValuePair<String, String>> testVector1314 {{"key1", "val1"}, {"key2", "val2"}};
+    EXPECT_EQ(differingQueryParameters(url13, url14), testVector1314);
+    
+    URL url15 = createURL("http://www.webkit.org/?key1=val1");
+    URL url16 = createURL("http://www.webkit.org/?key2=val2");
+    Vector<KeyValuePair<String, String>> testVector1516 {{"key1", "val1"}, {"key2", "val2"}};
+    EXPECT_EQ(differingQueryParameters(url15, url16), testVector1516);
+    
+    URL url11 = createURL("http://www.webkit.org/?key2=val2&key1=val1");
+    URL url12 = createURL("http://www.webkit.org/?key3=val3&key1=val1");
+    Vector<KeyValuePair<String, String>> testVector1112 {{"key2", "val2"}, {"key3", "val3"}};
+    EXPECT_EQ(differingQueryParameters(url11, url12), testVector1112);
+    
+    URL url17 = createURL("http://www.webkit.org/?key1=val1&key2=val2");
+    URL url18 = createURL("http://www.webkit.org/?key1&key3=val3");
+    Vector<KeyValuePair<String, String>> testVector1718 {{"key1", ""}, {"key1", "val1"}, {"key2", "val2"}, {"key3", "val3"}};
+    EXPECT_EQ(differingQueryParameters(url17, url18), testVector1718);
+    
+    URL url19 = createURL("http://www.webkit.org/?key2=val2&key1=val1&key2=val2");
+    URL url20 = createURL("http://www.webkit.org/?key3=val3&key1");
+    Vector<KeyValuePair<String, String>> testVector1920 {{"key1", ""}, {"key1", "val1"}, {"key2", "val2"}, {"key2", "val2"}, {"key3", "val3"}};
+    EXPECT_EQ(differingQueryParameters(url19, url20), testVector1920);
+    
+    URL url21 = createURL("http://www.webkit.org/??");
+    URL url22 = createURL("http://www.webkit.org/?/?test=test");
+    Vector<KeyValuePair<String, String>> testVector2122 {{"/?test", "test"}, {"?", ""}};
+    EXPECT_EQ(differingQueryParameters(url21, url22), testVector2122);
+    
+    URL url23 = createURL("http://www.webkit.org/?=test");
+    URL url24 = createURL("http://www.webkit.org/?==");
+    Vector<KeyValuePair<String, String>> testVector2324 {{"", "="}, {"", "test"}};
+    EXPECT_EQ(differingQueryParameters(url23, url24), testVector2324);
+    
+    URL url27 = createURL("http://www.webkit.org??");
+    URL url28 = createURL("http://www.webkit.org?/?test=test");
+    Vector<KeyValuePair<String, String>> testVector2728 {{"/?test", "test"}, {"?", ""}};
+    EXPECT_EQ(differingQueryParameters(url27, url28), testVector2728);
+    
+    URL url29 = createURL("http://www.webkit.org?=test");
+    URL url30 = createURL("http://www.webkit.org?==");
+    Vector<KeyValuePair<String, String>> testVector2930 {{"", "="}, {"", "test"}};
+    EXPECT_EQ(differingQueryParameters(url29, url30), testVector2930);
+    
+    URL url31 = createURL("http://www.webkit.org?=?");
+    URL url32 = createURL("http://www.webkit.org=?");
+    Vector<KeyValuePair<String, String>> testVector3132 {{"", "?"}};
+    EXPECT_EQ(differingQueryParameters(url31, url32), testVector3132);
+    
+    URL url25 = createURL("http://www.webkit.org/?=?");
+    URL url26 = createURL("http://www.webkit.org/=?");
+    Vector<KeyValuePair<String, String>> testVector2526 {{"", "?"}};
+    EXPECT_EQ(differingQueryParameters(url25, url26), testVector2526);
+}
+
+TEST_F(WTF_URL, URLIsEqualIgnoringQueryAndFragments)
+{
+    URL url1 = createURL("www.webkit.org/?");
+    URL url2 = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_FALSE(isEqualIgnoringQueryAndFragments(url1, url2));
+    
+    URL url13 = createURL("webkit.org/?=?");
+    URL url14 = createURL("webkit.org/?=?");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url13, url14));
+    
+    URL url15 = createURL("http://www.webkit.org/");
+    URL url16 = createURL("webkit.org/");
+    EXPECT_FALSE(isEqualIgnoringQueryAndFragments(url15, url16));
+    
+    URL url17 = createURL("webkit.org/?=?");
+    URL url18 = createURL("kit.org/?=?");
+    EXPECT_FALSE(isEqualIgnoringQueryAndFragments(url17, url18));
+
+    URL url = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url, url));
+    
+    URL url3 = createURL("http://www.webkit.org/?");
+    URL url4 = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url3, url4));
+    
+    URL url7 = createURL("http://www.webkit.org?");
+    URL url8 = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url7, url8));
+    
+    URL url5 = createURL("http://www.example.org/path?");
+    URL url6 = createURL("http://www.webkit.org/?key1=val1");
+    EXPECT_FALSE(isEqualIgnoringQueryAndFragments(url5, url6));
+    
+    URL url9 = createURL("http://example.com?a=b");
+    URL url10 = createURL("http://example.com/?a=b");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url9, url10));
+    
+    URL url11 = createURL("http://www.webkit.org/?");
+    URL url12 = createURL("http://www.webkit.org?");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url11, url12));
+    
+    URL url21 = createURL("http://www.webkit.org/??");
+    URL url22 = createURL("http://www.webkit.org/?/?");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url21, url22));
+    
+    URL url23 = createURL("http://www.webkit.org/?=&");
+    URL url24 = createURL("http://www.webkit.org/?==&");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url23, url24));
+    
+    URL url27 = createURL("http://www.webkit.org?&?");
+    URL url28 = createURL("http://www.webkit.org??&");
+    EXPECT_TRUE(isEqualIgnoringQueryAndFragments(url27, url28));
+    
+    URL url31 = createURL("http://www.webkit.org?=?");
+    URL url32 = createURL("http://www.webkit.org=?");
+    EXPECT_FALSE(isEqualIgnoringQueryAndFragments(url31, url32));
+    
+    URL url25 = createURL("http://www.webkit.org/?=?");
+    URL url26 = createURL("http://www.webkit.org/=?");
+    EXPECT_FALSE(isEqualIgnoringQueryAndFragments(url25, url26));
+}
+
+TEST_F(WTF_URL, URLRemoveQueryParameters)
+{
+    URL url = createURL("http://www.webkit.org/?key=val");
+    URL url1 = createURL("http://www.webkit.org/?key=val&key1=val1");
+    URL url2 = createURL("http://www.webkit.org/?");
+    URL url3 = createURL("http://www.webkit.org/?key=val#fragment");
+    URL url4 = createURL("http://www.webkit.org/?key=val&key=val#fragment");
+    URL url5 = createURL("http://www.webkit.org/?key&key=#fragment");
+    URL url6 = createURL("http://www.webkit.org/#fragment");
+    URL url7 = createURL("http://www.webkit.org/?key=val#fragment");
+    URL url8 = createURL("http://www.webkit.org/");
+    URL url9 = createURL("http://www.webkit.org/#fragment");
+    URL url10 = createURL("http://www.webkit.org/?key=val#fragment");
+    URL url11 = createURL("http://www.webkit.org/?key=val&key1=val1#fragment");
+    URL url12 = createURL("http://www.webkit.org/?key=val&key1=val1#fragment");
+    URL url13 = createURL("http://www.webkit.org");
+    
+    HashSet<String> keyRemovalSet1 {"key"};
+    HashSet<String> keyRemovalSet2 {"key1"};
+    HashSet<String> keyRemovalSet3 {"key2"};
+    HashSet<String> keyRemovalSet4 {"key", "key1"};
+    
+    removeQueryParameters(url1, keyRemovalSet2);
+    EXPECT_EQ(url1.string(), url.string());
+    
+    removeQueryParameters(url2, keyRemovalSet1);
+    EXPECT_EQ(url2.string(), url8.string());
+    
+    removeQueryParameters(url3, keyRemovalSet1);
+    EXPECT_EQ(url3.string(), url6.string());
+    
+    removeQueryParameters(url4, keyRemovalSet1);
+    EXPECT_EQ(url4.string(), url6.string());
+    
+    removeQueryParameters(url5, keyRemovalSet1);
+    EXPECT_EQ(url5.string(), url6.string());
+    
+    removeQueryParameters(url6, keyRemovalSet1);
+    EXPECT_EQ(url6.string(), url9.string());
+    
+    removeQueryParameters(url7, keyRemovalSet2);
+    EXPECT_EQ(url7.string(), url10.string());
+    
+    removeQueryParameters(url11, keyRemovalSet3);
+    EXPECT_EQ(url11.string(), url12.string());
+    
+    removeQueryParameters(url12, keyRemovalSet4);
+    EXPECT_EQ(url12.string(), url9.string());
+    
+    removeQueryParameters(url13, keyRemovalSet1);
+    EXPECT_EQ(url13.string(), url8.string());
 }
 
 } // namespace TestWebKitAPI
