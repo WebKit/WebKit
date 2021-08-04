@@ -78,7 +78,8 @@ void lowerStackArgs(Code& code)
                     if (Arg::isValidImmForm(offset))
                         inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, Arg::imm(offset), base, inst.args[1]);
                     else {
-                        Air::Tmp tmp = Air::Tmp(*linkRegister());
+                        ASSERT(pinnedExtendedOffsetAddrRegister());
+                        Air::Tmp tmp = Air::Tmp(*pinnedExtendedOffsetAddrRegister());
                         Arg offsetArg = Arg::bigImm(offset);
                         insertionSet.insert(instIndex, Move, inst.origin, offsetArg, tmp);
                         inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, tmp, base, inst.args[1]);
@@ -127,7 +128,8 @@ void lowerStackArgs(Code& code)
                         if (result.isValidForm(width))
                             return result;
 #if CPU(ARM64)
-                        Air::Tmp tmp = Air::Tmp(*linkRegister());
+                        ASSERT(pinnedExtendedOffsetAddrRegister());
+                        Air::Tmp tmp = Air::Tmp(*pinnedExtendedOffsetAddrRegister());
 
                         Arg largeOffset = Arg::isValidImmForm(offsetFromSP) ? Arg::imm(offsetFromSP) : Arg::bigImm(offsetFromSP);
                         insertionSet.insert(instIndex, Move, inst.origin, largeOffset, tmp);

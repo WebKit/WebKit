@@ -144,11 +144,11 @@ static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(CCallHelpers& jit, intp
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
     }
 
-    ASSERT(linkRegister());
+    ASSERT(pinnedExtendedOffsetAddrRegister());
     auto addr = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
     if (addr.isValidForm(Width64))
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
-    GPRReg reg = *linkRegister();
+    GPRReg reg = *pinnedExtendedOffsetAddrRegister();
     jit.move(CCallHelpers::TrustedImmPtr(offsetFromFP), reg);
     jit.add64(GPRInfo::callFrameRegister, reg);
     return CCallHelpers::Address(reg);

@@ -67,10 +67,10 @@ bool shouldSaveIRBeforePhase()
     return Options::verboseValidationFailure();
 }
 
-std::optional<GPRReg> linkRegister()
+std::optional<GPRReg> pinnedExtendedOffsetAddrRegister()
 {
 #if CPU(ARM64)
-    return MacroAssembler::linkRegister;
+    return MacroAssembler::dataTempRegister;
 #elif CPU(X86_64)
     return std::nullopt;
 #else
