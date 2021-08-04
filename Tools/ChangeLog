@@ -1,3 +1,14 @@
+2021-08-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [check-github-mirror-integrity] Compare current time to canonical time
+        https://bugs.webkit.org/show_bug.cgi?id=228787
+        <rdar://problem/81524499>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/check-github-mirror-integrity: If the mirror isn't in line with the canonical repository, we should
+        check against the current time, not the time of last commit on the mirror.
+
 2021-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Tweak the formatting for passing NSArrays to TextStreams

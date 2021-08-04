@@ -24,6 +24,7 @@
 
 import os
 import sys
+import time
 
 from webkitpy import webkitscmpy
 from webkitscmpy import remote
@@ -41,7 +42,7 @@ def main():
         print(f'HEAD commit on GitHub {mirror_tip} matches HEAD commit on svn.webkit.org {canonical_tip}')
         return 0
 
-    if mirror_tip.timestamp >= canonical_tip.timestamp - 5 * 60 and mirror_tip.identifier == canonical_tip.identifier - 1:
+    if time.time() >= canonical_tip.timestamp - 5 * 60 and mirror_tip.identifier == canonical_tip.identifier - 1:
         print('GitHub is 1 commit behind svn.webkit.org. This is ok.')
         print(f'HEAD commit on GitHub {mirror_tip} slightly behind HEAD commit on svn.webkit.org {canonical_tip}')
         return 0
