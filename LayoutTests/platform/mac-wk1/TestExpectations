@@ -1357,6 +1357,8 @@ webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
 
 webkit.org/b/228084 [ BigSur Release ] media/video-restricted-no-preload-auto.html [ Pass Failure ]
 
+webkit.org/b/228801 [ Release ] media/video-page-visibility-restriction.html [ Pass Timeout ]
+
 webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html [ Pass Failure ]
 
 webkit.org/b/225495 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-023.html [ Pass ImageOnlyFailure ]
