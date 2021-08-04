@@ -1,3 +1,33 @@
+2021-08-04  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] medium size class lookup needs to correctly fence the counting lock read path
+        https://bugs.webkit.org/show_bug.cgi?id=228799
+
+        Reviewed by Tadeu Zagallo.
+
+        The medium size class lookup does a binary search on a data structure that may mutate; we
+        catch that using a counting lock. But the algorithm wasn't fencing the tail end; it's supposed
+        to reread the count at the end but that read was not fenced.
+
+        This adds the fencing using pas_depend. I confirmed that the disassembly does the right thing.
+        It adds very little code.
+
+        Also rebased a test. Libpas tests are very specific about memory usage in some cases, and so
+        sometimes you will encounter a test run that requires limits to be adjusted. This happens
+        because some tests can sometimes create very complex heap layouts that really do use more
+        memory than we asserted, but the assertion had always worked because the test never ran with
+        the "wrong" kind of layout. This fixes a one-off test failure I saw when debugging this fix.
+
+        * libpas/src/libpas/pas_mutation_count.h:
+        (pas_mutation_count_matches_with_dependency):
+        (pas_mutation_count_matches): Deleted.
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (medium_directory_tuple_for_index_impl):
+        (medium_directory_tuple_for_index_with_lock):
+        (pas_segregated_heap_medium_directory_tuple_for_index):
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::addLargeHeapTests):
+
 2021-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         pas_segmented_vector's iterate functions should handle memory ordering correctly

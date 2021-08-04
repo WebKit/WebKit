@@ -234,7 +234,12 @@ pas_bitfit_heap* pas_segregated_heap_get_bitfit(pas_segregated_heap* heap,
     return result;
 }
 
-static pas_segregated_heap_medium_directory_tuple*
+typedef struct {
+    pas_segregated_heap_medium_directory_tuple* tuple;
+    uintptr_t dependency;
+} medium_directory_tuple_for_index_impl_result;
+
+static PAS_ALWAYS_INLINE medium_directory_tuple_for_index_impl_result
 medium_directory_tuple_for_index_impl(
     pas_segregated_heap_rare_data* rare_data,
     pas_segregated_heap_medium_directory_tuple* medium_directories,
@@ -247,6 +252,7 @@ medium_directory_tuple_for_index_impl(
     unsigned begin;
     unsigned end;
     pas_segregated_heap_medium_directory_tuple* best;
+    medium_directory_tuple_for_index_impl_result result;
     
     PAS_ASSERT(rare_data);
 
@@ -256,10 +262,14 @@ medium_directory_tuple_for_index_impl(
     begin = 0;
     end = num_medium_directories;
     best = NULL;
+
+    result.dependency = (uintptr_t)medium_directories;
     
     while (end > begin) {
         unsigned middle;
         pas_segregated_heap_medium_directory_tuple* directory;
+        unsigned begin_index;
+        unsigned end_index;
 
         middle = (begin + end) >> 1;
         
@@ -269,31 +279,40 @@ medium_directory_tuple_for_index_impl(
             pas_log("begin = %u, end = %u, middle = %u, begin_index = %u, end_index = %u\n",
                     begin, end, middle, directory->begin_index, directory->end_index);
         }
+
+        begin_index = directory->begin_index;
+        end_index = directory->end_index;
         
-        if (index < directory->begin_index) {
+        result.dependency += begin_index + end_index;
+        
+        if (index < begin_index) {
             end = middle;
             best = directory;
             continue;
         }
         
-        if (index > directory->end_index) {
+        if (index > end_index) {
             begin = middle + 1;
             continue;
         }
-        
-        return directory;
+
+        result.tuple = directory;
+        return result;
     }
 
     switch (search_mode) {
     case pas_segregated_heap_medium_size_directory_search_within_size_class_progression:
-        return NULL;
+        result.tuple = NULL;
+        return result;
         
     case pas_segregated_heap_medium_size_directory_search_least_greater_equal:
-        return best;
+        result.tuple = best;
+        return result;
     }
 
     PAS_ASSERT(!"Should not be reached");
-    return NULL;
+    result.tuple = NULL;
+    return result;
 }
 
 static pas_segregated_heap_medium_directory_tuple*
@@ -318,7 +337,7 @@ medium_directory_tuple_for_index_with_lock(
         medium_directories,
         rare_data->num_medium_directories,
         index,
-        search_mode);
+        search_mode).tuple;
     
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
     
@@ -336,7 +355,7 @@ pas_segregated_heap_medium_directory_tuple_for_index(
     pas_mutation_count saved_count;
     pas_segregated_heap_medium_directory_tuple* medium_directories;
     unsigned num_medium_directories;
-    pas_segregated_heap_medium_directory_tuple* result;
+    medium_directory_tuple_for_index_impl_result result;
     
     rare_data = pas_segregated_heap_rare_data_ptr_load(&heap->rare_data);
     if (!rare_data)
@@ -361,8 +380,9 @@ pas_segregated_heap_medium_directory_tuple_for_index(
     result = medium_directory_tuple_for_index_impl(
         rare_data, medium_directories, num_medium_directories, index, search_mode);
     
-    if (pas_mutation_count_matches(&rare_data->mutation_count, saved_count))
-        return result;
+    if (pas_mutation_count_matches_with_dependency(
+            &rare_data->mutation_count, saved_count, result.dependency))
+        return result.tuple;
     
     return medium_directory_tuple_for_index_with_lock(
         heap, index, search_mode, pas_lock_is_not_held);

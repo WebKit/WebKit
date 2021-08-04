@@ -66,11 +66,12 @@ static inline bool pas_mutation_count_is_mutating(pas_mutation_count saved_mutat
     return saved_mutation_count.count & PAS_MUTATION_COUNT_MUTATING_BIT;
 }
 
-static inline bool pas_mutation_count_matches(pas_mutation_count* mutation_count,
-                                              pas_mutation_count saved_mutation_count)
+static inline bool pas_mutation_count_matches_with_dependency(pas_mutation_count* mutation_count,
+                                                              pas_mutation_count saved_mutation_count,
+                                                              uintptr_t dependency)
 {
     pas_compiler_fence();
-    return mutation_count->count == saved_mutation_count.count;
+    return mutation_count[pas_depend(dependency)].count == saved_mutation_count.count;
 }
 
 static inline unsigned pas_mutation_count_depend(pas_mutation_count saved_mutation_count)

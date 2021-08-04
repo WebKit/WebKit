@@ -2720,7 +2720,7 @@ void addLargeHeapTests()
                                         AllocationProgram::free("firstHalf"),
                                         AllocationProgram::free("secondHalf")));
     ADD_TEST(testComplexLargeAllocation(IsolatedComplexAllocator(7, 1),
-                                        ExpectedBytes::upperBound(417792),
+                                        ExpectedBytes::upperBound(638976),
                                         AllocationProgram::allocate("boot", 40960, 1),
                                         AllocationProgram::free("boot"),
                                         AllocationProgram::allocate("big", 9362, 65536),
