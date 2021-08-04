@@ -1,3 +1,32 @@
+2021-08-04  Tim Horton  <timothy_horton@apple.com>
+
+        fast/canvas/canvas-crash.html doesn't test what it intends to on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=228747
+
+        Reviewed by Simon Fraser.
+
+        The test fast/canvas/canvas-crash.html intends to test changes made
+        to actual canvas code (see r215632); however, on the iOS simulator
+        the test doesn't even manage to make a canvas context because of
+        "maximum area" and "maximum backing store size" limits, which differ
+        per-platform. This results in unique test results for iOS, as well
+        as the test not actually exercising the code it was intended to.
+
+        Fix this by adding an override for the maximum area limit (we already
+        had one for maximum backing store size), and overriding them in
+        this test (and another similarly afflicted test).
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::maxCanvasArea):
+        (WebCore::HTMLCanvasElement::setMaxCanvasAreaForTesting):
+        (WebCore::HTMLCanvasElement::createImageBuffer const):
+        * html/HTMLCanvasElement.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setMaxCanvasArea):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-08-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add missing null-check in Touch constructor
