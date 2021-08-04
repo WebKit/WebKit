@@ -79,7 +79,11 @@ DisplayLink::~DisplayLink()
 WebCore::FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
 {
     CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
-    return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
+    if (!refreshPeriod.timeValue)
+        return WebCore::FullSpeedFramesPerSecond;
+
+    WebCore::FramesPerSecond result = round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
+    return result ?: WebCore::FullSpeedFramesPerSecond;
 }
 
 void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID observerID, WebCore::FramesPerSecond preferredFramesPerSecond)

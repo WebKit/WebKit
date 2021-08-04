@@ -1,3 +1,17 @@
+2021-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash in DisplayLink::notifyObserversDisplayWasRefreshed() on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=228790
+        <rdar://81338621>
+
+        Reviewed by Tim Horton.
+
+        Defend against DisplayLink::nominalFramesPerSecondFromDisplayLink() returning zero,
+        which can result in a later divide by zero in m_currentUpdate.nextUpdate().
+
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::nominalFramesPerSecondFromDisplayLink):
+
 2021-08-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPUProcess] REGRESSION: A noticeable slow down when browsing Live Photos album on iCloud.com
