@@ -1,3 +1,15 @@
+2021-08-04  Tim Horton  <timothy_horton@apple.com>
+
+        Bifurcated RemoteLayerBackingStore zooms in every time it repaints
+        https://bugs.webkit.org/show_bug.cgi?id=228798
+
+        Reviewed by Sam Weinig.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        If applying the scale/flip workaround manually, we need to save the
+        GraphicsContext state, or it leaks between paints.
+
 2021-08-04  Jean-Yves Avenard  <jya@apple.com>
 
         Use Observer in place of VideoFullscreenManagerProxyClient
