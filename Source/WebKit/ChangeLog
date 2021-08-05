@@ -1,5 +1,48 @@
 2021-08-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280652. rdar://problem/81568994
+
+    [GPUProcess] REGRESSION: A noticeable slow down when browsing Live Photos album on iCloud.com
+    https://bugs.webkit.org/show_bug.cgi?id=228673
+    <rdar://81353138>
+    
+    Reviewed by Wenson Hsieh.
+    
+    RemoteImageBufferProxy::flushDrawingContext() assumes a FlushContext item
+    is always appended to its DisplayList when it calls flushDrawingContextAsync()
+    and this is why it waits up to 3 seconds for the DidFlush message. But this
+    does not happen if the DisplayList of RemoteImageBufferProxy is empty.
+    
+    In addition to checking whether the DisplayList is empty, we can check also
+    whether we do not have pending a FlushContext item before appending a new
+    one.
+    
+    * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280652 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-04  Said Abou-Hallawa  <said@apple.com>
+
+            [GPUProcess] REGRESSION: A noticeable slow down when browsing Live Photos album on iCloud.com
+            https://bugs.webkit.org/show_bug.cgi?id=228673
+            <rdar://81353138>
+
+            Reviewed by Wenson Hsieh.
+
+            RemoteImageBufferProxy::flushDrawingContext() assumes a FlushContext item
+            is always appended to its DisplayList when it calls flushDrawingContextAsync()
+            and this is why it waits up to 3 seconds for the DidFlush message. But this
+            does not happen if the DisplayList of RemoteImageBufferProxy is empty.
+
+            In addition to checking whether the DisplayList is empty, we can check also
+            whether we do not have pending a FlushContext item before appending a new
+            one.
+
+            * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
+2021-08-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r280639. rdar://problem/81568951
 
     [GPU Process] REGRESSION: iCloud Photos Web app may crash WebProcess once the GPUProcess is relaunched
