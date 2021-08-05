@@ -1,3 +1,21 @@
+2021-08-05  Robin Morisset  <rmorisset@apple.com>
+
+        REGRESSION (r280507): ASSERTION FAILED: !undominatedPhis.contains(value) in JSC::B3::(anonymous namespace)::Validater::validatePhisAreDominatedByUpsilons()
+        https://bugs.webkit.org/show_bug.cgi?id=228838
+        <rdar://problem/81579314>
+
+        Reviewed by Geoffrey Garen.
+
+        When I added validation of the dominance of Phis by their Upsilons, I checked two things:
+        - There is no path from the entry point to a Phi without going through a corresponding Upsilon (the actual dominance check)
+        - There is no way to execute a Phi twice without going through a corresponding Upsilon in between
+        The second property is not actually true in B3 IR, I had misunderstood that part of the meaning of Phis/Upsilons.
+        So this patch just removes this second check.
+
+        It has no security/stability/performance implication: this is validation code, which runs automatically in debug mode, but should not run at all on customer machines.
+
+        * b3/B3Validate.cpp:
+
 2021-08-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         GCC 11 builds should use -Wno-array-bounds, -Wno-nonnull

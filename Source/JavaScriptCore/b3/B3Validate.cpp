@@ -677,7 +677,6 @@ private:
                         undominatedPhis.remove(value->as<UpsilonValue>()->phi());
                         break;
                     case Phi:
-                        VALIDATE(!undominatedPhis.contains(value), ("At ", *value));
                         undominatedPhis.add(value);
                         break;
                     default:
