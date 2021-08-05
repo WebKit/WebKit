@@ -18,7 +18,7 @@ PASS A SecurityError exception must be thrown when window.onafterprint is access
 PASS A SecurityError exception must be thrown when window.onbeforeprint is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.onbeforeunload is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.onblur is accessed from a different origin.
-FAIL A SecurityError exception must be thrown when window.oncancel is accessed from a different origin. assert_true: window.oncancel should exist. expected true got false
+PASS A SecurityError exception must be thrown when window.oncancel is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.oncanplay is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.oncanplaythrough is accessed from a different origin.
 PASS A SecurityError exception must be thrown when window.onchange is accessed from a different origin.

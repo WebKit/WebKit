@@ -263,7 +263,7 @@ FAIL HTMLElement interface: operation attachInternals() assert_own_property: int
 PASS HTMLElement interface: attribute onabort
 FAIL HTMLElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
 PASS HTMLElement interface: attribute onblur
-FAIL HTMLElement interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
+PASS HTMLElement interface: attribute oncancel
 PASS HTMLElement interface: attribute oncanplay
 PASS HTMLElement interface: attribute oncanplaythrough
 PASS HTMLElement interface: attribute onchange
@@ -358,7 +358,7 @@ FAIL HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onabort" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" not found in prototype chain
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onblur" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncancel" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplay" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncanplaythrough" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onchange" with the proper type
@@ -4403,7 +4403,7 @@ FAIL Window interface: attribute external assert_own_property: The global object
 PASS Window interface: attribute onabort
 FAIL Window interface: attribute onauxclick assert_own_property: The global object must have a property "onauxclick" expected property "onauxclick" missing
 PASS Window interface: attribute onblur
-FAIL Window interface: attribute oncancel assert_own_property: The global object must have a property "oncancel" expected property "oncancel" missing
+PASS Window interface: attribute oncancel
 PASS Window interface: attribute oncanplay
 PASS Window interface: attribute oncanplaythrough
 PASS Window interface: attribute onchange
@@ -4553,7 +4553,7 @@ FAIL Window interface: window must inherit property "external" with the proper t
 PASS Window interface: window must inherit property "onabort" with the proper type
 FAIL Window interface: window must inherit property "onauxclick" with the proper type assert_own_property: expected property "onauxclick" missing
 PASS Window interface: window must inherit property "onblur" with the proper type
-FAIL Window interface: window must inherit property "oncancel" with the proper type assert_own_property: expected property "oncancel" missing
+PASS Window interface: window must inherit property "oncancel" with the proper type
 PASS Window interface: window must inherit property "oncanplay" with the proper type
 PASS Window interface: window must inherit property "oncanplaythrough" with the proper type
 PASS Window interface: window must inherit property "onchange" with the proper type
@@ -5268,7 +5268,7 @@ PASS MimeType interface: attribute enabledPlugin
 PASS SVGElement interface: attribute onabort
 FAIL SVGElement interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
 PASS SVGElement interface: attribute onblur
-FAIL SVGElement interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
+PASS SVGElement interface: attribute oncancel
 PASS SVGElement interface: attribute oncanplay
 PASS SVGElement interface: attribute oncanplaythrough
 PASS SVGElement interface: attribute onchange
@@ -5402,7 +5402,7 @@ PASS Document interface: attribute all
 PASS Document interface: attribute onabort
 FAIL Document interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
 PASS Document interface: attribute onblur
-FAIL Document interface: attribute oncancel assert_true: The prototype object must have a property "oncancel" expected true got false
+PASS Document interface: attribute oncancel
 PASS Document interface: attribute oncanplay
 PASS Document interface: attribute oncanplaythrough
 PASS Document interface: attribute onchange
@@ -5527,7 +5527,7 @@ FAIL Document interface: iframe.contentDocument must inherit property "all" with
 PASS Document interface: iframe.contentDocument must inherit property "onabort" with the proper type
 FAIL Document interface: iframe.contentDocument must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" not found in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "onblur" with the proper type
-FAIL Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oncanplay" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oncanplaythrough" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onchange" with the proper type
@@ -5652,7 +5652,7 @@ PASS Document interface: new Document() must inherit property "all" with the pro
 PASS Document interface: new Document() must inherit property "onabort" with the proper type
 FAIL Document interface: new Document() must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" not found in prototype chain
 PASS Document interface: new Document() must inherit property "onblur" with the proper type
-FAIL Document interface: new Document() must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: new Document() must inherit property "oncancel" with the proper type
 PASS Document interface: new Document() must inherit property "oncanplay" with the proper type
 PASS Document interface: new Document() must inherit property "oncanplaythrough" with the proper type
 PASS Document interface: new Document() must inherit property "onchange" with the proper type
@@ -5777,7 +5777,7 @@ PASS Document interface: documentWithHandlers must inherit property "all" with t
 PASS Document interface: documentWithHandlers must inherit property "onabort" with the proper type
 FAIL Document interface: documentWithHandlers must inherit property "onauxclick" with the proper type assert_inherits: property "onauxclick" found on object expected in prototype chain
 PASS Document interface: documentWithHandlers must inherit property "onblur" with the proper type
-FAIL Document interface: documentWithHandlers must inherit property "oncancel" with the proper type assert_inherits: property "oncancel" found on object expected in prototype chain
+PASS Document interface: documentWithHandlers must inherit property "oncancel" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oncanplay" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oncanplaythrough" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onchange" with the proper type

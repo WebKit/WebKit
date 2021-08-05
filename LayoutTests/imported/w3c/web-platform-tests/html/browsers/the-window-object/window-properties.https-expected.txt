@@ -80,7 +80,7 @@ PASS Window attribute: onafterprint
 PASS Window attribute: onbeforeprint
 PASS Window attribute: onbeforeunload
 PASS Window attribute: onblur
-FAIL Window attribute: oncancel assert_true: oncancel in window expected true got false
+PASS Window attribute: oncancel
 PASS Window attribute: oncanplay
 PASS Window attribute: oncanplaythrough
 PASS Window attribute: onchange

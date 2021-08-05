@@ -55,6 +55,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "FullscreenManager.h"
+#include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
@@ -3507,6 +3508,13 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         if (auto* page = m_frame.page()) {
             if (auto* validationMessageClient = page->validationMessageClient())
                 validationMessageClient->hideAnyValidationMessage();
+        }
+    }
+
+    if (auto* activeModalDialog = m_frame.document()->activeModalDialog()) {
+        if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
+            activeModalDialog->cancel();
+            return true;
         }
     }
 

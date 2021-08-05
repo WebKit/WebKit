@@ -14,10 +14,10 @@ PASS onblur: the default value must be null
 PASS onblur: the content attribute must be compiled into a function as the corresponding property
 PASS onblur: the content attribute must execute when an event is dispatched
 PASS onblur: dispatching an Event at a <meta> element must trigger element.onblur
-FAIL oncancel: must be on the appropriate locations for GlobalEventHandlers assert_true: Window has an own property named "oncancel" expected true got false
-FAIL oncancel: the default value must be null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
-FAIL oncancel: the content attribute must be compiled into a function as the corresponding property assert_equals: The oncancel property must be a function expected "function" but got "undefined"
-FAIL oncancel: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS oncancel: must be on the appropriate locations for GlobalEventHandlers
+PASS oncancel: the default value must be null
+PASS oncancel: the content attribute must be compiled into a function as the corresponding property
+PASS oncancel: the content attribute must execute when an event is dispatched
 PASS oncancel: dispatching an Event at a <meta> element must trigger element.oncancel
 PASS oncanplay: must be on the appropriate locations for GlobalEventHandlers
 PASS oncanplay: the default value must be null

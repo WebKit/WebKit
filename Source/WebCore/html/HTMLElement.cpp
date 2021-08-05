@@ -266,6 +266,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onbeforeloadAttr.get(),
         &onbeforepasteAttr.get(),
         &onblurAttr.get(),
+        &oncancelAttr.get(),
         &oncanplayAttr.get(),
         &oncanplaythroughAttr.get(),
         &onchangeAttr.get(),

@@ -6,7 +6,7 @@
   <script src="/resources/testharnessreport.js"></script>
   <script src="/resources/testdriver.js"></script>
   <script src="/resources/testdriver-vendor.js"></script>
-  <script src="/resources/testdriver-actions.js"></script>
+  <link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=227534">
   <link rel="help" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1322947">
 </head>
 <body>
@@ -23,11 +23,7 @@
   setup({ single_test: true });
 
   const triggerEscKey = () => {
-    const escKey = "\uE00C";
-    new test_driver.Actions()
-      .keyDown(escKey)
-      .keyUp(escKey)
-      .send();
+    test_driver.send_keys(document.documentElement, "\uE00C"); // ESC key
   };
 
   /* Make sure we still cancel the dialog even if the input element is focused */
@@ -49,7 +45,7 @@
 
   dialog.addEventListener("close", function() {
     assert_false(dialog.open, "dialog closed");
-    step_timeout(function(){
+    step_timeout(function() {
       runTestCancelWhenInputFocused();
     }, 0);
   });

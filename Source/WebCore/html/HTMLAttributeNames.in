@@ -220,6 +220,7 @@ onbeforepaste
 onbeforeprint
 onbeforeunload
 onblur
+oncancel
 oncanplay
 oncanplaythrough
 onchange

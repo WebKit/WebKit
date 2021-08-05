@@ -33,8 +33,7 @@ interface mixin GlobalEventHandlers {
     // FIXME: Implement 'onauxclick'.
     // attribute EventHandler onauxclick;
     attribute EventHandler onblur;
-    // FIXME: Implement 'oncancel'.
-    // attribute EventHandler oncancel;
+    attribute EventHandler oncancel;
     attribute EventHandler oncanplay;
     attribute EventHandler oncanplaythrough;
     attribute EventHandler onchange;

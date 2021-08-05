@@ -95,4 +95,14 @@ void HTMLDialogElement::close(const String& result)
     });
 }
 
+void HTMLDialogElement::cancel()
+{
+    document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
+        auto cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
+        protectedThis->dispatchEvent(cancelEvent);
+        if (!cancelEvent->defaultPrevented())
+            protectedThis->close(nullString());
+    });
+}
+
 }

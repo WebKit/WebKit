@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: action
 Test cancel event is fired when the dialog is closed by user interaction
 
-Hello World
 
-
-FAIL Test cancel event is fired when the dialog is closed by user interaction ReferenceError: Can't find variable: action
+PASS Test cancel event is fired when the dialog is closed by user interaction
 

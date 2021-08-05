@@ -23,7 +23,7 @@ PASS shadowed unhandledrejection (document.body)
 PASS shadowed unload (document.body)
 PASS not shadowed abort (document.body)
 FAIL not shadowed auxclick (document.body) assert_equals: alternative body should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed cancel (document.body) assert_equals: alternative body should reflect expected (object) null but got (undefined) undefined
+PASS not shadowed cancel (document.body)
 PASS not shadowed canplay (document.body)
 PASS not shadowed canplaythrough (document.body)
 PASS not shadowed change (document.body)
@@ -130,7 +130,7 @@ PASS shadowed unhandledrejection (document.createElement("body"))
 PASS shadowed unload (document.createElement("body"))
 PASS not shadowed abort (document.createElement("body"))
 FAIL not shadowed auxclick (document.createElement("body")) assert_equals: body should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed cancel (document.createElement("body")) assert_equals: body should reflect expected (object) null but got (undefined) undefined
+PASS not shadowed cancel (document.createElement("body"))
 PASS not shadowed canplay (document.createElement("body"))
 PASS not shadowed canplaythrough (document.createElement("body"))
 PASS not shadowed change (document.createElement("body"))
@@ -237,7 +237,7 @@ PASS shadowed unhandledrejection (window)
 PASS shadowed unload (window)
 PASS not shadowed abort (window)
 FAIL not shadowed auxclick (window) assert_equals: body should reflect expected (object) null but got (undefined) undefined
-FAIL not shadowed cancel (window) assert_equals: body should reflect expected (object) null but got (undefined) undefined
+PASS not shadowed cancel (window)
 PASS not shadowed canplay (window)
 PASS not shadowed canplaythrough (window)
 PASS not shadowed change (window)

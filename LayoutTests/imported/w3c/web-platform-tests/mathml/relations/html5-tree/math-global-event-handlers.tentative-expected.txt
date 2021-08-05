@@ -14,11 +14,11 @@ PASS onblur: the default value must be null
 PASS onblur: the content attribute must be compiled into a function as the corresponding property
 PASS onblur: dynamic changes on the attribute
 PASS onblur: dispatching an Event at a <math> element must trigger element.onblur
-FAIL oncancel: must be on the appropriate locations for GlobalEventHandlers assert_true: MathMLElement has an own property named "oncancel" expected true got false
-FAIL oncancel: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
-FAIL oncancel: the content attribute must be compiled into a function as the corresponding property assert_equals: The oncancel property must be a function expected "function" but got "undefined"
-FAIL oncancel: dynamic changes on the attribute assert_equals: The oncancel property must be null (no attribute) expected (object) null but got (undefined) undefined
-FAIL oncancel: dispatching an Event at a <math> element must trigger element.oncancel assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
+PASS oncancel: must be on the appropriate locations for GlobalEventHandlers
+PASS oncancel: the default value must be null
+PASS oncancel: the content attribute must be compiled into a function as the corresponding property
+PASS oncancel: dynamic changes on the attribute
+PASS oncancel: dispatching an Event at a <math> element must trigger element.oncancel
 PASS oncanplay: must be on the appropriate locations for GlobalEventHandlers
 PASS oncanplay: the default value must be null
 PASS oncanplay: the content attribute must be compiled into a function as the corresponding property

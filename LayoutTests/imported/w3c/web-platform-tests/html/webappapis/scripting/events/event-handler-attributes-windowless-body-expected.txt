@@ -45,7 +45,7 @@ PASS Return null when getting the unload event handler of a windowless body
 PASS Ignore setting of unload window event handlers on windowless body
 PASS abort is unaffected on a windowless body
 FAIL auxclick is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
-FAIL cancel is unaffected on a windowless body assert_equals: expected (object) null but got (undefined) undefined
+PASS cancel is unaffected on a windowless body
 PASS canplay is unaffected on a windowless body
 PASS canplaythrough is unaffected on a windowless body
 PASS change is unaffected on a windowless body
@@ -152,7 +152,7 @@ PASS Return null when getting the unload event handler of a windowless frameset
 PASS Ignore setting of unload window event handlers on windowless frameset
 PASS abort is unaffected on a windowless frameset
 FAIL auxclick is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
-FAIL cancel is unaffected on a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
+PASS cancel is unaffected on a windowless frameset
 PASS canplay is unaffected on a windowless frameset
 PASS canplaythrough is unaffected on a windowless frameset
 PASS change is unaffected on a windowless frameset

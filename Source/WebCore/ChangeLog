@@ -1,3 +1,31 @@
+2021-08-05  Tim Nguyen  <ntim@apple.com>
+
+        Implement support for <dialog> element cancel event
+        https://bugs.webkit.org/show_bug.cgi?id=227534
+
+        Reviewed by Chris Dumez.
+
+        This makes <dialog> emit a cancel event then close when the escape key is pressed.
+
+        Updated relevant WPT:
+        - <dialog> cancel event WPTs: used send_keys instead of test_driver.Actions() (which are unsupported by WebKit test runner)
+        - oncancel now is recognized
+
+        Failing WPT:
+        - dialog-cancel-with-input.html: needs <dialog> focusing steps (webkit.org/b/227537) to be implemented for <input> to get focus
+        - dialog-cancel-with-select.html: needs <dialog> focusing steps (webkit.org/b/227537) to be implemented for <select> to get focus
+        - dialog-keydown-preventDefault.html: current implementation does not prevent canceling from happening when keydown event has preventDefault()
+
+        * dom/GlobalEventHandlers.idl:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::cancel):
+        * html/HTMLDialogElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::internalKeyEvent):
+
 2021-08-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] getUserMedia sometimes doesn't capture from specified microphone
