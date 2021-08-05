@@ -241,7 +241,7 @@ static inline bool addMicrophoneSandboxExtension(Vector<SandboxExtension::Handle
 static inline bool addTCCDSandboxExtension(Vector<SandboxExtension::Handle>& extensions)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
-    if (!SandboxExtension::createHandleForGenericExtension("com.apple.tccd"_s, sandboxExtensionHandle)) {
+    if (!SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, std::nullopt, sandboxExtensionHandle)) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.tccd sandbox extension");
         return false;
     }
