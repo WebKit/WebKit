@@ -52,6 +52,7 @@ using _WKRectEdge = NSUInteger;
 OBJC_CLASS NSAccessibilityRemoteUIElement;
 OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSMenu;
+OBJC_CLASS NSPopover;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
@@ -906,6 +907,10 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     RefPtr<WorkQueue> m_imageAnalyzerQueue;
     RetainPtr<VKImageAnalyzer> m_imageAnalyzer;
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    WeakObjCPtr<NSPopover> m_lastContextMenuTranslationPopover;
 #endif
 };
     

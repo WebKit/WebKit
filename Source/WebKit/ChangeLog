@@ -1,3 +1,24 @@
+2021-08-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS Monterey] Translate popover becomes detached from webpage after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=228807
+        rdar://81540115
+
+        Reviewed by Sam Weinig.
+
+        Close the context menu translation popover in `WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly`
+        (along with all other content-relative UI) to prevent the popover from being detached from its translated text
+        upon scrolling or zooming.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+        (WebKit::WebViewImpl::handleContextMenuTranslation):
+
+        Save a weak pointer to the current translation popover when we're about to present it, and use it to force the
+        popover to `-close` when dismissing content-relative child windows. Also take this opportunity to remove some
+        staging declarations on LTUITranslationViewController that have long since landed in the macOS 12 SDK.
+
 2021-08-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         GCC 11 builds should use -Wno-array-bounds, -Wno-nonnull

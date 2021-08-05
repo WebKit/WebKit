@@ -150,10 +150,6 @@
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>
 
-@interface LTUITranslationViewController (Staging_77660675)
-@property (nonatomic, copy) void(^replacementHandler)(NSAttributedString *);
-@end
-
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
 SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
@@ -3720,6 +3716,10 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
     [m_immediateActionController dismissContentRelativeChildWindows];
 
     m_pageClient->dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeTextIgnored);
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    [std::exchange(m_lastContextMenuTranslationPopover, nil) close];
+#endif
 }
 
 void WebViewImpl::hideWordDefinitionWindow()
@@ -5779,7 +5779,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
     auto view = m_view.get();
     auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
-    if (info.mode == WebCore::TranslationContextMenuMode::Editable && [translationViewController respondsToSelector:@selector(setReplacementHandler:)]) {
+    if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];
         [translationViewController setReplacementHandler:[this, weakThis = makeWeakPtr(*this)](NSAttributedString *string) {
             if (weakThis)
@@ -5805,6 +5805,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
     else
         preferredEdge = aim > highlight ? NSRectEdgeMaxX : NSRectEdgeMinX;
 
+    m_lastContextMenuTranslationPopover = popover.get();
     [popover showRelativeToRect:info.selectionBoundsInRootView ofView:view.get() preferredEdge:preferredEdge];
 }
 
