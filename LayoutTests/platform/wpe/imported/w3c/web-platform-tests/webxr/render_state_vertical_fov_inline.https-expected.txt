@@ -1,3 +1,4 @@
 
-FAIL inlineVerticalFieldOfView is set appropriately on inline sessions promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL inlineVerticalFieldOfView is set appropriately on inline sessions - webgl promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL inlineVerticalFieldOfView is set appropriately on inline sessions - webgl2 assert_implements: webgl2 not supported. undefined
 

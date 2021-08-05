@@ -49,22 +49,22 @@ layer at (0,0) size 785x1728
           text run at (0,0) width 528: "The next line tests a small negative line spacing, and should be crammed backwards"
       RenderBlock {P} at (0,484) size 769x18 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x17
-          RenderText {#text} at (160,0) size 0x17
-            text run at (160,0) width 0: "Hello, world"
+          RenderText {#text} at (160,0) size -16x17
+            text run at (160,0) width -16: "Hello, world"
       RenderBlock {P} at (0,518) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 508x17
           text run at (0,0) width 508: "The next line tests a large negative line spacing, and should be just display an 'H'"
       RenderBlock {P} at (0,552) size 769x18 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x17
-          RenderText {#text} at (160,0) size 0x17
-            text run at (160,0) width 0: "Hello, world"
+          RenderText {#text} at (160,0) size -38320x17
+            text run at (160,0) width -38320: "Hello, world"
       RenderBlock {P} at (0,586) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 510x17
           text run at (0,0) width 510: "The next line tests a very large negative line spacing, and should just have an 'H'."
       RenderBlock {P} at (0,620) size 769x18 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x17
-          RenderText {#text} at (160,0) size 0x17
-            text run at (160,0) width 0: "Hello, world"
+          RenderText {#text} at (160,0) size -1919920x17
+            text run at (160,0) width -1919920: "Hello, world"
       RenderBlock {P} at (0,654) size 769x36 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 767x35
           text run at (0,0) width 713: "The next few lines test the interaction with opacity. The first line should be normally spaced out, slightly opaque, "

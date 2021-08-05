@@ -1,3 +1,41 @@
+2021-08-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update baselines after r280672.
+
+        * platform/glib/fast/selectors/unqualified-hover-strict-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * platform/glib/media/video-playing-and-pause-expected.png:
+        * platform/glib/media/video-playing-and-pause-expected.txt:
+        * platform/glib/tables/mozilla/core/col_span-expected.txt:
+        * platform/wpe/fast/selectors/unqualified-hover-strict-expected.png: Added.
+        * platform/wpe/fast/text/text-letter-spacing-expected.png: Added.
+        * platform/wpe/fast/text/text-letter-spacing-expected.txt:
+        * platform/wpe/fast/text/wbr-expected.png: Added.
+        * platform/wpe/fast/text/wbr-expected.txt:
+        * platform/wpe/fast/text/whitespace/span-in-word-space-causes-overflow-expected.png: Added.
+        * platform/wpe/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/wpe/fast/text/word-break-expected.txt:
+        * platform/wpe/http/wpt/webxr/xrSession_end_device_reports_shutdown.https-expected.txt:
+        * platform/wpe/http/wpt/webxr/xrSession_ended_by_system.https-expected.txt:
+        * platform/wpe/http/wpt/webxr/xrSession_reject_multiple_end.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-color-adjust/inheritance-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_inline.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrFrame_lifetime.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrPose_transform_sameObject.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https-expected.txt:
+        * platform/wpe/tables/mozilla/core/col_span-expected.png: Added.
+        * platform/wpe/tables/mozilla/marvin/x_col_width_rel-expected.png: Added.
+        * platform/wpe/tables/mozilla/marvin/x_col_width_rel-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_width_rel-expected.png: Added.
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_width_rel-expected.txt:
+        * platform/wpe/tables/mozilla/other/ms-expected.txt:
+
 2021-08-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update some WPT baselines after recent improvements.

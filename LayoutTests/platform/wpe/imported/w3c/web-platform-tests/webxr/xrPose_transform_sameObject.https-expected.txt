@@ -1,3 +1,4 @@
 
-PASS XRPose.transform meets [SameObject] requirement
+PASS XRPose.transform meets [SameObject] requirement - webgl
+FAIL XRPose.transform meets [SameObject] requirement - webgl2 assert_implements: webgl2 not supported. undefined
 
