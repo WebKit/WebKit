@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test dialog modal is closed by escape key with select focused</title>
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <script src="/resources/testdriver.js"></script>
+  <script src="/resources/testdriver-vendor.js"></script>
+  <script src="/resources/testdriver-actions.js"></script>
+  <link rel="help" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1322947">
+</head>
+<body>
+<p>Test dialog modal is closed by escape key with select focused</p>
+<dialog id="dialog">
+  <select>
+    <option value="one">one</option>
+    <option value="two">two</option>
+  </select>
+</dialog>
+
+<script>
+  setup({ single_test: true });
+
+  const dialog = document.getElementById("dialog");
+  const select = document.querySelector("select");
+
+  dialog.addEventListener("close", function() {
+    assert_false(dialog.open, "dialog with select is closed");
+    done();
+  });
+  dialog.showModal();
+  assert_true(select == document.activeElement, "select element should be focused");
+
+  const escKey = "\uE00C";
+  new test_driver.Actions()
+    .keyDown(escKey)
+    .keyUp(escKey)
+    .send();
+</script>
+</body>
+</html>
+

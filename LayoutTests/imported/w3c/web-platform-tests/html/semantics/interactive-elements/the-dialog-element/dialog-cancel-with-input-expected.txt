@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: action
+Test dialog modal is closed by escape key with input focused
+
+Hello World
+
+
+FAIL Test dialog modal is closed by escape key with input focused ReferenceError: Can't find variable: action
+

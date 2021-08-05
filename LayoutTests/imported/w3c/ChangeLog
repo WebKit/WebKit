@@ -1,3 +1,24 @@
+2021-08-05  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT
+        https://bugs.webkit.org/show_bug.cgi?id=228822
+
+        Unreviewed.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/1fa1d40a251a1a9e506caec3fdfba5fe2c7ef6f6
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-events.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-preventDefault.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-input-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-input.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-select-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-select.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-keydown-preventDefault-expected.txt: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-keydown-preventDefault.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
 2021-08-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         Update some WPT baselines after recent improvements.
