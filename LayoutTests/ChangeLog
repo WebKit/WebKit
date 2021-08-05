@@ -1,3 +1,17 @@
+2021-08-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update some WPT baselines after recent improvements.
+        https://bugs.webkit.org/show_bug.cgi?id=228804
+
+        Update WPT test baselines after r279971, r279978, r279979, and r280310
+        to account for more passing tests.
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-08-04  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk1 Release ] media/video-page-visibility-restriction.html is flaky timing out.

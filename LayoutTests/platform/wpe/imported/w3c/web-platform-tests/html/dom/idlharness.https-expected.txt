@@ -284,7 +284,7 @@ PASS HTMLElement interface: attribute onemptied
 PASS HTMLElement interface: attribute onended
 PASS HTMLElement interface: attribute onerror
 PASS HTMLElement interface: attribute onfocus
-FAIL HTMLElement interface: attribute onformdata assert_true: The prototype object must have a property "onformdata" expected true got false
+PASS HTMLElement interface: attribute onformdata
 PASS HTMLElement interface: attribute oninput
 PASS HTMLElement interface: attribute oninvalid
 PASS HTMLElement interface: attribute onkeydown
@@ -379,7 +379,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onended" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onerror" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onfocus" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onformdata" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninput" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oninvalid" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onkeydown" with the proper type
@@ -1398,7 +1398,7 @@ PASS MediaError interface: constant MEDIA_ERR_DECODE on interface prototype obje
 PASS MediaError interface: constant MEDIA_ERR_SRC_NOT_SUPPORTED on interface object
 PASS MediaError interface: constant MEDIA_ERR_SRC_NOT_SUPPORTED on interface prototype object
 PASS MediaError interface: attribute code
-FAIL MediaError interface: attribute message assert_true: The prototype object must have a property "message" expected true got false
+PASS MediaError interface: attribute message
 PASS MediaError must be primary interface of errorVideo.error
 PASS Stringification of errorVideo.error
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_ABORTED" with the proper type
@@ -1406,7 +1406,7 @@ PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_NET
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_DECODE" with the proper type
 PASS MediaError interface: errorVideo.error must inherit property "MEDIA_ERR_SRC_NOT_SUPPORTED" with the proper type
 PASS MediaError interface: errorVideo.error must inherit property "code" with the proper type
-FAIL MediaError interface: errorVideo.error must inherit property "message" with the proper type assert_inherits: property "message" not found in prototype chain
+PASS MediaError interface: errorVideo.error must inherit property "message" with the proper type
 PASS AudioTrackList interface: existence and properties of interface object
 PASS AudioTrackList interface object length
 PASS AudioTrackList interface object name
@@ -3776,23 +3776,23 @@ PASS ValidityState interface: document.createElement("input").validity must inhe
 PASS ValidityState interface: document.createElement("input").validity must inherit property "badInput" with the proper type
 PASS ValidityState interface: document.createElement("input").validity must inherit property "customError" with the proper type
 PASS ValidityState interface: document.createElement("input").validity must inherit property "valid" with the proper type
-FAIL SubmitEvent interface: existence and properties of interface object assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface object length assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface object name assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL SubmitEvent interface: attribute submitter assert_own_property: self does not have own property "SubmitEvent" expected property "SubmitEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface object assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface object length assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface object name assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent interface: attribute formData assert_own_property: self does not have own property "FormDataEvent" expected property "FormDataEvent" missing
-FAIL FormDataEvent must be primary interface of new FormDataEvent("formdata", { formData: new FormData() }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormDataEvent"
-FAIL Stringification of new FormDataEvent("formdata", { formData: new FormData() }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormDataEvent"
-FAIL FormDataEvent interface: new FormDataEvent("formdata", { formData: new FormData() }) must inherit property "formData" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: FormDataEvent"
+PASS SubmitEvent interface: existence and properties of interface object
+PASS SubmitEvent interface object length
+PASS SubmitEvent interface object name
+PASS SubmitEvent interface: existence and properties of interface prototype object
+PASS SubmitEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS SubmitEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS SubmitEvent interface: attribute submitter
+PASS FormDataEvent interface: existence and properties of interface object
+PASS FormDataEvent interface object length
+PASS FormDataEvent interface object name
+PASS FormDataEvent interface: existence and properties of interface prototype object
+PASS FormDataEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS FormDataEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS FormDataEvent interface: attribute formData
+PASS FormDataEvent must be primary interface of new FormDataEvent("formdata", { formData: new FormData() })
+PASS Stringification of new FormDataEvent("formdata", { formData: new FormData() })
+PASS FormDataEvent interface: new FormDataEvent("formdata", { formData: new FormData() }) must inherit property "formData" with the proper type
 PASS HTMLDetailsElement interface: existence and properties of interface object
 PASS HTMLDetailsElement interface object length
 PASS HTMLDetailsElement interface object name
@@ -4424,7 +4424,7 @@ PASS Window interface: attribute onemptied
 PASS Window interface: attribute onended
 PASS Window interface: attribute onerror
 PASS Window interface: attribute onfocus
-FAIL Window interface: attribute onformdata assert_own_property: The global object must have a property "onformdata" expected property "onformdata" missing
+PASS Window interface: attribute onformdata
 PASS Window interface: attribute oninput
 PASS Window interface: attribute oninvalid
 PASS Window interface: attribute onkeydown
@@ -4484,7 +4484,7 @@ PASS Window interface: attribute onunhandledrejection
 PASS Window interface: attribute onunload
 PASS Window interface: attribute origin
 PASS Window interface: attribute isSecureContext
-FAIL Window interface: attribute crossOriginIsolated assert_own_property: The global object must have a property "crossOriginIsolated" expected property "crossOriginIsolated" missing
+PASS Window interface: attribute crossOriginIsolated
 PASS Window interface: operation btoa(DOMString)
 PASS Window interface: operation atob(DOMString)
 PASS Window interface: operation setTimeout(TimerHandler, optional long, any...)
@@ -4574,7 +4574,7 @@ PASS Window interface: window must inherit property "onemptied" with the proper 
 PASS Window interface: window must inherit property "onended" with the proper type
 PASS Window interface: window must inherit property "onerror" with the proper type
 PASS Window interface: window must inherit property "onfocus" with the proper type
-FAIL Window interface: window must inherit property "onformdata" with the proper type assert_own_property: expected property "onformdata" missing
+PASS Window interface: window must inherit property "onformdata" with the proper type
 PASS Window interface: window must inherit property "oninput" with the proper type
 PASS Window interface: window must inherit property "oninvalid" with the proper type
 PASS Window interface: window must inherit property "onkeydown" with the proper type
@@ -4634,7 +4634,7 @@ PASS Window interface: window must inherit property "onunhandledrejection" with 
 PASS Window interface: window must inherit property "onunload" with the proper type
 PASS Window interface: window must inherit property "origin" with the proper type
 PASS Window interface: window must inherit property "isSecureContext" with the proper type
-FAIL Window interface: window must inherit property "crossOriginIsolated" with the proper type assert_own_property: expected property "crossOriginIsolated" missing
+PASS Window interface: window must inherit property "crossOriginIsolated" with the proper type
 PASS Window interface: window must inherit property "btoa(DOMString)" with the proper type
 PASS Window interface: calling btoa(DOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "atob(DOMString)" with the proper type
@@ -4981,17 +4981,17 @@ PASS MessagePort interface: operation start()
 PASS MessagePort interface: operation close()
 PASS MessagePort interface: attribute onmessage
 FAIL MessagePort interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
-FAIL BroadcastChannel interface: existence and properties of interface object assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface object length assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface object name assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: attribute name assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: operation postMessage(any) assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: operation close() assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: attribute onmessage assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
-FAIL BroadcastChannel interface: attribute onmessageerror assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+PASS BroadcastChannel interface: existence and properties of interface object
+PASS BroadcastChannel interface object length
+PASS BroadcastChannel interface object name
+PASS BroadcastChannel interface: existence and properties of interface prototype object
+PASS BroadcastChannel interface: existence and properties of interface prototype object's "constructor" property
+PASS BroadcastChannel interface: existence and properties of interface prototype object's @@unscopables property
+PASS BroadcastChannel interface: attribute name
+PASS BroadcastChannel interface: operation postMessage(any)
+PASS BroadcastChannel interface: operation close()
+PASS BroadcastChannel interface: attribute onmessage
+PASS BroadcastChannel interface: attribute onmessageerror
 PASS WorkerGlobalScope interface: existence and properties of interface object
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface object
 PASS SharedWorkerGlobalScope interface: existence and properties of interface object
@@ -5289,7 +5289,7 @@ PASS SVGElement interface: attribute onemptied
 PASS SVGElement interface: attribute onended
 PASS SVGElement interface: attribute onerror
 PASS SVGElement interface: attribute onfocus
-FAIL SVGElement interface: attribute onformdata assert_true: The prototype object must have a property "onformdata" expected true got false
+PASS SVGElement interface: attribute onformdata
 PASS SVGElement interface: attribute oninput
 PASS SVGElement interface: attribute oninvalid
 PASS SVGElement interface: attribute onkeydown
@@ -5423,7 +5423,7 @@ PASS Document interface: attribute onemptied
 PASS Document interface: attribute onended
 PASS Document interface: attribute onerror
 PASS Document interface: attribute onfocus
-FAIL Document interface: attribute onformdata assert_true: The prototype object must have a property "onformdata" expected true got false
+PASS Document interface: attribute onformdata
 PASS Document interface: attribute oninput
 PASS Document interface: attribute oninvalid
 PASS Document interface: attribute onkeydown
@@ -5548,7 +5548,7 @@ PASS Document interface: iframe.contentDocument must inherit property "onemptied
 PASS Document interface: iframe.contentDocument must inherit property "onended" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onerror" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onfocus" with the proper type
-FAIL Document interface: iframe.contentDocument must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onformdata" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oninput" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "oninvalid" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onkeydown" with the proper type
@@ -5673,7 +5673,7 @@ PASS Document interface: new Document() must inherit property "onemptied" with t
 PASS Document interface: new Document() must inherit property "onended" with the proper type
 PASS Document interface: new Document() must inherit property "onerror" with the proper type
 PASS Document interface: new Document() must inherit property "onfocus" with the proper type
-FAIL Document interface: new Document() must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onformdata" with the proper type
 PASS Document interface: new Document() must inherit property "oninput" with the proper type
 PASS Document interface: new Document() must inherit property "oninvalid" with the proper type
 PASS Document interface: new Document() must inherit property "onkeydown" with the proper type
@@ -5798,7 +5798,7 @@ PASS Document interface: documentWithHandlers must inherit property "onemptied" 
 PASS Document interface: documentWithHandlers must inherit property "onended" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onerror" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onfocus" with the proper type
-FAIL Document interface: documentWithHandlers must inherit property "onformdata" with the proper type assert_inherits: property "onformdata" found on object expected in prototype chain
+PASS Document interface: documentWithHandlers must inherit property "onformdata" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oninput" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "oninvalid" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onkeydown" with the proper type

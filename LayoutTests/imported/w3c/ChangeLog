@@ -1,3 +1,13 @@
+2021-08-04  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        Update some WPT baselines after recent improvements.
+        https://bugs.webkit.org/show_bug.cgi?id=228804
+
+        Unreviewed test gardening. Update baseline after r279978.
+        This test is already marked as flaky on mac and iOS.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error-expected.txt:
+
 2021-08-03  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         ReadableStream's pipeTo() and pipeThrough() don't properly check for AbortSignal

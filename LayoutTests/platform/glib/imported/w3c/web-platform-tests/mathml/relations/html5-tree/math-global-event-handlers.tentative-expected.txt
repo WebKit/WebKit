@@ -114,11 +114,11 @@ PASS onfocus: the default value must be null
 PASS onfocus: the content attribute must be compiled into a function as the corresponding property
 PASS onfocus: dynamic changes on the attribute
 PASS onfocus: dispatching an Event at a <math> element must trigger element.onfocus
-FAIL onformdata: must be on the appropriate locations for GlobalEventHandlers assert_true: MathMLElement has an own property named "onformdata" expected true got false
-FAIL onformdata: the default value must be null assert_equals: The default value of the property is null for a MathMLMathElement instance expected (object) null but got (undefined) undefined
-FAIL onformdata: the content attribute must be compiled into a function as the corresponding property assert_equals: The onformdata property must be a function expected "function" but got "undefined"
-FAIL onformdata: dynamic changes on the attribute assert_equals: The onformdata property must be null (no attribute) expected (object) null but got (undefined) undefined
-FAIL onformdata: dispatching an Event at a <math> element must trigger element.onformdata assert_equals: The event must be fired at the <math> element expected (object) Element node <math></math> but got (undefined) undefined
+PASS onformdata: must be on the appropriate locations for GlobalEventHandlers
+PASS onformdata: the default value must be null
+PASS onformdata: the content attribute must be compiled into a function as the corresponding property
+PASS onformdata: dynamic changes on the attribute
+PASS onformdata: dispatching an Event at a <math> element must trigger element.onformdata
 PASS oninput: must be on the appropriate locations for GlobalEventHandlers
 PASS oninput: the default value must be null
 PASS oninput: the content attribute must be compiled into a function as the corresponding property
