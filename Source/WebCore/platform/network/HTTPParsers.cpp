@@ -648,7 +648,7 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
                     } else if (header[index] == '\"') {
                         value = valueBuilder.toString();
                         break;
-                    } else if ((header[index] >= 0x00 && header[index] <= 0x1F) || (header[index] >= 0x7F && header[index] <= 0xFF)) // Not in VCHAR or SP.
+                    } else if (header[index] <= 0x1F || (header[index] >= 0x7F && header[index] <= 0xFF)) // Not in VCHAR or SP.
                         return std::nullopt;
                     else
                         valueBuilder.append(header[index]);

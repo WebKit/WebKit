@@ -1,3 +1,16 @@
+2021-08-05  Rob Buis  <rbuis@igalia.com>
+
+        Fix warning in HTTPParsers.parseStructuredFieldValue
+        https://bugs.webkit.org/show_bug.cgi?id=228815
+
+        Reviewed by Sam Weinig.
+
+        UChar is unsigned, so it is not needed to check that it is
+        zewro or greater.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseStructuredFieldValue):
+
 2021-08-05  Imanol Fernandez  <ifernandez@igalia.com>
 
         Fix XR related clang warnings in WPE
