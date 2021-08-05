@@ -717,10 +717,10 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 {
     ASSERT(isMainThread());
 
+    [self _cancel];
+
     if (!self.session)
         return;
-
-    [self _cancel];
 
     if ([self.session rangeResponseGenerator].willHandleRequest(self, self.originalRequest))
         return;

@@ -1,3 +1,38 @@
+2021-08-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280623. rdar://problem/81517664
+
+    Null check self.session after calling _cancel instead of before
+    https://bugs.webkit.org/show_bug.cgi?id=228757
+    <rdar://79224868>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-08-03
+    Reviewed by Geoffrey Garen.
+    
+    _cancel already null checks self.session before using it.
+    It seems to be setting self.session to null after the null check, so move the null check to before we use it.
+    This should fix an occasional crash during teardown.
+    
+    * platform/network/cocoa/WebCoreNSURLSession.mm:
+    (-[WebCoreNSURLSessionDataTask _restart]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280623 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-03  Alex Christensen  <achristensen@webkit.org>
+
+            Null check self.session after calling _cancel instead of before
+            https://bugs.webkit.org/show_bug.cgi?id=228757
+            <rdar://79224868>
+
+            Reviewed by Geoffrey Garen.
+
+            _cancel already null checks self.session before using it.
+            It seems to be setting self.session to null after the null check, so move the null check to before we use it.
+            This should fix an occasional crash during teardown.
+
+            * platform/network/cocoa/WebCoreNSURLSession.mm:
+            (-[WebCoreNSURLSessionDataTask _restart]):
+
 2021-08-04  Russell Epstein  <repstein@apple.com>
 
         Revert r280492. rdar://problem/81522050
