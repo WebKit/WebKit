@@ -1,3 +1,13 @@
+2021-08-05  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Flatpak SDK] Update libwpe to 1.11.1
+        https://bugs.webkit.org/show_bug.cgi?id=228793
+
+        Reviewed by Alejandro G. Castro.
+
+        * elements/sdk/libwpe.bst: Bump to version 1.11.1, which includes the
+        new fullscreen API support.
+
 2021-07-28  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Dependencies update - July 2021 round
