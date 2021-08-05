@@ -1,3 +1,26 @@
+2021-08-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] RemoteAudioSessionProxyManager should use the shared audio session
+        https://bugs.webkit.org/show_bug.cgi?id=228795
+        <rdar://problem/81530450>
+
+        Reviewed by Jer Noble.
+
+        RemoteAudioSessionProxyManager creates and uses a private AudioSession, which means
+        that any code that moves from the WebProcess to the GPUProcess and uses
+        `AudioSession::sharedSession` will be using a separate platform audio session wrapper
+        object. RemoteAudioSessionProxyManager doesn't need a private AudioSession, so 
+        change it to use `AudioSession::sharedSession`.
+
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::RemoteAudioSessionProxyManager): Don't
+        create a new AudioSession.
+        (WebKit::RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager): Use
+        AudioSession::sharedSession().
+        (WebKit::RemoteAudioSessionProxyManager::updateCategory): Ditto.
+        (WebKit::RemoteAudioSessionProxyManager::setPreferredBufferSizeForProcess): Ditto.
+        (WebKit::RemoteAudioSessionProxyManager::tryToSetActiveForProcess): Ditto.
+
 2021-08-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS Monterey] Translate popover becomes detached from webpage after scrolling

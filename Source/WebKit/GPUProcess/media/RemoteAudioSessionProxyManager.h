@@ -52,8 +52,8 @@ public:
 
     bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);
 
-    WebCore::AudioSession& session() { return m_session; }
-    const WebCore::AudioSession& session() const { return m_session; }
+    WebCore::AudioSession& session() { return WebCore::AudioSession::sharedSession(); }
+    const WebCore::AudioSession& session() const { return WebCore::AudioSession::sharedSession(); }
 
 private:
     void beginAudioSessionInterruption() final;
@@ -64,7 +64,6 @@ private:
     void sampleRateDidChange(const WebCore::AudioSession&) final;
     void configurationDidChange(const WebCore::AudioSession&);
 
-    UniqueRef<WebCore::AudioSession> m_session;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;
 };
 
