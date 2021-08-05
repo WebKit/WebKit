@@ -1,3 +1,37 @@
+2021-08-04  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r280374): ASSERTION FAILED: Completion handler should not be called more than once under WebCore::MediaControlsContextMenuProvider::contextMenuItemSelected
+        https://bugs.webkit.org/show_bug.cgi?id=228725
+        <rdar://problem/81437221>
+
+        Reviewed by Eric Carlson.
+
+        The contextmenu system used by (modern) media controls are a bit wonky in that it has to
+        support both macOS and iOS, which use wildly different mechanisms. The former has distinct
+        methods for handling when a contextmenu item is selected vs when the menu is dismissed (at
+        least as of r280374). The latter has a single method that handles both. Additionally, the
+        (modern) media controls JS expects the following from `showMediaControlsContextMenu`:
+         1. `showMediaControlsContextMenu` will only `return true` if the contextmenu will be shown
+         2. the callback provided to `showMediaControlsContextMenu` will always/only be invoked when
+            the contextmenu is dismissed (regardless of whether an item is selected)
+         3. if an item is selected, the logic for that will be handled by the `MediaControlsHost`
+        This patch primarily addresses #2, but also slightly adjusts the code to fix #1. It does #1
+        by moving the call that saves the callback further down. On iOS, #2 already works. On macOS,
+        it does #2 by changing from `CompletionHandler` to `Function`, allowing it to be called more
+        than once, with the understanding that the JS callback will not be invoked more than once.
+        This way, macOS can match the behavior of iOS by eagerly invoking the JS callback when a
+        contextmenu item is selected without waiting for the menu to actually dismiss, while still
+        handling the contextmenu being dismissed without an item being selected (and also not having
+        to worry about whether the `CompletionHandler` has already been invoked).
+
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsContextMenuProvider::create):
+        (WebCore::MediaControlsContextMenuProvider::MediaControlsContextMenuProvider):
+        (WebCore::MediaControlsContextMenuProvider::didDismissContextMenu):
+        (WebCore::MediaControlsContextMenuProvider::contextMenuCleared):
+        (WebCore::MediaControlsHost::showMediaControlsContextMenu):
+
 2021-08-04  Dana Estra  <destra@apple.com>
 
         REGRESSION (r280492): Clicking backspace on sign in fields results in deleting two characters instead of one.

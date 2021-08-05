@@ -61,7 +61,7 @@
 #include "VTTCue.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
@@ -365,13 +365,13 @@ String MediaControlsHost::formattedStringForDuration(double durationInSeconds)
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
 class MediaControlsContextMenuProvider final : public ContextMenuProvider {
 public:
-    static Ref<MediaControlsContextMenuProvider> create(Vector<ContextMenuItem>&& items, CompletionHandler<void(uint64_t)>&& callback)
+    static Ref<MediaControlsContextMenuProvider> create(Vector<ContextMenuItem>&& items, Function<void(uint64_t)>&& callback)
     {
         return adoptRef(*new MediaControlsContextMenuProvider(WTFMove(items), WTFMove(callback)));
     }
 
 private:
-    MediaControlsContextMenuProvider(Vector<ContextMenuItem>&& items, CompletionHandler<void(uint64_t)>&& callback)
+    MediaControlsContextMenuProvider(Vector<ContextMenuItem>&& items, Function<void(uint64_t)>&& callback)
         : m_items(WTFMove(items))
         , m_callback(WTFMove(callback))
     {
@@ -390,8 +390,10 @@ private:
 
     void didDismissContextMenu() override
     {
-        if (m_callback)
+        if (!m_didDismiss) {
+            m_didDismiss = true;
             m_callback(ContextMenuItemTagNoAction);
+        }
     }
 
     void contextMenuItemSelected(ContextMenuAction action, const String&) override
@@ -401,8 +403,7 @@ private:
 
     void contextMenuCleared() override
     {
-        if (m_callback)
-            m_callback(ContextMenuItemTagNoAction);
+        didDismissContextMenu();
         m_items.clear();
     }
 
@@ -412,7 +413,8 @@ private:
     }
 
     Vector<ContextMenuItem> m_items;
-    CompletionHandler<void(uint64_t)> m_callback;
+    Function<void(uint64_t)> m_callback;
+    bool m_didDismiss { false };
 };
 
 class MediaControlsContextMenuEventListener final : public EventListener {
@@ -463,13 +465,6 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #if USE(UICONTEXTMENU) || (ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS))
     if (m_showMediaControlsContextMenuCallback)
         return false;
-
-    m_showMediaControlsContextMenuCallback = WTFMove(callback);
-
-    auto invokeCallbackAtScopeExit = makeScopeExit([&, protectedThis = makeRef(*this)] {
-        if (m_showMediaControlsContextMenuCallback)
-            std::exchange(m_showMediaControlsContextMenuCallback, nullptr)->handleEvent();
-    });
 
     if (!m_mediaElement)
         return false;
@@ -655,14 +650,24 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
     ASSERT(!idMap.isEmpty());
 
-    auto handleItemSelected = [weakMediaElement = makeWeakPtr(mediaElement), idMap = WTFMove(idMap), invokeCallbackAtScopeExit = WTFMove(invokeCallbackAtScopeExit)] (MenuItemIdentifier selectedItemID) {
+    m_showMediaControlsContextMenuCallback = WTFMove(callback);
+
+    auto handleItemSelected = [weakThis = makeWeakPtr(this), idMap = WTFMove(idMap)] (MenuItemIdentifier selectedItemID) {
+        if (!weakThis)
+            return;
+        Ref strongThis = *weakThis;
+
+        auto invokeCallbackAtScopeExit = makeScopeExit([strongThis] {
+            if (auto showMediaControlsContextMenuCallback = std::exchange(strongThis->m_showMediaControlsContextMenuCallback, nullptr))
+                showMediaControlsContextMenuCallback->handleEvent();
+        });
+
         if (selectedItemID == invalidMenuItemIdentifier)
             return;
 
-        if (!weakMediaElement)
+        if (!strongThis->m_mediaElement)
             return;
-
-        auto& mediaElement = *weakMediaElement;
+        auto& mediaElement = *strongThis->m_mediaElement;
 
         UserGestureIndicator gestureIndicator(ProcessingUserGesture, &mediaElement.document());
 

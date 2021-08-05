@@ -45,7 +45,7 @@ class TextTrack;
 class TextTrackList;
 class VoidCallback;
 
-class MediaControlsHost : public RefCounted<MediaControlsHost> {
+class MediaControlsHost final : public RefCounted<MediaControlsHost>, public CanMakeWeakPtr<MediaControlsHost> {
     WTF_MAKE_FAST_ALLOCATED(MediaControlsHost);
 public:
     static Ref<MediaControlsHost> create(HTMLMediaElement&);
