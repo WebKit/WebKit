@@ -1,3 +1,20 @@
+2021-08-05  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Fix XR related clang warnings in WPE
+        https://bugs.webkit.org/show_bug.cgi?id=228779
+
+        Reviewed by Sam Weinig.
+
+        Fix a few compiler warnings.
+
+        * platform/xr/openxr/OpenXRInputSource.cpp:
+        (PlatformXR::OpenXRInputSource::getButton const):
+        * platform/xr/openxr/OpenXRSwapchain.cpp:
+        (PlatformXR::OpenXRSwapchain::create):
+        (PlatformXR::OpenXRSwapchain::OpenXRSwapchain):
+        (PlatformXR::OpenXRSwapchain::acquireImage):
+        * platform/xr/openxr/OpenXRSwapchain.h:
+
 2021-08-04  Darin Adler  <darin@apple.com>
 
         Change WebSocket.cpp to @no-unify, since it’s hard to do that for someone without a Mac

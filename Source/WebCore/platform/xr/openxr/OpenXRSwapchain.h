@@ -43,10 +43,9 @@ public:
     int32_t height() const { return m_createInfo.height; }
 
 private:
-    OpenXRSwapchain(XrInstance, XrSession, XrSwapchain, const XrSwapchainCreateInfo&, Vector<XrSwapchainImageOpenGLKHR>&&);
+    OpenXRSwapchain(XrInstance, XrSwapchain, const XrSwapchainCreateInfo&, Vector<XrSwapchainImageOpenGLKHR>&&);
 
     XrInstance m_instance;
-    XrSession m_session;
     XrSwapchain m_swapchain;
     XrSwapchainCreateInfo m_createInfo;
     Vector<XrSwapchainImageOpenGLKHR> m_imageBuffers;

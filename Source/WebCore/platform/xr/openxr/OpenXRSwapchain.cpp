@@ -56,12 +56,11 @@ std::unique_ptr<OpenXRSwapchain> OpenXRSwapchain::create(XrInstance instance, Xr
     result = xrEnumerateSwapchainImages(swapchain, imageCount, &imageCount, imageHeaders[0]);
     RETURN_IF_FAILED(result, "xrEnumerateSwapchainImages with imageCount", instance, nullptr);
 
-    return std::unique_ptr<OpenXRSwapchain>(new OpenXRSwapchain(instance, session, swapchain, info, WTFMove(imageBuffers)));
+    return std::unique_ptr<OpenXRSwapchain>(new OpenXRSwapchain(instance, swapchain, info, WTFMove(imageBuffers)));
 }
 
-OpenXRSwapchain::OpenXRSwapchain(XrInstance instance, XrSession session, XrSwapchain swapchain, const XrSwapchainCreateInfo& info, Vector<XrSwapchainImageOpenGLKHR>&& imageBuffers)
+OpenXRSwapchain::OpenXRSwapchain(XrInstance instance, XrSwapchain swapchain, const XrSwapchainCreateInfo& info, Vector<XrSwapchainImageOpenGLKHR>&& imageBuffers)
     : m_instance(instance)
-    , m_session(session)
     , m_swapchain(swapchain)
     , m_createInfo(info)
     , m_imageBuffers(WTFMove(imageBuffers))
@@ -78,6 +77,10 @@ OpenXRSwapchain::~OpenXRSwapchain()
 
 std::optional<PlatformGLObject> OpenXRSwapchain::acquireImage()
 {
+#if LOG_DISABLED
+    UNUSED_VARIABLE(m_instance);
+#endif
+
     RELEASE_ASSERT_WITH_MESSAGE(!m_acquiredTexture , "Expected no acquired images. ReleaseImage not called?");
 
     auto acquireInfo = createStructure<XrSwapchainImageAcquireInfo, XR_TYPE_SWAPCHAIN_IMAGE_ACQUIRE_INFO>();

@@ -300,7 +300,7 @@ std::optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton
     auto& actions = it->value;
 
     auto queryActionState = [this, &hasValue](XrAction action, auto& value, auto defaultValue) {
-        if (action != XR_NULL_HANDLE && XR_SUCCEEDED(getActionState(action, &value)))
+        if (action != XR_NULL_HANDLE && XR_SUCCEEDED(this->getActionState(action, &value)))
             hasValue = true;
         else
             value = defaultValue;

@@ -76,10 +76,10 @@ Vector<PlatformXR::Device::ViewData> XRDeviceProxy::views(SessionMode mode) cons
 {
     Vector<Device::ViewData> views;
     if (m_supportsStereoRendering && mode == SessionMode::ImmersiveVr) {
-        views.append({ .active = true, Eye::Left });
-        views.append({ .active = true, Eye::Right });
+        views.append({ .active = true, .eye = Eye::Left });
+        views.append({ .active = true, .eye = Eye::Right });
     } else
-        views.append({ .active = true, Eye::None });
+        views.append({ .active = true, .eye = Eye::None });
     return views;
 }
 
