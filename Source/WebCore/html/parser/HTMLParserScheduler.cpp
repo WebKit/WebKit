@@ -91,7 +91,7 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
 
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
-    if (m_parser.document()->isLayoutTimerActive()) {
+    if (m_parser.document()->isLayoutPending()) {
         m_continueNextChunkTimer.startOneShot(0_s);
         return;
     }

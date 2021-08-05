@@ -3246,7 +3246,7 @@ bool Document::shouldScheduleLayout() const
     return true;
 }
     
-bool Document::isLayoutTimerActive() const
+bool Document::isLayoutPending() const
 {
     return view() && view()->layoutContext().isLayoutPending();
 }

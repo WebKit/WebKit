@@ -735,7 +735,7 @@ public:
     bool parsing() const { return m_bParsing; }
 
     bool shouldScheduleLayout() const;
-    bool isLayoutTimerActive() const;
+    bool isLayoutPending() const;
 #if !LOG_DISABLED
     Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
 #endif
