@@ -136,9 +136,16 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-attributes)
     endif ()
 
+    # Since GCC 11, these warnings produce too many false positives to be useful. We'll rely on
+    # developers who build with Clang to notice these warnings.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-array-bounds)
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-nonnull)
+    endif ()
+
     # -Wexpansion-to-defined produces false positives with GCC but not Clang
     # https://bugs.webkit.org/show_bug.cgi?id=167643#c13
-    if (CMAKE_COMPILER_IS_GNUCXX)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-expansion-to-defined)
     endif ()
 

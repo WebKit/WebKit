@@ -142,13 +142,11 @@ public:
         // https://bugs.webkit.org/show_bug.cgi?id=197754
         uintptr_t value = 0;
 
-IGNORE_ARRAY_BOUNDS_WARNINGS_BEGIN
 #if CPU(LITTLE_ENDIAN)
         memcpy(&value, m_storage.data(), storageSize);
 #else
         memcpy(bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), m_storage.data(), storageSize);
 #endif
-IGNORE_ARRAY_BOUNDS_WARNINGS_END
 
         if (isAlignmentShiftProfitable)
             value <<= alignmentShiftSize;

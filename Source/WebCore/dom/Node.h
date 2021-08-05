@@ -795,9 +795,7 @@ ALWAYS_INLINE void Node::deref() const
 #if ASSERT_ENABLED
         m_inRemovedLastRefFunction = true;
 #endif
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
         const_cast<Node&>(*this).removedLastRef();
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
         return;
     }
     m_refCountAndParentBit = updatedRefCount;

@@ -38,10 +38,8 @@ template<typename T> struct DefaultRefDerefTraits {
 
     static ALWAYS_INLINE void derefIfNotNull(T* ptr)
     {
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
         if (LIKELY(ptr != nullptr))
             ptr->deref();
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
     }
 };
 

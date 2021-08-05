@@ -70,9 +70,7 @@ public:
         // the appropriate subclass type.
         unsigned tempRefCount = m_refCount - refCountIncrement;
         if (!tempRefCount) {
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
             destroy();
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
             return;
         }
         m_refCount = tempRefCount;

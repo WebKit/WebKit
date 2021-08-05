@@ -234,9 +234,7 @@ ALWAYS_INLINE bool Bitmap<bitmapSize, WordType>::concurrentTestAndClear(size_t n
 template<size_t bitmapSize, typename WordType>
 inline void Bitmap<bitmapSize, WordType>::clear(size_t n)
 {
-IGNORE_ARRAY_BOUNDS_WARNINGS_BEGIN
     bits[n / wordSize] &= ~(one << (n % wordSize));
-IGNORE_ARRAY_BOUNDS_WARNINGS_END
 }
 
 template<size_t bitmapSize, typename WordType>

@@ -253,9 +253,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
         return;
     }
 
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
     auto slowPaths = info->emitFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes);
-IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
     auto doneLocation = label();
     addSlowCase(slowPaths);
 

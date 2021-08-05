@@ -1,3 +1,17 @@
+2021-08-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        GCC 11 builds should use -Wno-array-bounds, -Wno-nonnull
+        https://bugs.webkit.org/show_bug.cgi?id=228601
+
+        Reviewed by Carlos Garcia Campos.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::deref):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::deref const):
+        * dom/Node.h:
+        (WebCore::Node::deref const):
+
 2021-08-05  Rob Buis  <rbuis@igalia.com>
 
         Fix warning in HTTPParsers.parseStructuredFieldValue

@@ -1,3 +1,22 @@
+2021-08-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        GCC 11 builds should use -Wno-array-bounds, -Wno-nonnull
+        https://bugs.webkit.org/show_bug.cgi?id=228601
+
+        Reviewed by Carlos Garcia Campos.
+
+        Prior to GCC 11, these were good warnings that could catch serious errors. But GCC 11 has
+        just become too sensitive and it's flagging what appear to be harmless cases, and not
+        providing enough feedback to know why. This has resulted in me littering our code with
+        pragmas to suppress GCC's false positives, and I think it's reached the point where it's
+        nicer to just turn off the warnings until such time that GCC gets this under control, and
+        rely on Clang instead in the meantime.
+
+        The GCC developers have indicated that these warnings will *always* produce false positives
+        in some circumstances, but with GCC 11 it's just too become too much IMO.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-07-30  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Fix fallback methods in the libgcrypt find module

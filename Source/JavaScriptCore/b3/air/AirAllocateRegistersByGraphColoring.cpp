@@ -1466,10 +1466,7 @@ public:
         if (!reg) {
             dataLog("FATAL: No color for ", tmp, "\n");
             dataLog("Code:\n");
-// https://bugs.webkit.org/show_bug.cgi?id=224782
-IGNORE_ARRAY_BOUNDS_WARNINGS_BEGIN
             dataLog(m_code);
-IGNORE_ARRAY_BOUNDS_WARNINGS_END
             RELEASE_ASSERT_NOT_REACHED();
         }
         return reg;
@@ -1484,15 +1481,12 @@ protected:
 
     void initializePrecoloredTmp()
     {
-// https://bugs.webkit.org/show_bug.cgi?id=224782
-IGNORE_ARRAY_BOUNDS_WARNINGS_BEGIN
         m_coloredTmp.resize(m_lastPrecoloredRegisterIndex + 1);
         for (unsigned i = 1; i <= m_lastPrecoloredRegisterIndex; ++i) {
             Tmp tmp = TmpMapper::tmpFromAbsoluteIndex(i);
             ASSERT(tmp.isReg());
             m_coloredTmp[i] = tmp.reg();
         }
-IGNORE_ARRAY_BOUNDS_WARNINGS_END
     }
 
     bool mayBeCoalesced(Arg left, Arg right)
