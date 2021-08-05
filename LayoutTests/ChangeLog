@@ -1,3 +1,10 @@
+2021-08-05  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GStreamer MSE microgardening
+        https://bugs.webkit.org/show_bug.cgi?id=228823
+
+        * platform/glib/TestExpectations:
+
 2021-08-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust editing/deleting/ios/backspace-last-character.html to check that pressing backspace deletes one character

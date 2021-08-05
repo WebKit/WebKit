@@ -574,6 +574,10 @@ webkit.org/b/179258 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 
+# Need changes in the demuxers and AppendPipeline to enable aborts not followed by an initialization segment:
+webkit.org/b/228820 media/media-source/media-mp4-h264-partial-abort.html [ Failure ]
+webkit.org/b/228820 media/media-source/media-webm-opus-partial-abort.html [ Failure ]
+
 webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Crash Pass ]
 
 # See also bug #175578.
