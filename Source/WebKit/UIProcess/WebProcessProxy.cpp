@@ -1245,7 +1245,7 @@ void WebProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         UNUSED_PARAM(this);
 #endif
         completionHandler(WTFMove(reply));
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "fetchWebsiteData: Teleasing a background assertion because the Web process is done fetching Website data");
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "fetchWebsiteData: Releasing a background assertion because the Web process is done fetching Website data");
     });
 }
 
@@ -1261,7 +1261,7 @@ void WebProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Webs
         UNUSED_PARAM(this);
 #endif
         completionHandler();
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "deleteWebsiteData: Teleasing a background assertion because the Web process is done deleting Website data");
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "deleteWebsiteData: Releasing a background assertion because the Web process is done deleting Website data");
     });
 }
 

@@ -1,3 +1,16 @@
+2021-08-05  Kate Cheney  <katherine_cheney@apple.com>
+
+        LoadWebArchive.FailNavigation1 test is a false positive
+        https://bugs.webkit.org/show_bug.cgi?id=228848
+        <rdar://problem/81587448>
+
+        Reviewed by Brent Fulgham.
+
+        Update LoadWebArchive.FailNavigation1 to test the case of a webarchive
+        being loaded with a host for better test coverage.
+
+        * TestWebKitAPI/Tests/mac/load-web-archive-1.html:
+
 2021-08-05  Zan Dobersek  <zdobersek@igalia.com>
 
         run-jsc-stress-tests: detect the riscv64 architecture
