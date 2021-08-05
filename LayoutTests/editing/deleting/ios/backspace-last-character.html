@@ -6,7 +6,7 @@
 </head>
 <body>
 <div id="test-container">
-    <textarea id="input"></textarea>
+    <textarea id="input">H</textarea>
     <textarea id="output" readonly></textarea>
 </div>
 <script>
@@ -36,13 +36,13 @@ async function runTest()
     console.log("Waiting for element focus.");
     await new Promise(resolve => shouldBecomeEqual("inputDidFocus", "true", resolve));
 
-    console.log("Typing 'w'.");
+    console.log("Typing 'i'.");
     if (window.testRunner)
-        await UIHelper.keyDown("w");
+        await UIHelper.keyDown("i");
 
     console.log("Waiting for first input event.");
     await new Promise(resolve => shouldBecomeEqual("inputEventCount", "1", resolve));
-    shouldBeEqualToString('document.getElementById("input").value', "w");
+    shouldBeEqualToString('document.getElementById("input").value', "Hi");
 
     console.log("Hitting backspace.");
     if (window.testRunner)
@@ -50,6 +50,14 @@ async function runTest()
 
     console.log("Waiting for second input event.");
     await new Promise(resolve => shouldBecomeEqual("inputEventCount", "2", resolve));
+    shouldBeEqualToString('document.getElementById("input").value', "H");
+
+    console.log("Hitting backspace again.");
+    if (window.testRunner)
+        await UIHelper.keyDown("\b");
+
+    console.log("Waiting for third input event.");
+    await new Promise(resolve => shouldBecomeEqual("inputEventCount", "3", resolve));
     shouldBeEqualToString('document.getElementById("input").value', "");
 
     console.log("Test complete.");
@@ -57,7 +65,7 @@ async function runTest()
     finishJSTest();
 }
 
-description("This tests using the software keyboard and pressing 'w' then <kbd>backspace</kbd> deletes the 'w' and does not cause an assertion failure in a debug build.");
+description("This tests using the software keyboard and pressing 'i' then <kbd>backspace</kbd> twice to delete 'Hi'. This should not cause a debug assertion.");
 input.addEventListener("keydown", appendANewline);
 
 runTest();
