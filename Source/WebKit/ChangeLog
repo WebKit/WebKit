@@ -1,3 +1,32 @@
+2021-08-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280606. rdar://problem/81475582
+
+    [iOS] Fix sandbox violation in GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=228743
+    <rdar://problem/81334849>
+    
+    Reviewed by Brent Fulgham.
+    
+    Allow reading "hw.product" in the GPU process' sandbox.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280606 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-03  Per Arne  <pvollan@apple.com>
+
+            [iOS] Fix sandbox violation in GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=228743
+            <rdar://problem/81334849>
+
+            Reviewed by Brent Fulgham.
+
+            Allow reading "hw.product" in the GPU process' sandbox.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-08-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r280603. rdar://problem/81473647
