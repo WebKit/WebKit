@@ -26,6 +26,7 @@
 #include "WriteBarrier.h"
 #include <wtf/HashTable.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringImpl.h>
 
@@ -548,13 +549,13 @@ inline T* PropertyTable::skipDeletedEntries(T* valuePtr, T* endValuePtr)
 inline PropertyTable::ValueType* PropertyTable::table()
 {
     // The table of values lies after the hash index.
-    return reinterpret_cast<ValueType*>(m_index + m_indexSize);
+    return reinterpret_cast_ptr<ValueType*>(m_index + m_indexSize);
 }
 
 inline const PropertyTable::ValueType* PropertyTable::table() const
 {
     // The table of values lies after the hash index.
-    return reinterpret_cast<const ValueType*>(m_index + m_indexSize);
+    return reinterpret_cast_ptr<const ValueType*>(m_index + m_indexSize);
 }
 
 inline unsigned PropertyTable::usedCount() const

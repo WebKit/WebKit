@@ -1,3 +1,20 @@
+2021-08-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use reinterpret_cast_ptr in KeywordLookupGenerator, PropertyMapHashTable
+        https://bugs.webkit.org/show_bug.cgi?id=228819
+
+        Reviewed by Adrian Perez de Castro.
+
+        Switch to using reinterpret_cast_ptr in KeywordLookupGenerator (which
+        generates the KeywordLookup.h header) and PropertyMapHashTable, reducing
+        a bit the GCC warning spewage when compiling for targets benefitting
+        from the reinterpret_cast_ptr workaround.
+
+        * KeywordLookupGenerator.py:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::table):
+        (JSC::PropertyTable::table const):
+
 2021-08-04  Yijia Huang  <yijia_huang@apple.com>
 
         [ARM64] Fix Zoom black screen during video meeting on Safari
