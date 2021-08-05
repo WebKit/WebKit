@@ -57,6 +57,8 @@ public:
     void enableAllDevicesQuery();
     void disableAllDevicesQuery();
 
+    void setPreferredAudioSessionDeviceUID(const String&);
+
 private:
     AVAudioSessionCaptureDeviceManager();
     ~AVAudioSessionCaptureDeviceManager();

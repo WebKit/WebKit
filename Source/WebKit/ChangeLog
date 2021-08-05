@@ -1,3 +1,16 @@
+2021-08-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] getUserMedia sometimes doesn't capture from specified microphone
+        https://bugs.webkit.org/show_bug.cgi?id=228753
+        rdar://79704226
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp: Re
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::audioUnitWillStart): Delete,
+        we don't need it now that the web process configures the audio session before
+        capture begins.
+
 2021-08-05  Youenn Fablet  <youenn@apple.com>
 
         GPUProcessProxy should send tccd mach lookup sandbox extension

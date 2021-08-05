@@ -144,12 +144,29 @@ std::optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::a
     return std::nullopt;
 }
 
+void AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceUID(const String& deviceUID)
+{
+    AVAudioSessionPortDescription *preferredPort = nil;
+    NSString *nsDeviceUID = deviceUID;
+    for (AVAudioSessionPortDescription *portDescription in [m_audioSession availableInputs]) {
+        if ([portDescription.UID isEqualToString:nsDeviceUID]) {
+            preferredPort = portDescription;
+            break;
+        }
+    }
+
+    if (!preferredPort) {
+        RELEASE_LOG_ERROR(WebRTC, "failed to find preferred input '%{public}s'", deviceUID.ascii().data());
+        return;
+    }
+
+    NSError *error = nil;
+    if (![[PAL::getAVAudioSessionClass() sharedInstance] setPreferredInput:preferredPort error:&error])
+        RELEASE_LOG_ERROR(WebRTC, "failed to set preferred input to '%{public}s' with error: %@", deviceUID.ascii().data(), error.localizedDescription);
+}
+
 void AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices()
 {
-    if (m_recomputeDevices)
-        return;
-
-    m_recomputeDevices = true;
     computeCaptureDevices([] { });
 }
 
@@ -180,13 +197,9 @@ void AVAudioSessionCaptureDeviceManager::computeCaptureDevices(CompletionHandler
         });
     }
 
-    if (!m_recomputeDevices)
-        return;
-
     m_dispatchQueue->dispatch([this, completion = WTFMove(completion)] () mutable {
         auto newAudioDevices = retrieveAudioSessionCaptureDevices();
         callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = WTFMove(newAudioDevices).isolatedCopy()] () mutable {
-            m_recomputeDevices = false;
             setAudioCaptureDevices(WTFMove(newAudioDevices));
             completion();
         }).get());
@@ -220,17 +233,34 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
 void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&& newAudioDevices)
 {
     bool firstTime = !m_devices;
-    bool haveDeviceChanges = !m_devices || newAudioDevices.size() != m_devices->size();
-    if (!haveDeviceChanges) {
-        for (size_t i = 0; i < newAudioDevices.size(); ++i) {
-            auto& oldState = (*m_devices)[i];
-            auto& newState = newAudioDevices[i];
-            if (newState.type() != oldState.type() || newState.persistentId() != oldState.persistentId() || newState.enabled() != oldState.enabled() || newState.isDefault() != oldState.isDefault())
-                haveDeviceChanges = true;
+    bool deviceListChanged = newAudioDevices.size() != m_devices->size();
+    bool defaultDeviceChanged = false;
+    if (!deviceListChanged && !firstTime) {
+        for (auto& newState : newAudioDevices) {
+
+            std::optional<CaptureDevice> oldState;
+            for (const auto& device : m_devices.value()) {
+                if (device.type() == newState.type() && device.persistentId() == newState.persistentId()) {
+                    oldState = device;
+                    break;
+                }
+            }
+
+            if (!oldState.has_value()) {
+                deviceListChanged = true;
+                break;
+            }
+            if (newState.isDefault() != oldState.value().isDefault())
+                defaultDeviceChanged  = true;
+
+            if (newState.enabled() != oldState.value().enabled()) {
+                deviceListChanged = true;
+                break;
+            }
         }
     }
 
-    if (!haveDeviceChanges && !firstTime)
+    if (!deviceListChanged && !firstTime && !defaultDeviceChanged)
         return;
 
     auto newDevices = copyToVectorOf<CaptureDevice>(newAudioDevices);
@@ -240,7 +270,7 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
     });
     m_devices = WTFMove(newDevices);
 
-    if (!firstTime)
+    if (deviceListChanged && !firstTime)
         deviceChanged();
 }
 

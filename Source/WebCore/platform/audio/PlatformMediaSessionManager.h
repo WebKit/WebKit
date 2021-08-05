@@ -181,9 +181,8 @@ protected:
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }
-#if USE(AUDIO_SESSION)
     void maybeDeactivateAudioSession();
-#endif
+    bool maybeActivateAudioSession();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
