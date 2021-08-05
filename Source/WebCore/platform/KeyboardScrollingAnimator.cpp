@@ -191,6 +191,7 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
         case Key::Space:
             return ScrollGranularity::ScrollByPage;
         };
+        RELEASE_ASSERT_NOT_REACHED();
     }();
 
     auto direction = [&] {
@@ -206,6 +207,7 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
         case Key::Space:
             return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }();
 
     float distance = scrollDistance(direction, granularity);
