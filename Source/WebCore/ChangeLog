@@ -1,3 +1,21 @@
+2021-08-05  Andres Gonzalez  <andresg_22@apple.com>
+
+        VoiceOver is not announcing the state as selected/unselected when an item is selected in a grid.
+        https://bugs.webkit.org/show_bug.cgi?id=228840
+        <rdar://78225826>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/selected-state-changed-notifications.html.
+
+        On iOS, a table/grid cell element is not exposed to AX clients. Instead
+        the content of the cell is. This patch ensures that if the cell element
+        is selected, the AX objects that represent the content inside the cell
+        will inherit the selected state from the cell.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityTraitsFromAncestors]):
+
 2021-08-05  Tim Nguyen  <ntim@apple.com>
 
         Implement support for <dialog> element cancel event

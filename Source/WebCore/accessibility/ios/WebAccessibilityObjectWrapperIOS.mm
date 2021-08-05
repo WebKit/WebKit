@@ -697,6 +697,11 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         case AccessibilityRole::Heading:
             traits |= [self _axHeaderTrait];
             break;
+        case AccessibilityRole::Cell:
+        case AccessibilityRole::GridCell:
+            if (parent->isSelected())
+                traits |= [self _axSelectedTrait];
+            break;
         default:
             if ([self _accessibilityIsLandmarkRole:parentRole])
                 traits |= [self _axContainedByLandmarkTrait];

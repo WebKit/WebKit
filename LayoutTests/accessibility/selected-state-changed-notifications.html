@@ -31,6 +31,7 @@
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
+        var platform = accessibilityController.platformName;
 
         var notificationCount = 0;
         accessibilityController.addNotificationListener((axElement, notification) => {
@@ -42,6 +43,10 @@
 
         var axSelectable = accessibilityController.accessibleElementById("selectable");
         shouldBeFalse("axSelectable.isSelected");
+        // On iOS, the cell element is not exposed to clients, but instead its content.
+        // So make sure that the selected state of the contained static text matches the state of the cell.
+        if (platform == "ios")
+            shouldBeFalse("axSelectable.children[0].isSelected");
 
         axSelectable.press();
         setTimeout(async () => {
@@ -49,12 +54,16 @@
                 return notificationCount == 1;
             });
             shouldBeTrue("axSelectable.isSelected");
+            if (platform == "ios")
+                shouldBeTrue("axSelectable.children[0].isSelected");
 
             axSelectable.press();
             await waitFor(() => {
                 return notificationCount == 2;
             });
             shouldBeFalse("axSelectable.isSelected");
+            if (platform == "ios")
+                shouldBeFalse("axSelectable.children[0].isSelected");
 
             finishJSTest();
         }, 0);

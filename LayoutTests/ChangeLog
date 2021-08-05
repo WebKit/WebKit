@@ -1,3 +1,15 @@
+2021-08-05  Andres Gonzalez  <andresg_22@apple.com>
+
+        VoiceOver is not announcing the state as selected/unselected when an item is selected in a grid.
+        https://bugs.webkit.org/show_bug.cgi?id=228840
+        <rdar://78225826>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/selected-state-changed-notifications.html:
+        * platform/ios/TestExpectations:
+        * platform/ios/accessibility/selected-state-changed-notifications-expected.txt: Added.
+
 2021-08-05  Tim Nguyen  <ntim@apple.com>
 
         Implement support for <dialog> element cancel event
