@@ -1,3 +1,15 @@
+2021-08-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Avoid reinterpret_cast alignment increase warnings with GCC on CPU(RISCV64)
+        https://bugs.webkit.org/show_bug.cgi?id=228818
+
+        Reviewed by Adrian Perez de Castro.
+
+        * wtf/StdLibExtras.h: As with 32-bit ARM and MIPS targets, RISC-V 64-bit
+        builds with GCC also spawn warnings when the use of reinterpret_cast
+        causes an increase in alignment. Workaround via reinterpret_cast_ptr is
+        thus required for CPU(RISCV64).
+
 2021-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Tweak the formatting for passing NSArrays to TextStreams
