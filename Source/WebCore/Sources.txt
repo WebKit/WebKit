@@ -323,7 +323,7 @@ Modules/webdriver/NavigatorWebDriver.cpp
 Modules/websockets/CloseEvent.cpp
 Modules/websockets/ThreadableWebSocketChannel.cpp
 Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
-Modules/websockets/WebSocket.cpp
+Modules/websockets/WebSocket.cpp @no-unify
 Modules/websockets/WebSocketChannel.cpp
 Modules/websockets/WebSocketChannelInspector.cpp
 Modules/websockets/WebSocketDeflateFramer.cpp
