@@ -1,3 +1,14 @@
+2021-08-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        run-jsc-stress-tests: detect the riscv64 architecture
+        https://bugs.webkit.org/show_bug.cgi?id=228817
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Scripts/run-jsc-stress-tests: Detect the riscv64 architecture when
+        examining ELF binaries. For the moment, this architecture should be
+        marked as not supporting FTL.
+
 2021-08-04  Peng Liu  <peng.liu6@apple.com>
 
         [Catalina][GPUP] Some API tests fail after GPU Process features are enabled

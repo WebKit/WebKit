@@ -422,6 +422,8 @@ def determineArchitectureFromELFBinary
 
     # MIPS and PowerPC may be either big- or little-endian. S390 (which includes
     # S390x) is big-endian. The rest are little-endian.
+    # For RISC-V, to avoid encoding problems, construct the comparison string
+    # by packing a char array matching the ELF's RISC-V machine value.
     code = data[18, 20]
     case code
     when "\x03\0"
@@ -446,6 +448,8 @@ def determineArchitectureFromELFBinary
         "x86-64"
     when "\xB7\0"
         "arm64"
+    when [243, 0].pack("cc")
+        "riscv64"
     else
         $stderr.puts "Warning: unable to determine architecture from code: #{code}"
         nil
@@ -513,7 +517,7 @@ end
 
 $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
-$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $hostOS == "windows" || $hostOS == "playstation")
+$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "windows" || $hostOS == "playstation")
 
 if $architecture == "x86"
     # The JIT is temporarily disabled on this platform since
