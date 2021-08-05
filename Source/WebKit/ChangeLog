@@ -1,5 +1,50 @@
 2021-08-05  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280639. rdar://problem/81568951
+
+    [GPU Process] REGRESSION: iCloud Photos Web app may crash WebProcess once the GPUProcess is relaunched
+    https://bugs.webkit.org/show_bug.cgi?id=228665
+    
+    Reviewed by Simon Fraser.
+    
+    When the GPUProcess is relaunched, ensure NativeImage is detached from
+    the RemoteResourceCacheProxy once it is removed from its m_nativeImages.
+    
+    Otherwise the NativeImage later will ask RemoteResourceCacheProxy to
+    release its corresponding NativeImage from RemoteResourceCache even
+    though it was destroyed when the GPUProcess was relaunched.
+    
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+    (WebKit::RemoteResourceCacheProxy::~RemoteResourceCacheProxy):
+    (WebKit::RemoteResourceCacheProxy::clearNativeImageMap):
+    (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280639 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-04  Said Abou-Hallawa  <said@apple.com>
+
+            [GPU Process] REGRESSION: iCloud Photos Web app may crash WebProcess once the GPUProcess is relaunched
+            https://bugs.webkit.org/show_bug.cgi?id=228665
+
+            Reviewed by Simon Fraser.
+
+            When the GPUProcess is relaunched, ensure NativeImage is detached from
+            the RemoteResourceCacheProxy once it is removed from its m_nativeImages.
+
+            Otherwise the NativeImage later will ask RemoteResourceCacheProxy to
+            release its corresponding NativeImage from RemoteResourceCache even
+            though it was destroyed when the GPUProcess was relaunched.
+
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+            (WebKit::RemoteResourceCacheProxy::~RemoteResourceCacheProxy):
+            (WebKit::RemoteResourceCacheProxy::clearNativeImageMap):
+            (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
+2021-08-05  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r280606. rdar://problem/81475582
 
     [iOS] Fix sandbox violation in GPU process

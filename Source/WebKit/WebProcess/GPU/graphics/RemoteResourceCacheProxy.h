@@ -79,6 +79,8 @@ private:
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, FontState>;
     
     void releaseNativeImage(WebCore::RenderingResourceIdentifier) override;
+    void clearNativeImageMap();
+
     void finalizeRenderingUpdateForFonts();
     void prepareForNextRenderingUpdate();
     void clearFontMap();

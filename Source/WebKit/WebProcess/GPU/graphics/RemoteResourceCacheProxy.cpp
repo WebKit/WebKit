@@ -41,8 +41,7 @@ RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& 
 
 RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 {
-    for (auto& nativeImageState : m_nativeImages.values())
-        nativeImageState.image->removeObserver(*this);
+    clearNativeImageMap();
 }
 
 void RemoteResourceCacheProxy::cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
@@ -153,6 +152,13 @@ void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier re
     m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier, useCount);
 }
 
+void RemoteResourceCacheProxy::clearNativeImageMap()
+{
+    for (auto& nativeImageState : m_nativeImages.values())
+        nativeImageState.image->removeObserver(*this);
+    m_nativeImages.clear();
+}
+
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
 {
     m_numberOfFontsUsedInCurrentRenderingUpdate = 0;
@@ -204,7 +210,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
         item.useCount = 0;
         item.imageBuffer->clearBackend();
     }
-    m_nativeImages.clear();
+    clearNativeImageMap();
     clearFontMap();
 }
 
