@@ -117,6 +117,7 @@ public:
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 
     MediaTime currentMediaTime() const final;
+    void outputMediaDataWillChange();
 
 private:
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -435,6 +436,7 @@ private:
     mutable bool m_allowsWirelessVideoPlayback { true };
     bool m_shouldPlayToPlaybackTarget { false };
 #endif
+    bool m_runningModalPaint { false };
 };
 
 }

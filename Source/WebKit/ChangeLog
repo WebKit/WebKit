@@ -1,3 +1,19 @@
+2021-08-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+        <rdar://problem/81336280>
+
+        Reviewed by Eric Carlson.
+
+        Drive-by fix: we're passing the wrong value into acceleratedRenderingStateChanged(), and
+        we're not setting the correct initial value on MediaPlayerPrivateRemote creation.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+
 2021-08-06  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION: ASSERTION FAILED: !DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord

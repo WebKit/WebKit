@@ -1,3 +1,44 @@
+2021-08-06  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+        <rdar://problem/81336280>
+
+        Reviewed by Eric Carlson.
+
+        A much more minimal approach to removing support for AVAssetImageGenerator.
+
+        The only time we use an AVAssetImageGenerator (as opposed to an AVPlayerItemVideoOutput)
+        is when the latter does not currently have an available image enqueued. Because painting
+        is a synchronous operation, we use a synchronous API (the generator) to create an image
+        for that operation. However, this can create deadlocks if (for example) the resource needs
+        to load data on the main thread in order to complete the painting operation.
+
+        Instead, allow the main runloop to spin while waiting (up to 1_s) for the video output
+        to receive a decoded frame.
+
+        Drive-by fixes:
+        - Don't create an AVPlayerLayer at AVPlayer-creation; this causes the AVPlayerItemVideoOutput
+          to never receive a decoded frambe (as the layer is not in a CALayer-heirarchy).
+        - preferredRenderingMode() shouldn't be "none" when the page isn't visible. We already
+          just mark the layer as "hidden" in that case.
+        - Don't tear down the AVPlayerItemVideoOutput when creating an AVPlayerLayer; it'll just
+          get re-created anyway.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::preferredRenderingMode const):
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (-[WebCoreAVFPullDelegate setParent:]):
+
 2021-08-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r274038): Keyframe animation with top/left with percentages fails to animate

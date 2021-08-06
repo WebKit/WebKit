@@ -105,7 +105,7 @@ MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundatio
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::preferredRenderingMode() const
 {
-    if (!m_visible || assetStatus() == MediaPlayerAVAssetStatusUnknown)
+    if (assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaRenderingNone;
 
     if (supportsAcceleratedRendering() && m_player->renderingCanBeAccelerated())
@@ -122,18 +122,16 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
     MediaRenderingMode currentMode = currentRenderingMode();
     MediaRenderingMode preferredMode = preferredRenderingMode();
 
-    if (preferredMode == MediaRenderingNone)
-        preferredMode = MediaRenderingToContext;
-
     if (currentMode == preferredMode && currentMode != MediaRenderingNone)
         return;
 
-    if (currentMode != MediaRenderingNone)
-        tearDownVideoRendering();
-
     switch (preferredMode) {
     case MediaRenderingNone:
+        tearDownVideoRendering();
+        break;
+
     case MediaRenderingToContext:
+        destroyVideoLayer();
         createContextVideoRenderer();
         break;
 
