@@ -39,6 +39,8 @@
 static const size_t kB = 1024;
 static const size_t MB = kB * kB;
 
+namespace {
+
 struct Object {
     Object(void* pointer, size_t size, long uuid)
         : pointer(pointer)
@@ -122,6 +124,8 @@ void deallocate(const Object& object)
 
     mbfree(object.pointer, object.size);
 }
+
+} // anonymous namespace
 
 void benchmark_stress(CommandLine&)
 {

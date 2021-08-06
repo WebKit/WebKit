@@ -34,10 +34,14 @@
 
 using namespace std;
 
+namespace {
+
 struct Object {
     double* p;
     size_t size;
 };
+
+}
 
 void benchmark_big(CommandLine& commandLine)
 {
