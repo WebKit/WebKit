@@ -1,3 +1,16 @@
+2021-08-06  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION: ASSERTION FAILED: !DeprecatedGlobalSettings::shouldManageAudioSessionCategory() || AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord
+        https://bugs.webkit.org/show_bug.cgi?id=228847
+        <rdar://problem/81587101>
+
+        Reviewed by Jer Noble.
+
+        No new tests, fixes a crashing test.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::audioUnitWillStart): Restore.
+
 2021-08-05  Kate Cheney  <katherine_cheney@apple.com>
 
         LoadWebArchive.FailNavigation1 test is a false positive
