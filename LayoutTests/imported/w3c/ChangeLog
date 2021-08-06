@@ -1,3 +1,16 @@
+2021-08-06  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r274038): Keyframe animation with top/left with percentages fails to animate
+        https://bugs.webkit.org/show_bug.cgi?id=228811
+        <rdar://problem/81568266>
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-position/animations/bottom-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/left-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/right-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/top-composition-expected.txt:
+
 2021-08-05  Tim Nguyen  <ntim@apple.com>
 
         Implement support for <dialog> element cancel event
