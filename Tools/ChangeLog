@@ -11,6 +11,20 @@
 
         * TestWebKitAPI/Tests/mac/load-web-archive-1.html:
 
+2021-08-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r279855): TestWebKitAPI.AppleLanguagesTest.UpdateAppleLanguages is failing
+        https://bugs.webkit.org/show_bug.cgi?id=228309
+
+        Unreviewed test gardening.
+
+        This test has been skipped on Apple Silicon because of timeouts, and
+        now it is a flaky failure on Intel machines. Disable it outright for
+        the time be ing.
+
+        * TestWebKitAPI/Tests/WebKit/OverrideAppleLanguagesPreference.mm:
+        (TEST_F):
+
 2021-08-05  Zan Dobersek  <zdobersek@igalia.com>
 
         run-jsc-stress-tests: detect the riscv64 architecture

@@ -58,8 +58,7 @@ TEST(WebKit, OverrideAppleLanguagesPreference)
 
 // On older macOSes, CFPREFS_DIRECT_MODE is disabled and the WebProcess does not see the updated AppleLanguages
 // after the AppleLanguagePreferencesChangedNotification notification.
-// FIXME: This test is currently disabled on Apple Silicon because it times out there (https://bugs.webkit.org/show_bug.cgi?id=222619).
-#if PLATFORM(MAC) && ENABLE(CFPREFS_DIRECT_MODE) && CPU(X86_64)
+#if PLATFORM(MAC) && ENABLE(CFPREFS_DIRECT_MODE)
 class AppleLanguagesTest : public testing::Test {
 public:
     AppleLanguagesTest()
@@ -109,7 +108,8 @@ static WKPreferenceObserver *preferenceDidChangeMethodOverride(id self, SEL sele
     return observer;
 }
 
-TEST_F(AppleLanguagesTest, UpdateAppleLanguages)
+// FIXME: This test times out on Apple Silicon (webkit.org/b/222619) and is a flaky failure on Intel (webkit.org/b/228309)
+TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
 {
     preferenceObserverSharedInstanceCalled = false;
     Method sharedInstanceMethod = class_getClassMethod(objc_getClass("WKPreferenceObserver"), @selector(sharedInstance));
