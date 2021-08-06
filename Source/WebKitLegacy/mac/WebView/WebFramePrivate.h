@@ -95,7 +95,6 @@ typedef enum {
 - (BOOL)needsLayout; // Needed for Mail <rdar://problem/6228038>
 - (void)_setLoadsSynchronously:(BOOL)flag;
 - (BOOL)_loadsSynchronously;
-- (unsigned)formElementsCharacterCount;
 - (void)setTimeoutsPaused:(BOOL)flag;
 
 /*!

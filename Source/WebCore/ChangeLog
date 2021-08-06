@@ -1,3 +1,45 @@
+2021-08-05  Cameron McCormack  <heycam@apple.com>
+
+        Stop tracking form elements with FormController
+        https://bugs.webkit.org/show_bug.cgi?id=228724
+        <rdar://problem/81435095>
+
+        Reviewed by Darin Adler.
+
+        FormController currently tracks the insertion order of
+        HTMLFormElementWithState objects in the document.  But we don't need
+        to know this list of form controls until the time we need to save
+        form state for the document (e.g. on pagehide).  So we instead
+        traverse the document to find those elements at the point we need
+        them, rather than maintain FormController::m_formElementsWithState.
+
+        This is a small speedup (1-2%) on a few of the Speedometer subtests
+        that insert and remove many input elements.
+
+        A future optimization could record on the Document whether there are
+        any input elements that have had their value changed, since it's
+        probably common for pages with form controls to never be changed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState const): Traverse the document to
+        find all the HTMLFormElementWithState objects.
+        * dom/Element.h:
+        (WebCore::Element::isFormControlElementWithState const):
+        * html/FormController.cpp:
+        (WebCore::FormController::createSavedFormStateMap):
+        (WebCore::FormController::formElementsState const):
+        * html/FormController.h:
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::insertedIntoAncestor):
+        Track the order that HTMLFormControlElementWithState objects are
+        inserted into the document.
+        (WebCore::HTMLFormControlElementWithState::removedFromAncestor):
+        * html/HTMLFormControlElementWithState.h:
+        (WebCore::HTMLFormControlElementWithState::insertionIndex const):
+        (isType):
+        * page/Frame.h: Remove unused formElementsCharacterCount.
+        * page/ios/FrameIOS.mm:
+
 2021-08-05  Tim Horton  <timothy_horton@apple.com>
 
         fast/canvas/canvas-crash.html doesn't test what it intends to on iOS

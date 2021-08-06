@@ -38,6 +38,8 @@ public:
     virtual FormControlState saveFormControlState() const;
     virtual void restoreFormControlState(const FormControlState&) { } // Called only if state is not empty.
 
+    uint64_t insertionIndex() const { return m_insertionIndex; }
+
 protected:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
@@ -50,10 +52,15 @@ protected:
 
 private:
     bool isFormControlElementWithState() const final;
+
+    uint64_t m_insertionIndex { 0 };
+    static uint64_t lastInsertionIndex;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFormControlElementWithState)
+    static bool isType(const WebCore::Element& element) { return element.isFormControlElementWithState(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
     static bool isType(const WebCore::FormAssociatedElement& element) { return element.isFormControlElementWithState(); }
 SPECIALIZE_TYPE_TRAITS_END()

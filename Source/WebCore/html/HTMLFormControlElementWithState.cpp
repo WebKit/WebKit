@@ -43,15 +43,13 @@ HTMLFormControlElementWithState::~HTMLFormControlElementWithState() = default;
 
 Node::InsertedIntoAncestorResult HTMLFormControlElementWithState::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    if (insertionType.connectedToDocument && !containingShadowRoot())
-        document().formController().registerFormElementWithState(*this);
+    m_insertionIndex = ++lastInsertionIndex;
     return HTMLFormControlElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
 
 void HTMLFormControlElementWithState::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (removalType.disconnectedFromDocument && !containingShadowRoot() && !oldParentOfRemovedTree.containingShadowRoot())
-        document().formController().unregisterFormElementWithState(*this);
+    m_insertionIndex = 0;
     HTMLFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
@@ -83,5 +81,7 @@ bool HTMLFormControlElementWithState::isFormControlElementWithState() const
 {
     return true;
 }
+
+uint64_t HTMLFormControlElementWithState::lastInsertionIndex { 0 };
 
 } // namespace Webcore

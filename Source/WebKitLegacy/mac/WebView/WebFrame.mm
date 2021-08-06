@@ -1163,11 +1163,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 #if PLATFORM(IOS_FAMILY)
 
-- (unsigned)formElementsCharacterCount
-{
-    return core(self)->formElementsCharacterCount();
-}
-
 - (void)setTimeoutsPaused:(BOOL)flag
 {
     if ([self _webHTMLDocumentView]) {

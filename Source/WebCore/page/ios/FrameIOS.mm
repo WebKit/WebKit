@@ -627,14 +627,6 @@ NSRect Frame::rectForScrollToVisible()
     return unionRect(selection.visibleStart().absoluteCaretBounds(), selection.visibleEnd().absoluteCaretBounds());
 }
 
-unsigned Frame::formElementsCharacterCount() const
-{
-    Document* document = this->document();
-    if (!document)
-        return 0;
-    return document->formController().formElementsCharacterCount();
-}
-
 void Frame::setTimersPaused(bool paused)
 {
     if (!m_page)

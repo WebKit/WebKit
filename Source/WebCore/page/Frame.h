@@ -282,7 +282,6 @@ public:
     WEBCORE_EXPORT void updateLayout() const;
     WEBCORE_EXPORT NSRect caretRect();
     WEBCORE_EXPORT NSRect rectForScrollToVisible();
-    WEBCORE_EXPORT unsigned formElementsCharacterCount() const;
 
     // This function is used by Legacy WebKit.
     WEBCORE_EXPORT void setTimersPaused(bool);

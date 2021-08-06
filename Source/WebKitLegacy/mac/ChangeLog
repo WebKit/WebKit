@@ -1,3 +1,16 @@
+2021-08-05  Cameron McCormack  <heycam@apple.com>
+
+        Stop tracking form elements with FormController
+        https://bugs.webkit.org/show_bug.cgi?id=228724
+        <rdar://problem/81435095>
+
+        Reviewed by Darin Adler.
+
+        formElementsCharacterCount is unused and can be removed.
+
+        * WebView/WebFrame.mm:
+        * WebView/WebFramePrivate.h:
+
 2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop building WebGPU and the WHLSL compiler to decrease binary size
