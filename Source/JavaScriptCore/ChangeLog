@@ -1,3 +1,96 @@
+2021-08-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280659. rdar://problem/81592180
+
+    [ARM64] Fix Zoom black screen during video meeting on Safari
+    https://bugs.webkit.org/show_bug.cgi?id=228776
+    
+    Reviewed by Saam Barati.
+    
+    The problem (rdar://81434487) reports that Zoom turns to a black screen during the video
+    meeting on Safari. The reproduction of this problem is verified and bisected to the previous patch
+    (https://bugs.webkit.org/show_bug.cgi?id=228057). Previously, we introduce a pattern
+    matching for instruction EON-with-shift on ARM64, where the pattern is d = n ^ ((m ShiftType amount) ^ -1).
+    
+        x = m ShiftType amount
+        y = x ^ -1
+        z = n ^ y
+    
+    We check canBeInternal() on x but not on y based on the computing cost analysis in that patch,
+    which is totally wrong. If the pattern matching is triggered, then the compiler would not emit
+    the corresponding Air of x after lowering, leading to data corruption or system crash since y
+    depends on x.
+    
+    In the real world example (Zoom video meeting), we find the B3 IR:
+    
+        ...
+        Int32 b@528 = SShr(b@526, $31(b@527), Wasm: {opcode: I32ShrS, location: 0x26b})
+        Int32 b@529 = BitXor(b@528, $-1(b@144), Wasm: {opcode: I32Xor, location: 0x26e})
+        ...
+        Int32 b@551 = BitXor(b@446, b@529, Wasm: {opcode: I32Xor, location: 0x28e})
+        ...
+    
+    After Lowering to Air:
+    
+        ...
+        Not32 %fp, %x2, b@529
+        ...
+        XorNotRightShift32 %tmp199, %tmp211, $31, %tmp209, b@551
+        ...
+    
+    Since the implementation of the previous patch does commitInternal() on b@528, the operand of
+    b@529 turns to a frame pointer. To resolve this problem, we should either check canBeInternal()
+    on both b@528 and b@529 or not at all.
+    
+    * b3/B3LowerToAir.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280659 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-04  Yijia Huang  <yijia_huang@apple.com>
+
+            [ARM64] Fix Zoom black screen during video meeting on Safari
+            https://bugs.webkit.org/show_bug.cgi?id=228776
+
+            Reviewed by Saam Barati.
+
+            The problem (rdar://81434487) reports that Zoom turns to a black screen during the video
+            meeting on Safari. The reproduction of this problem is verified and bisected to the previous patch
+            (https://bugs.webkit.org/show_bug.cgi?id=228057). Previously, we introduce a pattern
+            matching for instruction EON-with-shift on ARM64, where the pattern is d = n ^ ((m ShiftType amount) ^ -1).
+
+                x = m ShiftType amount
+                y = x ^ -1
+                z = n ^ y
+
+            We check canBeInternal() on x but not on y based on the computing cost analysis in that patch,
+            which is totally wrong. If the pattern matching is triggered, then the compiler would not emit
+            the corresponding Air of x after lowering, leading to data corruption or system crash since y
+            depends on x.
+
+            In the real world example (Zoom video meeting), we find the B3 IR:
+
+                ...
+                Int32 b@528 = SShr(b@526, $31(b@527), Wasm: {opcode: I32ShrS, location: 0x26b})
+                Int32 b@529 = BitXor(b@528, $-1(b@144), Wasm: {opcode: I32Xor, location: 0x26e})
+                ...
+                Int32 b@551 = BitXor(b@446, b@529, Wasm: {opcode: I32Xor, location: 0x28e})
+                ...
+
+
+            After Lowering to Air:
+
+                ...
+                Not32 %fp, %x2, b@529
+                ...
+                XorNotRightShift32 %tmp199, %tmp211, $31, %tmp209, b@551
+                ...
+
+            Since the implementation of the previous patch does commitInternal() on b@528, the operand of
+            b@529 turns to a frame pointer. To resolve this problem, we should either check canBeInternal()
+            on both b@528 and b@529 or not at all.
+
+            * b3/B3LowerToAir.cpp:
+
 2021-08-02  Yijia Huang  <yijia_huang@apple.com>
 
         Add new patterns to instruction selector to utilize AND/EOR/ORR-with-shift supported by ARM64
