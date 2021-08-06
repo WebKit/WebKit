@@ -1,3 +1,18 @@
+2021-08-05  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening, move some expected results to GTK/WPE specific directories
+        https://bugs.webkit.org/show_bug.cgi?id=228844
+
+        Some expected results have diverged between GTK and WPE and need to be
+        moved to the more specific directories.
+
+        * platform/gtk/fast/selectors/unqualified-hover-strict-expected.txt: Copied from LayoutTests/platform/glib/fast/selectors/unqualified-hover-strict-expected.txt.
+        * platform/gtk/media/video-playing-and-pause-expected.txt: Copied from LayoutTests/platform/glib/media/video-playing-and-pause-expected.txt.
+        * platform/gtk/tables/mozilla/core/col_span-expected.txt: Copied from LayoutTests/platform/glib/tables/mozilla/core/col_span-expected.txt.
+        * platform/wpe/fast/selectors/unqualified-hover-strict-expected.txt: Renamed from LayoutTests/platform/glib/fast/selectors/unqualified-hover-strict-expected.txt.
+        * platform/wpe/media/video-playing-and-pause-expected.txt: Renamed from LayoutTests/platform/glib/media/video-playing-and-pause-expected.txt.
+        * platform/wpe/tables/mozilla/core/col_span-expected.txt: Renamed from LayoutTests/platform/glib/tables/mozilla/core/col_span-expected.txt.
+
 2021-08-05  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r280541): [ BigSur Debug ] accessibility/roles-computedRoleString.html is timing out
