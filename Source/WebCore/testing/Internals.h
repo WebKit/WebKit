@@ -346,6 +346,7 @@ public:
     void setUserPreferredAudioCharacteristic(const String&);
 
     void setMaxCanvasPixelMemory(unsigned);
+    void setMaxCanvasArea(unsigned);
 
     ExceptionOr<unsigned> wheelEventHandlerCount();
     ExceptionOr<unsigned> touchEventHandlerCount();

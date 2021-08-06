@@ -11,20 +11,25 @@ function test()
     if (window.testRunner)
         testRunner.dumpAsText();
 
+    if (window.internals) {
+        window.internals.setMaxCanvasPixelMemory(16384 * 16384 * 4);
+        window.internals.setMaxCanvasArea(134217728);
+    }
+
     var canvas = document.getElementById("bigCanvas");
     var width = canvas.width;
     // We need to perform a context fetch to force allocation of
     // canvas resources.
-    if (canvas.getContext)
-    {
-      var ctx = canvas.getContext("2d");
-      if (ctx == null)
-      {
-        print("Canvas 2d context = null!");
-      }
+    if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+        if (ctx == null)
+            print("Canvas 2d context = null!");
     }
 
     print("Survived canvas creation attempt. Width = " + width);
+
+    // Resize the canvas to ensure the large canvas doesn't leak into the next test.
+    canvas.width = 1;
 }
 </script>
 </head>

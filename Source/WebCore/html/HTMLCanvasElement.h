@@ -128,7 +128,8 @@ public:
     // It would be better to have the contexts own the buffers.
     void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&);
 
-    WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(size_t);
+    WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(std::optional<size_t>);
+    WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
 
     bool needsPreparationForDisplay();
     void prepareForDisplay();
