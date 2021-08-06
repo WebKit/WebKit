@@ -31,7 +31,6 @@
 #include "Connection.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
-#include "SampleBufferDisplayLayerManager.h"
 #include "SharedMemory.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
@@ -52,6 +51,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProviderManager;
 class RemoteMediaPlayerManager;
+class SampleBufferDisplayLayerManager;
 class WebPage;
 struct OverrideScreenDataForTesting;
 struct WebPageCreationParameters;

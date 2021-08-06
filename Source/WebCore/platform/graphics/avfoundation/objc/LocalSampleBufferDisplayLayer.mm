@@ -207,11 +207,8 @@ LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 void LocalSampleBufferDisplayLayer::layerStatusDidChange()
 {
     ASSERT(isMainThread());
-    if (m_sampleBufferDisplayLayer.get().status != AVQueuedSampleBufferRenderingStatusRendering)
-        return;
-    if (!m_client)
-        return;
-    m_client->sampleBufferDisplayLayerStatusDidChange(*this);
+    if (m_client && m_sampleBufferDisplayLayer.get().status == AVQueuedSampleBufferRenderingStatusFailed)
+        m_client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 void LocalSampleBufferDisplayLayer::layerErrorDidChange()

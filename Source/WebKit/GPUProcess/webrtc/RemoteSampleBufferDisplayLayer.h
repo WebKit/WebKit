@@ -80,7 +80,7 @@ private:
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     // WebCore::SampleBufferDisplayLayer::Client
-    void sampleBufferDisplayLayerStatusDidChange(WebCore::SampleBufferDisplayLayer&) final;
+    void sampleBufferDisplayLayerStatusDidFail() final;
 
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;

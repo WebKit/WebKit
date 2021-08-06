@@ -142,7 +142,7 @@ IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const
     return m_connection.ptr();
 }
 
-void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidChange(WebCore::SampleBufferDisplayLayer&)
+void RemoteSampleBufferDisplayLayer::sampleBufferDisplayLayerStatusDidFail()
 {
     send(Messages::SampleBufferDisplayLayer::SetDidFail { m_sampleBufferDisplayLayer->didFail() });
 }
