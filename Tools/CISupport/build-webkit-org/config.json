@@ -129,7 +129,8 @@
                     { "name": "wpe-linux-bot-6", "platform": "wpe" },
                     { "name": "wpe-linux-bot-7", "platform": "wpe" },
                     { "name": "wpe-linux-bot-8", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-9", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-9", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-10", "platform": "wpe" }
                   ],
 
     "builders":   [
@@ -551,12 +552,20 @@
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--cmakeargs=-DENABLE_UNIFIED_BUILDS=OFF"],
                       "workernames": ["wpe-linux-bot-9"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory", "builddir": "wpe-linux-64-release-ubuntu",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["wpe-linux-bot-10"]
                     }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
-                                       "GTK-Linux-64-bit-Release-Debian-Stable-Build", "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "GTK-Linux-64-bit-Release-Debian-Stable-Build",
+                                       "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                        "JSCOnly-Linux-AArch64-Release",
                                        "JSCOnly-Linux-ARMv7-Thumb2-Release", "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release",
                                        "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",

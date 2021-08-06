@@ -1,3 +1,15 @@
+2021-08-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [buildbot] Add new post-commit bot to build WPE on Ubuntu-LTS
+        https://bugs.webkit.org/show_bug.cgi?id=228535
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently we only had a bot to build WebKitGTK on Ubuntu LTS. This is
+        not enough to detect build regressions in WPE.
+
+        * CISupport/build-webkit-org/config.json:
+
 2021-08-05  Kate Cheney  <katherine_cheney@apple.com>
 
         LoadWebArchive.FailNavigation1 test is a false positive
