@@ -97,6 +97,7 @@ PlatformWebView::~PlatformWebView()
 {
     if (::IsWindow(m_window))
         ::DestroyWindow(m_window);
+    WKRelease(m_view);
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode)
