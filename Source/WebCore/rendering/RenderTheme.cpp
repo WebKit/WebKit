@@ -93,9 +93,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             style.setAppearance(MenulistButtonPart);
             part = MenulistButtonPart;
             break;
-        case TextFieldPart:
-            adjustTextFieldStyle(style, element);
-            FALLTHROUGH;
         default:
             style.setAppearance(NoControlPart);
             break;
