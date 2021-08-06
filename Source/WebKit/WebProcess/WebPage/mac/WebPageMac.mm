@@ -603,12 +603,13 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
     completionHandler(result);
 }
 
-void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event)
 {
     if (WebProcess::singleton().parentProcessConnection()->inSendSync()) {
         // In case we're already inside a sendSync message, it's possible that the page is in a
         // transitionary state, so any hit-testing could cause crashes  so we just return early in that case.
-        return completionHandler(false);
+        send(Messages::WebPageProxy::HandleAcceptsFirstMouse(false));
+        return;
     }
 
     auto& frame = m_page->focusController().focusedOrMainFrame();
@@ -623,7 +624,8 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
     else
 #endif
         result = !!hitResult.scrollbar();
-    completionHandler(result);
+
+    send(Messages::WebPageProxy::HandleAcceptsFirstMouse(result));
 }
 
 void WebPage::setTopOverhangImage(WebImage* image)

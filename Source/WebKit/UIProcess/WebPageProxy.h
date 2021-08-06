@@ -913,7 +913,6 @@ public:
         
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
-    bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
     CALayer *acceleratedCompositingRootLayer() const;
@@ -1921,6 +1920,8 @@ public:
 
 #if PLATFORM(MAC)
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&);
+
+    bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
@@ -2324,6 +2325,8 @@ private:
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
 
     void setEditableElementIsFocused(bool);
+
+    void handleAcceptsFirstMouse(bool);
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
@@ -2613,6 +2616,8 @@ private:
 
 #if PLATFORM(MAC)
     bool m_useSystemAppearance { false };
+
+    bool m_acceptsFirstMouse { false };
 #endif
 
 #if ENABLE(APPLE_PAY)

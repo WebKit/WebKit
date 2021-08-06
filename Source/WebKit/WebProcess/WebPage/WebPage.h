@@ -930,7 +930,6 @@ public:
     void getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&&);
     void getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(SharedMemory::IPCHandle&&)>&&);
     void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&&);
-    void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&&);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&&);
@@ -939,6 +938,7 @@ public:
 #if PLATFORM(MAC)
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
     void fontAtSelection(CompletionHandler<void(const FontInfo&, double, bool)>&&);
+    void requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(SERVICE_CONTROLS)

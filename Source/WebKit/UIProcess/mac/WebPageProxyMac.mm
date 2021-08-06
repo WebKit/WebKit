@@ -49,6 +49,7 @@
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
+#import "WebPageProxyMessages.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import <WebCore/AttributedString.h>
@@ -395,10 +396,21 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
     if (!hasRunningProcess())
         return false;
 
-    bool result = false;
-    const Seconds messageTimeout(3);
-    sendSync(Messages::WebPage::AcceptsFirstMouse(eventNumber, event), Messages::WebPage::AcceptsFirstMouse::Reply(result), messageTimeout);
-    return result;
+    if (!m_process->hasConnection())
+        return false;
+
+    send(Messages::WebPage::RequestAcceptsFirstMouse(eventNumber, event), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    bool receivedReply = m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageID(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+
+    if (!receivedReply)
+        return false;
+
+    return m_acceptsFirstMouse;
+}
+
+void WebPageProxy::handleAcceptsFirstMouse(bool acceptsFirstMouse)
+{
+    m_acceptsFirstMouse = acceptsFirstMouse;
 }
 
 void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)

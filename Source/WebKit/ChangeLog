@@ -1,3 +1,99 @@
+2021-08-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] 3 second IPC deadlocks involving WebPageProxy::acceptsFirstMouse
+        https://bugs.webkit.org/show_bug.cgi?id=228834
+        rdar://75390908
+
+        Reviewed by Wenson Hsieh and Tim Horton.
+
+        Reports show 3 second hangs in WebPageProxy::acceptsFirstMouse, which is
+        the timeout for the sync IPC sent by the method. While this method has
+        always sent a sync IPC, logs show the WebProcess is also blocked on sync
+        IPC, under WebProcess::ensureGPUProcessConnection.
+
+        If a Web<->GPU process connection has not been established,
+        WebProcess::ensureGPUProcessConnection sends a sync IPC from the
+        WebProcess to the UIProcess to establish get the connection. However, to
+        get the connection, the UIProcess then sends an async IPC with a reply
+        block to the GPUProcess (see GPUProcessProxy::getGPUProcessConnection).
+        The WebProcess remains blocked until the UIProcess receives the reply
+        from the GPUProcess, and then sends a reply to the WebProcess.
+
+        Now, if a call to acceptsFirstMouse occurs in between the time the async
+        UIProcess -> GPUProcess IPC is sent, and the reply is received, we will
+        experience deadlock. The UIProcess will be blocked waiting on the
+        WebProcess' reply to acceptsFirstMouse, and the reply from the GPUProcess
+        will not be dispatched. Since the reply from the GPUProcess will not be
+        dispatched until the UIProcess is unblocked, the WebProcess will be
+        waiting under WebProcess:ensureGPUProcessConnection, and unable to reply
+        to acceptsFirstMouse.
+
+        A simple fix for the described scenario would be to introduce a
+        replySendOptions parameter to sendWithAsyncReply, so that the UIProcess
+        could be re-entered to dispatch the GPUProcess reply, even when waiting
+        for acceptsFirstMouse. However, this will not work in cases where the
+        GPUProcess is being launched, due to being blocked on the reply from
+        xpc_connection_send_message_with_reply in ProcessLauncherMac, which is
+        before the IPC::Connection has been established.
+
+        Since re-entering the UIProcess is not possible in this scenario, given
+        the existing architecture, the next simplest solution is to re-enter
+        the WebProcess on acceptsFirstMouse instead. Consequently, one part of
+        the fix involves sending the acceptsFirstMouse IPC with
+        IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply and
+        tagging WebProcess::getGPUProcessConnection as unbounded sync IPC.
+
+        Then, we must also consider the fact that, in the WebProcess,
+        acceptsFirstMouse performs hit-testing. Hit-testing triggers layout and
+        could cause script to run. Script could result in a GPUProcess connection
+        being established, eventually leading us down the path towards the
+        aforementioned deadlock. To avoid deadlock in this scenario, we need to
+        interrupt acceptsFirstMouse if a message to get the GPUProcess connection
+        is received. This is achieved by using waitForAndDispatchImmediately with
+        the InterruptWaitingIfSyncMessageArrives option, and splitting up
+        acceptsFirstMouse into two separate IPCs.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+
+        Implementation not required for iOS.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::acceptsFirstMouse):
+
+        Send an async IPC with IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply
+        so that the WebProcess can be re-entered to resolve deadlock if
+        necessary. Then, use waitForAndDispatchImmediately to wait for the reply
+        (essentially making it a sync IPC), so that the wait can be interrupted
+        if another sync message, such as getGPUProcessConnection, is received.
+
+        (WebKit::WebPageProxy::handleAcceptsFirstMouse):
+
+        Store the result of the reply from the WebProcess.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Split the sync IPC into two async IPCs, in order to support the use of
+        waitForAndDispatchImmediately.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
+        Implementation not required for iOS.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::requestAcceptsFirstMouse):
+
+        Exit early if re-entering the WebProcess, to avoid running script on
+        re-entry.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getGPUProcessConnection):
+
+        Tag as unbounded sync IPC, so the WebProcess can be re-entered to
+        resolve deadlock.
+
 2021-08-06  Youenn Fablet  <youenn@apple.com>
 
         WebKit::SampleBufferDisplayLayer needs to handle GPUProcess crash

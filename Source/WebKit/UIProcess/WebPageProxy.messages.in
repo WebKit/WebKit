@@ -376,6 +376,8 @@ messages -> WebPageProxy {
     RecordAutocorrectionResponse(int32_t response, String replacedString, String replacementString);
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
+
+    HandleAcceptsFirstMouse(bool acceptsFirstMouse)
 #endif
 
     DidUpdateRenderingAfterCommittingLoad()

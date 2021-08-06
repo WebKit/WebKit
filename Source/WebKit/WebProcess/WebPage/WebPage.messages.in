@@ -446,7 +446,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
-    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) Synchronous
 
     SetTextAsync(String text)
 
@@ -464,6 +463,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(MAC)
     AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range) Async
     FontAtSelection() -> (struct WebKit::FontInfo fontInfo, double fontSize, bool selectionHasMultipleFonts) Async
+    RequestAcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event)
 #endif
 
     SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)

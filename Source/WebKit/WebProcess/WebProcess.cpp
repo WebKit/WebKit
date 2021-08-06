@@ -1213,6 +1213,8 @@ GPUProcessConnectionInfo WebProcess::getGPUProcessConnection(IPC::Connection& co
     GPUProcessConnectionParameters parameters;
     platformInitializeGPUProcessConnectionParameters(parameters);
 
+    IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
+
     GPUProcessConnectionInfo connectionInfo;
     if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0)) {
         // If we failed the first time, retry once. The attachment may have become invalid

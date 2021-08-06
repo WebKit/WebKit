@@ -774,12 +774,6 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent
     return false;
 }
 
-bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
-{
-    notImplemented();
-    return false;
-}
-
 void WebPageProxy::willStartUserTriggeredZooming()
 {
     send(Messages::WebPage::WillStartUserTriggeredZooming());

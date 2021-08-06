@@ -636,12 +636,6 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, Compl
     completionHandler(false);
 }
 
-void WebPage::acceptsFirstMouse(int, const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&& completionHandler)
-{
-    notImplemented();
-    completionHandler(false);
-}
-
 void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier, const PrintInfo&, Vector<IntRect>&)
 {
     notImplemented();
