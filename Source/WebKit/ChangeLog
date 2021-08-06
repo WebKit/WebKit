@@ -1,3 +1,89 @@
+2021-08-06  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280702. rdar://problem/81618758
+
+    [iOS] getUserMedia sometimes doesn't capture from specified microphone
+    https://bugs.webkit.org/show_bug.cgi?id=228753
+    rdar://79704226
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    The system will always choose the "default" audio input source unless
+    +[AVAudioSession setPreferredInput:error:] is called first, and that only works
+    if the audio session category has been set to PlayAndRecord *before* it is called,
+    so configure the audio session for recording before we choose and configure the
+    audio capture device.
+    
+    Tested manually, this only reproduces on hardware.
+    
+    * platform/audio/PlatformMediaSessionManager.cpp:
+    (WebCore::PlatformMediaSessionManager::activeAudioSessionRequired const): Audio
+    capture requires an active audio session.
+    (WebCore::PlatformMediaSessionManager::removeSession): Move `#if USE(AUDIO_SESSION)`
+    guard inside of maybeDeactivateAudioSession so it isn't spread throughout the file.
+    (WebCore::PlatformMediaSessionManager::sessionWillBeginPlayback): Ditto.
+    (WebCore::PlatformMediaSessionManager::processWillSuspend): Ditto.
+    (WebCore::PlatformMediaSessionManager::processDidResume): Ditto.
+    (WebCore::PlatformMediaSessionManager::sessionCanProduceAudioChanged): Add logging,
+    call `maybeActivateAudioSession()` so we activate the audio session if necessary.
+    (WebCore::PlatformMediaSessionManager::addAudioCaptureSource): Call updateSessionState
+    instead of scheduleUpdateSessionState so the audio session category is updated
+    immediately.
+    (WebCore::PlatformMediaSessionManager::maybeDeactivateAudioSession): Move
+    `#if USE(AUDIO_SESSION)` into the function so it doesn't need to be spread
+    throughout the file.
+    (WebCore::PlatformMediaSessionManager::maybeActivateAudioSession): Ditto.
+    * platform/audio/PlatformMediaSessionManager.h:
+    (WebCore::PlatformMediaSessionManager::isApplicationInBackground const):
+    
+    * platform/audio/ios/AudioSessionIOS.mm:
+    (WebCore::AudioSessionIOS::setPreferredBufferSize): Log an error if we are unable
+    to set the preferred buffer size.
+    
+    * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+    * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+    (WebCore::AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceUID):
+    New, set the preferred input so capture will use select the device we want.
+    (WebCore::AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices): Remove
+    m_recomputeDevices, `setAudioCaptureDevices` has been restructured so we don't need it.
+    (WebCore::AVAudioSessionCaptureDeviceManager::computeCaptureDevices): Ditto.
+    (WebCore::AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices): Don't update
+    the list of capture devices when the default device changes, only when a device is
+    added, removed, enabled, or disabled.
+    
+    * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+    (WebCore::CoreAudioSharedUnit::setCaptureDevice): Call `setPreferredAudioSessionDeviceUID`
+    so the correct device is selected.
+    (WebCore::CoreAudioSharedUnit::cleanupAudioUnit): Clear m_persistentID.
+    (WebCore::CoreAudioCaptureSource::create): Return an error with a string, or the
+    web process can detect a failure.
+    (WebCore::CoreAudioCaptureSource::stopProducingData): Add logging.
+    
+    Source/WebKit:
+    
+    * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp: Re
+    (WebKit::UserMediaCaptureManagerProxy::SourceProxy::audioUnitWillStart): Delete,
+    we don't need it now that the web process configures the audio session before
+    capture begins.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280702 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-05  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] getUserMedia sometimes doesn't capture from specified microphone
+            https://bugs.webkit.org/show_bug.cgi?id=228753
+            rdar://79704226
+
+            Reviewed by Youenn Fablet.
+
+            * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp: Re
+            (WebKit::UserMediaCaptureManagerProxy::SourceProxy::audioUnitWillStart): Delete,
+            we don't need it now that the web process configures the audio session before
+            capture begins.
+
 2021-08-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r280652. rdar://problem/81568994

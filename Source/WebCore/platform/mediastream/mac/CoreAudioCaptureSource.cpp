@@ -163,6 +163,9 @@ CoreAudioSharedUnit::CoreAudioSharedUnit()
 
 void CoreAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID)
 {
+    if (m_persistentID == persistentID)
+        return;
+
     m_persistentID = WTFMove(persistentID);
 
 #if PLATFORM(MAC)
@@ -173,6 +176,7 @@ void CoreAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captu
     reconfigureAudioUnit();
 #else
     UNUSED_PARAM(captureDeviceID);
+    AVAudioSessionCaptureDeviceManager::singleton().setPreferredAudioSessionDeviceUID(m_persistentID);
 #endif
 }
 
@@ -466,6 +470,7 @@ void CoreAudioSharedUnit::cleanupAudioUnit()
 
     m_microphoneSampleBuffer = nullptr;
     m_speakerSampleBuffer = nullptr;
+    m_persistentID = emptyString();
 #if !LOG_DISABLED
     m_ioUnitName = emptyString();
 #endif
@@ -619,7 +624,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
 #elif PLATFORM(IOS_FAMILY)
     auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(WTFMove(deviceID));
     if (!device)
-        return { };
+        return { "No AVAudioSessionCaptureDevice device"_s };
 
     auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), 0));
 #endif
@@ -760,6 +765,7 @@ void CoreAudioCaptureSource::startProducingData()
 
 void CoreAudioCaptureSource::stopProducingData()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     unit().stopProducingData();
 }
 
