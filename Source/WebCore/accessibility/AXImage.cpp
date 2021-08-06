@@ -67,7 +67,11 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AXImage::imageOverlayEl
     if (!page)
         return std::nullopt;
 
-    page->chrome().client().requestTextRecognition(*element(), [] (RefPtr<Element>&& imageOverlayHost) {
+    auto* element = this->element();
+    if (!element)
+        return std::nullopt;
+
+    page->chrome().client().requestTextRecognition(*element, [] (RefPtr<Element>&& imageOverlayHost) {
         if (!imageOverlayHost)
             return;
 
