@@ -1,3 +1,16 @@
+2021-08-05  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Assertion failure when checking array in DFG (32 bits)
+        https://bugs.webkit.org/show_bug.cgi?id=228839
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/check-array-empty-32.js: Added.
+        (a.b.catch.print.c):
+        (a.b):
+        (a.e):
+        (a):
+
 2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Yarr BoyerMoore search should support character-class

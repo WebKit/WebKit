@@ -858,7 +858,9 @@ void SpeculativeJIT::checkArray(Node* node)
     
     if (arrayMode.alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1()))) {
         // We can purge Empty check completely in this case of CheckArrayOrEmpty since CellUse only accepts SpecCell | SpecEmpty.
+#if USE(JSVALUE64)
         ASSERT(typeFilterFor(node->child1().useKind()) & SpecEmpty);
+#endif
         noResult(m_currentNode);
         return;
     }

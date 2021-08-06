@@ -1,3 +1,16 @@
+2021-08-05  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Assertion failure when checking array in DFG (32 bits)
+        https://bugs.webkit.org/show_bug.cgi?id=228839
+
+        Reviewed by Yusuke Suzuki.
+
+        Since empty values don't pass the cell check in 32 bits, we need to
+        guard the SpecEmpty check to only happen in 64 bits archs
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+
 2021-08-05  Robin Morisset  <rmorisset@apple.com>
 
         REGRESSION (r280507): ASSERTION FAILED: !undominatedPhis.contains(value) in JSC::B3::(anonymous namespace)::Validater::validatePhisAreDominatedByUpsilons()
