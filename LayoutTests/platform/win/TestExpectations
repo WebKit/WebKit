@@ -4658,3 +4658,5 @@ fast/events/dropzone-002.html [ Pass Crash ]
 fast/events/input-events-drag-and-drop.html [ Pass Crash ]
 fast/forms/number/number-l10n-input.html [ Pass Crash ]
 fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Crash ]
+
+accessibility/selected-state-changed-notifications.html [ Skip ]

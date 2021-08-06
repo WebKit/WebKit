@@ -1,3 +1,9 @@
+2021-08-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test garening, skip test that is unsupported on WK1.
+
+        * platform/win/TestExpectations:
+
 2021-08-05  Tim Horton  <timothy_horton@apple.com>
 
         fast/canvas/canvas-crash.html doesn't test what it intends to on iOS
