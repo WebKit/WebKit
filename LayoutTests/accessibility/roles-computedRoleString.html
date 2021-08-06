@@ -313,6 +313,7 @@ if (window.testRunner && window.accessibilityController) {
     var examples = document.querySelectorAll(".ex");
     var el, contentAttrRoleString, axElement, computedAriaRole, output, expectedRole, expectation, result, note;
     var currentPlatform = accessibilityController.platformName;
+    let consoleOutput = "";
     for (var i = 0, c = examples.length; i < c; i++) {
         el = examples[i];
 		el.id = "ex" + i
@@ -343,10 +344,11 @@ if (window.testRunner && window.accessibilityController) {
         matchedResults = (computedAriaRole == expectedRole)
 
         if (matchedResults)
-            testPassed(output);
+            consoleOutput += "PASS " + output + "\n";
         else
-            testFailed(output + "Expected: " + expectation);
+            consoleOutput += "FAIL " + output + "Expected: " + expectation + "\n";
     }
+    document.getElementById("console").textContent = consoleOutput;
 
     // Once tests are complete, hide all the example markup.
     document.getElementById("content").style.visibility = "hidden";

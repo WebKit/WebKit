@@ -1,3 +1,13 @@
+2021-08-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r280541): [ BigSur Debug ] accessibility/roles-computedRoleString.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=228744
+        <rdar://problem/81472432>
+
+        Unreviewed, speed up test a bit as it is timing out flakily in Debug.
+
+        * accessibility/roles-computedRoleString.html:
+
 2021-08-05  Andres Gonzalez  <andresg_22@apple.com>
 
         VoiceOver is not announcing the state as selected/unselected when an item is selected in a grid.
