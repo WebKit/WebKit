@@ -713,6 +713,7 @@ public:
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
     void activeAudioRouteDidChange(bool shouldPause);
     bool elementIsBlockingDisplaySleep(HTMLMediaElement&) const;
+    bool isPlayerVisibleInViewport(HTMLMediaElement&) const;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

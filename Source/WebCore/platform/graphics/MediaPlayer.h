@@ -360,6 +360,9 @@ public:
     void setVisible(bool);
     void setVisibleForCanvas(bool);
 
+    void setVisibleInViewport(bool);
+    bool isVisibleInViewport() const { return m_visibleInViewport; }
+
     void prepareToPlay();
     void play();
     void pause();
@@ -699,6 +702,7 @@ private:
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };
     bool m_visible { false };
+    bool m_visibleInViewport { false };
     bool m_muted { false };
     bool m_preservesPitch { true };
     bool m_privateBrowsing { false };

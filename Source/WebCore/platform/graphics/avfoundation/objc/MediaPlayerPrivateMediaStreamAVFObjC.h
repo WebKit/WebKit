@@ -122,6 +122,7 @@ private:
 
     void setVisible(bool) final;
     void setVisibleForCanvas(bool) final;
+    void setVisibleInViewport(bool) final;
 
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override;
@@ -143,7 +144,7 @@ private:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
 
-    void acceleratedRenderingStateChanged() override;
+    void acceleratedRenderingStateChanged() final { updateLayersAsNeeded(); }
     bool supportsAcceleratedRendering() const override { return true; }
 
     bool hasSingleSecurityOrigin() const override { return true; }
@@ -170,6 +171,7 @@ private:
     void scheduleDeferredTask(Function<void ()>&&);
 
     void layersAreInitialized(IntSize, bool);
+    void updateLayersAsNeeded();
 
     enum DisplayMode {
         None,
@@ -272,7 +274,8 @@ private:
     bool m_muted { false };
     bool m_ended { false };
     bool m_hasEverEnqueuedVideoFrame { false };
-    bool m_visible { false };
+    bool m_isPageVisible { false };
+    bool m_isVisibleInViewPort { false };
     bool m_haveSeenMetadata { false };
     bool m_waitingForFirstImage { false };
 };

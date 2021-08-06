@@ -4420,6 +4420,13 @@ bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const
 {
     return element.isDisablingSleep();
 }
+
+bool Internals::isPlayerVisibleInViewport(HTMLMediaElement& element) const
+{
+    auto player = element.player();
+    return player && player->isVisibleInViewport();
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)

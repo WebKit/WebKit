@@ -575,6 +575,8 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
             client().mediaPlayerEngineUpdated();
             if (m_visible)
                 m_private->setVisible(m_visible);
+            if (m_visibleInViewport)
+                m_private->setVisibleInViewport(m_visibleInViewport);
             m_private->prepareForPlayback(m_privateBrowsing, m_preload, m_preservesPitch, m_shouldPrepareToRender);
         }
     }
@@ -1009,6 +1011,12 @@ void MediaPlayer::setVisible(bool visible)
 void MediaPlayer::setVisibleForCanvas(bool visible)
 {
     m_private->setVisibleForCanvas(visible);
+}
+
+void MediaPlayer::setVisibleInViewport(bool visible)
+{
+    m_visibleInViewport = visible;
+    m_private->setVisibleInViewport(visible);
 }
 
 MediaPlayer::Preload MediaPlayer::preload() const

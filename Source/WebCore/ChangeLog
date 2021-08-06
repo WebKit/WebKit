@@ -1,3 +1,45 @@
+2021-08-06  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerPrivateMediaStreamAVFObjC should skip enqueuing frames when not visible
+        https://bugs.webkit.org/show_bug.cgi?id=228816
+        <rdar://81077972>
+
+        Reviewed by Eric Carlson.
+
+        Do not create layers when not needed.
+        This prevents enqueuing frames in a AVSampleBufferDisplayLayer that will only buffer them, thus breaking camera capture/video decoding.
+        We do this by not calling ensureLayers when getting a new track. Instead we react upon player renderingCanBeAccelerated value.
+
+        It is also unnecessary and takes CPU cycles to enqueue frames when the video element is not visible.
+        HTMLMediaElement and RenderVideo thus pass to MediaPlayer a new flag telling whether the video element is visible in the view port.
+        MediaPlayerPrivateMediaStreamAVFObjC will then skip enqueueing frames if not needed.
+
+        Add getter and internals API to cover these changes.
+
+        Test: fast/mediastream/mediaPlayer-visibility.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isVisibleInViewportChanged):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::setVisibleInViewport):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setVisibleInViewport):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisible):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisibleInViewport):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isPlayerVisibleInViewport const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-08-05  Cameron McCormack  <heycam@apple.com>
 
         Stop tracking form elements with FormController

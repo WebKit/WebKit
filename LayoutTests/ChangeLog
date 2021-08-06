@@ -1,3 +1,14 @@
+2021-08-06  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerPrivateMediaStreamAVFObjC should skip enqueuing frames when not visible
+        https://bugs.webkit.org/show_bug.cgi?id=228816
+        <rdar://81077972>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/mediaPlayer-visibility-expected.txt: Added.
+        * fast/mediastream/mediaPlayer-visibility.html: Added.
+
 2021-08-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test garening, skip test that is unsupported on WK1.
