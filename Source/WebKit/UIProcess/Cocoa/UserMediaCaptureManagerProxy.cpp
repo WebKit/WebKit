@@ -100,6 +100,11 @@ public:
     CAAudioStreamDescription& description() { return m_description; }
     int64_t numberOfFrames() { return m_numberOfFrames; }
 
+    void audioUnitWillStart() final
+    {
+        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, RouteSharingPolicy::Default);
+    }
+
     void start()
     {
         m_shouldReset = true;
