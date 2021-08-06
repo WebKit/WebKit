@@ -1,3 +1,46 @@
+2021-08-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add setup function
+        https://bugs.webkit.org/show_bug.cgi?id=225985
+        <rdar://problem/78226729>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Key should be pulled from environment variable with key_name in it.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Move config regexes.
+        (Git.__init__): Add `git remote add`, `git config` and `git fetch fork`.
+        (Git.config): Add user.email to default configuration.
+        (Git.edit_config): Modify configuration file.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub): Add list of forks.
+        (GitHub.__enter__): Correctly mock token.
+        (GitHub.request): Add fork check and fork addition.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add setup function.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Strip email domain, guide user on token permissions.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py: Added.
+        (Setup.github): Ensure that GitHub credentials are in the keychain.
+        (Setup.git): Set the user for the repository, along with merge strategy.
+        (Setup.parser):
+        (Setup.main):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (test_config): Change user name.
+        (test_global_config): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py: Added.
+        (TestSetup):
+        (TestSetup.setUp):
+        (TestSetup.test_svn):
+        (TestSetup.test_github):
+        (TestSetup.test_git):
+        (TestSetup.test_github_checkout):
+
 2021-08-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKitTestRunner] WTR::PlatformWebView leaks m_view (WKViewRef)

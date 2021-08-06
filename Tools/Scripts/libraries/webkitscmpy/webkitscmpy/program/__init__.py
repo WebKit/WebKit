@@ -33,6 +33,7 @@ from .find import Find, Info
 from .log import Log
 from .pull import Pull
 from .setup_git_svn import SetupGitSvn
+from .setup import Setup
 
 from webkitcorepy import arguments, log as webkitcorepy_log
 from webkitscmpy import local, log, remote
@@ -63,7 +64,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    programs = [Find, Info, Checkout, Canonicalize, Pull, Clean, Log, Blame]
+    programs = [Find, Info, Checkout, Canonicalize, Pull, Clean, Log, Blame, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 

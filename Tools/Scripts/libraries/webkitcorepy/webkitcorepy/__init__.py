@@ -40,7 +40,7 @@ from webkitcorepy.credentials import credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 
-version = Version(0, 8, 0)
+version = Version(0, 8, 1)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

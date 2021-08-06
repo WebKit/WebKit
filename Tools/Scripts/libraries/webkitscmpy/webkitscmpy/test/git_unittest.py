@@ -411,7 +411,7 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
         with mocks.local.Git(self.path, git_svn=True) as m:
             repo = local.Git(self.path)
 
-            self.assertEqual(repo.config()['user.name'], 'tapple@webkit.org')
+            self.assertEqual(repo.config()['user.name'], 'Tim Apple')
             self.assertEqual(repo.config()['core.filemode'], 'true')
             self.assertEqual(repo.config()['remote.origin.url'], 'git@example.org:/mock/repository')
             self.assertEqual(repo.config()['svn-remote.svn.url'], 'https://svn.example.org/repository/webkit')
@@ -419,7 +419,7 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
 
     def test_global_config(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
-            self.assertEqual(local.Git.config()['user.name'], 'tapple@webkit.org')
+            self.assertEqual(local.Git.config()['user.name'], 'Tim Apple')
             self.assertEqual(local.Git.config()['sendemail.transferencoding'], 'base64')
 
 

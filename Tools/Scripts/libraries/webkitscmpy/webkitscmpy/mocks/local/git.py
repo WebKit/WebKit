@@ -35,6 +35,15 @@ from webkitscmpy.program.canonicalize.message import main as message_main
 
 
 class Git(mocks.Subprocess):
+    # Parse a .git/config that looks like this
+    # [core]
+    #     repositoryformatversion = 0
+    # [branch "main"]
+    #     remote = origin
+    # 	  merge = refs/heads/main
+    RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
+    RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
+    RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>\S+)')
 
     def __init__(
         self, path='/.invalid-git', datafile=None,
@@ -187,6 +196,12 @@ nothing to commit, working tree clean
                 ) if args[3] == 'origin' else mocks.ProcessCompletion(
                     returncode=128,
                     stderr="fatal: No such remote '{}'\n".format(args[3]),
+                ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'remote', 'add', re.compile(r'.+'),
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
                 ),
             ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-a',
@@ -354,6 +369,17 @@ nothing to commit, working tree clean
                         returncode=0,
                         stdout='\n'.join(['{}={}'.format(key, value) for key, value in Git.config().items()])
                     ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'config', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    self.edit_config(args[2], args[3]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'fetch', 'fork',
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
+                ),
             ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
@@ -590,34 +616,50 @@ nothing to commit, working tree clean
     def config(context):
         if isinstance(context, type):
             return {
-                'user.name': 'tapple@webkit.org',
+                'user.name': 'Tim Apple',
+                'user.email': 'tapple@webkit.org',
                 'sendemail.transferencoding': 'base64',
             }
-
-        # Parse a .git/config that looks like this
-        # [core]
-        #     repositoryformatversion = 0
-        # [branch "main"]
-        #     remote = origin
-        # 	  merge = refs/heads/main
-        RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
-        RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
-        RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>\S+)')
 
         top = None
         result = Git.config()
         with open(os.path.join(context.path, '.git', 'config'), 'r') as configfile:
             for line in configfile.readlines():
-                match = RE_MULTI_TOP.match(line)
+                match = context.RE_MULTI_TOP.match(line)
                 if match:
                     top = '{}.{}'.format(match.group('keya'), match.group('keyb'))
                     continue
-                match = RE_SINGLE_TOP.match(line)
+                match = context.RE_SINGLE_TOP.match(line)
                 if match:
                     top = match.group('key')
                     continue
 
-                match = RE_ELEMENT.match(line)
+                match = context.RE_ELEMENT.match(line)
                 if top and match:
                     result['{}.{}'.format(top, match.group('key'))] = match.group('value')
         return result
+
+    def edit_config(self, key, value):
+        with open(os.path.join(self.path, '.git', 'config'), 'r') as configfile:
+            lines = [line for line in configfile.readlines()]
+
+        key_a = key.split('.')[0]
+        key_b = '.'.join(key.split('.')[1:])
+
+        did_print = False
+        with open(os.path.join(self.path, '.git', 'config'), 'w') as configfile:
+            for line in lines:
+                match = self.RE_ELEMENT.match(line)
+                if not match or match.group('key') != key_b:
+                    configfile.write(line)
+                match = self.RE_MULTI_TOP.match(line)
+                if not match or '{}.{}'.format(match.group('keya'), match.group('keyb')) != key_a:
+                    continue
+                configfile.write('\t{}={}\n'.format(key_b, value))
+                did_print = True
+
+            if not did_print:
+                configfile.write('[{}]\n'.format(key_a))
+                configfile.write('\t{}={}\n'.format(key_b, value))
+
+        return mocks.ProcessCompletion(returncode=0)

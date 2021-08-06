@@ -38,7 +38,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
         return _cache.get(name)
 
     username = os.environ.get('{}_USERNAME'.format(name.upper()))
-    key = os.environ.get('{}_{}'.format(name.upper(), name.upper()))
+    key = os.environ.get('{}_{}'.format(name.upper(), key_name.upper()))
 
     if username and key:
         _cache[name] = (username, key)

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -63,13 +63,18 @@ class GitHub(Scm):
         )
 
     def credentials(self, required=True):
-        return credentials(
+        username, token = credentials(
             url=self.api_url,
             required=required,
             name=self.url.split('/')[2].replace('.', '_').upper(),
-            prompt="GitHub's API\nPlease generate a 'Personal access token' via 'Developer settings' for your user",
+            prompt='''GitHub's API
+Please generate a 'Personal access token' via 'Developer settings' with 'repo' and 'workflow' access
+for your {} user'''.format(self.url.split('/')[2]),
             key_name='token',
         )
+        if username:
+            username = username.split('@')[0]
+        return username, token
 
     @property
     def is_git(self):

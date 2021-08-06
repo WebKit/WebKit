@@ -39,6 +39,7 @@ class GitHub(mocks.Requests):
 
         self.default_branch = default_branch
         self.remote = remote
+        self.forks = []
         hostname = self.remote.split('/')[0]
         self.api_remote = 'api.{hostname}/repos/{repo}'.format(
             hostname=hostname,
@@ -62,7 +63,7 @@ class GitHub(mocks.Requests):
     def __enter__(self):
         prefix = self.remote.split('/')[0].replace('.', '_').upper()
         username_key = '{}_USERNAME'.format(prefix)
-        token_key = '{}_ACCESS_TOKEN'.format(prefix)
+        token_key = '{}_TOKEN'.format(prefix)
         self._environment = {
             username_key: os.environ.get(username_key),
             token_key: os.environ.get(token_key),
@@ -314,5 +315,25 @@ class GitHub(mocks.Requests):
         # Find the number of parents a commit has
         if stripped_url.startswith('{}/tree/'.format(self.remote)):
             return self._parents_of_request(url=url, ref=stripped_url.split('/')[-1])
+
+        # Check for existance of forked repo
+        if stripped_url.startswith('{}/repos'.format(self.api_remote.split('/')[0])) and stripped_url.split('/')[-1] == self.remote.split('/')[-1]:
+            username = stripped_url.split('/')[-2]
+            if username in self.forks or username == self.remote.split('/')[-2]:
+                return mocks.Response.fromJson(dict(
+                    owmer=dict(
+                        login=username,
+                    ), fork=username in self.forks,
+                    name=stripped_url.split('/')[-1],
+                    full_name='/'.join(stripped_url.split('/')[-2:]),
+                ), url=url)
+            return mocks.Response.create404(url)
+
+        # Add fork
+        if stripped_url.startswith('{}/forks'.format(self.api_remote)) and method == 'POST':
+            username = kwargs.get('json', {}).get('owner', None)
+            if username:
+                self.forks.append(username)
+            return mocks.Response.fromJson({}) if username else mocks.Response.create404(url)
 
         return mocks.Response.create404(url)
