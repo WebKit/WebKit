@@ -137,6 +137,8 @@ NetworkSession::~NetworkSession()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     destroyResourceLoadStatistics([] { });
 #endif
+    for (auto& loader : std::exchange(m_keptAliveLoads, { }))
+        loader->abort();
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

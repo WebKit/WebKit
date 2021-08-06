@@ -1,0 +1,8 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+fetch("/resources/slow-script.pl", { keepalive : true });
+</script>
+Send a keepalive fetch request in an ephemeral session. This test should not cause a crash.
