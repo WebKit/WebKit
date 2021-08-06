@@ -1,3 +1,12 @@
+2021-08-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Make config.json compact
+        https://bugs.webkit.org/show_bug.cgi?id=228862
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/config.json:
+
 2021-08-05  Diego Pino Garcia  <dpino@igalia.com>
 
         [buildbot] Add new post-commit bot to build WPE on Ubuntu-LTS
