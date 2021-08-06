@@ -112,7 +112,10 @@ void RealtimeVideoSource::sourceMutedChanged()
 void RealtimeVideoSource::sourceSettingsChanged()
 {
     auto rotation = m_source->sampleRotation();
-    auto size = m_source->size();
+    auto size = this->size();
+    if (size.isEmpty())
+        size = m_source->size();
+
     if (rotation == MediaSample::VideoRotation::Left || rotation == MediaSample::VideoRotation::Right)
         size = size.transposedSize();
 
