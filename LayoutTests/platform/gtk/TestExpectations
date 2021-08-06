@@ -941,12 +941,6 @@ webkit.org/b/224590 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 webkit.org/b/224967 webkit.org/b/225659 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Crash Failure ]
 
-webkit.org/b/225644 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
-webkit.org/b/225644 fast/repaint/fixed-table-cell.html [ ImageOnlyFailure ]
-webkit.org/b/225644 fast/repaint/fixed-table-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/225644 fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure ]
-webkit.org/b/225644 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
