@@ -880,6 +880,9 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-005.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-006.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-018.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-019.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-031.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-032.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-035.html [ ImageOnlyFailure ]
@@ -1781,6 +1784,7 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shapin
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-force-end-001.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ Timeout ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ Timeout ImageOnlyFailure ]
+webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-pre-wrap-trailing-spaces-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/185939 imported/w3c/web-platform-tests/css/WOFF2 [ Pass ]
 webkit.org/b/185938 imported/w3c/web-platform-tests/css/WOFF2/tabledata-glyf-bbox-001.xht [ ImageOnlyFailure ]
