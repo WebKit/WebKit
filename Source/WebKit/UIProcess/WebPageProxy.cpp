@@ -8239,7 +8239,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldEnableVP9Decoder = preferences().vp9DecoderEnabled();
 #if ENABLE(VP9) && PLATFORM(COCOA)
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
-    parameters.shouldEnableVP8Decoder = preferences().vp9DecoderEnabled();
+    parameters.shouldEnableVP8Decoder = preferences().vp8DecoderEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP9SWDecoder = preferences().vp9DecoderEnabled() && (!WebCore::systemHasBattery() || preferences().vp9SWDecoderEnabledOnBattery());
 #endif

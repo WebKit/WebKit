@@ -42,22 +42,34 @@
 
 namespace WebKit {
 
-#if PLATFORM(COCOA) && HAVE(SYSTEM_FEATURE_FLAGS)
+#if PLATFORM(COCOA)
 
 // Because of <rdar://problem/60608008>, WebKit has to parse the feature flags plist file
-bool isFeatureFlagEnabled(const String& featureName)
+bool isFeatureFlagEnabled(const String& featureName, bool defaultValue)
 {
-    BOOL isWebKitBundleFromStagedFramework = [[[NSBundle mainBundle] bundlePath] hasPrefix:@"/Library/Apple/System/Library/StagedFrameworks/WebKit"];
+#if HAVE(SYSTEM_FEATURE_FLAGS)
 
-    if (!isWebKitBundleFromStagedFramework)
-        return _os_feature_enabled_impl("WebKit", (const char*)featureName.utf8().data());
+#if PLATFORM(MAC)
+    static bool isSystemWebKit = [] {
+        NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WebView")];
+        return [bundle.bundlePath hasPrefix:@"/System/"];
+    }();
 
-    static NeverDestroyed<RetainPtr<NSDictionary>> dictionary = [NSDictionary dictionaryWithContentsOfFile:@"/Library/Apple/System/Library/FeatureFlags/Domain/WebKit.plist"];
-
-    if (![[dictionary.get() objectForKey:featureName] objectForKey:@"Enabled"])
+    if (isSystemWebKit)
         return _os_feature_enabled_impl("WebKit", (const char*)featureName.characters8());
 
-    return [[[dictionary.get() objectForKey:featureName] objectForKey:@"Enabled"] isKindOfClass:[NSNumber class]] && [[[dictionary.get() objectForKey:featureName] objectForKey:@"Enabled"] boolValue];
+    return defaultValue;
+#else
+    UNUSED_PARAM(defaultValue);
+    return _os_feature_enabled_impl("WebKit", (const char*)featureName.characters8());
+#endif // PLATFORM(MAC)
+
+#else
+
+    UNUSED_PARAM(featureName);
+    return defaultValue;
+
+#endif // HAVE(SYSTEM_FEATURE_FLAGS)
 }
 
 #endif
@@ -66,11 +78,7 @@ bool isFeatureFlagEnabled(const String& featureName)
 
 bool defaultIncrementalPDFEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("incremental_pdf");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("incremental_pdf", false);
 }
 
 #endif
@@ -79,11 +87,7 @@ bool defaultIncrementalPDFEnabled()
 
 bool defaultWebXREnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("WebXR");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("WebXR", false);
 }
 
 #endif // ENABLE(WEBXR)
@@ -278,20 +282,12 @@ bool defaultWheelEventGesturesBecomeNonBlocking()
 
 bool defaultWebMParserEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webm_parser");
-#endif
-
-    return true;
+    return isFeatureFlagEnabled("webm_parser", true);
 }
 
 bool defaultWebMWebAudioEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webm_webaudio");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("webm_webaudio", false);
 }
 
 #endif // ENABLE(MEDIA_SOURCE)
@@ -300,20 +296,12 @@ bool defaultWebMWebAudioEnabled()
 
 bool defaultVP8DecoderEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("vp8_decoder");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("vp8_decoder", true);
 }
 
 bool defaultVP9DecoderEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("vp9_decoder");
-#endif
-
-    return true;
+    return isFeatureFlagEnabled("vp9_decoder", true);
 }
 
 #endif // ENABLE(VP9)

@@ -67,6 +67,11 @@
 		<key>Enabled</key>
 		<true/>
 	</dict>
+	<key>vp8_decoder</key>
+	<dict>
+		<key>Enabled</key>
+		<true/>
+	</dict>
 	<key>WebXR</key>
 	<dict>
 		<key>Enabled</key>
@@ -78,11 +83,6 @@
 		<true/>
 	</dict>
 	<key>webm_parser</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>webm_webaudio</key>
 	<dict>
 		<key>Enabled</key>
 		<true/>

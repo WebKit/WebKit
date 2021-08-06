@@ -67,6 +67,11 @@
 		<key>Enabled</key>
 		<true/>
 	</dict>
+	<key>vp8_decoder</key>
+	<dict>
+		<key>Enabled</key>
+		<true/>
+	</dict>
 	<key>WebXR</key>
 	<dict>
 		<key>Enabled</key>
@@ -85,7 +90,7 @@
 	<key>webm_webaudio</key>
 	<dict>
 		<key>Enabled</key>
-		<true/>
+		<false/>
 	</dict>
 	<key>RB_full_manage_WK_jetsam</key>
 	<dict>

@@ -1,3 +1,16 @@
+2021-08-06  Peng Liu  <peng.liu6@apple.com>
+
+        [macOS] Clean up Feature Flags related code
+        https://bugs.webkit.org/show_bug.cgi?id=228803
+        <rdar://problem/81142982>
+
+        Reviewed by Tim Horton.
+
+        Update a mac-bigsur specific test expectation file because the test is passing now.
+
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-expected.txt: Removed.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-expected.txt:
+
 2021-08-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r274038): Keyframe animation with top/left with percentages fails to animate

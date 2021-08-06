@@ -41,6 +41,13 @@
 
 namespace WebKit {
 
+#if !PLATFORM(COCOA)
+bool isFeatureFlagEnabled(const String&, bool defaultValue)
+{
+    return defaultValue;
+}
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
@@ -108,15 +115,13 @@ static bool defaultAsyncFrameAndOverflowScrollingEnabled()
     return true;
 #endif
 
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("async_frame_and_overflow_scrolling");
-#endif
-
 #if PLATFORM(MAC)
-    return true;
+    bool defaultValue = true;
+#else
+    bool defaultValue = false;
 #endif
 
-    return false;
+    return isFeatureFlagEnabled("async_frame_and_overflow_scrolling", defaultValue);
 }
 
 bool defaultAsyncFrameScrollingEnabled()
@@ -150,49 +155,33 @@ bool defaultOfflineWebApplicationCacheEnabled()
 bool defaultUseGPUProcessForCanvasRenderingEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("gpu_process_canvas_rendering");
+    bool defaultValue = true;
 #else
-    return true;
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-#else
-    return false;
+    bool defaultValue = false;
 #endif
+
+    return isFeatureFlagEnabled("gpu_process_canvas_rendering", defaultValue);
 }
 
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
-#if ENABLE(GPU_PROCESS_BY_DEFAULT)
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("gpu_process_dom_rendering");
-#else
-    return false;
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-#else
-    return false;
-#endif
+    return isFeatureFlagEnabled("gpu_process_dom_rendering", false);
 }
 
 bool defaultUseGPUProcessForMediaEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("gpu_process_media");
+    bool defaultValue = true;
 #else
-    return true;
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-#else
-    return false;
+    bool defaultValue = false;
 #endif
+
+    return isFeatureFlagEnabled("gpu_process_media", defaultValue);
 }
 
 bool defaultUseGPUProcessForWebGLEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("gpu_process_webgl");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("gpu_process_webgl", false);
 }
 
 #endif // ENABLE(GPU_PROCESS)
@@ -202,19 +191,17 @@ bool defaultUseGPUProcessForWebGLEnabled()
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
-
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-#if PLATFORM(MAC)
-    return isFeatureFlagEnabled("gpu_process_webrtc");
-#elif PLATFORM(IOS_FAMILY)
-    return isFeatureFlagEnabled("gpu_process_media");
+    bool defaultValue = true;
+#else
+    bool defaultValue = false;
 #endif
-#else
-    return true;
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
 
+#if PLATFORM(MAC)
+    return isFeatureFlagEnabled("gpu_process_webrtc", defaultValue);
+#elif PLATFORM(IOS_FAMILY)
+    return isFeatureFlagEnabled("gpu_process_media", defaultValue);
 #else
-    return false;
+    return defaultValue;
 #endif
 }
 
@@ -230,14 +217,12 @@ bool defaultCaptureAudioInUIProcessEnabled()
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("gpu_process_webrtc");
+    bool defaultValue = true;
 #else
-    return true;
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-#else
-    return false;
+    bool defaultValue = false;
 #endif
+
+    return isFeatureFlagEnabled("gpu_process_webrtc", defaultValue);
 }
 
 #endif // ENABLE(MEDIA_STREAM)
@@ -247,39 +232,26 @@ bool defaultCaptureVideoInGPUProcessEnabled()
 bool defaultWebRTCCodecsInGPUProcess()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("gpu_process_webrtc");
+    bool defaultValue = true;
 #else
-    return true;
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-#else
-    return false;
+    bool defaultValue = false;
 #endif
+
+    return isFeatureFlagEnabled("gpu_process_webrtc", defaultValue);
 }
 
 #endif // ENABLE(WEB_RTC)
 
-bool defaultInAppBrowserPrivacy()
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("InAppBrowserPrivacy");
-#endif
-
-    return false;
-}
-
 #if HAVE(INCREMENTAL_PDF_APIS)
 bool defaultIncrementalPDFEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("incremental_pdf");
+#if PLATFORM(MAC)
+    bool defaultValue = true;
+#else
+    bool defaultValue = false;
 #endif
 
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
+    return isFeatureFlagEnabled("incremental_pdf", defaultValue);
 }
 #endif
 
@@ -300,15 +272,13 @@ bool defaultWebXREnabled()
 
 bool defaultWebMFormatReaderEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webm_format_reader");
+#if PLATFORM(MAC)
+    bool defaultValue = true;
+#else
+    bool defaultValue = false;
 #endif
 
-#if PLATFORM(MAC)
-    return true;
-#else
-    return false;
-#endif
+    return isFeatureFlagEnabled("webm_format_reader", defaultValue);
 }
 
 #endif // ENABLE(WEBM_FORMAT_READER)
@@ -317,29 +287,17 @@ bool defaultWebMFormatReaderEnabled()
 
 bool defaultVP8DecoderEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("vp8_decoder");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("vp8_decoder", true);
 }
 
 bool defaultVP9DecoderEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("vp9_decoder");
-#endif
-
-    return true;
+    return isFeatureFlagEnabled("vp9_decoder", true);
 }
 
 bool defaultVP9SWDecoderEnabledOnBattery()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("sw_vp9_decoder_on_battery");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("sw_vp9_decoder_on_battery", false);
 }
 #endif // ENABLE(VP9)
 
@@ -347,20 +305,12 @@ bool defaultVP9SWDecoderEnabledOnBattery()
 
 bool defaultWebMParserEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webm_parser");
-#endif
-
-    return true;
+    return isFeatureFlagEnabled("webm_parser", true);
 }
 
 bool defaultWebMWebAudioEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("webm_webaudio");
-#endif
-
-    return false;
+    return isFeatureFlagEnabled("webm_webaudio", false);
 }
 
 #endif // ENABLE(MEDIA_SOURCE)

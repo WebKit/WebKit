@@ -35,9 +35,7 @@
 
 namespace WebKit {
 
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-bool isFeatureFlagEnabled(const String&);
-#endif
+bool isFeatureFlagEnabled(const String&, bool defaultValue = false);
 
 #if PLATFORM(IOS_FAMILY)
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
@@ -84,8 +82,6 @@ bool defaultCaptureVideoInGPUProcessEnabled();
 #if ENABLE(WEB_RTC)
 bool defaultWebRTCCodecsInGPUProcess();
 #endif
-
-bool defaultInAppBrowserPrivacy();
 
 #if HAVE(INCREMENTAL_PDF_APIS)
 bool defaultIncrementalPDFEnabled();
