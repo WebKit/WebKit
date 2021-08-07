@@ -1,3 +1,13 @@
+2021-08-06  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [SOUP] test imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=228851
+
+        Unreviewed test gardening. Add a GLIB-specific baseline for the
+        failing subtest
+
+        * platform/glib/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https-expected.txt: Added.
+
 2021-08-06  Robert Jenner  <Jenner@apple.com>
 
         [ Monterey wk2 Release ] fast/scrolling/iframe-scrollable-after-back.html is a flaky timeout
