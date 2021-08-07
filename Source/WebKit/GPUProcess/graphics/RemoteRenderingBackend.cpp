@@ -152,7 +152,7 @@ void RemoteRenderingBackend::didFlush(DisplayList::FlushIdentifier flushIdentifi
     send(Messages::RemoteRenderingBackendProxy::DidFlush(flushIdentifier, renderingResourceIdentifier), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
@@ -160,7 +160,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     RefPtr<ImageBuffer> imageBuffer;
 
     if (renderingMode == RenderingMode::Accelerated) {
-        if (auto acceleratedImageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, renderingResourceIdentifier)) {
+        if (auto acceleratedImageBuffer = AcceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier)) {
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
             // Mark the IOSurface as being owned by the WebProcess even though it was constructed by the GPUProcess so that Jetsam knows which process to kill.
             acceleratedImageBuffer->setProcessOwnership(m_gpuConnectionToWebProcess->webProcessIdentityToken());
@@ -170,7 +170,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     }
 
     if (!imageBuffer)
-        imageBuffer = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, renderingResourceIdentifier);
+        imageBuffer = UnacceleratedRemoteImageBuffer::create(logicalSize, resolutionScale, colorSpace, pixelFormat, *this, imageBufferResourceIdentifier);
 
     if (!imageBuffer) {
         ASSERT_NOT_REACHED();
@@ -180,7 +180,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
     updateRenderingResourceRequest();
 
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
@@ -338,6 +338,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
     LOG_WITH_STREAM(SharedDisplayLists, stream << "Waking up to Items[" << arguments.itemBufferIdentifier << "] => Image(" << arguments.destinationImageBufferIdentifier << ") at " << arguments.offset);
     destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle, arguments.reason);
 
+    // FIXME: All the callers pass m_pendingWakeupInfo.arguments so the body of this function should just be this loop.
     while (destinationImageBuffer && m_pendingWakeupInfo) {
         if (m_pendingWakeupInfo->missingCachedResourceIdentifier)
             break;
@@ -477,7 +478,7 @@ void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::Rendering
     completionHandler(WTFMove(handle));
 }
 
-void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier nativeImageResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -485,13 +486,13 @@ void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& han
     if (!bitmap)
         return;
 
-    auto image = NativeImage::create(bitmap->createPlatformImage(), renderingResourceIdentifier);
+    auto image = NativeImage::create(bitmap->createPlatformImage(), nativeImageResourceIdentifier);
     if (!image)
         return;
 
     m_remoteResourceCache.cacheNativeImage(makeRef(*image));
 
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
@@ -499,9 +500,9 @@ void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto identifier = font->renderingResourceIdentifier();
+    auto fontResourceIdentifier = font->renderingResourceIdentifier();
     m_remoteResourceCache.cacheFont(WTFMove(font));
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(fontResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
@@ -531,18 +532,18 @@ void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID rendering
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
+void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier itemBufferIdentifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
 {
     ASSERT(!RunLoop::isMain());
-    MESSAGE_CHECK(!m_sharedDisplayListHandles.contains(identifier), "Duplicate shared display list handle");
+    MESSAGE_CHECK(!m_sharedDisplayListHandles.contains(itemBufferIdentifier), "Duplicate shared display list handle");
 
     if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite)) {
-        auto handle = DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull());
+        auto handle = DisplayListReaderHandle::create(itemBufferIdentifier, sharedMemory.releaseNonNull());
         MESSAGE_CHECK(handle, "There must be enough space to create the handle.");
-        m_sharedDisplayListHandles.set(identifier, handle);
+        m_sharedDisplayListHandles.set(itemBufferIdentifier, handle);
     }
 
-    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
+    if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(itemBufferIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
