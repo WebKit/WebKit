@@ -198,7 +198,7 @@ static ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject)
         && globalObject->arraySpeciesWatchpointSet().stateOnJSThread() == IsWatched;
 }
 
-enum class SpeciesConstructResult {
+enum class SpeciesConstructResult : uint8_t {
     FastPath,
     Exception,
     CreatedObject

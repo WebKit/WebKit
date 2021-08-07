@@ -47,7 +47,7 @@ namespace JSC {
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
 
-struct SignalContext {
+struct VMTraps::SignalContext {
 private:
     SignalContext(PlatformRegisters& registers, MacroAssemblerCodePtr<PlatformRegistersPCPtrTag> trapPC)
         : registers(registers)
@@ -84,8 +84,8 @@ static bool isSaneFrame(CallFrame* frame, CallFrame* calleeFrame, EntryFrame* en
         return false;
     return stackBounds.contains(frame);
 }
-    
-void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stackBounds)
+
+void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBounds stackBounds)
 {
     // This must be the initial signal to get the mutator thread's attention.
     // Let's get the thread to break at invalidation points if needed.

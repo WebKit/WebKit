@@ -221,7 +221,10 @@ public:
     JS_EXPORT_PRIVATE void fireTrap(Event);
     void handleTraps(BitField mask = AsyncEvents);
 
-    void tryInstallTrapBreakpoints(struct SignalContext&, StackBounds);
+#if ENABLE(SIGNAL_BASED_VM_TRAPS)
+    struct SignalContext;
+    void tryInstallTrapBreakpoints(struct VMTraps::SignalContext&, StackBounds);
+#endif
 
 private:
     VM& vm() const;

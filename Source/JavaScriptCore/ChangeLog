@@ -1,3 +1,25 @@
+2021-08-07  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix ODR violations in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=228876
+
+        Reviewed by Yusuke Suzuki.
+
+        When built with LTO enabled, GCC will warn about violations of C++'s one-definition rule.
+        JSC currently has two violations. The first is JSC::SpeciesConstructResult, which has two
+        different declarations, one in ArrayPrototype.cpp and the other in
+        JSArrayBufferPrototype.cpp. I decided to change the version in ArrayPrototype.cpp to make
+        the declarations match.
+
+        The next problem is JSC::SignalContext. We have two different versions of this struct, one
+        in VMTraps.cpp and the other in SigillCrashAnalyzer.cpp. In this case, I decided to change
+        the one in VMTraps.cpp from JSC::SignalContext to JSC::VMTraps::SignalContext.
+
+        * runtime/ArrayPrototype.cpp:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        * runtime/VMTraps.h:
+
 2021-08-07  Keith Miller  <keith_miller@apple.com>
 
         for-in should only emit one loop in bytecode
