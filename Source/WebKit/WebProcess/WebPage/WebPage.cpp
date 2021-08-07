@@ -6484,7 +6484,7 @@ void WebPage::reportUsedFeatures()
 void WebPage::sendEditorStateUpdate()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (frame.editor().ignoreSelectionChanges())
+    if (frame.editor().ignoreSelectionChanges() || !frame.document() || !frame.document()->hasLivingRenderTree())
         return;
 
     m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;

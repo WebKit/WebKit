@@ -1,3 +1,18 @@
+2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Web process crashes when detaching Document with uncommitted marked text
+        https://bugs.webkit.org/show_bug.cgi?id=228841
+        rdar://79960890
+
+        Reviewed by Ryosuke Niwa.
+
+        Deploy a similar fix on iOS, to avoid any attempts to compute editor state due to discarding uncommitted marked
+        text during Document teardown. This is required in order to avoid the same security assertion when running the
+        new layout test on iOS.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendEditorStateUpdate):
+
 2021-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Deduplicate logging channel algorithms

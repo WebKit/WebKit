@@ -284,9 +284,14 @@
     [super dealloc];
 }
 
+- (WebFrame *)selectedOrMainFrame
+{
+    return webView.selectedFrame ?: webView.mainFrame;
+}
+
 - (NSObject <NSTextInput> *)textInput
 {
-    NSView <NSTextInput> *view = inputMethodView ? inputMethodView : (id)[[[webView mainFrame] frameView] documentView];
+    NSView <NSTextInput> *view = inputMethodView ?: (id)self.selectedOrMainFrame.frameView.documentView;
     return [view conformsToProtocol:@protocol(NSTextInput)] ? view : nil;
 }
 

@@ -1,3 +1,16 @@
+2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Web process crashes when detaching Document with uncommitted marked text
+        https://bugs.webkit.org/show_bug.cgi?id=228841
+        rdar://79960890
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a layout test to exercise the crash.
+
+        * editing/inserting/remove-frame-with-marked-text-expected.txt: Added.
+        * editing/inserting/remove-frame-with-marked-text.html: Added.
+
 2021-08-06  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [SOUP] test imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html fails

@@ -1,3 +1,25 @@
+2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Web process crashes when detaching Document with uncommitted marked text
+        https://bugs.webkit.org/show_bug.cgi?id=228841
+        rdar://79960890
+
+        Reviewed by Ryosuke Niwa.
+
+        In the case where the document is in the process of being detached (underneath `willBeRemovedFromFrame()`), if
+        there is currently uncommitted marked text in the document, we will attempt to cancel the IME composition in the
+        process of clearing out the selection. On macOS, this calls into `Editor::cancelComposition()` which
+        subsequently triggers layout under various call stacks (DOM mutations, text event dispatch, and when scrolling
+        to reveal the selection); this triggers a security release assertion inside `Document::updateLayout()`.
+
+        To mitigate this, we avoid calling into this codepath if the Document no longer has a living render tree (i.e.,
+        the render tree has either been destroyed, is being destroyed, or has not been created yet).
+
+        Test: editing/inserting/remove-frame-with-marked-text.html
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::selectionWillChange):
+
 2021-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Deduplicate logging channel algorithms

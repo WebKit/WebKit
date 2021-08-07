@@ -220,7 +220,7 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
 
 void Editor::selectionWillChange()
 {
-    if (!hasComposition() || ignoreSelectionChanges() || m_document.selection().isNone())
+    if (!hasComposition() || ignoreSelectionChanges() || m_document.selection().isNone() || !m_document.hasLivingRenderTree())
         return;
 
     cancelComposition();

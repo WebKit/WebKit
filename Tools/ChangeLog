@@ -1,3 +1,19 @@
+2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Web process crashes when detaching Document with uncommitted marked text
+        https://bugs.webkit.org/show_bug.cgi?id=228841
+        rdar://79960890
+
+        Reviewed by Ryosuke Niwa.
+
+        Make a small adjustment to DumpRenderTree, such that TextInputController targets the selected frame (or the main
+        frame, if there is no DOM selection). This behavior matches that of WebKitTestRunner, and allows layout tests
+        that use TextInputController to simulate setting marked text inside subframes.
+
+        * DumpRenderTree/mac/TextInputControllerMac.m:
+        (-[TextInputController selectedOrMainFrame]):
+        (-[TextInputController textInput]):
+
 2021-08-07  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Ensure file handle is not leaked in loadConfig.py
