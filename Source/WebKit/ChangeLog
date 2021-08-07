@@ -1,3 +1,27 @@
+2021-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Page on mhlw.go.jp triggers WebContent termination by GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=228885
+        <rdar://81603231>
+
+        Reviewed by Wenson Hsieh.
+
+        https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000164708_00001.html triggered an issue
+        where RemoteRenderingBackend::finalizeRenderingUpdate() would be called when the
+        GPU process had just processed a "switching to next item buffer" meta command,
+        but had not yet received the new item buffer. This triggered the 
+        MESSAGE_CHECK(initialHandle, "Missing initial shared display list handle");
+        in RemoteRenderingBackend::wakeUpAndApplyDisplayList().
+
+        Protect against this by having finalizeRenderingUpdate() check that 
+        arguments.itemBufferIdentifier had been received, which is similar to what happens
+        inside the loop in wakeUpAndApplyDisplayList() already.
+
+        Not easily testable.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::finalizeRenderingUpdate):
+
 2021-08-06  Tim Horton  <timothy_horton@apple.com>
 
         Disable WKHoverPlatter for now

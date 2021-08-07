@@ -521,8 +521,13 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
 {
-    if (m_pendingWakeupInfo && m_remoteResourceCache.cachedImageBuffer(m_pendingWakeupInfo->arguments.destinationImageBufferIdentifier))
+    auto shouldPerformWakeup = [&](const GPUProcessWakeupMessageArguments& arguments) {
+        return m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier) && m_sharedDisplayListHandles.contains(arguments.itemBufferIdentifier);
+    };
+
+    if (m_pendingWakeupInfo && shouldPerformWakeup(m_pendingWakeupInfo->arguments))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
 }
 
