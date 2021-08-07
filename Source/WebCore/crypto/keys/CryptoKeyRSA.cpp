@@ -139,6 +139,9 @@ JsonWebKey CryptoKeyRSA::exportJwk() const
 
     auto rsaComponents = exportData();
 
+    if (!rsaComponents)
+        return result;
+
     // public key
     result.n = base64URLEncodeToString(rsaComponents->modulus());
     result.e = base64URLEncodeToString(rsaComponents->exponent());

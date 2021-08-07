@@ -1,3 +1,17 @@
+2021-08-06  Kate Cheney  <katherine_cheney@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::CryptoKeyRSA::exportJwk const
+        https://bugs.webkit.org/show_bug.cgi?id=228878
+        <rdar://problem/60147231>
+
+        Reviewed by Brent Fulgham.
+
+        exportData() could return nullptr. We should check the value of
+        rsaComponents before trying to use it.
+
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::exportJwk const):
+
 2021-08-06  Alexander Mikhaylenko  <alexm@gnome.org>
 
         REGRESSION(r279987): [GTK][WPE] It caused 2 new test failures
