@@ -143,7 +143,7 @@ public:
     {
         if (isAllSet())
             return;
-        ASSERT(std::is_sorted(characters));
+        ASSERT(std::is_sorted(characters.begin(), characters.end()));
         for (UChar32 character : characters) {
             // Early return since characters are sorted.
             if (charSize == CharSize::Char8 && character > 0xff)
@@ -157,7 +157,7 @@ public:
     {
         if (isAllSet())
             return;
-        ASSERT(std::is_sorted(characters, [](CharacterRange lhs, CharacterRange rhs) {
+        ASSERT(std::is_sorted(ranges.begin(), ranges.end(), [](CharacterRange lhs, CharacterRange rhs) {
                 return lhs.begin < rhs.begin;
             }));
         for (CharacterRange range : ranges) {
