@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,6 @@
 
 #include "config.h"
 #include "Logging.h"
-#include "LogInitialization.h"
-
-#include <wtf/LoggingAccumulator.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
-
-#if PLATFORM(COCOA)
-#include <notify.h>
-#include <wtf/BlockPtr.h>
-#endif
 
 namespace WebCore {
 
@@ -43,67 +32,6 @@ namespace WebCore {
 
 #define DEFINE_WEBCORE_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
 WEBCORE_LOG_CHANNELS(DEFINE_WEBCORE_LOG_CHANNEL)
-
-static WTFLogChannel* logChannels[] = {
-    WEBCORE_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
-};
-
-static const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
-
-bool isLogChannelEnabled(const String& name)
-{
-    WTFLogChannel* channel = WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
-    if (!channel)
-        return false;
-    return channel->state != WTFLogChannelState::Off;
-}
-
-static bool logChannelsNeedInitialization = true;
-
-void setLogChannelToAccumulate(const String& name)
-{
-    WTFLogChannel* channel = WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
-    if (!channel)
-        return;
-
-    channel->state = WTFLogChannelState::OnWithAccumulation;
-    logChannelsNeedInitialization = true;
-}
-
-void clearAllLogChannelsToAccumulate()
-{
-    resetAccumulatedLogs();
-    for (auto* channel : logChannels) {
-        if (channel->state == WTFLogChannelState::OnWithAccumulation)
-            channel->state = WTFLogChannelState::Off;
-    }
-
-    logChannelsNeedInitialization = true;
-}
-
-void initializeLogChannelsIfNecessary(std::optional<String> logChannelString)
-{
-    if (!logChannelsNeedInitialization && !logChannelString)
-        return;
-
-    logChannelsNeedInitialization = false;
-
-    String enabledChannelsString = logChannelString ? logChannelString.value() : logLevelString();
-    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
-//    LogEventLoop.state = WTFLogChannelState::On;
-}
-
-WTFLogChannel* getLogChannel(const String& name)
-{
-    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
-}
-
-#else
-
-WTFLogChannel* getLogChannel(const String&)
-{
-    return nullptr;
-}
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 

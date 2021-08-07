@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 
 #import "WebDelegateImplementationCaching.h"
 
+#import "WebKitLogInitialization.h"
 #import "WebKitLogging.h"
 #import "WebView.h"
 #import "WebViewData.h"

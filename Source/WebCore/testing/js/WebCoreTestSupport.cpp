@@ -36,6 +36,7 @@
 #include "JSServiceWorkerInternals.h"
 #include "JSWorkerGlobalScope.h"
 #include "LogInitialization.h"
+#include "Logging.h"
 #include "MockGamepadProvider.h"
 #include "Page.h"
 #include "SWContextManager.h"
@@ -122,7 +123,7 @@ void clearWheelEventTestMonitor(WebCore::Frame& frame)
 void setLogChannelToAccumulate(const String& name)
 {
 #if !LOG_DISABLED
-    WebCore::setLogChannelToAccumulate(name);
+    logChannels().setLogChannelToAccumulate(name);
 #else
     UNUSED_PARAM(name);
 #endif
@@ -131,14 +132,14 @@ void setLogChannelToAccumulate(const String& name)
 void clearAllLogChannelsToAccumulate()
 {
 #if !LOG_DISABLED
-    WebCore::clearAllLogChannelsToAccumulate();
+    logChannels().clearAllLogChannelsToAccumulate();
 #endif
 }
 
 void initializeLogChannelsIfNecessary()
 {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WebCore::initializeLogChannelsIfNecessary();
+    logChannels().initializeLogChannelsIfNecessary();
 #endif
 }
 

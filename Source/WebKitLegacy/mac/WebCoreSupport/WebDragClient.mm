@@ -34,6 +34,7 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
+#import "WebKitLogInitialization.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"

@@ -46,6 +46,15 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
 
+// X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
+// As a workaround, we explicitly undef them here.
+#if defined(False)
+#undef False
+#endif
+#if defined(True)
+#undef True
+#endif
+
 namespace WTF {
 
 enum class CanBeGCThread {

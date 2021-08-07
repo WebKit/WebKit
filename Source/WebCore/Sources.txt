@@ -1755,6 +1755,7 @@ platform/LengthBox.cpp
 platform/LengthPoint.cpp
 platform/LengthSize.cpp
 platform/LocalizedStrings.cpp
+platform/LogInitialization.cpp
 platform/Logging.cpp
 platform/LowPowerModeNotifier.cpp
 platform/MIMETypeRegistry.cpp

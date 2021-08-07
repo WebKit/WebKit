@@ -251,8 +251,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     resolvePathsForSandboxExtensions();
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WebCore::initializeLogChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
+    WebCore::logChannels().initializeLogChannelsIfNecessary();
+    WebKit::logChannels().initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #ifndef NDEBUG
