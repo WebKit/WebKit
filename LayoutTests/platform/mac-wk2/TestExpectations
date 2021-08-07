@@ -1496,9 +1496,6 @@ webkit.org/b/226054 [ BigSur Release ] imported/w3c/web-platform-tests/webrtc/RT
 # rdar://80335706 (REGRESSION: [ Monterey wk2 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ])
 [ Monterey ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
 
-# rdar://80335452 ([ Monterey wk2 Release ] fast/scrolling/iframe-scrollable-after-back.html is a flaky timeout)
-[ Monterey ] fast/scrolling/iframe-scrollable-after-back.html [ Pass Timeout ]
-
 webkit.org/b/227776 [ BigSur Release arm64 ] scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/227776 [ Catalina Release ] scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
