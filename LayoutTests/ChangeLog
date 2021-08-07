@@ -1,5 +1,13 @@
 2021-08-06  Robert Jenner  <Jenner@apple.com>
 
+        [BigSur Release Wk2 Arm64] imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html is flaky failing 
+        https://bugs.webkit.org/show_bug.cgi?id=224784
+        Unreviewed test gardening. Removing no longer needed expectation.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-06  Robert Jenner  <Jenner@apple.com>
+
         [BigSur Wk2 Arm64] http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=224783
 
