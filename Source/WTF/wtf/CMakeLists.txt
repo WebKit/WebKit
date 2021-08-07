@@ -123,7 +123,6 @@ set(WTF_PUBLIC_HEADERS
     LockedPrintStream.h
     Locker.h
     LocklessBag.h
-    LogChannels.h
     Logger.h
     LoggerHelper.h
     LoggingAccumulator.h
@@ -423,7 +422,6 @@ set(WTF_SOURCES
     LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp
     LockedPrintStream.cpp
-    LogChannels.cpp
     Logger.cpp
     MainThread.cpp
     MediaTime.cpp

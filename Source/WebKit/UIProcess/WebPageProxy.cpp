@@ -68,7 +68,6 @@
 #include "FrameInfoData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
-#include "LogInitialization.h"
 #include "Logging.h"
 #include "NativeWebGestureEvent.h"
 #include "NativeWebKeyboardEvent.h"

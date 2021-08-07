@@ -243,8 +243,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
-    WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
+    WebCore::initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
+    WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
 #endif
 
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.

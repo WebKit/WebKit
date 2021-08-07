@@ -35,7 +35,6 @@
 #include "CommandLineAPIHost.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
-#include "LogInitialization.h"
 #include "Logging.h"
 #include "Node.h"
 #include "Page.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2010, 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,15 @@
 
 #pragma once
 
-#include <wtf/LogChannels.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-WTF::LogChannels& logChannels();
+namespace WebKit {
+
+void initializeLogChannelsIfNecessary(std::optional<String> = std::nullopt);
 String logLevelString();
 
-#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
-WTFLogChannel* getLogChannel(const String& name);
-
 } // namespace WebKit
+
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

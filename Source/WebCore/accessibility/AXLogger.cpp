@@ -36,7 +36,6 @@
 #endif
 #include "AXObjectCache.h"
 #include "FrameView.h"
-#include "LogInitialization.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 

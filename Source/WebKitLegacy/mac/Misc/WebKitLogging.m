@@ -33,4 +33,37 @@
 #define DEFINE_WEBKIT_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
 WEBKIT_LOG_CHANNELS(DEFINE_WEBKIT_LOG_CHANNEL)
 
+static WTFLogChannel* logChannels[] = {
+    WEBKIT_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
+};
+
+static const size_t logChannelCount = sizeof(logChannels) / sizeof(logChannels[0]);
+
+
+static NSString * const defaultsDomain = @"WebKitLogging";
+
+void WebKitInitializeLogChannelsIfNecessary()
+{
+    static bool haveInitializedLoggingChannels = false;
+    if (haveInitializedLoggingChannels)
+        return;
+    haveInitializedLoggingChannels = true;
+
+    NSString *logLevel = [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
+    if (!logLevel)
+        return;
+    
+    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, [logLevel UTF8String]);
+}
+
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+void ReportDiscardedDelegateException(SEL delegateSelector, id exception)
+{
+    if ([exception isKindOfClass:[NSException class]])
+        NSLog(@"*** WebKit discarded an uncaught exception in the %s delegate: <%@> %@",
+            sel_getName(delegateSelector), [exception name], [exception reason]);
+    else
+        NSLog(@"*** WebKit discarded an uncaught exception in the %s delegate: %@",
+            sel_getName(delegateSelector), exception);
+}

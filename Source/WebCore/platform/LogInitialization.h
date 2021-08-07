@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2013, 2015, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,20 @@
 
 #pragma once
 
-#include <wtf/LogChannels.h>
+#include <wtf/Assertions.h>
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-WEBCORE_EXPORT WTF::LogChannels& logChannels();
-String logLevelString();
+WEBCORE_EXPORT String logLevelString();
+bool isLogChannelEnabled(const String& name);
+WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
+WEBCORE_EXPORT void clearAllLogChannelsToAccumulate();
+WEBCORE_EXPORT void initializeLogChannelsIfNecessary(std::optional<String> = std::nullopt);
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
-WEBCORE_EXPORT WTFLogChannel* getLogChannel(const String& name);
 
 } // namespace WebCore

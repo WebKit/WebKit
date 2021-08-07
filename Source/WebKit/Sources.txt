@@ -135,7 +135,6 @@ NetworkProcess/webrtc/NetworkMDNSRegister.cpp
 NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp
 
 // TODO: We should unify these files once GTK's PluginProcess2 is removed.
-Platform/LogInitialization.cpp @no-unify
 Platform/Logging.cpp @no-unify
 Platform/Module.cpp @no-unify
 Platform/SharedMemory.cpp @no-unify

@@ -133,4 +133,6 @@ WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
+WEBCORE_EXPORT WTFLogChannel* getLogChannel(const String& name);
+
 } // namespace WebCore

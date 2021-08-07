@@ -281,8 +281,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
-    WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
+    WebCore::initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
+    WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
 #endif
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;

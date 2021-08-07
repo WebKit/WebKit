@@ -112,8 +112,13 @@ WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 
 #undef DECLARE_LOG_CHANNEL
 
+namespace WebKit {
+WTFLogChannel* getLogChannel(const String&);
+} // namespace WebKit
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
