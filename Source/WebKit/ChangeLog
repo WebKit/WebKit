@@ -1,3 +1,17 @@
+2021-08-06  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r185111): Links to App Store doesn't work when opening a PDF in Safari on iOS and iPadOS
+        https://bugs.webkit.org/show_bug.cgi?id=228881
+        rdar://81294035
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+        Clicking a link in PDF should absolutely be allowed to launch an external app.
+        Humorously, r185111 applied the correct value to PDFPlugin (macOS), but the
+        wrong value to WKPDFView (iOS). Bring them into alignment.
+
 2021-08-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         ASSERTION FAILED: !m_networkLoad in NetworkResourceLoader::~NetworkResourceLoader()
