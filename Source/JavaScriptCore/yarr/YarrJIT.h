@@ -60,6 +60,56 @@ enum class JITFailureReason : uint8_t {
     ExecutableMemoryAllocationFailure,
 };
 
+class BoyerMooreFastCandidates {
+    WTF_MAKE_FAST_ALLOCATED(BoyerMooreFastCandidates);
+public:
+    static constexpr unsigned maxSize = 2;
+    using CharacterVector = Vector<UChar32, maxSize>;
+
+    BoyerMooreFastCandidates() = default;
+
+    bool isValid() const { return m_isValid; }
+    void invalidate()
+    {
+        m_characters.clear();
+        m_isValid = false;
+    }
+
+    bool isEmpty() const { return m_characters.isEmpty(); }
+    unsigned size() const { return m_characters.size(); }
+    UChar32 at(unsigned index) const { return m_characters.at(index); }
+
+    void add(UChar32 character)
+    {
+        if (!isValid())
+            return;
+        if (!m_characters.contains(character)) {
+            if (m_characters.size() < maxSize)
+                m_characters.append(character);
+            else
+                invalidate();
+        }
+    }
+
+    void merge(const BoyerMooreFastCandidates& other)
+    {
+        if (!isValid())
+            return;
+        if (!other.isValid()) {
+            invalidate();
+            return;
+        }
+        for (unsigned index = 0; index < other.size(); ++index)
+            add(other.at(index));
+    }
+
+    void dump(PrintStream&) const;
+
+private:
+    CharacterVector m_characters;
+    bool m_isValid { true };
+};
+
 class BoyerMooreBitmap {
     WTF_MAKE_NONCOPYABLE(BoyerMooreBitmap);
     WTF_MAKE_FAST_ALLOCATED(BoyerMooreBitmap);
@@ -72,48 +122,62 @@ public:
 
     unsigned count() const { return m_count; }
     const Map& map() const { return m_map; }
-    bool isMaskEffective() const { return m_isMaskEffective; }
+    const BoyerMooreFastCandidates& charactersFastPath() const { return m_charactersFastPath; }
 
-    void add(UChar32 character)
+    bool add(CharSize charSize, UChar32 character)
     {
         if (isAllSet())
-            return;
+            return false;
+        if (charSize == CharSize::Char8 && character > 0xff)
+            return true;
+        m_charactersFastPath.add(character);
         unsigned position = character & mapMask;
-        if (position != static_cast<unsigned>(character))
-            m_isMaskEffective = true;
         if (!m_map.get(position)) {
             m_map.set(position);
             ++m_count;
         }
+        return !isAllSet();
     }
 
-    void addCharacters(const Vector<UChar32>& characters)
+    void addCharacters(CharSize charSize, const Vector<UChar32>& characters)
     {
         if (isAllSet())
             return;
-        if (characters.size() >= mapSize) {
-            setAll();
-            return;
+        ASSERT(std::is_sorted(characters));
+        for (UChar32 character : characters) {
+            // Early return since characters are sorted.
+            if (charSize == CharSize::Char8 && character > 0xff)
+                return;
+            if (!add(charSize, character))
+                return;
         }
-        for (UChar32 character : characters)
-            add(character);
     }
 
-    void addRanges(const Vector<CharacterRange>& ranges)
+    void addRanges(CharSize charSize, const Vector<CharacterRange>& ranges)
     {
-        if (ranges.size() >= mapSize) {
-            setAll();
+        if (isAllSet())
             return;
-        }
+        ASSERT(std::is_sorted(characters, [](CharacterRange lhs, CharacterRange rhs) {
+                return lhs.begin < rhs.begin;
+            }));
         for (CharacterRange range : ranges) {
-            if (isAllSet())
-                return;
-            if (static_cast<unsigned>(range.end - range.begin + 1) >= mapSize) {
+            auto begin = range.begin;
+            auto end = range.end;
+            if (charSize == CharSize::Char8) {
+                // Early return since ranges are sorted.
+                if (begin > 0xff)
+                    return;
+                if (end > 0xff)
+                    end = 0xff;
+            }
+            if (static_cast<unsigned>(end - begin + 1) >= mapSize) {
                 setAll();
                 return;
             }
-            for (UChar32 character = range.begin; character <= range.end; ++character)
-                add(character);
+            for (UChar32 character = begin; character <= end; ++character) {
+                if (!add(charSize, character))
+                    return;
+            }
         }
     }
 
@@ -126,8 +190,8 @@ public:
 
 private:
     Map m_map { };
+    BoyerMooreFastCandidates m_charactersFastPath;
     unsigned m_count { 0 };
-    bool m_isMaskEffective { false };
 };
 
 #if CPU(ARM64E)

@@ -36,6 +36,7 @@
 #include "YarrMatchingContextHolder.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HexNumber.h>
+#include <wtf/ListDump.h>
 #include <wtf/Threading.h>
 
 
@@ -50,14 +51,24 @@ static constexpr bool verbose = false;
 JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToYarrJITAfter, vmEntryToYarrJITAfter);
 #endif
 
+void BoyerMooreFastCandidates::dump(PrintStream& out) const
+{
+    if (!isValid()) {
+        out.print("isValid:(false)");
+        return;
+    }
+    out.print("isValid:(true),characters:(", listDump(m_characters), ")");
+}
+
 class BoyerMooreInfo {
     WTF_MAKE_NONCOPYABLE(BoyerMooreInfo);
     WTF_MAKE_FAST_ALLOCATED(BoyerMooreInfo);
 public:
     static constexpr unsigned maxLength = 32;
 
-    explicit BoyerMooreInfo(unsigned length)
+    explicit BoyerMooreInfo(CharSize charSize, unsigned length)
         : m_characters(length)
+        , m_charSize(charSize)
     {
         ASSERT(this->length() <= maxLength);
     }
@@ -71,7 +82,7 @@ public:
 
     void set(unsigned index, UChar32 character)
     {
-        m_characters[index].add(character);
+        m_characters[index].add(m_charSize, character);
     }
 
     void setAll(unsigned index)
@@ -81,26 +92,27 @@ public:
 
     void addCharacters(unsigned index, const Vector<UChar32>& characters)
     {
-        m_characters[index].addCharacters(characters);
+        m_characters[index].addCharacters(m_charSize, characters);
     }
 
     void addRanges(unsigned index, const Vector<CharacterRange>& range)
     {
-        m_characters[index].addRanges(range);
+        m_characters[index].addRanges(m_charSize, range);
     }
 
-    static UniqueRef<BoyerMooreInfo> create(unsigned length)
+    static UniqueRef<BoyerMooreInfo> create(CharSize charSize, unsigned length)
     {
-        return makeUniqueRef<BoyerMooreInfo>(length);
+        return makeUniqueRef<BoyerMooreInfo>(charSize, length);
     }
 
     std::optional<std::tuple<unsigned, unsigned>> findWorthwhileCharacterSequenceForLookahead() const;
-    std::tuple<BoyerMooreBitmap::Map, bool> createCandidateBitmap(unsigned begin, unsigned end) const;
+    std::tuple<BoyerMooreBitmap::Map, BoyerMooreFastCandidates> createCandidateBitmap(unsigned begin, unsigned end) const;
 
 private:
     std::tuple<int, unsigned, unsigned> findBestCharacterSequence(unsigned numberOfCandidatesLimit) const;
 
     Vector<BoyerMooreBitmap> m_characters;
+    CharSize m_charSize;
 };
 
 std::tuple<int, unsigned, unsigned> BoyerMooreInfo::findBestCharacterSequence(unsigned numberOfCandidatesLimit) const
@@ -158,16 +170,16 @@ std::optional<std::tuple<unsigned, unsigned>> BoyerMooreInfo::findWorthwhileChar
     return std::tuple { begin, end };
 }
 
-std::tuple<BoyerMooreBitmap::Map, bool> BoyerMooreInfo::createCandidateBitmap(unsigned begin, unsigned end) const
+std::tuple<BoyerMooreBitmap::Map, BoyerMooreFastCandidates> BoyerMooreInfo::createCandidateBitmap(unsigned begin, unsigned end) const
 {
     BoyerMooreBitmap::Map map { };
-    bool isMaskEffective = false;
+    BoyerMooreFastCandidates charactersFastPath;
     for (unsigned index = begin; index < end; ++index) {
         auto& bmBitmap = m_characters[index];
         map.merge(bmBitmap.map());
-        isMaskEffective |= bmBitmap.isMaskEffective();
+        charactersFastPath.merge(bmBitmap.charactersFastPath());
     }
-    return std::tuple { map, isMaskEffective };
+    return std::tuple { WTFMove(map), WTFMove(charactersFastPath) };
 }
 
 class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
@@ -2409,7 +2421,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         auto [beginIndex, endIndex] = *range;
                         ASSERT(endIndex <= alternative->m_minimumSize);
 
-                        auto [map, isMaskEffective] = op.m_bmInfo->createCandidateBitmap(beginIndex, endIndex);
+                        auto [map, charactersFastPath] = op.m_bmInfo->createCandidateBitmap(beginIndex, endIndex);
                         unsigned mapCount = map.count();
                         // If candiate characters are <= 2, checking each is better than using vector.
                         JumpList outOfLengthFailure;
@@ -2418,23 +2430,15 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         // Patterns like /[]/ have zero candidates. Since it is rare, we do not do nothing for now.
                         if (!mapCount)
                             break;
-                        if (mapCount <= 2) {
-                            UChar32 character1 = map.findBit(0, true);
-                            ASSERT(character1 != BoyerMooreBitmap::Map::size());
-                            UChar32 character2 = 0xff;
-                            if (mapCount == 2) {
-                                character2 = map.findBit(character1 + 1, true);
-                                ASSERT(character2 != BoyerMooreBitmap::Map::size());
-                            }
-                            dataLogLnIf(Options::verboseRegExpCompilation(), "Found 1-or-2 characters lookahead character:(0x", hex(character1), "),character2:(", hex(character2), "),isMaskEffective:(", isMaskEffective,"),range:[", beginIndex, ", ", endIndex, ")");
+                        if (charactersFastPath.isValid() && !charactersFastPath.isEmpty()) {
+                            static_assert(BoyerMooreFastCandidates::maxSize == 2);
+                            dataLogLnIf(Options::verboseRegExpCompilation(), "Found characters fastpath lookahead ", charactersFastPath, " range:[", beginIndex, ", ", endIndex, ")");
 
                             auto loopHead = label();
                             readCharacter(m_checkedOffset - endIndex + 1, regT0);
-                            if (isMaskEffective)
-                                and32(TrustedImm32(BoyerMooreBitmap::mapMask), regT0, regT0);
-                            matched.append(branch32(Equal, regT0, TrustedImm32(character1)));
-                            if (mapCount == 2)
-                                matched.append(branch32(Equal, regT0, TrustedImm32(character2)));
+                            matched.append(branch32(Equal, regT0, TrustedImm32(charactersFastPath.at(0))));
+                            if (charactersFastPath.size() > 1)
+                                matched.append(branch32(Equal, regT0, TrustedImm32(charactersFastPath.at(1))));
                             outOfLengthFailure.append(jumpIfNoAvailableInput(endIndex - beginIndex));
                             jump().linkTo(loopHead, this);
                         } else {
@@ -3895,7 +3899,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         // FIXME: Support unicode flag.
         // https://bugs.webkit.org/show_bug.cgi?id=228611
         if (disjunction->m_minimumSize && !m_pattern.sticky() && !m_pattern.unicode()) {
-            auto bmInfo = BoyerMooreInfo::create(std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
+            auto bmInfo = BoyerMooreInfo::create(m_charSize, std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
             if (collectBoyerMooreInfo(disjunction, currentAlternativeIndex, bmInfo.get())) {
                 m_ops.last().m_bmInfo = bmInfo.ptr();
                 m_bmInfos.append(WTFMove(bmInfo));
@@ -3971,11 +3975,6 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         break;
                     auto& characterClass = *term.characterClass;
                     if (term.invert() || characterClass.m_anyCharacter) {
-                        bmInfo.setAll(cursor);
-                        ++cursor;
-                        continue;
-                    }
-                    if (characterClass.m_table) {
                         bmInfo.setAll(cursor);
                         ++cursor;
                         continue;
