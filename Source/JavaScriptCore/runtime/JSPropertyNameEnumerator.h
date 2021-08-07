@@ -28,7 +28,7 @@
 #include "JSCast.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"
-#include "Structure.h"
+#include "StructureChain.h"
 
 namespace JSC {
 
@@ -36,6 +36,17 @@ class JSPropertyNameEnumerator final : public JSCell {
 public:
     using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    enum Mode : uint8_t {
+        InitMode = 0,
+        IndexedMode = 1 << 0,
+        OwnStructureMode = 1 << 1,
+        GenericMode = 1 << 2,
+        // Profiling Only
+        HasSeenOwnStructureModeStructureMismatch = 1 << 3,
+    };
+
+    static constexpr uint8_t enumerationModeMask = (GenericMode << 1) - 1;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -74,15 +85,19 @@ public:
     uint32_t endGenericPropertyIndex() const { return m_endGenericPropertyIndex; }
     uint32_t cachedInlineCapacity() const { return m_cachedInlineCapacity; }
     uint32_t sizeOfPropertyNames() const { return endGenericPropertyIndex(); }
+    uint32_t modeSet() const { return m_modeSet; }
     static ptrdiff_t cachedStructureIDOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedStructureID); }
     static ptrdiff_t indexedLengthOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_indexedLength); }
     static ptrdiff_t endStructurePropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endStructurePropertyIndex); }
     static ptrdiff_t endGenericPropertyIndexOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_endGenericPropertyIndex); }
     static ptrdiff_t cachedInlineCapacityOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_cachedInlineCapacity); }
+    static ptrdiff_t modeSetOffset() { return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_modeSet); }
     static ptrdiff_t cachedPropertyNamesVectorOffset()
     {
         return OBJECT_OFFSETOF(JSPropertyNameEnumerator, m_propertyNames);
     }
+
+    JSString* computeNext(JSGlobalObject*, JSObject* base, uint32_t& currentIndex, Mode&, bool shouldAllocateIndexedNameString = true);
 
     DECLARE_VISIT_CHILDREN;
 
@@ -99,6 +114,7 @@ private:
     uint32_t m_endStructurePropertyIndex;
     uint32_t m_endGenericPropertyIndex;
     uint32_t m_cachedInlineCapacity;
+    uint32_t m_modeSet { 0 };
 };
 
 void getEnumerablePropertyNames(JSGlobalObject*, JSObject*, PropertyNameArray&, uint32_t& indexedLength, uint32_t& structurePropertyCount);
@@ -134,7 +150,10 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
         numberStructureProperties = 0;
     }
 
-    enumerator = JSPropertyNameEnumerator::create(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTFMove(propertyNames));
+    if (!indexedLength && !propertyNames.size())
+        enumerator = vm.emptyPropertyNameEnumerator();
+    else
+        enumerator = JSPropertyNameEnumerator::create(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTFMove(propertyNames));
     if (!indexedLength && successfullyNormalizedChain && structureAfterGettingPropertyNames == structure) {
         enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(globalObject, base));
         if (structure->canCachePropertyNameEnumerator(vm))
@@ -142,5 +161,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     }
     return enumerator;
 }
+
+using EnumeratorMetadata = std::underlying_type_t<JSPropertyNameEnumerator::Mode>;
 
 } // namespace JSC

@@ -29,6 +29,7 @@
 #include "DFGRegisteredStructure.h"
 #include "HeapCell.h"
 #include "PrivateFieldPutKind.h"
+#include <wtf/OptionSet.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(DFG_JIT)
@@ -50,6 +51,8 @@ struct OpInfo {
     explicit OpInfo(CacheableIdentifier identifier) : m_value(static_cast<uint64_t>(identifier.rawBits())) { }
     explicit OpInfo(ECMAMode ecmaMode) : m_value(ecmaMode.value()) { }
     explicit OpInfo(PrivateFieldPutKind putKind) : m_value(putKind.value()) { }
+    template<typename EnumType>
+    explicit OpInfo(OptionSet<EnumType> optionSet) : m_value(optionSet.toRaw()) { }
 
     template <typename T>
     explicit OpInfo(T* ptr)

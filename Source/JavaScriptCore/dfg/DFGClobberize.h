@@ -147,6 +147,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case CheckArray:
         case CheckArrayOrEmpty:
             break;
+        case EnumeratorNextUpdateIndexAndMode:
+        case EnumeratorGetByVal:
+        case EnumeratorInByVal:
+        case EnumeratorHasOwnProperty:
         case GetIndexedPropertyStorage:
         case GetArrayLength:
         case GetVectorLength:
@@ -164,7 +168,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case ArrayPop:
         case ArrayIndexOf:
         case HasIndexedProperty:
-        case HasEnumerableIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:
@@ -337,21 +340,84 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(MathDotRandomState);
         return;
 
-    case GetEnumerableLength: {
-        read(Heap);
-        write(SideState);
+    case EnumeratorNextUpdatePropertyName: {
+        def(PureValue(node, node->enumeratorMetadata().toRaw()));
         return;
     }
 
-    case ToIndexString:
-    case GetEnumeratorStructurePname:
-    case GetEnumeratorGenericPname: {
+    case EnumeratorNextExtractMode:
+    case EnumeratorNextExtractIndex: {
         def(PureValue(node));
         return;
     }
 
-    case HasIndexedProperty:
-    case HasEnumerableIndexedProperty: {
+    case EnumeratorNextUpdateIndexAndMode: {
+        read(JSObject_butterfly);
+        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && graph.varArgChild(node, 0).useKind() == CellUse) {
+            read(NamedProperties);
+            read(JSCell_structureID);
+            return;
+        }
+
+        if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode) {
+            clobberTop();
+            return;
+        }
+
+        ArrayMode mode = node->arrayMode();
+        switch (mode.type()) {
+        case Array::ForceExit: {
+            write(SideState);
+            return;
+        }
+        case Array::Int32: {
+            if (mode.isSaneChain()) {
+                read(Butterfly_publicLength);
+                read(IndexedInt32Properties);
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                return;
+            }
+            break;
+        }
+
+        case Array::Double: {
+            if (mode.isSaneChain()) {
+                read(Butterfly_publicLength);
+                read(IndexedDoubleProperties);
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                return;
+            }
+            break;
+        }
+
+        case Array::Contiguous: {
+            if (mode.isSaneChain()) {
+                read(Butterfly_publicLength);
+                read(IndexedContiguousProperties);
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                return;
+            }
+            break;
+        }
+
+        case Array::ArrayStorage: {
+            if (mode.isInBounds()) {
+                read(Butterfly_vectorLength);
+                read(IndexedArrayStorageProperties);
+                return;
+            }
+            break;
+        }
+
+        default:
+            break;
+        }
+
+        clobberTop();
+        return;
+    }
+
+    case HasIndexedProperty: {
         read(JSObject_butterfly);
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {
@@ -705,6 +771,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ToPrimitive:
     case ToPropertyKey:
     case InByVal:
+    case EnumeratorInByVal:
+    case EnumeratorHasOwnProperty:
     case InById:
     case HasPrivateName:
     case HasPrivateBrand:
@@ -716,12 +784,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ResolveScopeForHoistingFuncDeclInEval:
     case ResolveScope:
     case ToObject:
-    case HasEnumerableStructureProperty:
-    case HasEnumerableProperty:
-    case HasOwnStructureProperty:
-    case InStructureProperty:
     case GetPropertyEnumerator:
-    case GetDirectPname:
     case InstanceOfCustom:
     case ToNumber:
     case ToNumeric:
@@ -904,6 +967,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(AbstractHeap(Stack, data->count));
         for (unsigned i = data->limit; i--;)
             write(AbstractHeap(Stack, data->start + static_cast<int>(i)));
+        return;
+    }
+
+    case EnumeratorGetByVal: {
+        clobberTop();
         return;
     }
         

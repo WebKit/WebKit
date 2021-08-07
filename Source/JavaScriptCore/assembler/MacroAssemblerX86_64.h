@@ -97,12 +97,6 @@ public:
         or16(imm, Address(scratchRegister()));
     }
 
-    void or8(TrustedImm32 imm, AbsoluteAddress address)
-    {
-        move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        or8(imm, Address(scratchRegister()));
-    }
-
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(TrustedImmPtr(address.m_ptr), scratchRegister());
@@ -585,6 +579,12 @@ public:
             m_assembler.sarq_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
+    }
+
+    void rshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(src, dest);
+        rshift64(imm, dest);
     }
 
     void urshift64(TrustedImm32 imm, RegisterID dest)

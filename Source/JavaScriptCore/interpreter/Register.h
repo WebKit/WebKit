@@ -53,7 +53,7 @@ namespace JSC {
         ALWAYS_INLINE Register& operator=(CallFrame*);
         ALWAYS_INLINE Register& operator=(CodeBlock*);
         ALWAYS_INLINE Register& operator=(JSScope*);
-        ALWAYS_INLINE Register& operator=(JSObject*);
+        ALWAYS_INLINE Register& operator=(JSCell*);
         ALWAYS_INLINE Register& operator=(EncodedJSValue);
 
         int32_t i() const;

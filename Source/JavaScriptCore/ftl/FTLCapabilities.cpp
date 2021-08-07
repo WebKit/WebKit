@@ -286,18 +286,15 @@ inline CapabilityLevel canCompile(Node* node)
     case Int52Constant:
     case BooleanToNumber:
     case HasIndexedProperty:
-    case HasEnumerableIndexedProperty:
-    case HasEnumerableStructureProperty:
-    case HasEnumerableProperty:
-    case HasOwnStructureProperty:
-    case InStructureProperty:
-    case GetDirectPname:
-    case GetEnumerableLength:
     case GetIndexedPropertyStorage:
     case GetPropertyEnumerator:
-    case GetEnumeratorStructurePname:
-    case GetEnumeratorGenericPname:
-    case ToIndexString:
+    case EnumeratorNextUpdateIndexAndMode:
+    case EnumeratorNextExtractMode:
+    case EnumeratorNextExtractIndex:
+    case EnumeratorNextUpdatePropertyName:
+    case EnumeratorGetByVal:
+    case EnumeratorInByVal:
+    case EnumeratorHasOwnProperty:
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:

@@ -1069,6 +1069,13 @@ public:
         store32(dataTempRegister, address);
     }
 
+    void or8(RegisterID src, AbsoluteAddress address)
+    {
+        load8(address.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
+        or32(src, dataTempRegister, dataTempRegister);
+        store8(dataTempRegister, address.m_ptr);
+    }
+
     void or8(TrustedImm32 imm, AbsoluteAddress address)
     {
         LogicalImmediate logicalImm = LogicalImmediate::create32(imm.m_value);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpTailCallForwardArguments) \
     macro(OpConstructVarargs) \
     macro(OpGetByVal) \
-    macro(OpGetDirectPname) \
+    macro(OpEnumeratorGetByVal) \
     macro(OpGetById) \
     macro(OpGetByIdWithThis) \
     macro(OpTryGetById) \
@@ -127,7 +127,6 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpGetPrivateName) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
-    macro(OpHasEnumerableIndexedProperty) \
     macro(OpCallVarargs) \
     macro(OpTailCallVarargs) \
     macro(OpTailCallForwardArguments) \
@@ -136,6 +135,10 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpInByVal) \
     macro(OpPutByVal) \
     macro(OpPutByValDirect) \
+    macro(OpEnumeratorNext) \
+    macro(OpEnumeratorGetByVal) \
+    macro(OpEnumeratorInByVal) \
+    macro(OpEnumeratorHasOwnProperty) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(macro) \
     macro(OpNewArray) \

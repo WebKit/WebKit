@@ -56,6 +56,12 @@ JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, Structure* structure,
     , m_endGenericPropertyIndex(propertyNamesSize)
     , m_cachedInlineCapacity(structure ? structure->inlineCapacity() : 0)
 {
+    if (m_indexedLength)
+        m_modeSet |= JSPropertyNameEnumerator::IndexedMode;
+    if (m_endStructurePropertyIndex)
+        m_modeSet |= JSPropertyNameEnumerator::OwnStructureMode;
+    if (m_endGenericPropertyIndex - m_endStructurePropertyIndex)
+        m_modeSet |= JSPropertyNameEnumerator::GenericMode;
 }
 
 void JSPropertyNameEnumerator::finishCreation(VM& vm, RefPtr<PropertyNameArrayData>&& identifiers)
@@ -146,6 +152,72 @@ void getEnumerablePropertyNames(JSGlobalObject* globalObject, JSObject* base, Pr
         getOwnPropertyNames(object);
         RETURN_IF_EXCEPTION(scope, void());
     }
+}
+
+JSString* JSPropertyNameEnumerator::computeNext(JSGlobalObject* globalObject, JSObject* base, uint32_t& index, Mode& mode, bool shouldAllocateIndexedNameString)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(indexedLength() || sizeOfPropertyNames());
+
+    index++;
+    switch (mode) {
+    case InitMode: {
+        mode = IndexedMode;
+        index = 0;
+        FALLTHROUGH;
+    }
+
+    case JSPropertyNameEnumerator::IndexedMode: {
+        while (index < indexedLength() && !base->hasEnumerableProperty(globalObject, index)) {
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            index++;
+        }
+        scope.assertNoException();
+
+        if (index < indexedLength())
+            return shouldAllocateIndexedNameString ? jsString(vm, Identifier::from(vm, index).string()) : nullptr;
+
+        if (!sizeOfPropertyNames())
+            return nullptr;
+
+        mode = OwnStructureMode;
+        index = 0;
+        FALLTHROUGH;
+    }
+
+    case JSPropertyNameEnumerator::OwnStructureMode:
+    case JSPropertyNameEnumerator::GenericMode: {
+        JSString* name = nullptr;
+        while (true) {
+            if (index >= sizeOfPropertyNames())
+                break;
+            name = propertyNameAtIndex(index);
+            if (!name)
+                break;
+            if (index < endStructurePropertyIndex() && base->structureID() == cachedStructureID())
+                break;
+            auto id = Identifier::fromString(vm, name->value(globalObject));
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (base->hasEnumerableProperty(globalObject, id))
+                break;
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            name = nullptr;
+            index++;
+        }
+        scope.assertNoException();
+
+        if (index >= endStructurePropertyIndex() && index < sizeOfPropertyNames())
+            mode = GenericMode;
+        return name;
+    }
+
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } // namespace JSC

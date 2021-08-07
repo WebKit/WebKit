@@ -1142,47 +1142,12 @@ void JIT::emit_op_check_tdz(const Instruction* currentInstruction)
     addSlowCase(branchIfEmpty(regT0));
 }
 
-template <typename OpCodeType>
-void JIT::emit_op_has_structure_propertyImpl(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpCodeType>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister enumerator = bytecode.m_enumerator;
-
-    emitLoadPayload(base, regT0);
-    emitJumpSlowCaseIfNotJSCell(base);
-
-    emitLoadPayload(enumerator, regT1);
-
-    load32(Address(regT0, JSCell::structureIDOffset()), regT0);
-    addSlowCase(branch32(NotEqual, regT0, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
-    
-    move(TrustedImm32(1), regT0);
-    emitStoreBool(dst, regT0);
-}
-
-void JIT::emit_op_has_enumerable_structure_property(const Instruction* currentInstruction)
-{
-    emit_op_has_structure_propertyImpl<OpHasEnumerableStructureProperty>(currentInstruction);
-}
-
-void JIT::emit_op_has_own_structure_property(const Instruction* currentInstruction)
-{
-    emit_op_has_structure_propertyImpl<OpHasOwnStructureProperty>(currentInstruction);
-}
-
-void JIT::emit_op_in_structure_property(const Instruction* currentInstruction)
-{
-    emit_op_has_structure_propertyImpl<OpInStructureProperty>(currentInstruction);
-}
-
 void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
 {
     const Instruction* currentInstruction = m_codeBlock->instructions().at(byValInfo->bytecodeIndex).ptr();
-    
+
     PatchableJump badType;
-    
+
     // FIXME: Add support for other types like TypedArrays and Arguments.
     // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
     JumpList slowCases = emitLoadForArrayMode(currentInstruction, arrayMode, badType, nullptr);
@@ -1190,7 +1155,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     Jump done = jump();
 
     LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
-    
+
     patchBuffer.link(badType, byValInfo->slowPathTarget);
     patchBuffer.link(slowCases, byValInfo->slowPathTarget);
 
@@ -1199,168 +1164,9 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
         "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
-    
+
     MacroAssembler::repatchJump(byValInfo->m_badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
     MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
-}
-
-void JIT::emit_op_has_enumerable_indexed_property(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpHasEnumerableIndexedProperty>();
-    auto& metadata = bytecode.metadata(m_codeBlock);
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister property = bytecode.m_property;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo(m_bytecodeIndex);
-    
-    emitLoadPayload(base, regT0);
-    emitJumpSlowCaseIfNotJSCell(base);
-
-    emitLoad(property, regT3, regT1);
-    addSlowCase(branchIfNotInt32(regT3));
-
-    // This is technically incorrect - we're zero-extending an int32. On the hot path this doesn't matter.
-    // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
-    // number was signed since m_vectorLength is always less than intmax (since the total allocation
-    // size is always less than 4Gb). As such zero extending will have been correct (and extending the value
-    // to 64-bits is necessary since it's used in the address calculation. We zero extend rather than sign
-    // extending since it makes it easier to re-tag the value in the slow case.
-    zeroExtend32ToWord(regT1, regT1);
-
-    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
-    and32(TrustedImm32(IndexingShapeMask), regT2);
-
-    JITArrayMode mode = chooseArrayMode(profile);
-    PatchableJump badType;
-
-    // FIXME: Add support for other types like TypedArrays and Arguments.
-    // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
-    JumpList slowCases = emitLoadForArrayMode(currentInstruction, mode, badType, byValInfo);
-    move(TrustedImm32(1), regT0);
-
-    addSlowCase(badType);
-    addSlowCase(slowCases);
-    
-    Label done = label();
-    
-    emitStoreBool(dst, regT0);
-
-    Label nextHotPath = label();
-    
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, PatchableJump(), badType, mode, profile, done, nextHotPath));
-}
-
-void JIT::emitSlow_op_has_enumerable_indexed_property(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkAllSlowCases(iter);
-
-    auto bytecode = currentInstruction->as<OpHasEnumerableIndexedProperty>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister property = bytecode.m_property;
-    ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
-
-    Label slowPath = label();
-    
-    emitLoad(base, regT1, regT0);
-    emitLoad(property, regT3, regT2);
-    Call call = callOperation(operationHasIndexedPropertyDefault, dst, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2), byValInfo);
-
-    m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
-    m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
-    m_byValInstructionIndex++;
-}
-
-void JIT::emit_op_get_direct_pname(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpGetDirectPname>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister index = bytecode.m_index;
-    VirtualRegister enumerator = bytecode.m_enumerator;
-
-    // Check that base is a cell
-    emitLoadPayload(base, regT0);
-    emitJumpSlowCaseIfNotJSCell(base);
-
-    // Check the structure
-    emitLoadPayload(enumerator, regT1);
-    load32(Address(regT0, JSCell::structureIDOffset()), regT2);
-    addSlowCase(branch32(NotEqual, regT2, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
-
-    // Compute the offset
-    emitLoadPayload(index, regT2);
-    // If index is less than the enumerator's cached inline storage, then it's an inline access
-    Jump outOfLineAccess = branch32(AboveOrEqual, regT2, Address(regT1, JSPropertyNameEnumerator::cachedInlineCapacityOffset()));
-    addPtr(TrustedImm32(JSObject::offsetOfInlineStorage()), regT0);
-    load32(BaseIndex(regT0, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-    load32(BaseIndex(regT0, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-    
-    Jump done = jump();
-
-    // Otherwise it's out of line
-    outOfLineAccess.link(this);
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
-    sub32(Address(regT1, JSPropertyNameEnumerator::cachedInlineCapacityOffset()), regT2);
-    neg32(regT2);
-    int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
-    load32(BaseIndex(regT0, regT2, TimesEight, offsetOfFirstProperty + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-    load32(BaseIndex(regT0, regT2, TimesEight, offsetOfFirstProperty + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-    
-    done.link(this);
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
-    emitStore(dst, regT1, regT0);
-}
-
-void JIT::emit_op_enumerator_structure_pname(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpEnumeratorStructurePname>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister enumerator = bytecode.m_enumerator;
-    VirtualRegister index = bytecode.m_index;
-
-    emitLoadPayload(index, regT0);
-    emitLoadPayload(enumerator, regT1);
-    Jump inBounds = branch32(Below, regT0, Address(regT1, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()));
-
-    move(TrustedImm32(JSValue::NullTag), regT2);
-    move(TrustedImm32(0), regT0);
-
-    Jump done = jump();
-    inBounds.link(this);
-
-    loadPtr(Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), regT1);
-    loadPtr(BaseIndex(regT1, regT0, ScalePtr), regT0);
-    move(TrustedImm32(JSValue::CellTag), regT2);
-
-    done.link(this);
-    emitStore(dst, regT2, regT0);
-}
-
-void JIT::emit_op_enumerator_generic_pname(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpEnumeratorGenericPname>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister enumerator = bytecode.m_enumerator;
-    VirtualRegister index = bytecode.m_index;
-
-    emitLoadPayload(index, regT0);
-    emitLoadPayload(enumerator, regT1);
-    Jump inBounds = branch32(Below, regT0, Address(regT1, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()));
-
-    move(TrustedImm32(JSValue::NullTag), regT2);
-    move(TrustedImm32(0), regT0);
-
-    Jump done = jump();
-    inBounds.link(this);
-
-    loadPtr(Address(regT1, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), regT1);
-    loadPtr(BaseIndex(regT1, regT0, ScalePtr), regT0);
-    move(TrustedImm32(JSValue::CellTag), regT2);
-    
-    done.link(this);
-    emitStore(dst, regT2, regT0);
 }
 
 void JIT::emit_op_profile_type(const Instruction* currentInstruction)

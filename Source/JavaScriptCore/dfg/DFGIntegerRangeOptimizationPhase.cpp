@@ -1344,6 +1344,7 @@ public:
                     break;
                 }
 
+                case EnumeratorGetByVal:
                 case GetByVal: {
                     if (node->arrayMode().type() != Array::Undecided)
                         break;
@@ -1380,6 +1381,7 @@ private:
     void executeNode(Node* node)
     {
         switch (node->op()) {
+        // FIXME: Teach this about EnumeratorNextExtractIndex.
         case CheckInBounds: {
             setRelationship(Relationship::safeCreate(node->child1().node(), node->child2().node(), Relationship::LessThan));
             setRelationship(Relationship::safeCreate(node->child1().node(), m_zero, Relationship::GreaterThan, -1));

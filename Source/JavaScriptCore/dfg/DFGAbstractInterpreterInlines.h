@@ -2151,7 +2151,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case StringCharAt:
         setForNode(node, m_vm.stringStructure.get());
         break;
-            
+
+    case EnumeratorGetByVal: {
+        // FIXME: This should be able to do code motion for OwnStructureMode but we'd need to teach AI about the enumerator's cached structure for that to be profitable.
+        clobberWorld();
+        makeHeapTopForNode(node);
+        break;
+    }
+
     case GetByVal:
     case AtomicsAdd:
     case AtomicsAnd:
@@ -4244,25 +4251,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecBoolean);
         break;
     }
-            
-    case GetEnumerableLength: {
-        setNonCellTypeForNode(node, SpecInt32Only);
-        break;
-    }
-    case HasEnumerableProperty: {
-        setNonCellTypeForNode(node, SpecBoolean);
-        clobberWorld();
-        break;
-    }
-    case InStructureProperty:
-    case HasOwnStructureProperty:
-    case HasEnumerableStructureProperty: {
-        setNonCellTypeForNode(node, SpecBoolean);
-        clobberWorld();
-        break;
-    }
-    case HasIndexedProperty:
-    case HasEnumerableIndexedProperty: {
+
+    case HasIndexedProperty: {
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {
         case Array::Int32:
@@ -4281,26 +4271,53 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecBoolean);
         break;
     }
-    case GetDirectPname: {
-        clobberWorld();
-        makeHeapTopForNode(node);
-        break;
-    }
+
     case GetPropertyEnumerator: {
         setTypeForNode(node, SpecCell);
         clobberWorld();
         break;
     }
-    case GetEnumeratorStructurePname: {
+
+    case EnumeratorNextUpdateIndexAndMode: {
+        ArrayMode arrayMode = node->arrayMode();
+        if (arrayMode.isSaneChain())
+            ASSERT(node->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode);
+        else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::OwnStructureMode || m_graph.varArgChild(node, 0).useKind() != CellUse)
+            clobberWorld();
+
+        setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
+    case EnumeratorNextExtractMode: {
+        if (node->child1()->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode) {
+            setConstant(node, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::IndexedMode)));
+            break;
+        }
+
+        if (node->child1()->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node->child1().node(), 0).useKind() == CellUse) {
+            setConstant(node, jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::OwnStructureMode)));
+            break;
+        }
+
+        FALLTHROUGH;
+    }
+    case EnumeratorNextExtractIndex: {
+        setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+    }
+
+    case EnumeratorNextUpdatePropertyName: {
         setTypeForNode(node, SpecString | SpecOther);
         break;
     }
-    case GetEnumeratorGenericPname: {
-        setTypeForNode(node, SpecString | SpecOther);
-        break;
-    }
-    case ToIndexString: {
-        setTypeForNode(node, SpecString);
+
+    case EnumeratorInByVal:
+    case EnumeratorHasOwnProperty: {
+        // FIXME: We can determine when the property definitely exists based on abstract
+        // value information.
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecBoolean);
         break;
     }
 

@@ -8387,103 +8387,136 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_has_private_brand);
         }
 
-        case op_get_enumerable_length: {
-            auto bytecode = currentInstruction->as<OpGetEnumerableLength>();
-            set(bytecode.m_dst, addToGraph(GetEnumerableLength, get(bytecode.m_base)));
-            NEXT_OPCODE(op_get_enumerable_length);
-        }
-
-        case op_has_enumerable_structure_property: {
-            auto bytecode = currentInstruction->as<OpHasEnumerableStructureProperty>();
-            set(bytecode.m_dst, addToGraph(HasEnumerableStructureProperty,
-                get(bytecode.m_base),
-                get(bytecode.m_property),
-                get(bytecode.m_enumerator)));
-            NEXT_OPCODE(op_has_enumerable_structure_property);
-        }
-
-        case op_has_enumerable_property: {
-            auto bytecode = currentInstruction->as<OpHasEnumerableProperty>();
-            set(bytecode.m_dst, addToGraph(HasEnumerableProperty, get(bytecode.m_base), get(bytecode.m_property)));
-            NEXT_OPCODE(op_has_enumerable_property);
-        }
-
-        case op_has_own_structure_property: {
-            auto bytecode = currentInstruction->as<OpHasOwnStructureProperty>();
-            set(bytecode.m_dst, addToGraph(HasOwnStructureProperty,
-                get(bytecode.m_base),
-                get(bytecode.m_property),
-                get(bytecode.m_enumerator)));
-            NEXT_OPCODE(op_has_own_structure_property);
-        }
-
-        case op_in_structure_property: {
-            auto bytecode = currentInstruction->as<OpInStructureProperty>();
-            set(bytecode.m_dst, addToGraph(InStructureProperty,
-                get(bytecode.m_base),
-                get(bytecode.m_property),
-                get(bytecode.m_enumerator)));
-            NEXT_OPCODE(op_in_structure_property);
-        }
-
-        case op_has_enumerable_indexed_property: {
-            auto bytecode = currentInstruction->as<OpHasEnumerableIndexedProperty>();
-            Node* base = get(bytecode.m_base);
-            ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
-            Node* property = get(bytecode.m_property);
-            addVarArgChild(base);
-            addVarArgChild(property);
-            addVarArgChild(nullptr);
-            Node* hasIterableProperty = addToGraph(Node::VarArg, HasEnumerableIndexedProperty, OpInfo(arrayMode.asWord()));
-            m_exitOK = false; // HasIndexedProperty must be treated as if it clobbers exit state, since FixupPhase may make it generic.
-            set(bytecode.m_dst, hasIterableProperty);
-            NEXT_OPCODE(op_has_enumerable_indexed_property);
-        }
-
-        case op_get_direct_pname: {
-            auto bytecode = currentInstruction->as<OpGetDirectPname>();
-            SpeculatedType prediction = getPredictionWithoutOSRExit();
-            
-            Node* base = get(bytecode.m_base);
-            Node* property = get(bytecode.m_property);
-            Node* index = get(bytecode.m_index);
-            Node* enumerator = get(bytecode.m_enumerator);
-
-            addVarArgChild(base);
-            addVarArgChild(property);
-            addVarArgChild(index);
-            addVarArgChild(enumerator);
-            set(bytecode.m_dst, addToGraph(Node::VarArg, GetDirectPname, OpInfo(0), OpInfo(prediction)));
-
-            NEXT_OPCODE(op_get_direct_pname);
-        }
-
         case op_get_property_enumerator: {
             auto bytecode = currentInstruction->as<OpGetPropertyEnumerator>();
             set(bytecode.m_dst, addToGraph(GetPropertyEnumerator, get(bytecode.m_base)));
             NEXT_OPCODE(op_get_property_enumerator);
         }
 
-        case op_enumerator_structure_pname: {
-            auto bytecode = currentInstruction->as<OpEnumeratorStructurePname>();
-            set(bytecode.m_dst, addToGraph(GetEnumeratorStructurePname,
-                get(bytecode.m_enumerator),
-                get(bytecode.m_index)));
-            NEXT_OPCODE(op_enumerator_structure_pname);
+        case op_enumerator_next: {
+            auto bytecode = currentInstruction->as<OpEnumeratorNext>();
+            auto& metadata = bytecode.metadata(codeBlock);
+            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+            Node* base = get(bytecode.m_base);
+            Node* index = get(bytecode.m_index);
+            Node* enumerator = get(bytecode.m_enumerator);
+            Node* mode = get(bytecode.m_mode);
+
+            auto seenModes = OptionSet<JSPropertyNameEnumerator::Mode>::fromRaw(metadata.m_enumeratorMetadata);
+
+            if (!seenModes)
+                addToGraph(ForceOSRExit);
+
+            addVarArgChild(base);
+            addVarArgChild(index);
+            addVarArgChild(mode);
+            addVarArgChild(enumerator);
+            addVarArgChild(nullptr); // storage for IndexedMode only.
+            Node* updatedIndexAndMode = addToGraph(Node::VarArg, EnumeratorNextUpdateIndexAndMode, OpInfo(arrayMode.asWord()), OpInfo(seenModes));
+
+            Node* updatedMode = addToGraph(EnumeratorNextExtractMode, updatedIndexAndMode);
+            set(bytecode.m_mode, updatedMode);
+
+            Node* updatedIndex = addToGraph(EnumeratorNextExtractIndex, updatedIndexAndMode);
+            set(bytecode.m_index, updatedIndex);
+
+            set(bytecode.m_propertyName, addToGraph(EnumeratorNextUpdatePropertyName, OpInfo(), OpInfo(seenModes), updatedIndex, updatedMode, enumerator));
+
+            NEXT_OPCODE(op_enumerator_next);
         }
 
-        case op_enumerator_generic_pname: {
-            auto bytecode = currentInstruction->as<OpEnumeratorGenericPname>();
-            set(bytecode.m_dst, addToGraph(GetEnumeratorGenericPname,
-                get(bytecode.m_enumerator),
-                get(bytecode.m_index)));
-            NEXT_OPCODE(op_enumerator_generic_pname);
+        case op_enumerator_get_by_val: {
+            auto bytecode = currentInstruction->as<OpEnumeratorGetByVal>();
+            auto& metadata = bytecode.metadata(codeBlock);
+            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+            SpeculatedType speculation = getPredictionWithoutOSRExit();
+
+            Node* base = get(bytecode.m_base);
+            Node* propertyName = get(bytecode.m_propertyName);
+            Node* index = get(bytecode.m_index);
+            Node* mode = get(bytecode.m_mode);
+            Node* enumerator = get(bytecode.m_enumerator);
+
+            auto seenModes = OptionSet<JSPropertyNameEnumerator::Mode>::fromRaw(metadata.m_enumeratorMetadata);
+            if (!seenModes)
+                addToGraph(ForceOSRExit);
+
+            if (seenModes == JSPropertyNameEnumerator::IndexedMode) {
+                Node* badMode = addToGraph(ArithBitAnd, mode, jsConstant(jsNumber(JSPropertyNameEnumerator::GenericMode | JSPropertyNameEnumerator::OwnStructureMode)));
+
+                // We know the ArithBitAnd cannot have effects so it's ok to exit here.
+                m_exitOK = true;
+                addToGraph(ExitOK);
+
+                addToGraph(CheckIsConstant, OpInfo(m_graph.freezeStrong(jsNumber(0))), badMode);
+
+                addVarArgChild(base);
+                addVarArgChild(index); // Use index so we'll use the normal indexed optimizations.
+                addVarArgChild(nullptr); // For property storage to match GetByVal.
+                set(bytecode.m_dst, addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation)));
+
+                addToGraph(Phantom, propertyName);
+                addToGraph(Phantom, enumerator);
+                NEXT_OPCODE(op_enumerator_get_by_val);
+            }
+
+            // FIXME: Checking for a BadConstantValue causes us to always use the Generic variant if we switched from IndexedMode -> IndexedMode + OwnStructureMode even though that might be fine.
+            if (!seenModes.containsAny({ JSPropertyNameEnumerator::GenericMode, JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch })
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+                Node* modeTest = addToGraph(SameValue, mode, jsConstant(jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::GenericMode))));
+                addToGraph(CheckIsConstant, OpInfo(m_graph.freezeStrong(jsBoolean(false))), modeTest);
+
+                addVarArgChild(base);
+                addVarArgChild(index); // Use index so we'll use the normal indexed optimizations.
+                addVarArgChild(nullptr); // For property storage to match GetByVal.
+                addVarArgChild(index);
+                addVarArgChild(mode);
+                addVarArgChild(enumerator);
+                set(bytecode.m_dst, addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation)));
+
+                addToGraph(Phantom, propertyName);
+                NEXT_OPCODE(op_enumerator_get_by_val);
+            }
+
+            addVarArgChild(base);
+            addVarArgChild(propertyName);
+            addVarArgChild(nullptr); // For property storage to match GetByVal.
+            addVarArgChild(index);
+            addVarArgChild(mode);
+            addVarArgChild(enumerator);
+            set(bytecode.m_dst, addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation)));
+
+            NEXT_OPCODE(op_enumerator_get_by_val);
         }
-            
-        case op_to_index_string: {
-            auto bytecode = currentInstruction->as<OpToIndexString>();
-            set(bytecode.m_dst, addToGraph(ToIndexString, get(bytecode.m_index)));
-            NEXT_OPCODE(op_to_index_string);
+
+        case op_enumerator_in_by_val: {
+            auto bytecode = currentInstruction->as<OpEnumeratorInByVal>();
+            auto& metadata = bytecode.metadata(codeBlock);
+            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+
+            addVarArgChild(get(bytecode.m_base));
+            addVarArgChild(get(bytecode.m_propertyName));
+            addVarArgChild(get(bytecode.m_index));
+            addVarArgChild(get(bytecode.m_mode));
+            addVarArgChild(get(bytecode.m_enumerator));
+            set(bytecode.m_dst, addToGraph(Node::VarArg, EnumeratorInByVal, OpInfo(arrayMode.asWord()), OpInfo(metadata.m_enumeratorMetadata)));
+
+            NEXT_OPCODE(op_enumerator_in_by_val);
+        }
+
+        case op_enumerator_has_own_property: {
+            auto bytecode = currentInstruction->as<OpEnumeratorHasOwnProperty>();
+            auto& metadata = bytecode.metadata(codeBlock);
+            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+
+            addVarArgChild(get(bytecode.m_base));
+            addVarArgChild(get(bytecode.m_propertyName));
+            addVarArgChild(get(bytecode.m_index));
+            addVarArgChild(get(bytecode.m_mode));
+            addVarArgChild(get(bytecode.m_enumerator));
+            set(bytecode.m_dst, addToGraph(Node::VarArg, EnumeratorHasOwnProperty, OpInfo(arrayMode.asWord()), OpInfo(metadata.m_enumeratorMetadata)));
+
+            NEXT_OPCODE(op_enumerator_has_own_property);
         }
 
         case op_get_internal_field: {

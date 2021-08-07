@@ -14,5 +14,5 @@ noInline(foo);
 for (var i = 0; i < 10000; ++i) {
     var result = foo({0:0, 1:1, a:2, b:3});
     if (result != 7)
-        throw "Error: bad result: " + result;
+        throw new Error("bad result: " + result);
 }

@@ -36,6 +36,7 @@
 #include "JSLexicalEnvironment.h"
 #include "LinkBuffer.h"
 #include "PrivateFieldPutKind.h"
+#include "ProbeContext.h"
 #include "SlowPathCall.h"
 #include "StructureStubInfo.h"
 #include "ThunkGenerators.h"
@@ -86,10 +87,10 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 
 }
 
-void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+template<typename OpcodeType>
+void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEntry>::iterator& iter)
 {
     if (hasAnySlowCases(iter)) {
-        auto bytecode = currentInstruction->as<OpGetByVal>();
         VirtualRegister dst = bytecode.m_dst;
         auto& metadata = bytecode.metadata(m_codeBlock);
         ArrayProfile* profile = &metadata.m_arrayProfile;
@@ -134,6 +135,11 @@ void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<S
 
         gen.reportSlowPathCall(coldPathBegin, call);
     }
+}
+
+void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    generateGetByValSlowCase(currentInstruction->as<OpGetByVal>(), iter);
 }
 
 #if ENABLE(EXTRA_CTI_THUNKS)
@@ -2976,6 +2982,193 @@ void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
 }
 
 template void JIT::emit_op_put_by_val<OpPutByVal>(const Instruction*);
+
+void JIT::emit_op_enumerator_next(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpEnumeratorNext>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister mode = bytecode.m_mode;
+    VirtualRegister index = bytecode.m_index;
+    VirtualRegister propertyName = bytecode.m_propertyName;
+    VirtualRegister enumerator = bytecode.m_enumerator;
+
+    JumpList done;
+    JumpList operationCases;
+
+    GPRReg modeGPR = regT0;
+    GPRReg indexGPR = regT1;
+    GPRReg baseGPR = regT2;
+
+    // This is the most common mode set we tend to see, so special case it if we profile it in the LLInt.
+    if (metadata.m_enumeratorMetadata == JSPropertyNameEnumerator::OwnStructureMode) {
+        GPRReg enumeratorGPR = regT3;
+        emitGetVirtualRegister(enumerator, enumeratorGPR);
+        operationCases.append(branchTest32(NonZero, Address(enumeratorGPR, JSPropertyNameEnumerator::modeSetOffset()), TrustedImm32(~JSPropertyNameEnumerator::OwnStructureMode)));
+        emitGetVirtualRegister(base, baseGPR);
+        load32(Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset()), indexGPR);
+        operationCases.append(branch32(NotEqual, indexGPR, Address(baseGPR, JSCell::structureIDOffset())));
+
+        emitGetVirtualRegister(mode, modeGPR);
+        emitGetVirtualRegister(index, indexGPR);
+        Jump notInit = branchTest32(Zero, modeGPR);
+        // Need to use add64 since this is a JSValue int32.
+        add64(TrustedImm32(1), indexGPR);
+        emitPutVirtualRegister(index, indexGPR);
+        notInit.link(this);
+        storeTrustedValue(jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::OwnStructureMode)), addressFor(mode));
+
+        Jump outOfBounds = branch32(AboveOrEqual, indexGPR, Address(enumeratorGPR, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()));
+        loadPtr(Address(enumeratorGPR, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), enumeratorGPR);
+        // We need to clear the high bits from the number encoding.
+        and32(TrustedImm32(-1), indexGPR);
+        loadPtr(BaseIndex(enumeratorGPR, indexGPR, ScalePtr), enumeratorGPR);
+
+        emitPutVirtualRegister(propertyName, enumeratorGPR);
+        done.append(jump());
+
+        outOfBounds.link(this);
+        storeTrustedValue(jsNull(), addressFor(propertyName));
+        done.append(jump());
+    }
+
+    operationCases.link(this);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_enumerator_next);
+    slowPathCall.call();
+
+    done.link(this);
+}
+
+void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpEnumeratorGetByVal>();
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister mode = bytecode.m_mode;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister index = bytecode.m_index;
+    VirtualRegister propertyName = bytecode.m_propertyName;
+    VirtualRegister enumerator = bytecode.m_enumerator;
+    ArrayProfile* profile = &metadata.m_arrayProfile;
+
+    JumpList doneCases;
+
+    auto resultGPR = regT0;
+
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(mode, regT2);
+    emitGetVirtualRegister(propertyName, regT1);
+
+    or8(regT2, AbsoluteAddress(&metadata.m_enumeratorMetadata));
+
+    addSlowCase(branchIfNotCell(regT0));
+    // This is always an int32 encoded value.
+    Jump isNotOwnStructureMode = branchTest32(NonZero, regT2, TrustedImm32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::GenericMode));
+
+    // Check the structure
+    emitGetVirtualRegister(enumerator, regT2);
+    load32(Address(regT0, JSCell::structureIDOffset()), regT3);
+    Jump structureMismatch = branch32(NotEqual, regT3, Address(regT2, JSPropertyNameEnumerator::cachedStructureIDOffset()));
+
+    // Compute the offset.
+    emitGetVirtualRegister(index, regT3);
+    // If index is less than the enumerator's cached inline storage, then it's an inline access
+    Jump outOfLineAccess = branch32(AboveOrEqual, regT3, Address(regT2, JSPropertyNameEnumerator::cachedInlineCapacityOffset()));
+    addPtr(TrustedImm32(JSObject::offsetOfInlineStorage()), regT0);
+    signExtend32ToPtr(regT3, regT3);
+    load64(BaseIndex(regT0, regT3, TimesEight), resultGPR);
+
+    doneCases.append(jump());
+
+    // Otherwise it's out of line
+    outOfLineAccess.link(this);
+    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
+    sub32(Address(regT2, JSPropertyNameEnumerator::cachedInlineCapacityOffset()), regT3);
+    neg32(regT3);
+    signExtend32ToPtr(regT3, regT3);
+    int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
+    load64(BaseIndex(regT0, regT3, TimesEight, offsetOfFirstProperty), resultGPR);
+    doneCases.append(jump());
+
+    structureMismatch.link(this);
+    store8(TrustedImm32(JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch), &metadata.m_enumeratorMetadata);
+
+    isNotOwnStructureMode.link(this);
+    Jump isNotIndexed = branchTest32(Zero, regT2, TrustedImm32(JSPropertyNameEnumerator::IndexedMode));
+    // Replace the string with the index.
+    emitGetVirtualRegister(index, regT1);
+
+    isNotIndexed.link(this);
+    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+
+    JITGetByValGenerator gen(
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(resultGPR), regT2);
+    gen.generateFastPath(*this);
+    if (!JITCode::useDataIC(JITType::BaselineJIT))
+        addSlowCase(gen.slowPathJump());
+    else
+        addSlowCase();
+    m_getByVals.append(gen);
+
+    doneCases.link(this);
+
+    emitValueProfilingSite(metadata, JSValueRegs(resultGPR));
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emitSlow_op_enumerator_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    generateGetByValSlowCase(currentInstruction->as<OpEnumeratorGetByVal>(), iter);
+}
+
+template <typename OpcodeType, typename SlowPathFunctionType>
+void JIT::emit_enumerator_has_propertyImpl(const Instruction* currentInstruction, const OpcodeType& bytecode, SlowPathFunctionType generalCase)
+{
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister enumerator = bytecode.m_enumerator;
+    VirtualRegister mode = bytecode.m_mode;
+
+    JumpList slowCases;
+
+    emitGetVirtualRegister(mode, regT0);
+    or8(regT0, AbsoluteAddress(&metadata.m_enumeratorMetadata));
+
+    slowCases.append(branchTest32(Zero, regT0, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode)));
+
+    emitGetVirtualRegister(base, regT0);
+
+    slowCases.append(branchIfNotCell(regT0));
+
+    emitGetVirtualRegister(enumerator, regT1);
+    load32(Address(regT0, JSCell::structureIDOffset()), regT0);
+    slowCases.append(branch32(NotEqual, regT0, Address(regT1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+
+    move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
+    emitPutVirtualRegister(dst);
+    Jump done = jump();
+
+    slowCases.link(this);
+
+    JITSlowPathCall slowPathCall(this, currentInstruction, generalCase);
+    slowPathCall.call();
+
+    done.link(this);
+}
+
+void JIT::emit_op_enumerator_in_by_val(const Instruction* currentInstruction)
+{
+    emit_enumerator_has_propertyImpl(currentInstruction, currentInstruction->as<OpEnumeratorInByVal>(), slow_path_enumerator_in_by_val);
+}
+
+void JIT::emit_op_enumerator_has_own_property(const Instruction* currentInstruction)
+{
+    emit_enumerator_has_propertyImpl(currentInstruction, currentInstruction->as<OpEnumeratorHasOwnProperty>(), slow_path_enumerator_has_own_property);
+}
 
 #else // USE(JSVALUE64)
 

@@ -47,6 +47,7 @@
 namespace JSC { namespace DFG {
 
 class GPRTemporary;
+class JSValueRegsTemporary;
 class JSValueOperand;
 class SlowPathGenerator;
 class SpeculativeJIT;
@@ -246,6 +247,8 @@ public:
     }
     GPRReg allocate(GPRReg specific)
     {
+        if (specific == InvalidGPRReg)
+            allocate();
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
         m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
 #endif
@@ -1345,12 +1348,15 @@ public:
         return temporaryRegisterForPutByVal(temporary, node->arrayMode());
     }
     
+    // We use a scopedLambda to placate register allocation validation.
+    void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
+
     void compileGetCharCodeAt(Node*);
-    void compileGetByValOnString(Node*);
+    void compileGetByValOnString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
     void compileFromCharCode(Node*); 
 
-    void compileGetByValOnDirectArguments(Node*);
-    void compileGetByValOnScopedArguments(Node*);
+    void compileGetByValOnDirectArguments(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
+    void compileGetByValOnScopedArguments(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
 
     void compileGetPrivateName(Node*);
     void compileGetPrivateNameById(Node*);
@@ -1424,12 +1430,12 @@ public:
     JITCompiler::Jump jumpForTypedArrayIsDetachedIfOutOfBounds(Node*, GPRReg baseGPR, JITCompiler::Jump outOfBounds);
     void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR);
     void compileGetTypedArrayByteOffset(Node*);
-    void compileGetByValOnIntTypedArray(Node*, TypedArrayType);
+    void compileGetByValOnIntTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
     void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
-    void compileGetByValOnFloatTypedArray(Node*, TypedArrayType);
+    void compileGetByValOnFloatTypedArray(Node*, TypedArrayType, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
     void compilePutByValForFloatTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
-    void compileGetByValForObjectWithString(Node*);
-    void compileGetByValForObjectWithSymbol(Node*);
+    void compileGetByValForObjectWithString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
+    void compileGetByValForObjectWithSymbol(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>& prefix);
     void compilePutByValForCellWithString(Node*, Edge& child1, Edge& child2, Edge& child3);
     void compilePutByValForCellWithSymbol(Node*, Edge& child1, Edge& child2, Edge& child3);
     void compileGetByValWithThis(Node*);
@@ -1458,7 +1464,7 @@ public:
 #endif
         Edge valueUse);
     void loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
-    void setIntTypedArrayLoadResult(Node*, GPRReg resultReg, TypedArrayType, bool canSpeculate);
+    void setIntTypedArrayLoadResult(Node*, JSValueRegs resultRegs, TypedArrayType, bool canSpeculate, bool shouldBox);
     template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, MacroAssembler::JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
     void compileSetFunctionName(Node*);
@@ -1524,21 +1530,22 @@ public:
     void compileToLowerCase(Node*);
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
-    void compileGetEnumerableLength(Node*);
-    void compileHasEnumerableStructureProperty(Node*);
-    void compileHasEnumerableProperty(Node*);
-    void compileToIndexString(Node*);
+
+    void compileEnumeratorNextUpdateIndexAndMode(Node*);
+    void compileEnumeratorNextExtractMode(Node*);
+    void compileEnumeratorNextExtractIndex(Node*);
+    void compileEnumeratorNextUpdatePropertyName(Node*);
+    void compileEnumeratorGetByVal(Node*);
+    template<typename SlowPathFunctionType>
+    void compileEnumeratorHasProperty(Node*, SlowPathFunctionType);
+    void compileEnumeratorInByVal(Node*);
+    void compileEnumeratorHasOwnProperty(Node*);
+
     void compilePutByIdFlush(Node*);
     void compilePutById(Node*);
     void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
-    template <typename Function>
-    void compileHasOwnStructurePropertyImpl(Node*, Function);
-    void compileHasOwnStructureProperty(Node*);
-    void compileInStructureProperty(Node*);
-    void compileGetDirectPname(Node*);
     void compileGetPropertyEnumerator(Node*);
-    void compileGetEnumeratorPname(Node*);
     void compileGetExecutable(Node*);
     void compileGetGetter(Node*);
     void compileGetSetter(Node*);
@@ -1568,7 +1575,7 @@ public:
     void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
-    void compileHasIndexedProperty(Node*, S_JITOperation_GCZ);
+    void compileHasIndexedProperty(Node*, S_JITOperation_GCZ, const ScopedLambda<std::tuple<GPRReg, GPRReg>()>& prefix);
     void compileExtractCatchLocal(Node*);
     void compileClearCatchLocals(Node*);
     void compileProfileType(Node*);
@@ -1926,6 +1933,8 @@ public:
         return edge().node();
     }
 
+    JSValueRegs regs() { return jsValueRegs(); }
+
 #if USE(JSVALUE64)
     GPRReg gpr()
     {
@@ -1965,7 +1974,7 @@ public:
         return JSValueRegs(tagGPR(), payloadGPR());
     }
 
-    GPRReg gpr(WhichValueWord which)
+    GPRReg gpr(WhichValueWord which = PayloadWord)
     {
         return jsValueRegs().gpr(which);
     }
@@ -2003,21 +2012,20 @@ private:
 class StorageOperand {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    StorageOperand() = default;
+
     explicit StorageOperand(SpeculativeJIT* jit, Edge edge)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
     {
-        ASSERT(m_jit);
-        ASSERT(edge.useKind() == UntypedUse || edge.useKind() == KnownCellUse);
-        if (jit->isFilled(node()))
-            gpr();
+        emplace(jit, edge);
     }
     
     ~StorageOperand()
     {
-        ASSERT(m_gprOrInvalid != InvalidGPRReg);
-        m_jit->unlock(m_gprOrInvalid);
+        if (m_gprOrInvalid != InvalidGPRReg)
+            m_jit->unlock(m_gprOrInvalid);
     }
     
     Edge edge() const
@@ -2036,6 +2044,17 @@ public:
             m_gprOrInvalid = m_jit->fillStorage(edge());
         return m_gprOrInvalid;
     }
+
+    void emplace(SpeculativeJIT* jit, Edge edge)
+    {
+        m_jit = jit;
+        m_edge = edge;
+        ASSERT(m_gprOrInvalid == InvalidGPRReg);
+        ASSERT(m_jit);
+        ASSERT(edge.useKind() == UntypedUse || edge.useKind() == KnownCellUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
     
     void use()
     {
@@ -2043,9 +2062,9 @@ public:
     }
     
 private:
-    SpeculativeJIT* m_jit;
+    SpeculativeJIT* m_jit { nullptr };
     Edge m_edge;
-    GPRReg m_gprOrInvalid;
+    GPRReg m_gprOrInvalid { InvalidGPRReg };
 };
 
 
@@ -2134,11 +2153,19 @@ class JSValueRegsTemporary {
 public:
     JSValueRegsTemporary();
     JSValueRegsTemporary(SpeculativeJIT*);
+    JSValueRegsTemporary(SpeculativeJIT*, GPRReg specificPayload);
+#if USE(JSVALUE32_64)
+    JSValueRegsTemporary(SpeculativeJIT*, GPRReg specificPayload, GPRReg specificTag);
+#endif
     template<typename T>
     JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, T& operand, WhichValueWord resultRegWord = PayloadWord);
     JSValueRegsTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&);
     ~JSValueRegsTemporary();
     
+    explicit operator bool() { return !!regs(); }
+
+    JSValueRegsTemporary& operator=(JSValueRegsTemporary&&) = default;
+
     JSValueRegs regs();
 
 private:
@@ -2149,6 +2176,26 @@ private:
     GPRTemporary m_tagGPR;
 #endif
 };
+
+#if USE(JSVALUE64)
+template<typename T>
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord)
+    : m_gpr(jit, Reuse, operand)
+{
+}
+#else
+template<typename T>
+JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, T& operand, WhichValueWord resultWord)
+{
+    if (resultWord == PayloadWord) {
+        m_payloadGPR = GPRTemporary(jit, Reuse, operand);
+        m_tagGPR = GPRTemporary(jit);
+    } else {
+        m_payloadGPR = GPRTemporary(jit);
+        m_tagGPR = GPRTemporary(jit, Reuse, operand);
+    }
+}
+#endif
 
 class FPRTemporary {
     WTF_MAKE_FAST_ALLOCATED;

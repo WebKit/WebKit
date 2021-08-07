@@ -52,6 +52,7 @@
 #include "DeleteByVariant.h"
 #include "GetByVariant.h"
 #include "JSCJSValue.h"
+#include "JSPropertyNameEnumerator.h"
 #include "Operands.h"
 #include "PrivateFieldPutKind.h"
 #include "PutByIdVariant.h"
@@ -1764,7 +1765,6 @@ public:
         case ArithFloor:
         case ArithCeil:
         case ArithTrunc:
-        case GetDirectPname:
         case GetById:
         case GetByIdFlush:
         case GetByIdWithThis:
@@ -1772,6 +1772,7 @@ public:
         case GetByIdDirectFlush:
         case GetPrototypeOf:
         case TryGetById:
+        case EnumeratorGetByVal:
         case GetByVal:
         case GetByValWithThis:
         case GetPrivateName:
@@ -1939,6 +1940,82 @@ public:
     {
         ASSERT(hasStoragePointer());
         return m_opInfo.as<void*>();
+    }
+
+    bool hasStorageChild() const
+    {
+        switch (op()) {
+        case StringCharAt:
+        case StringCharCodeAt:
+        case StringCodePointAt:
+        case EnumeratorGetByVal:
+        case GetByVal:
+        case PutByValDirect:
+        case PutByVal:
+        case PutByValAlias:
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor:
+        case ArrayPush:
+        case ArrayPop:
+        case GetArrayLength:
+        case HasIndexedProperty:
+        case EnumeratorNextUpdateIndexAndMode:
+        case ArrayIndexOf:
+            return true;
+        default:
+            break;
+        }
+        return false;
+    }
+
+    unsigned storageChildIndex()
+    {
+        ASSERT(hasStorageChild());
+        switch (op()) {
+        case StringCharAt:
+        case StringCharCodeAt:
+        case StringCodePointAt:
+        case EnumeratorGetByVal:
+        case GetByVal:
+            return 2;
+        case PutByValDirect:
+        case PutByVal:
+        case PutByValAlias:
+            return 3;
+        case AtomicsAdd:
+        case AtomicsAnd:
+        case AtomicsCompareExchange:
+        case AtomicsExchange:
+        case AtomicsLoad:
+        case AtomicsOr:
+        case AtomicsStore:
+        case AtomicsSub:
+        case AtomicsXor:
+            return 2 + numExtraAtomicsArgs(op());
+        case ArrayPush:
+            return 0;
+
+        case ArrayPop:
+        case GetArrayLength:
+            return 2;
+
+        case HasIndexedProperty:
+            return 2;
+
+        case EnumeratorNextUpdateIndexAndMode:
+            return 4;
+
+        default:
+            // FIXME: Add ArrayIndexOf but it does non-trivial things to determine storage edge.
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     bool hasUidOperand()
@@ -2205,6 +2282,10 @@ public:
         case PutByVal:
         case PutByValAlias:
         case GetByVal:
+        case EnumeratorNextUpdateIndexAndMode:
+        case EnumeratorGetByVal:
+        case EnumeratorInByVal:
+        case EnumeratorHasOwnProperty:
         case StringCharAt:
         case StringCharCodeAt:
         case StringCodePointAt:
@@ -2216,7 +2297,6 @@ public:
         case ArrayPop:
         case ArrayIndexOf:
         case HasIndexedProperty:
-        case HasEnumerableIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:
@@ -3172,6 +3252,25 @@ public:
     {
         ASSERT(hasSetPrivateBrandStatus());
         return m_opInfo.as<SetPrivateBrandStatus*>();
+    }
+
+    bool hasEnumeratorMetadata() const
+    {
+        switch (op()) {
+        case EnumeratorNextUpdateIndexAndMode:
+        case EnumeratorNextUpdatePropertyName:
+        case EnumeratorHasOwnProperty:
+        case EnumeratorInByVal:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    OptionSet<JSPropertyNameEnumerator::Mode> enumeratorMetadata()
+    {
+        ASSERT(hasEnumeratorMetadata());
+        return OptionSet<JSPropertyNameEnumerator::Mode>::fromRaw(m_opInfo2.as<unsigned>());
     }
 
     void dumpChildren(PrintStream& out)

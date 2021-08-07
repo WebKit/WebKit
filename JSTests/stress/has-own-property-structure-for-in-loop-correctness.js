@@ -132,7 +132,10 @@ function test5() {
     o.__proto__ = p;
 
     for (let i = 0; i < 1000; ++i) {
-        assert(count(o) === 0);
+        var c = count(o);
+        if (c)
+            print(c);
+        assert(c === 0);
     }
 }
 test5();

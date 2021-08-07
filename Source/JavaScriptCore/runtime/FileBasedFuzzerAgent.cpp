@@ -90,7 +90,6 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
         break;
 
     case op_get_by_val_with_this:
-    case op_get_direct_pname:
     case op_construct:
     case op_construct_varargs:
     case op_call_varargs:

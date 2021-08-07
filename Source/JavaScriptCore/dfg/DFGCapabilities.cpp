@@ -254,17 +254,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_has_private_brand:
     case op_get_scope:
     case op_get_from_scope:
-    case op_get_enumerable_length:
-    case op_has_enumerable_indexed_property:
-    case op_has_enumerable_structure_property:
-    case op_has_enumerable_property:
-    case op_has_own_structure_property:
-    case op_in_structure_property:
-    case op_get_direct_pname:
     case op_get_property_enumerator:
-    case op_enumerator_structure_pname:
-    case op_enumerator_generic_pname:
-    case op_to_index_string:
     case op_new_func:
     case op_new_func_exp:
     case op_new_generator_func:
@@ -299,6 +289,10 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_set_private_brand:
     case op_check_private_brand:
     case op_switch_string:
+    case op_enumerator_next:
+    case op_enumerator_get_by_val:
+    case op_enumerator_in_by_val:
+    case op_enumerator_has_own_property:
         return CanCompileAndInline;
 
     case op_call_eval:

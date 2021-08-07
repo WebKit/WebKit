@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_get_by_id:
     case op_get_by_id_with_this:
     case op_get_by_val_with_this:
-    case op_get_direct_pname:
+    case op_enumerator_get_by_val:
     case op_construct:
     case op_construct_varargs:
     case op_call:

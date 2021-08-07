@@ -1,3 +1,42 @@
+2021-08-07  Keith Miller  <keith_miller@apple.com>
+
+        for-in should only emit one loop in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=227989
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/for-in-double-array-with-own-named.js: Added.
+        (test):
+        * microbenchmarks/for-in-double-array.js: Added.
+        (test):
+        * microbenchmarks/for-in-getters.js: Added.
+        (test):
+        * microbenchmarks/for-in-int32-array-with-own-named.js: Added.
+        (test):
+        * microbenchmarks/for-in-int32-array.js: Added.
+        (test):
+        * microbenchmarks/for-in-int32-object-with-own-named-and-getters.js: Added.
+        (test):
+        * microbenchmarks/for-in-int32-object-with-own-named.js: Added.
+        (test):
+        * microbenchmarks/for-in-object-with-own-named.js: Added.
+        (sum):
+        (opaqueSet):
+        * microbenchmarks/for-in-string-array.js: Added.
+        (test):
+        * microbenchmarks/for-of-iterate-array-map-set.js: Added.
+        (sum):
+        (let.generator):
+        * stress/for-in-array-mode.js:
+        (test):
+        * stress/for-in-base-reassigned-later.js:
+        * stress/for-in-delete-during-iteration.js:
+        * stress/for-in-primitive-index-on-prototype.js: Added.
+        (test):
+        * stress/for-in-tests.js:
+        * stress/has-own-property-structure-for-in-loop-correctness.js:
+        (test5):
+
 2021-08-05  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Assertion failure when checking array in DFG (32 bits)

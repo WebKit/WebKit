@@ -114,6 +114,7 @@ namespace JSC { namespace FTL {
     macro(JSPropertyNameEnumerator_endGenericPropertyIndex, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_endStructurePropertyIndex, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_indexLength, JSPropertyNameEnumerator::indexedLengthOffset()) \
+    macro(JSPropertyNameEnumerator_modeSet, JSPropertyNameEnumerator::modeSetOffset()) \
     macro(JSRopeString_flags, JSRopeString::offsetOfFlags()) \
     macro(JSRopeString_length, JSRopeString::offsetOfLength()) \
     macro(JSRopeString_fiber0, JSRopeString::offsetOfFiber0()) \

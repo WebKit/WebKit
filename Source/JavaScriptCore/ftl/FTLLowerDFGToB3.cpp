@@ -1523,40 +1523,31 @@ private:
             compileStoreBarrier();
             break;
         case HasIndexedProperty:
-            compileHasIndexedProperty(operationHasIndexedProperty);
-            break;
-        case HasEnumerableIndexedProperty:
-            compileHasIndexedProperty(operationHasEnumerableIndexedProperty);
-            break;
-        case HasEnumerableStructureProperty:
-            compileHasEnumerableStructureProperty();
-            break;
-        case HasEnumerableProperty:
-            compileHasEnumerableProperty();
-            break;
-        case HasOwnStructureProperty:
-            compileHasOwnStructureProperty();
-            break;
-        case InStructureProperty:
-            compileInStructureProperty();
-            break;
-        case GetDirectPname:
-            compileGetDirectPname();
-            break;
-        case GetEnumerableLength:
-            compileGetEnumerableLength();
+            compileHasIndexedProperty();
             break;
         case GetPropertyEnumerator:
             compileGetPropertyEnumerator();
             break;
-        case GetEnumeratorStructurePname:
-            compileGetEnumeratorStructurePname();
+        case EnumeratorNextUpdateIndexAndMode:
+            compileEnumeratorNextUpdateIndexAndMode();
             break;
-        case GetEnumeratorGenericPname:
-            compileGetEnumeratorGenericPname();
+        case EnumeratorNextExtractIndex:
+            compileEnumeratorNextExtractIndex();
             break;
-        case ToIndexString:
-            compileToIndexString();
+        case EnumeratorNextExtractMode:
+            compileEnumeratorNextExtractMode();
+            break;
+        case EnumeratorNextUpdatePropertyName:
+            compileEnumeratorNextUpdatePropertyName();
+            break;
+        case EnumeratorGetByVal:
+            compileEnumeratorGetByVal();
+            break;
+        case EnumeratorInByVal:
+            compileEnumeratorInByVal();
+            break;
+        case EnumeratorHasOwnProperty:
+            compileEnumeratorHasOwnProperty();
             break;
         case CheckStructureImmediate:
             compileCheckStructureImmediate();
@@ -5020,7 +5011,7 @@ private:
         // we dominate them.
     }
     
-    void compileGetByVal()
+    LValue compileGetByValImpl()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         switch (m_node->arrayMode().type()) {
@@ -5047,8 +5038,7 @@ private:
                 // We have to keep base alive to keep content in storage alive.
                 if (m_node->arrayMode().type() == Array::Contiguous)
                     ensureStillAliveHere(base);
-                setJSValue(result);
-                return;
+                return result;
             }
 
             LBasicBlock fastCase = m_out.newBlock();
@@ -5080,8 +5070,7 @@ private:
             // We have to keep base alive to keep content in storage alive.
             if (m_node->arrayMode().type() == Array::Contiguous)
                 ensureStillAliveHere(base);
-            setJSValue(m_out.phi(Int64, fastResult, slowResult));
-            return;
+            return m_out.phi(Int64, fastResult, slowResult);
         }
             
         case Array::Double: {
@@ -5100,8 +5089,8 @@ private:
                         LoadFromHole, noValue(), nullptr,
                         m_out.doubleNotEqualOrUnordered(result, result));
                 }
-                setDouble(result);
-                break;
+
+                return result;
             }
 
             bool resultIsUnboxed = m_node->arrayMode().isOutOfBoundsSaneChain() && !(m_node->flags() & NodeBytecodeUsesAsOther);
@@ -5141,18 +5130,16 @@ private:
             
             m_out.appendTo(continuation, lastNext);
             if (resultIsUnboxed)
-                setDouble(m_out.phi(Double, fastResult, slowResult));
-            else
-                setJSValue(m_out.phi(Int64, fastResult, slowResult));
-            return;
+                return m_out.phi(Double, fastResult, slowResult);
+
+            return m_out.phi(Int64, fastResult, slowResult);
         }
 
         case Array::Undecided: {
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
 
             speculate(OutOfBounds, noValue(), m_node, m_out.lessThan(index, m_out.int32Zero));
-            setJSValue(m_out.constInt64(JSValue::ValueUndefined));
-            return;
+            return m_out.constInt64(JSValue::ValueUndefined);
         }
             
         case Array::DirectArguments: {
@@ -5169,8 +5156,7 @@ private:
                 speculate(OutOfBounds, noValue(), nullptr, isOutOfBounds);
                 TypedPointer address = m_out.baseIndex(
                     m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
-                setJSValue(m_out.load64(address));
-                return;
+                return m_out.load64(address);
             }
 
             LBasicBlock inBounds = m_out.newBlock();
@@ -5192,8 +5178,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, fastResult, slowResult));
-            return;
+            return m_out.phi(Int64, fastResult, slowResult);
         }
             
         case Array::ScopedArguments: {
@@ -5246,8 +5231,7 @@ private:
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, namedResult, overflowResult));
-            return;
+            return m_out.phi(Int64, namedResult, overflowResult);
         }
             
         case Array::BigInt64Array:
@@ -5256,24 +5240,21 @@ private:
             if (m_graph.m_slowGetByVal.contains(m_node)) {
                 if (m_graph.varArgChild(m_node, 0).useKind() == ObjectUse) {
                     if (m_graph.varArgChild(m_node, 1).useKind() == StringUse) {
-                        setJSValue(vmCall(
+                        return vmCall(
                             Int64, operationGetByValObjectString, weakPointer(globalObject),
-                            lowObject(m_graph.varArgChild(m_node, 0)), lowString(m_graph.varArgChild(m_node, 1))));
-                        return;
+                            lowObject(m_graph.varArgChild(m_node, 0)), lowString(m_graph.varArgChild(m_node, 1)));
                     }
 
                     if (m_graph.varArgChild(m_node, 1).useKind() == SymbolUse) {
-                        setJSValue(vmCall(
+                        return vmCall(
                             Int64, operationGetByValObjectSymbol, weakPointer(globalObject),
-                            lowObject(m_graph.varArgChild(m_node, 0)), lowSymbol(m_graph.varArgChild(m_node, 1))));
-                        return;
+                            lowObject(m_graph.varArgChild(m_node, 0)), lowSymbol(m_graph.varArgChild(m_node, 1)));
                     }
                 }
 
-                setJSValue(vmCall(
+                return vmCall(
                     Int64, operationGetByVal, weakPointer(globalObject),
-                    lowJSValue(m_graph.varArgChild(m_node, 0)), lowJSValue(m_graph.varArgChild(m_node, 1))));
-                return;
+                    lowJSValue(m_graph.varArgChild(m_node, 0)), lowJSValue(m_graph.varArgChild(m_node, 1)));
             }
 
             Node* node = m_node;
@@ -5373,8 +5354,7 @@ private:
                 });
             });
 
-            setJSValue(patchpoint);
-            return;
+            return patchpoint;
         }
 
         case Array::ArrayStorage:
@@ -5390,8 +5370,7 @@ private:
                 speculate(LoadFromHole, noValue(), nullptr, m_out.isZero64(result));
                 // We have to keep base alive to keep content in storage alive.
                 ensureStillAliveHere(base);
-                setJSValue(result);
-                return;
+                return result;
             }
 
             LBasicBlock inBounds = m_out.newBlock();
@@ -5417,13 +5396,11 @@ private:
             m_out.appendTo(continuation, lastNext);
             // We have to keep base alive to keep content in storage alive.
             ensureStillAliveHere(base);
-            setJSValue(m_out.phi(Int64, fastResult, slowResult));
-            return;
+            return m_out.phi(Int64, fastResult, slowResult);
         }
             
         case Array::String: {
-            compileStringCharAt();
-            return;
+            return compileStringCharAtImpl();
         }
             
         case Array::Int8Array:
@@ -5448,9 +5425,7 @@ private:
                     LValue result = loadFromIntTypedArray(pointer, type);
                     // We have to keep base alive since that keeps storage alive.
                     ensureStillAliveHere(base);
-                    constexpr bool canSpeculate = true;
-                    setIntTypedArrayLoadResult(result, type, canSpeculate);
-                    return;
+                    return result;
                 }
             
                 ASSERT(isFloat(type));
@@ -5469,8 +5444,7 @@ private:
                 
                 // We have to keep base alive since that keeps storage alive.
                 ensureStillAliveHere(base);
-                setDouble(result);
-                return;
+                return result;
             }
         }
 
@@ -5480,8 +5454,24 @@ private:
         case Array::SelectUsingPredictions:
         case Array::Unprofiled:
             DFG_CRASH(m_graph, m_node, "Bad array type");
+            return nullptr;
+        }
+    }
+
+    void compileGetByVal()
+    {
+        LValue result = compileGetByValImpl();
+        TypedArrayType type = m_node->arrayMode().typedArrayType();
+        if (isInt(type)) {
+            constexpr bool canSpeculate = true;
+            setIntTypedArrayLoadResult(result, type, canSpeculate);
             return;
         }
+
+        if (result->type() == Double)
+            setDouble(result);
+        else
+            setJSValue(result);
     }
     
     void compileGetMyArgumentByVal()
@@ -8571,7 +8561,7 @@ private:
         setJSValue(m_out.phi(Int64, fastResult, emptyResult, slowResult));
     }
     
-    void compileStringCharAt()
+    LValue compileStringCharAtImpl()
     {
         LValue base = lowString(m_graph.child(m_node, 0));
         LValue index = lowInt32(m_graph.child(m_node, 1));
@@ -8679,7 +8669,12 @@ private:
         m_out.appendTo(continuation, lastNext);
         // We have to keep base alive since that keeps storage alive.
         ensureStillAliveHere(base);
-        setJSValue(m_out.phi(Int64, results));
+        return m_out.phi(Int64, results);
+    }
+
+    void compileStringCharAt()
+    {
+        setJSValue(compileStringCharAtImpl());
     }
     
     void compileStringCharCodeAt()
@@ -12906,17 +12901,16 @@ private:
         emitStoreBarrier(lowCell(m_node->child1()), m_node->op() == FencedStoreBarrier);
     }
     
-    void compileHasIndexedProperty(S_JITOperation_GCZ slowPathOperation)
+    LValue compileHasIndexedPropertyImpl(LValue index, S_JITOperation_GCZ slowPathOperation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue base = lowCell(m_graph.varArgChild(m_node, 0));
-        LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
         ArrayMode mode = m_node->arrayMode();
 
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
         case Array::Contiguous: {
-            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, m_node->storageChildIndex()));
 
             IndexedAbstractHeap& heap = mode.type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
@@ -12951,11 +12945,10 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            setBoolean(m_out.phi(Int32, checkHoleResult, slowResult));
-            return;
+            return m_out.phi(Int32, checkHoleResult, slowResult);
         }
         case Array::Double: {
-            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, m_node->storageChildIndex()));
             
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
             
@@ -12989,12 +12982,11 @@ private:
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            setBoolean(m_out.phi(Int32, checkHoleResult, slowResult));
-            return;
+            return m_out.phi(Int32, checkHoleResult, slowResult);
         }
 
         case Array::ArrayStorage: {
-            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, m_node->storageChildIndex()));
 
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
@@ -13026,128 +13018,19 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            setBoolean(m_out.phi(Int32, checkHoleResult, slowResult));
-            break;
+            return m_out.phi(Int32, checkHoleResult, slowResult);
         }
 
         default: {
-            setBoolean(m_out.notZero64(vmCall(Int64, slowPathOperation, weakPointer(globalObject), base, index)));
-            break;
+            return m_out.notZero64(vmCall(Int64, slowPathOperation, weakPointer(globalObject), base, index));
         }
         }
     }
 
-    void compileHasEnumerableProperty()
+    void compileHasIndexedProperty()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue base = lowJSValue(m_node->child1());
-        LValue property = lowCell(m_node->child2());
-        setJSValue(vmCall(Int64, operationHasEnumerableProperty, weakPointer(globalObject), base, property));
-    }
-
-    template <typename SlowPathCall>
-    void compileHasStructurePropertyImpl(LValue base, SlowPathCall slowPathCall)
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue property = lowString(m_node->child2());
-        LValue enumerator = lowCell(m_node->child3());
-
-        LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock correctStructure = m_out.newBlock();
-        LBasicBlock slowPath = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        m_out.branch(isCell(base, provenType(m_node->child1())),
-            usually(isCellCase), rarely(slowPath));
-
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, correctStructure);
-
-        m_out.branch(m_out.notEqual(
-            m_out.load32(base, m_heaps.JSCell_structureID),
-            m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)),
-            rarely(slowPath), usually(correctStructure));
-
-        m_out.appendTo(correctStructure, slowPath);
-        ValueFromBlock correctStructureResult = m_out.anchor(m_out.booleanTrue);
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowPath, continuation);
-        ValueFromBlock slowPathResult = m_out.anchor(
-            m_out.equal(
-                m_out.constInt64(JSValue::encode(jsBoolean(true))), 
-                vmCall(Int64, slowPathCall, weakPointer(globalObject), base, property)));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setBoolean(m_out.phi(Int32, correctStructureResult, slowPathResult));
-    }
-
-    void compileHasEnumerableStructureProperty()
-    {
-        compileHasStructurePropertyImpl(lowJSValue(m_node->child1()), operationHasEnumerableProperty);
-    }
-
-    void compileHasOwnStructureProperty()
-    {
-        compileHasStructurePropertyImpl(lowCell(m_node->child1()), operationHasOwnStructureProperty);
-    }
-
-    void compileInStructureProperty()
-    {
-        compileHasStructurePropertyImpl(lowCell(m_node->child1()), operationInStructureProperty);
-    }
-
-    void compileGetDirectPname()
-    {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue base = lowCell(m_graph.varArgChild(m_node, 0));
-        LValue property = lowCell(m_graph.varArgChild(m_node, 1));
-        LValue index = lowInt32(m_graph.varArgChild(m_node, 2));
-        LValue enumerator = lowCell(m_graph.varArgChild(m_node, 3));
-
-        LBasicBlock checkOffset = m_out.newBlock();
-        LBasicBlock inlineLoad = m_out.newBlock();
-        LBasicBlock outOfLineLoad = m_out.newBlock();
-        LBasicBlock slowCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        m_out.branch(m_out.notEqual(
-            m_out.load32(base, m_heaps.JSCell_structureID),
-            m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)),
-            rarely(slowCase), usually(checkOffset));
-
-        LBasicBlock lastNext = m_out.appendTo(checkOffset, inlineLoad);
-        m_out.branch(m_out.aboveOrEqual(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity)),
-            unsure(outOfLineLoad), unsure(inlineLoad));
-
-        m_out.appendTo(inlineLoad, outOfLineLoad);
-        ValueFromBlock inlineResult = m_out.anchor(
-            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), 
-                base, m_out.zeroExt(index, Int64), ScaleEight, JSObject::offsetOfInlineStorage())));
-        m_out.jump(continuation);
-
-        m_out.appendTo(outOfLineLoad, slowCase);
-        LValue storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
-        LValue realIndex = m_out.signExt32To64(
-            m_out.neg(m_out.sub(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity))));
-        int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
-        ValueFromBlock outOfLineResult = m_out.anchor(
-            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty)));
-        m_out.jump(continuation);
-
-        m_out.appendTo(slowCase, continuation);
-        ValueFromBlock slowCaseResult = m_out.anchor(
-            vmCall(Int64, operationGetByVal, weakPointer(globalObject), base, property));
-        m_out.jump(continuation);
-
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, inlineResult, outOfLineResult, slowCaseResult));
-    }
-
-    void compileGetEnumerableLength()
-    {
-        LValue enumerator = lowCell(m_node->child1());
-        setInt32(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_indexLength));
+        LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+        setBoolean(compileHasIndexedPropertyImpl(index, operationHasIndexedProperty));
     }
 
     void compileGetPropertyEnumerator()
@@ -13159,63 +13042,300 @@ private:
             setJSValue(vmCall(Int64, operationGetPropertyEnumerator, weakPointer(globalObject), lowJSValue(m_node->child1())));
     }
 
-    void compileGetEnumeratorStructurePname()
+    void compileEnumeratorNextUpdateIndexAndMode()
     {
-        LValue enumerator = lowCell(m_node->child1());
-        LValue index = lowInt32(m_node->child2());
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+        LValue mode = lowInt32(m_graph.varArgChild(m_node, 2));
+        LValue enumerator = lowCell(m_graph.varArgChild(m_node, 3));
 
-        LBasicBlock inBounds = m_out.newBlock();
-        LBasicBlock outOfBounds = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+        if (m_node->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode) {
+            speculate(BadCache, noValue(), m_node, m_out.notZero32(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endGenericPropertyIndex)));
 
-        m_out.branch(m_out.below(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endStructurePropertyIndex)),
-            usually(inBounds), rarely(outOfBounds));
+            LBasicBlock increment = m_out.newBlock();
+            LBasicBlock checkHasProperty = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
 
-        LBasicBlock lastNext = m_out.appendTo(inBounds, outOfBounds);
-        LValue storage = m_out.loadPtr(enumerator, m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVector);
-        ValueFromBlock inBoundsResult = m_out.anchor(
-            m_out.loadPtr(m_out.baseIndex(m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, storage, m_out.zeroExtPtr(index))));
-        m_out.jump(continuation);
+            ValueFromBlock initialIndex = m_out.anchor(index);
+            ValueFromBlock initialIndexForHasProperty = m_out.anchor(index);
+            m_out.branch(m_out.isZero32(mode), unsure(checkHasProperty), unsure(increment));
 
-        m_out.appendTo(outOfBounds, continuation);
-        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(JSValue::ValueNull));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, inBoundsResult, outOfBoundsResult));
+            m_out.appendTo(increment);
+            LValue indexPhi = m_out.phi(Int32, initialIndex);
+            LValue incrementedIndex = m_out.add(indexPhi, m_out.int32One);
+            ValueFromBlock incrementedIndexResult = m_out.anchor(incrementedIndex);
+            ValueFromBlock finalIncrementedIndex = m_out.anchor(incrementedIndex);
+            m_out.branch(m_out.lessThan(incrementedIndex, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_indexLength)), unsure(checkHasProperty), unsure(continuation));
+
+            m_out.appendTo(checkHasProperty);
+            LValue propertyIndex = m_out.phi(Int32, initialIndexForHasProperty, incrementedIndexResult);
+            m_out.addIncomingToPhi(indexPhi, m_out.anchor(propertyIndex));
+            ValueFromBlock finalPropertyIndex = m_out.anchor(propertyIndex);
+            LValue hasProperty = compileHasIndexedPropertyImpl(propertyIndex, operationHasEnumerableIndexedProperty);
+            m_out.branch(hasProperty, unsure(continuation), unsure(increment));
+
+            m_out.appendTo(continuation);
+            LValue finalIndex = m_out.phi(Int32, finalIncrementedIndex, finalPropertyIndex);
+            setJSValue(m_out.bitOr(m_out.zeroExt(finalIndex, Int64), m_out.constInt64(JSValue::NumberTag | static_cast<uint64_t>(JSPropertyNameEnumerator::IndexedMode) << 32)));
+            return;
+        }
+
+        Edge& baseEdge = m_graph.varArgChild(m_node, 0);
+        if (m_node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && baseEdge.useKind() == CellUse) {
+            LValue base = lowCell(baseEdge);
+            speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.load32(base, m_heaps.JSCell_structureID), m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)));
+
+            speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_modeSet), m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)));
+
+            LBasicBlock increment = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            ValueFromBlock initialIndex = m_out.anchor(index);
+            m_out.branch(m_out.isZero32(mode), unsure(continuation), unsure(increment));
+
+            m_out.appendTo(increment);
+            ValueFromBlock incrementedIndex = m_out.anchor(m_out.add(index, m_out.int32One));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation);
+            index = m_out.phi(Int32, initialIndex, incrementedIndex);
+            setJSValue(m_out.bitOr(m_out.zeroExt(index, Int64), m_out.constInt64(JSValue::DoubleEncodeOffset | static_cast<uint64_t>(JSPropertyNameEnumerator::OwnStructureMode) << 32)));
+            return;
+        }
+
+        LValue base = lowJSValue(baseEdge);
+        setJSValue(vmCall(Int64, operationEnumeratorNextUpdateIndexAndMode, weakPointer(globalObject), base, index, mode, enumerator));
     }
 
-    void compileGetEnumeratorGenericPname()
+    void compileEnumeratorNextExtractIndex()
     {
-        LValue enumerator = lowCell(m_node->child1());
-        LValue index = lowInt32(m_node->child2());
+        LValue boxedPair = lowJSValue(m_node->child1());
 
-        LBasicBlock inBounds = m_out.newBlock();
-        LBasicBlock outOfBounds = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        m_out.branch(m_out.below(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endGenericPropertyIndex)),
-            usually(inBounds), rarely(outOfBounds));
-
-        LBasicBlock lastNext = m_out.appendTo(inBounds, outOfBounds);
-        LValue storage = m_out.loadPtr(enumerator, m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVector);
-        ValueFromBlock inBoundsResult = m_out.anchor(
-            m_out.loadPtr(m_out.baseIndex(m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, storage, m_out.zeroExtPtr(index))));
-        m_out.jump(continuation);
-
-        m_out.appendTo(outOfBounds, continuation);
-        ValueFromBlock outOfBoundsResult = m_out.anchor(m_out.constInt64(JSValue::ValueNull));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, inBoundsResult, outOfBoundsResult));
+        setInt32(m_out.castToInt32(boxedPair));
     }
-    
-    void compileToIndexString()
+
+    void compileEnumeratorNextExtractMode()
+    {
+        LValue boxedPair = lowJSValue(m_node->child1());
+
+        LValue highBits = m_out.castToInt32(m_out.lShr(boxedPair, m_out.constInt32(32)));
+        setInt32(m_out.bitAnd(highBits, m_out.constInt32(JSPropertyNameEnumerator::enumerationModeMask)));
+    }
+
+    // FIXME: We should probably have a method of value recovery for this node since it's "effect" free but always live in bytecode.
+    void compileEnumeratorNextUpdatePropertyName()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue index = lowInt32(m_node->child1());
-        setJSValue(vmCall(Int64, operationToIndexString, weakPointer(globalObject), index));
+        LValue mode = lowInt32(m_node->child2());
+        LValue enumerator = lowCell(m_node->child3());
+
+        LBasicBlock operationBlock = nullptr;
+        LBasicBlock continuation = nullptr;
+
+        Vector<ValueFromBlock, 3> results;
+        OptionSet seenModes = m_node->enumeratorMetadata();
+
+        if (seenModes.containsAny({ JSPropertyNameEnumerator::OwnStructureMode, JSPropertyNameEnumerator::GenericMode })) {
+            LBasicBlock checkIndex = nullptr;
+            LBasicBlock outOfBoundsBlock = m_out.newBlock();
+            LBasicBlock loadPropertyNameBlock = m_out.newBlock();
+            continuation = m_out.newBlock();
+
+            if (seenModes.contains(JSPropertyNameEnumerator::IndexedMode)) {
+                checkIndex = m_out.newBlock();
+                operationBlock = m_out.newBlock();
+                m_out.branch(m_out.testIsZero32(mode, m_out.constInt32(JSPropertyNameEnumerator::IndexedMode)), unsure(checkIndex), unsure(operationBlock));
+            }
+
+            {
+                if (checkIndex)
+                    m_out.appendTo(checkIndex);
+                LValue outOfBounds = m_out.aboveOrEqual(index, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_endGenericPropertyIndex));
+                m_out.branch(outOfBounds, unsure(outOfBoundsBlock), unsure(loadPropertyNameBlock));
+            }
+
+            {
+                m_out.appendTo(outOfBoundsBlock);
+                results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsNull()))));
+                m_out.jump(continuation);
+            }
+
+            {
+                m_out.appendTo(loadPropertyNameBlock);
+                LValue namesVector = m_out.loadPtr(enumerator, m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVector);
+                results.append(m_out.anchor(m_out.zeroExtPtr(m_out.loadPtr(m_out.baseIndex(m_heaps.WriteBarrierBuffer_bufferContents.atAnyIndex(), namesVector, m_out.zeroExt(index, Int64), ScalePtr)))));
+                m_out.jump(continuation);
+            }
+        }
+
+        if (seenModes.contains(JSPropertyNameEnumerator::IndexedMode)) {
+            if (operationBlock)
+                m_out.appendTo(operationBlock);
+            results.append(m_out.anchor(vmCall(Int64, operationEnumeratorNextUpdatePropertyName, weakPointer(globalObject), index, mode, enumerator)));
+            if (continuation)
+                m_out.jump(continuation);
+        }
+
+        if (continuation)
+            m_out.appendTo(continuation);
+
+        ASSERT(results.size());
+        LValue result = m_out.phi(Int64, results);
+        setJSValue(result);
+    }
+
+    void compileEnumeratorGetByVal()
+    {
+        Edge baseEdge = m_graph.varArgChild(m_node, 0);
+        Edge propertyNameEdge = m_graph.varArgChild(m_node, 1);
+        Edge storageEdge = m_graph.varArgChild(m_node, 2);
+        Edge indexEdge = m_graph.varArgChild(m_node, 3);
+
+        LValue base = DFG::isCell(baseEdge.useKind()) ? lowCell(baseEdge, ManualOperandSpeculation) : lowJSValue(baseEdge);
+
+        LValue storage = storageEdge ? lowStorage(storageEdge) : nullptr;
+        // We have to materialize the propertyName here in case it requires boxing since the IC path won't dominate subsequent uses in subsequent nodes.
+        // If it's an Int32 and we use it as such this boxing will be DCE'd by b3 later anyway.
+        lowJSValue(propertyNameEdge, ManualOperandSpeculation);
+
+
+        LValue index = lowInt32(indexEdge);
+        LValue mode = lowInt32(m_graph.varArgChild(m_node, 4));
+        LValue enumerator = lowCell(m_graph.varArgChild(m_node, 5));
+
+        LBasicBlock checkIsCellBlock = m_out.newBlock();
+        LBasicBlock checkStructureBlock = m_out.newBlock();
+        LBasicBlock checkInlineOrOutOfLineBlock = m_out.newBlock();
+        LBasicBlock inlineLoadBlock = m_out.newBlock();
+        LBasicBlock outOfLineLoadBlock = m_out.newBlock();
+        LBasicBlock genericICBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        Vector<ValueFromBlock, 4> results;
+
+        LValue isNotNamed = m_out.testNonZero32(mode, m_out.constInt32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::GenericMode));
+        m_out.branch(isNotNamed, unsure(genericICBlock), unsure(checkIsCellBlock));
+
+        m_out.appendTo(checkIsCellBlock);
+        m_out.branch(isCell(base, provenType(baseEdge)), usually(checkStructureBlock), rarely(genericICBlock));
+
+        m_out.appendTo(checkStructureBlock);
+        LValue structureID;
+        auto structure = m_state.forNode(baseEdge.node()).m_structure.onlyStructure();
+        if (structure)
+            structureID = m_out.constInt32(structure->id());
+        else
+            structureID = m_out.load32(base, m_heaps.JSCell_structureID);
+
+        LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));
+
+        if (indexEdge.node() == propertyNameEdge.node()) {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+            LBasicBlock badStructureSlowPath = m_out.newBlock();
+            m_out.branch(hasEnumeratorStructure, usually(checkInlineOrOutOfLineBlock), rarely(genericICBlock));
+
+            m_out.appendTo(badStructureSlowPath);
+            results.append(m_out.anchor(vmCall(Int64, operationEnumeratorRecoverNameAndGetByVal, weakPointer(globalObject), base, index, enumerator)));
+        } else
+            m_out.branch(hasEnumeratorStructure, usually(checkInlineOrOutOfLineBlock), rarely(genericICBlock));
+
+        m_out.appendTo(checkInlineOrOutOfLineBlock);
+        LValue inlineCapacity = nullptr;
+        bool hasNoOutOfLineProperties = false;
+        if (structure) {
+            hasNoOutOfLineProperties = !structure->outOfLineCapacity();
+            inlineCapacity = m_out.constInt32(structure->inlineCapacity());
+        }
+        if (!inlineCapacity)
+            inlineCapacity = m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity);
+        LValue isInline = hasNoOutOfLineProperties ? m_out.int32One : m_out.below(index, inlineCapacity);
+        m_out.branch(isInline, unsure(inlineLoadBlock), unsure(outOfLineLoadBlock));
+
+        m_out.appendTo(inlineLoadBlock);
+        results.append(m_out.anchor(
+            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(),
+                base, m_out.zeroExt(index, Int64), ScaleEight, JSObject::offsetOfInlineStorage()))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(outOfLineLoadBlock);
+        if (!storage)
+            storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
+
+        LValue realIndex = m_out.signExt32To64(
+            m_out.neg(m_out.sub(index, inlineCapacity)));
+        int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
+        results.append(m_out.anchor(
+            m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty))));
+        m_out.jump(continuation);
+
+        m_out.appendTo(genericICBlock);
+        LValue genericResult = compileGetByValImpl();
+        TypedArrayType type = m_node->arrayMode().typedArrayType();
+        if (isInt(type)) {
+            if (elementSize(type) < 4 || isSigned(type))
+                genericResult = boxInt32(genericResult);
+            else
+                genericResult = strictInt52ToJSValue(genericResult);
+        } else if (genericResult->type() == Double)
+            genericResult = boxDouble(genericResult);
+
+        results.append(m_out.anchor(genericResult));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation);
+        ASSERT(results.size());
+        LValue result = m_out.phi(Int64, results);
+        setJSValue(result);
+    }
+
+    template<typename SlowPathFunctionType>
+    void compileEnumeratorHasProperty(SlowPathFunctionType slowPathFunction)
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        Edge baseEdge = m_graph.varArgChild(m_node, 0);
+        LValue base = baseEdge.useKind() == CellUse ? lowCell(baseEdge) : lowJSValue(baseEdge);
+        LValue propertyName = lowJSValue(m_graph.varArgChild(m_node, 1));
+        LValue index = lowInt32(m_graph.varArgChild(m_node, 2));
+        LValue mode = lowInt32(m_graph.varArgChild(m_node, 3));
+        LValue enumerator = lowCell(m_graph.varArgChild(m_node, 4));
+
+        LBasicBlock isNamedBlock = m_out.newBlock();
+        LBasicBlock isCellBlock = m_out.newBlock();
+        LBasicBlock matchesStructureBlock = m_out.newBlock();
+        LBasicBlock operationBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(m_out.testNonZero32(mode, m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)), unsure(isNamedBlock), unsure(operationBlock));
+        m_out.appendTo(isNamedBlock);
+
+        m_out.branch(isCell(base, provenType(baseEdge)), unsure(isCellBlock), unsure(operationBlock));
+
+        m_out.appendTo(isCellBlock);
+        LValue structureID = m_out.load32(base, m_heaps.JSCell_structureID);
+        m_out.branch(m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)),
+            usually(matchesStructureBlock), rarely(operationBlock));
+
+        m_out.appendTo(matchesStructureBlock);
+        ValueFromBlock namedResult = m_out.anchor(m_out.booleanTrue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(operationBlock);
+        ValueFromBlock operationResult = m_out.anchor(unboxBoolean(vmCall(Int64, slowPathFunction, weakPointer(globalObject), base, propertyName, index, mode)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation);
+        setBoolean(m_out.phi(Int32, namedResult, operationResult));
+    }
+
+    void compileEnumeratorInByVal()
+    {
+        compileEnumeratorHasProperty(operationEnumeratorInByVal);
+    }
+
+    void compileEnumeratorHasOwnProperty()
+    {
+        compileEnumeratorHasProperty(operationEnumeratorHasOwnProperty);
     }
     
     void compileCheckStructureImmediate()
@@ -17344,7 +17464,7 @@ private:
             setInt32(result);
             return;
         }
-        
+
         if (m_node->shouldSpeculateInt32() && canSpeculate) {
             speculate(
                 Overflow, noValue(), nullptr, m_out.lessThan(result, m_out.int32Zero));
@@ -20294,6 +20414,27 @@ private:
             m_out.constInt32(nodeIndex));
 #endif // ASSERT_ENABLED
         m_out.unreachable();
+    }
+
+    // This only works for ints right now.
+    PatchpointValue* dataLogForDebugging(const char* prefix, LValue value)
+    {
+        PatchpointValue* result = m_out.patchpoint(Void);
+        result->effects.writesLocalState = true;
+        result->append(value, ValueRep::reg(GPRInfo::regT0));
+        Type valueType = value->type();
+        result->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+            jit.probeDebug([=] (Probe::Context& context) {
+                if (valueType == Int32)
+                    dataLogLn(prefix, context.gpr<int32_t>(GPRInfo::regT0));
+                else
+                    dataLogLn(prefix, context.gpr<JSValue>(GPRInfo::regT0));
+            });
+        });
+
+        return result;
     }
 
     AvailabilityMap& availabilityMap() { return m_availabilityCalculator.m_availability; }

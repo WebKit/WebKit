@@ -501,20 +501,17 @@ namespace JSC { namespace DFG {
     macro(StoreBarrier, NodeMustGenerate) \
     macro(FencedStoreBarrier, NodeMustGenerate) \
     \
-    /* For-in enumeration opcodes */\
-    macro(GetEnumerableLength, NodeMustGenerate | NodeResultJS) \
     /* Must generate because of Proxies on the prototype chain */ \
     macro(HasIndexedProperty, NodeMustGenerate | NodeResultBoolean | NodeHasVarArgs) \
-    macro(HasEnumerableIndexedProperty, NodeMustGenerate | NodeResultBoolean | NodeHasVarArgs) \
-    macro(HasEnumerableStructureProperty, NodeResultBoolean) \
-    macro(HasEnumerableProperty, NodeResultBoolean) \
-    macro(HasOwnStructureProperty, NodeResultBoolean | NodeMustGenerate) \
-    macro(InStructureProperty, NodeMustGenerate | NodeResultBoolean) \
-    macro(GetDirectPname, NodeMustGenerate | NodeHasVarArgs | NodeResultJS) \
+    /* For-in enumeration opcodes */\
     macro(GetPropertyEnumerator, NodeMustGenerate | NodeResultJS) \
-    macro(GetEnumeratorStructurePname, NodeMustGenerate | NodeResultJS) \
-    macro(GetEnumeratorGenericPname, NodeMustGenerate | NodeResultJS) \
-    macro(ToIndexString, NodeResultJS) \
+    macro(EnumeratorNextUpdateIndexAndMode, NodeResultJS | NodeHasVarArgs) \
+    macro(EnumeratorNextExtractMode, NodeResultInt32) \
+    macro(EnumeratorNextExtractIndex, NodeResultInt32) \
+    macro(EnumeratorNextUpdatePropertyName, NodeResultJS) \
+    macro(EnumeratorGetByVal, NodeResultJS | NodeHasVarArgs | NodeMustGenerate) \
+    macro(EnumeratorInByVal, NodeResultBoolean | NodeHasVarArgs | NodeMustGenerate) \
+    macro(EnumeratorHasOwnProperty, NodeResultBoolean | NodeHasVarArgs | NodeMustGenerate) \
     /* Nodes for JSMap and JSSet */ \
     macro(MapHash, NodeResultInt32) \
     macro(NormalizeMapKey, NodeResultJS) \

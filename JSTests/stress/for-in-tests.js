@@ -105,6 +105,7 @@ function shouldThrowSyntaxError(script) {
             throw new Error("bad result");
     }
 })();
+
 (function() {
     var foo = function(a, b) {
         for (var p in b) {

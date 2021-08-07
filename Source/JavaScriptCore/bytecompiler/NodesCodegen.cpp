@@ -2131,24 +2131,24 @@ RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& g
     RELEASE_ASSERT(m_args->m_listNode && m_args->m_listNode->m_expr && !m_args->m_listNode->m_next);  
     ExpressionNode* argument = m_args->m_listNode->m_expr;
     RELEASE_ASSERT(argument->isResolveNode());
-    StructureForInContext* structureContext = nullptr;
+    ForInContext* context = nullptr;
     Variable argumentVariable = generator.variable(static_cast<ResolveNode*>(argument)->identifier());
     if (argumentVariable.isLocal()) {
         RegisterID* property = argumentVariable.local();
-        structureContext = generator.findStructureForInContext(property);
+        context = generator.findForInContext(property);
     }
 
     auto canUseFastHasOwnProperty = [&] {
-        if (!structureContext)
+        if (!context)
             return false;
-        if (!structureContext->baseVariable())
+        if (!context->baseVariable())
             return false;
         if (m_base->isResolveNode())
-            return generator.variable(static_cast<ResolveNode*>(m_base)->identifier()) == structureContext->baseVariable().value();
+            return generator.variable(static_cast<ResolveNode*>(m_base)->identifier()) == context->baseVariable().value();
         if (m_base->isThisNode()) {
             // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
             ASSERT(base);
-            return generator.variable(generator.propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local) == structureContext->baseVariable().value();
+            return generator.variable(generator.propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local) == context->baseVariable().value();
         }
         return false;
     };
@@ -2160,7 +2160,7 @@ RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& g
         Ref<Label> end = generator.newLabel();
 
         unsigned branchInsnOffset = generator.emitWideJumpIfNotFunctionHasOwnProperty(function.get(), realCall.get());
-        generator.emitHasOwnStructureProperty(returnValue.get(), base.get(), generator.emitNode(argument), structureContext->enumerator());
+        generator.emitEnumeratorHasOwnProperty(returnValue.get(), base.get(), context->mode(), generator.emitNode(argument), context->propertyOffset(), context->enumerator());
         generator.emitJump(end.get());
 
         generator.emitLabel(realCall.get());
@@ -2172,7 +2172,7 @@ RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& g
 
         generator.emitLabel(end.get());
 
-        generator.recordHasOwnStructurePropertyInForInLoop(*structureContext, branchInsnOffset, realCall);
+        generator.recordHasOwnPropertyInForInLoop(*context, branchInsnOffset, realCall);
     } else {
         CallArguments callArguments(generator, m_args);
         generator.move(callArguments.thisRegister(), base.get());
@@ -4184,8 +4184,6 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (generator.shouldBeConcernedWithCompletionValue() && m_statement->hasEarlyBreakOrContinue())
         generator.emitLoad(dst, jsUndefined());
 
-    Ref<Label> end = generator.newLabel();
-
     RegisterID* forLoopSymbolTable = nullptr;
     generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::LetConstScope, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
 
@@ -4193,12 +4191,10 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitNode(generator.ignoredResult(), m_lexpr);
 
     RefPtr<RegisterID> base = generator.newTemporary();
-    RefPtr<RegisterID> length;
-    RefPtr<RegisterID> enumerator;
 
     generator.emitNode(base.get(), m_expr);
     RefPtr<RegisterID> local = this->tryGetBoundLocal(generator);
-    RefPtr<RegisterID> enumeratorIndex;
+
 
     std::optional<Variable> baseVariable;
     if (m_expr->isResolveNode())
@@ -4209,137 +4205,46 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         baseVariable = generator.variable(generator.propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local);
     }
 
-    // Pause at the assignment expression for each for..in iteration.
-    generator.emitDebugHook(m_lexpr);
-
     int profilerStartOffset = m_statement->startOffset();
     int profilerEndOffset = m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0);
 
-    enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
-
-    BytecodeGenerator::PreservedTDZStack preservedTDZStack;
-    generator.preserveTDZStack(preservedTDZStack);
-
-    // Indexed property loop.
     {
-        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
-        Ref<Label> loopStart = generator.newLabel();
-        Ref<Label> loopEnd = generator.newLabel();
-
-        length = generator.emitGetEnumerableLength(generator.newTemporary(), enumerator.get());
-        RefPtr<RegisterID> i = generator.emitLoad(generator.newTemporary(), jsNumber(0));
+        RefPtr<RegisterID> enumerator = generator.newTemporary();
+        RefPtr<RegisterID> mode = generator.emitLoad(generator.newTemporary(), jsNumber(static_cast<unsigned>(JSPropertyNameEnumerator::InitMode)));
+        RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(0));
         RefPtr<RegisterID> propertyName = generator.newTemporary();
+        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
-        generator.emitLabel(loopStart.get());
+        enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
+        generator.moveLinkTimeConstant(propertyName.get(), LinkTimeConstant::emptyPropertyNameEnumerator);
+        generator.emitEqualityOp<OpStricteq>(propertyName.get(), enumerator.get(), propertyName.get());
+        generator.emitJumpIfTrue(propertyName.get(), scope->breakTarget());
+
+        generator.emitLabel(*scope->continueTarget());
         generator.emitLoopHint();
+        generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
+        generator.emitDebugHook(m_lexpr); // Pause at the assignment expression for each for..in iteration.
 
-        RefPtr<RegisterID> result = generator.emitBinaryOp<OpLess>(generator.newTemporary(), i.get(), length.get());
-        generator.emitJumpIfFalse(result.get(), loopEnd.get());
-        generator.emitHasEnumerableIndexedProperty(result.get(), base.get(), i.get());
-        generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
+        // FIXME: We should have a way to see if anyone is actually using the propertyName for something other than a get_by_val. If not, we could eliminate the toString in this opcode.
+        generator.emitEnumeratorNext(propertyName.get(), mode.get(), index.get(), base.get(), enumerator.get());
 
-        generator.emitToIndexString(propertyName.get(), i.get());
+        // Note, choosing undefined or null helps please DFG's Abstract Interpreter as it doesn't distinguish null and undefined as types (via SpecOther).
+        generator.emitJumpIfTrue(generator.emitIsUndefinedOrNull(generator.newTemporary(), propertyName.get()), scope->breakTarget());
+
         this->emitLoopHeader(generator, propertyName.get());
 
         generator.emitProfileControlFlow(profilerStartOffset);
 
-        generator.pushIndexedForInScope(local.get(), i.get());
+        generator.pushForInScope(local.get(), propertyName.get(), index.get(), enumerator.get(), mode.get(), baseVariable);
         generator.emitNode(dst, m_statement);
-        generator.popIndexedForInScope(local.get());
+        generator.popForInScope(local.get());
 
         generator.emitProfileControlFlow(profilerEndOffset);
-
-        generator.emitLabel(*scope->continueTarget());
-        generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
-        generator.emitInc(i.get());
-        generator.emitDebugHook(m_lexpr); // Pause at the assignment expression for each for..in iteration.
-        generator.emitJump(loopStart.get());
+        generator.emitJump(*scope->continueTarget());
 
         generator.emitLabel(scope->breakTarget());
-        generator.emitJump(end.get());
-        generator.emitLabel(loopEnd.get());
-    }
-    generator.restoreTDZStack(preservedTDZStack);
-
-    // Structure property loop.
-    {
-        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
-        Ref<Label> loopStart = generator.newLabel();
-        Ref<Label> loopEnd = generator.newLabel();
-
-        enumeratorIndex = generator.emitLoad(generator.newTemporary(), jsNumber(0));
-        RefPtr<RegisterID> propertyName = generator.newTemporary();
-        generator.emitEnumeratorStructurePropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
-
-        generator.emitLabel(loopStart.get());
-        generator.emitLoopHint();
-
-        RefPtr<RegisterID> result = generator.emitIsNull(generator.newTemporary(), propertyName.get());
-        generator.emitJumpIfTrue(result.get(), loopEnd.get());
-        generator.emitHasEnumerableStructureProperty(result.get(), base.get(), propertyName.get(), enumerator.get());
-        generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
-
-        this->emitLoopHeader(generator, propertyName.get());
-
-        generator.emitProfileControlFlow(profilerStartOffset);
-
-        generator.pushStructureForInScope(local.get(), enumeratorIndex.get(), propertyName.get(), enumerator.get(), baseVariable);
-        generator.emitNode(dst, m_statement);
-        generator.popStructureForInScope(local.get());
-
-        generator.emitProfileControlFlow(profilerEndOffset);
-
-        generator.emitLabel(*scope->continueTarget());
-        generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
-        generator.emitInc(enumeratorIndex.get());
-        generator.emitEnumeratorStructurePropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
-        generator.emitDebugHook(m_lexpr); // Pause at the assignment expression for each for..in iteration.
-        generator.emitJump(loopStart.get());
-        
-        generator.emitLabel(scope->breakTarget());
-        generator.emitJump(end.get());
-        generator.emitLabel(loopEnd.get());
-    }
-    generator.restoreTDZStack(preservedTDZStack);
-
-    // Generic property loop.
-    {
-        Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
-        Ref<Label> loopStart = generator.newLabel();
-        Ref<Label> loopEnd = generator.newLabel();
-
-        RefPtr<RegisterID> propertyName = generator.newTemporary();
-
-        generator.emitEnumeratorGenericPropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
-
-        generator.emitLabel(loopStart.get());
-        generator.emitLoopHint();
-
-        RefPtr<RegisterID> result = generator.emitIsNull(generator.newTemporary(), propertyName.get());
-        generator.emitJumpIfTrue(result.get(), loopEnd.get());
-
-        generator.emitHasEnumerableProperty(result.get(), base.get(), propertyName.get());
-        generator.emitJumpIfFalse(result.get(), *scope->continueTarget());
-
-        this->emitLoopHeader(generator, propertyName.get());
-
-        generator.emitProfileControlFlow(profilerStartOffset);
-
-        generator.emitNode(dst, m_statement);
-
-        generator.emitLabel(*scope->continueTarget());
-        generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
-        generator.emitInc(enumeratorIndex.get());
-        generator.emitEnumeratorGenericPropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
-        generator.emitDebugHook(m_lexpr); // Pause at the assignment expression for each for..in iteration.
-        generator.emitJump(loopStart.get());
-
-        generator.emitLabel(scope->breakTarget());
-        generator.emitJump(end.get());
-        generator.emitLabel(loopEnd.get());
     }
 
-    generator.emitLabel(end.get());
     generator.popLexicalScope(this);
     generator.emitProfileControlFlow(profilerEndOffset);
 }

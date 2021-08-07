@@ -473,14 +473,14 @@ private:
             Edge child1 = m_graph.child(node, 0);
             if (!child1->prediction())
                 break;
-            
+
             Edge child2 = m_graph.child(node, 1);
             ArrayMode arrayMode = node->arrayMode().refine(
                 m_graph, node,
                 child1->prediction(),
                 child2->prediction(),
                 SpecNone);
-            
+
             switch (arrayMode.type()) {
             case Array::Int32:
                 if (arrayMode.isOutOfBounds())
@@ -862,6 +862,7 @@ private:
             break;
         }
 
+        case EnumeratorGetByVal:
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:
@@ -882,7 +883,6 @@ private:
         case GetPrivateName:
         case GetPrivateNameById:
         case MultiGetByOffset:
-        case GetDirectPname:
         case Call:
         case DirectCall:
         case TailCallInlinedCaller:
@@ -1205,21 +1205,20 @@ private:
             setPrediction(SpecObjectOther);
             break;
 
-        case GetEnumerableLength: {
+        case EnumeratorNextExtractMode:
+        case EnumeratorNextExtractIndex: {
             setPrediction(SpecInt32Only);
             break;
         }
+
+        case EnumeratorInByVal:
+        case EnumeratorHasOwnProperty:
         case InByVal:
         case InById:
         case HasPrivateName:
         case HasPrivateBrand:
         case HasOwnProperty:
-        case HasOwnStructureProperty:
-        case InStructureProperty:
-        case HasIndexedProperty:
-        case HasEnumerableIndexedProperty:
-        case HasEnumerableStructureProperty:
-        case HasEnumerableProperty: {
+        case HasIndexedProperty: {
             setPrediction(SpecBoolean);
             break;
         }
@@ -1227,18 +1226,17 @@ private:
             setPrediction(SpecCell);
             break;
         }
-        case GetEnumeratorStructurePname: {
-            setPrediction(SpecCell | SpecOther);
+
+        case EnumeratorNextUpdateIndexAndMode: {
+            setPrediction(SpecFullNumber);
             break;
         }
-        case GetEnumeratorGenericPname: {
-            setPrediction(SpecCell | SpecOther);
+
+        case EnumeratorNextUpdatePropertyName: {
+            setPrediction(SpecString | SpecOther);
             break;
         }
-        case ToIndexString: {
-            setPrediction(SpecString);
-            break;
-        }
+
         case ParseInt: {
             // We expect this node to almost always produce an int32. However,
             // it's possible it produces NaN or integers out of int32 range. We

@@ -472,8 +472,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         OpcodeID opcodeID = instruction->opcodeID();
         m_bytecodeCost += opcodeLengths[opcodeID];
         switch (opcodeID) {
-        LINK(OpHasEnumerableIndexedProperty)
-
         LINK(OpCallVarargs, profile)
         LINK(OpTailCallVarargs, profile)
         LINK(OpTailCallForwardArguments, profile)
@@ -481,7 +479,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpGetByVal, profile)
         LINK(OpGetPrivateName, profile)
 
-        LINK(OpGetDirectPname, profile)
         LINK(OpGetByIdWithThis, profile)
         LINK(OpTryGetById, profile)
         LINK(OpGetByIdDirect, profile)
@@ -502,6 +499,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpRshift, profile)
 
         LINK(OpGetById, profile)
+
+        LINK(OpEnumeratorNext, profile)
+        LINK(OpEnumeratorInByVal, profile)
+        LINK(OpEnumeratorHasOwnProperty, profile)
+        LINK(OpEnumeratorGetByVal, profile)
 
         LINK(OpCall, profile)
         LINK(OpTailCall, profile)

@@ -390,7 +390,8 @@ private:
             node->child2()->mergeFlags(flags & ~NodeBytecodeNeedsNegZero);
             break;
         }
-            
+
+        case EnumeratorGetByVal:
         case GetByVal: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);

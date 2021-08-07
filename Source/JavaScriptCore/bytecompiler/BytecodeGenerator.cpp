@@ -1503,11 +1503,11 @@ unsigned BytecodeGenerator::emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* 
     return m_lastInstruction.offset();
 }
 
-void BytecodeGenerator::recordHasOwnStructurePropertyInForInLoop(StructureForInContext& structureContext, unsigned branchOffset, Label& genericPath)
+void BytecodeGenerator::recordHasOwnPropertyInForInLoop(ForInContext& context, unsigned branchOffset, Label& genericPath)
 {
     RELEASE_ASSERT(genericPath.isBound());
     RELEASE_ASSERT(!genericPath.isForward());
-    structureContext.addHasOwnPropertyJump(branchOffset, genericPath.location());
+    context.addHasOwnPropertyJump(branchOffset, genericPath.location());
 }
 
 bool BytecodeGenerator::hasConstant(const Identifier& ident) const
@@ -2581,12 +2581,8 @@ RegisterID* BytecodeGenerator::emitInByVal(RegisterID* dst, RegisterID* property
         if (context.local() != property)
             continue;
 
-        if (!context.isStructureForInContext())
-            break;
-
-        StructureForInContext& structureContext = context.asStructureForInContext();
-        OpInStructureProperty::emit<OpcodeSize::Wide32>(this, dst, base, property, structureContext.enumerator());
-        structureContext.addInInst(m_lastInstruction.offset(), property->index());
+        OpEnumeratorInByVal::emit<OpcodeSize::Wide32>(this, dst, base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        context.addInInst(m_lastInstruction.offset(), property->index());
         return dst;
     }
 
@@ -2734,24 +2730,9 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
         if (context.local() != property)
             continue;
 
-        if (context.isIndexedForInContext()) {
-            auto& indexedContext = context.asIndexedForInContext();
-            kill(dst);
-            if (OpGetByVal::checkWithoutMetadataID<OpcodeSize::Narrow>(this, dst, base, property))
-                OpGetByVal::emitWithSmallestSizeRequirement<OpcodeSize::Narrow>(this, dst, base, indexedContext.index());
-            else if (OpGetByVal::checkWithoutMetadataID<OpcodeSize::Wide16>(this, dst, base, property))
-                OpGetByVal::emitWithSmallestSizeRequirement<OpcodeSize::Wide16>(this, dst, base, indexedContext.index());
-            else
-                OpGetByVal::emit<OpcodeSize::Wide32>(this, dst, base, indexedContext.index());
-            indexedContext.addGetInst(m_lastInstruction.offset(), property->index());
-            return dst;
-        }
-
-        // We cannot do the above optimization here since OpGetDirectPname => OpGetByVal conversion involves different metadata ID allocation.
-        StructureForInContext& structureContext = context.asStructureForInContext();
-        OpGetDirectPname::emit<OpcodeSize::Wide32>(this, kill(dst), base, property, structureContext.index(), structureContext.enumerator());
-
-        structureContext.addGetInst(m_lastInstruction.offset(), property->index());
+        // FIXME: We should have a better bytecode rewriter that can resize chunks.
+        OpEnumeratorGetByVal::emit<OpcodeSize::Wide32>(this, kill(dst), base, context.mode(), property, context.propertyOffset(), context.enumerator());
+        context.addGetInst(m_lastInstruction.offset(), property->index());
         return dst;
     }
 
@@ -4552,57 +4533,20 @@ RegisterID* BytecodeGenerator::emitGetGlobalPrivate(RegisterID* dst, const Ident
     return emitGetFromScope(dst, scope.get(), var, ThrowIfNotFound);
 }
 
-RegisterID* BytecodeGenerator::emitGetEnumerableLength(RegisterID* dst, RegisterID* base)
+void BytecodeGenerator::emitEnumeratorNext(RegisterID* propertyName, RegisterID* mode, RegisterID* index, RegisterID* base, RegisterID* enumerator)
 {
-    OpGetEnumerableLength::emit(this, dst, base);
-    return dst;
+    OpEnumeratorNext::emit(this, propertyName, mode, index, base, enumerator);
 }
 
-RegisterID* BytecodeGenerator::emitHasEnumerableIndexedProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName)
+RegisterID* BytecodeGenerator::emitEnumeratorHasOwnProperty(RegisterID* dst, RegisterID* base, RegisterID* mode, RegisterID* propertyName, RegisterID* index, RegisterID* enumerator)
 {
-    OpHasEnumerableIndexedProperty::emit(this, dst, base, propertyName);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitHasEnumerableStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator)
-{
-    OpHasEnumerableStructureProperty::emit(this, dst, base, propertyName, enumerator);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitHasEnumerableProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName)
-{
-    OpHasEnumerableProperty::emit(this, dst, base, propertyName);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitHasOwnStructureProperty(RegisterID* dst, RegisterID* base, RegisterID* propertyName, RegisterID* enumerator)
-{
-    OpHasOwnStructureProperty::emit(this, dst, base, propertyName, enumerator);
+    OpEnumeratorHasOwnProperty::emit(this, dst, base, mode, propertyName, index, enumerator);
     return dst;
 }
 
 RegisterID* BytecodeGenerator::emitGetPropertyEnumerator(RegisterID* dst, RegisterID* base)
 {
     OpGetPropertyEnumerator::emit(this, dst, base);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitEnumeratorStructurePropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index)
-{
-    OpEnumeratorStructurePname::emit(this, dst, enumerator, index);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitEnumeratorGenericPropertyName(RegisterID* dst, RegisterID* enumerator, RegisterID* index)
-{
-    OpEnumeratorGenericPname::emit(this, dst, enumerator, index);
-    return dst;
-}
-
-RegisterID* BytecodeGenerator::emitToIndexString(RegisterID* dst, RegisterID* index)
-{
-    OpToIndexString::emit(this, dst, index);
     return dst;
 }
 
@@ -4646,23 +4590,6 @@ RegisterID* BytecodeGenerator::emitIsEmpty(RegisterID* dst, RegisterID* src)
 {
     OpIsEmpty::emit(this, dst, src);
     return dst;
-}
-
-void BytecodeGenerator::pushIndexedForInScope(RegisterID* localRegister, RegisterID* indexRegister)
-{
-    if (!localRegister)
-        return;
-    unsigned bodyBytecodeStartOffset = instructions().size();
-    m_forInContextStack.append(adoptRef(*new IndexedForInContext(localRegister, indexRegister, bodyBytecodeStartOffset)));
-}
-
-void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
-{
-    if (!localRegister)
-        return;
-    unsigned bodyBytecodeEndOffset = instructions().size();
-    m_forInContextStack.last()->asIndexedForInContext().finalize(*this, m_codeBlock.get(), bodyBytecodeEndOffset);
-    m_forInContextStack.removeLast();
 }
 
 RegisterID* BytecodeGenerator::emitLoadArrowFunctionLexicalEnvironment(const Identifier& identifier)
@@ -4768,20 +4695,20 @@ void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
     }
 }
 
-void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, std::optional<Variable> baseVariable)
+void BytecodeGenerator::pushForInScope(RegisterID* localRegister, RegisterID* propertyNameRegister, RegisterID* propertyOffsetRegister, RegisterID* enumeratorRegister, RegisterID* modeRegister, std::optional<Variable> baseVariable)
 {
     if (!localRegister)
         return;
     unsigned bodyBytecodeStartOffset = instructions().size();
-    m_forInContextStack.append(adoptRef(*new StructureForInContext(localRegister, indexRegister, propertyRegister, enumeratorRegister, baseVariable, bodyBytecodeStartOffset)));
+    m_forInContextStack.append(adoptRef(*new ForInContext(localRegister, propertyNameRegister, propertyOffsetRegister, enumeratorRegister, modeRegister, baseVariable, bodyBytecodeStartOffset)));
 }
 
-void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)
+void BytecodeGenerator::popForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
     unsigned bodyBytecodeEndOffset = instructions().size();
-    m_forInContextStack.last()->asStructureForInContext().finalize(*this, m_codeBlock.get(), bodyBytecodeEndOffset);
+    m_forInContextStack.last()->finalize(*this, m_codeBlock.get(), bodyBytecodeEndOffset);
     m_forInContextStack.removeLast();
 }
 
@@ -5384,34 +5311,7 @@ void BytecodeGenerator::emitOptionalCheck(RegisterID* src)
     emitJumpIfTrue(emitIsUndefinedOrNull(newTemporary(), src), m_optionalChainTargetStack.last().get());
 }
 
-void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGenerator* codeBlock, unsigned bodyBytecodeEndOffset)
-{
-    // Lexically invalidating ForInContexts is kind of weak sauce, but it only occurs if
-    // either of the following conditions is true:
-    //
-    // (1) The loop iteration variable is re-assigned within the body of the loop.
-    // (2) The loop iteration variable is captured in the lexical scope of the function.
-    //
-    // These two situations occur sufficiently rarely that it's okay to use this style of
-    // "analysis" to make iteration faster. If we didn't want to do this, we would either have
-    // to perform some flow-sensitive analysis to see if/when the loop iteration variable was
-    // reassigned, or we'd have to resort to runtime checks to see if the variable had been
-    // reassigned from its original value.
-
-    for (unsigned offset = bodyBytecodeStartOffset(); isValid() && offset < bodyBytecodeEndOffset;) {
-        auto instruction = generator.instructions().at(offset);
-        ASSERT(!instruction->is<OpEnter>());
-        for (Checkpoint checkpoint = instruction->numberOfCheckpoints(); checkpoint--;) {
-            computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), checkpoint, [&] (VirtualRegister operand) {
-                if (local()->virtualRegister() == operand)
-                    invalidate();
-            });
-        }
-        offset += instruction->size();
-    }
-}
-
-template <typename OldOpType, typename TupleType>
+template <typename OldOpType, typename NewOpType, typename TupleType>
 ALWAYS_INLINE void rewriteOp(BytecodeGenerator& generator, TupleType& instTuple)
 {
     unsigned instIndex = std::get<0>(instTuple);
@@ -5431,34 +5331,52 @@ ALWAYS_INLINE void rewriteOp(BytecodeGenerator& generator, TupleType& instTuple)
     // 2. base stays the same.
     // 3. property gets switched to the original property.
 
-    if constexpr (std::is_same<OldOpType, OpGetDirectPname>::value) {
-        static_assert(sizeof(OpGetByVal) <= sizeof(OpGetDirectPname));
-        OpGetByVal::emit<OpcodeSize::Wide32>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
-    } else if constexpr (std::is_same<OldOpType, OpInStructureProperty>::value) {
-        static_assert(sizeof(OpInByVal) <= sizeof(OpInStructureProperty));
-        OpInByVal::emit<OpcodeSize::Wide32>(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
-    } else
-        RELEASE_ASSERT_NOT_REACHED();
+    static_assert(sizeof(NewOpType) <= sizeof(OldOpType));
+    NewOpType::emit(&generator, bytecode.m_dst, bytecode.m_base, VirtualRegister(propertyRegIndex));
 
     // 4. nop out the remaining bytes
     while (generator.m_writer.position() < end)
         OpNop::emit<OpcodeSize::Narrow>(&generator);
 }
 
-void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGenerator* codeBlock, unsigned bodyBytecodeEndOffset)
+void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGenerator* codeBlock, unsigned bodyBytecodeEndOffset)
 {
-    Base::finalize(generator, codeBlock, bodyBytecodeEndOffset);
-    if (isValid())
+    // Lexically invalidating ForInContexts is kind of weak sauce, but it only occurs if
+    // either of the following conditions is true:
+    //
+    // (1) The loop iteration variable is re-assigned within the body of the loop.
+    // (2) The loop iteration variable is captured in the lexical scope of the function.
+    //
+    // These two situations occur sufficiently rarely that it's okay to use this style of
+    // "analysis" to make iteration faster. If we didn't want to do this, we would either have
+    // to perform some flow-sensitive analysis to see if/when the loop iteration variable was
+    // reassigned, or we'd have to resort to runtime checks to see if the variable had been
+    // reassigned from its original value.
+
+    bool escaped = false;
+    for (unsigned offset = bodyBytecodeStartOffset(); !escaped && offset < bodyBytecodeEndOffset;) {
+        auto instruction = generator.instructions().at(offset);
+        ASSERT(!instruction->is<OpEnter>());
+        for (Checkpoint checkpoint = instruction->numberOfCheckpoints(); checkpoint--;) {
+            computeDefsForBytecodeIndex(codeBlock, instruction.ptr(), checkpoint, [&] (VirtualRegister operand) {
+                if (local()->virtualRegister() == operand)
+                    escaped = true;
+            });
+        }
+        offset += instruction->size();
+    }
+
+    if (!escaped)
         return;
 
     OpcodeID lastOpcodeID = generator.m_lastOpcodeID;
     InstructionStream::MutableRef lastInstruction = generator.m_lastInstruction;
 
     for (const auto& instTuple : m_getInsts)
-        rewriteOp<OpGetDirectPname>(generator, instTuple);
+        rewriteOp<OpEnumeratorGetByVal, OpGetByVal>(generator, instTuple);
 
     for (const auto& instTuple : m_inInsts)
-        rewriteOp<OpInStructureProperty>(generator, instTuple);
+        rewriteOp<OpEnumeratorInByVal, OpInByVal>(generator, instTuple);
 
     for (const auto& hasOwnPropertyTuple : m_hasOwnPropertyJumpInsts) {
         static_assert(sizeof(OpJmp) <= sizeof(OpJneqPtr));
@@ -5487,22 +5405,6 @@ void StructureForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeB
     }
 }
 
-void IndexedForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGenerator* codeBlock, unsigned bodyBytecodeEndOffset)
-{
-    Base::finalize(generator, codeBlock, bodyBytecodeEndOffset);
-    if (isValid())
-        return;
-
-    for (const auto& instPair : m_getInsts) {
-        unsigned instIndex = instPair.first;
-        int propertyRegIndex = instPair.second;
-        generator.m_writer.ref(instIndex)->cast<OpGetByVal>()->setProperty(VirtualRegister(propertyRegIndex), []() {
-            ASSERT_NOT_REACHED();
-            return VirtualRegister();
-        });
-    }
-}
-
 void StaticPropertyAnalysis::record()
 {
     auto* instruction = m_instructionRef.ptr();
@@ -5528,17 +5430,14 @@ void BytecodeGenerator::emitToThis()
     OpToThis::emit(this, kill(&m_thisRegister), ecmaMode());
 }
 
-StructureForInContext* BytecodeGenerator::findStructureForInContext(RegisterID* property)
+ForInContext* BytecodeGenerator::findForInContext(RegisterID* property)
 {
     for (size_t i = m_forInContextStack.size(); i--; ) {
         ForInContext& context = m_forInContextStack[i].get();
         if (context.local() != property)
             continue;
 
-        if (!context.isStructureForInContext())
-            break;
-
-        return &context.asStructureForInContext();
+        return &context;
     }
 
     return nullptr;

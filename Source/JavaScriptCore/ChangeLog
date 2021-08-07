@@ -1,3 +1,276 @@
+2021-08-07  Keith Miller  <keith_miller@apple.com>
+
+        for-in should only emit one loop in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=227989
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch redesigns how we implement for-in loops. Before this patch we would emit three copies of the for-in loop body. One for the indexed properties, one for the named-own properties, and one for generic properties (anything else). This had a couple of problems. Firstly, it meant bytecode size grew exponentially to number of nested for-in loops. This in turn meant DFG/FTL compilation took much longer.
+
+        Going off our experience with fast for-of, this patch turns for-in loops specializations into
+        a "fused" opcode that internally switches on the enumeration mode it currently sees. For example, if we are enumerating an own-named property, the new enumerator_get_by_val bytecode will check the enumerator cell's cached structure matches the base's then load the property offset directly.
+
+        There are four new opcodes this patch adds, which replace the various operations we had for the specialized loops previously. The new opcodes are EnumeratorGetByVal, EnumeratorInByVal, EnumeratorHasOwnProperty, and EnumeratorNext. The first three correspond to GetByVal, InByVal, and HasOwnProperty respectively. The EnumeratorNext opcode has three results in bytecode, the next enumeration value's mode, the index of the property name, and the property name string itself. When enumeration is done EnumeratorNext returns JS null as the property name string. Since the DFG doesn't support tuples yet this opcode is spilt into four new nodes. The first computes the updated index and mode for the next enumeration key, which is encoded into a single JS number. Then there are two nodes that extract the mode and index. Finally, the last new node produces the property name string or null based on the extracted mode and index.
+
+        Since, in most benchmarks, any given enumeration opcode tends to profile exactly one enumeration mode. This patch focuses primarily on reimplementing all the optimizations we have for any one specific mode. This means there are still potential optimizations for the multi-mode flavors of each new opcode.
+
+        The main optimizations implemented for each new opcode are:
+
+        EnumeratorNext:
+        1) IndexedMode loops are loaded and checked for presence inline (DFG/FTL).
+        2) NamedMode is computed inline as long as the cached structure on the enumerator cell matches the base (Baseline+). This can only differ if there's a transition.
+        3) property names are extracted from the cached buffer inline (Baseline+).
+
+        EnumeratorGetByVal:
+        EnumeratorInByVal:
+        EnumeratorHasOwnProperty:
+        1) IndexedMode has all the optimizations of a normal XByVal on indexed properties (DFG/FTL).
+        2) NamedMode will extract the value directly from the inline/out-of-line offset if the structure matches the enumerator's (Baseline+).
+
+        There are also a few interesting changes worth mentioning here:
+        1) If a for-in loop would produce an empty enumerator we now always
+        return the VMs empty enumerator. This has two benefits, most importantly, it distingishes between an unprofiled for-in loop and empty enumeration, which prevents OSR exit loops. Also, it means that the various Enumerator opcodes no longer need to handle undefined/null when `toObject`ing the base value.
+
+        2) The enumerator now contains a bit set of all the modes it will produce. This removes a few extra branches when speculating on the modes we will see in EnumeratorNext.
+
+        3) In the DFG, enumerator GetByVal relies on compileGetByVal to set the result it also passes a prefix callback which emits code after the various cases set up their operands but before code is emitting to help satisfy the branch over register allocation validation. Also, the array mode branch in compileGetByVal passes the data format that it would prefer, which for normal GetByVal is returned. For EnumeratorGetByVal, that preference is completely ignored and it always returns DataFormatJS.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::or8):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::or8):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::rshift64):
+        (JSC::MacroAssemblerX86_64::or8): Deleted.
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/LinkTimeConstant.h:
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::recordHasOwnPropertyInForInLoop):
+        (JSC::BytecodeGenerator::emitInByVal):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitEnumeratorNext):
+        (JSC::BytecodeGenerator::emitEnumeratorHasOwnProperty):
+        (JSC::BytecodeGenerator::pushForInScope):
+        (JSC::BytecodeGenerator::popForInScope):
+        (JSC::rewriteOp):
+        (JSC::ForInContext::finalize):
+        (JSC::BytecodeGenerator::findForInContext):
+        (JSC::BytecodeGenerator::recordHasOwnStructurePropertyInForInLoop): Deleted.
+        (JSC::BytecodeGenerator::emitGetEnumerableLength): Deleted.
+        (JSC::BytecodeGenerator::emitHasEnumerableIndexedProperty): Deleted.
+        (JSC::BytecodeGenerator::emitHasEnumerableStructureProperty): Deleted.
+        (JSC::BytecodeGenerator::emitHasEnumerableProperty): Deleted.
+        (JSC::BytecodeGenerator::emitHasOwnStructureProperty): Deleted.
+        (JSC::BytecodeGenerator::emitEnumeratorStructurePropertyName): Deleted.
+        (JSC::BytecodeGenerator::emitEnumeratorGenericPropertyName): Deleted.
+        (JSC::BytecodeGenerator::emitToIndexString): Deleted.
+        (JSC::BytecodeGenerator::pushIndexedForInScope): Deleted.
+        (JSC::BytecodeGenerator::popIndexedForInScope): Deleted.
+        (JSC::BytecodeGenerator::pushStructureForInScope): Deleted.
+        (JSC::BytecodeGenerator::popStructureForInScope): Deleted.
+        (JSC::StructureForInContext::finalize): Deleted.
+        (JSC::IndexedForInContext::finalize): Deleted.
+        (JSC::BytecodeGenerator::findStructureForInContext): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ForInContext::isValid const):
+        (JSC::ForInContext::invalidate):
+        (JSC::ForInContext::local const):
+        (JSC::ForInContext::propertyName const):
+        (JSC::ForInContext::propertyOffset const):
+        (JSC::ForInContext::enumerator const):
+        (JSC::ForInContext::mode const):
+        (JSC::ForInContext::ForInContext):
+        (JSC::ForInContext::bodyBytecodeStartOffset const):
+        (JSC::ForInContext::type const): Deleted.
+        (JSC::ForInContext::isIndexedForInContext const): Deleted.
+        (JSC::ForInContext::isStructureForInContext const): Deleted.
+        (JSC::ForInContext::asIndexedForInContext): Deleted.
+        (JSC::ForInContext::asStructureForInContext): Deleted.
+        (JSC::StructureForInContext::StructureForInContext): Deleted.
+        (JSC::StructureForInContext::index const): Deleted.
+        (JSC::StructureForInContext::property const): Deleted.
+        (JSC::StructureForInContext::enumerator const): Deleted.
+        (JSC::StructureForInContext::baseVariable const): Deleted.
+        (JSC::StructureForInContext::addGetInst): Deleted.
+        (JSC::StructureForInContext::addInInst): Deleted.
+        (JSC::StructureForInContext::addHasOwnPropertyJump): Deleted.
+        (JSC::IndexedForInContext::IndexedForInContext): Deleted.
+        (JSC::IndexedForInContext::index const): Deleted.
+        (JSC::IndexedForInContext::addGetInst): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::HasOwnPropertyFunctionCallDotNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isSaneChain const):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::injectOSR):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::setJSArraySaneChainIfPossible):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasStorageChild const):
+        (JSC::DFG::Node::storageChildIndex):
+        (JSC::DFG::Node::hasArrayMode):
+        (JSC::DFG::Node::hasEnumeratorMetadata const):
+        (JSC::DFG::Node::enumeratorMetadata):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::handleNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::JSValueRegsTemporary::JSValueRegsTemporary):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::setIntTypedArrayLoadResult):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithSymbol):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextExtractIndex):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextExtractMode):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdatePropertyName):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasProperty):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorInByVal):
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasOwnProperty):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        (JSC::DFG::SpeculativeJIT::compileGetEnumerableLength): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHasEnumerableProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileToIndexString): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHasEnumerableStructureProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHasOwnStructurePropertyImpl): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileHasOwnStructureProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileInStructureProperty): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetEnumeratorPname): Deleted.
+        (JSC::DFG::SpeculativeJIT::compileGetDirectPname): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::allocate):
+        (JSC::DFG::JSValueOperand::regs):
+        (JSC::DFG::JSValueOperand::gpr):
+        (JSC::DFG::StorageOperand::StorageOperand):
+        (JSC::DFG::StorageOperand::~StorageOperand):
+        (JSC::DFG::StorageOperand::emplace):
+        (JSC::DFG::JSValueRegsTemporary::operator bool):
+        (JSC::DFG::JSValueRegsTemporary::JSValueRegsTemporary):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByValImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAtImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::phi):
+        * generator/DSL.rb:
+        * interpreter/Register.h:
+        * interpreter/RegisterInlines.h:
+        (JSC::Register::operator=):
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emit_op_has_structure_propertyImpl): Deleted.
+        (JSC::JIT::emit_op_has_enumerable_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_own_structure_property): Deleted.
+        (JSC::JIT::emit_op_in_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_enumerable_indexed_property): Deleted.
+        (JSC::JIT::emitSlow_op_has_enumerable_indexed_property): Deleted.
+        (JSC::JIT::emit_op_get_direct_pname): Deleted.
+        (JSC::JIT::emit_op_enumerator_structure_pname): Deleted.
+        (JSC::JIT::emit_op_enumerator_generic_pname): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emit_op_has_structure_propertyImpl): Deleted.
+        (JSC::JIT::emit_op_has_enumerable_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_own_structure_property): Deleted.
+        (JSC::JIT::emit_op_in_structure_property): Deleted.
+        (JSC::JIT::emit_op_has_enumerable_indexed_property): Deleted.
+        (JSC::JIT::emitSlow_op_has_enumerable_indexed_property): Deleted.
+        (JSC::JIT::emit_op_get_direct_pname): Deleted.
+        (JSC::JIT::emit_op_enumerator_structure_pname): Deleted.
+        (JSC::JIT::emit_op_enumerator_generic_pname): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_enumerator_next):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        (JSC::JIT::emitSlow_op_enumerator_get_by_val):
+        (JSC::JIT::emit_enumerator_has_propertyImpl):
+        (JSC::JIT::emit_op_enumerator_in_by_val):
+        (JSC::JIT::emit_op_enumerator_has_own_property):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_enumerator_next):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        (JSC::JIT::emitSlow_op_enumerator_get_by_val):
+        (JSC::JIT::emit_op_enumerator_in_by_val):
+        (JSC::JIT::emit_op_enumerator_has_own_property):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/CommonSlowPaths.h:
+        * runtime/FileBasedFuzzerAgent.cpp:
+        (JSC::FileBasedFuzzerAgent::getPredictionInternal):
+        * runtime/FileBasedFuzzerAgentBase.cpp:
+        (JSC::FileBasedFuzzerAgentBase::opcodeAliasForLookupKey):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+        (JSC::JSPropertyNameEnumerator::computeNext):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/PredictionFileCreatingFuzzerAgent.cpp:
+        (JSC::PredictionFileCreatingFuzzerAgent::getPredictionInternal):
+
 2021-08-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix on Debug build

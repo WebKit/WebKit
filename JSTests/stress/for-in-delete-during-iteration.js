@@ -12,8 +12,9 @@
     };
     noInline(foo);
     for (var i = 0; i < 10000; ++i) {
-        if (foo() !== "1235")
-            throw new Error("bad result");
+        var result = foo();
+        if (result !== "1235")
+            throw new Error("bad result got: " + result);
     }
     foo(null);
 })();
@@ -36,8 +37,9 @@
     };
     noInline(foo);
     for (var i = 0; i < 10000; ++i) {
-        if (foo() !== "xz")
-            throw new Error("bad result");
+        var result = foo();
+        if (result !== "xz")
+            throw new Error("bad result: " + result);
     }
 })();
 (function() {
