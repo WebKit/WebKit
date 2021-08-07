@@ -1,5 +1,16 @@
 2021-08-06  Tim Horton  <timothy_horton@apple.com>
 
+        Disable WKHoverPlatter for now
+        https://bugs.webkit.org/show_bug.cgi?id=228880
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKHoverPlatterParameters.mm:
+        (-[WKHoverPlatterParameters setDefaultValues]):
+        Flip the switch.
+
+2021-08-06  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r185111): Links to App Store doesn't work when opening a PDF in Safari on iOS and iPadOS
         https://bugs.webkit.org/show_bug.cgi?id=228881
         rdar://81294035

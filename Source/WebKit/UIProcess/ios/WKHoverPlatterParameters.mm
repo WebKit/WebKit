@@ -61,7 +61,7 @@ static void setDefaultValuesForAdditionalPlatterLayoutParameters(WKHoverPlatterP
     [super setDefaultValues];
 
     _platterEnabledForMouse = NO;
-    _platterEnabledForHover = YES;
+    _platterEnabledForHover = NO;
 
     _platterCornerRadius = 6;
     _platterPadding = 5;
