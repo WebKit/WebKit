@@ -82,8 +82,8 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     initializeSandbox(parameters, sandboxParameters);
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    WebCore::initializeLogChannelsIfNecessary();
-    WebKit::initializeLogChannelsIfNecessary();
+    WebCore::logChannels().initializeLogChannelsIfNecessary();
+    WebKit::logChannels().initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
     initializeProcessName(parameters);

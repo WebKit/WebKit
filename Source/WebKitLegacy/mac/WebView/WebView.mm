@@ -81,6 +81,7 @@
 #import "WebInspectorClient.h"
 #import "WebKitErrors.h"
 #import "WebKitFullScreenListener.h"
+#import "WebKitLogInitialization.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
@@ -1480,8 +1481,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
     if (!didOneTimeInitialization) {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-        WebKitInitializeLogChannelsIfNecessary();
-        WebCore::initializeLogChannelsIfNecessary();
+        WebCore::logChannels().initializeLogChannelsIfNecessary();
+        WebKit::logChannels().initializeLogChannelsIfNecessary();
 #endif
 
         // Initialize our platform strategies first before invoking the rest

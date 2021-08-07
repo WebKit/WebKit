@@ -1,3 +1,48 @@
+2021-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Deduplicate logging channel algorithms
+        https://bugs.webkit.org/show_bug.cgi?id=228809
+
+        Reviewed by Fujii Hironori.
+
+        The current infrastructure (before this patch) had the following duplicated for each framework:
+          - A .cpp file declared the list of logging channels for that framework
+          - The .cpp file also had algorithms to search, modify, and initialize these logging channels
+
+        Each framework's .cpp file had duplicate algorithms. (The initialization algorithm was even
+        duplicated 3 times!)
+
+        Because the algorithms directly name their specific list of logging channels, a naive deduplication
+        would have had to add new parameters to these algorithms to pass in the appropriate framework's
+        list. That's fine, but this is exactly the sort of thing classes were designed for - classes are
+        an association of algorithms and data. The algorithms are shared but the data isn't, which really
+        just means we should have 3 instances of a shared class - one for the 3 sets of data.
+
+        So, this patch creates the LogChannels class which contains the deduplicated algorithms, and each
+        framework has a NeverDestroyed singleton instance of that class. There is a single virtual method
+        in the class, so the appropriate "default write" variable can be queried for each framework.
+
+        The instances cannot be declared in the Logging.h files in the frameworks, because certain WebKit2
+        files want to initialize all 3 instances of LogChannels, but you can't #include multiple Logging.h
+        files at the same time because their LOG_CHANNEL_PREFIX #defines will collide with each other.
+        Luckily, LogInitialization.h files exist exactly to solve this purpose, so that's where the
+        LogChannels instances are declared in. After this change, the Logging.h files are just for the
+        declarations of the logging channels themselves, and the LogInitialization.h files are for the
+        LogChannels instances which contain the searching/modifying/initializing algorithms on the list of
+        logging channels. If you just want to LOG(...) something, #include the relevant Logging.h file, and
+        if you want to search/modify/initialize across the entire list of channels, then #include the
+        relevant LogInitialization.h file.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/LogChannels.cpp: Copied from Source/WebCore/platform/Logging.cpp.
+        (WTF::LogChannels::isLogChannelEnabled):
+        (WTF::LogChannels::setLogChannelToAccumulate):
+        (WTF::LogChannels::clearAllLogChannelsToAccumulate):
+        (WTF::LogChannels::initializeLogChannelsIfNecessary):
+        (WTF::LogChannels::getLogChannel):
+        * wtf/LogChannels.h: Copied from Source/WebCore/platform/LogInitialization.h.
+
 2021-08-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         GCC 11 builds should use -Wno-array-bounds, -Wno-nonnull
