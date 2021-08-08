@@ -1,3 +1,13 @@
+2021-08-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Limit the size of error context buffer
+        https://bugs.webkit.org/show_bug.cgi?id=228900
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/ews-build/steps.py:
+        (BuildLogLineObserver.outLineReceived): Limit the lines for additional context to 50 lines.
+
 2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Web process crashes when detaching Document with uncommitted marked text

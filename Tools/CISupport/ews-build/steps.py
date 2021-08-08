@@ -1529,7 +1529,7 @@ class BuildLogLineObserver(logobserver.LogLineObserver, object):
             self.error_context_buffer.append(line)
 
         if self.searchString in line:
-            for log in self.error_context_buffer:
+            for log in self.error_context_buffer[-50:]:
                 self.errorReceived(log)
             self.error_context_buffer = []
 
