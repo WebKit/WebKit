@@ -1,3 +1,13 @@
+2021-08-08  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: http/tests/preload/onload_event.html is a flaky timeout on Big Sur wk1 Release
+        https://bugs.webkit.org/show_bug.cgi?id=227366
+        <rdar://problem/79733280>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Web process crashes when detaching Document with uncommitted marked text

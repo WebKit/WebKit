@@ -1,3 +1,29 @@
+2021-08-08  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: http/tests/preload/onload_event.html is a flaky timeout on Big Sur wk1 Release
+        https://bugs.webkit.org/show_bug.cgi?id=227366
+        <rdar://problem/79733280>
+
+        Reviewed by Eric Carlson.
+
+        Querying for any state on an AVAsset before its fully loaded will cause AVFoundation to block
+        on networking to fulfill the request, and in the case where WebKit handles loading, will eventually
+        dispatch to the main thread (which is blocked) in WebCore loader code, causing a deadlock.
+
+        Always guard queries to AVAsset with checks for the loaded status of the property being queried.
+        To make this easier, add a new safeAVAssetTracksForVisualMedia() method, similar to the existing
+        safeAVAssetTracksForAudibleMedia(), which checks the "tracks" property status and returns an empty
+        array if the tracks are not yet loaded.
+
+        Guard a few more methods by bailing early if the AVAsset is not fully loaded.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateRotationSession):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeAVAssetTracksForVisualMedia):
+
 2021-08-07  David Kilzer  <ddkilzer@apple.com>
 
         UBSan: KeyboardScrollingAnimator.cpp:303:10: runtime error: load of value nnn, which is not a valid value for type 'bool'
