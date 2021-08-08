@@ -12,11 +12,11 @@ description: >
 //CHECK#1
 var arr = /\0/.exec("\u0000"); 
 if ((arr === null) || (arr[0] !== "\u0000")) {
-  $ERROR('#1: var arr = /\\0/.exec(\\u0000); arr[0] === "\\u0000". Actual. ' + (arr && arr[0]));
+  throw new Test262Error('#1: var arr = /\\0/.exec(\\u0000); arr[0] === "\\u0000". Actual. ' + (arr && arr[0]));
 }
 
 //CHECK#2
 var arr = (new RegExp("\\0")).exec("\u0000"); 
 if ((arr === null) || (arr[0] !== "\u0000")) {
-  $ERROR('#2: var arr = (new RegExp("\\0")).exec(\\u0000); arr[0] === "\\u0000". Actual. ' + (arr && arr[0]));
+  throw new Test262Error('#2: var arr = (new RegExp("\\0")).exec(\\u0000); arr[0] === "\\u0000". Actual. ' + (arr && arr[0]));
 }

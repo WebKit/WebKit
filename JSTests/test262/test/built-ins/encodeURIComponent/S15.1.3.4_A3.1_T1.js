@@ -12,6 +12,6 @@ var uriReserved_ = [";", "/", "?", ":", "@", "&", "=", "+", "$", ","];
 for (var indexC = 0; indexC < 10; indexC++) {
   var str = uriReserved_[indexC];
   if (encodeURIComponent(str) !== uriReserved[indexC]) {
-    $ERROR('#' + (indexC + 1) + ': unescapedURIComponentSet not containing' + str);
+    throw new Test262Error('#' + (indexC + 1) + ': unescapedURIComponentSet not containing' + str);
   }
 }

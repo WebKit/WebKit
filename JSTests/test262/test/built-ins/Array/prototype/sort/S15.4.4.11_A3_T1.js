@@ -38,7 +38,7 @@ alphabetR.sort();
 //CHECK#0
 alphabetR.getClass = Object.prototype.toString;
 if (alphabetR.getClass() !== "[object " + "Object" + "]") {
-  $ERROR('#0: alphabetR.sort() is Object object, not Array object');
+  throw new Test262Error('#0: alphabetR.sort() is Object object, not Array object');
 }
 
 //CHECK#1
@@ -50,5 +50,5 @@ for (var i = 0; i < 10; i++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: Check ToString operator');
+  throw new Test262Error('#1: Check ToString operator');
 }

@@ -21,9 +21,9 @@ Object.defineProperties(obj, {
 verifyNotWritable(obj, "prop");
 
 if (!obj.hasOwnProperty("prop")) {
-  $ERROR('Expected obj.hasOwnProperty("prop") to be true, actually ' + obj.hasOwnProperty("prop"));
+  throw new Test262Error('Expected obj.hasOwnProperty("prop") to be true, actually ' + obj.hasOwnProperty("prop"));
 }
 
 if (obj.prop !== 1001) {
-  $ERROR('Expected obj.prop === 1001, actually ' + obj.prop);
+  throw new Test262Error('Expected obj.prop === 1001, actually ' + obj.prop);
 }

@@ -12,5 +12,5 @@ includes: [propertyHelper.js]
 var x = encodeURIComponent.length;
 verifyNotWritable(encodeURIComponent, "length", null, Infinity);
 if (encodeURIComponent.length !== x) {
-  $ERROR('#1: x = encodeURIComponent.length; encodeURIComponent.length = Infinity; encodeURIComponent.length === x. Actual: ' + (encodeURIComponent.length));
+  throw new Test262Error('#1: x = encodeURIComponent.length; encodeURIComponent.length = Infinity; encodeURIComponent.length === x. Actual: ' + (encodeURIComponent.length));
 }

@@ -28,6 +28,7 @@
 
 #include "WebBroadcastChannelRegistryMessages.h"
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
@@ -58,23 +59,28 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     channelsForNameIterator->value.removeFirst(globalChannelIdentifier);
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&& message)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
     if (channelsForOriginIterator == m_broadcastChannels.end())
-        return;
+        return completionHandler();
     auto channelsForNameIterator = channelsForOriginIterator->value.find(name);
     ASSERT(channelsForNameIterator != channelsForOriginIterator->value.end());
     if (channelsForNameIterator == channelsForOriginIterator->value.end())
-        return;
+        return completionHandler();
 
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     GlobalBroadcastChannelIdentifier sourceGlobalChannelIdentifier { connection.uniqueID(), source };
     for (auto& globalIdentifier : channelsForNameIterator->value) {
         if (globalIdentifier == sourceGlobalChannelIdentifier)
             continue;
 
-        IPC::Connection::send(globalIdentifier.connectionIdentifier, Messages::WebBroadcastChannelRegistry::PostMessageToRemote(globalIdentifier.channelIndentifierInProcess, message), 0);
+        RefPtr connection = IPC::Connection::connection(globalIdentifier.connectionIdentifier);
+        if (!connection)
+            continue;
+
+        connection->sendWithAsyncReply(Messages::WebBroadcastChannelRegistry::PostMessageToRemote(globalIdentifier.channelIndentifierInProcess, message), [callbackAggregator] { }, 0);
     }
 }
 

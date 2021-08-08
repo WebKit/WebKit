@@ -11,9 +11,9 @@ description: Pattern is "??"
 
 //CHECK#1
 try {
-	$ERROR('#1.1: new RegExp("??") throw SyntaxError. Actual: ' + (new RegExp("??")));
+	throw new Test262Error('#1.1: new RegExp("??") throw SyntaxError. Actual: ' + (new RegExp("??")));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: new RegExp("??") throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: new RegExp("??") throw SyntaxError. Actual: ' + (e));
 	}
 }

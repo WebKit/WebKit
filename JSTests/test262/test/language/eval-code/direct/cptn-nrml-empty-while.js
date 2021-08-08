@@ -11,5 +11,5 @@ description: do-while statement
 
 //CHECK#1
 if (eval("while(false);") !== undefined) {
-  $ERROR('#1: eval("while(false);") === undefined. Actual: ' + (eval("while(false);")));
+  throw new Test262Error('#1: eval("while(false);") === undefined. Actual: ' + (eval("while(false);")));
 }

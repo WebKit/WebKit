@@ -14,40 +14,40 @@ description: >
 
 // CHECK#1
 if (!(Number.POSITIVE_INFINITY) !== false) {
-  $ERROR('#1: !(+Infinity) === false. Actual: ' + (!(+Infinity))); 	
+  throw new Test262Error('#1: !(+Infinity) === false. Actual: ' + (!(+Infinity))); 	
 }
 
 // CHECK#2;
 if (!(Number.NEGATIVE_INFINITY) !== false) {
-  $ERROR('#2: !(-Infinity) === false. Actual: ' + (!(-Infinity))); 	
+  throw new Test262Error('#2: !(-Infinity) === false. Actual: ' + (!(-Infinity))); 	
 }
 
 // CHECK#3
 if (!(Number.MAX_VALUE) !== false) {
-  $ERROR('#3: !(Number.MAX_VALUE) === false. Actual: ' + (!(Number.MAX_VALUE))); 	
+  throw new Test262Error('#3: !(Number.MAX_VALUE) === false. Actual: ' + (!(Number.MAX_VALUE))); 	
 }
 
 // CHECK#4
 if (!(Number.MIN_VALUE) !== false) {
-  $ERROR('#4: !(Number.MIN_VALUE) === false. Actual: ' + (!(Number.MIN_VALUE))); 	
+  throw new Test262Error('#4: !(Number.MIN_VALUE) === false. Actual: ' + (!(Number.MIN_VALUE))); 	
 }
 
 // CHECK#5
 if (!(13) !== false) {
-  $ERROR('#5: !(13) === false. Actual: ' + (!(13)));	
+  throw new Test262Error('#5: !(13) === false. Actual: ' + (!(13)));	
 }
 
 // CHECK#6
 if (!(-13) !== false) {
-  $ERROR('#6: !(-13) === false. Actual: ' + (!(-13)));	
+  throw new Test262Error('#6: !(-13) === false. Actual: ' + (!(-13)));	
 }
 
 // CHECK#7
 if (!(1.3) !== false) {
-  $ERROR('#7: !(1.3) === false. Actual: ' + (!(1.3)));	
+  throw new Test262Error('#7: !(1.3) === false. Actual: ' + (!(1.3)));	
 }
 
 // CHECK#8
 if (!(-1.3) !== false) {
-  $ERROR('#8: !(-1.3) === false. Actual: ' + (!(-1.3)));	
+  throw new Test262Error('#8: !(-1.3) === false. Actual: ' + (!(-1.3)));	
 }

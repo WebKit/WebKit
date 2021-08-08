@@ -233,8 +233,8 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
     jit.ret();
 
     MacroAssembler::Label local0 = jit.label();
-    jit.load64(x1, PostIndex(8), x6);
-    jit.store64(x6, x3, PostIndex(8));
+    jit.load64(MacroAssembler::PostIndexAddress(x1, 8), x6);
+    jit.store64(x6, MacroAssembler::PostIndexAddress(x3, 8));
     smallCopy.link(&jit);
     jit.branchSub64(MacroAssembler::AboveOrEqual, TrustedImm32(8), x2).linkTo(local0, &jit);
     MacroAssembler::Jump local2 = jit.branchAdd64(MacroAssembler::Equal, TrustedImm32(8), x2);

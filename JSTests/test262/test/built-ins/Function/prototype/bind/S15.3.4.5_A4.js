@@ -12,6 +12,6 @@ function foo() {}
 
 var b = foo.bind(33, 44);
 foo.apply = function() {
-  $ERROR("Function.prototype.bind called original's .apply method");
+  throw new Test262Error("Function.prototype.bind called original's .apply method");
 };
 b(55, 66);

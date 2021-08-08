@@ -482,7 +482,7 @@ void RenderBox::updateFromStyle()
     setFloating(!isOutOfFlowPositioned() && styleToUse.isFloating());
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
-    if (styleToUse.overflowX() != Overflow::Visible && !isDocElementRenderer && isRenderBlock()) {
+    if (!(styleToUse.overflowX() == Overflow::Visible && styleToUse.overflowY() == Overflow::Visible) && !isDocElementRenderer && isRenderBlock()) {
         bool boxHasNonVisibleOverflow = true;
         if (isBody()) {
             // Overflow on the body can propagate to the viewport under the following conditions.
@@ -548,7 +548,7 @@ LayoutUnit RenderBox::clientHeight() const
 
 int RenderBox::scrollWidth() const
 {
-    if (hasNonVisibleOverflow() && layer())
+    if (hasPotentiallyScrollableOverflow() && layer())
         return layer()->scrollWidth();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
@@ -561,7 +561,7 @@ int RenderBox::scrollWidth() const
 
 int RenderBox::scrollHeight() const
 {
-    if (hasNonVisibleOverflow() && layer())
+    if (hasPotentiallyScrollableOverflow() && layer())
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
@@ -597,7 +597,7 @@ static void setupWheelEventMonitor(RenderLayerScrollableArea& scrollableArea)
 
 void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& options)
 {
-    if (!hasNonVisibleOverflow() || !layer())
+    if (!hasPotentiallyScrollableOverflow() || !layer())
         return;
     auto* scrollableArea = layer()->scrollableArea();
     ASSERT(scrollableArea);
@@ -607,7 +607,7 @@ void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& op
 
 void RenderBox::setScrollTop(int newTop, const ScrollPositionChangeOptions& options)
 {
-    if (!hasNonVisibleOverflow() || !layer())
+    if (!hasPotentiallyScrollableOverflow() || !layer())
         return;
     auto* scrollableArea = layer()->scrollableArea();
     ASSERT(scrollableArea);
@@ -617,7 +617,7 @@ void RenderBox::setScrollTop(int newTop, const ScrollPositionChangeOptions& opti
 
 void RenderBox::setScrollPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
-    if (!hasNonVisibleOverflow() || !layer())
+    if (!hasPotentiallyScrollableOverflow() || !layer())
         return;
     auto* scrollableArea = layer()->scrollableArea();
     ASSERT(scrollableArea);
@@ -958,7 +958,7 @@ bool RenderBox::requiresLayerWithScrollableArea() const
     if (isRenderView() || isDocumentElementRenderer())
         return true;
 
-    if (hasNonVisibleOverflow())
+    if (hasPotentiallyScrollableOverflow())
         return true;
 
     if (style().resize() != Resize::None)
@@ -976,7 +976,7 @@ bool RenderBox::canBeProgramaticallyScrolled() const
     if (isRenderView())
         return true;
 
-    if (!hasNonVisibleOverflow())
+    if (!hasPotentiallyScrollableOverflow())
         return false;
 
     if (hasScrollableOverflowX() || hasScrollableOverflowY())
@@ -1098,7 +1098,7 @@ bool RenderBox::needsPreferredWidthsRecalculation() const
 
 ScrollPosition RenderBox::scrollPosition() const
 {
-    if (!hasNonVisibleOverflow())
+    if (!hasPotentiallyScrollableOverflow())
         return { 0, 0 };
 
     ASSERT(hasLayer());
@@ -2042,11 +2042,18 @@ void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, 
 
 LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy, PaintPhase) const
 {
-    // FIXME: When overflow-clip (CSS3) is implemented, we'll obtain the property
-    // here.
     LayoutRect clipRect = borderBoxRectInFragment(fragment);
     clipRect.setLocation(location + clipRect.location() + LayoutSize(borderLeft(), borderTop()));
     clipRect.setSize(clipRect.size() - LayoutSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
+    if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible) {
+        LayoutRect infRect = LayoutRect::infiniteRect();
+        clipRect.setY(infRect.y());
+        clipRect.setHeight(infRect.height());
+    } else if (style().overflowY() == Overflow::Clip && style().overflowX() == Overflow::Visible) {
+        LayoutRect infRect = LayoutRect::infiniteRect();
+        clipRect.setX(infRect.x());
+        clipRect.setWidth(infRect.width());
+    }
 
     // Subtract out scrollbars if we have them.
     if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
@@ -4803,7 +4810,7 @@ bool RenderBox::shrinkToAvoidFloats() const
 
 bool RenderBox::createsNewFormattingContext() const
 {
-    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasNonVisibleOverflow() || isFlexItemIncludingDeprecated()
+    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasPotentiallyScrollableOverflow() || isFlexItemIncludingDeprecated()
         || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderFragmentContainer()
         || style().containsLayout() || isGridItem() || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot;
 }
@@ -4891,7 +4898,7 @@ void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& d
     // Add in visual overflow from the child.  Even if the child clips its overflow, it may still
     // have visual overflow of its own set from box shadows or reflections. It is unnecessary to propagate this
     // overflow if we are clipping our own overflow.
-    if (child->hasSelfPaintingLayer() || hasNonVisibleOverflow())
+    if (child->hasSelfPaintingLayer() || hasPotentiallyScrollableOverflow())
         return;
     LayoutRect childVisualOverflowRect = child->visualOverflowRectForPropagation(&style());
     childVisualOverflowRect.move(delta);
@@ -4906,7 +4913,7 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
     
     // For overflow clip objects, we don't want to propagate overflow into unreachable areas.
     LayoutRect overflowRect(rect);
-    if (hasNonVisibleOverflow() || isRenderView()) {
+    if (hasPotentiallyScrollableOverflow() || isRenderView()) {
         // Overflow is in the block's coordinate space and thus is flipped for horizontal-bt and vertical-rl 
         // writing modes. At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
         // and vertical-lr/rl as the same.
@@ -5051,10 +5058,22 @@ LayoutRect RenderBox::logicalLayoutOverflowRectForPropagation(const RenderStyle*
 
 LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parentStyle) const
 {
-    // Only propagate interior layout overflow if we don't clip it.
+    // Only propagate interior layout overflow if we don't completely clip it.
     LayoutRect rect = borderBoxRect();
-    if (!shouldApplyLayoutContainment(*this) && !hasNonVisibleOverflow())
-        rect.unite(layoutOverflowRect());
+    if (!shouldApplyLayoutContainment(*this)) {
+        if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible) {
+            LayoutRect clippedOverflowRect = layoutOverflowRect();
+            clippedOverflowRect.setX(rect.x());
+            clippedOverflowRect.setWidth(rect.width());
+            rect.unite(clippedOverflowRect);
+        } else if (style().overflowY() == Overflow::Clip && style().overflowX() == Overflow::Visible) {
+            LayoutRect clippedOverflowRect = layoutOverflowRect();
+            clippedOverflowRect.setY(rect.y());
+            clippedOverflowRect.setHeight(rect.height());
+            rect.unite(clippedOverflowRect);
+        } else if (!hasNonVisibleOverflow())
+            rect.unite(layoutOverflowRect());
+    }
 
     bool hasTransform = this->hasTransform();
     // While a stickily positioned renderer is also inflow positioned, they stretch the overflow rect with their inflow geometry

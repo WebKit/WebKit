@@ -3630,6 +3630,7 @@
             "values": [
                 "visible",
                 "hidden",
+                "clip",
                 "scroll",
                 "auto"
             ],
@@ -3642,6 +3643,7 @@
             "values": [
                 "visible",
                 "hidden",
+                "clip",
                 "scroll",
                 "auto",
                 "-webkit-paged-x",

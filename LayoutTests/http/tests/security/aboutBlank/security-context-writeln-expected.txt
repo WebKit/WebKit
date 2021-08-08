@@ -3,11 +3,11 @@
 --- Test begins ---
 * "about:blank"
 document.URL = about:blank
-document.baseURI = about:blank
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/security-context-writeln.html
 document.cookie = cookie=parent
 * ""
 document.URL = about:blank
-document.baseURI = about:blank
+document.baseURI = http://127.0.0.1:8000/security/aboutBlank/security-context-writeln.html
 document.cookie = cookie=parent
 --- After document.writeln() ---
 * "about:blank"

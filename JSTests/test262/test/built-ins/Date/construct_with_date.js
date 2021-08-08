@@ -18,10 +18,10 @@ var dateValue = 1438560000000;
 
 var oldDate = new Date(dateValue);
 oldDate.toString = function() {
-  $ERROR("toString() method called");
+  throw new Test262Error("toString() method called");
 };
 oldDate.valueOf = function() {
-  $ERROR("valueOf() method called");
+  throw new Test262Error("valueOf() method called");
 };
 
 var newDate = new Date(oldDate);

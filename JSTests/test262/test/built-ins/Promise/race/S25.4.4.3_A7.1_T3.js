@@ -19,7 +19,7 @@ sequence.push(1);
 
 p.then(function(arg) {
   if (arg !== 2) {
-    $ERROR("Expected promise to be fulfilled with 2, got " + arg);
+    throw new Test262Error("Expected promise to be fulfilled with 2, got " + arg);
   }
 
   sequence.push(4);

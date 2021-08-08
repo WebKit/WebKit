@@ -15,7 +15,7 @@ obj.join = Array.prototype.join;
 //CHECK#1
 obj.length = 4.5;
 if (obj.join() !== ",,,") {
-  $ERROR('#1: var obj = {}; obj.length = 4.5; obj.join = Array.prototype.join; obj.join() === ",,,". Actual: ' + (obj.join()));
+  throw new Test262Error('#1: var obj = {}; obj.length = 4.5; obj.join = Array.prototype.join; obj.join() === ",,,". Actual: ' + (obj.join()));
 }
 
 //CHECK#2
@@ -23,12 +23,12 @@ obj[0] = undefined;
 obj[1] = 1;
 obj[2] = null;
 if (obj.join() !== ",1,,") {
-  $ERROR('#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === ",1,,". Actual: ' + (obj.join()));
+  throw new Test262Error('#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === ",1,,". Actual: ' + (obj.join()));
 }
 
 //CHECK#3
 if (obj.length !== 4.5) {
-  $ERROR('#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === 4.5. Actual: ' + (obj.length));
+  throw new Test262Error('#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === 4.5. Actual: ' + (obj.length));
 }
 
 var obj = {};
@@ -38,7 +38,7 @@ obj.join = Array.prototype.join;
 var x = new Number(4.5);
 obj.length = x;
 if (obj.join() !== ",,,") {
-  $ERROR('#4: var obj = {}; var x = new Number(4.5); obj.length = x; obj.join = Array.prototype.join; obj.join() === ",,,". Actual: ' + (obj.join()));
+  throw new Test262Error('#4: var obj = {}; var x = new Number(4.5); obj.length = x; obj.join = Array.prototype.join; obj.join() === ",,,". Actual: ' + (obj.join()));
 }
 
 //CHECK#5
@@ -46,10 +46,10 @@ obj[0] = undefined;
 obj[1] = 1;
 obj[2] = null;
 if (obj.join() !== ",1,,") {
-  $ERROR('#5: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === ",1,,". Actual: ' + (obj.join()));
+  throw new Test262Error('#5: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join() === ",1,,". Actual: ' + (obj.join()));
 }
 
 //CHECK#6
 if (obj.length !== x) {
-  $ERROR('#6: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === x. Actual: ' + (obj.length));
+  throw new Test262Error('#6: var obj = {}; var x = new Number(4.5); obj.length = x; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === x. Actual: ' + (obj.length));
 }

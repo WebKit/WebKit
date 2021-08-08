@@ -23,7 +23,7 @@ var __device = new __FACTORY();
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__device.printShape === undefined) {
-	$ERROR('#1: __device.printShape !== undefined. Actual: __device.printShape ==='+__device.printShape);
+	throw new Test262Error('#1: __device.printShape !== undefined. Actual: __device.printShape ==='+__device.printShape);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ if (__device.printShape === undefined) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__device.printShape() !== __CUBE) {
-	$ERROR('#2: __device.printShape() === __CUBE. Actual: __device.printShape() ==='+__device.printShape());
+	throw new Test262Error('#2: __device.printShape() === __CUBE. Actual: __device.printShape() ==='+__device.printShape());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

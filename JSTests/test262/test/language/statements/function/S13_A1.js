@@ -15,7 +15,7 @@ var __func = function __exp__func(){return 0;};
 // //////////////////////////////
 //CHECK#1
 if (typeof __func !== "function") {
-	$ERROR('#1: typeof __func === "function". Actual: typeof __func ==='+typeof __func);
+	throw new Test262Error('#1: typeof __func === "function". Actual: typeof __func ==='+typeof __func);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ if (typeof __func !== "function") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof __exp__func !== "undefined"){
-    $ERROR('#2: typeof __exp__func === "undefined". Actual: typeof __exp__func ==='+typeof __exp__func);
+    throw new Test262Error('#2: typeof __exp__func === "undefined". Actual: typeof __exp__func ==='+typeof __exp__func);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

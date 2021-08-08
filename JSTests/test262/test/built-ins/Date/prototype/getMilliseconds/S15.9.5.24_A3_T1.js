@@ -14,5 +14,5 @@ includes: [propertyHelper.js]
 var x = Date.prototype.getMilliseconds.length;
 verifyNotWritable(Date.prototype.getMilliseconds, "length", null, 1);
 if (Date.prototype.getMilliseconds.length !== x) {
-  $ERROR('#1: The Date.prototype.getMilliseconds.length has the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getMilliseconds.length has the attribute ReadOnly');
 }

@@ -9,20 +9,20 @@ description: Test some url
 
 //CHECK#1
 if (encodeURI("") !== "") {
-  $ERROR('#1: ""');
+  throw new Test262Error('#1: ""');
 }
 
 //CHECK#2
 if (encodeURI("http://unipro.ru") !== "http://unipro.ru") {
-  $ERROR('#2: http://unipro.ru');
+  throw new Test262Error('#2: http://unipro.ru');
 }
 
 //CHECK#3
 if (encodeURI("http://www.google.ru/support/jobs/bin/static.py?page=why-ru.html&sid=liveandwork") !== "http://www.google.ru/support/jobs/bin/static.py?page=why-ru.html&sid=liveandwork") {
-  $ERROR('#3: http://www.google.ru/support/jobs/bin/static.py?page=why-ru.html&sid=liveandwork"');
+  throw new Test262Error('#3: http://www.google.ru/support/jobs/bin/static.py?page=why-ru.html&sid=liveandwork"');
 }
 
 //CHECK#4
 if (encodeURI("http://en.wikipedia.org/wiki/UTF-8#Description") !== "http://en.wikipedia.org/wiki/UTF-8#Description") {
-  $ERROR('#4: http://en.wikipedia.org/wiki/UTF-8#Description');
+  throw new Test262Error('#4: http://en.wikipedia.org/wiki/UTF-8#Description');
 }

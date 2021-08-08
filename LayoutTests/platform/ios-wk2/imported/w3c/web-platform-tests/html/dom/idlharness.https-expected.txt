@@ -4474,7 +4474,7 @@ PASS Window interface: attribute onunhandledrejection
 PASS Window interface: attribute onunload
 PASS Window interface: attribute origin
 PASS Window interface: attribute isSecureContext
-FAIL Window interface: attribute crossOriginIsolated assert_own_property: The global object must have a property "crossOriginIsolated" expected property "crossOriginIsolated" missing
+PASS Window interface: attribute crossOriginIsolated
 PASS Window interface: operation btoa(DOMString)
 PASS Window interface: operation atob(DOMString)
 PASS Window interface: operation setTimeout(TimerHandler, optional long, any...)
@@ -4624,7 +4624,7 @@ PASS Window interface: window must inherit property "onunhandledrejection" with 
 PASS Window interface: window must inherit property "onunload" with the proper type
 PASS Window interface: window must inherit property "origin" with the proper type
 PASS Window interface: window must inherit property "isSecureContext" with the proper type
-FAIL Window interface: window must inherit property "crossOriginIsolated" with the proper type assert_own_property: expected property "crossOriginIsolated" missing
+PASS Window interface: window must inherit property "crossOriginIsolated" with the proper type
 PASS Window interface: window must inherit property "btoa(DOMString)" with the proper type
 PASS Window interface: calling btoa(DOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "atob(DOMString)" with the proper type

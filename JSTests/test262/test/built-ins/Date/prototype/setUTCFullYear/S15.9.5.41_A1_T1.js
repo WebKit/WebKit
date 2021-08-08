@@ -13,5 +13,5 @@ if (x === 1)
 else
   Date.prototype.setUTCFullYear = 1;
 if (Date.prototype.setUTCFullYear === x) {
-  $ERROR('#1: The Date.prototype.setUTCFullYear has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.setUTCFullYear has not the attribute ReadOnly');
 }

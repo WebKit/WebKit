@@ -12,7 +12,7 @@ description: Declaring variable within a "for" IterationStatement
 try {
 	__ind=__ind;
 } catch (e) {
-    $ERROR('#1: var inside "for" is admitted '+e.message);
+    throw new Test262Error('#1: var inside "for" is admitted '+e.message);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

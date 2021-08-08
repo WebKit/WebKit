@@ -18,7 +18,7 @@ __instance.substring = String.prototype.substring;
 if (__instance.substring(function() {
     return true;
   }(), x) !== "alse") {
-  $ERROR('#1: var x; __instance = new Boolean; __instance.substring = String.prototype.substring;  __instance.substring(function(){return true;}(),x) === "alse". Actual: ' + __instance.substring(function() {
+  throw new Test262Error('#1: var x; __instance = new Boolean; __instance.substring = String.prototype.substring;  __instance.substring(function(){return true;}(),x) === "alse". Actual: ' + __instance.substring(function() {
     return true;
   }(), x));
 }

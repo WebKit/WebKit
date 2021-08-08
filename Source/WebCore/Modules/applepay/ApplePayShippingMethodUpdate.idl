@@ -26,4 +26,5 @@
 [
     Conditional=APPLE_PAY,
 ] dictionary ApplePayShippingMethodUpdate : ApplePayDetailsUpdateBase {
+    [Conditional=APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS] sequence<ApplePayShippingMethod> newShippingMethods;
 };

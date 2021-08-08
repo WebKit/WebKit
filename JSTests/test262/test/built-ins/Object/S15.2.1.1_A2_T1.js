@@ -12,23 +12,23 @@ description: Calling Object function with boolean argument value
 var bool = true;
 
 if (typeof bool !== 'boolean') {
-  $ERROR('#1: bool should be boolean primitive');
+  throw new Test262Error('#1: bool should be boolean primitive');
 }
 
 var obj = Object(bool);
 
 if (obj.constructor !== Boolean) {
-  $ERROR('#2: Object(true) returns ToObject(true)');
+  throw new Test262Error('#2: Object(true) returns ToObject(true)');
 }
 
 if (typeof obj !== "object") {
-  $ERROR('#3: Object(true) returns ToObject(true)');
+  throw new Test262Error('#3: Object(true) returns ToObject(true)');
 }
 
 if (!obj) {
-  $ERROR('#4: Object(true) returns ToObject(true)');
+  throw new Test262Error('#4: Object(true) returns ToObject(true)');
 }
 
 if (obj === true) {
-  $ERROR('#5: Object(true) returns ToObject(true)');
+  throw new Test262Error('#5: Object(true) returns ToObject(true)');
 }

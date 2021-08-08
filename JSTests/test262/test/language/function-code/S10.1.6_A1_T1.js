@@ -16,4 +16,4 @@ function f1(a){
   return a;
 }
 if (f1(1) !== 1)
-  $ERROR('#1: Function parameter was deleted');
+  throw new Test262Error('#1: Function parameter was deleted');

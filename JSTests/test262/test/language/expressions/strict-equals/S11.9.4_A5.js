@@ -11,25 +11,25 @@ description: x and y are primitive strings
 
 //CHECK#1
 if (!("" === "")) {
-  $ERROR('#1: "" === ""');
+  throw new Test262Error('#1: "" === ""');
 }
 
 //CHECK#2
 if (!(" " === " ")) {
-  $ERROR('#2: " " === " "');
+  throw new Test262Error('#2: " " === " "');
 }
 
 //CHECK#3
 if (!("string" === "string")) {
-  $ERROR('#3: "string" === "string"');
+  throw new Test262Error('#3: "string" === "string"');
 }
 
 //CHECK#4
 if (" string" === "string ") {
-  $ERROR('#4: " string" !== "string "');
+  throw new Test262Error('#4: " string" !== "string "');
 }
 
 //CHECK#5
 if ("1.0" === "1") {
-  $ERROR('#5: "1.0" !== "1"');
+  throw new Test262Error('#5: "1.0" !== "1"');
 }

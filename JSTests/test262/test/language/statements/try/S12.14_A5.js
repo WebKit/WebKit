@@ -13,14 +13,14 @@ description: Checking "catch" catches the Identifier in appropriate way
 try {
   throw "catchme";	
   throw "dontcatchme";
-  $ERROR('#1.1: throw "catchme" lead to throwing exception');
+  throw new Test262Error('#1.1: throw "catchme" lead to throwing exception');
 }
 catch (e) {
   if(e==="dontcatchme"){
-    $ERROR('#1.2: Exception !== "dontcatchme"');
+    throw new Test262Error('#1.2: Exception !== "dontcatchme"');
   }
   if (e!=="catchme") {
-    $ERROR('#1.3: Exception === "catchme". Actual:  Exception ==='+ e  );
+    throw new Test262Error('#1.3: Exception === "catchme". Actual:  Exception ==='+ e  );
   }
 }
 
@@ -40,12 +40,12 @@ function SwitchTest1(value){
   return result;
   }
   catch(e){	
-    if ((value===1)&&(e!==4)) $ERROR('#2.1: Exception === 4. Actual: '+e);
-    if ((value===4)&&(e!=="ex"))$ERROR('#2.2: Exception === "ex". Actual: '+e);
+    if ((value===1)&&(e!==4)) throw new Test262Error('#2.1: Exception === 4. Actual: '+e);
+    if ((value===4)&&(e!=="ex"))throw new Test262Error('#2.2: Exception === "ex". Actual: '+e);
   }
   finally{
     return result;
   }
 }
-if (SwitchTest1(1)!==4) $ERROR('#2.3: "finally" block must be evaluated');
-if (SwitchTest1(4)!==64)$ERROR('#2.4: "finally" block must be evaluated');
+if (SwitchTest1(1)!==4) throw new Test262Error('#2.3: "finally" block must be evaluated');
+if (SwitchTest1(4)!==64)throw new Test262Error('#2.4: "finally" block must be evaluated');

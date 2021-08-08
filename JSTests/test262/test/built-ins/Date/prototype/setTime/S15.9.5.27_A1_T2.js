@@ -8,9 +8,9 @@ description: Checking absence of DontDelete attribute
 ---*/
 
 if (delete Date.prototype.setTime === false) {
-  $ERROR('#1: The Date.prototype.setTime property has not the attributes DontDelete');
+  throw new Test262Error('#1: The Date.prototype.setTime property has not the attributes DontDelete');
 }
 
 if (Date.prototype.hasOwnProperty('setTime')) {
-  $ERROR('#2: The Date.prototype.setTime property has not the attributes DontDelete');
+  throw new Test262Error('#2: The Date.prototype.setTime property has not the attributes DontDelete');
 }

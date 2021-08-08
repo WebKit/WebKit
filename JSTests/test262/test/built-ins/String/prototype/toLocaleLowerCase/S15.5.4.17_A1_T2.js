@@ -14,7 +14,7 @@ __instance.toLocaleLowerCase = String.prototype.toLocaleLowerCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.toLocaleLowerCase() !== "false") {
-  $ERROR('#1: __instance = new Boolean; __instance.toLocaleLowerCase = String.prototype.toLocaleLowerCase;  __instance.toLocaleLowerCase() === "false". Actual: ' + __instance.toLocaleLowerCase());
+  throw new Test262Error('#1: __instance = new Boolean; __instance.toLocaleLowerCase = String.prototype.toLocaleLowerCase;  __instance.toLocaleLowerCase() === "false". Actual: ' + __instance.toLocaleLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

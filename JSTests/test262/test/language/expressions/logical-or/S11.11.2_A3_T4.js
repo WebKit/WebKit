@@ -9,10 +9,10 @@ description: Type(x) or Type(y) is changed between null and undefined
 
 //CHECK#1
 if ((false || undefined) !== undefined) {
-  $ERROR('#1: (false || undefined) === undefined');
+  throw new Test262Error('#1: (false || undefined) === undefined');
 }
 
 //CHECK#2
 if ((false || null) !== null) {
-  $ERROR('#2: (false || null) === null');
+  throw new Test262Error('#2: (false || null) === null');
 }

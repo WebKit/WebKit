@@ -22,12 +22,12 @@ fakeinstance = {};
 
 //CHECK#1
 if (fakeinstance instanceof FAKEFACTORY) {
-  $ERROR('#1: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true');
+  throw new Test262Error('#1: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true');
 }
 
 FAKEFACTORY.prototype=Object.prototype;
 
 //CHECK#2
 if (!(fakeinstance instanceof FAKEFACTORY)) {
-  $ERROR('#2: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true');
+  throw new Test262Error('#2: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true');
 }

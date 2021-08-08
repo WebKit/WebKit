@@ -9,17 +9,17 @@ description: Checking use hasOwnProperty, delete
 
 //CHECK#1
 if (encodeURI.hasOwnProperty('length') !== true) {
-  $ERROR('#1: encodeURI.hasOwnProperty(\'length\') === true. Actual: ' + (encodeURI.hasOwnProperty('length')));
+  throw new Test262Error('#1: encodeURI.hasOwnProperty(\'length\') === true. Actual: ' + (encodeURI.hasOwnProperty('length')));
 }
 
 delete encodeURI.length;
 
 //CHECK#2
 if (encodeURI.hasOwnProperty('length') !== false) {
-  $ERROR('#2: delete encodeURI.length; encodeURI.hasOwnProperty(\'length\') === false. Actual: ' + (encodeURI.hasOwnProperty('length')));
+  throw new Test262Error('#2: delete encodeURI.length; encodeURI.hasOwnProperty(\'length\') === false. Actual: ' + (encodeURI.hasOwnProperty('length')));
 }
 
 //CHECK#3
 if (encodeURI.length === undefined) {
-  $ERROR('#3: delete encodeURI.length; encodeURI.length !== undefined');
+  throw new Test262Error('#3: delete encodeURI.length; encodeURI.length !== undefined');
 }

@@ -1477,14 +1477,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case CustomAccessorSetter: {
         GPRReg valueRegsPayloadGPR = valueRegs.payloadGPR();
 
-        if (isValidOffset(m_offset)) {
-            Structure* currStructure;
-            if (!hasAlternateBase())
-                currStructure = structure();
-            else
-                currStructure = alternateBase()->structure(vm);
+        Structure* currStructure = hasAlternateBase() ? alternateBase()->structure(vm) : structure();
+        if (isValidOffset(m_offset))
             currStructure->startWatchingPropertyForReplacements(vm, offset());
-        }
 
         bool doesPropertyStorageLoads = m_type == Load 
             || m_type == GetGetter
@@ -1749,7 +1744,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);
             ASSERT(!doesPropertyStorageLoads); // Or we need an extra register. We rely on propertyOwnerGPR being correct here.
 
-            JSGlobalObject* globalObject = hasAlternateBase() ? alternateBase()->globalObject(vm) : structure()->globalObject();
+            // We do not need to keep globalObject alive since
+            // 1. if it is CustomValue, the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock) must keep it alive.
+            // 2. if it is CustomAccessor, structure should hold it.
+            JSGlobalObject* globalObject = currStructure->globalObject();
 
             // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
             // hard to track if someone did spillage or not, so we just assume that we always need

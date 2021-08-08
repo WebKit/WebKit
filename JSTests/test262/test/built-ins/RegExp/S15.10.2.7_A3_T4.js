@@ -13,5 +13,5 @@ var __executed = /\s+java\s+/.test("java\n\nobject");
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /\\s+java\\s+/.test("java\\n\\nobject") === false');
+	throw new Test262Error('#1: /\\s+java\\s+/.test("java\\n\\nobject") === false');
 }

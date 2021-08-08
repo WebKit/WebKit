@@ -12,7 +12,7 @@ var trappedKey = {
     throw new RangeError('This error should be re-thrown');
   },
   get b() {
-    $ERROR('Should not try to get the second element');
+    throw new Test262Error('Should not try to get the second element');
   }
 };
 

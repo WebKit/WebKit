@@ -14,7 +14,7 @@ __instance.toUpperCase = String.prototype.toUpperCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.toUpperCase() !== "TRUE") {
-  $ERROR('#1: __instance = new Object(true); __instance.toUpperCase = String.prototype.toUpperCase;  __instance.toUpperCase() === "TRUE". Actual: ' + __instance.toUpperCase());
+  throw new Test262Error('#1: __instance = new Object(true); __instance.toUpperCase = String.prototype.toUpperCase;  __instance.toUpperCase() === "TRUE". Actual: ' + __instance.toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

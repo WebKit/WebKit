@@ -13,5 +13,5 @@ var __executed = /\d{2,4}/.test("the 7 movie");
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /\\d{2,4}/.test("the 7 movie") === false');
+	throw new Test262Error('#1: /\\d{2,4}/.test("the 7 movie") === false');
 }

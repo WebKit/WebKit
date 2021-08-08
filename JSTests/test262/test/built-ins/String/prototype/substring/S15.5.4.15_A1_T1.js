@@ -14,7 +14,7 @@ __instance.substring = String.prototype.substring;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.substring(false, true) !== "t") {
-  $ERROR('#1: __instance = new Object(true); __instance.substring = String.prototype.substring;  __instance.substring(false, true) === "t". Actual: ' + __instance.substring(false, true));
+  throw new Test262Error('#1: __instance = new Object(true); __instance.substring = String.prototype.substring;  __instance.substring(false, true) === "t". Actual: ' + __instance.substring(false, true));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -11,10 +11,10 @@ description: Checking property toPrecision
 
 //CHECK#1
 if ((new Number()).hasOwnProperty("toPrecision") !== false) {
-  $ERROR('#1: Number instance must have no special property "toPrecision"');
+  throw new Test262Error('#1: Number instance must have no special property "toPrecision"');
 }
 
 //CHECK#2
 if ((new Number()).toPrecision !== Number.prototype.toPrecision) {
-  $ERROR('#2: Number instance property "toPrecision" must be inherited from Number prototype object');
+  throw new Test262Error('#2: Number instance property "toPrecision" must be inherited from Number prototype object');
 }

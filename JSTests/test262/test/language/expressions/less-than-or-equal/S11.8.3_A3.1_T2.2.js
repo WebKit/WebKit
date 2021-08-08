@@ -14,50 +14,50 @@ description: >
 
 //CHECK#1
 if ("1" <= 1 !== true) {
-  $ERROR('#1: "1" <= 1 === true');
+  throw new Test262Error('#1: "1" <= 1 === true');
 }
 
 //CHECK#2
 if (1 <= "1" !== true) {
-  $ERROR('#2: 1 <= "1" === true');
+  throw new Test262Error('#2: 1 <= "1" === true');
 }
 
 //CHECK#3
 if (new String("1") <= 1 !== true) {
-  $ERROR('#3: new String("1") <= 1 === true');
+  throw new Test262Error('#3: new String("1") <= 1 === true');
 }
 
 //CHECK#4
 if (1 <= new String("1") !== true) {
-  $ERROR('#4: 1 <= new String("1") === true');
+  throw new Test262Error('#4: 1 <= new String("1") === true');
 }
 
 //CHECK#5
 if ("1" <= new Number(1) !== true) {
-  $ERROR('#5: "1" <= new Number(1) === true');
+  throw new Test262Error('#5: "1" <= new Number(1) === true');
 }
 
 //CHECK#6
 if (new Number(1) <= "1" !== true) {
-  $ERROR('#6: new Number(1) <= "1" === true');
+  throw new Test262Error('#6: new Number(1) <= "1" === true');
 }
 
 //CHECK#7
 if (new String("1") <= new Number(1) !== true) {
-  $ERROR('#7: new String("1") <= new Number(1) === true');
+  throw new Test262Error('#7: new String("1") <= new Number(1) === true');
 }
 
 //CHECK#8
 if (new Number(1) <= new String("1") !== true) {
-  $ERROR('#8: new Number(1) <= new String("1") === true');
+  throw new Test262Error('#8: new Number(1) <= new String("1") === true');
 }
 
 //CHECK#9
 if ("x" <= 1 !== false) {
-  $ERROR('#9: "x" <= 1 === false');
+  throw new Test262Error('#9: "x" <= 1 === false');
 }
 
 //CHECK#10
 if (1 <= "x" !== false) {
-  $ERROR('#10: 1 <= "x" === false');
+  throw new Test262Error('#10: 1 <= "x" === false');
 }

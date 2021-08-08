@@ -16,7 +16,7 @@ this["beep"]=function(){__count++};
 //CHECK#1
 beep();
 if (__count !==1) {
-  $ERROR('#1: __count=0; this["beep"]=function(){__count++}; beep(); __count === 1. Actual: ' + (__count));
+  throw new Test262Error('#1: __count=0; this["beep"]=function(){__count++}; beep(); __count === 1. Actual: ' + (__count));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ if (__count !==1) {
 //CHECK#2
 this["beep"]();
 if (__count !==2) {
-  $ERROR('#2: __count=0; this["beep"]=function(){__count++}; beep(); this["beep"](); __count === 2. Actual: ' + (__count));
+  throw new Test262Error('#2: __count=0; this["beep"]=function(){__count++}; beep(); this["beep"](); __count === 2. Actual: ' + (__count));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

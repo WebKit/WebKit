@@ -14,7 +14,7 @@ var object = {
   }
 };
 if (encodeURIComponent(object) !== "%5Bobject%20Object%5D") {
-  $ERROR('#1: var object = {valueOf: function() {return "^"}}; encodeURIComponent(object) === %5Bobject%20Object%5D. Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#1: var object = {valueOf: function() {return "^"}}; encodeURIComponent(object) === %5Bobject%20Object%5D. Actual: ' + (encodeURIComponent(object)));
 }
 
 //CHECK#2
@@ -27,7 +27,7 @@ var object = {
   }
 };
 if (encodeURIComponent(object) !== "%5E") {
-  $ERROR('#2: var object = {valueOf: function() {return ""}, toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#2: var object = {valueOf: function() {return ""}, toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
 }
 
 //CHECK#3
@@ -40,7 +40,7 @@ var object = {
   }
 };
 if (encodeURIComponent(object) !== "%5E") {
-  $ERROR('#3: var object = {valueOf: function() {return "^"}, toString: function() {return {}}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#3: var object = {valueOf: function() {return "^"}, toString: function() {return {}}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
 }
 
 //CHECK#4
@@ -54,14 +54,14 @@ try {
     }
   };
   if (encodeURIComponent(object) !== "%5E") {
-    $ERROR('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
+    throw new Test262Error('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
   }
 }
 catch (e) {
   if (e === "error") {
-    $ERROR('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "^"}}; encodeURIComponent(object) not throw "error"');
+    throw new Test262Error('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "^"}}; encodeURIComponent(object) not throw "error"');
   } else {
-    $ERROR('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "^"}}; encodeURIComponent(object) not throw Error. Actual: ' + (e));
+    throw new Test262Error('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "^"}}; encodeURIComponent(object) not throw Error. Actual: ' + (e));
   }
 }
 
@@ -72,7 +72,7 @@ var object = {
   }
 };
 if (encodeURIComponent(object) !== "%5E") {
-  $ERROR('#5: var object = {toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#5: var object = {toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
 }
 
 //CHECK#6
@@ -85,7 +85,7 @@ var object = {
   }
 }
 if (encodeURIComponent(object) !== "%5E") {
-  $ERROR('#6: var object = {valueOf: function() {return {}}, toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#6: var object = {valueOf: function() {return {}}, toString: function() {return "^"}}; encodeURIComponent(object) === "%5E". Actual: ' + (encodeURIComponent(object)));
 }
 
 //CHECK#7
@@ -99,11 +99,11 @@ try {
     }
   };
   encodeURIComponent(object);
-  $ERROR('#7.1: var object = {valueOf: function() {return "^"}, toString: function() {throw "error"}}; encodeURIComponent(object) throw "error". Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#7.1: var object = {valueOf: function() {return "^"}, toString: function() {throw "error"}}; encodeURIComponent(object) throw "error". Actual: ' + (encodeURIComponent(object)));
 }
 catch (e) {
   if (e !== "error") {
-    $ERROR('#7.2: var object = {valueOf: function() {return "^"}, toString: function() {throw "error"}}; encodeURIComponent(object) throw "error". Actual: ' + (e));
+    throw new Test262Error('#7.2: var object = {valueOf: function() {return "^"}, toString: function() {throw "error"}}; encodeURIComponent(object) throw "error". Actual: ' + (e));
   }
 }
 
@@ -118,10 +118,10 @@ try {
     }
   };
   encodeURIComponent(object);
-  $ERROR('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; encodeURIComponent(object) throw TypeError. Actual: ' + (encodeURIComponent(object)));
+  throw new Test262Error('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; encodeURIComponent(object) throw TypeError. Actual: ' + (encodeURIComponent(object)));
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; encodeURIComponent(object) throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; encodeURIComponent(object) throw TypeError. Actual: ' + (e));
   }
 }

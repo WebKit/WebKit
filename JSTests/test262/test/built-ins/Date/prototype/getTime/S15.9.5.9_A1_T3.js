@@ -8,11 +8,11 @@ description: Checking DontEnum attribute
 ---*/
 
 if (Date.prototype.propertyIsEnumerable('getTime')) {
-  $ERROR('#1: The Date.prototype.getTime property has the attribute DontEnum');
+  throw new Test262Error('#1: The Date.prototype.getTime property has the attribute DontEnum');
 }
 
 for (var x in Date.prototype) {
   if (x === "getTime") {
-    $ERROR('#2: The Date.prototype.getTime has the attribute DontEnum');
+    throw new Test262Error('#2: The Date.prototype.getTime has the attribute DontEnum');
   }
 }

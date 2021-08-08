@@ -12,7 +12,7 @@ description: Function execution context - Other Properties
 function test() {
   //CHECK#27
   if (Math === null) {
-    $ERROR("#27: Math === null");
+    throw new Test262Error("#27: Math === null");
   }
 }
 

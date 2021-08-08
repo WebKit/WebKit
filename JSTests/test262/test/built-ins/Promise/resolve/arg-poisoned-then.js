@@ -28,7 +28,7 @@ Object.defineProperty(poisonedThen, 'then', {
 });
 
 Promise.resolve(poisonedThen).then(function() {
-  $ERROR(
+  throw new Test262Error(
     'Promise should be rejected when retrieving `then` property throws an error'
   );
 }, function(reason) {

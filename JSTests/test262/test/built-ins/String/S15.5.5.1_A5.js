@@ -14,7 +14,7 @@ var __str__instance = new String("ABC\u0041\u0042\u0043");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str__instance.length !== 6) {
-  $ERROR('#1: var __str__instance = new String("ABC\\u0041\\u0042\\u0043"); __str__instance.length === 6. Actual: __str__instance.length ===' + __str__instance.length);
+  throw new Test262Error('#1: var __str__instance = new String("ABC\\u0041\\u0042\\u0043"); __str__instance.length === 6. Actual: __str__instance.length ===' + __str__instance.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ __str__instance.toString = function() {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str__instance != "ed") {
-  $ERROR('#2: var __str__instance = new String("ABC\\u0041\\u0042\\u0043"); __str__instance.valueOf = function(){return "ed"}; __str__instance.toString = function(){return "ed"}; __str__instance =="ed". Actual: __str__instance ==' + __str__instance);
+  throw new Test262Error('#2: var __str__instance = new String("ABC\\u0041\\u0042\\u0043"); __str__instance.valueOf = function(){return "ed"}; __str__instance.toString = function(){return "ed"}; __str__instance =="ed". Actual: __str__instance ==' + __str__instance);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ if (__str__instance != "ed") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__str__instance.length !== 6) {
-  $ERROR('#3: var __str__instance = new String("ABC\\u0041\\u0042\\u0043"); __str__instance.valueOf = function(){return "ed"}; __str__instance.toString = function(){return "ed"}; __str__instance.length === 6. Actual: __str__instance.length ===' + __str__instance.length);
+  throw new Test262Error('#3: var __str__instance = new String("ABC\\u0041\\u0042\\u0043"); __str__instance.valueOf = function(){return "ed"}; __str__instance.toString = function(){return "ed"}; __str__instance.length === 6. Actual: __str__instance.length ===' + __str__instance.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

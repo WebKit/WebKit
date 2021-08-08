@@ -68,7 +68,7 @@
 #include "ImageOverlayController.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
-#include "KeyboardScroll.h"
+#include "KeyboardScrollingAnimator.h"
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
@@ -1509,6 +1509,12 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
 
     switch (style ? style->cursor() : CursorType::Auto) {
     case CursorType::Auto: {
+        if (HTMLElement::isImageOverlayText(node.get())) {
+            auto* renderer = node->renderer();
+            if (renderer && renderer->style().userSelect() != UserSelect::None)
+                return iBeam;
+        }
+
         bool editable = node->hasEditableStyle();
 
         if (useHandCursor(node.get(), result.isOverLink(), shiftKey))
@@ -3803,6 +3809,12 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         if (event.charCode() == ' ')
             defaultSpaceEventHandler(event);
     }
+    if (event.type() == eventNames().keyupEvent) {
+        m_frame.editor().handleKeyboardEvent(event);
+        if (event.defaultHandled())
+            return;
+        stopKeyboardScrolling();
+    }
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -4197,7 +4209,7 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent& event)
     if (!view)
         return;
 
-    bool defaultHandled = m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() ? handleKeyboardScrolling(event) : view->logicalScroll(direction, ScrollByPage);
+    bool defaultHandled = m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled() ? startKeyboardScrolling(event) : view->logicalScroll(direction, ScrollByPage);
     if (defaultHandled)
         event.setDefaultHandled();
 }
@@ -4237,7 +4249,7 @@ float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity 
             return m_frame.view()->verticalScrollbar();
         return m_frame.view()->horizontalScrollbar();
     }();
-    
+
     switch (granularity) {
     case ScrollGranularity::ScrollByLine:
         return scrollbar->lineStep();
@@ -4252,62 +4264,28 @@ float EventHandler::scrollDistance(ScrollDirection direction, ScrollGranularity 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool EventHandler::handleKeyboardScrolling(KeyboardEvent& event)
+void EventHandler::stopKeyboardScrolling()
 {
     Ref protectedFrame = m_frame;
-    // FIXME (bug 227459): This logic does not account for writing-mode.
+    FrameView* view = m_frame.view();
 
-    enum class Key : uint8_t { LeftArrow, RightArrow, UpArrow, DownArrow, Space };
+    KeyboardScrollingAnimator* animator = view->scrollAnimator().keyboardScrollingAnimator();
 
-    Key key;
-    if (event.keyIdentifier() == "Left")
-        key = Key::LeftArrow;
-    else if (event.keyIdentifier() == "Right")
-        key = Key::RightArrow;
-    else if (event.keyIdentifier() == "Up")
-        key = Key::UpArrow;
-    else if (event.keyIdentifier() == "Down")
-        key = Key::DownArrow;
-    else if (event.charCode() == ' ')
-        key = Key::Space;
-    else
-        return false;
+    if (animator)
+        animator->handleKeyUpEvent();
+}
 
-    auto granularity = [&] {
-        switch (key) {
-        case Key::LeftArrow:
-        case Key::RightArrow:
-            return event.altKey() ? ScrollGranularity::ScrollByPage : ScrollGranularity::ScrollByLine;
-        case Key::UpArrow:
-        case Key::DownArrow:
-            if (event.metaKey())
-                return ScrollGranularity::ScrollByDocument;
-            if (event.altKey())
-                return ScrollGranularity::ScrollByPage;
-            return ScrollGranularity::ScrollByLine;
-        case Key::Space:
-            return ScrollGranularity::ScrollByPage;
-        };
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
+bool EventHandler::startKeyboardScrolling(KeyboardEvent& event)
+{
+    Ref protectedFrame = m_frame;
+    FrameView* view = m_frame.view();
 
-    auto direction = [&] {
-        switch (key) {
-        case Key::LeftArrow:
-            return ScrollDirection::ScrollLeft;
-        case Key::RightArrow:
-            return ScrollDirection::ScrollRight;
-        case Key::UpArrow:
-            return ScrollDirection::ScrollUp;
-        case Key::DownArrow:
-            return ScrollDirection::ScrollDown;
-        case Key::Space:
-            return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }();
+    KeyboardScrollingAnimator* animator = view->scrollAnimator().keyboardScrollingAnimator();
 
-    return EventHandler::scrollRecursively(direction, granularity, nullptr);
+    if (animator)
+        return animator->beginKeyboardScrollGesture(event);
+
+    return false;
 }
 
 void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent& event)
@@ -4316,7 +4294,7 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
 
     if (!isSpatialNavigationEnabled(&m_frame)) {
         if (m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled())
-            handleKeyboardScrolling(event);
+            startKeyboardScrolling(event);
         return;
     }
 

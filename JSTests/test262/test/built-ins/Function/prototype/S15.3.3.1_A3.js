@@ -13,7 +13,7 @@ verifyNotConfigurable(Function, "prototype");
 //CHECK#1
 try {
   if ((delete Function.prototype) !== false) {
-    $ERROR('#1: Function.prototype has the attribute DontDelete');
+    throw new Test262Error('#1: Function.prototype has the attribute DontDelete');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;
@@ -22,5 +22,5 @@ try {
 
 //CHECK#2
 if (!(Function.hasOwnProperty('prototype'))) {
-  $ERROR('#2: the Function.prototype property has the attributes DontDelete.');
+  throw new Test262Error('#2: the Function.prototype property has the attributes DontDelete.');
 }

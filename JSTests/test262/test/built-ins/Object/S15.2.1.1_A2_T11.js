@@ -11,7 +11,7 @@ description: Calling Object function with function declaration as argument value
 
 //CHECK#1
 if (typeof func !== 'undefined') {
-  $ERROR('#1:  function expression can\'t be declarated');
+  throw new Test262Error('#1:  function expression can\'t be declarated');
 }
 
 var n_obj = Object(function func() {
@@ -20,10 +20,10 @@ var n_obj = Object(function func() {
 
 //CHECK#2
 if ((n_obj.constructor !== Function) || (n_obj() !== 1)) {
-  $ERROR('#2: Object(function func(){return 1;}) returns function');
+  throw new Test262Error('#2: Object(function func(){return 1;}) returns function');
 }
 
 //CHECK#3
 if (typeof func !== 'undefined') {
-  $ERROR('#3:  function expression can\'t be declarated');
+  throw new Test262Error('#3:  function expression can\'t be declarated');
 }

@@ -649,6 +649,96 @@ public:
         m_assembler.sub<64>(d, n, m, Assembler::LSR, amount.m_value);
     }
 
+    void andLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void andRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void andUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void andLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void andRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void andUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.and_<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void xorLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void xorRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void xorUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void xorLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void xorRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void xorUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.eor<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void orLeftShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<32>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void orRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<32>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void orUnsignedRightShift32(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<32>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
+    void orLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<64>(d, n, m, Assembler::LSL, amount.m_value);
+    }
+
+    void orRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<64>(d, n, m, Assembler::ASR, amount.m_value);
+    }
+
+    void orUnsignedRightShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        m_assembler.orr<64>(d, n, m, Assembler::LSR, amount.m_value);
+    }
+
     void clearBit64(RegisterID bitToClear, RegisterID dest, RegisterID scratchForMask = InvalidGPRReg)
     {
         if (scratchForMask == InvalidGPRReg)
@@ -1447,9 +1537,14 @@ public:
         load<64>(address, dest);
     }
 
-    void load64(RegisterID src, PostIndex simm, RegisterID dest)
+    void load64(PreIndexAddress src, RegisterID dest)
     {
-        m_assembler.ldr<64>(dest, src, simm);
+        m_assembler.ldr<64>(dest, src.base, PreIndex(src.index));
+    }
+
+    void load64(PostIndexAddress src, RegisterID dest)
+    {
+        m_assembler.ldr<64>(dest, src.base, PostIndex(src.index));
     }
 
     DataLabel32 load64WithAddressOffsetPatch(Address address, RegisterID dest)
@@ -1468,6 +1563,27 @@ public:
         return label;
     }
 
+    void loadPair32(RegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        loadPair32(src, TrustedImm32(0), dest1, dest2);
+    }
+
+    void loadPair32(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
+    {
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPImm<32>(offset.m_value)) {
+            m_assembler.ldp<32>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        if (src == dest1) {
+            load32(Address(src, offset.m_value + 4), dest2);
+            load32(Address(src, offset.m_value), dest1);
+        } else {
+            load32(Address(src, offset.m_value), dest1);
+            load32(Address(src, offset.m_value + 4), dest2);
+        }
+    }
+
     void loadPair64(RegisterID src, RegisterID dest1, RegisterID dest2)
     {
         loadPair64(src, TrustedImm32(0), dest1, dest2);
@@ -1475,7 +1591,18 @@ public:
 
     void loadPair64(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
     {
-        m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPImm<64>(offset.m_value)) {
+            m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        if (src == dest1) {
+            load64(Address(src, offset.m_value + 8), dest2);
+            load64(Address(src, offset.m_value), dest1);
+        } else {
+            load64(Address(src, offset.m_value), dest1);
+            load64(Address(src, offset.m_value + 8), dest2);
+        }
     }
 
     void loadPair64WithNonTemporalAccess(RegisterID src, RegisterID dest1, RegisterID dest2)
@@ -1485,7 +1612,18 @@ public:
 
     void loadPair64WithNonTemporalAccess(RegisterID src, TrustedImm32 offset, RegisterID dest1, RegisterID dest2)
     {
-        m_assembler.ldnp<64>(dest1, dest2, src, offset.m_value);
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPImm<64>(offset.m_value)) {
+            m_assembler.ldnp<64>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        if (src == dest1) {
+            load64(Address(src, offset.m_value + 8), dest2);
+            load64(Address(src, offset.m_value), dest1);
+        } else {
+            load64(Address(src, offset.m_value), dest1);
+            load64(Address(src, offset.m_value + 8), dest2);
+        }
     }
 
     void loadPair64(RegisterID src, FPRegisterID dest1, FPRegisterID dest2)
@@ -1495,7 +1633,13 @@ public:
 
     void loadPair64(RegisterID src, TrustedImm32 offset, FPRegisterID dest1, FPRegisterID dest2)
     {
-        m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+        ASSERT(dest1 != dest2); // If it is the same, ldp becomes illegal instruction.
+        if (ARM64Assembler::isValidLDPFPImm<64>(offset.m_value)) {
+            m_assembler.ldp<64>(dest1, dest2, src, offset.m_value);
+            return;
+        }
+        loadDouble(Address(src, offset.m_value), dest1);
+        loadDouble(Address(src, offset.m_value + 8), dest2);
     }
 
     void abortWithReason(AbortReason reason)
@@ -1546,6 +1690,16 @@ public:
     void load32(const void* address, RegisterID dest)
     {
         load<32>(address, dest);
+    }
+
+    void load32(PreIndexAddress src, RegisterID dest)
+    {
+        m_assembler.ldr<32>(dest, src.base, PreIndex(src.index));
+    }
+
+    void load32(PostIndexAddress src, RegisterID dest)
+    {
+        m_assembler.ldr<32>(dest, src.base, PostIndex(src.index));
     }
 
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
@@ -1747,7 +1901,17 @@ public:
         m_assembler.add<64>(memoryTempRegister, memoryTempRegister, address.index, indexExtendType(address), address.scale);
         m_assembler.str<64>(src, address.base, memoryTempRegister);
     }
-    
+
+    void store64(RegisterID src, PreIndexAddress dest)
+    {
+        m_assembler.str<64>(src, dest.base, PreIndex(dest.index));
+    }
+
+    void store64(RegisterID src, PostIndexAddress dest)
+    {
+        m_assembler.str<64>(src, dest.base, PostIndex(dest.index));
+    }
+
     void store64(RegisterID src, const void* address)
     {
         store<64>(src, address);
@@ -1791,17 +1955,27 @@ public:
         store64(dataTempRegister, address);
     }
 
-    void store64(RegisterID src, RegisterID dest, PostIndex simm)
-    {
-        m_assembler.str<64>(src, dest, simm);
-    }
-    
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
         signExtend32ToPtrWithFixedWidth(address.offset, getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.str<64>(src, address.base, memoryTempRegister, Assembler::SXTW, 0);
         return label;
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        storePair32(src1, src2, dest, TrustedImm32(0));
+    }
+
+    void storePair32(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        if (ARM64Assembler::isValidSTPImm<32>(offset.m_value)) {
+            m_assembler.stp<32>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        store32(src1, Address(dest, offset.m_value));
+        store32(src2, Address(dest, offset.m_value + 4));
     }
 
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest)
@@ -1811,7 +1985,12 @@ public:
 
     void storePair64(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+        if (ARM64Assembler::isValidSTPImm<64>(offset.m_value)) {
+            m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        store64(src1, Address(dest, offset.m_value));
+        store64(src2, Address(dest, offset.m_value + 8));
     }
 
     void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest)
@@ -1821,7 +2000,12 @@ public:
 
     void storePair64WithNonTemporalAccess(RegisterID src1, RegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        m_assembler.stnp<64>(src1, src2, dest, offset.m_value);
+        if (ARM64Assembler::isValidSTPImm<64>(offset.m_value)) {
+            m_assembler.stnp<64>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        store64(src1, Address(dest, offset.m_value));
+        store64(src2, Address(dest, offset.m_value + 8));
     }
 
     void storePair64(FPRegisterID src1, FPRegisterID src2, RegisterID dest)
@@ -1831,7 +2015,12 @@ public:
 
     void storePair64(FPRegisterID src1, FPRegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
-        m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+        if (ARM64Assembler::isValidSTPFPImm<64>(offset.m_value)) {
+            m_assembler.stp<64>(src1, src2, dest, offset.m_value);
+            return;
+        }
+        storeDouble(src1, Address(dest, offset.m_value));
+        storeDouble(src2, Address(dest, offset.m_value + 8));
     }
 
     void store32(RegisterID src, ImplicitAddress address)
@@ -1893,6 +2082,16 @@ public:
 
         moveToCachedReg(imm, dataMemoryTempRegister());
         store32(dataTempRegister, address);
+    }
+
+    void store32(RegisterID src, PreIndexAddress dest)
+    {
+        m_assembler.str<32>(src, dest.base, PreIndex(dest.index));
+    }
+
+    void store32(RegisterID src, PostIndexAddress dest)
+    {
+        m_assembler.str<32>(src, dest.base, PostIndex(dest.index));
     }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)

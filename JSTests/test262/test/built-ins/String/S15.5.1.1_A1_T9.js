@@ -18,7 +18,7 @@ var __str = String(this);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(this); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(this); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "__THIS__") {
-  $ERROR('#2: toString=function(){return "__THIS__";}; __str = String(this); __str === "__THIS__". Actual: __str ===' + __str);
+  throw new Test262Error('#2: toString=function(){return "__THIS__";}; __str = String(this); __str === "__THIS__". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

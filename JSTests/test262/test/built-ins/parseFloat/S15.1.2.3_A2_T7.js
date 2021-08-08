@@ -9,12 +9,12 @@ description: "StrWhiteSpaceChar :: LF (U+000A)"
 
 //CHECK#1
 if (parseFloat("\u000A1.1") !== parseFloat("1.1")) {
-  $ERROR('#1: parseFloat("\\u000A1.1") === parseFloat("1.1"). Actual: ' + (parseFloat("\u000A1.1")));
+  throw new Test262Error('#1: parseFloat("\\u000A1.1") === parseFloat("1.1"). Actual: ' + (parseFloat("\u000A1.1")));
 }
 
 //CHECK#2
 if (parseFloat("\u000A\u000A-1.1") !== parseFloat("-1.1")) {
-  $ERROR('#2: parseFloat("\\u000A\\u000A-1.1") === parseFloat("-1.1"). Actual: ' + (parseFloat("\u000A\u000A-1.1")));
+  throw new Test262Error('#2: parseFloat("\\u000A\\u000A-1.1") === parseFloat("-1.1"). Actual: ' + (parseFloat("\u000A\u000A-1.1")));
 }
 
 //CHECK#3

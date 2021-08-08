@@ -9,15 +9,15 @@ description: Type(x) is boolean primitive or Boolean object
 
 //CHECK#1
 if (!false !== true) {
-  $ERROR('#1: !false === true');
+  throw new Test262Error('#1: !false === true');
 }
 
 //CHECK#2
 if (!new Boolean(true) !== false) {
-  $ERROR('#2: !new Boolean(true) === false');
+  throw new Test262Error('#2: !new Boolean(true) === false');
 }
 
 //CHECK#3
 if (!new Boolean(false) !== false) {
-  $ERROR('#3: !new Boolean(false) === false');
+  throw new Test262Error('#3: !new Boolean(false) === false');
 }

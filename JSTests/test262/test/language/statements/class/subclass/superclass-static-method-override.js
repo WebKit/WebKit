@@ -8,7 +8,7 @@ description: >
 function Base() {}
 Object.defineProperty(Base, 'staticM', {
   set: function() {
-    $ERROR("`Base.staticM` is unreachable.");
+    throw new Test262Error("`Base.staticM` is unreachable.");
   }
 });
 

@@ -30,8 +30,8 @@ with (outerScope) {
 }
 
 if (innerScope.x !== 3) {
-  $ERROR('#1: innerScope.x === 3. Actual: ' + (innerScope.x));
+  throw new Test262Error('#1: innerScope.x === 3. Actual: ' + (innerScope.x));
 }
 if (outerScope.x !== 0) {
-  $ERROR('#2: outerScope.x === 0. Actual: ' + (outerScope.x));
+  throw new Test262Error('#2: outerScope.x === 0. Actual: ' + (outerScope.x));
 }

@@ -8,5 +8,5 @@ description: The Date.prototype has the property "setMonth"
 ---*/
 
 if (Date.prototype.hasOwnProperty("setMonth") !== true) {
-  $ERROR('#1: The Date.prototype has the property "setMonth"');
+  throw new Test262Error('#1: The Date.prototype has the property "setMonth"');
 }

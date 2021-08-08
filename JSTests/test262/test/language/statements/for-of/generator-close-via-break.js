@@ -15,11 +15,11 @@ function* values() {
   startedCount += 1;
   try {
     yield;
-    $ERROR('This code is unreachable (within `try` block)');
+    throw new Test262Error('This code is unreachable (within `try` block)');
   } finally {
     finallyCount += 1;
   }
-  $ERROR('This code is unreachable (following `try` statement)');
+  throw new Test262Error('This code is unreachable (following `try` statement)');
 }
 var iterable = values();
 

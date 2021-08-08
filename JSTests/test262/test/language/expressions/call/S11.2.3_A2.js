@@ -10,21 +10,21 @@ description: If GetBase(MemberExpression) is null, throw ReferenceError
 //CHECK#1
 try {
   x();
-  $ERROR('#1.1: x() throw ReferenceError. Actual: ' + (x()));  
+  throw new Test262Error('#1.1: x() throw ReferenceError. Actual: ' + (x()));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: x() throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: x() throw ReferenceError. Actual: ' + (e));  
   }
 }
 
 //CHECK#2
 try {
   x(1,2,3);
-  $ERROR('#2.1: x(1,2,3) throw ReferenceError. Actual: ' + (x(1,2,3))); 
+  throw new Test262Error('#2.1: x(1,2,3) throw ReferenceError. Actual: ' + (x(1,2,3))); 
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#2.2: x(1,2,3) throw ReferenceError. Actual: ' + (e)); 
+    throw new Test262Error('#2.2: x(1,2,3) throw ReferenceError. Actual: ' + (e)); 
   }
 }

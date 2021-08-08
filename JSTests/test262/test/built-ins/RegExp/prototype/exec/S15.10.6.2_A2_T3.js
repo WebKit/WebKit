@@ -14,10 +14,10 @@ __instance.exec = RegExp.prototype.exec;
 //CHECK#1
 try {
   __instance.exec("message to investigate");
-	$ERROR('#1.1: __instance.exec = RegExp.prototype.exec; __instance.exec("message to investigate"); function __instance(){}');
+	throw new Test262Error('#1.1: __instance.exec = RegExp.prototype.exec; __instance.exec("message to investigate"); function __instance(){}');
 } catch (e) {
 	if ((e instanceof TypeError) !== true) {
-		$ERROR('#1.2: __instance.exec = RegExp.prototype.exec; __instance.exec("message to investigate"); function __instance(){}. Actual: ' + (e));
+		throw new Test262Error('#1.2: __instance.exec = RegExp.prototype.exec; __instance.exec("message to investigate"); function __instance(){}. Actual: ' + (e));
 	}
 }
 

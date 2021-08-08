@@ -217,6 +217,10 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
     }
 
     auto paymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+#if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
+    [paymentMethodUpdate setErrors:toNSErrors(WTFMove(update->errors)).get()];
+    [paymentMethodUpdate setShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()];
+#endif
 #if HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
     [paymentMethodUpdate setInstallmentGroupIdentifier:WTFMove(update->installmentGroupIdentifier)];
 #endif // HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -260,6 +264,9 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(std::optiona
     }
 
     auto shippingMethodUpdate = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))]);
+#if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
+    [shippingMethodUpdate setShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()];
+#endif
 #if defined(PaymentAuthorizationPresenterAdditions_completeShippingMethodSelection)
     PaymentAuthorizationPresenterAdditions_completeShippingMethodSelection
 #endif

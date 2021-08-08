@@ -11,10 +11,10 @@ description: True and false convert to String by explicit transformation
 
 // CHECK#1
 if (String(false) !== "false") {
-  $ERROR('#1: String(false) === "false". Actual: ' + (String(false)));
+  throw new Test262Error('#1: String(false) === "false". Actual: ' + (String(false)));
 }
 
 // CHECK#2
 if (String(true) !== "true") {
-  $ERROR('#2: String(true) === "true". Actual: ' + (String(true)));
+  throw new Test262Error('#2: String(true) === "true". Actual: ' + (String(true)));
 }

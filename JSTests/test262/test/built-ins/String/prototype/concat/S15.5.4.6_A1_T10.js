@@ -30,10 +30,10 @@ var __str = "lego";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str.concat(__obj) !== "legoA") {
-  $ERROR('#1: var x; var __obj = {toString:function(){return "\u0041";}, valueOf:function(){return "_\u0041_";}}; var __str = "lego"; __str.concat(__obj) === "legoA". Actual: ' + __str.concat(__obj));
+  throw new Test262Error('#1: var x; var __obj = {toString:function(){return "\u0041";}, valueOf:function(){return "_\u0041_";}}; var __str = "lego"; __str.concat(__obj) === "legoA". Actual: ' + __str.concat(__obj));
 }
 if (__str.concat(__obj, __obj2, __obj3, x) !== "legoAtrue42undefined") {
-  $ERROR('#2: var x; var __obj = {toString:function(){return "\u0041";}, valueOf:function(){return "_\u0041_";}}; var __obj2 = {toString:function(){return true;}}; var __obj3 = {toString:function(){return 42;}}; var __str = "lego"; __str.concat(__obj, __obj2, __obj3, x) === "legoAtrue42undefined". Actual: ' + __str.concat(__obj, __obj2, __obj3, x));
+  throw new Test262Error('#2: var x; var __obj = {toString:function(){return "\u0041";}, valueOf:function(){return "_\u0041_";}}; var __obj2 = {toString:function(){return true;}}; var __obj3 = {toString:function(){return 42;}}; var __str = "lego"; __str.concat(__obj, __obj2, __obj3, x) === "legoAtrue42undefined". Actual: ' + __str.concat(__obj, __obj2, __obj3, x));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

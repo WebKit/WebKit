@@ -11,7 +11,7 @@ description: Call charCodeAt() function without argument of string object
 //CHECK#1
 //since Number() evaluates to 0 charCodeAt() evaluates to charCodeAt(0)
 if ("smart".charCodeAt() !== 0x73) {
-  $ERROR('#1: "smart".charCodeAt() === 0x73. Actual: "smart".charCodeAt() ===' + ("smart".charCodeAt()));
+  throw new Test262Error('#1: "smart".charCodeAt() === 0x73. Actual: "smart".charCodeAt() ===' + ("smart".charCodeAt()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

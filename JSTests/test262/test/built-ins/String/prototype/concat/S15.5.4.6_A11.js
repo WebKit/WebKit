@@ -10,7 +10,7 @@ description: Checking String.prototype.concat.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.concat.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.concat.hasOwnProperty("length") return true. Actual: ' + String.prototype.concat.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.concat.hasOwnProperty("length") return true. Actual: ' + String.prototype.concat.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.concat.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.concat.length !== 1) {
-  $ERROR('#2: String.prototype.concat.length === 1. Actual: ' + String.prototype.concat.length);
+  throw new Test262Error('#2: String.prototype.concat.length === 1. Actual: ' + String.prototype.concat.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

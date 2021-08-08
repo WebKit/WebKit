@@ -10,10 +10,10 @@ description: Checking with undeclarated variables
 //CHECK#1
 try {
   object instanceof (object = {}, Object);
-  $ERROR('#1.1: object instanceof (object = {}, Object) throw ReferenceError. Actual: ' + (object instanceof (object = {}, Object)));  
+  throw new Test262Error('#1.1: object instanceof (object = {}, Object) throw ReferenceError. Actual: ' + (object instanceof (object = {}, Object)));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: object instanceof (object = {}, Object) throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: object instanceof (object = {}, Object) throw ReferenceError. Actual: ' + (e));  
   }
 }

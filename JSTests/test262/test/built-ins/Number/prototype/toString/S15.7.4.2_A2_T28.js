@@ -11,40 +11,40 @@ description: radix is 30
 
 //CHECK#1
 if (Number.prototype.toString(30) !== "0") {
-  $ERROR('#1: Number.prototype.toString(30) === "0"');
+  throw new Test262Error('#1: Number.prototype.toString(30) === "0"');
 }
 
 //CHECK#2
 if ((new Number()).toString(30) !== "0") {
-  $ERROR('#2: (new Number()).toString(30) === "0"');
+  throw new Test262Error('#2: (new Number()).toString(30) === "0"');
 }
 
 //CHECK#3
 if ((new Number(0)).toString(30) !== "0") {
-  $ERROR('#3: (new Number(0)).toString(30) === "0"');
+  throw new Test262Error('#3: (new Number(0)).toString(30) === "0"');
 }
 
 //CHECK#4
 if ((new Number(-1)).toString(30) !== "-1") {
-  $ERROR('#4: (new Number(-1)).toString(30) === "-1"');
+  throw new Test262Error('#4: (new Number(-1)).toString(30) === "-1"');
 }
 
 //CHECK#5
 if ((new Number(1)).toString(30) !== "1") {
-  $ERROR('#5: (new Number(1)).toString(30) === "1"');
+  throw new Test262Error('#5: (new Number(1)).toString(30) === "1"');
 }
 
 //CHECK#6
 if ((new Number(Number.NaN)).toString(30) !== "NaN") {
-  $ERROR('#6: (new Number(Number.NaN)).toString(30) === "NaN"');
+  throw new Test262Error('#6: (new Number(Number.NaN)).toString(30) === "NaN"');
 }
 
 //CHECK#7
 if ((new Number(Number.POSITIVE_INFINITY)).toString(30) !== "Infinity") {
-  $ERROR('#7: (new Number(Number.POSITIVE_INFINITY)).toString(30) === "Infinity"');
+  throw new Test262Error('#7: (new Number(Number.POSITIVE_INFINITY)).toString(30) === "Infinity"');
 }
 
 //CHECK#8
 if ((new Number(Number.NEGATIVE_INFINITY)).toString(30) !== "-Infinity") {
-  $ERROR('#8: (new Number(Number.NEGATIVE_INFINITY)).toString(30) === "-Infinity"');
+  throw new Test262Error('#8: (new Number(Number.NEGATIVE_INFINITY)).toString(30) === "-Infinity"');
 }

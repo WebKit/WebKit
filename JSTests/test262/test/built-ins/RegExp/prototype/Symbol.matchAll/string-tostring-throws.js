@@ -15,7 +15,7 @@ features: [Symbol.matchAll]
 
 var obj = {
   valueOf() {
-    $ERROR('This method should not be invoked.');
+    throw new Test262Error('This method should not be invoked.');
   },
   toString() {
     throw new Test262Error('toString invoked');

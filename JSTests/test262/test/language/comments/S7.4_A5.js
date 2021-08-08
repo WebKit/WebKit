@@ -27,17 +27,17 @@ for (var i1 = 0; i1 < 16; i1++) {
           eval("//var " + xx + "yy = -1");
           if (LineTerminators !== true) {
             if (yy !== 0) {
-              $ERROR('#' + uu + ' ');
+              throw new Test262Error('#' + uu + ' ');
               errorCount++;
             }
           } else {
             if (yy !== -1) {
-              $ERROR('#' + uu + ' ');
+              throw new Test262Error('#' + uu + ' ');
               errorCount++;
             }
           }
         } catch (e){
-          $ERROR('#' + uu + ' ');
+          throw new Test262Error('#' + uu + ' ');
           errorCount++;
         }
         count++;
@@ -47,5 +47,5 @@ for (var i1 = 0; i1 < 16; i1++) {
 }
 
 if (errorCount > 0) {
-  $ERROR('Total error: ' + errorCount + ' bad Unicode character in ' + count);
+  throw new Test262Error('Total error: ' + errorCount + ' bad Unicode character in ' + count);
 }

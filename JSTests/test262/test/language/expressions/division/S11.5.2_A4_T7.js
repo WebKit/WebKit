@@ -11,20 +11,20 @@ description: Division of a zero by a zero results in NaN
 
 //CHECK#1
 if (isNaN(+0 / +0) !== true) {
-  $ERROR('#1: +0 / +0 === Not-a-Number. Actual: ' + (+0 / +0));
+  throw new Test262Error('#1: +0 / +0 === Not-a-Number. Actual: ' + (+0 / +0));
 }  
 
 //CHECK#2
 if (isNaN(-0 / +0) !== true) {
-  $ERROR('#2: -0 / +0 === Not-a-Number. Actual: ' + (-0 / +0)); 
+  throw new Test262Error('#2: -0 / +0 === Not-a-Number. Actual: ' + (-0 / +0)); 
 } 
 
 //CHECK#3
 if (isNaN(+0 / -0) !== true) {
-  $ERROR('#3: +0 / -0 === Not-a-Number. Actual: ' + (+0 / -0)); 
+  throw new Test262Error('#3: +0 / -0 === Not-a-Number. Actual: ' + (+0 / -0)); 
 } 
 
 //CHECK#4
 if (isNaN(-0 / -0) !== true) {
-  $ERROR('#4: -0 / -0 === Not-a-Number. Actual: ' + (-0 / -0));
+  throw new Test262Error('#4: -0 / -0 === Not-a-Number. Actual: ' + (-0 / -0));
 }

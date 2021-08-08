@@ -3,36 +3,36 @@ PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_o
 PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin-allow-popups"
 PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin-allow-popups"
 PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin-allow-popups"
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
-FAIL same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin-allow-popups" assert_equals: opener expected false but got true
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a SAME_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a SAME_SITE with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_ORIGIN iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with SAME_SITE iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via window_open a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via anchor a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_GET a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
+PASS same-origin-allow-popups with CROSS_ORIGIN iframe opening popup via form_POST a CROSS_ORIGIN with COOP: "same-origin-allow-popups"
 

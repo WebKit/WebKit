@@ -8,3 +8,5 @@ fast/images/text-recognition/mac [ Skip ]
 
 # Accessibility text recognition support tests.
 accessibility/ios-simulator/image-overlay-elements.html [ Skip ]
+
+http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html [ Skip ]

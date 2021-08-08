@@ -54,9 +54,25 @@ class TestGit(testing.PathTestCase):
         with mocks.local.Git(self.path, detached=True):
             self.assertEqual(local.Git(self.path).branch, None)
 
-    def test_remote(self):
+    def test_url(self):
         with mocks.local.Git(self.path) as repo:
-            self.assertEqual(local.Git(self.path).remote(), repo.remote)
+            self.assertEqual(local.Git(self.path).url(), repo.remote)
+
+    def test_remote(self):
+        with mocks.local.Git(self.path):
+            self.assertEqual(local.Git(self.path).remote(), None)
+
+    def test_remote_github(self):
+        with mocks.local.Git(self.path, remote='git@github.example.com:WebKit/WebKit.git'):
+            self.assertIsInstance(local.Git(self.path).remote(), remote.GitHub)
+        with mocks.local.Git(self.path, remote='https://github.example.com/WebKit/WebKit.git'):
+            self.assertIsInstance(local.Git(self.path).remote(), remote.GitHub)
+
+    def test_remote_bitbucket(self):
+        with mocks.local.Git(self.path, remote='ssh://git@stash.example.com:webkit/webkit.git'):
+            self.assertIsInstance(local.Git(self.path).remote(), remote.BitBucket)
+        with mocks.local.Git(self.path, remote='http://git@stash.example.com/webkit/webkit.git'):
+            self.assertIsInstance(local.Git(self.path).remote(), remote.BitBucket)
 
     def test_branches(self):
         with mocks.local.Git(self.path):

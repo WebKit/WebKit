@@ -13,26 +13,26 @@ var x;
 x = 1;
 x <<= 1;
 if (x !== 2) {
-  $ERROR('#1: x = 1; x <<= 1; x === 2. Actual: ' + (x));
+  throw new Test262Error('#1: x = 1; x <<= 1; x === 2. Actual: ' + (x));
 }
 
 //CHECK#2
 x = new Number(1);
 x <<= 1;
 if (x !== 2) {
-  $ERROR('#2: x = new Number(1); x <<= 1; x === 2. Actual: ' + (x));
+  throw new Test262Error('#2: x = new Number(1); x <<= 1; x === 2. Actual: ' + (x));
 }
 
 //CHECK#3
 x = 1;
 x <<= new Number(1);
 if (x !== 2) {
-  $ERROR('#3: x = 1; x <<= new Number(1); x === 2. Actual: ' + (x));
+  throw new Test262Error('#3: x = 1; x <<= new Number(1); x === 2. Actual: ' + (x));
 }
 
 //CHECK#4
 x = new Number(1);
 x <<= new Number(1);
 if (x !== 2) {
-  $ERROR('#4: x = new Number(1); x <<= new Number(1); x === 2. Actual: ' + (x));
+  throw new Test262Error('#4: x = new Number(1); x <<= new Number(1); x === 2. Actual: ' + (x));
 }

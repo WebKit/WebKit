@@ -21,10 +21,10 @@ function testCompoundAssignment() {
   })();
 
   if (innerX !== 2) {
-    $ERROR('#1: innerX === 2. Actual: ' + (innerX));
+    throw new Test262Error('#1: innerX === 2. Actual: ' + (innerX));
   }
   if (x !== 5) {
-    $ERROR('#2: x === 5. Actual: ' + (x));
+    throw new Test262Error('#2: x === 5. Actual: ' + (x));
   }
 }
 testCompoundAssignment();

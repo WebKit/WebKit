@@ -8,9 +8,9 @@ description: The "length" property of the "setHours" is 4
 ---*/
 
 if (Date.prototype.setHours.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The setHours has a "length" property');
+  throw new Test262Error('#1: The setHours has a "length" property');
 }
 
 if (Date.prototype.setHours.length !== 4) {
-  $ERROR('#2: The "length" property of the setHours is 4');
+  throw new Test262Error('#2: The "length" property of the setHours is 4');
 }

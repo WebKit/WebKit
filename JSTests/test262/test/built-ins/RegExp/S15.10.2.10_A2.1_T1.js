@@ -18,5 +18,5 @@ for (var alpha = 0x0041; alpha <= 0x005A; alpha++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: CharacterEscape :: c A - Z');
+  throw new Test262Error('#1: CharacterEscape :: c A - Z');
 }

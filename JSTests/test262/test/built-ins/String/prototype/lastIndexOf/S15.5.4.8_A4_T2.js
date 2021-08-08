@@ -30,10 +30,10 @@ var __str = new String("ABB\u0041BABAB");
 //CHECK#1
 try {
   var x = __str.lastIndexOf(__obj, __obj2);
-  $ERROR('#1: var x = __str.lastIndexOf(__obj, __obj2) lead to throwing exception');
+  throw new Test262Error('#1: var x = __str.lastIndexOf(__obj, __obj2) lead to throwing exception');
 } catch (e) {
   if (e !== "intointeger") {
-    $ERROR('#1.1: Exception === "intointeger". Actual: ' + e);
+    throw new Test262Error('#1.1: Exception === "intointeger". Actual: ' + e);
   }
 }
 //

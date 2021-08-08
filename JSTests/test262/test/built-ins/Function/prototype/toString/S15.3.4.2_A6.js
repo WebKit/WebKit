@@ -11,5 +11,5 @@ description: >
 
 //CHECK#1
 if (Function.prototype.toString.prototype !== undefined) {
-  $ERROR('#1: Function.prototype.toString has not prototype property'+Function.prototype.toString.prototype);
+  throw new Test262Error('#1: Function.prototype.toString has not prototype property'+Function.prototype.toString.prototype);
 }

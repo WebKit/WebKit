@@ -31,7 +31,7 @@ Object.defineProperty(poisonedDone, 'done', {
 });
 Object.defineProperty(poisonedDone, 'value', {
   get: function() {
-    $ERROR('The `value` property should not be accessed.');
+    throw new Test262Error('The `value` property should not be accessed.');
   }
 });
 

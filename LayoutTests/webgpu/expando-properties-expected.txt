@@ -1,3 +1,0 @@
-
-PASS Verify expando properties are preserved on the WebGPU context
-

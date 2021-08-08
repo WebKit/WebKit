@@ -24,7 +24,7 @@ obj.oneProperty = true;
 // We now see that that change is represented in both variables
 // (Since they both refer to the same object)
 if(objRef.oneProperty !== true){
-  $ERROR('#1: var obj = new Object(); var objRef = obj; objRef.oneProperty = -1; obj.oneProperty = true; objRef.oneProperty === true. Actual: ' + (objRef.oneProperty));
+  throw new Test262Error('#1: var obj = new Object(); var objRef = obj; objRef.oneProperty = -1; obj.oneProperty = true; objRef.oneProperty === true. Actual: ' + (objRef.oneProperty));
 };
 //
 //////////////////////////////////////////////////////////////////////////////

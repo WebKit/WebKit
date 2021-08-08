@@ -9,5 +9,5 @@ description: Use real NO-BREAK SPACE
 
 //CHECK#1
 if (" str ing " !== "\u00A0str\u00A0ing\u00A0") {
-  $ERROR('#1: " str ing " === "\\u00A0str\\u00A0ing\\u00A0"');
+  throw new Test262Error('#1: " str ing " === "\\u00A0str\\u00A0ing\\u00A0"');
 }

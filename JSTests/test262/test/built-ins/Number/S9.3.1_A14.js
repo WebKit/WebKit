@@ -9,5 +9,5 @@ description: Compare Number('+1234567890') with +('1234567890')
 
 // CHECK#1
 if (Number("+1234567890") !== +("1234567890")) {
-  $ERROR('#1: Number("+1234567890") === +("1234567890")');
+  throw new Test262Error('#1: Number("+1234567890") === +("1234567890")');
 }

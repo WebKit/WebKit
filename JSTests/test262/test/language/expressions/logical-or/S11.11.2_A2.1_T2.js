@@ -10,10 +10,10 @@ description: If GetBase(x) is null, throw ReferenceError
 //CHECK#1
 try {
   x || true;
-  $ERROR('#1.1: x || true throw ReferenceError. Actual: ' + (x || true));  
+  throw new Test262Error('#1.1: x || true throw ReferenceError. Actual: ' + (x || true));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: x || true throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: x || true throw ReferenceError. Actual: ' + (e));  
   }
 }

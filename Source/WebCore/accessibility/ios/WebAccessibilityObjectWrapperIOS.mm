@@ -587,99 +587,92 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     }    
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityTreeAncestor
+static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descendant, const AccessibilityRoleSet& roles)
 {
-    auto matchFunc = [] (const AXCoreObject& object) {
-        AccessibilityRole role = object.roleValue();
-        return role == AccessibilityRole::Tree;
-    };
-
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
-        return parent->wrapper();
-    return nil;
+    auto* ancestor = Accessibility::findAncestor(descendant, false, [&roles] (const auto& object) {
+        return roles.contains(object.roleValue());
+    });
+    return ancestor ? ancestor->wrapper() : nil;
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityDescriptionListAncestor
+- (AccessibilityObjectWrapper *)_accessibilityTreeAncestor
 {
-    auto matchFunc = [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::DescriptionList;
-    };
-    
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Tree });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityListAncestor
+- (AccessibilityObjectWrapper *)_accessibilityDescriptionListAncestor
 {
-    auto matchFunc = [] (const AXCoreObject& object) {
-        AccessibilityRole role = object.roleValue();
-        return role == AccessibilityRole::List || role == AccessibilityRole::ListBox;
-    };
-    
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, WTFMove(matchFunc)))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::DescriptionList });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityArticleAncestor
+- (AccessibilityObjectWrapper *)_accessibilityListAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::DocumentArticle;
-    }))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::List, AccessibilityRole::ListBox });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityLandmarkAncestor
+- (AccessibilityObjectWrapper *)_accessibilityArticleAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [self] (const AXCoreObject& object) {
-        return [self _accessibilityIsLandmarkRole:object.roleValue()];
-    }))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::DocumentArticle });
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityTableAncestor
+- (AccessibilityObjectWrapper *)_accessibilityLandmarkAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        switch (object.roleValue()) {
-        case AccessibilityRole::Table:
-        case AccessibilityRole::TreeGrid:
-        case AccessibilityRole::Grid:
-            return true;
-        default:
-            return false;
-        }
-    }))
-        return parent->wrapper();
-    return nil;
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Document,
+        AccessibilityRole::DocumentArticle,
+        AccessibilityRole::DocumentNote,
+        AccessibilityRole::LandmarkBanner,
+        AccessibilityRole::LandmarkComplementary,
+        AccessibilityRole::LandmarkContentInfo,
+        AccessibilityRole::LandmarkDocRegion,
+        AccessibilityRole::LandmarkMain,
+        AccessibilityRole::LandmarkNavigation,
+        AccessibilityRole::LandmarkRegion,
+        AccessibilityRole::LandmarkSearch });
+}
+
+- (AccessibilityObjectWrapper *)_accessibilityTableAncestor
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Table,
+        AccessibilityRole::TreeGrid,
+        AccessibilityRole::Grid });
 }
 
 - (BOOL)_accessibilityIsInTableCell
 {
-    return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.roleValue() == AccessibilityRole::Cell;
-    }) != nullptr;
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::Cell }) != nullptr;
 }
 
-- (AccessibilityObjectWrapper*)_accessibilityFieldsetAncestor
+- (AccessibilityObjectWrapper *)_accessibilityFieldsetAncestor
 {
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.isFieldset();
-    }))
-        return parent->wrapper();
-    return nil;
-}
-
-- (AccessibilityObjectWrapper*)_accessibilityFrameAncestor
-{
-    auto* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
-        return object.isWebArea();
-    });
-    if (!parent)
+    if (![self _prepareAccessibilityCall])
         return nil;
-    return parent->wrapper();
+
+    auto* ancestor = Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
+        return object.isFieldset();
+    });
+    return ancestor ? ancestor->wrapper() : nil;
+}
+
+- (AccessibilityObjectWrapper *)_accessibilityFrameAncestor
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    return ancestorWithRole(*self.axBackingObject, { AccessibilityRole::WebArea });
 }
 
 - (uint64_t)_accessibilityTraitsFromAncestors
@@ -2354,7 +2347,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
 }
 
-- (NSArray *)stringsForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
+// Returns an array of strings and AXObject wrappers corresponding to the text
+// runs and replacement nodes included in the given range.
+- (NSArray *)contentForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
 {
     auto array = adoptNS([[NSMutableArray alloc] init]);
 
@@ -2396,7 +2391,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         } else {
             if (Node* replacedNode = it.node()) {
                 auto* object = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
-                if (object && !object->accessibilityIsIgnored())
+                if (object)
                     [self _addAccessibilityObject:object toTextMarkerArray:array.get()];
             }
         }
@@ -2422,7 +2417,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return nil;
 
     auto range = makeSimpleRange([startMarker visiblePosition], [endMarker visiblePosition]);
-    return range ? [self stringsForSimpleRange:*range attributed:attributed] : nil;
+    return range ? [self contentForSimpleRange:*range attributed:attributed] : nil;
 }
 
 // FIXME: No reason for this to be a method instead of a function.
@@ -2857,29 +2852,53 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     auto* backingObject = self.axBackingObject;
 
     auto range = backingObject->elementRange();
-    if (!range || range->collapsed())
+    if (!range)
         return nil;
 
-    Vector<std::pair<IntRect, RetainPtr<id>>> lines;
+    Vector<std::pair<IntRect, RetainPtr<NSAttributedString>>> lines;
     auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
     auto rangeEnd = VisiblePosition { makeContainerOffsetPosition(range->end) };
-    while (!start.isNull() && start < rangeEnd) {
+    while (!start.isNull() && start <= rangeEnd) {
         auto end = backingObject->nextLineEndPosition(start);
         if (end <= start)
             break;
 
         auto rect = backingObject->boundsForVisiblePositionRange({start, end});
-        NSArray *content = [self stringsForSimpleRange:*makeSimpleRange(start, end) attributed:YES];
+
+        auto lineRange = makeSimpleRange(start, end);
+        if (!lineRange)
+            break;
+
+        NSArray *content = [self contentForSimpleRange:*lineRange attributed:YES];
         auto text = adoptNS([[NSMutableAttributedString alloc] init]);
         for (id item in content) {
             if ([item isKindOfClass:NSAttributedString.class])
                 [text appendAttributedString:item];
+            else if ([item isKindOfClass:WebAccessibilityObjectWrapper.class]) {
+                NSString *label = static_cast<WebAccessibilityObjectWrapper *>(item).accessibilityLabel;
+                if (!label)
+                    continue;
+
+                auto attributedLabel = adoptNS([[NSAttributedString alloc] initWithString:label]);
+                [text appendAttributedString:attributedLabel.get()];
+            }
         }
         lines.append({rect, text});
 
         start = end;
-        while (isEndOfLine(start))
-            start = start.next();
+        // If start is at a hard breakline "\n", move to the beginning of the next line.
+        while (isEndOfLine(start)) {
+            end = start.next();
+            auto endOfLineRange = makeSimpleRange(start, end);
+            if (!endOfLineRange)
+                break;
+
+            TextIterator it(*endOfLineRange);
+            if (it.atEnd() || it.text().length() != 1 || it.text()[0] != '\n')
+                break;
+
+            start = end;
+        }
     }
 
     if (lines.isEmpty())

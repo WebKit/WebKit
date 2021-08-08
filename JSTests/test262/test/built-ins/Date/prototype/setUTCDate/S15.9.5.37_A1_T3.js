@@ -8,11 +8,11 @@ description: Checking DontEnum attribute
 ---*/
 
 if (Date.prototype.propertyIsEnumerable('setUTCDate')) {
-  $ERROR('#1: The Date.prototype.setUTCDate property has the attribute DontEnum');
+  throw new Test262Error('#1: The Date.prototype.setUTCDate property has the attribute DontEnum');
 }
 
 for (var x in Date.prototype) {
   if (x === "setUTCDate") {
-    $ERROR('#2: The Date.prototype.setUTCDate has the attribute DontEnum');
+    throw new Test262Error('#2: The Date.prototype.setUTCDate has the attribute DontEnum');
   }
 }

@@ -20,7 +20,7 @@ __evaluated = eval("x+1+x==1");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__evaluated !== false) {
-	$ERROR('#1: __evaluated === false. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#1: __evaluated === false. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ __evaluated = eval("1+1+1==1");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__evaluated !== false) {
-	$ERROR('#2: __evaluated === false. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#2: __evaluated === false. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

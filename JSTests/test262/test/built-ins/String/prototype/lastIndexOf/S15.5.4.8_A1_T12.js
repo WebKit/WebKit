@@ -12,7 +12,7 @@ var __instance = new Array('new', 'zoo', 'revue');
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.lastIndexOf('new') !== 0) {
-  $ERROR('#1: __instance = new Array(\'new\',\'zoo\',\'revue\'); __instance.lastIndexOf(\'new\') === 0. Actual: ' + __instance.lastIndexOf('new'));
+  throw new Test262Error('#1: __instance = new Array(\'new\',\'zoo\',\'revue\'); __instance.lastIndexOf(\'new\') === 0. Actual: ' + __instance.lastIndexOf('new'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if (__instance.lastIndexOf('new') !== 0) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__instance.lastIndexOf('zoo') !== 1) {
-  $ERROR('#2: __instance = new Array(\'new\',\'zoo\',\'revue\'); __instance.lastIndexOf(\'zoo\') === 1. Actual: ' + __instance.lastIndexOf('zoo'));
+  throw new Test262Error('#2: __instance = new Array(\'new\',\'zoo\',\'revue\'); __instance.lastIndexOf(\'zoo\') === 1. Actual: ' + __instance.lastIndexOf('zoo'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

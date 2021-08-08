@@ -11,17 +11,17 @@ description: >
 
 //CHECK#0
 if (!(Function.prototype.toString.hasOwnProperty('length'))) {
-  $ERROR('#0: the Function.prototype.toString has length property.');
+  throw new Test262Error('#0: the Function.prototype.toString has length property.');
 }
 
 
 // CHECK#1
 if (Function.prototype.toString.propertyIsEnumerable('length')) {
-  $ERROR('#1: the Function.prototype.toString.length property has the attributes DontEnum');
+  throw new Test262Error('#1: the Function.prototype.toString.length property has the attributes DontEnum');
 }
 
 // CHECK#2
 for (var p in Function.prototype.toString){
   if (p==="length")
-      $ERROR('#2: the Function.prototype.toString.length property has the attributes DontEnum');
+      throw new Test262Error('#2: the Function.prototype.toString.length property has the attributes DontEnum');
 }

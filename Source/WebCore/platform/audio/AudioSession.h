@@ -125,6 +125,9 @@ public:
 
     virtual void setRoutingArbitrationClient(WeakPtr<AudioSessionRoutingArbitrationClient>&& client) { m_routingArbitrationClient = client; }
 
+    static bool shouldManageAudioSessionCategory() { return s_shouldManageAudioSessionCategory; }
+    static void setShouldManageAudioSessionCategory(bool flag) { s_shouldManageAudioSessionCategory = flag; }
+
 protected:
     friend class NeverDestroyed<AudioSession>;
     AudioSession();
@@ -138,6 +141,8 @@ protected:
 
     WeakPtr<AudioSessionRoutingArbitrationClient> m_routingArbitrationClient;
     bool m_active { false }; // Used only for testing.
+
+    static bool s_shouldManageAudioSessionCategory;
 };
 
 class WEBCORE_EXPORT AudioSessionRoutingArbitrationClient {

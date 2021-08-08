@@ -12,6 +12,6 @@ var hex = ["\x41", "\x42", "\x43", "\x44", "\x45", "\x46", "\x47", "\x48", "\x49
 var character = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 for (var index = 0; index <= 25; index++) {
   if (hex[index] !== character[index]) {
-    $ERROR('#' + character[index] + ' ');
+    throw new Test262Error('#' + character[index] + ' ');
   }
 }

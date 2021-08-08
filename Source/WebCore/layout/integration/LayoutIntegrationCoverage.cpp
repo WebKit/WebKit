@@ -637,6 +637,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             return false;
         if (style.boxShadow())
             return false;
+        if (!style.hangingPunctuation().isEmpty())
+            return false;
         return true;
     };
 #endif

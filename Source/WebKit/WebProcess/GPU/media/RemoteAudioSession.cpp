@@ -109,6 +109,7 @@ void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy polic
 
 void RemoteAudioSession::setPreferredBufferSize(size_t size)
 {
+    configuration().preferredBufferSize = size;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
 }
 

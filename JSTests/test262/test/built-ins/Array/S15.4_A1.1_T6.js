@@ -13,21 +13,21 @@ description: Checking for Boolean object
 var x = [];
 x[new Boolean(true)] = 1;
 if (x[1] !== undefined) {
-  $ERROR('#1: x = []; x[new Boolean(true)] = 1; x[1] === undefined. Actual: ' + (x[1]));
+  throw new Test262Error('#1: x = []; x[new Boolean(true)] = 1; x[1] === undefined. Actual: ' + (x[1]));
 }
 
 //CHECK#2
 if (x["true"] !== 1) {
-  $ERROR('#2: x = []; x[true] = 1; x["true"] === 1. Actual: ' + (x["true"]));
+  throw new Test262Error('#2: x = []; x[true] = 1; x["true"] === 1. Actual: ' + (x["true"]));
 }
 
 //CHECK#3
 x[new Boolean(false)] = 0;
 if (x[0] !== undefined) {
-  $ERROR('#3: x = []; x[true] = 1; x[new Boolean(false)] = 0; x[0] === undefined. Actual: ' + (x[0]));
+  throw new Test262Error('#3: x = []; x[true] = 1; x[new Boolean(false)] = 0; x[0] === undefined. Actual: ' + (x[0]));
 }
 
 //CHECK#4
 if (x["false"] !== 0) {
-  $ERROR('#4: x = []; x[false] = 1; x["false"] === 0. Actual: ' + (x["false"]));
+  throw new Test262Error('#4: x = []; x[false] = 1; x["false"] === 0. Actual: ' + (x["false"]));
 }

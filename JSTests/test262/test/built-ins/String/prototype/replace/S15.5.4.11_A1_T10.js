@@ -23,7 +23,7 @@ var __str = "ABB\u0041BABAB";
 if (__str.replace(__obj, function() {
     return x;
   }) !== "undefinedBABABAB") {
-  $ERROR('#1: var x; var __obj = {toString:function(){return "\u0041B";}}; var __str = "ABB\u0041BABAB"; replace(__obj, function(){return x;}) === "undefinedBABABAB". Actual: ' + __str.replace(__obj, function() {
+  throw new Test262Error('#1: var x; var __obj = {toString:function(){return "\u0041B";}}; var __str = "ABB\u0041BABAB"; replace(__obj, function(){return x;}) === "undefinedBABABAB". Actual: ' + __str.replace(__obj, function() {
     return x;
   }));
 }

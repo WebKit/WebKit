@@ -19,10 +19,10 @@ var arrayLike = {
     throw new StopReverse();
   },
   get "9007199254740991" () {
-    $ERROR("Get 9007199254740991");
+    throw new Test262Error("Get 9007199254740991");
   },
   get "9007199254740992" () {
-    $ERROR("Get 9007199254740992");
+    throw new Test262Error("Get 9007199254740992");
   },
   length: 2 ** 53 + 2,
 };

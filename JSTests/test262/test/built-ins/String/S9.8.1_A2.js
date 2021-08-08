@@ -9,10 +9,10 @@ description: +0 and -0 convert to String by explicit transformation
 
 // CHECK#1
 if (String(+0) !== "0") {
-  $ERROR('#1: String(+0) === "0". Actual: ' + (String(+0)));
+  throw new Test262Error('#1: String(+0) === "0". Actual: ' + (String(+0)));
 }
 
 // CHECK#2
 if (String(-0) !== "0") {
-  $ERROR('#2: String(-0) === "0". Actual: ' + (String(-0)));
+  throw new Test262Error('#2: String(-0) === "0". Actual: ' + (String(-0)));
 }

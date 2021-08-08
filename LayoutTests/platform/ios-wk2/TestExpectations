@@ -1074,6 +1074,8 @@ webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogIn
 
 webkit.org/b/225665 http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Slow ]
 
+webkit.org/b/228588 http/tests/appcache/main-resource-redirect-with-sw.html [ Pass Timeout ]
+
 webkit.org/b/153050 http/tests/security/cross-frame-access-custom.html [ Pass Failure ]
 
 webkit.org/b/155201 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
@@ -1409,7 +1411,6 @@ webkit.org/b/208587 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ P
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
 
-webkit.org/b/228038 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Crash ]
 webkit.org/b/228038 [ Debug ] fast/mediastream/apply-constraints-video.html [ Pass Crash ]
 webkit.org/b/228038 media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html [ Pass Crash ]
 webkit.org/b/228038 [ Debug ] media/non-existent-video-playback-interrupted.html  [ Pass Crash ]
@@ -1849,6 +1850,8 @@ webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit
 
 webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ Pass Failure ]
 
+webkit.org/b/228672 fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html [ Pass Timeout ]
+
 http/tests/in-app-browser-privacy/ [ Pass ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
@@ -1881,6 +1884,8 @@ webkit.org/b/228305 [ Debug ] http/tests/xmlhttprequest/access-control-preflight
 
 webkit.org/b/215351 http/wpt/service-workers/module-meta-url-fragment.https.html [ Pass Failure ]
 
+webkit.org/b/228670 http/wpt/service-workers/navigation-redirect-main-frame.https.html [ Pass Timeout ]
+
 webkit.org/b/228165 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Pass Failure ]
 
 webkit.org/b/215398 [ Release ] imported/w3c/web-platform-tests/css/css-images/idlharness.html [ Pass Timeout ]
@@ -1906,7 +1911,7 @@ webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/repl
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-012.html [ ImageOnlyFailure ]
 webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/replaced-element-013.html [ ImageOnlyFailure ]
 
-webkit.org/b/215929 compositing/video/poster.html [ Pass ImageOnlyFailure ]
+webkit.org/b/215929 compositing/video/poster.html [ Pass Timeout ]
 
 webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
 
@@ -1989,10 +1994,6 @@ webkit.org/b/228082 fast/canvas/canvas-overloads-setShadow.html [ Pass Timeout ]
 
 webkit.org/b/228114 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Pass Failure ]
 
-webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Failure ]
-
-webkit.org/b/228168 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html [ Pass Failure ]
-
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
 
 webkit.org/b/227762 [ Debug ] imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
@@ -2001,3 +2002,6 @@ webkit.org/b/226789 imported/w3c/web-platform-tests/webstorage/event_case_sensit
 
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Pass Failure ]
 webkit.org/b/228327 [ Release ] imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Pass Failure ]
+
+webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html [ Pass Timeout ]
+webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Pass Timeout ]

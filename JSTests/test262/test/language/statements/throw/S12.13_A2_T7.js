@@ -25,6 +25,6 @@ try{
 }
 catch(e){
   for (var i=0;i<3;i++){
-    if (e[i]!==mycars[i]) $ERROR('#1.'+i+': Exception['+i+'] === mycars['+i+']. Actual:  Exception['+i+'] ==='+ e[i]  );
+    if (e[i]!==mycars[i]) throw new Test262Error('#1.'+i+': Exception['+i+'] === mycars['+i+']. Actual:  Exception['+i+'] ==='+ e[i]  );
   }
 }

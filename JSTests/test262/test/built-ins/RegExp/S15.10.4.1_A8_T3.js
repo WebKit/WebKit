@@ -13,25 +13,25 @@ var __re = new RegExp({toString:function(){return "[0-9]";}}, (function(){return
 
 //CHECK#1
 if (__re.ignoreCase !== false) {
-	$ERROR('#1: __re = new RegExp({toString:function(){return "[0-9]"; __re.ignoreCase === false. Actual: ' + (__re.ignoreCase));
+	throw new Test262Error('#1: __re = new RegExp({toString:function(){return "[0-9]"; __re.ignoreCase === false. Actual: ' + (__re.ignoreCase));
 }
 
 //CHECK#2
 if (__re.multiline !== true) {
-	$ERROR('#2: __re = new RegExp({toString:function(){return "[0-9]"; __re.multiline === true. Actual: ' + (__re.multiline));
+	throw new Test262Error('#2: __re = new RegExp({toString:function(){return "[0-9]"; __re.multiline === true. Actual: ' + (__re.multiline));
 }
 
 //CHECK#3
 if (__re.global !== false) {
-	$ERROR('#3: __re = new RegExp({toString:function(){return "[0-9]"; __re.global === false. Actual: ' + (__re.global));
+	throw new Test262Error('#3: __re = new RegExp({toString:function(){return "[0-9]"; __re.global === false. Actual: ' + (__re.global));
 }
 
 //CHECK#4
 if (__re.lastIndex !== 0) {
-	$ERROR('#4: __re = new RegExp({toString:function(){return "[0-9]"; __re.lastIndex === 0. Actual: ' + (__re.lastIndex));
+	throw new Test262Error('#4: __re = new RegExp({toString:function(){return "[0-9]"; __re.lastIndex === 0. Actual: ' + (__re.lastIndex));
 }
 
 //CHECK#5
 if (typeof __re.source === "undefined") {
-	$ERROR('#5: __re = new RegExp({toString:function(){return "[0-9]"; typeof __re.source !== "undefined"');
+	throw new Test262Error('#5: __re = new RegExp({toString:function(){return "[0-9]"; typeof __re.source !== "undefined"');
 }

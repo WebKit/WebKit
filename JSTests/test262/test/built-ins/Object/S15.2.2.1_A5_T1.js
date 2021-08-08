@@ -13,27 +13,27 @@ var num = 1.0;
 
 //CHECK#1
 if (typeof num !== 'number') {
-  $ERROR('#1: 1.0 is NOT a number');
+  throw new Test262Error('#1: 1.0 is NOT a number');
 }
 
 var n_obj = new Object(num);
 
 //CHECK#2
 if (n_obj.constructor !== Number) {
-  $ERROR('#2: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#2: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#3
 if (typeof n_obj !== 'object') {
-  $ERROR('#3: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#3: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#4
 if (n_obj != num) {
-  $ERROR('#4: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#4: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#5
 if (n_obj === num) {
-  $ERROR('#5: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#5: When the Object constructor is called with Number argument return ToObject(number)');
 }

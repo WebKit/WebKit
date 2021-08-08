@@ -22,6 +22,6 @@ var basenum = 9;
 
 for (var i = 0; i < basenum; i++) {
   if (Math.pow(base[i], exponent) !== 1) {
-    $ERROR("#1: Math.pow(" + base[i] + ", -0) !== 1");
+    throw new Test262Error("#1: Math.pow(" + base[i] + ", -0) !== 1");
   }
 }

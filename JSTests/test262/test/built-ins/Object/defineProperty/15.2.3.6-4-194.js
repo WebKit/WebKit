@@ -25,7 +25,7 @@ try {
   Object.defineProperty(arrObj, "0", {
     configurable: true
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyEqualTo(arrObj, "0", getFunc());
 
@@ -34,7 +34,7 @@ try {
   verifyNotConfigurable(arrObj, "0");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e.name);
+    throw new Test262Error("Expected TypeError, got " + e.name);
   }
 
 }

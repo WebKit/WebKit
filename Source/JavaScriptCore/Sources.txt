@@ -113,6 +113,7 @@ b3/B3BasicBlock.cpp
 b3/B3BlockInsertionSet.cpp
 b3/B3BottomTupleValue.cpp
 b3/B3BreakCriticalEdges.cpp
+b3/B3CanonicalizePrePostIncrements.cpp
 b3/B3CCallValue.cpp
 b3/B3CaseCollection.cpp
 b3/B3CheckSpecial.cpp

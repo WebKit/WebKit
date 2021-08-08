@@ -36,6 +36,7 @@
 #include "NetworkProcess.h"
 #include "NetworkRTCProviderMessages.h"
 #include "NetworkRTCResolver.h"
+#include "NetworkSession.h"
 #include "RTCPacketOptions.h"
 #include "WebRTCResolverMessages.h"
 #include <WebCore/LibWebRTCMacros.h>
@@ -86,6 +87,9 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_rtcMonitor(*this)
     , m_rtcNetworkThread(rtcNetworkThread())
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(&m_rtcNetworkThread))
+#if PLATFORM(COCOA)
+    , m_sourceApplicationAuditToken(connection.networkProcess().sourceApplicationAuditToken())
+#endif
 {
 #if !RELEASE_LOG_DISABLED
     rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);
@@ -118,6 +122,9 @@ void NetworkRTCProvider::close()
 
     callOnRTCNetworkThread([this]() {
         m_sockets.clear();
+#if PLATFORM(COCOA)
+        m_attributedBundleIdentifiers.clear();
+#endif
     });
 }
 
@@ -132,18 +139,34 @@ void NetworkRTCProvider::createSocket(LibWebRTCSocketIdentifier identifier, std:
     addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), type, WTFMove(connection)));
 }
 
-void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&& domain)
+#if PLATFORM(COCOA)
+const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier)
 {
+    return m_attributedBundleIdentifiers.ensure(pageIdentifier, [&]() -> String {
+        String value;
+        callOnMainRunLoopAndWait([&] {
+            auto* session = m_connection->networkSession();
+            if (session)
+                value = session->attributedBundleIdentifierFromPageIdentifier(pageIdentifier).isolatedCopy();
+        });
+        return value;
+    }).iterator->value;
+}
+#endif
+
+void NetworkRTCProvider::createUDPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort, WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&& domain)
+{
+    ASSERT(m_rtcNetworkThread.IsCurrent());
+
 #if PLATFORM(COCOA)
     if (m_platformUDPSocketsEnabled) {
-        if (auto socket = NetworkRTCUDPSocketCocoa::createUDPSocket(identifier, *this, address.value, minPort, maxPort, m_ipcConnection.copyRef(), isFirstParty, isRelayDisabled, WTFMove(domain))) {
+        if (auto socket = NetworkRTCUDPSocketCocoa::createUDPSocket(identifier, *this, address.value, minPort, maxPort, m_ipcConnection.copyRef(), String(attributedBundleIdentifierFromPageIdentifier(pageIdentifier)), isFirstParty, isRelayDisabled, WTFMove(domain))) {
             addSocket(identifier, WTFMove(socket));
             return;
         }
     }
 #endif
 
-    ASSERT(m_rtcNetworkThread.IsCurrent());
     std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(address.value, minPort, maxPort));
     createSocket(identifier, WTFMove(socket), Socket::Type::UDP, m_ipcConnection.copyRef());
 }
@@ -174,8 +197,19 @@ rtc::ProxyInfo NetworkRTCProvider::proxyInfoFromSession(const RTCNetwork::Socket
 }
 #endif
 
-void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options)
+void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, const RTCNetwork::SocketAddress& localAddress, const RTCNetwork::SocketAddress& remoteAddress, String&& userAgent, int options, WebPageProxyIdentifier pageIdentifier, bool isRelayDisabled)
 {
+    ASSERT(m_rtcNetworkThread.IsCurrent());
+
+#if PLATFORM(COCOA)
+    if (m_platformTCPSocketsEnabled) {
+        if (auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress.value, options, attributedBundleIdentifierFromPageIdentifier(pageIdentifier), isRelayDisabled, m_ipcConnection.copyRef())) {
+            addSocket(identifier, WTFMove(socket));
+            return;
+        }
+    }
+#endif
+
     callOnMainRunLoop([this, protectedThis = makeRef(*this), identifier, localAddress, remoteAddress, userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
         if (!m_connection)
             return;
@@ -186,14 +220,7 @@ void NetworkRTCProvider::createClientTCPSocket(LibWebRTCSocketIdentifier identif
             return;
         }
         callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), proxyInfo = proxyInfoFromSession(remoteAddress, *session), userAgent = WTFMove(userAgent).isolatedCopy(), options]() mutable {
-#if PLATFORM(COCOA)
-            if (m_platformTCPSocketsEnabled) {
-                if (auto socket = NetworkRTCTCPSocketCocoa::createClientTCPSocket(identifier, *this, remoteAddress, options, m_ipcConnection.copyRef())) {
-                    addSocket(identifier, WTFMove(socket));
-                    return;
-                }
-            }
-#endif
+
             rtc::PacketSocketTcpOptions tcpOptions;
             tcpOptions.opts = options;
             std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, proxyInfo, userAgent.utf8().data(), tcpOptions));

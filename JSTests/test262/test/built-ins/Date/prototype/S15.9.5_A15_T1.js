@@ -8,5 +8,5 @@ description: The Date.prototype has the property "getUTCDate"
 ---*/
 
 if (Date.prototype.hasOwnProperty("getUTCDate") !== true) {
-  $ERROR('#1: The Date.prototype has the property "getUTCDate"');
+  throw new Test262Error('#1: The Date.prototype has the property "getUTCDate"');
 }

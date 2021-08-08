@@ -24,5 +24,5 @@ instance = new FACTORY;
 
 //CHECK#1
 if (!(instance instanceof FACTORY)) {
-  $ERROR('#1: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true');
+  throw new Test262Error('#1: If O and V refer to the same object or if they refer to objects joined to each other (13.1.2), return true');
 }

@@ -22,6 +22,6 @@ bases[8] = NaN;
 
 for (var i = 0; i < bases.length; i++) {
   if ((bases[i] ** exponent) !== 1) {
-    $ERROR("(" + bases[i] + " **  " + exponent + ") !== 1");
+    throw new Test262Error("(" + bases[i] + " **  " + exponent + ") !== 1");
   }
 }

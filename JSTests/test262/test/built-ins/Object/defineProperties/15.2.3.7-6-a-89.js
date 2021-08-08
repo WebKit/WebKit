@@ -37,5 +37,5 @@ verifyNotConfigurable(obj, "foo");
 var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
 if (typeof(desc.set) !== "undefined") {
-  $ERROR('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
+  throw new Test262Error('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
 }

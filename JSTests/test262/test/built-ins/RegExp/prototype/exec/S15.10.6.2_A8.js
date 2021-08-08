@@ -11,12 +11,12 @@ description: >
 
 //CHECK#0
 if (RegExp.prototype.exec.hasOwnProperty('length') !== true) {
-  $ERROR('#0: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
+  throw new Test262Error('#0: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
 }
 
  //CHECK#1
 if (RegExp.prototype.exec.propertyIsEnumerable('length') !== false) {
-  $ERROR('#1: RegExp.prototype.exec.propertyIsEnumerable(\'length\') === true');
+  throw new Test262Error('#1: RegExp.prototype.exec.propertyIsEnumerable(\'length\') === true');
 }
 
  //CHECK#2
@@ -27,5 +27,5 @@ for (var p in RegExp.prototype.exec){
 }
 
 if (count !== 0) {
-  $ERROR('#2: count = 0; for (p in RegExp.prototype.exec){ if (p==="length") count++; } count === 0. Actual: ' + (count));
+  throw new Test262Error('#2: count = 0; for (p in RegExp.prototype.exec){ if (p==="length") count++; } count === 0. Actual: ' + (count));
 }

@@ -15,19 +15,19 @@ function f1() {
   this.constructor.prototype.arguments = ARG_STRING;
   return arguments;
 }
-  
+
 //CHECK#1
 if ((new f1(1,2,3,4,5)).length !== 5)
-  $ERROR('#1: (new f1(1,2,3,4,5)).length===5, where f1 returns "arguments" that is set to "'+ ARG_STRING + '"');
+  throw new Test262Error('#1: (new f1(1,2,3,4,5)).length===5, where f1 returns "arguments" that is set to "'+ ARG_STRING + '"');
 
-//CHECK#2  
+//CHECK#2
 if ((new f1(1,2,3,4,5))[3] !== 4)
-  $ERROR('#2: (new f1(1,2,3,4,5))[3]===4, where f1 returns "arguments" that is set to "'+ ARG_STRING + '"');
+  throw new Test262Error('#2: (new f1(1,2,3,4,5))[3]===4, where f1 returns "arguments" that is set to "'+ ARG_STRING + '"');
 
 //CHECK#3
-var x = new f1(1,2,3,4,5); 
+var x = new f1(1,2,3,4,5);
 if (delete x[3] !== true)
-  $ERROR('#3.1: Function parameters have attribute {DontDelete}');
-  
+  throw new Test262Error('#3.1: Function parameters have attribute {DontDelete}');
+
 if (x[3] === 4)
-  $ERROR('#3.2: Function parameters have attribute {DontDelete}');
+  throw new Test262Error('#3.2: Function parameters have attribute {DontDelete}');

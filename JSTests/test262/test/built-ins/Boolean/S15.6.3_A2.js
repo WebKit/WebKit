@@ -11,5 +11,5 @@ description: Checking prototype of the Boolean constructor
 
 //CHECK#1
 if (!(Function.prototype.isPrototypeOf(Boolean))) {
-  $ERROR('#1: the value of the internal [[Prototype]] property of the Boolean constructor is the Function prototype object.');
+  throw new Test262Error('#1: the value of the internal [[Prototype]] property of the Boolean constructor is the Function prototype object.');
 }

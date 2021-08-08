@@ -8,9 +8,9 @@ description: The "length" property of the "getTime" is 0
 ---*/
 
 if (Date.prototype.getTime.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The getTime has a "length" property');
+  throw new Test262Error('#1: The getTime has a "length" property');
 }
 
 if (Date.prototype.getTime.length !== 0) {
-  $ERROR('#2: The "length" property of the getTime is 0');
+  throw new Test262Error('#2: The "length" property of the getTime is 0');
 }

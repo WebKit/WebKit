@@ -16,7 +16,7 @@ delete String.fromCharCode;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__fcc__func(65, 66, 66, 65) !== "ABBA") {
-  $ERROR('#1: __fcc__func = String.fromCharCode; delete String.fromCharCode; __fcc__func(65,66,66,65) === "ABBA". Actual: __fcc__func(65,66,66,65) ===' + __fcc__func(65, 66, 66, 65));
+  throw new Test262Error('#1: __fcc__func = String.fromCharCode; delete String.fromCharCode; __fcc__func(65,66,66,65) === "ABBA". Actual: __fcc__func(65,66,66,65) ===' + __fcc__func(65, 66, 66, 65));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

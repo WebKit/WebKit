@@ -9,10 +9,10 @@ description: Checking RegExp.prototype.exec.length
 
 //CHECK#1
 if (RegExp.prototype.exec.hasOwnProperty("length") !== true) {
-  $ERROR('#1: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
+  throw new Test262Error('#1: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
 }
 
 //CHECK#2
 if (RegExp.prototype.exec.length !== 1) {
-  $ERROR('#2: RegExp.prototype.exec.length === 1. Actual: ' + (RegExp.prototype.exec.length));
+  throw new Test262Error('#2: RegExp.prototype.exec.length === 1. Actual: ' + (RegExp.prototype.exec.length));
 }

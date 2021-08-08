@@ -20,7 +20,7 @@ assert.throws(DummyError, function() {
     }
   };
   var expr = function() {
-    $ERROR("right-hand side expression evaluated");
+    throw new Test262Error("right-hand side expression evaluated");
   };
 
   base[prop] -= expr();

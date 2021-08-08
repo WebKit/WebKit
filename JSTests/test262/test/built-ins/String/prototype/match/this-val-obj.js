@@ -14,7 +14,7 @@ __instance.match = String.prototype.match;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.match(true)[0] !== "true") {
-  $ERROR('#1: __instance = new Object(true); __instance.match = String.prototype.match;  __instance.match(true)[0] === "true". Actual: ' + __instance.match(true)[0]);
+  throw new Test262Error('#1: __instance = new Object(true); __instance.match = String.prototype.match;  __instance.match(true)[0] === "true". Actual: ' + __instance.match(true)[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

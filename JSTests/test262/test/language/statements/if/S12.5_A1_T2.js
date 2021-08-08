@@ -11,39 +11,39 @@ var c=0;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if(!(1))
-	$ERROR('#1.1: 1 in expression is evaluated to true');
+	throw new Test262Error('#1.1: 1 in expression is evaluated to true');
 else
   c++;
-if (c!=1) $ERROR('#1.2: else branch don`t execute');
+if (c!=1) throw new Test262Error('#1.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if(!(true))
-	$ERROR('#2.1: true in expression is evaluated to true');
+	throw new Test262Error('#2.1: true in expression is evaluated to true');
 else
   c++;
-if (c!=2) $ERROR('#2.2: else branch don`t execute');
+if (c!=2) throw new Test262Error('#2.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if(!("1"))
-	$ERROR('#3.1: "1" in expression is evaluated to true');
+	throw new Test262Error('#3.1: "1" in expression is evaluated to true');
 else
   c++;
-if (c!=3) $ERROR('#3.2: else branch don`t execute');
+if (c!=3) throw new Test262Error('#3.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if(!("A"))
-	$ERROR('#4.1: "A" in expression is evaluated to true');
+	throw new Test262Error('#4.1: "A" in expression is evaluated to true');
 else
   c++;
-if (c!=4) $ERROR('#4.2: else branch don`t execute');
+if (c!=4) throw new Test262Error('#4.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////

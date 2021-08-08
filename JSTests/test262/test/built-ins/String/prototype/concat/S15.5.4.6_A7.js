@@ -11,7 +11,7 @@ var __FACTORY = String.prototype.concat;
 
 try {
   var __instance = new __FACTORY;
-  $ERROR('#1: __FACTORY = String.prototype.concat; "__instance = new __FACTORY" lead throwing exception');
+  throw new Test262Error('#1: __FACTORY = String.prototype.concat; "__instance = new __FACTORY" lead throwing exception');
 } catch (e) {
   if (e instanceof Test262Error) throw e;
 }

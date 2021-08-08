@@ -9,10 +9,10 @@ description: Use HORIZONTAL TAB(\u0009 and \t)
 
 // CHECK#1
 if (eval("'\u0009str\u0009ing\u0009'") !== "\u0009str\u0009ing\u0009") {
-  $ERROR('#1: eval("\'\\u0009str\\u0009ing\\u0009\'") === "\\u0009str\\u0009ing\\u0009"');
+  throw new Test262Error('#1: eval("\'\\u0009str\\u0009ing\\u0009\'") === "\\u0009str\\u0009ing\\u0009"');
 }
 
 //CHECK#2
 if (eval("'\tstr\ting\t'") !== "\tstr\ting\t") {
-  $ERROR('#2: eval("\'\\tstr\\ting\\t\'") === "\\tstr\\ting\\t"');
+  throw new Test262Error('#2: eval("\'\\tstr\\ting\\t\'") === "\\tstr\\ting\\t"');
 }

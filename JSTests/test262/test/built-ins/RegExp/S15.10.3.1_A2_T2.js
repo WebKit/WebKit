@@ -15,9 +15,9 @@ var x = 1;
 
 //CHECK#1
 try {
-	$ERROR('#1.1: var x = 1; RegExp(/[a-b]?/, x) throw SyntaxError. Actual: ' + (RegExp(/[a-b]?/, x)));
+	throw new Test262Error('#1.1: var x = 1; RegExp(/[a-b]?/, x) throw SyntaxError. Actual: ' + (RegExp(/[a-b]?/, x)));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: var x = 1; RegExp(/[a-b]?/, x) throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: var x = 1; RegExp(/[a-b]?/, x) throw SyntaxError. Actual: ' + (e));
 	} 
 }

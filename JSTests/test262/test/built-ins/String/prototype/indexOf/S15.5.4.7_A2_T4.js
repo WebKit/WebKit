@@ -10,7 +10,7 @@ description: Call "abcd".indexOf("abcdab",NaN) and check result
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("abcd".indexOf("abcdab", NaN) !== -1) {
-  $ERROR('#1: "abcd".indexOf("abcdab",NaN)===-1. Actual: ' + ("abcd".indexOf("abcdab", NaN)));
+  throw new Test262Error('#1: "abcd".indexOf("abcdab",NaN)===-1. Actual: ' + ("abcd".indexOf("abcdab", NaN)));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -15,5 +15,5 @@ var tostr = Object.prototype.toString();
 
 //CHECK#1
 if (tostr !== "[object Object]") {
-  $ERROR('#1: the value of the internal [[Class]] property of Object prototype object is "Object"');
+  throw new Test262Error('#1: the value of the internal [[Class]] property of Object prototype object is "Object"');
 }

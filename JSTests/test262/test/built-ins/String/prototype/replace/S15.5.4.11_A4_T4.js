@@ -13,7 +13,7 @@ var __pattern = /([a-z]+)([0-9]+)/ig;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str.replace(__pattern, __replFN) !== '12aBc 34dEf') {
-  $ERROR('#1: var __str = "aBc12 dEf34"; var __pattern = /([a-z]+)([0-9]+)/ig; function __replFN() {return arguments[2] + arguments[1];}; __str.replace(__pattern, __replFN)===\'12aBc 34dEf\'. Actual: ' + __str.replace(__pattern, __replFN));
+  throw new Test262Error('#1: var __str = "aBc12 dEf34"; var __pattern = /([a-z]+)([0-9]+)/ig; function __replFN() {return arguments[2] + arguments[1];}; __str.replace(__pattern, __replFN)===\'12aBc 34dEf\'. Actual: ' + __str.replace(__pattern, __replFN));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

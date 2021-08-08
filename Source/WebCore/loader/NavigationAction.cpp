@@ -46,7 +46,9 @@ static GlobalFrameIdentifier createGlobalFrameIdentifier(const Document& documen
 
 NavigationAction::Requester::Requester(const Document& document)
     : m_url { URL { document.url() } }
-    , m_origin { makeRefPtr(document.securityOrigin()) }
+    , m_origin { &document.securityOrigin() }
+    , m_topOrigin { &document.topOrigin() }
+    , m_crossOriginOpenerPolicy { document.crossOriginOpenerPolicy() }
     , m_globalFrameIdentifier(createGlobalFrameIdentifier(document))
 {
 }

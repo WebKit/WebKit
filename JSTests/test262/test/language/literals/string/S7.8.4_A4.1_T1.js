@@ -9,30 +9,30 @@ description: "SingleEscapeSequence :: one of b f n r t v"
 
 //CHECK#1
 if (String.fromCharCode(0x0008) !== "\b") {
-  $ERROR('#1: String.fromCharCode(0x0008) === "\\b"');
+  throw new Test262Error('#1: String.fromCharCode(0x0008) === "\\b"');
 }
 
 //CHECK#2
 if (String.fromCharCode(0x0009) !== "\t") {
-  $ERROR('#2: String.fromCharCode(0x0009) === "\\t"');
+  throw new Test262Error('#2: String.fromCharCode(0x0009) === "\\t"');
 }
 
 //CHECK#3
 if (String.fromCharCode(0x000A) !== "\n") {
-  $ERROR('#3: String.fromCharCode(0x000A) === "\\n"');
+  throw new Test262Error('#3: String.fromCharCode(0x000A) === "\\n"');
 }
 
 //CHECK#4
 if (String.fromCharCode(0x000B) !== "\v") {
-  $ERROR('#4: String.fromCharCode(0x000B) === "\\v"');
+  throw new Test262Error('#4: String.fromCharCode(0x000B) === "\\v"');
 }
 
 //CHECK#5
 if (String.fromCharCode(0x000C) !== "\f") {
-  $ERROR('#5: String.fromCharCode(0x000C) === "\\f"');
+  throw new Test262Error('#5: String.fromCharCode(0x000C) === "\\f"');
 }
 
 //CHECK#6
 if (String.fromCharCode(0x000D) !== "\r") {
-  $ERROR('#6: String.fromCharCode(0x000D) === "\\r"');
+  throw new Test262Error('#6: String.fromCharCode(0x000D) === "\\r"');
 }

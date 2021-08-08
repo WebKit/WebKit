@@ -13,17 +13,17 @@ description: Checking prototype property of the newly created objects
 // CHECK#1
 var x1 = new Number(1);
 if (typeof x1.constructor.prototype !== "object") {
-  $ERROR('#1: typeof x1.constructor.prototype === "object"');
+  throw new Test262Error('#1: typeof x1.constructor.prototype === "object"');
 }
 
 //CHECK#2
 var x2 = new Number(2);
 if (!Number.prototype.isPrototypeOf(x2)) {
-  $ERROR('#2: Number.prototype.isPrototypeOf(x2)');
+  throw new Test262Error('#2: Number.prototype.isPrototypeOf(x2)');
 }
 
 //CHECK#3
 var x3 = new Number(3);
 if (Number.prototype !== x3.constructor.prototype) {
-  $ERROR('#3: Number.prototype === x3.constructor.prototype');
+  throw new Test262Error('#3: Number.prototype === x3.constructor.prototype');
 }

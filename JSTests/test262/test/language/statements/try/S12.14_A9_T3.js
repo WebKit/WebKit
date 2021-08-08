@@ -27,10 +27,10 @@ do{
 }
 while(c1<2);
 if(fin!==1){
-  $ERROR('#1.1: "finally" block must be evaluated');
+  throw new Test262Error('#1.1: "finally" block must be evaluated');
 }
 if(c1!==1){
-  $ERROR('#1.2: "try{break}catch finally" must work correctly');
+  throw new Test262Error('#1.2: "try{break}catch finally" must work correctly');
 }
 
 // CHECK#2
@@ -51,10 +51,10 @@ do{
 }
 while(c2<2);
 if(fin2!==1){
-  $ERROR('#2.1: "finally" block must be evaluated');
+  throw new Test262Error('#2.1: "finally" block must be evaluated');
 }
 if(c2!==1){
-  $ERROR('#2.2: "try catch{break} finally" must work correctly');
+  throw new Test262Error('#2.2: "try catch{break} finally" must work correctly');
 }
 
 // CHECK#3
@@ -75,10 +75,10 @@ do{
 }
 while(c3<2);
 if(fin3!==1){
-  $ERROR('#3.1: "finally" block must be evaluated');
+  throw new Test262Error('#3.1: "finally" block must be evaluated');
 }
 if(c3!==1){
-  $ERROR('#3.2: "try catch finally{break}" must work correctly');
+  throw new Test262Error('#3.2: "try catch finally{break}" must work correctly');
 }
 
 // CHECK#4
@@ -96,10 +96,10 @@ do{
 }
 while(c4<2);
 if(fin4!==1){
-  $ERROR('#4.1: "finally" block must be evaluated');
+  throw new Test262Error('#4.1: "finally" block must be evaluated');
 }
 if(c4!==1){
-  $ERROR('#4.2: "try{break} finally" must work correctly');
+  throw new Test262Error('#4.2: "try{break} finally" must work correctly');
 }
 
 // CHECK#5
@@ -114,7 +114,7 @@ do{
 }
 while(c5<2);
 if(c5!==0){
-  $ERROR('#5: "try catch{break}" must work correctly');
+  throw new Test262Error('#5: "try catch{break}" must work correctly');
 }
 
 // CHECK#6
@@ -129,7 +129,7 @@ do{
 }
 while(c6<2);
 if(c6!==1){
-  $ERROR('#6: "try{break} catch" must work correctly');
+  throw new Test262Error('#6: "try{break} catch" must work correctly');
 }
 
 // CHECK#7
@@ -153,8 +153,8 @@ catch(ex1){
   c7=10;
 }
 if(fin7!==1){
-  $ERROR('#7.1: "finally" block must be evaluated');
+  throw new Test262Error('#7.1: "finally" block must be evaluated');
 }
 if(c7!==1){
-  $ERROR('#7.2: try finally{break} error');
+  throw new Test262Error('#7.2: try finally{break} error');
 }

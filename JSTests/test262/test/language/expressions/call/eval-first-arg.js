@@ -13,5 +13,5 @@ description: eval("x = 1", "x = 2"), x equal 1, not 2
 var x;
 eval("x = 1", "x = 2");
 if (x !== 1) {
-  $ERROR('#1: eval("x = 1", "x = 2"); x === 1. Actual: ' + (x));
+  throw new Test262Error('#1: eval("x = 1", "x = 2"); x === 1. Actual: ' + (x));
 }

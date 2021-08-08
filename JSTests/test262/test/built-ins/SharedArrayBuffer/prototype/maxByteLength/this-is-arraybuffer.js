@@ -26,7 +26,7 @@ assert.throws(TypeError, function() {
   getter.call(ab);
 }, "`this` cannot be an ArrayBuffer");
 
-Object.defineProperties(sab, { maxByteLength: maxByteLength });
+Object.defineProperties(ab, { maxByteLength: maxByteLength });
 
 assert.throws(TypeError, function() {
   ab.maxByteLength;

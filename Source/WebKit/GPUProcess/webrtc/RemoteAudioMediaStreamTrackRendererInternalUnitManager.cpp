@@ -65,6 +65,7 @@ private:
     Ref<IPC::Connection> m_connection;
     UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> m_localUnit;
     uint64_t m_readOffset { 0 };
+    uint64_t m_generateOffset { 0 };
     uint64_t m_frameChunkSize { 0 };
     IPC::Semaphore m_renderSemaphore;
 #if PLATFORM(COCOA)
@@ -149,6 +150,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start(const S
         stop();
 
     m_readOffset = 0;
+    m_generateOffset = 0;
     m_isPlaying = true;
     m_ringBuffer = WebCore::CARingBuffer::adoptStorage(makeUniqueRef<ReadOnlySharedRingBufferStorage>(handle), description, numberOfFrames).moveToUniquePtr();
     m_renderSemaphore = WTFMove(semaphore);
@@ -177,8 +179,10 @@ OSStatus RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::render(si
         status = noErr;
     }
 
-    for (unsigned i = 0; i < sampleCount; i += m_frameChunkSize)
+    auto requestedSamplesCount = m_generateOffset;
+    for (; requestedSamplesCount < sampleCount; requestedSamplesCount += m_frameChunkSize)
         m_renderSemaphore.signal();
+    m_generateOffset = requestedSamplesCount - sampleCount;
 
     return status;
 }

@@ -1176,7 +1176,7 @@ private:
 
     void registerChannel(const SecurityOriginData&, const String&, BroadcastChannelIdentifier) final { }
     void unregisterChannel(const SecurityOriginData&, const String&, BroadcastChannelIdentifier) final { }
-    void postMessage(const SecurityOriginData&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&) final { }
+    void postMessage(const SecurityOriginData&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
 PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)

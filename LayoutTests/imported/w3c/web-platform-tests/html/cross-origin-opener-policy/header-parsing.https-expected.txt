@@ -16,11 +16,11 @@ PASS unspecified document opening popup to https://localhost:9443 with COOP: "$s
 PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin same-origin"
 PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin,same-origin"
 PASS unspecified document opening popup to https://localhost:9443 with COOP: "*same-origin "
-FAIL unspecified document opening popup to https://localhost:9443 with COOP: " same-origin" assert_equals: name expected "" but got "unspecified_to_SAME_ORIGIN_-same-origin"
-FAIL unspecified document opening popup to https://localhost:9443 with COOP: "same-origin " assert_equals: name expected "" but got "unspecified_to_SAME_ORIGIN_same-origin-"
-FAIL unspecified document opening popup to https://localhost:9443 with COOP: "\tsame-origin" assert_equals: name expected "" but got "unspecified_to_SAME_ORIGIN_\tsame-origin"
-FAIL unspecified document opening popup to https://localhost:9443 with COOP: "same-origin\t" assert_equals: name expected "" but got "unspecified_to_SAME_ORIGIN_same-origin\t"
-FAIL unspecified document opening popup to https://localhost:9443 with COOP: "same-origin;same-origin" assert_equals: name expected "" but got "unspecified_to_SAME_ORIGIN_same-origin;same-origin"
-FAIL unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; foo=bar" assert_equals: name expected "" but got "unspecified_to_SAME_ORIGIN_same-origin;-foo=bar"
+PASS unspecified document opening popup to https://localhost:9443 with COOP: " same-origin"
+PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin "
+PASS unspecified document opening popup to https://localhost:9443 with COOP: "\tsame-origin"
+PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin\t"
+PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin;same-origin"
+PASS unspecified document opening popup to https://localhost:9443 with COOP: "same-origin; foo=bar"
 PASS unspecified document opening popup to https://localhost:9443 with repeated COOP header
 

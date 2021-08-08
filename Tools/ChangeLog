@@ -1,3 +1,284 @@
+2021-08-02  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] RemoteAudioSession::setPreferredBufferSize() does not change its preferredBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=228720
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        (TEST_F):
+
+2021-08-02  Alex Christensen  <achristensen@webkit.org>
+
+        Don't change invalid baseURLs from loadData or loadHTMLString to about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=228717
+        <rdar://79909343>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadAlternateHTMLString.mm:
+        (TEST):
+
+2021-08-02  Kevin Neal  <kevin_neal@apple.com>
+
+        [results.webkit.org] Fix incorrect conditional check
+        https://bugs.webkit.org/show_bug.cgi?id=228666
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+
+2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedRef
+        https://bugs.webkit.org/show_bug.cgi?id=227164
+
+        Reviewed by Geoffrey Garen.
+
+        Added some unit tests for CheckedRef and updated the unit tests
+        for CheckedPtr per the removal of makeCheckedPtr.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CheckedPtr.cpp:
+        (WTF_CheckedPtr.CheckedRef): Added
+        * TestWebKitAPI/Tests/WTF/CheckedRef.cpp: Added.
+        (TestWebKitAPI..CheckedObject): Added.
+        (TestWebKitAPI..DerivedCheckedObject): Added.
+        (WTF_CheckedRef.Basic): Added.
+        (WTF_CheckedRef.DerivedClass): Added.
+        (WTF_CheckedRef.HashSet): Added.
+
+2021-08-02  Russell Epstein  <repstein@apple.com>
+
+        Add basestring compatibility for Python3 in webkitcorepy.
+        https://bugs.webkit.org/show_bug.cgi?id=228707
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bumped version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/string_utils.py: Added
+        basestring compatibility for Python3.
+
+2021-08-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Make CORS allowlist test wait for promise resolution
+        https://bugs.webkit.org/show_bug.cgi?id=228695
+
+        Reviewed by Michael Catanzaro.
+
+        r278456 introduced a CORS allow list test that tries to fetch a
+        resource using the fetch() function, which returns a promise. This is
+        working on GTK but in WPE the test fails as the promise is not yet
+        resolved by the time the test variable is checked.
+
+        This commit changes the test to actually report the promise failure
+        through catch() and wait for its resolution before checking the values.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewCORSAllowlist):
+
+2021-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] Clean up IndexedDB files between tests
+        https://bugs.webkit.org/show_bug.cgi?id=228692
+
+        Reviewed by Ryosuke Niwa.
+
+        storage/indexeddb/getdatabases.html was failing because it counted
+        up the remaining databases of previous tests.
+
+        Mac DRT removes IndexedDB after the testing (Bug 192796, r240358).
+        Win DRT also should do it.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Call TestRunner::clearAllDatabases after the testing.
+
+2021-07-31  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        Add myself (Alexander Mikhaylenko) to contributors.json as a committer
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2021-07-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Forward errors from log and blame
+        https://bugs.webkit.org/show_bug.cgi?id=228621
+        <rdar://problem/81297642>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.main): If the exit code is non-zero, print all errors.
+
+2021-07-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Not all platforms support more -F
+        https://bugs.webkit.org/show_bug.cgi?id=228619
+        <rdar://problem/81296290>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.pager): Only pass -F to more on Darwin.
+
+2021-07-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][GTK] build broken with python2 after r280382
+        https://bugs.webkit.org/show_bug.cgi?id=228629
+
+        Reviewed by Philippe Normand.
+
+        Fix compatibility with python2.
+
+        * glib/apply-build-revision-to-files.py:
+        (main):
+
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Handle relative paths in filtered commands
+        https://bugs.webkit.org/show_bug.cgi?id=228606
+        <rdar://problem/81289748>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.pager): Child process should use the same current working directory.
+        (FilteredCommand.main): Convert any file names to their absolute paths.
+
+2021-07-29  Tim Horton  <timothy_horton@apple.com>
+
+        Simplify ImageDiff SDK logic
+        https://bugs.webkit.org/show_bug.cgi?id=228603
+        <rdar://problem/81281548>
+
+        Reviewed by Sam Weinig.
+
+        * ImageDiff/Makefile:
+        For any non-macOS SDK, build a macOS ImageDiff (because we use it on the host, not the target).
+
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Return remote objects from remote() function
+        https://bugs.webkit.org/show_bug.cgi?id=226980
+        <rdar://problem/79299760>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.url): Add function to return remote url directly.
+        (Git.remote): Construct the appropriate remote object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.url): Add function to return the remote url directly.
+        (Svn.remote): Construct the appropriate remote object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_url):
+        (TestGit.test_remote):
+        (TestGit.test_remote_github):
+        (TestGit.test_remote_bitbucket):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_url):
+        (TestLocalSvn.test_remote):
+
+2021-07-29  Peng Liu  <peng.liu6@apple.com>
+
+        [Catalina][GPUP] Some API tests fail after GPU Process features are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228589
+
+        Reviewed by Aakash Jain.
+
+        Disable a few API tests while the investigation is ongoing.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/AudioBufferSize.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlaying.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        (TEST_F):
+
+2021-07-29  Aakash Jain  <aakash_jain@apple.com>
+
+        Send email notification when VerifyGitHubIntegrity step fails
+        https://bugs.webkit.org/show_bug.cgi?id=228592
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/emails.json:
+        * CISupport/ews-build/send_email.py:
+        (send_email_to_github_admin):
+        * CISupport/ews-build/steps.py:
+        (VerifyGitHubIntegrity):
+        (VerifyGitHubIntegrity.evaluateCommand):
+        (VerifyGitHubIntegrity.send_email_for_github_issue):
+
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add identifiers to 'log' and 'blame'
+        https://bugs.webkit.org/show_bug.cgi?id=228027
+        <rdar://problem/80691164>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.from_path): Pass all kwargs to local SCM object.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Blame and Log commands.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/blame.py: Added.
+        (Blame): Invoke pager.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand): Shared command that handles replace hashes/revisions in
+        an SCM command with identifiers.
+        (FilteredCommand.parser): Allow user to change the prefered commit representation.
+        (FilteredCommand.pager): Pass output through more if called from a terminal.
+        (FilteredCommand.main): Modify output of provided command to replace commit representation
+        with the preffered commit representation.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/log.py: Added.
+        (Log): Invoke pager.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/log_unittest.py: Added.
+        (TestLog):
+        (TestLog.setUp):
+        (TestLog.test_git):
+        (TestLog.test_git_svn):
+        (TestLog.test_git):
+
+2021-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Catch AttributeError when getting password
+        https://bugs.webkit.org/show_bug.cgi?id=228590
+        <rdar://problem/81278799>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Catch AttributeError.
+
+2021-07-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] VerifyGitHubIntegrity step fails with an exception
+        https://bugs.webkit.org/show_bug.cgi?id=228587
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (VerifyGitHubIntegrity): Fixed the base class.
+        (VerifyGitHubIntegrity.getResultSummary): Drive-by fix to improve error message.
+        * CISupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2021-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] .asc file extension is appended to filename of text/plain downloads

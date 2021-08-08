@@ -42,6 +42,7 @@
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/HexNumber.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
@@ -378,8 +379,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
 
     auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
     m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [weakThis = makeWeakPtr(this), size](auto didSucceed) {
-        if (weakThis)
+        if (weakThis) {
+#if !RELEASE_LOG_DISABLED
+            if (weakThis->m_sampleBufferDisplayLayer)
+                weakThis->m_sampleBufferDisplayLayer->setLogIdentifier(makeString(hex(reinterpret_cast<uintptr_t>(weakThis->logIdentifier()))));
+#endif
             weakThis->layersAreInitialized(size, didSucceed);
+        }
     });
 }
 
@@ -871,6 +877,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
             if (m_sampleBufferDisplayLayer && m_activeVideoTrack->streamTrack().source().isCaptureSource())
                 m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
             m_activeVideoTrack->streamTrack().source().addVideoSampleObserver(*this);
+            ALWAYS_LOG(LOGIDENTIFIER, "observing video source ", m_activeVideoTrack->streamTrack().logIdentifier());
         }
     }
 }

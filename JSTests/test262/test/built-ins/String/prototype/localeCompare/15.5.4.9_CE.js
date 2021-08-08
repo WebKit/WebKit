@@ -56,7 +56,7 @@ if ("a".localeCompare("Z") < 0) {
   for (i = 0; i < pairs.length; i++) {
     var pair = pairs[i];
     if (pair[0].localeCompare(pair[1]) !== 0) {
-      $ERROR("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
+      throw new Test262Error("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
         ") ≠ " + pair[1] + " (" + toU(pair[1]) + ").");
     }
   }
@@ -66,7 +66,7 @@ if ("a".localeCompare("Z") < 0) {
   for (i = 0; i < pairs.length; i++) {
     var pair = pairs[i];
     if (pair[0].localeCompare(pair[1]) === 0) {
-      $ERROR("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
+      throw new Test262Error("String.prototype.localeCompare considers " + pair[0] + " (" + toU(pair[0]) +
         ") = " + pair[1] + " (" + toU(pair[1]) + ").");
     }
   }

@@ -25,10 +25,10 @@ description: >
 //CHECK#1
 try {
    eval("/a\u2028/").source;
-   $ERROR('#1.1: RegularExpressionChar :: Line separator is incorrect. Actual: ' + (eval("/a\u2028/").source));
+   throw new Test262Error('#1.1: RegularExpressionChar :: Line separator is incorrect. Actual: ' + (eval("/a\u2028/").source));
 }
 catch (e) {
   if ((e instanceof SyntaxError) !== true) {
-     $ERROR('#1.2: RegularExpressionChar :: Line separator is incorrect. Actual: ' + (e));
+     throw new Test262Error('#1.2: RegularExpressionChar :: Line separator is incorrect. Actual: ' + (e));
   }
 }

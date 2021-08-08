@@ -14,5 +14,5 @@ if (x === 1)
 else
   Date.prototype.getMilliseconds = 1;
 if (Date.prototype.getMilliseconds === x) {
-  $ERROR('#1: The Date.prototype.getMilliseconds has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getMilliseconds has not the attribute ReadOnly');
 }

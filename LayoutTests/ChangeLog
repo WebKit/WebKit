@@ -1,3 +1,1012 @@
+2021-08-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden some passing tests
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/vorbis container support
+        https://bugs.webkit.org/show_bug.cgi?id=228139
+        rdar://80883073
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/TestExpectations:
+        * webaudio/decode-audio-data-webm-vorbis-expected.txt: Added.
+        * webaudio/decode-audio-data-webm-vorbis.html: Added.
+
+2021-08-02  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS iPad ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228718.
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
+2021-08-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some failures and removing deprecated baseline.
+
+        Unreviewed test gardening.
+
+        Also unified skips for tests loading pdf as img.src.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution-expected.txt: Removed.
+
+2021-08-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ MacOS wk2 ] compositing/video/video-object-fit.html is a flaky timeout on EWS.
+        https://bugs.webkit.org/show_bug.cgi?id=228713
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Calling unobserve on ResizeObserver should not clear existing observations in active targets
+        https://bugs.webkit.org/show_bug.cgi?id=228693
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test.
+
+        * resize-observer/resize-observer-keeps-element-of-queued-entry-alive-expected.txt: Added.
+        * resize-observer/resize-observer-keeps-element-of-queued-entry-alive.html: Added.
+
+2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r279800): IntersectionObserver may never get a delivery of an observation if the element has been unobserved and is disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=228679
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test.
+
+        * intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive-expected.txt: Added.
+        * intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive.html: Added.
+
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Use iBeam cursor when hovering over selectable text inside image links
+        https://bugs.webkit.org/show_bug.cgi?id=228700
+        rdar://81210248
+
+        Reviewed by Tim Horton.
+
+        Add a layout test that hovers over Live Text in several different image elements, and checks their respective
+        cursor types.
+
+        * fast/images/text-recognition/mac/cursor-types-for-recognized-text-expected.txt: Added.
+        * fast/images/text-recognition/mac/cursor-types-for-recognized-text.html: Added.
+
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that is no longer flaky.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (Safari 15): Unable to repaint canvases with software filters when GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228682
+        rdar://79699997
+
+        Reviewed by Simon Fraser.
+
+        * css3/filters/canvas-with-filter-after-repaint-expected.html: Added.
+        * css3/filters/canvas-with-filter-after-repaint.html: Added.
+
+2021-08-02  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Mac wk1 ] imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228704.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-08-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ] fast/canvas/canvas-color-space-display-p3.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=228663
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
+2021-08-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228672
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-08-02  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r273072): Images do not layout correctly on walmart.com/grocery
+        https://bugs.webkit.org/show_bug.cgi?id=228656
+        <rdar://80418083>
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/flexbox/flex-with-min-max-height-expected.html: Added.
+        * fast/flexbox/flex-with-min-max-height.html: Added.
+
+2021-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for [WebAccessibilityObjectWrapper lineRectsAndText] to properly handle replacement nodes and SVG text.
+        https://bugs.webkit.org/show_bug.cgi?id=228336
+        <rdar://problem/81172124>
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        - Expanded this test to cover the case of an image element and SVG text.
+        - Added the test case of a paragraph with soft linebreaks.
+
+        * accessibility/ios-simulator/element-line-rects-and-text-expected.txt:
+        * accessibility/ios-simulator/element-line-rects-and-text.html:
+
+2021-08-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2021-07-31  Martin Robinson  <mrobinson@webkit.org>
+
+        REGRESSION(r279564): [GTK] Mouse wheel scrolling scrolls too little (take two)
+        https://bugs.webkit.org/show_bug.cgi?id=228572
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/gtk/fast/scrolling/scroll-wheel-repeated-events-expected.txt: Added.
+        * platform/gtk/fast/scrolling/scroll-wheel-repeated-events.html: Added.
+
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Move DOM-unrelated tests out of fast/regex/dom
+        https://bugs.webkit.org/show_bug.cgi?id=228661
+
+        Reviewed by Saam Barati.
+
+        By moving to fast/regex/, we can run them from JSC tests too.
+
+        * fast/regex/lastIndex-expected.txt: Renamed from LayoutTests/fast/regex/dom/lastIndex-expected.txt.
+        * fast/regex/lastIndex.html: Renamed from LayoutTests/fast/regex/dom/lastIndex.html.
+        * fast/regex/non-pattern-characters-expected.txt: Renamed from LayoutTests/fast/regex/dom/non-pattern-characters-expected.txt.
+        * fast/regex/non-pattern-characters.html: Renamed from LayoutTests/fast/regex/dom/non-pattern-characters.html.
+        * fast/regex/script-tests/lastIndex.js: Renamed from LayoutTests/fast/regex/dom/script-tests/lastIndex.js.
+        * fast/regex/script-tests/non-pattern-characters.js: Renamed from LayoutTests/fast/regex/dom/script-tests/non-pattern-characters.js.
+        * fast/regex/script-tests/unicodeCaseInsensitive.js: Renamed from LayoutTests/fast/regex/dom/script-tests/unicodeCaseInsensitive.js.
+        * fast/regex/unicodeCaseInsensitive-expected.txt: Renamed from LayoutTests/fast/regex/dom/unicodeCaseInsensitive-expected.txt.
+        * fast/regex/unicodeCaseInsensitive.html: Renamed from LayoutTests/fast/regex/dom/unicodeCaseInsensitive.html.
+
+2021-07-30  Sihui Liu  <sihui_liu@apple.com>
+
+        [ macOS wk2 ARM 64 ] storage/indexeddb/IDBObject-leak.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223453
+        <rdar://problem/75580609>
+
+        Reviewed by Youenn Fablet.
+
+        As JavaScriptCore uses conservative GC, transaction may be still be alive after one gc call, so we should invoke
+        gc multiple times.
+
+        Also, this patch renames IDBObject-leak.html to database-transaction-cycle.html to better indicate what it is
+        testing.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * storage/indexeddb/IDBObject-leak-expected.txt: Removed.
+        * storage/indexeddb/IDBObject-leak.html: Removed.
+        * storage/indexeddb/database-transaction-cycle-expected.txt: Added.
+        * storage/indexeddb/database-transaction-cycle.html: Added.
+        * storage/indexeddb/resources/database-transaction-cycle-iframe.html: Added.
+
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [css-overflow] Implement clip value for overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198230
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for 'Cross-Origin-Opener-Policy' HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=192193
+        <rdar://problem/42013525>
+
+        Reviewed by Geoff Garen.
+
+        Update test expectations.
+
+        * TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac/TestExpectations:
+
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] http/wpt/service-workers/navigation-redirect-main-frame.https.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228670
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r280482.
+
+        Will take a more conservative approach
+
+        Reverted changeset:
+
+        "HTMLElement.innerText setter should convert new lines to
+        <br>"
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+        https://commits.webkit.org/r280482
+
+2021-07-30  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION (r274460?): Infinite recursion on fullscreen/full-screen-remove-ancestor.html in WTR::InjectedBundlePage::closeFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=224085
+        rdar://75576840
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations: re-enable test.
+
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ] fast/canvas/canvas-color-space-display-p3.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=228663
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Debug ] fast/events/tabindex-focus-blur-all.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=228659
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        REGRESSION (r275641): [ iPad Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html is asserting.
+        https://bugs.webkit.org/show_bug.cgi?id=228622
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
+2021-07-30  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ] Rebaselining fast/dom/collection-iterators.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228657
+
+        Unreviewed test gardening.
+
+        * platform/ipad/fast/dom/collection-iterators-expected.txt: Added.
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Document's fallback base URL should be deduced from its creator when URL is about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=228624
+
+        Reviewed by Geoffrey Garen.
+
+        Update existing tests to reflect behavior change. I have verified that those tests were failing in Firefox & Chrome and
+        are now passing in those browsers.
+
+        * http/tests/dom/iframe-no-src-local-origin-allow-expected.txt: Renamed from LayoutTests/fast/frames/iframe-no-src-local-origin-allow-expected.txt.
+        * http/tests/dom/iframe-no-src-local-origin-allow.html: Renamed from LayoutTests/fast/frames/iframe-no-src-local-origin-allow.html.
+        * http/tests/dom/iframe-no-src-set-location-expected.txt: Renamed from LayoutTests/fast/frames/iframe-no-src-set-location-expected.txt.
+        * http/tests/dom/iframe-no-src-set-location.html: Renamed from LayoutTests/fast/frames/iframe-no-src-set-location.html.
+        * http/tests/dom/resources/iframe-no-src-set-location-pass.html: Renamed from LayoutTests/fast/frames/resources/iframe-no-src-set-location-pass.html.
+        * http/tests/security/aboutBlank/security-context-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-write-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical-expected.txt:
+        * http/tests/security/aboutBlank/security-context-window-open-expected.txt:
+        * http/tests/security/aboutBlank/security-context-with-base-tag-expected.txt:
+        * http/tests/security/aboutBlank/security-context-write-expected.txt:
+        * http/tests/security/aboutBlank/security-context-writeln-expected.txt:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a few tests that changed output.
+
+        * editing/pasteboard/smart-paste-paragraph-003-expected.txt:
+        * platform/mac/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/mac/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/mac/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/mac/fast/forms/textarea-width-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+
+2021-07-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html is a Flaky Failure
+        https://bugs.webkit.org/show_bug.cgi?id=201481
+        <rdar://problem/55046055>
+
+        Reviewed by Youenn Fablet.
+
+        The test always passes now according to recent results, but it is shown as failed as TEXT because of the
+        expectation.
+
+        * platform/mac/TestExpectations:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Clicking an HTMLLinkElement should not trigger a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=228618
+
+        Reviewed by Sam Weinig.
+
+        Update existing tests to reflect behavior change. I verified that the tests were failing
+        in both Firefox and Chrome prior to me updating them.
+
+        * fast/dom/html-link-element-activation-behavior-on-element-click-expected.txt:
+        * fast/dom/html-link-element-activation-behavior-on-element-click.html:
+        * fast/dom/html-link-element-activation-behavior-on-mouse-click-expected.txt:
+        * fast/dom/html-link-element-activation-behavior-on-mouse-click.html:
+        * fast/dom/resources/html-link-element-activation-behavior-on-element-click-step1.html:
+        * fast/dom/resources/html-link-element-activation-behavior-on-mouse-click-step1.html:
+        * fast/dom/resources/html-link-element-activation-behavior-target.html:
+
+2021-07-30  Dean Jackson  <dino@apple.com>
+
+        [Media Controls] Add an option for having no scrubber on the time control and parameterize margin
+        https://bugs.webkit.org/show_bug.cgi?id=228633
+        rdar://81314458
+
+        Reviewed by Tim Horton.
+
+        Make sure the TimeControls element is in the document so its computed style
+        can be read.
+
+        * media/modern-media-controls/time-control/time-control.html:
+
+2021-07-30  Eric Hutchison  <ehutchison@apple.com>
+
+        [ BigSur Release wk2 arm64] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228644.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-07-30  Eric Hutchison  <ehutchison@apple.com>
+
+        Updated test expectations for imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228197.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-07-30  Eric Hutchison  <ehutchison@apple.com>
+
+        imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html is a flaky failure .
+        https://bugs.webkit.org/show_bug.cgi?id=228642.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-07-30  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac Debug] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.tentative.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228640.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [AspectRatio] Fix replaced-element-034.html
+        https://bugs.webkit.org/show_bug.cgi?id=228223
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations:
+
+2021-07-29  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Missing playing events when the ready state becomes HAVE_FUTURE_DATA/HAVE_ENOUGH_DATA from HAVE_METADATA state
+        https://bugs.webkit.org/show_bug.cgi?id=228531
+
+        Reviewed by Eric Carlson.
+
+        Added the testcase to checks if the playing event is fired correctly on the ready state changes.
+
+        * media/media-source/media-source-monitor-playing-event-expected.txt: Added.
+        * media/media-source/media-source-monitor-playing-event.html: Added.
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        * TestExpectations:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * inspector/canvas/create-context-webgpu-expected.txt: Removed.
+        * inspector/canvas/create-context-webgpu.html: Removed.
+        * inspector/canvas/requestClientNodes-webgpu-expected.txt: Removed.
+        * inspector/canvas/requestClientNodes-webgpu.html: Removed.
+        * inspector/canvas/requestShaderSource-webgpu-expected.txt: Removed.
+        * inspector/canvas/requestShaderSource-webgpu.html: Removed.
+        * inspector/canvas/resolveContext-webgpu-expected.txt: Removed.
+        * inspector/canvas/resolveContext-webgpu.html: Removed.
+        * inspector/canvas/shaderProgram-add-remove-webgpu-expected.txt: Removed.
+        * inspector/canvas/shaderProgram-add-remove-webgpu.html: Removed.
+        * inspector/canvas/updateShader-webgpu-expected.txt: Removed.
+        * inspector/canvas/updateShader-webgpu-sharedVertexFragment-expected.txt: Removed.
+        * inspector/canvas/updateShader-webgpu-sharedVertexFragment.html: Removed.
+        * inspector/canvas/updateShader-webgpu.html: Removed.
+        * platform/glib/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * webgpu/bind-groups-expected.txt: Removed.
+        * webgpu/bind-groups.html: Removed.
+        * webgpu/blend-color-triangle-strip-expected.html: Removed.
+        * webgpu/blend-color-triangle-strip.html: Removed.
+        * webgpu/blend-triangle-strip-expected.html: Removed.
+        * webgpu/blend-triangle-strip.html: Removed.
+        * webgpu/blit-commands-expected.html: Removed.
+        * webgpu/blit-commands-texture-to-texture-expected.html: Removed.
+        * webgpu/blit-commands-texture-to-texture.html: Removed.
+        * webgpu/blit-commands.html: Removed.
+        * webgpu/buffer-command-buffer-races-expected.html: Removed.
+        * webgpu/buffer-command-buffer-races.html: Removed.
+        * webgpu/buffer-errors-expected.txt: Removed.
+        * webgpu/buffer-errors.html: Removed.
+        * webgpu/color-write-mask-triangle-strip-expected.html: Removed.
+        * webgpu/color-write-mask-triangle-strip.html: Removed.
+        * webgpu/command-buffers-expected.txt: Removed.
+        * webgpu/command-buffers.html: Removed.
+        * webgpu/compute-pipeline-errors-expected.txt: Removed.
+        * webgpu/compute-pipeline-errors.html: Removed.
+        * webgpu/depth-enabled-triangle-strip-expected.html: Removed.
+        * webgpu/depth-enabled-triangle-strip.html: Removed.
+        * webgpu/draw-indexed-triangles-expected.html: Removed.
+        * webgpu/draw-indexed-triangles.html: Removed.
+        * webgpu/error-scopes-test-expected.txt: Removed.
+        * webgpu/error-scopes-test.html: Removed.
+        * webgpu/expando-properties-expected.txt: Removed.
+        * webgpu/expando-properties.html: Removed.
+        * webgpu/js/webgpu-functions.js: Removed.
+        * webgpu/map-read-buffers-expected.txt: Removed.
+        * webgpu/map-read-buffers.html: Removed.
+        * webgpu/map-write-buffers-expected.txt: Removed.
+        * webgpu/map-write-buffers.html: Removed.
+        * webgpu/pipeline-layouts-expected.txt: Removed.
+        * webgpu/pipeline-layouts.html: Removed.
+        * webgpu/queue-creation-expected.txt: Removed.
+        * webgpu/queue-creation.html: Removed.
+        * webgpu/render-command-encoding-expected.txt: Removed.
+        * webgpu/render-command-encoding.html: Removed.
+        * webgpu/render-pipeline-errors-expected.txt: Removed.
+        * webgpu/render-pipeline-errors.html: Removed.
+        * webgpu/render-pipelines-expected.txt: Removed.
+        * webgpu/render-pipelines.html: Removed.
+        * webgpu/resources/blue-checkered.png: Removed.
+        * webgpu/resources/green-400.png: Removed.
+        * webgpu/shader-modules-expected.txt: Removed.
+        * webgpu/shader-modules.html: Removed.
+        * webgpu/simple-triangle-strip-expected.html: Removed.
+        * webgpu/simple-triangle-strip.html: Removed.
+        * webgpu/texture-creation-expected.txt: Removed.
+        * webgpu/texture-creation.html: Removed.
+        * webgpu/texture-triangle-strip-expected.html: Removed.
+        * webgpu/texture-triangle-strip.html: Removed.
+        * webgpu/textures-textureviews-expected.txt: Removed.
+        * webgpu/textures-textureviews.html: Removed.
+        * webgpu/uncaptured-errors-expected.txt: Removed.
+        * webgpu/uncaptured-errors.html: Removed.
+        * webgpu/vertex-buffer-triangle-strip-expected.html: Removed.
+        * webgpu/vertex-buffer-triangle-strip.html: Removed.
+        * webgpu/viewport-scissor-rect-triangle-strip-expected.html: Removed.
+        * webgpu/viewport-scissor-rect-triangle-strip.html: Removed.
+        * webgpu/whlsl/address-of-swizzle-expected.txt: Removed.
+        * webgpu/whlsl/address-of-swizzle.html: Removed.
+        * webgpu/whlsl/arbitrary-vertex-attribute-locations-expected.html: Removed.
+        * webgpu/whlsl/arbitrary-vertex-attribute-locations.html: Removed.
+        * webgpu/whlsl/argument-evaluation-order-expected.txt: Removed.
+        * webgpu/whlsl/argument-evaluation-order.html: Removed.
+        * webgpu/whlsl/array-length-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/array-length-spec-tests.html: Removed.
+        * webgpu/whlsl/array-oob-alias-expected.txt: Removed.
+        * webgpu/whlsl/array-oob-alias.html: Removed.
+        * webgpu/whlsl/array-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/array-spec-tests.html: Removed.
+        * webgpu/whlsl/bad-add-expected.txt: Removed.
+        * webgpu/whlsl/bad-add.html: Removed.
+        * webgpu/whlsl/bad-literals-expected.txt: Removed.
+        * webgpu/whlsl/bad-literals.html: Removed.
+        * webgpu/whlsl/bitwise-bool-ops-expected.txt: Removed.
+        * webgpu/whlsl/bitwise-bool-ops.html: Removed.
+        * webgpu/whlsl/bool-matrix-expected.txt: Removed.
+        * webgpu/whlsl/bool-matrix.html: Removed.
+        * webgpu/whlsl/bools-expected.txt: Removed.
+        * webgpu/whlsl/bools.html: Removed.
+        * webgpu/whlsl/buffer-fragment-expected.html: Removed.
+        * webgpu/whlsl/buffer-fragment.html: Removed.
+        * webgpu/whlsl/buffer-length-expected.txt: Removed.
+        * webgpu/whlsl/buffer-length.html: Removed.
+        * webgpu/whlsl/buffer-vertex-expected.html: Removed.
+        * webgpu/whlsl/buffer-vertex.html: Removed.
+        * webgpu/whlsl/builtin-vectors-2-expected.txt: Removed.
+        * webgpu/whlsl/builtin-vectors-2.html: Removed.
+        * webgpu/whlsl/builtin-vectors-expected.txt: Removed.
+        * webgpu/whlsl/builtin-vectors.html: Removed.
+        * webgpu/whlsl/casts-expected.txt: Removed.
+        * webgpu/whlsl/casts.html: Removed.
+        * webgpu/whlsl/checker-should-set-type-of-read-modify-write-variables-expected.txt: Removed.
+        * webgpu/whlsl/checker-should-set-type-of-read-modify-write-variables.html: Removed.
+        * webgpu/whlsl/clamp-stdlib-expected.txt: Removed.
+        * webgpu/whlsl/clamp-stdlib.html: Removed.
+        * webgpu/whlsl/comment-parsing-expected.txt: Removed.
+        * webgpu/whlsl/comment-parsing.html: Removed.
+        * webgpu/whlsl/compute-expected.txt: Removed.
+        * webgpu/whlsl/compute.html: Removed.
+        * webgpu/whlsl/copy-expected.txt: Removed.
+        * webgpu/whlsl/copy.html: Removed.
+        * webgpu/whlsl/dereference-ordering-expected.txt: Removed.
+        * webgpu/whlsl/dereference-ordering.html: Removed.
+        * webgpu/whlsl/dereference-pointer-should-type-check-expected.html: Removed.
+        * webgpu/whlsl/dereference-pointer-should-type-check.html: Removed.
+        * webgpu/whlsl/device-proper-type-checker-expected.txt: Removed.
+        * webgpu/whlsl/device-proper-type-checker.html: Removed.
+        * webgpu/whlsl/do-while-loop-break-expected.html: Removed.
+        * webgpu/whlsl/do-while-loop-break.html: Removed.
+        * webgpu/whlsl/do-while-loop-continue-expected.html: Removed.
+        * webgpu/whlsl/do-while-loop-continue.html: Removed.
+        * webgpu/whlsl/do-while-loop-expected.html: Removed.
+        * webgpu/whlsl/do-while-loop.html: Removed.
+        * webgpu/whlsl/dont-crash-parsing-enum-expected.html: Removed.
+        * webgpu/whlsl/dont-crash-parsing-enum.html: Removed.
+        * webgpu/whlsl/dot-expressions-expected.html: Removed.
+        * webgpu/whlsl/dot-expressions.html: Removed.
+        * webgpu/whlsl/double-not-expected.txt: Removed.
+        * webgpu/whlsl/double-not.html: Removed.
+        * webgpu/whlsl/duplicate-types-should-not-produce-duplicate-ctors-expected.txt: Removed.
+        * webgpu/whlsl/duplicate-types-should-not-produce-duplicate-ctors.html: Removed.
+        * webgpu/whlsl/duplicates-expected.txt: Removed.
+        * webgpu/whlsl/duplicates.html: Removed.
+        * webgpu/whlsl/ensure-proper-pointer-usage-expected.txt: Removed.
+        * webgpu/whlsl/ensure-proper-pointer-usage.html: Removed.
+        * webgpu/whlsl/ensure-proper-variable-lifetime-2-expected.html: Removed.
+        * webgpu/whlsl/ensure-proper-variable-lifetime-2.html: Removed.
+        * webgpu/whlsl/ensure-proper-variable-lifetime-3-expected.html: Removed.
+        * webgpu/whlsl/ensure-proper-variable-lifetime-3.html: Removed.
+        * webgpu/whlsl/ensure-proper-variable-lifetime-expected.html: Removed.
+        * webgpu/whlsl/ensure-proper-variable-lifetime.html: Removed.
+        * webgpu/whlsl/enum-integer-constructor-expected.txt: Removed.
+        * webgpu/whlsl/enum-integer-constructor.html: Removed.
+        * webgpu/whlsl/enum-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/enum-spec-tests.html: Removed.
+        * webgpu/whlsl/enums-2-expected.txt: Removed.
+        * webgpu/whlsl/enums-2.html: Removed.
+        * webgpu/whlsl/enums-expected.txt: Removed.
+        * webgpu/whlsl/enums.html: Removed.
+        * webgpu/whlsl/equality-expected.txt: Removed.
+        * webgpu/whlsl/equality.html: Removed.
+        * webgpu/whlsl/float-math-expected.txt: Removed.
+        * webgpu/whlsl/float-math.html: Removed.
+        * webgpu/whlsl/getter-setter-type-expected.txt: Removed.
+        * webgpu/whlsl/getter-setter-type.html: Removed.
+        * webgpu/whlsl/huge-array-expected.txt: Removed.
+        * webgpu/whlsl/huge-array.html: Removed.
+        * webgpu/whlsl/if-statement-expected.txt: Removed.
+        * webgpu/whlsl/if-statement.html: Removed.
+        * webgpu/whlsl/increment-decrement-expected.txt: Removed.
+        * webgpu/whlsl/increment-decrement.html: Removed.
+        * webgpu/whlsl/increment-setter-expected.txt: Removed.
+        * webgpu/whlsl/increment-setter.html: Removed.
+        * webgpu/whlsl/index-getter-setter-expected.txt: Removed.
+        * webgpu/whlsl/index-getter-setter.html: Removed.
+        * webgpu/whlsl/int-bit-math-expected.txt: Removed.
+        * webgpu/whlsl/int-bit-math.html: Removed.
+        * webgpu/whlsl/int-literal-compare-expected.txt: Removed.
+        * webgpu/whlsl/int-literal-compare.html: Removed.
+        * webgpu/whlsl/js/test-harness.js: Removed.
+        * webgpu/whlsl/length-stdlib-expected.txt: Removed.
+        * webgpu/whlsl/length-stdlib.html: Removed.
+        * webgpu/whlsl/lexing-expected.txt: Removed.
+        * webgpu/whlsl/lexing.html: Removed.
+        * webgpu/whlsl/literals-expected.txt: Removed.
+        * webgpu/whlsl/literals.html: Removed.
+        * webgpu/whlsl/logical-negation-expected.txt: Removed.
+        * webgpu/whlsl/logical-negation.html: Removed.
+        * webgpu/whlsl/loops-break-expected.html: Removed.
+        * webgpu/whlsl/loops-break.html: Removed.
+        * webgpu/whlsl/loops-continue-expected.html: Removed.
+        * webgpu/whlsl/loops-continue.html: Removed.
+        * webgpu/whlsl/loops-expected.html: Removed.
+        * webgpu/whlsl/loops-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/loops-spec-tests.html: Removed.
+        * webgpu/whlsl/loops.html: Removed.
+        * webgpu/whlsl/lots-of-local-variables-expected.txt: Removed.
+        * webgpu/whlsl/lots-of-local-variables.html: Removed.
+        * webgpu/whlsl/lvalues-expected.txt: Removed.
+        * webgpu/whlsl/lvalues.html: Removed.
+        * webgpu/whlsl/make-array-ref-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/make-array-ref-spec-tests.html: Removed.
+        * webgpu/whlsl/make-array-reference-expected.txt: Removed.
+        * webgpu/whlsl/make-array-reference.html: Removed.
+        * webgpu/whlsl/matrices-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/matrices-spec-tests.html: Removed.
+        * webgpu/whlsl/matrix-2-expected.txt: Removed.
+        * webgpu/whlsl/matrix-2.html: Removed.
+        * webgpu/whlsl/matrix-alignment-expected.txt: Removed.
+        * webgpu/whlsl/matrix-alignment.html: Removed.
+        * webgpu/whlsl/matrix-compare-expected.txt: Removed.
+        * webgpu/whlsl/matrix-compare.html: Removed.
+        * webgpu/whlsl/matrix-constructors-expected.txt: Removed.
+        * webgpu/whlsl/matrix-constructors-list-of-scalars-expected.txt: Removed.
+        * webgpu/whlsl/matrix-constructors-list-of-scalars.html: Removed.
+        * webgpu/whlsl/matrix-constructors.html: Removed.
+        * webgpu/whlsl/matrix-expected.txt: Removed.
+        * webgpu/whlsl/matrix-index-assign-expected.txt: Removed.
+        * webgpu/whlsl/matrix-index-assign.html: Removed.
+        * webgpu/whlsl/matrix-index-order-expected.txt: Removed.
+        * webgpu/whlsl/matrix-index-order.html: Removed.
+        * webgpu/whlsl/matrix-memory-layout-expected.txt: Removed.
+        * webgpu/whlsl/matrix-memory-layout.html: Removed.
+        * webgpu/whlsl/matrix.html: Removed.
+        * webgpu/whlsl/nested-dot-expression-rvalue-expected.html: Removed.
+        * webgpu/whlsl/nested-dot-expression-rvalue.html: Removed.
+        * webgpu/whlsl/nested-loop-expected.html: Removed.
+        * webgpu/whlsl/nested-loop.html: Removed.
+        * webgpu/whlsl/null-arg-expected.txt: Removed.
+        * webgpu/whlsl/null-arg.html: Removed.
+        * webgpu/whlsl/null-array-property-access-expected.txt: Removed.
+        * webgpu/whlsl/null-array-property-access.html: Removed.
+        * webgpu/whlsl/null-array-ref.html: Removed.
+        * webgpu/whlsl/oob-access-2-expected.txt: Removed.
+        * webgpu/whlsl/oob-access-2.html: Removed.
+        * webgpu/whlsl/oob-access-expected.txt: Removed.
+        * webgpu/whlsl/oob-access.html: Removed.
+        * webgpu/whlsl/operator-div-expected.txt: Removed.
+        * webgpu/whlsl/operator-div.html: Removed.
+        * webgpu/whlsl/operator-equal-equal-expected.txt: Removed.
+        * webgpu/whlsl/operator-equal-equal.html: Removed.
+        * webgpu/whlsl/operator-minus-expected.txt: Removed.
+        * webgpu/whlsl/operator-minus.html: Removed.
+        * webgpu/whlsl/operator-overload-expected.txt: Removed.
+        * webgpu/whlsl/operator-overload.html: Removed.
+        * webgpu/whlsl/operator-plus-expected.txt: Removed.
+        * webgpu/whlsl/operator-plus.html: Removed.
+        * webgpu/whlsl/operator-syntax-expected.txt: Removed.
+        * webgpu/whlsl/operator-syntax.html: Removed.
+        * webgpu/whlsl/operator-times-expected.txt: Removed.
+        * webgpu/whlsl/operator-times.html: Removed.
+        * webgpu/whlsl/operator-vector-assign-expected.txt: Removed.
+        * webgpu/whlsl/operator-vector-assign.html: Removed.
+        * webgpu/whlsl/operator-vector-load-expected.txt: Removed.
+        * webgpu/whlsl/operator-vector-load.html: Removed.
+        * webgpu/whlsl/operator-xy-expected.txt: Removed.
+        * webgpu/whlsl/operator-xy.html: Removed.
+        * webgpu/whlsl/overload-expected.txt: Removed.
+        * webgpu/whlsl/overload.html: Removed.
+        * webgpu/whlsl/plus-equals-expected.txt: Removed.
+        * webgpu/whlsl/plus-equals.html: Removed.
+        * webgpu/whlsl/pointer-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/pointer-spec-tests.html: Removed.
+        * webgpu/whlsl/postfix-prefix-expected.txt: Removed.
+        * webgpu/whlsl/postfix-prefix.html: Removed.
+        * webgpu/whlsl/property-evaluation-order-expected.txt: Removed.
+        * webgpu/whlsl/property-evaluation-order.html: Removed.
+        * webgpu/whlsl/read-modify-write-expected.txt: Removed.
+        * webgpu/whlsl/read-modify-write-high-zombies-expected.txt: Removed.
+        * webgpu/whlsl/read-modify-write-high-zombies.html: Removed.
+        * webgpu/whlsl/read-modify-write.html: Removed.
+        * webgpu/whlsl/recursive-structs-expected.txt: Removed.
+        * webgpu/whlsl/recursive-structs.html: Removed.
+        * webgpu/whlsl/return-local-variable-expected.html: Removed.
+        * webgpu/whlsl/return-local-variable.html: Removed.
+        * webgpu/whlsl/return-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/return-spec-tests.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-10-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-10.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-11-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-11.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-12-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-12.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-13-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-13.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-14-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-14.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-15-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-15.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-16-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-16.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-17-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-17.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-18-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-18.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-19-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-2-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-2.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-20-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-20.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-21-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-21.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-22-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-22.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-23-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-23.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-24-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-25-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-25.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-26-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-27-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-27.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-3-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-3.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-4-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-4.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-5-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-5.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-6-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-6.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-7-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-7.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-8-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-8.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-9-expected.txt: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-9.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules-expected.html: Removed.
+        * webgpu/whlsl/separate-shader-modules/separate-shader-modules.html: Removed.
+        * webgpu/whlsl/setter-spec-tests-expected.txt: Removed.
+        * webgpu/whlsl/setter-spec-tests.html: Removed.
+        * webgpu/whlsl/simple-arrays-expected.txt: Removed.
+        * webgpu/whlsl/simple-arrays.html: Removed.
+        * webgpu/whlsl/simple-getter-setter-expected.txt: Removed.
+        * webgpu/whlsl/simple-getter-setter.html: Removed.
+        * webgpu/whlsl/simple-tests-expected.txt: Removed.
+        * webgpu/whlsl/simple-tests.html: Removed.
+        * webgpu/whlsl/simple-while-loop-expected.txt: Removed.
+        * webgpu/whlsl/simple-while-loop.html: Removed.
+        * webgpu/whlsl/smaller-than-32-bit-types-expected.txt: Removed.
+        * webgpu/whlsl/smaller-than-32-bit-types.html: Removed.
+        * webgpu/whlsl/sparse-bind-group-2-expected.txt: Removed.
+        * webgpu/whlsl/sparse-bind-group-2.html: Removed.
+        * webgpu/whlsl/sparse-bind-group-3-expected.txt: Removed.
+        * webgpu/whlsl/sparse-bind-group-3.html: Removed.
+        * webgpu/whlsl/sparse-bind-group-expected.txt: Removed.
+        * webgpu/whlsl/sparse-bind-group.html: Removed.
+        * webgpu/whlsl/store-null-expected.txt: Removed.
+        * webgpu/whlsl/store-null.html: Removed.
+        * webgpu/whlsl/store-to-property-updates-properly-expected.html: Removed.
+        * webgpu/whlsl/store-to-property-updates-properly.html: Removed.
+        * webgpu/whlsl/struct-expected.txt: Removed.
+        * webgpu/whlsl/struct.html: Removed.
+        * webgpu/whlsl/structure-field-enumeration-element-clash-expected.txt: Removed.
+        * webgpu/whlsl/structure-field-enumeration-element-clash.html: Removed.
+        * webgpu/whlsl/switch-expected.txt: Removed.
+        * webgpu/whlsl/switch.html: Removed.
+        * webgpu/whlsl/ternary-spec-test-expected.txt: Removed.
+        * webgpu/whlsl/ternary-spec-test.html: Removed.
+        * webgpu/whlsl/test-harness-test-expected.txt: Removed.
+        * webgpu/whlsl/test-harness-test.html: Removed.
+        * webgpu/whlsl/textures-getdimensions-expected.txt: Removed.
+        * webgpu/whlsl/textures-getdimensions.html: Removed.
+        * webgpu/whlsl/textures-load-expected.html: Removed.
+        * webgpu/whlsl/textures-load.html: Removed.
+        * webgpu/whlsl/textures-sample-bias-expected.html: Removed.
+        * webgpu/whlsl/textures-sample-bias.html: Removed.
+        * webgpu/whlsl/textures-sample-expected.html: Removed.
+        * webgpu/whlsl/textures-sample-grad-expected.html: Removed.
+        * webgpu/whlsl/textures-sample-grad.html: Removed.
+        * webgpu/whlsl/textures-sample-level-expected.html: Removed.
+        * webgpu/whlsl/textures-sample-level.html: Removed.
+        * webgpu/whlsl/textures-sample.html: Removed.
+        * webgpu/whlsl/two-dimensional-array-expected.txt: Removed.
+        * webgpu/whlsl/two-dimensional-array.html: Removed.
+        * webgpu/whlsl/type-mismatch-expected.txt: Removed.
+        * webgpu/whlsl/type-mismatch.html: Removed.
+        * webgpu/whlsl/uint-bitwise-expected.txt: Removed.
+        * webgpu/whlsl/uint-bitwise.html: Removed.
+        * webgpu/whlsl/use-undefined-variable-2-expected.txt: Removed.
+        * webgpu/whlsl/use-undefined-variable-2.html: Removed.
+        * webgpu/whlsl/use-undefined-variable-expected.txt: Removed.
+        * webgpu/whlsl/use-undefined-variable.html: Removed.
+        * webgpu/whlsl/variable-shadowing-expected.txt: Removed.
+        * webgpu/whlsl/variable-shadowing.html: Removed.
+        * webgpu/whlsl/vector-compare-expected.txt: Removed.
+        * webgpu/whlsl/vector-compare.html: Removed.
+        * webgpu/whlsl/vector-constructors-expected.txt: Removed.
+        * webgpu/whlsl/vector-constructors.html: Removed.
+        * webgpu/whlsl/vector-matrix-addition-subtraction-expected.txt: Removed.
+        * webgpu/whlsl/vector-matrix-addition-subtraction.html: Removed.
+        * webgpu/whlsl/vector-syntax-expected.txt: Removed.
+        * webgpu/whlsl/vector-syntax.html: Removed.
+        * webgpu/whlsl/void-variable-parameter-expected.txt: Removed.
+        * webgpu/whlsl/void-variable-parameter.html: Removed.
+        * webgpu/whlsl/while-loop-break-expected.html: Removed.
+        * webgpu/whlsl/while-loop-break.html: Removed.
+        * webgpu/whlsl/while-loop-continue-expected.html: Removed.
+        * webgpu/whlsl/while-loop-continue.html: Removed.
+        * webgpu/whlsl/whlsl-expected.html: Removed.
+        * webgpu/whlsl/whlsl.html: Removed.
+        * webgpu/whlsl/wrong-argument-length-expected.txt: Removed.
+        * webgpu/whlsl/wrong-argument-length.html: Removed.
+        * webgpu/whlsl/wrong-types-expected.txt: Removed.
+        * webgpu/whlsl/wrong-types.html: Removed.
+        * webgpu/whlsl/zero-initialize-values-2-expected.html: Removed.
+        * webgpu/whlsl/zero-initialize-values-2.html: Removed.
+        * webgpu/whlsl/zero-initialize-values-expected.html: Removed.
+        * webgpu/whlsl/zero-initialize-values.html: Removed.
+
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Legacy RegExp fields should be accessors
+        https://bugs.webkit.org/show_bug.cgi?id=220233
+
+        Reviewed by Tadeu Zagallo.
+
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/dom/regexp-caching-expected.txt:
+        * js/dom/regexp-caching.html:
+        * js/resources/getOwnPropertyDescriptor.js:
+        * js/script-tests/static-put-in-prototype-chain.js:
+        * js/static-put-in-prototype-chain-expected.txt:
+        * js/static-put-in-prototype-chain.html:
+
+2021-07-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
+        https://bugs.webkit.org/show_bug.cgi?id=228599
+        <rdar://problem/81190366>
+
+        Reviewed by Andy Estes.
+
+        * http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html: Added.
+        * http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https-expected.txt: Added.
+
+        * platform/ios-14-wk2/TestExpectations:
+        * platform/mac-bigsur-wk2/TestExpectations: Added.
+        Skip on older macOS/iOS since they don't support modifying shipping methods with any update.
+
+2021-07-29  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Mac wk1 Debug] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228626.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] compositing/video/poster.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228616
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-29  Alex Christensen  <achristensen@webkit.org>
+
+        [ Mac ] fast/dom/webtiming-document-open.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=228571
+
+        Reviewed by Chris Dumez.
+
+        * platform/mac/TestExpectations:
+
+2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] 2 http/tests/cookies/same-site tests are flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=228604
+
+        RUnreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iPad ] Rebaselining editing/selection/ios/change-selection-by-tapping-with-existing-selection.html.
+        https://bugs.webkit.org/show_bug.cgi?id=228607
+
+        Unreviewed test gardening.
+
+        * platform/ipad/editing/selection/ios/change-selection-by-tapping-with-existing-selection-expected.txt: Added.
+
+2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] 2 http/tests/cookies/same-site tests are flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=228604
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix fast/speechrecognition/detached-iframe.html
+        https://bugs.webkit.org/show_bug.cgi?id=228586
+
+        Reviewed by Chris Dumez.
+
+        The result of detached-iframe.html does not print description as remove() removes document.body instead of
+        the iframe.
+
+        * fast/speechrecognition/detached-iframe-expected.txt:
+        * fast/speechrecognition/detached-iframe.html:
+
+2021-07-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] http/tests/appcache/main-resource-redirect-with-sw.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=228588
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-07-29  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Mac wk2] fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=228591.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-07-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip storage/indexeddb/detached-iframe.html now that it is no longer flaky after r280426.

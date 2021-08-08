@@ -81,6 +81,7 @@
 #import <WebCore/SystemSoundManager.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
+#import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <mach/mach.h>
@@ -744,6 +745,9 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
     // Need to override the default, because service has a different bundle ID.
     auto webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
 
+    // We need to initialize the Vorbis decoder before the sandbox gets setup; this is a one off action.
+    WebCore::registerVorbisDecoderIfNeeded();
+
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
 
     bool enableMessageFilter = false;
@@ -1066,7 +1070,6 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     auto appID = CFSTR("com.apple.WebKit.WebContent");
     auto reduceMotionEnabled = preferences.reduceMotionEnabled;
-    WTFLogAlways("AX: reduce motion: %d", (int)reduceMotionEnabled);
     if (_AXSReduceMotionEnabledApp(appID) != reduceMotionEnabled)
         _AXSSetReduceMotionEnabledApp(reduceMotionEnabled, appID);
     auto increaseButtonLegibility = preferences.increaseButtonLegibility;
@@ -1265,10 +1268,7 @@ void WebProcess::revokeAccessToAssetServices()
 
 void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(WebKit::SandboxExtension::Handle&& fontMachExtensionHandle)
 {
-    if (m_fontMachExtension)
-        return;
-    m_fontMachExtension = SandboxExtension::create(WTFMove(fontMachExtensionHandle));
-    m_fontMachExtension->consume();
+    SandboxExtension::consumePermanently(fontMachExtensionHandle);
 #if HAVE(STATIC_FONT_REGISTRY)
     CTFontManagerEnableAllUserFonts(true);
 #endif

@@ -9,17 +9,17 @@ description: Either Type(x) is not Reference or GetBase(x) is not null
 
 //CHECK#1
 if (void 0 !== undefined) {
-  $ERROR('#1: void 0 === undefined. Actual: ' + (void 0));
+  throw new Test262Error('#1: void 0 === undefined. Actual: ' + (void 0));
 }
 
 //CHECK#2
 var x = 0;
 if (void x !== undefined) {
-  $ERROR('#2: var x = 0; void x === undefined. Actual: ' + (void x));
+  throw new Test262Error('#2: var x = 0; void x === undefined. Actual: ' + (void x));
 }
 
 //CHECK#3
 var x = new Object();
 if (void x !== undefined) {
-  $ERROR('#3: var x = new Object(); void x === undefined. Actual: ' + (void x));
+  throw new Test262Error('#3: var x = new Object(); void x === undefined. Actual: ' + (void x));
 }

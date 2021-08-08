@@ -15,22 +15,22 @@ var x = new Array(null);
 
 //CHECK#1
 if (x.length !== 1) {
-  $ERROR('#1: var x = new Array(null); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#1: var x = new Array(null); x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#2
 if (x[0] !== null) {
-  $ERROR('#2: var x = new Array(null); x[0] === null. Actual: ' + (x[0]));
+  throw new Test262Error('#2: var x = new Array(null); x[0] === null. Actual: ' + (x[0]));
 }
 
 var x = new Array(undefined);
 
 //CHECK#3
 if (x.length !== 1) {
-  $ERROR('#3: var x = new Array(undefined); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#3: var x = new Array(undefined); x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#4
 if (x[0] !== undefined) {
-  $ERROR('#4: var x = new Array(undefined); x[0] === undefined. Actual: ' + (x[0]));
+  throw new Test262Error('#4: var x = new Array(undefined); x[0] === undefined. Actual: ' + (x[0]));
 }

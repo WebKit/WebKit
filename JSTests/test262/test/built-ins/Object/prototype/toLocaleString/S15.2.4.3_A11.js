@@ -9,10 +9,10 @@ description: Checking the Object.prototype.toLocaleString.length
 
 //CHECK#1
 if (!(Object.prototype.toLocaleString.hasOwnProperty("length"))) {
-  $ERROR('#1: The length property of the toLocaleString method is 0');
+  throw new Test262Error('#1: The length property of the toLocaleString method is 0');
 }
 
 //CHECK#2
 if (Object.prototype.toLocaleString.length !== 0) {
-  $ERROR('#2: The length property of the toLocaleString method is 0');
+  throw new Test262Error('#2: The length property of the toLocaleString method is 0');
 }

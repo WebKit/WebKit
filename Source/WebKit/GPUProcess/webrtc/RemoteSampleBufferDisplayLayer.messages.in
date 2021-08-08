@@ -24,6 +24,9 @@
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
+#if !RELEASE_LOG_DISABLED
+    SetLogIdentifier(String logIdentifier)
+#endif
     UpdateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
     UpdateAffineTransform(CGAffineTransform transform)
     UpdateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)

@@ -20,7 +20,7 @@ function C(executor) {
 C.resolve = function() {};
 Object.defineProperty(C, Symbol.species, {
   get: function() {
-    $ERROR("Getter for Symbol.species called");
+    throw new Test262Error("Getter for Symbol.species called");
   }
 });
 

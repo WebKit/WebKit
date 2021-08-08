@@ -12,7 +12,7 @@ description: Checking returned result
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("Hello, WoRlD!".toLocaleLowerCase() !== "hello, world!") {
-  $ERROR('#1: "Hello, WoRlD!".toLocaleLowerCase() === "hello, world!". Actual: ' + ("Hello, WoRlD!".toLocaleLowerCase()));
+  throw new Test262Error('#1: "Hello, WoRlD!".toLocaleLowerCase() === "hello, world!". Actual: ' + ("Hello, WoRlD!".toLocaleLowerCase()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if ("Hello, WoRlD!".toLocaleLowerCase() !== "hello, world!") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if ("Hello, WoRlD!".toLocaleLowerCase() !== String("hello, world!")) {
-  $ERROR('#2: "Hello, WoRlD!".toLocaleLowerCase() === String("hello, world!"). Actual: ' + ("Hello, WoRlD!".toLocaleLowerCase()));
+  throw new Test262Error('#2: "Hello, WoRlD!".toLocaleLowerCase() === String("hello, world!"). Actual: ' + ("Hello, WoRlD!".toLocaleLowerCase()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ if ("Hello, WoRlD!".toLocaleLowerCase() !== String("hello, world!")) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if ("Hello, WoRlD!".toLocaleLowerCase() === new String("hello, world!")) {
-  $ERROR('#3: "Hello, WoRlD!".toLocaleLowerCase() !== new String("hello, world!")');
+  throw new Test262Error('#3: "Hello, WoRlD!".toLocaleLowerCase() !== new String("hello, world!")');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

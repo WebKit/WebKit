@@ -15,5 +15,5 @@ var __executed = /\bot/.test("pilot\nsoviet robot\topenoffice");
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /\\bot/.test("pilot\\nsoviet robot\\topenoffice") === false');
+	throw new Test262Error('#1: /\\bot/.test("pilot\\nsoviet robot\\topenoffice") === false');
 }

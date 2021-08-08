@@ -13,6 +13,6 @@ var uriMark = ["-", "_", ".", "!", "~", "*", "'", "(", ")"];
 for (var indexC = 0; indexC < uriMark.length; indexC++) {
   var str = uriMark[indexC];
   if (encodeURI(str) !== str) {
-    $ERROR('#' + (indexC + 1) + ': unescapedURISet containing' + str);
+    throw new Test262Error('#' + (indexC + 1) + ': unescapedURISet containing' + str);
   }
 }

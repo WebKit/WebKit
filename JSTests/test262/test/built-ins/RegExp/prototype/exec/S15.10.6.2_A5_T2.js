@@ -16,10 +16,10 @@ var __executed = __re.exec("aacd22 ");
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec("aacd22 "); __executed === true');
+	throw new Test262Error('#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec("aacd22 "); __executed === true');
 }
 
 //CHECK#2
 if (__re.lastIndex !== 0) {
-	$ERROR('#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec("aacd22 "); __re.lastIndex === 0. Actual: ' + (__re.lastIndex));
+	throw new Test262Error('#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=100; __executed = __re.exec("aacd22 "); __re.lastIndex === 0. Actual: ' + (__re.lastIndex));
 }

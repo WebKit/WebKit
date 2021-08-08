@@ -12,7 +12,7 @@ var __str = String();
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "") {
-  $ERROR('#2: __str = String(); __str === "". Actual: __str ===' + __str);
+  throw new Test262Error('#2: __str = String(); __str === "". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

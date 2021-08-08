@@ -1,0 +1,18 @@
+--- /Volumes/Data/worker/ipados-simulator-14-debug-tests-wk2/build/layout-test-results/fast/dom/collection-iterators-expected.txt
++++ /Volumes/Data/worker/ipados-simulator-14-debug-tests-wk2/build/layout-test-results/fast/dom/collection-iterators-actual.txt
+@@ -129,6 +129,15 @@
+ PASS 'forEach' in obj is false
+ PASS 'values' in obj is false
+ 
++* SourceBufferList
++PASS obj.__proto__ is SourceBufferList.prototype
++PASS Symbol.iterator in obj is true
++PASS for..of did not throw an exception
++PASS 'entries' in obj is false
++PASS 'keys' in obj is false
++PASS 'forEach' in obj is false
++PASS 'values' in obj is false
++
+ * StyleSheetList
+ PASS obj.__proto__ is StyleSheetList.prototype
+ PASS Symbol.iterator in obj is true

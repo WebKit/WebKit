@@ -21,7 +21,7 @@ var __obj={};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__obj.foo !== "whiskey gogo") {
-	$ERROR('#1: __obj.foo === "whiskey gogo". Actual: __obj.foo ==='+__obj.foo);
+	throw new Test262Error('#1: __obj.foo === "whiskey gogo". Actual: __obj.foo ==='+__obj.foo);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

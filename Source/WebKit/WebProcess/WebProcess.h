@@ -749,7 +749,6 @@ private:
 #endif
 
     RefPtr<SandboxExtension> m_assetServiceV2Extension;
-    RefPtr<SandboxExtension> m_fontMachExtension;
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;

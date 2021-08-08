@@ -13,20 +13,20 @@ var obj = Object((1 === 1) && (!false));
 
 //CHECK#1
 if (obj.constructor !== Boolean) {
-  $ERROR('#1: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#1: Object(expression) returns ToObject(expression)');
 }
 
 //CHECK#1.1
 if (typeof obj !== "object") {
-  $ERROR('#1.1: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#1.1: Object(expression) returns ToObject(expression)');
 }
 
 //CHECK#2
 if (!(obj)) {
-  $ERROR('#2: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#2: Object(expression) returns ToObject(expression)');
 }
 
 //CHECK#3
 if (obj === true) {
-  $ERROR('#3: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#3: Object(expression) returns ToObject(expression)');
 }

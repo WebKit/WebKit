@@ -19,11 +19,11 @@ eval("with(myObj){del = delete p1}");
 //CHECK#1
 try{
 if(myObj.p1() === 0){
-  $ERROR('#1: myObj.p1() !== 0 ');
+  throw new Test262Error('#1: myObj.p1() !== 0 ');
 }
 }catch(e){var x=1};
 if(x !== 1){
-  $ERROR('#1: x === 1. Actual:  x ==='+ x  );
+  throw new Test262Error('#1: x === 1. Actual:  x ==='+ x  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ if(x !== 1){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if(myObj.p1 !== undefined){
-  $ERROR('#2: myObj.p1 === undefined . Actual:  myObj.p1 ==='+ myObj.p1  );
+  throw new Test262Error('#2: myObj.p1 === undefined . Actual:  myObj.p1 ==='+ myObj.p1  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ if(myObj.p1 !== undefined){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if(myObj.del !== true){
-  $ERROR('#3: myObj.del === true . Actual:  myObj.del ==='+ myObj.del  );
+  throw new Test262Error('#3: myObj.del === true . Actual:  myObj.del ==='+ myObj.del  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ if(myObj.del !== true){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if(myObj.p1 === 'a'){
-  $ERROR('#4: myObj.p1 !== \'a\'');
+  throw new Test262Error('#4: myObj.p1 !== \'a\'');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

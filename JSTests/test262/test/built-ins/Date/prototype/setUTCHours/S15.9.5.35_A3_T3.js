@@ -10,11 +10,11 @@ description: Checking DontEnum attribute
 ---*/
 
 if (Date.prototype.setUTCHours.propertyIsEnumerable('length')) {
-  $ERROR('#1: The Date.prototype.setUTCHours.length property has the attribute DontEnum');
+  throw new Test262Error('#1: The Date.prototype.setUTCHours.length property has the attribute DontEnum');
 }
 
 for (var x in Date.prototype.setUTCHours) {
   if (x === "length") {
-    $ERROR('#2: The Date.prototype.setUTCHours.length has the attribute DontEnum');
+    throw new Test262Error('#2: The Date.prototype.setUTCHours.length has the attribute DontEnum');
   }
 }

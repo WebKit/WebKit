@@ -21,5 +21,5 @@ for (var i = 0; i < 26; i++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: CHECK ENGLISH ALPHABET');
+  throw new Test262Error('#1: CHECK ENGLISH ALPHABET');
 }

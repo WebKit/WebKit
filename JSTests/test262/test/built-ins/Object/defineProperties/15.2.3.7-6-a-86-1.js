@@ -41,7 +41,7 @@ try {
   verifyNotConfigurable(obj, "foo");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

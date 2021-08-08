@@ -11,5 +11,5 @@ description: Checking Function.prototype.constructor
 
 //CHECK#1
 if (Function.prototype.constructor !== Function) {
-  $ERROR('#1: The initial value of Function.prototype.constructor is the built-in Function constructor');
+  throw new Test262Error('#1: The initial value of Function.prototype.constructor is the built-in Function constructor');
 }

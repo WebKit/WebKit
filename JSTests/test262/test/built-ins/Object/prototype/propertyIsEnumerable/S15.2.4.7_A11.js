@@ -9,10 +9,10 @@ description: Checking the value of Object.prototype.hasOwnProperty.length
 
 //CHECK#1
 if (!(Object.prototype.propertyIsEnumerable.hasOwnProperty("length"))) {
-  $ERROR('#1: the Object.prototype.propertyIsEnumerable has length property');
+  throw new Test262Error('#1: the Object.prototype.propertyIsEnumerable has length property');
 }
 
 //CHECK#2
 if (Object.prototype.propertyIsEnumerable.length !== 1) {
-  $ERROR('#2: The length property of the toObject method is 1');
+  throw new Test262Error('#2: The length property of the toObject method is 1');
 }

@@ -13,9 +13,9 @@ description: >
 
 //CHECK#1
 try {
-	$ERROR('#1.1: new RegExp(".",null) throw SyntaxError. Actual: ' + (new RegExp(".",null)));
+	throw new Test262Error('#1.1: new RegExp(".",null) throw SyntaxError. Actual: ' + (new RegExp(".",null)));
 } catch (e) {
 	if ((e instanceof SyntaxError) !== true) {
-		$ERROR('#1.2: new RegExp(".",null) throw SyntaxError. Actual: ' + (e));
+		throw new Test262Error('#1.2: new RegExp(".",null) throw SyntaxError. Actual: ' + (e));
 	}
 }

@@ -14,7 +14,7 @@ __instance.indexOf = String.prototype.indexOf;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.indexOf(true, false) !== 0) {
-  $ERROR('#1: __instance = new Object(true); __instance.indexOf = String.prototype.indexOf;  __instance.indexOf(true, false) === 0. Actual: ' + __instance.indexOf(true, false));
+  throw new Test262Error('#1: __instance = new Object(true); __instance.indexOf = String.prototype.indexOf;  __instance.indexOf(true, false) === 0. Actual: ' + __instance.indexOf(true, false));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -62,6 +62,13 @@ void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size
     });
 }
 
+#if !RELEASE_LOG_DISABLED
+void RemoteSampleBufferDisplayLayer::setLogIdentifier(String&& identifier)
+{
+    m_sampleBufferDisplayLayer->setLogIdentifier(WTFMove(identifier));
+}
+#endif
+
 RemoteSampleBufferDisplayLayer::~RemoteSampleBufferDisplayLayer()
 {
 }

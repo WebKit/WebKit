@@ -10,7 +10,7 @@ description: Checking String.prototype.toLowerCase.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.toLowerCase.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.toLowerCase.hasOwnProperty("length") return true. Actual: ' + String.prototype.toLowerCase.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.toLowerCase.hasOwnProperty("length") return true. Actual: ' + String.prototype.toLowerCase.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.toLowerCase.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.toLowerCase.length !== 0) {
-  $ERROR('#2: String.prototype.toLowerCase.length === 0. Actual: ' + String.prototype.toLowerCase.length);
+  throw new Test262Error('#2: String.prototype.toLowerCase.length === 0. Actual: ' + String.prototype.toLowerCase.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

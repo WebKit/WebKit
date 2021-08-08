@@ -26,10 +26,10 @@ Number.prototype.indexOf = String.prototype.indexOf;
 //CHECK#1
 try {
   var x = __instance.indexOf(__obj, __obj2);
-  $ERROR('#1: "var x = __instance.indexOf(__obj, __obj2)" lead to throwing exception');
+  throw new Test262Error('#1: "var x = __instance.indexOf(__obj, __obj2)" lead to throwing exception');
 } catch (e) {
   if (e !== "intostr") {
-    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
+    throw new Test262Error('#1.1: Exception === "intostr". Actual: ' + e);
   }
 }
 //

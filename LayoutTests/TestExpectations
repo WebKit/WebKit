@@ -186,7 +186,7 @@ http/tests/storageAccess/ [ Skip ]
 http/tests/navigation/process-swap-window-open.html [ Skip ]
 http/tests/navigation/useragent-reload.py [ Skip ]
 storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
-storage/indexeddb/IDBObject-leak.html [ Skip ]
+storage/indexeddb/database-transaction-cycle.html [ Skip ]
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
 http/tests/in-app-browser-privacy/ [ Skip ]
 fast/speechrecognition/permission-error.html [ Skip ]
@@ -399,7 +399,6 @@ imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ DumpJSConsoleLogInStdErr ]
@@ -715,13 +714,14 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-co
 # Cross-Origin Opener Policy reporting is not supported and it is causing those tests to time out.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting [ Skip ]
 
-# This test is timing out because the location.href setter's relative URL resolution seems incorrect.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html [ Skip ]
+# This test is timing out locally but passing on wpt.live. The issue is that we run the WPT tests over localhost and they
+# are thus marked as secure contexts even when served over HTTP. The test assumes the context is non-secure because the
+# test is served over HTTP.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html [ Skip ]
 
 # COOP tests that are failing and keep printing a different uuid in the error output.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/blob-popup.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Failure Pass ]
 
 # Newly imported WPT tests that are crashing.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
@@ -3346,8 +3346,6 @@ fast/dom/linkify-phone-numbers.html [ ImageOnlyFailure ]
 
 webkit.org/b/199039 editing/deleting/smart-delete-paragraph-003.html [ Skip ]
 
-webkit.org/b/199028 webgpu/whlsl/test-harness-test.html [ Slow ]
-
 imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-inline.html [ ImageOnlyFailure ]
 
 # Test is failing and is printing different values when it fails.
@@ -4632,8 +4630,6 @@ webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fi
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/nested-with-too-tall-line.html [ ImageOnlyFailure ]
 
-webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/clip-001.html [ ImageOnlyFailure ]
-webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/dynamic-visible-to-clip-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-editing-input.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/214459 imported/w3c/web-platform-tests/css/css-overflow/text-overflow-ellipsis-vertical-rtl-001.html [ ImageOnlyFailure ]
@@ -4715,7 +4711,6 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-022.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-034.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-002.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-003.html [ ImageOnlyFailure ]
@@ -5097,17 +5092,8 @@ webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/overflow-bo
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-009.html [ Skip ]
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-010.html [ Skip ]
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-011.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/clip-002.html [ Skip ]
 webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/clip-003.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/clip-004.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/clip-005.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/clip-006.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/clip-007.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-cant-scroll.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-content-visual-overflow.html [ Skip ]
 webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-intersection-observer.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-scroll-size.html [ Skip ]
-webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-hit-testing.html [ Skip ]
 webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-invalidation.html [ Skip ]
 webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-001.html [ Skip ]
 webkit.org/b/198230 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-002.html [ Skip ]

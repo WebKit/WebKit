@@ -12,5 +12,5 @@ includes: [propertyHelper.js]
 var x = Number.MIN_VALUE;
 verifyNotWritable(Number, "MIN_VALUE", null, 1);
 if (Number.MIN_VALUE !== x) {
-  $ERROR('#1: x = Number.MIN_VALUE; Number.MIN_VALUE = 1; Number.MIN_VALUE === x');
+  throw new Test262Error('#1: x = Number.MIN_VALUE; Number.MIN_VALUE = 1; Number.MIN_VALUE === x');
 }

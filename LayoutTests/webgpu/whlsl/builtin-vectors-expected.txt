@@ -1,4 +1,0 @@
-
-PASS builtinVectorIndexSetters
-PASS builtinVectors
-

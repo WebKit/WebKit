@@ -26,5 +26,9 @@
 [
     Conditional=APPLE_PAY,
 ] dictionary ApplePayPaymentMethodUpdate : ApplePayDetailsUpdateBase {
+    [Conditional=APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS] sequence<ApplePayError> errors;
+
+    [Conditional=APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS] sequence<ApplePayShippingMethod> newShippingMethods;
+
     [Conditional=APPLE_PAY_INSTALLMENTS] DOMString installmentGroupIdentifier;
 };

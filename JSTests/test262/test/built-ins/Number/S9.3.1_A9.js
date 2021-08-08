@@ -16,10 +16,10 @@ description: >
 
 // CHECK#1
 if (Number("1234.5678e9") !== (Number("1234") + (Number("5678") * 1e-4)) * 1e9) {
-  $ERROR('#1: Number("1234.5678e9") === (Number("1234")+(Number("5678")*1e-4))*1e9');
+  throw new Test262Error('#1: Number("1234.5678e9") === (Number("1234")+(Number("5678")*1e-4))*1e9');
 }
 
 // CHECK#2
 if (+("1234.5678e-9") !== (Number("1234") + (Number("5678") * 1e-4)) * 1e-9) {
-  $ERROR('#2: +("1234.5678e-9") === (Number("1234")+(Number("5678")*1e-4))*1e-9');
+  throw new Test262Error('#2: +("1234.5678e-9") === (Number("1234")+(Number("5678")*1e-4))*1e-9');
 }

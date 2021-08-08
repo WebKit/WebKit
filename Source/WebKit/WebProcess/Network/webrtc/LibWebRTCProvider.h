@@ -63,16 +63,14 @@ private:
     RefPtr<WebCore::RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void setLoggingLevel(WTFLogLevel) final;
 
-#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
     WebPage& m_webPage;
+#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
     bool m_didInitializeCallback { false };
 #endif
 };
 
 inline LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
-#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
     : m_webPage(webPage)
-#endif
 {
     m_useNetworkThreadWithSocketServer = false;
 }

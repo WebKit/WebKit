@@ -13,7 +13,7 @@ description: Create a few Objects via the new operator
 //CHECK#1
 var objInstance=new Object;
 if (objInstance.constructor !== Object){
-  $ERROR('#1: var objInstance=new Object; objInstance.constructor === Object. Actual: ' + (objInstance.constructor));
+  throw new Test262Error('#1: var objInstance=new Object; objInstance.constructor === Object. Actual: ' + (objInstance.constructor));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (objInstance.constructor !== Object){
 //CHECK#2
 var numInstance=new Number;
 if (numInstance.constructor !== Number){
-  $ERROR('#2: var numInstance=new Number; numInstance.constructor === Number. Actual: ' + (numInstance.constructor));
+  throw new Test262Error('#2: var numInstance=new Number; numInstance.constructor === Number. Actual: ' + (numInstance.constructor));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

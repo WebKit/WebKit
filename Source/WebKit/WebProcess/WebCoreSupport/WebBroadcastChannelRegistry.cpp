@@ -49,14 +49,14 @@ void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::SecurityOrigi
     networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::UnregisterChannel { origin, name, identifier }, 0);
 }
 
-void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message)
+void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
-    networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::PostMessage { origin, name, source, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, 0);
+    networkProcessConnection().sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { origin, name, source, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, WTFMove(completionHandler), 0);
 }
 
-void WebBroadcastChannelRegistry::postMessageToRemote(WebCore::BroadcastChannelIdentifier identifier, WebCore::MessageWithMessagePorts&& message)
+void WebBroadcastChannelRegistry::postMessageToRemote(WebCore::BroadcastChannelIdentifier identifier, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
-    WebCore::BroadcastChannel::dispatchMessageTo(identifier, message.message.releaseNonNull());
+    WebCore::BroadcastChannel::dispatchMessageTo(identifier, message.message.releaseNonNull(), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

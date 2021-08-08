@@ -1682,10 +1682,14 @@ RefPtr<HTMLDataListElement> HTMLInputElement::dataList() const
 
 void HTMLInputElement::resetListAttributeTargetObserver()
 {
-    if (isConnected())
-        m_listAttributeTargetObserver = makeUnique<ListAttributeTargetObserver>(attributeWithoutSynchronization(listAttr), this);
-    else
-        m_listAttributeTargetObserver = nullptr;
+    if (isConnected()) {
+        if (auto& listAttrValue = attributeWithoutSynchronization(listAttr); !listAttrValue.isNull()) {
+            m_listAttributeTargetObserver = makeUnique<ListAttributeTargetObserver>(listAttrValue, this);
+            return;
+        }
+    }
+
+    m_listAttributeTargetObserver = nullptr;
 }
 
 void HTMLInputElement::dataListMayHaveChanged()

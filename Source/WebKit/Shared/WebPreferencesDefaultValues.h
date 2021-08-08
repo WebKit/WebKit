@@ -85,10 +85,6 @@ bool defaultCaptureVideoInGPUProcessEnabled();
 bool defaultWebRTCCodecsInGPUProcess();
 #endif
 
-#if ENABLE(WEBGPU)
-bool defaultWebGPUEnabled();
-#endif
-
 bool defaultInAppBrowserPrivacy();
 
 #if HAVE(INCREMENTAL_PDF_APIS)

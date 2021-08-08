@@ -15,5 +15,5 @@ if (x === 1)
 else
   Date.prototype.getTimezoneOffset = 1;
 if (Date.prototype.getTimezoneOffset === x) {
-  $ERROR('#1: The Date.prototype.getTimezoneOffset has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getTimezoneOffset has not the attribute ReadOnly');
 }

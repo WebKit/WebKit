@@ -14,7 +14,7 @@ __instance.concat("two");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance != "one") {
-  $ERROR('#1: __instance = new String("one"); __instance.concat("two");  __instance = new String("one"); __instance.concat("two"); __instance == "one". Actual: ' + __instance);
+  throw new Test262Error('#1: __instance = new String("one"); __instance.concat("two");  __instance = new String("one"); __instance.concat("two"); __instance == "one". Actual: ' + __instance);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

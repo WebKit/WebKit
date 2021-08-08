@@ -11,10 +11,10 @@ description: Checking property valueOf
 
 //CHECK#1
 if ((new Number()).hasOwnProperty("valueOf") !== false) {
-  $ERROR('#1: Number instance must have no special property "valueOf"');
+  throw new Test262Error('#1: Number instance must have no special property "valueOf"');
 }
 
 //CHECK#2
 if ((new Number()).valueOf !== Number.prototype.valueOf) {
-  $ERROR('#2: Number instance property "valueOf" must be inherited from Number prototype object');
+  throw new Test262Error('#2: Number instance property "valueOf" must be inherited from Number prototype object');
 }

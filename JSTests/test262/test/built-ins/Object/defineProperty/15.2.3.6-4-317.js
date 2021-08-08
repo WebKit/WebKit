@@ -21,7 +21,7 @@ includes: [propertyHelper.js]
     Object.defineProperty(arguments, "genericProperty", {
       value: 1002
     });
-    $ERROR("Expected an exception.");
+    throw new Test262Error("Expected an exception.");
   } catch (e) {
     verifyEqualTo(arguments, "genericProperty", 1001);
 
@@ -32,7 +32,7 @@ includes: [propertyHelper.js]
     verifyNotConfigurable(arguments, "genericProperty");
 
     if (!(e instanceof TypeError)) {
-      $ERROR("Expected TypeError, got " + e);
+      throw new Test262Error("Expected TypeError, got " + e);
     }
 
   }

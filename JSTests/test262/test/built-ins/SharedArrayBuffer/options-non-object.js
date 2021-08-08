@@ -18,10 +18,10 @@ info: |
 features: [resizable-arraybuffer]
 ---*/
 
-assert.sameValue(new SharedArrayBuffer(0, null).resizable, false, 'null');
-assert.sameValue(new SharedArrayBuffer(0, true).resizable, false, 'boolean');
-assert.sameValue(new SharedArrayBuffer(0, Symbol(3)).resizable, false, 'symbol');
-assert.sameValue(new SharedArrayBuffer(0, 1n).resizable, false, 'bigint');
-assert.sameValue(new SharedArrayBuffer(0, 'string').resizable, false, 'string');
-assert.sameValue(new SharedArrayBuffer(0, 9).resizable, false, 'number');
-assert.sameValue(new SharedArrayBuffer(0, undefined).resizable, false, 'undefined');
+assert.sameValue(new SharedArrayBuffer(0, null).growable, false, 'null');
+assert.sameValue(new SharedArrayBuffer(0, true).growable, false, 'boolean');
+assert.sameValue(new SharedArrayBuffer(0, Symbol(3)).growable, false, 'symbol');
+assert.sameValue(new SharedArrayBuffer(0, 1n).growable, false, 'bigint');
+assert.sameValue(new SharedArrayBuffer(0, 'string').growable, false, 'string');
+assert.sameValue(new SharedArrayBuffer(0, 9).growable, false, 'number');
+assert.sameValue(new SharedArrayBuffer(0, undefined).growable, false, 'undefined');

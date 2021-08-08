@@ -9,11 +9,11 @@ description: Type(x) and Type(y) vary between primitive string and String object
 
 //CHECK#1
 if (("" || "1") !== "1") {
-  $ERROR('#1: ("" || "1") === "1"');
+  throw new Test262Error('#1: ("" || "1") === "1"');
 }
 
 //CHECK#2
 var y = new String("1");
 if (("" || y) !== y) {
-  $ERROR('#2: (var y = new String("1"); "" || y) === y');
+  throw new Test262Error('#2: (var y = new String("1"); "" || y) === y');
 }

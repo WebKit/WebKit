@@ -11,12 +11,12 @@ description: Checking if Math.log(+0) and Math.log(-0) equals to -Infinity
 var x = +0;
 if (Math.log(x) !== -Infinity)
 {
-  $ERROR("#1: 'var x=+0; Math.log(x) !== -Infinity'");
+  throw new Test262Error("#1: 'var x=+0; Math.log(x) !== -Infinity'");
 }
 
 // CHECK#2
 var x = -0;
 if (Math.log(x) !== -Infinity)
 {
-  $ERROR("#1: 'var x=-0; Math.log(x) !== -Infinity'");
+  throw new Test262Error("#1: 'var x=-0; Math.log(x) !== -Infinity'");
 }

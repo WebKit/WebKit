@@ -1952,6 +1952,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Overflow e)
     case Overflow::PagedY:
         m_value.valueID = CSSValueWebkitPagedY;
         break;
+    case Overflow::Clip:
+        m_value.valueID = CSSValueClip;
+        break;
     }
 }
 
@@ -1973,6 +1976,8 @@ template<> inline CSSPrimitiveValue::operator Overflow() const
         return Overflow::PagedX;
     case CSSValueWebkitPagedY:
         return Overflow::PagedY;
+    case CSSValueClip:
+        return Overflow::Clip;
     default:
         break;
     }

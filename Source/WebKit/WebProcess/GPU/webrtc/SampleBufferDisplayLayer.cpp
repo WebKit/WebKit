@@ -67,6 +67,14 @@ void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, Comp
     });
 }
 
+#if !RELEASE_LOG_DISABLED
+void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
+{
+    ASSERT(m_videoLayer);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetLogIdentifier { logIdentifier }, m_identifier);
+}
+#endif
+
 SampleBufferDisplayLayer::~SampleBufferDisplayLayer()
 {
     m_connection->send(Messages::RemoteSampleBufferDisplayLayerManager::ReleaseLayer { m_identifier }, 0);

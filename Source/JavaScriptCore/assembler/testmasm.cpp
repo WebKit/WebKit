@@ -2212,6 +2212,644 @@ void testXorNotWithUnsignedRightShift64()
         }
     }
 }
+
+void testStorePrePostIndex32()
+{
+    int32_t nums[] = { 1, 2, 3 };
+    intptr_t addr = bitwise_cast<intptr_t>(&nums[1]);
+    int32_t index = sizeof(int32_t);
+
+    auto test1 = [&] (int32_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *++p1 = 4; return p1;
+            jit.store32(GPRInfo::argumentGPR0, CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int32_t* p1 = bitwise_cast<int32_t*>(test1(4));
+    CHECK_EQ(*p1, 4);
+    CHECK_EQ(*--p1, nums[1]);
+
+    auto test2 = [&] (int32_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *p2++ = 5; return p2;
+            jit.store32(GPRInfo::argumentGPR0, CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int32_t* p2 = bitwise_cast<int32_t*>(test2(5));
+    CHECK_EQ(*p2, 4);
+    CHECK_EQ(*--p2, 5);
+}
+
+void testStorePrePostIndex64()
+{
+    int64_t nums[] = { 1, 2, 3 };
+    intptr_t addr = bitwise_cast<intptr_t>(&nums[1]);
+    int32_t index = sizeof(int64_t);
+
+    auto test1 = [&] (int64_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *++p1 = 4; return p1;
+            jit.store64(GPRInfo::argumentGPR0, CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int64_t* p1 = bitwise_cast<int64_t*>(test1(4));
+    CHECK_EQ(*p1, 4);
+    CHECK_EQ(*--p1, nums[1]);
+
+    auto test2 = [&] (int64_t src) {
+        auto store = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // *p2++ = 5; return p2;
+            jit.store64(GPRInfo::argumentGPR0, CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR1, index));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<intptr_t>(store, src, addr);
+    };
+
+    int64_t* p2 = bitwise_cast<int64_t*>(test2(5));
+    CHECK_EQ(*p2, 4);
+    CHECK_EQ(*--p2, 5);
+}
+
+void testLoadPrePostIndex32()
+{
+    int32_t nums[] = { 1, 2, 3 };
+    int32_t index = sizeof(int32_t);
+
+    auto test1 = [&] (int32_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *++p1; *p1 = 4; return res;
+            jit.load32(CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int32_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test1(4), 3);
+    CHECK_EQ(nums[2], 4);
+
+    auto test2 = [&] (int32_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *p2++; *p2 = 5; return res;
+            jit.load32(CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store32(CCallHelpers::TrustedImm32(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int32_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test2(5), 2);
+    CHECK_EQ(nums[2], 5);
+}
+
+void testLoadPrePostIndex64()
+{
+    int64_t nums[] = { 1, 2, 3 };
+    int32_t index = sizeof(int64_t);
+
+    auto test1 = [&] (int64_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *++p1; *p1 = 4; return res;
+            jit.load64(CCallHelpers::PreIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int64_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test1(4), 3);
+    CHECK_EQ(nums[2], 4);
+
+    auto test2 = [&] (int64_t replace) {
+        auto load = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // res = *p2++; *p2 = 5; return res;
+            jit.load64(CCallHelpers::PostIndexAddress(GPRInfo::argumentGPR0, index), GPRInfo::argumentGPR1);
+            jit.store64(CCallHelpers::TrustedImm64(replace), CCallHelpers::ImplicitAddress(GPRInfo::argumentGPR0));
+            jit.move(GPRInfo::argumentGPR1, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+        return invoke<int64_t>(load, &nums[1]);
+    };
+
+    CHECK_EQ(test2(5), 2);
+    CHECK_EQ(nums[2], 5);
+}
+
+void testAndLeftShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto and32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.andLeftShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(and32, n, m);
+                int32_t rhs = n & (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAndRightShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto and32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.andRightShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(and32, n, m);
+                int32_t rhs = n & (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAndUnsignedRightShift32()
+{
+    Vector<uint32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto and32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.andUnsignedRightShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint32_t lhs = invoke<uint32_t>(and32, n, m);
+                uint32_t rhs = static_cast<uint32_t>(n) & (static_cast<uint32_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAndLeftShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto and64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.andLeftShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(and64, n, m);
+                int64_t rhs = n & (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAndRightShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto and64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.andRightShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(and64, n, m);
+                int64_t rhs = n & (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testAndUnsignedRightShift64()
+{
+    Vector<uint32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto and64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.andUnsignedRightShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint64_t lhs = invoke<uint64_t>(and64, n, m);
+                uint64_t rhs = static_cast<uint64_t>(n) & (static_cast<uint64_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testXorLeftShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto xor32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.xorLeftShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(xor32, n, m);
+                int32_t rhs = n ^ (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testXorRightShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto xor32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.xorRightShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(xor32, n, m);
+                int32_t rhs = n ^ (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testXorUnsignedRightShift32()
+{
+    Vector<uint32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto xor32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.xorUnsignedRightShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint32_t lhs = invoke<uint32_t>(xor32, n, m);
+                uint32_t rhs = static_cast<uint32_t>(n) ^ (static_cast<uint32_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testXorLeftShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto xor64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.xorLeftShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(xor64, n, m);
+                int64_t rhs = n ^ (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testXorRightShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto xor64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.xorRightShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(xor64, n, m);
+                int64_t rhs = n ^ (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testXorUnsignedRightShift64()
+{
+    Vector<uint32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto xor64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.xorUnsignedRightShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint64_t lhs = invoke<uint64_t>(xor64, n, m);
+                uint64_t rhs = static_cast<uint64_t>(n) ^ (static_cast<uint64_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testOrLeftShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto or32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.orLeftShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(or32, n, m);
+                int32_t rhs = n | (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testOrRightShift32()
+{
+    Vector<int32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto or32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.orRightShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int32_t lhs = invoke<int32_t>(or32, n, m);
+                int32_t rhs = n | (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testOrUnsignedRightShift32()
+{
+    Vector<uint32_t> amounts = { 0, 17, 31 };
+    for (auto n : int32Operands()) {
+        for (auto m : int32Operands()) {
+            for (auto amount : amounts) {
+                auto or32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.orUnsignedRightShift32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint32_t lhs = invoke<uint32_t>(or32, n, m);
+                uint32_t rhs = static_cast<uint32_t>(n) | (static_cast<uint32_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testOrLeftShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto or64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.orLeftShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(or64, n, m);
+                int64_t rhs = n | (m << amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testOrRightShift64()
+{
+    Vector<int32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto or64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.orRightShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                int64_t lhs = invoke<int64_t>(or64, n, m);
+                int64_t rhs = n | (m >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
+
+void testOrUnsignedRightShift64()
+{
+    Vector<uint32_t> amounts = { 0, 34, 63 };
+    for (auto n : int64Operands()) {
+        for (auto m : int64Operands()) {
+            for (auto amount : amounts) {
+                auto or64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
+
+                    jit.orUnsignedRightShift64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(amount),
+                        GPRInfo::returnValueGPR);
+
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
+
+                uint64_t lhs = invoke<uint64_t>(or64, n, m);
+                uint64_t rhs = static_cast<uint64_t>(n) | (static_cast<uint64_t>(m) >> amount);
+                CHECK_EQ(lhs, rhs);
+            }
+        }
+    }
+}
 #endif
 
 #if CPU(X86) || CPU(X86_64) || CPU(ARM64)
@@ -3066,6 +3704,245 @@ void testAtomicStrongCASFill16()
 
 #endif // CPU(ARM64)
 
+void testLoadStorePair32()
+{
+    constexpr uint32_t initialValue = 0x55aabb80u;
+    constexpr uint32_t value1 = 42;
+    constexpr uint32_t value2 = 0xcfbb1357u;
+
+    uint32_t buffer[10];
+
+    auto initBuffer = [&] {
+        for (unsigned i = 0; i < 10; ++i)
+            buffer[i] = initialValue + i;
+    };
+
+    struct Pair {
+        uint32_t value1;
+        uint32_t value2;
+    };
+
+    Pair pair;
+    auto initPair = [&] {
+        pair = { 0, 0 };
+    };
+
+    // Test loadPair32.
+    auto testLoadPair = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR0;
+        constexpr GPRReg pairGPR = GPRInfo::argumentGPR1;
+        jit.loadPair32(bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(uint32_t)), GPRInfo::regT2, GPRInfo::regT3);
+
+        jit.store32(GPRInfo::regT2, CCallHelpers::Address(pairGPR, 0));
+        jit.store32(GPRInfo::regT3, CCallHelpers::Address(pairGPR, sizeof(uint32_t)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testLoadPair0 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, 0);
+    });
+
+    initBuffer();
+
+    initPair();
+    invoke<void>(testLoadPair0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4);
+    CHECK_EQ(pair.value2, initialValue + 5);
+
+    initPair();
+    buffer[4] = value1;
+    buffer[5] = value2;
+    invoke<void>(testLoadPair0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value1);
+    CHECK_EQ(pair.value2, value2);
+
+    auto testLoadPairMinus2 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, -2);
+    });
+
+    initPair();
+    invoke<void>(testLoadPairMinus2, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4 - 2);
+    CHECK_EQ(pair.value2, initialValue + 5 - 2);
+
+    initPair();
+    buffer[4 - 2] = value2;
+    buffer[5 - 2] = value1;
+    invoke<void>(testLoadPairMinus2, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value2);
+    CHECK_EQ(pair.value2, value1);
+
+    auto testLoadPairPlus3 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, 3);
+    });
+
+    initPair();
+    invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4 + 3);
+    CHECK_EQ(pair.value2, initialValue + 5 + 3);
+
+    initPair();
+    buffer[4 + 3] = value1;
+    buffer[5 + 3] = value2;
+    invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value1);
+    CHECK_EQ(pair.value2, value2);
+
+    // Test loadPair32 using a buffer register as a destination.
+    auto testLoadPairUsingBufferRegisterAsDestination = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR0;
+        constexpr GPRReg pairGPR = GPRInfo::argumentGPR1;
+        jit.loadPair32(bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(uint32_t)), GPRInfo::argumentGPR0, GPRInfo::regT2);
+
+        jit.store32(GPRInfo::argumentGPR0, CCallHelpers::Address(pairGPR, 0));
+        jit.store32(GPRInfo::regT2, CCallHelpers::Address(pairGPR, sizeof(uint32_t)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testLoadPairUsingBufferRegisterAsDestination0 = compile([&] (CCallHelpers& jit) {
+        testLoadPairUsingBufferRegisterAsDestination(jit, 0);
+    });
+
+    initBuffer();
+
+    initPair();
+    invoke<void>(testLoadPairUsingBufferRegisterAsDestination0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4);
+    CHECK_EQ(pair.value2, initialValue + 5);
+
+    // Test storePair32.
+    auto testStorePair = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR2;
+        jit.storePair32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(unsigned)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testStorePair0 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, 0);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePair0, value1, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], value1);
+    CHECK_EQ(buffer[5], value2);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairMinus2 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, -2);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairMinus2, value1, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], value1);
+    CHECK_EQ(buffer[3], value2);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairPlus3 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, 3);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairPlus3, value1, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], value1);
+    CHECK_EQ(buffer[8], value2);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    // Test storePair32 from 1 register.
+    auto testStorePairFromOneReg = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR1;
+        jit.storePair32(GPRInfo::argumentGPR0, GPRInfo::argumentGPR0, bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(unsigned)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testStorePairFromOneReg0 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, 0);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneReg0, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], value2);
+    CHECK_EQ(buffer[5], value2);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairFromOneRegMinus2 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, -2);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneRegMinus2, value1, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], value1);
+    CHECK_EQ(buffer[3], value1);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairFromOneRegPlus3 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, 3);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneRegPlus3, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], value2);
+    CHECK_EQ(buffer[8], value2);
+    CHECK_EQ(buffer[9], initialValue + 9);
+}
+
 #if CPU(ARM64)
 void testLoadStorePair64Int64()
 {
@@ -3154,6 +4031,32 @@ void testLoadStorePair64Int64()
     invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
     CHECK_EQ(pair.value1, value1);
     CHECK_EQ(pair.value2, value2);
+
+    // Test loadPair64 using a buffer register as a destination.
+    auto testLoadPairUsingBufferRegisterAsDestination = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR0;
+        constexpr GPRReg pairGPR = GPRInfo::argumentGPR1;
+        jit.loadPair64(bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(CPURegister)), GPRInfo::argumentGPR0, GPRInfo::regT2);
+
+        jit.store64(GPRInfo::argumentGPR0, CCallHelpers::Address(pairGPR, 0));
+        jit.store64(GPRInfo::regT2, CCallHelpers::Address(pairGPR, sizeof(uint64_t)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testLoadPairUsingBufferRegisterAsDestination0 = compile([&] (CCallHelpers& jit) {
+        testLoadPairUsingBufferRegisterAsDestination(jit, 0);
+    });
+
+    initBuffer();
+
+    initPair();
+    invoke<void>(testLoadPairUsingBufferRegisterAsDestination0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4);
+    CHECK_EQ(pair.value2, initialValue + 5);
 
     // Test storePair64.
     auto testStorePair = [] (CCallHelpers& jit, int offset) {
@@ -4721,6 +5624,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareDoubleSameArg);
 
     RUN(testMul32WithImmediates());
+    RUN(testLoadStorePair32());
 
 #if CPU(X86_64)
     RUN(testBranchTestBit32RegReg());
@@ -4805,6 +5709,31 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testXorNotWithLeftShift64());
     RUN(testXorNotWithRightShift64());
     RUN(testXorNotWithUnsignedRightShift64());
+
+    RUN(testStorePrePostIndex32());
+    RUN(testStorePrePostIndex64());
+    RUN(testLoadPrePostIndex32());
+    RUN(testLoadPrePostIndex64());
+    RUN(testAndLeftShift32());
+    RUN(testAndRightShift32());
+    RUN(testAndUnsignedRightShift32());
+    RUN(testAndLeftShift64());
+    RUN(testAndRightShift64());
+    RUN(testAndUnsignedRightShift64());
+
+    RUN(testXorLeftShift32());
+    RUN(testXorRightShift32());
+    RUN(testXorUnsignedRightShift32());
+    RUN(testXorLeftShift64());
+    RUN(testXorRightShift64());
+    RUN(testXorUnsignedRightShift64());
+
+    RUN(testOrLeftShift32());
+    RUN(testOrRightShift32());
+    RUN(testOrUnsignedRightShift32());
+    RUN(testOrLeftShift64());
+    RUN(testOrRightShift64());
+    RUN(testOrUnsignedRightShift64());
 #endif
 
 #if CPU(ARM64E)

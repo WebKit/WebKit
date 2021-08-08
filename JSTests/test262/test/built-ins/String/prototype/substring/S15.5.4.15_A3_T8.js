@@ -18,7 +18,7 @@ __instance.substring = String.prototype.substring;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.substring(Infinity, NaN) !== "NaN") {
-  $ERROR('#1: __instance = new Number(NaN); __instance.substring = String.prototype.substring;  __instance.substring(Infinity, NaN) === "NaN". Actual: ' + __instance.substring(Infinity, NaN));
+  throw new Test262Error('#1: __instance = new Number(NaN); __instance.substring = String.prototype.substring;  __instance.substring(Infinity, NaN) === "NaN". Actual: ' + __instance.substring(Infinity, NaN));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

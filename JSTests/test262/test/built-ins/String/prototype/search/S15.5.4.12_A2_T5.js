@@ -15,7 +15,7 @@ var regExp = /four/;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (bString.search(regExp) !== 14) {
-  $ERROR('#1: var bString = new String("one two three four five"); var regExp = /four/; bString.search(regExp)=== 14. Actual: ' + bString.search(regExp));
+  throw new Test262Error('#1: var bString = new String("one two three four five"); var regExp = /four/; bString.search(regExp)=== 14. Actual: ' + bString.search(regExp));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

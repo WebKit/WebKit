@@ -13,5 +13,5 @@ Function("a1,a2,a3", "this.shifted=a1;").apply(null, [1]);
 
 //CHECK#1
 if (this["shifted"] !== 1) {
-  $ERROR('#1: If argArray is either an array or an arguments object, the function is passed the...');
+  throw new Test262Error('#1: If argArray is either an array or an arguments object, the function is passed the...');
 }

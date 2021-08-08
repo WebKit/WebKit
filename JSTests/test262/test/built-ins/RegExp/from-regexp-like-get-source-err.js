@@ -23,7 +23,7 @@ Object.defineProperty(obj, 'source', {
 });
 Object.defineProperty(obj, 'flags', {
   get: function() {
-    $ERROR('the `flags` property should not be referenced before `source`');
+    throw new Test262Error('the `flags` property should not be referenced before `source`');
   }
 });
 

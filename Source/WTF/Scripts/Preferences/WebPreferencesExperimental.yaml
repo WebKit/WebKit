@@ -321,6 +321,18 @@ CoreMathMLEnabled:
     WebCore:
       default: false
 
+CrossOriginOpenerPolicyEnabled:
+  type: bool
+  humanReadableName: "Cross-Origin-Opener-Policy (COOP) header"
+  humanReadableDescription: "Support for Cross-Origin-Opener-Policy (COOP) header"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DialogElementEnabled:
   type: bool
   humanReadableName: "Dialog Element"
@@ -731,6 +743,18 @@ OpusDecoderEnabled:
       default: true
     WebKit:
       default: true
+
+OverflowClipEnabled:
+  type: bool
+  humanReadableName: "CSS overflow: clip support"
+  humanReadableDescription: "Enable CSS overflow: clip support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 OverscrollBehaviorEnabled:
   type: bool
@@ -1225,19 +1249,6 @@ WebGLUsingMetal:
       "HAVE(WEBGL_COMPATIBLE_METAL)": true
       default: false
 
-WebGPUEnabled:
-  type: bool
-  humanReadableName: "WebGPU"
-  humanReadableDescription: "WebGPU Sketch prototype"
-  condition: ENABLE(WEBGPU)
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultWebGPUEnabled()
-    WebKit:
-      default: WebKit::defaultWebGPUEnabled()
-    WebCore:
-      default: false
-
 WebMFormatReaderEnabled:
   type: bool
   webcoreBinding: RuntimeEnabledFeatures
@@ -1344,6 +1355,19 @@ WebRTCPlatformUDPSocketsEnabled:
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:
+      default: true
+
+WebRTCSocketsProxyingEnabled:
+  type: bool
+  humanReadableName: "WebRTC Sockets Proxying"
+  humanReadableDescription: "Enable WebRTC Sockets Proxying"
+  condition: ENABLE(WEB_RTC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 WebRTCVP9Profile0CodecEnabled:

@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond))\Z/
 end
 
 def isArch(token)
@@ -303,7 +303,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -929,6 +929,12 @@ writeH("OpcodeGenerated") {
                 when "Index"
                     outp.puts "if (!Arg::isValidIndexForm(args[#{index}].scale(), args[#{index}].offset(), #{arg.widthCode}))"
                     outp.puts "OPGEN_RETURN(false);"
+                when "PreIndex"
+                    outp.puts "if (!Arg::isValidPreIndexForm(args[#{index}].offset()))"
+                    outp.puts "OPGEN_RETURN(false);"
+                when "PostIndex"
+                    outp.puts "if (!Arg::isValidPostIndexForm(args[#{index}].offset()))"
+                    outp.puts "OPGEN_RETURN(false);"
                 when "BigImm"
                 when "RelCond"
                 when "ResCond"
@@ -1235,6 +1241,10 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asAddress()"
                 when "Index"
                     outp.print "args[#{index}].asBaseIndex()"
+                when "PreIndex"
+                    outp.print "args[#{index}].asPreIndexAddress()"
+                when "PostIndex"
+                    outp.print "args[#{index}].asPostIndexAddress()"
                 when "RelCond"
                     outp.print "args[#{index}].asRelationalCondition()"
                 when "ResCond"

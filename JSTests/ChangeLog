@@ -1,3 +1,123 @@
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr BoyerMoore search should support character-class
+        https://bugs.webkit.org/show_bug.cgi?id=228613
+
+        Reviewed by Saam Barati.
+
+        * stress/regexp-bm-search-character-non-fixed-size.js: Added.
+        (shouldBe):
+        * stress/regexp-bm-search-many-candidate-zero-length.js: Added.
+        (shouldBe):
+        (regexp.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z.0.1.2.3.4.5.6.7.8.9.t.v.n.r):
+        * stress/regexp-bm-search-non-fixed-size.js: Added.
+        (shouldBe):
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=228709
+
+        Reviewed by Mark Lam.
+
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Error/prototype/constructor/S15.11.4.1_A1_T1.js: Removed.
+        * test262/test/built-ins/Error/prototype/message/15.11.4.3-1.js: Removed.
+        * test262/test/built-ins/Error/prototype/message/S15.11.4.3_A1.js: Removed.
+        * test262/test/built-ins/Error/prototype/message/S15.11.4.3_A2.js: Removed.
+        * test262/test/built-ins/Error/prototype/name/15.11.4.2-1.js: Removed.
+        * test262/test/built-ins/Error/prototype/name/S15.11.4.2_A1.js: Removed.
+        * test262/test/built-ins/Error/prototype/name/S15.11.4.2_A2.js: Removed.
+        * test262/test/built-ins/Error/prototype/toString/S15.11.4.4_A1.js: Removed.
+        * test262/test/built-ins/TypedArray/prototype/findLast/return-abrupt-from-this-out-of-bounds.js:
+        * test262/test/built-ins/TypedArray/prototype/findLastIndex/return-abrupt-from-this-out-of-bounds.js:
+        * test262/test/harness/sta-error.js: Removed.
+        * test262/test/harness/sta-override-error.js: Removed.
+        * test262/test262-Revision.txt:
+
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=228627
+
+        Reviewed by Ross Kirsling.
+
+2021-07-30  Robin Morisset  <rmorisset@apple.com>
+
+        Improve OSR entry into Wasm loops with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=228595
+
+        Reviewed by Yusuke Suzuki.
+
+        Just a straightforward test that counts to 1M in a loop, to exercise both OSR entry and a loop with an argument at the same time.
+        100k iterations was not enough to reliably complete an OSR entry.
+
+        * wasm/stress/osr-entry-with-loop-arguments.js: Added.
+        (async test):
+
+2021-07-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        putInlineFastReplacingStaticPropertyIfNeeded should handle custom values
+        https://bugs.webkit.org/show_bug.cgi?id=227963
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/reflect-set-custom-value.js:
+
+2021-07-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        definePropertyOnReceiver should check if receiver canPerformFastPutInline
+        https://bugs.webkit.org/show_bug.cgi?id=227963
+        <rdar://80259710>
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/reflect-set-custom-value.js: Added.
+
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Legacy RegExp fields should be accessors
+        https://bugs.webkit.org/show_bug.cgi?id=220233
+
+        Reviewed by Tadeu Zagallo.
+
+        * ChakraCore/test/Lib/forin_lib_v3.baseline-jsc:
+        * microbenchmarks/assign-custom-setter-polymorphic.js:
+        * microbenchmarks/assign-custom-setter.js:
+        * microbenchmarks/custom-setter-getter-as-put-get-by-id.js:
+        * microbenchmarks/custom-value-2.js:
+        * microbenchmarks/custom-value.js:
+        * microbenchmarks/get-custom-getter.js:
+        * stress/custom-value-delete-property-1.js:
+        * stress/custom-value-delete-property-2.js:
+        * stress/custom-value-delete-property-3.js:
+        * stress/object-assign-fast-path.js:
+        * stress/reflect-set.js:
+        * stress/regexp-constructor-dollar-getters-are-unique.js: Added.
+        * stress/regexp-setter-realm.js: Added.
+        * stress/static-put-in-prototype-chain.js: Added.
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should perform BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/jquery-todomvc-regexp.js:
+        * stress/regexp--bm-search-long-character.js: Added.
+        (shouldBe):
+        * stress/regexp--bm-search-long-map.js: Added.
+        (shouldBe):
+        * stress/regexp-bitvector-reuse.js: Added.
+        (shouldBe):
+        * stress/regexp-non-ascii-bm-search-character.js: Added.
+        (shouldBe):
+        * stress/regexp-non-ascii-bm-search-map.js: Added.
+        (shouldBe):
+
 2021-07-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Partly implement Function.prototype.{caller,arguments} reflection proposal

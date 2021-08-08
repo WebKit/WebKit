@@ -27,11 +27,11 @@ assert.sameValue(d3.valueOf(), NaN, "-Infinity");
 // CHECK#4
 var d4 = new Date(0);
 if (d4.valueOf() !== 0) {
-  $ERROR('#4: var d4 = new Date(0); d4.valueOf() === 0;');
+  throw new Test262Error('#4: var d4 = new Date(0); d4.valueOf() === 0;');
 }
 
 // CHECK#5
 var d5 = new Date(-0);
 if (d5.valueOf() !== -0) {
-  $ERROR('#5: var d5 = new Date(-0); d5.valueOf() === -0;');
+  throw new Test262Error('#5: var d5 = new Date(-0); d5.valueOf() === -0;');
 }

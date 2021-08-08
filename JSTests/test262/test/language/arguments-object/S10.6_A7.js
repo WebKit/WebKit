@@ -10,9 +10,9 @@ description: Use property arguments
 function f1() {
   return arguments;
 }
-  
+
 //CHECK#1-5
-for(var i = 1; i < 5; i++){  
-if (f1(1,2,3,4,5)[i] !== (i+1))
-  $ERROR("#"+i+": Returning function's arguments work wrong, f1(1,2,3,4,5)["+i+"] !== "+(i+1));
+for(var i = 1; i < 5; i++){
+  if (f1(1,2,3,4,5)[i] !== (i+1))
+    throw new Test262Error("#"+i+": Returning function's arguments work wrong, f1(1,2,3,4,5)["+i+"] !== "+(i+1));
 }

@@ -52,7 +52,7 @@ try {
   });
 } catch (e) {
   if (!result) {
-    $ERROR('Expected result  to be true, actually ' + result);
+    throw new Test262Error('Expected result  to be true, actually ' + result);
   }
 
   verifyEqualTo(obj, "0", getFunc());
@@ -64,7 +64,7 @@ try {
   verifyNotConfigurable(obj, "0");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

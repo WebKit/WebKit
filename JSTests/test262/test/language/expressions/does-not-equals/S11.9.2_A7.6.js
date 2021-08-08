@@ -11,15 +11,15 @@ description: x is object, y is primitive string
 
 //CHECK#1
 if ((new Boolean(true) != "1") !== false) {
-  $ERROR('#1: (new Boolean(true) != "1") === false');
+  throw new Test262Error('#1: (new Boolean(true) != "1") === false');
 }
 
 //CHECK#2
 if ((new Number(-1) != "-1") !== false) {
-  $ERROR('#2: (new Number(-1) != "-1") === false');
+  throw new Test262Error('#2: (new Number(-1) != "-1") === false');
 }
 
 //CHECK#3
 if ((new String("x") != "x") !== false) {
-  $ERROR('#3: (new String("x") != "x") === false');
+  throw new Test262Error('#3: (new String("x") != "x") === false');
 }

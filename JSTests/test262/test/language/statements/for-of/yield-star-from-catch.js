@@ -17,7 +17,7 @@ var controlIterator = (function*() {
   for (var x of dataIterator) {
     try {
       throw new Error();
-      $ERROR('This code is unreachable.');
+      throw new Test262Error('This code is unreachable.');
     } catch (err) {
       i++;
       yield * values();

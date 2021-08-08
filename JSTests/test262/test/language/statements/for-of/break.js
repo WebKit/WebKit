@@ -9,7 +9,7 @@ features: [generators]
 
 function* values() {
   yield 1;
-  $ERROR('This code is unreachable (following `yield` statement).');
+  throw new Test262Error('This code is unreachable (following `yield` statement).');
 }
 var iterator = values();
 var i = 0;
@@ -18,7 +18,7 @@ for (var x of iterator) {
   i++;
   break;
 
-  $ERROR('This code is unreachable.');
+  throw new Test262Error('This code is unreachable.');
 }
 
 assert.sameValue(i, 1);

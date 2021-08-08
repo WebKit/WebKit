@@ -11,7 +11,7 @@ function __mFunc(){return arguments.length;};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__mFunc([,,]) !== 1){
-  $ERROR('#1: function __mFunc(){return arguments.length;}; __mFunc([,,]) === 1. Actual: ' + (__mFunc([,,])));
+  throw new Test262Error('#1: function __mFunc(){return arguments.length;}; __mFunc([,,]) === 1. Actual: ' + (__mFunc([,,])));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

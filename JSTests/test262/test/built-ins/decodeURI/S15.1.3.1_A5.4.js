@@ -9,5 +9,5 @@ description: decodeURI.length === 1
 
 //CHECK#1
 if (decodeURI.length !== 1) {
-  $ERROR('#1: decodeURI.length === 1. Actual: ' + (decodeURI.length));
+  throw new Test262Error('#1: decodeURI.length === 1. Actual: ' + (decodeURI.length));
 }

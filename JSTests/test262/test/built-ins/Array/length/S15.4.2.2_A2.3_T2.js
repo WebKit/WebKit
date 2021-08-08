@@ -15,12 +15,12 @@ var x = new Array(true);
 
 //CHECK#1
 if (x.length !== 1) {
-  $ERROR('#1: var x = new Array(true); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#1: var x = new Array(true); x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#2
 if (x[0] !== true) {
-  $ERROR('#2: var x = new Array(true); x[0] === true. Actual: ' + (x[0]));
+  throw new Test262Error('#2: var x = new Array(true); x[0] === true. Actual: ' + (x[0]));
 }
 
 var obj = new Boolean(false);
@@ -28,10 +28,10 @@ var x = new Array(obj);
 
 //CHECK#3
 if (x.length !== 1) {
-  $ERROR('#3: var obj = new Boolean(false); var x = new Array(obj); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#3: var obj = new Boolean(false); var x = new Array(obj); x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#4
 if (x[0] !== obj) {
-  $ERROR('#4: var obj = new Boolean(false); var x = new Array(obj); x[0] === obj. Actual: ' + (x[0]));
+  throw new Test262Error('#4: var obj = new Boolean(false); var x = new Array(obj); x[0] === obj. Actual: ' + (x[0]));
 }

@@ -11,15 +11,15 @@ description: Global execution context - Value Properties
 
 //CHECK#1
 if (NaN === null) {
-  $ERROR("#1: NaN === null");
+  throw new Test262Error("#1: NaN === null");
 }
 
 //CHECK#2
 if (Infinity === null) {
-  $ERROR("#2: Infinity === null");
+  throw new Test262Error("#2: Infinity === null");
 }
 
 //CHECK#3
 if (undefined === null) {
-  $ERROR("#3: undefined === null");
+  throw new Test262Error("#3: undefined === null");
 }

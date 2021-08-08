@@ -19,10 +19,10 @@ var obj = new FACTORY("", 4, 2, "A");
 
 //CHECK#1
 if (obj["shifted"] !== "42") {
-  $ERROR('#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
+  throw new Test262Error('#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
 }
 
 //CHECK#2
 if (typeof this["shifted"] !== "undefined") {
-  $ERROR('#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
+  throw new Test262Error('#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
 }

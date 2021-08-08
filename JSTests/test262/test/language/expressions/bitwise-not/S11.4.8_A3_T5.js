@@ -9,10 +9,10 @@ description: Type(x) is Object object or Function object
 
 //CHECK#1
 if (~({}) !== -1) {
-  $ERROR('#1: ~({}) === -1. Actual: ' + (~({})));
+  throw new Test262Error('#1: ~({}) === -1. Actual: ' + (~({})));
 }
 
 //CHECK#2  
 if (~(function(){return 1}) !== -1) {
-  $ERROR('#2: ~(function(){return 1}) === -1. Actual: ' + (~(function(){return 1})));
+  throw new Test262Error('#2: ~(function(){return 1}) === -1. Actual: ' + (~(function(){return 1})));
 }

@@ -15,15 +15,15 @@ var obj = Object("" + 1);
 
 //CHECK#2
 if (obj.constructor !== String) {
-  $ERROR('#2: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#2: Object(expression) returns ToObject(expression)');
 }
 
 //CHECK#3
 if (typeof obj !== "object") {
-  $ERROR('#3: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#3: Object(expression) returns ToObject(expression)');
 }
 
 //CHECK#4
 if ((obj != "1") || (obj === "1")) {
-  $ERROR('#4: Object(expression) returns ToObject(expression)');
+  throw new Test262Error('#4: Object(expression) returns ToObject(expression)');
 }

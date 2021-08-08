@@ -14,7 +14,7 @@ var x = (function __func(){return arguments[0] +"-"+ arguments[1]})("Obi","Wan")
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (x !== "Obi-Wan") {
-	$ERROR('#1: x === "Obi-Wan". Actual: x ==='+x);
+	throw new Test262Error('#1: x === "Obi-Wan". Actual: x ==='+x);
 }
 
 //
@@ -23,7 +23,7 @@ if (x !== "Obi-Wan") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof __func !== 'undefined') {
-	$ERROR('#2: typeof __func === \'undefined\'. Actual: typeof __func ==='+typeof __func);
+	throw new Test262Error('#2: typeof __func === \'undefined\'. Actual: typeof __func ==='+typeof __func);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

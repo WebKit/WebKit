@@ -24,3 +24,13 @@ set(PLAYSTATION_jsc_MAIN_THREAD_NAME "JSCShell")
 if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
     set_target_properties(jsc PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 endif ()
+
+
+if (${CMAKE_GENERATOR} MATCHES "Visual Studio")
+    # With the VisualStudio generator, the compiler complains about -std=c++* for C sources.
+    set_source_files_properties(
+        ../API/tests/CustomGlobalObjectClassTest.c
+        ../API/tests/testapi.c
+        PROPERTIES COMPILE_FLAGS --std=gnu17
+    )
+endif ()

@@ -21,8 +21,8 @@ testWithIntlConstructors(function (Constructor) {
             var validExtension = "-u-co-phonebk-nu-latn";
             var invalidExtension = "-u-nu-invalid";
             var supported1 = Constructor.supportedLocalesOf([locale], opt);
-            var supported2 = Constructor.supportedLocalesOf([locale + validExtension], opt));
-            var supported3 = Constructor.supportedLocalesOf([locale + invalidExtension], opt));
+            var supported2 = Constructor.supportedLocalesOf([locale + validExtension], opt);
+            var supported3 = Constructor.supportedLocalesOf([locale + invalidExtension], opt);
             if (supported1.length === 1) {
                 assert.sameValue(supported2.length, 1, "#1.1: Presence of Unicode locale extension sequence affects whether locale " + locale + " is considered supported with matcher " + matcher + ".");
                 assert.sameValue(supported3.length, 1, "#1.2: Presence of Unicode locale extension sequence affects whether locale " + locale + " is considered supported with matcher " + matcher + ".");

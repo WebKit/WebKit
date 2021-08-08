@@ -14,7 +14,7 @@ var __string = "Boston, Mass. 02134";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g).length !== 1) {
-  $ERROR('#1: __string = "Boston, Mass. 02134"; __string.match(/([\\d]{5})([-\\ ]?[\\d]{4})?$/g).length=== 1. Actual: ' + __string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g).length);
+  throw new Test262Error('#1: __string = "Boston, Mass. 02134"; __string.match(/([\\d]{5})([-\\ ]?[\\d]{4})?$/g).length=== 1. Actual: ' + __string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (__string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g).length !== 1) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g)[0] !== __matches[0]) {
-  $ERROR('#2: __matches=["02134"]; __string = "Boston, Mass. 02134"; __string.match(/([\\d]{5})([-\\ ]?[\\d]{4})?$/g)[0]===__matches[0]. Actual: ' + __string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g)[0]);
+  throw new Test262Error('#2: __matches=["02134"]; __string = "Boston, Mass. 02134"; __string.match(/([\\d]{5})([-\\ ]?[\\d]{4})?$/g)[0]===__matches[0]. Actual: ' + __string.match(/([\d]{5})([-\ ]?[\d]{4})?$/g)[0]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,7 @@ var testScreen = {touch:function(){count++}};
 //CHECK#1
 testScreen.touch();
 if (count !==1) {
-  $ERROR('#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: ' + (count));
+  throw new Test262Error('#1: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); count === 1. Actual: ' + (count));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ if (count !==1) {
 //CHECK#2
 testScreen['touch']();
 if (count !==2) {
-  $ERROR('#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen[\'touch\'](); count === 2. Actual: ' + (count));
+  throw new Test262Error('#2: this.count=0; testScreen = {touch:function(){count++}}; testScreen.touch(); testScreen[\'touch\'](); count === 2. Actual: ' + (count));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

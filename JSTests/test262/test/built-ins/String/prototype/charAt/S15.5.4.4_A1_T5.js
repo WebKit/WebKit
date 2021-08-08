@@ -13,7 +13,7 @@ description: Call charAt() function with null argument of function object
 if (function() {
     return "lego"
   }().charAt(null) !== "l") {
-  $ERROR('#1: function(){return "lego"}().charAt(null) === "l". Actual: function(){return "lego"}().charAt(null) ===' + function() {
+  throw new Test262Error('#1: function(){return "lego"}().charAt(null) === "l". Actual: function(){return "lego"}().charAt(null) ===' + function() {
     return "lego"
   }().charAt(null));
 }

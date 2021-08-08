@@ -10,5 +10,5 @@ flags: [noStrict]
 
 //CHECK#1
 if (delete x !== true) {
-  $ERROR('#1: delete x === true');
+  throw new Test262Error('#1: delete x === true');
 }

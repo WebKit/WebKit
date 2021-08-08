@@ -1034,9 +1034,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             // Simple number.
             comparator = (a, b) => {
                 let aValue = a[sortColumnIdentifier];
+                let bValue = b[sortColumnIdentifier];
+
+                if (isNaN(aValue) && isNaN(bValue))
+                    return 0;
                 if (isNaN(aValue))
                     return 1;
-                let bValue = b[sortColumnIdentifier];
                 if (isNaN(bValue))
                     return -1;
                 return aValue - bValue;
@@ -1058,6 +1061,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             comparator = (a, b) => {
                 let transferSizeA = a.transferSize;
                 let transferSizeB = b.transferSize;
+
+                if (isNaN(transferSizeA) && isNaN(transferSizeB))
+                    return 0;
 
                 // Treat NaN as the largest value.
                 if (isNaN(transferSizeA))

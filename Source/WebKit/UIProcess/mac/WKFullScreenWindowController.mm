@@ -645,12 +645,17 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
         [self requestExitFullScreen];
 }
 
-- (void)didExitPictureInPicture
+- (void)setVideoFullscreenManagerClient:(WebKit::VideoFullscreenManagerProxyClient *)client
 {
     if (auto* videoFullscreenManager = self._videoFullscreenManager) {
         ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient);
-        videoFullscreenManager->setClient(nullptr);
+        videoFullscreenManager->setClient(client);
     }
+}
+
+- (void)didExitPictureInPicture
+{
+    [self setVideoFullscreenManagerClient:nullptr];
 }
 
 #pragma mark -
@@ -683,27 +688,23 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
+    RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedEnterFullScreenAnimation:YES];
-
-    if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-        ASSERT(videoFullscreenManager->client() == nullptr);
-        videoFullscreenManager->setClient(&_videoFullscreenManagerProxyClient);
-    }
+    [self setVideoFullscreenManagerClient:&_videoFullscreenManagerProxyClient];
 }
 
 - (void)windowDidFailToExitFullScreen:(NSWindow *)window
 {
+    RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedExitFullScreenAnimation:NO];
+    [self setVideoFullscreenManagerClient:nullptr];
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
+    RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedExitFullScreenAnimation:YES];
-
-    if (auto* videoFullscreenManager = self._videoFullscreenManager) {
-        ASSERT(videoFullscreenManager->client() == &_videoFullscreenManagerProxyClient);
-        videoFullscreenManager->setClient(nullptr);
-    }
+    [self setVideoFullscreenManagerClient:nullptr];
 }
 
 - (NSWindow *)destinationWindowToExitFullScreenForWindow:(NSWindow *)window
@@ -718,6 +719,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 {
     if (!_page)
         return nullptr;
+
     return _page->fullScreenManager();
 }
 

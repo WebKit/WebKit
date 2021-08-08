@@ -9,10 +9,10 @@ description: Checking all combinations
 
 //CHECK#1
 if (!(+0 === -0)) {
-  $ERROR('#1: +0 === -0');
+  throw new Test262Error('#1: +0 === -0');
 }
 
 //CHECK#2
 if (!(-0 === +0)) {
-  $ERROR('#2: -0 === +0');
+  throw new Test262Error('#2: -0 === +0');
 }

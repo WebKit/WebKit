@@ -14,7 +14,7 @@ __instance.lastIndexOf = String.prototype.lastIndexOf;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.lastIndexOf(true, false) !== 0) {
-  $ERROR('#1: __instance = new Object(true); __instance.lastIndexOf = String.prototype.lastIndexOf;  __instance.lastIndexOf(true, false) === 0. Actual: ' + __instance.lastIndexOf(true, false));
+  throw new Test262Error('#1: __instance = new Object(true); __instance.lastIndexOf = String.prototype.lastIndexOf;  __instance.lastIndexOf(true, false) === 0. Actual: ' + __instance.lastIndexOf(true, false));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

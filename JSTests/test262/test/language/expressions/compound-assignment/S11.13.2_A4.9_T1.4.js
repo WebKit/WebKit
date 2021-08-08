@@ -13,26 +13,26 @@ var x;
 x = null;
 x &= undefined;
 if (x !== 0) {
-  $ERROR('#1: x = null; x &= undefined; x === 0. Actual: ' + (x));
+  throw new Test262Error('#1: x = null; x &= undefined; x === 0. Actual: ' + (x));
 }
 
 //CHECK#2
 x = undefined;
 x &= null;
 if (x !== 0) {
-  $ERROR('#2: x = undefined; x &= null; x === 0. Actual: ' + (x));
+  throw new Test262Error('#2: x = undefined; x &= null; x === 0. Actual: ' + (x));
 }
 
 //CHECK#3
 x = undefined;
 x &= undefined;
 if (x !== 0) {
-  $ERROR('#3: x = undefined; x &= undefined; x === 0. Actual: ' + (x));
+  throw new Test262Error('#3: x = undefined; x &= undefined; x === 0. Actual: ' + (x));
 }
 
 //CHECK#4
 x = null;
 x &= null;
 if (x !== 0) {
-  $ERROR('#4: x = null; x &= null; x === 0. Actual: ' + (x));
+  throw new Test262Error('#4: x = null; x &= null; x === 0. Actual: ' + (x));
 }

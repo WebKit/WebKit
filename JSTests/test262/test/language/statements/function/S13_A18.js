@@ -10,7 +10,7 @@ description: Using a function declaration as a function parameter
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof sinx !== 'undefined') {
-	$ERROR('#1: typeof sinx === \'undefined\'. Actual: typeof sinx ==='+typeof sinx);
+	throw new Test262Error('#1: typeof sinx === \'undefined\'. Actual: typeof sinx ==='+typeof sinx);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ var __val = function derivative(f, dx) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof sinx !== 'undefined') {
-	$ERROR('#2: typeof sinx === \'undefined\'. Actual: typeof sinx ==='+typeof sinx);
+	throw new Test262Error('#2: typeof sinx === \'undefined\'. Actual: typeof sinx ==='+typeof sinx);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

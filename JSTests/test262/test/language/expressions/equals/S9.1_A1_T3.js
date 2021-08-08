@@ -14,11 +14,11 @@ description: >
 // CHECK#1
 var object = {valueOf: function() {return 1}, toString: function() {return 0}};
 if (object + "" !== "1") {
-  $ERROR('#1: var object = {valueOf: function() {return 1}, toString: function() {return 0}}; object + "" === "1". Actual: ' + (object + ""));
+  throw new Test262Error('#1: var object = {valueOf: function() {return 1}, toString: function() {return 0}}; object + "" === "1". Actual: ' + (object + ""));
 }
 
 // CHECK#2
 var object = {valueOf: function() {return "1"}, toString: function() {return 0}};
 if (object + 0 !== "10") {
-  $ERROR('#2: var object = {valueOf: function() {return "1"}, toString: function() {return 0}}; object + 0 === "10". Actual: ' + (object + 0));
+  throw new Test262Error('#2: var object = {valueOf: function() {return "1"}, toString: function() {return 0}}; object + 0 === "10". Actual: ' + (object + 0));
 }

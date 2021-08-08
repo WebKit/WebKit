@@ -13,29 +13,29 @@ description: Use try statement. len = NaN, +/-Infinity
 //CHECK#1
 try {
   new Array(NaN);
-  $ERROR('#1.1: new Array(NaN) throw RangeError. Actual: ' + (new Array(NaN)));
+  throw new Test262Error('#1.1: new Array(NaN) throw RangeError. Actual: ' + (new Array(NaN)));
 } catch (e) {
   if ((e instanceof RangeError) !== true) {
-    $ERROR('#1.2: new Array(NaN) throw RangeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: new Array(NaN) throw RangeError. Actual: ' + (e));
   }
 }
 
 //CHECK#2
 try {
   new Array(Number.POSITIVE_INFINITY);
-  $ERROR('#2.1: new Array(Number.POSITIVE_INFINITY) throw RangeError. Actual: ' + (new Array(Number.POSITIVE_INFINITY)));
+  throw new Test262Error('#2.1: new Array(Number.POSITIVE_INFINITY) throw RangeError. Actual: ' + (new Array(Number.POSITIVE_INFINITY)));
 } catch (e) {
   if ((e instanceof RangeError) !== true) {
-    $ERROR('#2.2: new Array(Number.POSITIVE_INFINITY) throw RangeError. Actual: ' + (e));
+    throw new Test262Error('#2.2: new Array(Number.POSITIVE_INFINITY) throw RangeError. Actual: ' + (e));
   }
 }
 
 //CHECK#3
 try {
   new Array(Number.NEGATIVE_INFINITY);
-  $ERROR('#3.1: new Array(Number.NEGATIVE_INFINITY) throw RangeError. Actual: ' + (new Array(Number.NEGATIVE_INFINITY)));
+  throw new Test262Error('#3.1: new Array(Number.NEGATIVE_INFINITY) throw RangeError. Actual: ' + (new Array(Number.NEGATIVE_INFINITY)));
 } catch (e) {
   if ((e instanceof RangeError) !== true) {
-    $ERROR('#3.2: new Array(Number.NEGATIVE_INFINITY) throw RangeError. Actual: ' + (e));
+    throw new Test262Error('#3.2: new Array(Number.NEGATIVE_INFINITY) throw RangeError. Actual: ' + (e));
   }
 }

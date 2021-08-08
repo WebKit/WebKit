@@ -10,11 +10,11 @@ description: Checking DontEnum attribute
 ---*/
 
 if (Date.prototype.setMinutes.propertyIsEnumerable('length')) {
-  $ERROR('#1: The Date.prototype.setMinutes.length property has the attribute DontEnum');
+  throw new Test262Error('#1: The Date.prototype.setMinutes.length property has the attribute DontEnum');
 }
 
 for (var x in Date.prototype.setMinutes) {
   if (x === "length") {
-    $ERROR('#2: The Date.prototype.setMinutes.length has the attribute DontEnum');
+    throw new Test262Error('#2: The Date.prototype.setMinutes.length has the attribute DontEnum');
   }
 }

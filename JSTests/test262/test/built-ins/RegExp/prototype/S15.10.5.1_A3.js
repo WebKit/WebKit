@@ -10,7 +10,7 @@ includes: [propertyHelper.js]
 
 //CHECK#0
 if (RegExp.hasOwnProperty('prototype') !== true) {
-	$ERROR('#0: RegExp.hasOwnProperty(\'prototype\') === true');
+	throw new Test262Error('#0: RegExp.hasOwnProperty(\'prototype\') === true');
 }
 
 verifyNotConfigurable(RegExp, "prototype");
@@ -18,7 +18,7 @@ verifyNotConfigurable(RegExp, "prototype");
 //CHECK#1
 try {
   if (delete RegExp.prototype !== false) {
-    $ERROR('#1: delete RegExp.prototype === false');
+    throw new Test262Error('#1: delete RegExp.prototype === false');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;
@@ -27,5 +27,5 @@ try {
 
 //CHECK#2
 if (RegExp.hasOwnProperty('prototype') !== true) {
-	$ERROR('#2: delete RegExp.prototype; RegExp.hasOwnProperty(\'prototype\') === true');
+	throw new Test262Error('#2: delete RegExp.prototype; RegExp.hasOwnProperty(\'prototype\') === true');
 }

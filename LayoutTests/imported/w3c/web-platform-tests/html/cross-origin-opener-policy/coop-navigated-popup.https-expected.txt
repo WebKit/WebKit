@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Open a popup to a document without COOP, then navigate it to a document with Test timed out
+PASS Open a popup to a document without COOP, then navigate it to a document with
 

@@ -25,7 +25,7 @@ try {
   Object.defineProperties(obj, this);
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
   result = true;
 } finally {

@@ -1,4 +1,4 @@
 
-FAIL Same origin popup redirects to same-origin with same-origin-allow-popups assert_equals: opener expected "false" but got "true"
-FAIL Cross origin popup redirects to same-origin with same-origin-allow-popups assert_equals: opener expected "false" but got "true"
+PASS Same origin popup redirects to same-origin with same-origin-allow-popups
+PASS Cross origin popup redirects to same-origin with same-origin-allow-popups
 

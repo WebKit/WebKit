@@ -22,10 +22,10 @@ __obj.toLocaleUpperCase = String.prototype.toLocaleUpperCase;
 //CHECK#1
 try {
   var x = __obj.toLocaleUpperCase();
-  $ERROR('#1: "var x = __obj.toLocaleUpperCase()" lead to throwing exception');
+  throw new Test262Error('#1: "var x = __obj.toLocaleUpperCase()" lead to throwing exception');
 } catch (e) {
   if (e !== "intostr") {
-    $ERROR('#1.1: Exception === "intostr". Actual: ' + e);
+    throw new Test262Error('#1.1: Exception === "intostr". Actual: ' + e);
   }
 }
 //

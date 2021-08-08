@@ -29,15 +29,15 @@ var body = "return a;";
 try {
   var f = new Function(p, body);
 } catch (e) {
-  $ERROR('#1: test failed with error ' + e);
+  throw new Test262Error('#1: test failed with error ' + e);
 }
 
 //CHECK#2
 if (f.constructor !== Function) {
-  $ERROR('#2: When the Function constructor is called with arguments p, body creates a new Function object as specified in 13.2');
+  throw new Test262Error('#2: When the Function constructor is called with arguments p, body creates a new Function object as specified in 13.2');
 }
 
 //CHECK#3
 if (f(42) !== 42) {
-  $ERROR('#3: When the Function constructor is called with arguments p, body creates a new Function object as specified in 13.2');
+  throw new Test262Error('#3: When the Function constructor is called with arguments p, body creates a new Function object as specified in 13.2');
 }

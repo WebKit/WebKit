@@ -10104,9 +10104,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _hasSelectableTextInImage = NO;
     _hasVisualSearchResults = NO;
 #endif // USE(QUICK_LOOK)
-#if USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     _contextMenuForMachineReadableCode.clear();
-#endif // USE(UICONTEXTMENU)
+#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 }
 
 - (void)_tearDownImageAnalysis
@@ -10128,9 +10128,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _hasSelectableTextInImage = NO;
     _hasVisualSearchResults = NO;
 #endif // USE(QUICK_LOOK)
-#if USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     _contextMenuForMachineReadableCode.clear();
-#endif // USE(UICONTEXTMENU)
+#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
 }
 
@@ -10215,9 +10215,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _hasVisualSearchResults = NO;
 #endif // USE(QUICK_LOOK)
 
-#if USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     _contextMenuForMachineReadableCode.clear();
-#endif // USE(UICONTEXTMENU)
+#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 
     WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([gestureRecognizer locationInView:self]) };
     request.includeImageData = true;
@@ -10322,9 +10322,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #else
                     UNUSED_PARAM(hasTextResults);
 #endif
-#if USE(UICONTEXTMENU)
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
                     strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
-#endif
+#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
                     [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
                 }];
             });
@@ -10391,12 +10391,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif
 
 #if USE(UICONTEXTMENU)
+#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
             strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip] ? result.mrcMenu : nil;
+#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
             strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
             [strongSelf->_contextMenuInteraction _presentMenuAtLocation:location];
 #else
             UNUSED_PARAM(location);
-#endif
+#endif // USE(UICONTEXTMENU)
         }];
     } forRequest:request];
 }
@@ -11074,10 +11076,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
                 RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
                 auto actions = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-#if ENABLE(IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
                 if (UIMenu *menu = strongSelf->_contextMenuForMachineReadableCode.get())
                     [actions addObject:menu];
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
                 return [UIMenu menuWithTitle:strongSelf->_positionInformation.title children:actions];
             };
 
@@ -11347,9 +11349,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
 
-#if ENABLE(IMAGE_ANALYSIS)
+#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     _contextMenuForMachineReadableCode.clear();
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] () {
         auto strongSelf = weakSelf.get();

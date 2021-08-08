@@ -36,6 +36,7 @@
 #import "Frame.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
+#import "GraphicsContextCG.h"
 #import "Image.h"
 #import "NotImplemented.h"
 #import "Page.h"

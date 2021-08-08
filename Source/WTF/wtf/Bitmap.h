@@ -23,6 +23,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PrintStream.h>
 #include <wtf/StdIntExtras.h>
 #include <string.h>
 #include <type_traits>
@@ -32,12 +33,14 @@ namespace WTF {
 template<size_t size>
 using BitmapWordType = std::conditional_t<(size <= 32 && sizeof(UCPURegister) > sizeof(uint32_t)), uint32_t, UCPURegister>;
 
-template<size_t bitmapSize, typename WordType = BitmapWordType<bitmapSize>>
+template<size_t bitmapSize, typename PassedWordType = BitmapWordType<bitmapSize>>
 class Bitmap final {
     WTF_MAKE_FAST_ALLOCATED;
     
-    static_assert(sizeof(WordType) <= sizeof(UCPURegister), "WordType must not be bigger than the CPU atomic word size");
 public:
+    using WordType = PassedWordType;
+
+    static_assert(sizeof(WordType) <= sizeof(UCPURegister), "WordType must not be bigger than the CPU atomic word size");
     constexpr Bitmap();
 
     static constexpr size_t size()
@@ -129,6 +132,11 @@ public:
     void operator^=(const Bitmap&);
 
     unsigned hash() const;
+
+    void dump(PrintStream& out) const;
+
+    WordType* storage() { return bits.data(); }
+    const WordType* storage() const { return bits.data(); }
 
 private:
     static constexpr unsigned wordSize = sizeof(WordType) * 8;
@@ -505,6 +513,13 @@ inline unsigned Bitmap<bitmapSize, WordType>::hash() const
     for (size_t i = 0; i < words; ++i)
         result ^= IntHash<WordType>::hash(bits[i]);
     return result;
+}
+
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::dump(PrintStream& out) const
+{
+    for (size_t i = 0; i < size(); ++i)
+        out.print(get(i) ? "1" : "-");
 }
 
 } // namespace WTF

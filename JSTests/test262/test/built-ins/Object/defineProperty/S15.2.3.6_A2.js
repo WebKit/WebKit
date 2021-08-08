@@ -18,5 +18,5 @@ Object.defineProperty(base, 'foo', {
   get: getter
 });
 if (derived.hasOwnProperty('foo')) {
-  $ERROR('Accessor properties inherit as own properties');
+  throw new Test262Error('Accessor properties inherit as own properties');
 }

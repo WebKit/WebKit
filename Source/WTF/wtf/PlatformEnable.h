@@ -751,6 +751,10 @@
 #define ENABLE_YARR_JIT_BACKREFERENCES 1
 #endif
 
+#if CPU(ARM64) || CPU(X86_64)
+#define ENABLE_YARR_JIT_UNICODE_EXPRESSIONS 1
+#endif
+
 /* If either the JIT or the RegExp JIT is enabled, then the Assembler must be
    enabled as well: */
 #if ENABLE(JIT) || ENABLE(YARR_JIT) || !ENABLE(C_LOOP)
@@ -900,10 +904,6 @@
 
 #if ENABLE(WEBGL2) && !ENABLE(WEBGL)
 #error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
-#endif
-
-#if ENABLE(WHLSL_COMPILER) && !ENABLE(WEBGPU)
-#error "ENABLE(WHLSL_COMPILER) requires ENABLE(WEBGPU)"
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) && !ENABLE(OFFSCREEN_CANVAS)

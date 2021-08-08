@@ -12,11 +12,11 @@ description: Use \n in RegExp and \u000A in tested string
 //CHECK#1
 var arr = /\n/.exec("\u000A");
 if ((arr === null) || (arr[0] !== "\u000A")) {
-  $ERROR('#1: var arr = /\\n/.exec("\\u000A"); arr[0] === "\\u000A". Actual. ' + (arr && arr[0]));
+  throw new Test262Error('#1: var arr = /\\n/.exec("\\u000A"); arr[0] === "\\u000A". Actual. ' + (arr && arr[0]));
 }
 
 //CHECK#2
 var arr = /\n\n/.exec("a\u000A\u000Ab");
 if ((arr === null) || (arr[0] !== "\u000A\u000A")) {
-  $ERROR('#2: var arr = /\\n\\n/.exec("a\\u000A\\u000Ab"); arr[0] === "\\u000A\\u000A". Actual. ' + (arr && arr[0]));
+  throw new Test262Error('#2: var arr = /\\n\\n/.exec("a\\u000A\\u000Ab"); arr[0] === "\\u000A\\u000A". Actual. ' + (arr && arr[0]));
 }

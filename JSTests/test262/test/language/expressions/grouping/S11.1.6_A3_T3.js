@@ -11,16 +11,16 @@ description: Applying grouping operator to String
 
 //CHECK#1
 if (("1") !== "1") {
-  $ERROR('#1: ("1") === "1". Actual: ' + (("1")));
+  throw new Test262Error('#1: ("1") === "1". Actual: ' + (("1")));
 }
 
 //CHECK#2
 if (("x") !== "x") {
-  $ERROR('#2: ("x") === "x". Actual: ' + (("x")));
+  throw new Test262Error('#2: ("x") === "x". Actual: ' + (("x")));
 }
 
 //CHECK#3
 var x = new Number("1");
 if ((x) !== x) {
-  $ERROR('#3: var x = new Number("1"); (x) === x. Actual: ' + ((x)));
+  throw new Test262Error('#3: var x = new Number("1"); (x) === x. Actual: ' + ((x)));
 }

@@ -10,7 +10,7 @@ description: Checking String.prototype.localeCompare.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.localeCompare.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.localeCompare.hasOwnProperty("length") return true. Actual: ' + String.prototype.localeCompare.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.localeCompare.hasOwnProperty("length") return true. Actual: ' + String.prototype.localeCompare.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.localeCompare.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.localeCompare.length !== 1) {
-  $ERROR('#2: String.prototype.localeCompare.length === 1. Actual: ' + String.prototype.localeCompare.length);
+  throw new Test262Error('#2: String.prototype.localeCompare.length === 1. Actual: ' + String.prototype.localeCompare.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

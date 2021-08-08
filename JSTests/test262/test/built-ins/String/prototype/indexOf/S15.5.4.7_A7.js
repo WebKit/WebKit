@@ -11,9 +11,9 @@ var __FACTORY = String.prototype.indexOf;
 
 try {
   var __instance = new __FACTORY;
-  $ERROR('#1: var __FACTORY = String.prototype.indexOf; "__instance = new __FACTORY" lead to throwing exception');
+  throw new Test262Error('#1: var __FACTORY = String.prototype.indexOf; "__instance = new __FACTORY" lead to throwing exception');
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: var __FACTORY = String.prototype.indexOf; "__instance = new __FACTORY" throw a TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: var __FACTORY = String.prototype.indexOf; "__instance = new __FACTORY" throw a TypeError. Actual: ' + (e));
   }
 }

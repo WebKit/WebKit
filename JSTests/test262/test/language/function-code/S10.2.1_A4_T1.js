@@ -21,7 +21,7 @@ function f1(x){
   }
 }
 if(!(f1().constructor.prototype === Function.prototype)){
-  $ERROR('#1: f1() returns function');
+  throw new Test262Error('#1: f1() returns function');
 }
 
 //CHECK#2
@@ -33,7 +33,7 @@ function f2(x){
   }
 }
 if(!(f2() === "function")){
-  $ERROR('#2: f2() === "function"');
+  throw new Test262Error('#2: f2() === "function"');
 }
 
 //CHECK#3
@@ -44,5 +44,5 @@ function f3() {
   }
 }
 if (!(f3() === "function")){
-  $ERROR('#3: f3() === "function"');
+  throw new Test262Error('#3: f3() === "function"');
 }

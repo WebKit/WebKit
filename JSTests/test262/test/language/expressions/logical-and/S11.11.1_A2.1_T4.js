@@ -9,5 +9,5 @@ description: If ToBoolean(x) is false and GetBase(y) is null, return false
 
 //CHECK#1
 if ((false && x) !== false) {
-  $ERROR('#1: (false && x) === false');
+  throw new Test262Error('#1: (false && x) === false');
 }

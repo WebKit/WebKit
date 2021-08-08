@@ -13,7 +13,7 @@ description: Call toLocaleUpperCase() function of function call
 if (function() {
     return "GnulLuNa"
   }().toLocaleUpperCase() !== "GNULLUNA") {
-  $ERROR('#1: function(){return "GnulLuNa"}().toLocaleUpperCase() === "GNULLUNA". Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "GnulLuNa"}().toLocaleUpperCase() === "GNULLUNA". Actual: ' + function() {
     return "GnulLuNa"
   }().toLocaleUpperCase());
 }

@@ -259,19 +259,6 @@ bool defaultWebRTCCodecsInGPUProcess()
 
 #endif // ENABLE(WEB_RTC)
 
-#if ENABLE(WEBGPU)
-
-bool defaultWebGPUEnabled()
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("WebGPU");
-#endif
-
-    return false;
-}
-
-#endif // ENABLE(WEBGPU)
-
 bool defaultInAppBrowserPrivacy()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)

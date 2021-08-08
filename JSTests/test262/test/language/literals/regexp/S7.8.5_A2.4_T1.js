@@ -11,10 +11,10 @@ description: Check similar to (/,\;/.source === ",\\;")
 
 //CHECK#1
 if (/,\;/.source !== ",\\;") {
-  $ERROR('#1: /,\\;/');
+  throw new Test262Error('#1: /,\\;/');
 }
 
 //CHECK#2
 if (/ \ /.source !== " \\ ") {
-  $ERROR('#2: / \\ /');
+  throw new Test262Error('#2: / \\ /');
 }

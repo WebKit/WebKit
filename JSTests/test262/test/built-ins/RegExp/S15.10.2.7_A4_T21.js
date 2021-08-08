@@ -13,5 +13,5 @@ var __executed = /[xyz]*1/.test('a0.b2.c3');
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /[xyz]*1/.test(\'a0.b2.c3\') === false');
+	throw new Test262Error('#1: /[xyz]*1/.test(\'a0.b2.c3\') === false');
 }

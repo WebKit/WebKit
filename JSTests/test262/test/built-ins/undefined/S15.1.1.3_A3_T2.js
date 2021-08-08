@@ -10,5 +10,5 @@ flags: [noStrict]
 
 // CHECK#1
 if (delete undefined !== false) {
-  $ERROR('#1: delete undefined === false. Actual: ' + (delete undefined));
+  throw new Test262Error('#1: delete undefined === false. Actual: ' + (delete undefined));
 }

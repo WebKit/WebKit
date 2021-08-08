@@ -11,7 +11,7 @@ info: |
 
 Object.defineProperty(Array.prototype, "0", {
   set: function(v) {
-    $ERROR('Should define own properties');
+    throw new Test262Error('Should define own properties');
   }
 });
 
@@ -22,7 +22,7 @@ function Custom() {}
 
 Object.defineProperty(Custom.prototype, "0", {
   set: function(v) {
-    $ERROR('Should define own properties');
+    throw new Test262Error('Should define own properties');
   }
 });
 

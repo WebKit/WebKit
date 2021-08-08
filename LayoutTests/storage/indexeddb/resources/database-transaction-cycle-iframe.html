@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script>
+
+var objectStore = null;
+var putRequest = null;
+
+function keepTransactionAlive() {
+    try {
+        putRequest = objectStore.put("value", "key");
+        putRequest.onsuccess = keepTransactionAlive;
+    } catch (e) {
+        putRequest = null;
+    }
+}
+
+function openDatabase() {
+    var databaseName = "database-transaction-cycle-iframe";
+    window.indexedDB.deleteDatabase(databaseName);
+    var openRequest = window.indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = (event) => {
+        var database = event.target.result;
+        objectStore = database.createObjectStore("objectStore");
+        event.target.transaction.onabort = () => parent.frameTransactionAborted();
+
+        keepTransactionAlive();
+
+        parent.frameDatabaseOpened();
+    };
+}
+
+openDatabase();
+</script>

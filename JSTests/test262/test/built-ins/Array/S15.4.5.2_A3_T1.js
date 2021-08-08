@@ -15,17 +15,17 @@ description: >
 var x = [];
 x.length = 1;
 if (x.length !== 1) {
-  $ERROR('#1: x = []; x.length = 1; x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#1: x = []; x.length = 1; x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x[5] = 1;
 x.length = 10;
 if (x.length !== 10) {
-  $ERROR('#2: x = []; x.length = 1; x[5] = 1; x.length = 10; x.length === 10. Actual: ' + (x.length));
+  throw new Test262Error('#2: x = []; x.length = 1; x[5] = 1; x.length = 10; x.length === 10. Actual: ' + (x.length));
 }
 
 //CHECK#3
 if (x[5] !== 1) {
-  $ERROR('#3: x = []; x.length = 1; x[5] = 1; x.length = 10; x[5] = 1');
+  throw new Test262Error('#3: x = []; x.length = 1; x[5] = 1; x.length = 10; x[5] = 1');
 }

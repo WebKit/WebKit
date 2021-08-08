@@ -26,7 +26,7 @@ do{
 }
 while(c1<2);
 if(fin!==1){
-  $ERROR('#1: "finally" block must be evaluated at "try{continue} catch finally" construction');
+  throw new Test262Error('#1: "finally" block must be evaluated at "try{continue} catch finally" construction');
 }
 
 // CHECK#2
@@ -46,7 +46,7 @@ do{
 }
 while(c2<2);
 if(fin2!==1){
-  $ERROR('#2: "finally" block must be evaluated at "try catch{continue} finally" construction');
+  throw new Test262Error('#2: "finally" block must be evaluated at "try catch{continue} finally" construction');
 }
 
 // CHECK#3
@@ -66,7 +66,7 @@ do{
 }
 while(c3<2);
 if(fin3!==1){
-  $ERROR('#3: "finally" block must be evaluated at "try catch finally{continue}" construction');
+  throw new Test262Error('#3: "finally" block must be evaluated at "try catch finally{continue}" construction');
 }
 
 // CHECK#4
@@ -83,7 +83,7 @@ do{
 }
 while(c4<2);
 if(fin4!==1){
-  $ERROR('#4: "finally" block must be evaluated at "try{continue} finally"  construction');
+  throw new Test262Error('#4: "finally" block must be evaluated at "try{continue} finally"  construction');
 }
 
 // CHECK#5
@@ -99,7 +99,7 @@ do{
 }
 while(c5<2);
 if(c5!==2){
-  $ERROR('#5: "try catch{continue}" must work correctly');
+  throw new Test262Error('#5: "try catch{continue}" must work correctly');
 }
 
 // CHECK#6
@@ -117,8 +117,8 @@ do{
 }
 while(c6<2);
 if(fin6!==1){
-  $ERROR('#6.1: "finally" block must be evaluated');
+  throw new Test262Error('#6.1: "finally" block must be evaluated');
 }
 if(c6!==2){
-  $ERROR('#6.2: "try finally{continue}" must work correctly');
+  throw new Test262Error('#6.2: "try finally{continue}" must work correctly');
 }

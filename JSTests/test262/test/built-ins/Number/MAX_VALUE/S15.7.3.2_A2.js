@@ -12,5 +12,5 @@ includes: [propertyHelper.js]
 var x = Number.MAX_VALUE;
 verifyNotWritable(Number, "MAX_VALUE", null, 1);
 if (Number.MAX_VALUE !== x) {
-  $ERROR('#1: x = Number.MAX_VALUE; Number.MAX_VALUE = 1; Number.MAX_VALUE === x');
+  throw new Test262Error('#1: x = Number.MAX_VALUE; Number.MAX_VALUE = 1; Number.MAX_VALUE === x');
 }

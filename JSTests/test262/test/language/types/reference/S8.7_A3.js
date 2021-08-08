@@ -23,7 +23,7 @@ items = new Array( "new", "array" );
 // items points to new Array( "new", "array" )
 // itemsRef points to new Array( "one", "two", "three" )
 if( items == itemsRef ){
-  $ERROR('#1: var items = new Array( "one", "two", "three" ); var itemsRef = items; items = new Array( "new", "array" ); items != itemsRef');
+  throw new Test262Error('#1: var items = new Array( "one", "two", "three" ); var itemsRef = items; items = new Array( "new", "array" ); items != itemsRef');
 };
 //
 //////////////////////////////////////////////////////////////////////////////

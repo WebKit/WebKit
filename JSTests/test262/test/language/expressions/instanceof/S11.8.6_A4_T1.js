@@ -9,15 +9,15 @@ description: Checking Boolean case
 
 //CHECK#1
 if (false instanceof Boolean) {
-	$ERROR('#1: false is not instanceof Boolean');
+	throw new Test262Error('#1: false is not instanceof Boolean');
 }
 
 //CHECK#2
 if (Boolean(false) instanceof Boolean) {
-	$ERROR('#2: Boolean(false) is not instanceof Boolean');
+	throw new Test262Error('#2: Boolean(false) is not instanceof Boolean');
 }
 
 //CHECK#3
 if (new Boolean instanceof Boolean !== true) {
-	$ERROR('#3: new Boolean instanceof Boolean');
+	throw new Test262Error('#3: new Boolean instanceof Boolean');
 }

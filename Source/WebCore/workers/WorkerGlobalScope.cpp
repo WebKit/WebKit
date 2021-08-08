@@ -582,6 +582,13 @@ void WorkerGlobalScope::clearDecodedScriptData()
     }
 }
 
+bool WorkerGlobalScope::crossOriginIsolated() const
+{
+    // FIXME: Implemented this. This should return true if COOP/COEP are used and the page is allowed to use APIs
+    // that require cross-origin isolation (e.g. SharedArrayBuffer).
+    return false;
+}
+
 void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts)
 {
     ASSERT(isContextThread());

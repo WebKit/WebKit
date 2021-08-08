@@ -359,6 +359,11 @@ VolatilityState IOSurface::state() const
     return previousState == kIOSurfacePurgeableEmpty ? VolatilityState::Empty : VolatilityState::Valid;
 }
 
+IOSurfaceSeed IOSurface::seed() const
+{
+    return IOSurfaceGetSeed(m_surface.get());
+}
+
 bool IOSurface::isVolatile() const
 {
     uint32_t previousState = 0;

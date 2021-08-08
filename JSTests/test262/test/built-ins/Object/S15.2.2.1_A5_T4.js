@@ -15,20 +15,20 @@ var n_obj = new Object(2 * ([].length + {
 
 //CHECK#2
 if (n_obj.constructor !== Number) {
-  $ERROR('#2: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#2: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#3
 if (typeof n_obj !== 'object') {
-  $ERROR('#3: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#3: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#4
 if (n_obj != 2) {
-  $ERROR('#4: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#4: When the Object constructor is called with Number argument return ToObject(number)');
 }
 
 //CHECK#5
 if (n_obj === 2) {
-  $ERROR('#5: When the Object constructor is called with Number argument return ToObject(number)');
+  throw new Test262Error('#5: When the Object constructor is called with Number argument return ToObject(number)');
 }

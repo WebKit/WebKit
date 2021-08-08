@@ -1,3 +1,0 @@
-
-PASS Test shader code validation when creating modules.
-

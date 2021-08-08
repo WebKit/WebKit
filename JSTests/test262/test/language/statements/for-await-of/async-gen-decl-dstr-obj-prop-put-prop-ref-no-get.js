@@ -27,7 +27,7 @@ info: |
 let setValue;
 let x = {
   get y() {
-    $ERROR('The property should not be accessed.');
+    throw new Test262Error('The property should not be accessed.');
   },
   set y(val) {
     setValue = val;

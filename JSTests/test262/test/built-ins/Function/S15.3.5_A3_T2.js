@@ -14,15 +14,15 @@ var obj = new FACTORY("1", 2);
 
 //CHECK#1
 if (typeof obj !== "object") {
-  $ERROR('#1: every function instance has a [[Construct]] property');
+  throw new Test262Error('#1: every function instance has a [[Construct]] property');
 }
 
 //CHECK#2
 if (obj.constructor !== FACTORY) {
-  $ERROR('#2: every function instance has a [[Construct]] property');
+  throw new Test262Error('#2: every function instance has a [[Construct]] property');
 }
 
 //CHECK#3
 if (obj.y !== "12") {
-  $ERROR('#3: every function instance has a [[Construct]] property');
+  throw new Test262Error('#3: every function instance has a [[Construct]] property');
 }

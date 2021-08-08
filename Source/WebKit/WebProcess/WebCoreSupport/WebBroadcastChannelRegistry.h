@@ -43,14 +43,14 @@ public:
 
     void registerChannel(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier) final;
     void unregisterChannel(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void postMessage(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&) final;
+    void postMessage(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     WebBroadcastChannelRegistry() = default;
 
-    void postMessageToRemote(WebCore::BroadcastChannelIdentifier, WebCore::MessageWithMessagePorts&&);
+    void postMessageToRemote(WebCore::BroadcastChannelIdentifier, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 };
 
 } // namespace WebKit

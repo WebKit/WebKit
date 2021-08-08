@@ -9,17 +9,17 @@ description: Type(y) and Type(z) are boolean primitives
 
 //CHECK#1
 if ((true ? false : true) !== false) {
-  $ERROR('#1: (true ? false : true) === false');
+  throw new Test262Error('#1: (true ? false : true) === false');
 }
 
 //CHECK#2
 var y = new Boolean(true);
 if ((true ? y : false) !== y) {
-  $ERROR('#2: (var y = new Boolean(true); (true ? y : false) === y');
+  throw new Test262Error('#2: (var y = new Boolean(true); (true ? y : false) === y');
 }
 
 //CHECK#3
 var y = new Boolean(false);
 if ((y ? y : true) !== y) {
-  $ERROR('#3: (var y = new Boolean(false); (y ? y : true) === y');
+  throw new Test262Error('#3: (var y = new Boolean(false); (y ? y : true) === y');
 }

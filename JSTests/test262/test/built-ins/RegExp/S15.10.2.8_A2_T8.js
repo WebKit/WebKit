@@ -14,5 +14,5 @@ var __executed = /(\.(?!com|org)|\/)/.test("ah.com");
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /(\\.(?!com|org)|\\/)/.test("ah.com") === false');
+	throw new Test262Error('#1: /(\\.(?!com|org)|\\/)/.test("ah.com") === false');
 }

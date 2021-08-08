@@ -1,3 +1,223 @@
+2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedRef
+        https://bugs.webkit.org/show_bug.cgi?id=227164
+
+        Reviewed by Geoffrey Garen.
+
+        Like r278344, this patch introduces a new type of smart pointer, CheckedRef,
+        which lets each object keep track of pointers pointing to the object.
+
+        As with CheckedPtr, the purpose of the internal counter for CheckedRef is
+        to release assert that there is no outstanding pointer at the time of destruction
+        instead of keeping the object alive when there is one.
+
+        This patch also removes makeCheckedPtr in favor of using CheckedPtr with
+        template argument deduction in C++17.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CheckedPtr.h:
+        (WTF::CheckedPtr::CheckedPtr): Added variants which take CheckedRef as arguments.
+        (WTF::makeCheckedPtr): Deleted.
+        (WTF::CanMakeCheckedPtr): Moved to CheckedRef.h
+        * wtf/CheckedRef.h: Added.
+        (WTF::CheckedRef::~CheckedRef): Added.
+        (WTF::CheckedRef::CheckedRef): Added.
+        (WTF::CheckedRef::isHashTableDeletedValue const): Added.
+        (WTF::CheckedRef::isHashTableEmptyValue const): Added.
+        (WTF::CheckedRef::hashTableEmptyValue): Added.
+        (WTF::CheckedRef::ptrAllowingHashTableEmptyValue const): Added.
+        (WTF::CheckedRef::ptrAllowingHashTableEmptyValue): Added.
+        (WTF::CheckedRef::ptr const): Added.
+        (WTF::CheckedRef::ptr): Added.
+        (WTF::CheckedRef::get const): Added.
+        (WTF::CheckedRef::get): Added.
+        (WTF::CheckedRef::operator-> const): Added.
+        (WTF::CheckedRef::operator->): Added.
+        (WTF::CheckedRef::operator const T& const): Added.
+        (WTF::CheckedRef::operator T&): Added.
+        (WTF::CheckedRef::operator! const): Added.
+        (WTF::CheckedRef::operator=): Added.
+        (WTF::CheckedRef::releasePtr): Added. Returns m_ptr without calling decrementPtrCount.
+        This is equivalent of leakPtr in Ref but we don't call this that since CheckedRef or
+        CheckedPtr is generally not used to manage the object lifetime.
+        (WTF::CheckedRef::poison): Added.
+        (WTF::CheckedRef::unpoison): Added.
+        (WTF::is): Added.
+        (WTF::CheckedRefHashTraits): Added.
+        (WTF::CheckedRefHashTraits::emptyValue): Added.
+        (WTF::CheckedRefHashTraits::constructEmptyValue): Added.
+        (WTF::CheckedRefHashTraits::isEmptyValue): Added.
+        (WTF::CheckedRefHashTraits::peek): Added.
+        (WTF::CheckedRefHashTraits::take): Added.
+        (WTF::CanMakeCheckedPtr): Moved from CheckedPtr.h
+        * wtf/Forward.h:
+
+2021-08-02  Devin Rousso  <drousso@apple.com>
+
+        [Live Text] SPI for machine readable codes is only available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=228711
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformHave.h:
+
+2021-08-02  Youenn Fablet  <youenn@apple.com>
+
+        Enable WebRTCPlatformUDPSocketsEnabled experimental feature by default
+        https://bugs.webkit.org/show_bug.cgi?id=228689
+        <rdar://problem/81383711>
+
+        Reviewed by Eric Carlson.
+
+        Enable WebRTCPlatformUDPSocketsEnabled experimental feature by default, WebRTC proxying being off by default for now.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should use Bitmap instead of ByteVector for BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228676
+
+        Reviewed by Saam Barati.
+
+        * wtf/Bitmap.h:
+
+2021-08-01  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an experimental feature to toggle WebRTC socket proxying
+        https://bugs.webkit.org/show_bug.cgi?id=228681
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Move JIT_UNICODE_EXPRESSIONS to ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) in PlatformEnable.h
+        https://bugs.webkit.org/show_bug.cgi?id=228669
+
+        Reviewed by Alexey Shvayka.
+
+        * wtf/PlatformEnable.h:
+
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [css-overflow] Implement clip value for overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198230
+
+        Reviewed by Simon Fraser.
+
+        Add preference for overflow: clip support.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for 'Cross-Origin-Opener-Policy' HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=192193
+        <rdar://problem/42013525>
+
+        Reviewed by Geoff Garen.
+
+        Add experimental feature flag for 'Cross-Origin-Opener-Policy' HTTP header
+        support.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
+2021-07-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
+        https://bugs.webkit.org/show_bug.cgi?id=228599
+        <rdar://problem/81190366>
+
+        Reviewed by Andy Estes.
+
+        r275169 made it so that `paymentMethodType` is no longer `required` so that `additionalShippingMethods`
+        can be specified without having to limit it to a specific payment method type. While this
+        works in theory, WebKit doesn't know about the user's selected payment method type until the
+        user actually selects a payment method, meaning that until then the `additionalShippingMethods`
+        are not used. Unfortunately (until now) `PKPaymentRequestPaymentMethodUpdate` did not
+        support providing a `NSArray<PKShippingMethod *> *`, so there was no way to update the list
+        of shipping methods when the user changed their selected payment method, meaning that WebKit
+        would have to wait/rely on the user to change their shipping address _after_ selecting a
+        payment method in order for `additionalShippingMethods` to take effect.
+
+        This also fixes an issue with WebKit's implementation of the W3C Payment Request API by
+        allowing any generic (i.e. things not specific to Apple Pay) `shippingOptions` provided in
+        `PaymentDetailsUpdate` to actually be used and update the Apple Pay sheet accordingly.
+
+        * wtf/PlatformHave.h:
+        * wtf/PlatformEnableCocoa.h:
+        Add new compile flags for PassKit supporting modifying shipping methods with any update.
+
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should perform BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+
+        Reviewed by Saam Barati.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::dump const):
+        * wtf/Bitmap.h:
+        (WTF::WordType>::dump const):
+        * wtf/UniqueRef.h:
+        (WTF::makeUniqueRefFromNonNullUniquePtr):
+        (WTF::UniqueRef::UniqueRef):
+
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        <rdar://problem/80693607>
+
+        Patch by Brent Fulgham.
+
+        Reviewed by Per Arne Vollan.
+
+        Add new SPI header for code signing features.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/spi/cocoa/SecuritySPI.h:
+        * wtf/spi/darwin/CodeSignSPI.h: Added.
+
+2021-07-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Don't set capture attribution dynamically in the simulator
+        https://bugs.webkit.org/show_bug.cgi?id=228596
+        rdar://81176531
+
+        Reviewed by Jer Noble.
+
+        * wtf/PlatformHave.h: Don't define HAVE_SYSTEM_STATUS for the simulator.
+
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Patch by David Kilzer.
+
+        Reviewed by David Kilzer.
+
+        * wtf/PlatformHave.h:
+        - Add HAVE(SPEECHSYNTHESIS_MONTEREY_SPI).
+
 2021-07-28  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/opus container support

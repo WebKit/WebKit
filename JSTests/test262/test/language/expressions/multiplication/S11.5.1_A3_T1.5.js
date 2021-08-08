@@ -9,20 +9,20 @@ description: Type(x) and Type(y) vary between Object object and Function object
 
 //CHECK#1
 if (isNaN({} * function(){return 1}) !== true) {
-  $ERROR('#1: {} * function(){return 1} === Not-a-Number. Actual: ' + ({} * function(){return 1}));
+  throw new Test262Error('#1: {} * function(){return 1} === Not-a-Number. Actual: ' + ({} * function(){return 1}));
 }
 
 //CHECK#2
 if (isNaN(function(){return 1} * {}) !== true) {
-  $ERROR('#2: function(){return 1} * {} === Not-a-Number. Actual: ' + (function(){return 1} * {}));
+  throw new Test262Error('#2: function(){return 1} * {} === Not-a-Number. Actual: ' + (function(){return 1} * {}));
 }
 
 //CHECK#3
 if (isNaN(function(){return 1} * function(){return 1}) !== true) {
-  $ERROR('#3: function(){return 1} * function(){return 1} === Not-a-Number. Actual: ' + (function(){return 1} * function(){return 1}));
+  throw new Test262Error('#3: function(){return 1} * function(){return 1} === Not-a-Number. Actual: ' + (function(){return 1} * function(){return 1}));
 }
 
 //CHECK#4
 if (isNaN({} * {}) !== true) {
-  $ERROR('#4: {} * {} === Not-a-Number. Actual: ' + ({} * {}));
+  throw new Test262Error('#4: {} * {} === Not-a-Number. Actual: ' + ({} * {}));
 }

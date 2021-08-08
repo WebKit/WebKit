@@ -5,6 +5,12 @@ test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
 test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
   default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
   strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
+test/annexB/built-ins/RegExp/prototype/compile/this-cross-realm-instance.js:
+  default: 'Test262Error: `RegExp.prototype.compile.call(otherRealm_regexp)` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `RegExp.prototype.compile.call(otherRealm_regexp)` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+test/annexB/built-ins/RegExp/prototype/compile/this-subclass-instance.js:
+  default: 'Test262Error: `subclass_regexp.compile()` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: `subclass_regexp.compile()` throws TypeError Expected a TypeError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:
@@ -603,6 +609,9 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
+test/built-ins/Array/prototype/Symbol.unscopables/value.js:
+  default: 'Test262Error: `findLast` property value Expected SameValue(«undefined», «true») to be true'
+  strict mode: 'Test262Error: `findLast` property value Expected SameValue(«undefined», «true») to be true'
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
@@ -669,6 +678,9 @@ test/built-ins/Function/prototype/toString/async-method-class-statement.js:
 test/built-ins/Function/prototype/toString/async-method-object.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async function f( /* b */ ) /* c */ { /* d */ }" (async f /* a */ ( /* b */ ) /* c */ { /* d */ })'
+test/built-ins/Function/prototype/toString/built-in-function-object.js:
+  default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
 test/built-ins/Function/prototype/toString/function-declaration-non-simple-parameter-list.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ }" (function /* a */ f /* b */ ( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function f( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ }" (function /* a */ f /* b */ ( /* c */ a /* d */ = /* e */ 0 /* f */ , /* g */ { /* h */ b /* i */ = /* j */ 0 /* k */ } /* l */ ) /* m */ { /* n */ })'
@@ -762,9 +774,6 @@ test/built-ins/Function/prototype/toString/unicode.js:
 test/built-ins/Object/entries/order-after-define-property.js:
   default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
-test/built-ins/Object/internals/DefineOwnProperty/consistent-value-regexp-dollar1.js:
-  default: 'Test262Error: Expected SameValue(«», «x») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«», «x») to be true'
 test/built-ins/Object/keys/order-after-define-property.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
@@ -1570,9 +1579,6 @@ test/language/expressions/compound-assignment/S11.13.2_A7.8_T4.js:
 test/language/expressions/compound-assignment/S11.13.2_A7.9_T4.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/expressions/delete/super-property-null-base.js:
-  default: 'Test262Error: Expected a TypeError but got a ReferenceError'
-  strict mode: 'Test262Error: Expected a TypeError but got a ReferenceError'
 test/language/expressions/dynamic-import/catch/nested-async-gen-await-eval-script-code-target.js:
   module: 'Test262:AsyncTestFailure:Test262Error: [object Object]'
 test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eval-script-code-target.js:
@@ -1699,6 +1705,12 @@ test/language/statements/async-generator/generator-created-after-decl-inst.js:
 test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
+test/language/statements/class/definition/fn-length-static-precedence.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
+test/language/statements/class/definition/fn-name-static-precedence.js:
+  default: 'Test262Error: Expected true but got false'
+  strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
@@ -1978,3 +1990,57 @@ test/language/statements/variable/dstr/ary-init-iter-get-err-array-prototype.js:
 test/language/statements/variable/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js:
   default: 'Test262Error: Expected SameValue(«3», «42») to be true'
   strict mode: 'Test262Error: Expected SameValue(«3», «42») to be true'
+test/language/white-space/after-regular-expression-literal-em-quad.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-em-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-en-quad.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-en-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-figure-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-four-per-em-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-hair-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-ideographic-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g　'"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g　'"
+test/language/white-space/after-regular-expression-literal-line-separator.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-medium-mathematical-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-nnbsp.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-ogham-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-paragraph-separator.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-punctuation-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-six-per-em-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-thin-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-three-per-em-space.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g '"
+test/language/white-space/after-regular-expression-literal-zwnbsp.js:
+  default: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g﻿'"
+  strict mode: "SyntaxError: Invalid non-latin character in RexExp literal's flags '/x/g﻿'"

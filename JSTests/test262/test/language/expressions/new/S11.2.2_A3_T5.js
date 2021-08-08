@@ -12,11 +12,11 @@ description: Checking "null primitive" case
 //CHECK#1
 try {
   new null;
-  $ERROR('#1: new null throw TypeError');	
+  throw new Test262Error('#1: new null throw TypeError');	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1: new null throw TypeError');	
+    throw new Test262Error('#1: new null throw TypeError');	
   }
 }
 
@@ -24,11 +24,11 @@ catch (e) {
 try {
   var x = null;
   new x;
-  $ERROR('#2: var x = null; new x throw TypeError');	
+  throw new Test262Error('#2: var x = null; new x throw TypeError');	
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#2: var x = null; new x throw TypeError');	
+    throw new Test262Error('#2: var x = null; new x throw TypeError');	
   }
 }
 
@@ -36,10 +36,10 @@ catch (e) {
 try {
   var x = null;
   new x();
-  $ERROR('#3: var x = null; new x() throw TypeError'); 
+  throw new Test262Error('#3: var x = null; new x() throw TypeError'); 
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#3: var x = null; new x() throw TypeError'); 
+    throw new Test262Error('#3: var x = null; new x() throw TypeError'); 
   }
 }

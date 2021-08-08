@@ -16,16 +16,16 @@ description: Change length of array
 var x = [0, , 2, , 4];
 x.length = 4;
 if (x[4] !== undefined) {
-  $ERROR('#1: x = [0,,2,,4]; x.length = 4; x[4] === undefined. Actual: ' + (x[4]));
+  throw new Test262Error('#1: x = [0,,2,,4]; x.length = 4; x[4] === undefined. Actual: ' + (x[4]));
 }
 
 //CHECK#2
 x.length = 3;
 if (x[3] !== undefined) {
-  $ERROR('#2: x = [0,,2,,4]; x.length = 4; x.length = 3; x[3] === undefined. Actual: ' + (x[3]));
+  throw new Test262Error('#2: x = [0,,2,,4]; x.length = 4; x.length = 3; x[3] === undefined. Actual: ' + (x[3]));
 }
 
 //CHECK#3
 if (x[2] !== 2) {
-  $ERROR('#3: x = [0,,2,,4]; x.length = 4; x.length = 3; x[2] === 2. Actual: ' + (x[2]));
+  throw new Test262Error('#3: x = [0,,2,,4]; x.length = 4; x.length = 3; x[2] === 2. Actual: ' + (x[2]));
 }

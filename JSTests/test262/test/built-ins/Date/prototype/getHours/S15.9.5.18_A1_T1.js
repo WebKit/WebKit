@@ -14,5 +14,5 @@ if (x === 1)
 else
   Date.prototype.getHours = 1;
 if (Date.prototype.getHours === x) {
-  $ERROR('#1: The Date.prototype.getHours has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getHours has not the attribute ReadOnly');
 }

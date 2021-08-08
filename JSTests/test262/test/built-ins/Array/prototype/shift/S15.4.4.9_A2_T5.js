@@ -23,7 +23,7 @@ obj.length = {
 };
 var shift = obj.shift();
 if (shift !== -1) {
-  $ERROR('#1: obj[0] = -1; obj.length = {valueOf: function() {return 1}}  obj.shift() === -1. Actual: ' + (shift));
+  throw new Test262Error('#1: obj[0] = -1; obj.length = {valueOf: function() {return 1}}  obj.shift() === -1. Actual: ' + (shift));
 }
 
 //CHECK#2
@@ -38,7 +38,7 @@ obj.length = {
 };
 var shift = obj.shift();
 if (shift !== -1) {
-  $ERROR('#0: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {return 0}}  obj.shift() === -1. Actual: ' + (shift));
+  throw new Test262Error('#0: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {return 0}}  obj.shift() === -1. Actual: ' + (shift));
 }
 
 //CHECK#3
@@ -53,7 +53,7 @@ obj.length = {
 };
 var shift = obj.shift();
 if (shift !== -1) {
-  $ERROR('#3: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {return {}}}  obj.shift() === -1. Actual: ' + (shift));
+  throw new Test262Error('#3: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {return {}}}  obj.shift() === -1. Actual: ' + (shift));
 }
 
 //CHECK#4
@@ -69,14 +69,14 @@ try {
   };
   var shift = obj.shift();
   if (shift !== -1) {
-    $ERROR('#4.1: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {throw "error"}}; obj.shift() === ",". Actual: ' + (shift));
+    throw new Test262Error('#4.1: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {throw "error"}}; obj.shift() === ",". Actual: ' + (shift));
   }
 }
 catch (e) {
   if (e === "error") {
-    $ERROR('#4.2: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {throw "error"}}; obj.shift() not throw "error"');
+    throw new Test262Error('#4.2: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {throw "error"}}; obj.shift() not throw "error"');
   } else {
-    $ERROR('#4.3: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {throw "error"}}; obj.shift() not throw Error. Actual: ' + (e));
+    throw new Test262Error('#4.3: obj[0] = -1; obj.length = {valueOf: function() {return 1}, toString: function() {throw "error"}}; obj.shift() not throw Error. Actual: ' + (e));
   }
 }
 
@@ -89,7 +89,7 @@ obj.length = {
 };
 var shift = obj.shift();
 if (shift !== undefined) {
-  $ERROR('#5: obj[0] = -1; obj.length = {toString: function() {return 0}}  obj.shift() === undefined. Actual: ' + (shift));
+  throw new Test262Error('#5: obj[0] = -1; obj.length = {toString: function() {return 0}}  obj.shift() === undefined. Actual: ' + (shift));
 }
 
 //CHECK#6
@@ -104,7 +104,7 @@ obj.length = {
 }
 var shift = obj.shift();
 if (shift !== undefined) {
-  $ERROR('#6: obj[0] = -1; obj.length = {valueOf: function() {return {}}, toString: function() {return 0}}  obj.shift() === undefined. Actual: ' + (shift));
+  throw new Test262Error('#6: obj[0] = -1; obj.length = {valueOf: function() {return {}}, toString: function() {return 0}}  obj.shift() === undefined. Actual: ' + (shift));
 }
 
 //CHECK#7
@@ -119,11 +119,11 @@ try {
     }
   };
   var shift = obj.shift();
-  $ERROR('#7.1: obj[0] = -1; obj.length = {valueOf: function() {throw "error"}, toString: function() {return 0}}; obj.shift() throw "error". Actual: ' + (shift));
+  throw new Test262Error('#7.1: obj[0] = -1; obj.length = {valueOf: function() {throw "error"}, toString: function() {return 0}}; obj.shift() throw "error". Actual: ' + (shift));
 }
 catch (e) {
   if (e !== "error") {
-    $ERROR('#7.2: obj[0] = -1; obj.length = {valueOf: function() {throw "error"}, toString: function() {return 0}}; obj.shift() throw "error". Actual: ' + (e));
+    throw new Test262Error('#7.2: obj[0] = -1; obj.length = {valueOf: function() {throw "error"}, toString: function() {return 0}}; obj.shift() throw "error". Actual: ' + (e));
   }
 }
 
@@ -139,10 +139,10 @@ try {
     }
   };
   var shift = obj.shift();
-  $ERROR('#8.1: obj[0] = -1; obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.shift() throw TypeError. Actual: ' + (shift));
+  throw new Test262Error('#8.1: obj[0] = -1; obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.shift() throw TypeError. Actual: ' + (shift));
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#8.2: obj[0] = -1; obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.shift() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#8.2: obj[0] = -1; obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.shift() throw TypeError. Actual: ' + (e));
   }
 }

@@ -11,10 +11,10 @@ var arr = /(A)\1/.exec("AA");
 
 //CHECK#1
 if ((arr === null) || (arr[0] !== "AA")) {
-  $ERROR('#1: var arr = (/(A)\\1/.exec("AA")); arr[0] === "AA". Actual. ' + (arr && arr[0]));
+  throw new Test262Error('#1: var arr = (/(A)\\1/.exec("AA")); arr[0] === "AA". Actual. ' + (arr && arr[0]));
 }
 
 //CHECK#2
 if ((arr === null) || (arr[1] !== "A")) {
-  $ERROR('#2: var arr = (/(A)\\1/.exec("AA")); arr[1] === "A". Actual. ' + (arr && arr[1]));
+  throw new Test262Error('#2: var arr = (/(A)\\1/.exec("AA")); arr[1] === "A". Actual. ' + (arr && arr[1]));
 }

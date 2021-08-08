@@ -23,5 +23,5 @@
 messages -> NetworkBroadcastChannelRegistry NotRefCounted {
     RegisterChannel(struct WebCore::SecurityOriginData origin, String name, WebCore::BroadcastChannelIdentifier channelIdentifier) WantsConnection
     UnregisterChannel(struct WebCore::SecurityOriginData origin, String name, WebCore::BroadcastChannelIdentifier channelIdentifier) WantsConnection
-    PostMessage(struct WebCore::SecurityOriginData origin, String name, WebCore::BroadcastChannelIdentifier source, struct WebCore::MessageWithMessagePorts message) WantsConnection
+    PostMessage(struct WebCore::SecurityOriginData origin, String name, WebCore::BroadcastChannelIdentifier source, struct WebCore::MessageWithMessagePorts message) -> () Async WantsConnection
 }

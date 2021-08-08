@@ -10,7 +10,7 @@ description: Call String.fromCharCode(65,66,66,65)
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String.fromCharCode(65, 66, 66, 65) !== "ABBA") {
-  $ERROR('#1: String.fromCharCode(65,66,66,65) === "ABBA". Actual: String.fromCharCode(65,66,66,65) ===' + String.fromCharCode(65, 66, 66, 65));
+  throw new Test262Error('#1: String.fromCharCode(65,66,66,65) === "ABBA". Actual: String.fromCharCode(65,66,66,65) ===' + String.fromCharCode(65, 66, 66, 65));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

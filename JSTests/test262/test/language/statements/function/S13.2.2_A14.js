@@ -25,7 +25,7 @@ function FACTORY(){
 try {
 	var obj = new FACTORY();
 } catch (e) {
-	$ERROR('#1: var obj = new FACTORY() does not lead to throwing exception');
+	throw new Test262Error('#1: var obj = new FACTORY() does not lead to throwing exception');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

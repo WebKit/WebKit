@@ -11,7 +11,7 @@ description: Check constructor of simple assigned variable
 //CHECK#1
 var str = "rock'n'roll";
 if (str.constructor !== String){
-  $ERROR('#1: var str = "rock\'n\'roll"; str.constructor === String. Actual: ' + (str.constructor));
+  throw new Test262Error('#1: var str = "rock\'n\'roll"; str.constructor === String. Actual: ' + (str.constructor));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

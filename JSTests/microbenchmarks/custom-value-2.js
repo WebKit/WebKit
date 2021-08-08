@@ -4,24 +4,25 @@ function assert(b) {
         throw new Error;
 }
 
+const Value = $vm.createCustomTestGetterSetter();
 function test1() {
-    function getMultiline(o) {
-        return o.multiline;
+    function getCustomValue2(o) {
+        return o.customValue2;
     }
-    noInline(getMultiline);
+    noInline(getCustomValue2);
 
-    RegExp.foo = 42;
+    Value.foo = 42;
 
     const o = {};
-    o.__proto__ = RegExp;
-    RegExp.multiline = false;
+    o.__proto__ = Value;
+    Value.customValue2 = false;
 
     for (let i = 0; i < 5000000; ++i) {
-        assert(getMultiline(o) === false);
+        assert(getCustomValue2(o) === false);
     }
-    delete RegExp.foo;
+    delete Value.foo;
     for (let i = 0; i < 5000000; ++i) {
-        assert(getMultiline(o) === false);
+        assert(getCustomValue2(o) === false);
     }
 }
 test1();

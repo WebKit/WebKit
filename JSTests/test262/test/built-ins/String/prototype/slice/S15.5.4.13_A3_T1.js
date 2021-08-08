@@ -14,7 +14,7 @@ __instance.slice = String.prototype.slice;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.slice(0, 8) !== "[object ") {
-  $ERROR('#1: __instance = new Object(); __instance.slice = String.prototype.slice; __instance.slice(0,8) === "[object ". Actual: ' + __instance.slice(0, 8));
+  throw new Test262Error('#1: __instance = new Object(); __instance.slice = String.prototype.slice; __instance.slice(0,8) === "[object ". Actual: ' + __instance.slice(0, 8));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -11,7 +11,7 @@ description: Checking if creating "new Error.prototype" fails
 //CHECK#1
 try {
   var __instance = new Error.prototype;
-  $ERROR('#1: "var __instance = new Error.prototype" lead to throwing exception');
+  throw new Test262Error('#1: "var __instance = new Error.prototype" lead to throwing exception');
 } catch (e) {
   if (e instanceof Test262Error) throw e;
 }

@@ -104,34 +104,6 @@ namespace WebCore {
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \
-    macro(GPU) \
-    macro(GPUAdapter) \
-    macro(GPUBindGroup) \
-    macro(GPUBindGroupLayout) \
-    macro(GPUBuffer) \
-    macro(GPUBufferUsage) \
-    macro(GPUCanvasContext) \
-    macro(GPUColorWrite) \
-    macro(GPUCommandBuffer) \
-    macro(GPUCommandEncoder) \
-    macro(GPUComputePassEncoder) \
-    macro(GPUComputePipeline) \
-    macro(GPUDevice) \
-    macro(GPUOutOfMemoryError) \
-    macro(GPUPipelineLayout) \
-    macro(GPUProgrammablePassEncoder) \
-    macro(GPUQueue) \
-    macro(GPURenderPassEncoder) \
-    macro(GPURenderPipeline) \
-    macro(GPUSampler) \
-    macro(GPUShaderModule) \
-    macro(GPUShaderStage) \
-    macro(GPUSwapChain) \
-    macro(GPUTexture) \
-    macro(GPUTextureUsage) \
-    macro(GPUTextureView) \
-    macro(GPUUncapturedErrorEvent) \
-    macro(GPUValidationError) \
     macro(HighlightRegister) \
     macro(Highlight) \
     macro(HTMLAttachmentElement) \
@@ -346,6 +318,7 @@ namespace WebCore {
     macro(controller) \
     macro(createImageBitmap) \
     macro(createReadableStream) \
+    macro(crossOriginIsolated) \
     macro(customElements) \
     macro(decode) \
     macro(disturbed) \

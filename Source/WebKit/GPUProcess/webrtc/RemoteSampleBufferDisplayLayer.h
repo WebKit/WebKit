@@ -62,6 +62,9 @@ public:
 private:
     RemoteSampleBufferDisplayLayer(SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
 
+#if !RELEASE_LOG_DISABLED
+    void setLogIdentifier(String&&);
+#endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void updateAffineTransform(CGAffineTransform);
     void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation);

@@ -15,7 +15,7 @@ __evaluated = eval("while(__condition < 10) { __condition++; if (((''+__conditio
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__odds !== 5) {
-	$ERROR('#1: __odds === 5. Actual:  __odds ==='+ __odds  );
+	throw new Test262Error('#1: __odds === 5. Actual:  __odds ==='+ __odds  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ if (__odds !== 5) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__evaluated !== 4) {
-	$ERROR('#2: __evaluated === 4. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#2: __evaluated === 4. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@ try{
     __PROTO.type=__MONSTER;
 }
 catch(e){
-    $ERROR('#0: __PROTO.type=__MONSTER does not lead to throwing exception')
+    throw new Test262Error('#0: __PROTO.type=__MONSTER does not lead to throwing exception')
 }
 
 function __FACTORY(){};
@@ -30,7 +30,7 @@ var __monster = new __FACTORY();
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(__PROTO.isPrototypeOf(__monster))) {
-	$ERROR('#1: __PROTO.isPrototypeOf(__monster) must be true');
+	throw new Test262Error('#1: __PROTO.isPrototypeOf(__monster) must be true');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ if (!(__PROTO.isPrototypeOf(__monster))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__monster.type !==__MONSTER) {
-	$ERROR('#2: __monster.type ===__MONSTER. Actual: __monster.type ==='+__monster.type);
+	throw new Test262Error('#2: __monster.type ===__MONSTER. Actual: __monster.type ==='+__monster.type);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

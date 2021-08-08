@@ -17,11 +17,11 @@ description: >
 
 //CHECK#1
 if (typeof Object.prototype.propertyIsEnumerable !== "function") {
-  $ERROR('#1: hasOwnProperty method is defined');
+  throw new Test262Error('#1: hasOwnProperty method is defined');
 }
 
 //CHECK#2
 if (Object.prototype.propertyIsEnumerable("propertyIsEnumerable")) {
-  $ERROR('#2: hasOwnProperty method works properly');
+  throw new Test262Error('#2: hasOwnProperty method works properly');
 }
 //

@@ -23,13 +23,13 @@ while (loop) {
     try {
       i++;
       continue outer;
-      $ERROR('This code is unreachable (following `continue` statement).');
+      throw new Test262Error('This code is unreachable (following `continue` statement).');
     } catch (err) {}
 
-    $ERROR('This code is unreachable (following `try` statment).');
+    throw new Test262Error('This code is unreachable (following `try` statment).');
   }
 
-  $ERROR('This code is unreachable (following `for..of` statement).');
+  throw new Test262Error('This code is unreachable (following `for..of` statement).');
 }
 
 assert.sameValue(i, 1);

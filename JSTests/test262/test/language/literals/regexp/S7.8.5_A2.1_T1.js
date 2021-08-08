@@ -11,25 +11,25 @@ description: Without eval
 
 //CHECK#1
 if (/1a/.source !== "1a") {
-  $ERROR('#1: /1a/');
+  throw new Test262Error('#1: /1a/');
 }   
 
 //CHECK#2
 if (/aa/.source !== "aa") {
-  $ERROR('#2: /aa/');
+  throw new Test262Error('#2: /aa/');
 }
 
 //CHECK#3
 if (/,;/.source !== ",;") {
-  $ERROR('#3: /,;/');
+  throw new Test262Error('#3: /,;/');
 }
 
 //CHECK#4
 if (/  /.source !== "  ") {
-  $ERROR('#4: /  /');
+  throw new Test262Error('#4: /  /');
 }      
 
 //CHECK#5
 if (/a\u0041/.source !== "a\\u0041") {
-  $ERROR('#5: /a\\u0041/');
+  throw new Test262Error('#5: /a\\u0041/');
 }

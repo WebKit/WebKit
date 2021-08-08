@@ -20,7 +20,7 @@ __instance.slice = String.prototype.slice;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.slice(-Infinity, 8).slice(1, Infinity) !== "unction") {
-  $ERROR('#1: __instance = function(){}; __instance.slice = String.prototype.slice; __instance.slice(-Infinity,8).slice(1,Infinity) === "unction". Actual: ' + __instance.slice(-Infinity, 8).slice(1, Infinity));
+  throw new Test262Error('#1: __instance = function(){}; __instance.slice = String.prototype.slice; __instance.slice(-Infinity,8).slice(1,Infinity) === "unction". Actual: ' + __instance.slice(-Infinity, 8).slice(1, Infinity));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

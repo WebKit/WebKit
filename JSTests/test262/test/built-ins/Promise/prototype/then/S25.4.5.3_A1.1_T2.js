@@ -12,9 +12,9 @@ description: Promise.prototype.then is a function of two arguments
 var p = new Promise(function() {});
 
 if (!(p.then instanceof Function)) {
-  $ERROR("Expected p.then to be a function");
+  throw new Test262Error("Expected p.then to be a function");
 }
 
 if (p.then.length !== 2) {
-  $ERROR("Expected p.then to be a function of two arguments");
+  throw new Test262Error("Expected p.then to be a function of two arguments");
 }

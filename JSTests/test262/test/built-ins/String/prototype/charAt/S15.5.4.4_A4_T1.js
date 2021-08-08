@@ -13,7 +13,7 @@ description: Compare results of x.charAt(pos) and x.substring(pos, pos+1)
 //CHECK#1
 for (var i = 0; i < 6; i++) {
   if ("ABC\u0041\u0042\u0043".charAt(i) !== "\u0041\u0042\u0043ABC".substring(i, i + 1)) {
-    $ERROR('#' + i + ': "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') === "\\u0041\\u0042\\u0043ABC".substring(' + i + ', ' + (i + 1) + '). Actual: "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') ===' + ("ABC\u0041\u0042\u0043".charAt(i)));
+    throw new Test262Error('#' + i + ': "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') === "\\u0041\\u0042\\u0043ABC".substring(' + i + ', ' + (i + 1) + '). Actual: "ABC\\u0041\\u0042\\u0043".charAt(' + i + ') ===' + ("ABC\u0041\u0042\u0043".charAt(i)));
   }
 }
 

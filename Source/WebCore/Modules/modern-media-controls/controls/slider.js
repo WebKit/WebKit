@@ -143,8 +143,32 @@ class Slider extends LayoutNode
     {
         super.commit();
 
-        let scrubberWidth = this._knobStyle === Slider.KnobStyle.Bar ? 4 : 9;
-        let scrubberBorder = this._knobStyle === Slider.KnobStyle.Bar ? 1 : (-1 * scrubberWidth / 2);
+        let scrubberWidth = (style => {
+            switch (style) {
+            case Slider.KnobStyle.Bar:
+                return 4;
+            case Slider.KnobStyle.Circle:
+                return 9;
+            case Slider.KnobStyle.None:
+                return 0;
+            }
+            console.error("Unknown Slider.KnobStyle");
+            return 0;
+        })(this._knobStyle);
+
+        let scrubberBorder = (style => {
+            switch (style) {
+            case Slider.KnobStyle.Bar:
+                return 1;
+            case Slider.KnobStyle.Circle:
+                return (-1 * scrubberWidth / 2);
+            case Slider.KnobStyle.None:
+                return 0;
+            }
+            console.error("Unknown Slider.KnobStyle");
+            return 0;
+        })(this._knobStyle);
+
         let scrubberCenterX = (scrubberWidth / 2) + Math.round((this.width - scrubberWidth) * this.value);
         this._primaryFill.element.style.width = `${scrubberCenterX - (scrubberWidth / 2) - scrubberBorder}px`;
         this._trackFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
@@ -210,4 +234,5 @@ class Slider extends LayoutNode
 Slider.KnobStyle = {
     Circle: "circle",
     Bar: "bar",
+    None: "none",
 };

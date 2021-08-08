@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (!(Object.prototype.valueOf.hasOwnProperty('length'))) {
-  $ERROR('#1: the Object.prototype.valueOf has length property.');
+  throw new Test262Error('#1: the Object.prototype.valueOf has length property.');
 }
 
 var obj = Object.prototype.valueOf.length;
@@ -23,5 +23,5 @@ verifyNotWritable(Object.prototype.valueOf, "length", null, function() {
 
 //CHECK#2
 if (Object.prototype.valueOf.length !== obj) {
-  $ERROR('#2: the Object.prototype.valueOf length property has the attributes ReadOnly.');
+  throw new Test262Error('#2: the Object.prototype.valueOf length property has the attributes ReadOnly.');
 }

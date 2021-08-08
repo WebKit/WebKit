@@ -8,9 +8,9 @@ description: The "length" property of the "setMilliseconds" is 1
 ---*/
 
 if (Date.prototype.setMilliseconds.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The setMilliseconds has a "length" property');
+  throw new Test262Error('#1: The setMilliseconds has a "length" property');
 }
 
 if (Date.prototype.setMilliseconds.length !== 1) {
-  $ERROR('#2: The "length" property of the setMilliseconds is 1');
+  throw new Test262Error('#2: The "length" property of the setMilliseconds is 1');
 }

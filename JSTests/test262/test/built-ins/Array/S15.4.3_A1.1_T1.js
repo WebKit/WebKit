@@ -15,10 +15,10 @@ Function.prototype.myproperty = 1;
 
 //CHECK#1
 if (Array.myproperty !== 1) {
-  $ERROR('#1: Function.prototype.myproperty = 1; Array.myproperty === 1. Actual: ' + (Array.myproperty));
+  throw new Test262Error('#1: Function.prototype.myproperty = 1; Array.myproperty === 1. Actual: ' + (Array.myproperty));
 }
 
 //CHECK#2
 if (Array.hasOwnProperty('myproperty') !== false) {
-  $ERROR('#2: Function.prototype.myproperty = 1; Array.hasOwnProperty(\'myproperty\') === false. Actual: ' + (Array.hasOwnProperty('myproperty')));
+  throw new Test262Error('#2: Function.prototype.myproperty = 1; Array.hasOwnProperty(\'myproperty\') === false. Actual: ' + (Array.hasOwnProperty('myproperty')));
 }

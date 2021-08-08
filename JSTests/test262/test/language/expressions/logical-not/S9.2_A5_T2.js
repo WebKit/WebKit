@@ -11,5 +11,5 @@ description: "\"\" convert to Boolean by implicit transformation"
 
 // CHECK#1
 if (!("") !== true) {
-  $ERROR('#1: !("") === true. Actual: ' + (!("")));
+  throw new Test262Error('#1: !("") === true. Actual: ' + (!("")));
 }

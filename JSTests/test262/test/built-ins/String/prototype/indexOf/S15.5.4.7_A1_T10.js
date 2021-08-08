@@ -22,7 +22,7 @@ var __str = "ABB\u0041BABAB";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str.indexOf(__obj, __obj2) !== 3) {
-  $ERROR('#1: var x; var __obj = {toString:function(){return "\u0041B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABB\u0041BABAB"; __str.indexOf(__obj, __obj2) === 3. Actual: ' + __str.indexOf(__obj, __obj2));
+  throw new Test262Error('#1: var x; var __obj = {toString:function(){return "\u0041B";}}; var __obj2 = {valueOf:function(){return true;}}; var __str = "ABB\u0041BABAB"; __str.indexOf(__obj, __obj2) === 3. Actual: ' + __str.indexOf(__obj, __obj2));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

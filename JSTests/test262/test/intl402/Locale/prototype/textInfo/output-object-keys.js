@@ -23,3 +23,9 @@ verifyProperty(result, 'direction', {
   enumerable: true,
   configurable: true
 });
+
+const direction = new Intl.Locale('en').textInfo.direction;
+assert(
+  direction === 'rtl' || direction === 'ltr',
+  'value of the `direction` property'
+);

@@ -13,20 +13,20 @@ var n_obj = new Object("" + 1);
 
 //CHECK#2
 if (n_obj.constructor !== String) {
-  $ERROR('#2: When the Object constructor is called with String argument return ToObject(string)');
+  throw new Test262Error('#2: When the Object constructor is called with String argument return ToObject(string)');
 }
 
 //CHECK#3
 if (typeof n_obj !== 'object') {
-  $ERROR('#3: When the Object constructor is called with String argument return ToObject(string)');
+  throw new Test262Error('#3: When the Object constructor is called with String argument return ToObject(string)');
 }
 
 //CHECK#4
 if (n_obj != "1") {
-  $ERROR('#4: When the Object constructor is called with String argument return ToObject(string)');
+  throw new Test262Error('#4: When the Object constructor is called with String argument return ToObject(string)');
 }
 
 //CHECK#5
 if (n_obj === "1") {
-  $ERROR('#5: When the Object constructor is called with String argument return ToObject(string)');
+  throw new Test262Error('#5: When the Object constructor is called with String argument return ToObject(string)');
 }

@@ -13,10 +13,10 @@ var global = this;
   "use strict";
 
   if (this === global) {
-    $ERROR('#1: String replace leaks global');
+    throw new Test262Error('#1: String replace leaks global');
   }
   if (this !== undefined) {
-    $ERROR('#2: replaceValue should be called with this===undefined. ' +
+    throw new Test262Error('#2: replaceValue should be called with this===undefined. ' +
       'Actual: ' + this);
   }
   return 'y';

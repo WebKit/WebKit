@@ -10,10 +10,10 @@ description: If GetBase(RelationalExpression) is null, throw ReferenceError
 //CHECK#1
 try {
   MAX_VALUE in Number;
-  $ERROR('#1.1: MAX_VALUE in Number throw ReferenceError. Actual: ' + (MAX_VALUE in Number));  
+  throw new Test262Error('#1.1: MAX_VALUE in Number throw ReferenceError. Actual: ' + (MAX_VALUE in Number));  
 }
 catch (e) {
   if ((e instanceof ReferenceError) !== true) {
-    $ERROR('#1.2: MAX_VALUE in Number throw ReferenceError. Actual: ' + (e));  
+    throw new Test262Error('#1.2: MAX_VALUE in Number throw ReferenceError. Actual: ' + (e));  
   }
 }

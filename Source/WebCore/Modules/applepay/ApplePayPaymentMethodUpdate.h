@@ -28,11 +28,21 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayDetailsUpdateBase.h"
+#include "ApplePayError.h"
+#include "ApplePayShippingMethod.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct ApplePayPaymentMethodUpdate final : public ApplePayDetailsUpdateBase {
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    Vector<RefPtr<ApplePayError>> errors;
+
+    Vector<ApplePayShippingMethod> newShippingMethods;
+#endif
+
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     String installmentGroupIdentifier;
 #endif // ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -45,6 +55,10 @@ template<class Encoder>
 void ApplePayPaymentMethodUpdate::encode(Encoder& encoder) const
 {
     ApplePayDetailsUpdateBase::encode(encoder);
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    encoder << errors;
+    encoder << newShippingMethods;
+#endif
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     encoder << installmentGroupIdentifier;
 #endif // ENABLE(APPLE_PAY_INSTALLMENTS)
@@ -64,6 +78,11 @@ std::optional<ApplePayPaymentMethodUpdate> ApplePayPaymentMethodUpdate::decode(D
     if (!name) \
         return std::nullopt; \
     result.name = WTFMove(*name); \
+
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    DECODE(errors, Vector<RefPtr<ApplePayError>>)
+    DECODE(newShippingMethods, Vector<ApplePayShippingMethod>)
+#endif
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     DECODE(installmentGroupIdentifier, String)

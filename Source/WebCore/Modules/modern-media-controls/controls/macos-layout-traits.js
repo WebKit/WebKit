@@ -88,3 +88,5 @@ class MacOSLayoutTraits extends LayoutTraits
         return `[MacOSLayoutTraits ${mode}]`;
     }
 }
+
+window.layoutTraitsClasses["MacOSLayoutTraits"] = MacOSLayoutTraits;

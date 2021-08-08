@@ -1,3 +1,907 @@
+2021-08-02  Yijia Huang  <yijia_huang@apple.com>
+
+        Add new patterns to instruction selector to utilize AND/EOR/ORR-with-shift supported by ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228675
+
+        Reviewed by Saam Barati.
+
+        Bitwise AND (shifted register) performs a bitwise AND of a register value and an optionally-shifted 
+        register value, and writes the result to the destination register.
+
+            and wd wn wm ShiftType #amount
+
+        The equivalent pattern is: n & (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = Const32(63)
+        Int @3 = Shl(@1, $63(@2))
+        Int @4 = BitAnd(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Lshift %x1, $63, %x1, @3
+        And    %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        // New optimized AIR
+        AndLeftShift %x0, %x1, $63, %x0, @4
+        Ret          %x0,                @5
+
+        Bitwise Exclusive OR (shifted register) performs a bitwise Exclusive OR of a register value and an 
+        optionally-shifted register value, and writes the result to the destination register.
+
+            eor wd wn wm ShiftType #amount
+
+        The equivalent pattern is: n ^ (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = Const32(63)
+        Int @3 = Shl(@1, $63(@2))
+        Int @4 = BitXor(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Lshift %x1, $63, %x1, @3
+        Xor    %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        // New optimized AIR
+        XorLeftShift %x0, %x1, $63, %x0, @4
+        Ret          %x0,                @5
+
+        Bitwise OR (shifted register) performs a bitwise (inclusive) OR of a register value and an 
+        optionally-shifted register value, and writes the result to the destination register.
+
+            orr wd wn wm ShiftType #amount
+
+        The equivalent pattern is: n | (m ShiftType amount)
+
+        Given B3 IR:
+        Int @0 = ArgumentReg(%x0)
+        Int @1 = ArgumentReg(%x1)
+        Int @2 = Const32(63)
+        Int @3 = Shl(@1, $63(@2))
+        Int @4 = BitOr(@0, @3)
+        Void@5 = Return(@4, Terminal)
+
+        // Old optimized AIR
+        Lshift %x1, $63, %x1, @3
+        Or     %x0, %x1, %x0, @4
+        Ret    %x0,           @5
+
+        // New optimized AIR
+        OrLeftShift %x0, %x1, $63, %x0, @4
+        Ret         %x0,                @5
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::andLeftShift32):
+        (JSC::MacroAssemblerARM64::andRightShift32):
+        (JSC::MacroAssemblerARM64::andUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::andLeftShift64):
+        (JSC::MacroAssemblerARM64::andRightShift64):
+        (JSC::MacroAssemblerARM64::andUnsignedRightShift64):
+        (JSC::MacroAssemblerARM64::xorLeftShift32):
+        (JSC::MacroAssemblerARM64::xorRightShift32):
+        (JSC::MacroAssemblerARM64::xorUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::xorLeftShift64):
+        (JSC::MacroAssemblerARM64::xorRightShift64):
+        (JSC::MacroAssemblerARM64::xorUnsignedRightShift64):
+        (JSC::MacroAssemblerARM64::orLeftShift32):
+        (JSC::MacroAssemblerARM64::orRightShift32):
+        (JSC::MacroAssemblerARM64::orUnsignedRightShift32):
+        (JSC::MacroAssemblerARM64::orLeftShift64):
+        (JSC::MacroAssemblerARM64::orRightShift64):
+        (JSC::MacroAssemblerARM64::orUnsignedRightShift64):
+        * assembler/testmasm.cpp:
+        (JSC::testAndLeftShift32):
+        (JSC::testAndRightShift32):
+        (JSC::testAndUnsignedRightShift32):
+        (JSC::testAndLeftShift64):
+        (JSC::testAndRightShift64):
+        (JSC::testAndUnsignedRightShift64):
+        (JSC::testXorLeftShift32):
+        (JSC::testXorRightShift32):
+        (JSC::testXorUnsignedRightShift32):
+        (JSC::testXorLeftShift64):
+        (JSC::testXorRightShift64):
+        (JSC::testXorUnsignedRightShift64):
+        (JSC::testOrLeftShift32):
+        (JSC::testOrRightShift32):
+        (JSC::testOrUnsignedRightShift32):
+        (JSC::testOrLeftShift64):
+        (JSC::testOrRightShift64):
+        (JSC::testOrUnsignedRightShift64):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.h:
+        * b3/testb3_2.cpp:
+        (testAndLeftShift32):
+        (testAndRightShift32):
+        (testAndUnsignedRightShift32):
+        (testAndLeftShift64):
+        (testAndRightShift64):
+        (testAndUnsignedRightShift64):
+        (testXorLeftShift32):
+        (testXorRightShift32):
+        (testXorUnsignedRightShift32):
+        (testXorLeftShift64):
+        (testXorRightShift64):
+        (testXorUnsignedRightShift64):
+        (testOrLeftShift32):
+        (testOrRightShift32):
+        (testOrUnsignedRightShift32):
+        (testOrLeftShift64):
+        (testOrRightShift64):
+        (testOrUnsignedRightShift64):
+        (addBitTests):
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use loadPair / storePair in YarrJIT
+        https://bugs.webkit.org/show_bug.cgi?id=228687
+
+        Reviewed by Mark Lam.
+
+        Use loadPair / storePair if possible in YarrJIT. Currently, we are not
+        deploying Spooler in YarrJIT, but we should do that in the future too.
+
+        In this patch, we also add appropriate fallback code in loadPair / storePair:
+        the offset of these functions are small enough so that we should consider
+        overflowing case. If it overflows, we use two loads or stores.
+
+        This patch also adds loadPair32 and storePair32 to all macro assembler so that
+        we can call it without CPU(ARM64). Internally, two loads or stores are combined.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadPair32):
+        (JSC::MacroAssemblerARM64::loadPair64):
+        (JSC::MacroAssemblerARM64::loadPair64WithNonTemporalAccess):
+        (JSC::MacroAssemblerARM64::storePair32):
+        (JSC::MacroAssemblerARM64::storePair64):
+        (JSC::MacroAssemblerARM64::storePair64WithNonTemporalAccess):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadPair32):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::loadPair32):
+        (JSC::MacroAssemblerMIPS::storePair32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadPair32):
+        (JSC::MacroAssemblerX86Common::storePair32):
+        * assembler/testmasm.cpp:
+        (JSC::testLoadStorePair32):
+        (JSC::testLoadStorePair64Int64):
+        * yarr/YarrJIT.cpp:
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix accidental narrowing
+        https://bugs.webkit.org/show_bug.cgi?id=228613
+
+        Note that this narrowing does not matter semantically since we mask this value with 0x7f.
+
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::BoyerMooreBitmap::addCharacters):
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr BoyerMoore search should support character-class
+        https://bugs.webkit.org/show_bug.cgi?id=228613
+
+        Reviewed by Saam Barati.
+
+        This patch adds character-class support for BoyerMoore lookahead search in Yarr.
+        Currently, we only support fixed-sized character-class. We can extend it for repeat cases in the future.
+
+        To apply this character-class thing to jQuery's RegExp, we also allow non-fixed-sized disjunction.
+        For example, /aaaa.*|bbbb/'s disjunction is not fixed-sized. But still we can use (aaaa|bbbb) prefix since
+        this part is fixed-sized and we know minimum-size of this disjunction is 4.
+
+        Plus, instead of giving up BoyerMoore search when we found non-supported terms, we shorten BoyerMoore search
+        length not to include this term so that we can still have a chance to leverage BoyerMoore search. In the case
+        of /aaaa|bbbb|ccc(d|e|f)/, we previously gave up since it finds `(d|e|f)`. But now, instead we shorten the length
+        from 4 to 3, and construct search pattern with `aaa|bbb|ccc`.
+
+        This patch improves jquery-todomvc-regexp by 20%.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      545.3561+-0.6968     ^    451.6117+-0.4613        ^ definitely 1.2076x faster
+
+        This improves Speedometer2/jQuery-TodoMVC by 2%.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |123.470833   |123.550000   |1.000641  | 0.841600                                         |
+            | VueJS-TodoMVC                        |26.883333    |26.950000    |1.002480  | 0.846732                                         |
+            | EmberJS-TodoMVC                      |127.708333   |127.754167   |1.000359  | 0.934206                                         |
+            | BackboneJS-TodoMVC                   |50.545833    |50.445833    |0.998022  | 0.679610                                         |
+            | Preact-TodoMVC                       |20.879167    |20.791667    |0.995809  | 0.796541                                         |
+            | AngularJS-TodoMVC                    |137.479167   |137.275000   |0.998515  | 0.729817                                         |
+            | Vanilla-ES2015-TodoMVC               |69.079167    |68.912500    |0.997587  | 0.524325                                         |
+            | Inferno-TodoMVC                      |65.604167    |66.120833    |1.007876  | 0.145549                                         |
+            | Flight-TodoMVC                       |77.029167    |76.708333    |0.995835  | 0.518562                                         |
+            | Angular2-TypeScript-TodoMVC          |40.516667    |40.812500    |1.007302  | 0.513386                                         |
+            | VanillaJS-TodoMVC                    |54.762500    |54.895833    |1.002435  | 0.647381                                         |
+            | jQuery-TodoMVC                       |255.950000   |250.425000   |0.978414  | 0.000000 (significant)                           |
+            | EmberJS-Debug-TodoMVC                |341.745833   |342.804167   |1.003097  | 0.219937                                         |
+            | React-TodoMVC                        |88.854167    |88.700000    |0.998265  | 0.568405                                         |
+            | React-Redux-TodoMVC                  |151.266667   |150.804167   |0.996942  | 0.256403                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |65.783333    |65.645833    |0.997910  | 0.437464                                         |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 246.52898
+            b mean = 246.85128
+            pValue = 0.3927330278
+            (Bigger means are better.)
+            1.001 times better
+            Results ARE NOT significant
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::BoyerMooreInfo::shortenLength):
+        (JSC::Yarr::BoyerMooreInfo::setAll):
+        (JSC::Yarr::BoyerMooreInfo::addCharacters):
+        (JSC::Yarr::BoyerMooreInfo::addRanges):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::BoyerMooreBitmap::add):
+        (JSC::Yarr::BoyerMooreBitmap::addCharacters):
+        (JSC::Yarr::BoyerMooreBitmap::addRanges):
+        (JSC::Yarr::BoyerMooreBitmap::setAll):
+        (JSC::Yarr::BoyerMooreBitmap::isAllSet const):
+
+2021-08-02  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Make C files in testapi compile with a C standard rather than C++ one
+        https://bugs.webkit.org/show_bug.cgi?id=228701
+
+        Reviewed by Ross Kirsling.
+
+        * shell/PlatformPlayStation.cmake: Set standard for C files in testapi
+
+2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should use Bitmap instead of ByteVector for BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228676
+
+        Reviewed by Saam Barati.
+
+        We observed that using Bitmap instead of ByteVector does not pose performance
+        issue. It was neutral in jquery-todomvc-regexp.js. In that case, we should use
+        Bitmap since it is 8x smaller.
+
+        We also search reusable Bitmap from Vector since comparing 128bit Bitmap is
+        super fast so we do not need to bother about linear search here (# of Bitmap
+        is currently up to 4).
+
+        To make code simplified, we add regT2 to ARMv7 and MIPS backend of YarrJIT.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      555.9566+-0.8856          555.0737+-0.9717
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::BoyerMooreInfo::index const): Deleted.
+        (JSC::Yarr::BoyerMooreInfo::setIndex): Deleted.
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::tryReuseBoyerMooreBitmap const):
+        (JSC::Yarr::BoyerMooreByteVector::BoyerMooreByteVector): Deleted.
+        (JSC::Yarr::YarrCodeBlock::tryReuseBoyerMooreByteVector const): Deleted.
+
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Move JIT_UNICODE_EXPRESSIONS to ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) in PlatformEnable.h
+        https://bugs.webkit.org/show_bug.cgi?id=228669
+
+        Reviewed by Alexey Shvayka.
+
+        Move JIT_UNICODE_EXPRESSIONS to PlatformEnable.h to align to the other YarrJIT flags.
+        This makes it easy to read that this is enabled on ARM64 and X86_64.
+
+        * yarr/YarrJIT.cpp:
+
+2021-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up Yarr by using `static constexpr`
+        https://bugs.webkit.org/show_bug.cgi?id=228678
+
+        Reviewed by Alexey Shvayka.
+
+        Modernize Yarr code by using static constexpr.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImm32::TrustedImm32):
+        * yarr/YarrCanonicalizeUCS2.cpp:
+        * yarr/YarrCanonicalizeUCS2.js:
+        (set characters.hex.set string_appeared_here):
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        * yarr/YarrJIT.cpp:
+
+2021-07-31  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r280493.
+        warning: variable ‘block’ set but not used [-Wunused-but-set-variable]
+
+        * b3/B3CanonicalizePrePostIncrements.cpp:
+        (JSC::B3::canonicalizePrePostIncrements):
+
+2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] branchTest8 should not emit tst for Zero/NonZero cases
+        https://bugs.webkit.org/show_bug.cgi?id=228674
+
+        Reviewed by Mark Lam.
+
+        Previously, branchTest8(NonZero, BaseIndex) emits `tst` instruction
+        unnecessarily. This is because the mask is truncated into 8bit, which
+        makes branchTest32 (which is internally used in branchTest8) emits tst.
+        We observed many unnecessary tst in YarrJIT.
+
+        This patch removes this unnecessary truncation since Zero/NonZero does
+        not care high bits of mask in branchTest8. This is ok because the
+        ResultCondition version of mask8OnCondition() is always used to generate
+        a mask that is only used against a value that is loaded with
+        MacroAssemblerHelpers::load8OnCondition(). For Zero/NonZero conditions,
+        load8OnCondition() will always zero fill the upper bytes. The 0 filled
+        upper bytes will not affect the result of a branch on zero or branch on
+        not zero.
+
+        Before:
+           0x10a8068b0:    ldrb     w16, [x7, x6]
+           0x10a8068b4:    tst      w16, #0xff
+           0x10a8068b8:    b.ne   0x10a8068cc
+
+        After:
+           0x1070068b0:    ldrb     w16, [x7, x6]
+           0x1070068b4:    cbnz     w16, 0x1070068c8
+
+        * assembler/MacroAssemblerHelpers.h:
+        (JSC::MacroAssemblerHelpers::mask8OnCondition):
+
+2021-07-30  Robin Morisset  <rmorisset@apple.com>
+
+        Improve OSR entry into Wasm loops with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=228595
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch has two parts:
+        - improve the Wasm OSR code to fully support loop arguments (just some plumbing to make sure that the right values are propagated)
+        - improve the B3 validator to fix a hole I noticed while writing the first part: we were not detecting code that introduce Upsilons in the wrong blocks.
+          Naturally, this caused hard to debug issues, as B3 has no well-defined semantics for a Phi that is reached before the corresponding Upsilon(s).
+
+        * b3/B3Validate.cpp:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addLoop):
+
+2021-07-30  Philip Chimento  <pchimento@igalia.com>
+
+        [JSC] Rename Temporal.now to Temporal.Now
+        https://bugs.webkit.org/show_bug.cgi?id=228658
+
+        Reviewed by Yusuke Suzuki.
+
+        See https://github.com/tc39/proposal-temporal/pull/1645. In the July
+        2021 meeting TC39 achieved consensus to rename Temporal.now to
+        Temporal.Now since it is a namespace.
+
+        * runtime/TemporalNow.cpp: Change Now[@@toStringTag] accordingly.
+        * runtime/TemporalObject.cpp: Rename now property to Now.
+
+2021-07-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        putInlineFastReplacingStaticPropertyIfNeeded should handle custom values
+        https://bugs.webkit.org/show_bug.cgi?id=227963
+
+        Reviewed by Alexey Shvayka.
+
+        Follow up after r280463: as it turns out, putInlineFastReplacingStaticPropertyIfNeeded also needs to handle
+        custom values, similar to how definePropertyOnReceiverSlow was updated. This function will be called when the
+        target property of the receiver is a custom value and isn't reified. The previous test case was expanded to
+        test both the reified and non-reified cases.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
+        * tools/JSDollarVM.cpp:
+
+2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix wrong access width
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+        rdar://81341472
+
+        * yarr/YarrJIT.cpp:
+
+2021-07-30  Yijia Huang  <yijia_huang@apple.com>
+
+        Add Pre/Post-Indexed Address Mode to Air for ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=228047
+
+        Reviewed by Phil Pizlo.
+
+        Pre-indexed addressing means that the address is the sum of the value in the 64-bit base register 
+        and an offset, and the address is then written back to the base register. And post-indexed 
+        addressing means that the address is the value in the 64-bit base register, and the sum of the 
+        address and the offset is then written back to the base register. They are relatively common for 
+        loops to iterate over an array by increasing/decreasing a pointer into the array at each iteration. 
+        With such an addressing mode, the instruction selector can merge the increment and access the array.
+
+        #####################################
+        ## Pre-Index Address Mode For Load ##
+        #####################################
+
+        LDR Wt, [Xn, #imm]!
+
+        In B3 Reduction Strength, since we have this reduction rule:
+            Turn this: Load(Add(address, offset1), offset = offset2)
+            Into this: Load(address, offset = offset1 + offset2)
+
+        Then, the equivalent pattern is:
+            address = Add(base, offset)
+            ...
+            memory = Load(base, offset)
+
+        First, we convert it to the canonical form:
+            address = Add(base, offset)
+            newMemory = Load(base, offset) // move the memory to just after the address
+            ...
+            memory = Identity(newMemory)
+
+        Next, lower to Air:
+            Move %base, %address
+            Move (%address, prefix(offset)), %newMemory
+
+        ######################################
+        ## Post-Index Address Mode For Load ##
+        ######################################
+
+        LDR Wt, [Xn], #imm
+
+        Then, the equivalent pattern is:
+            memory = Load(base, 0)
+            ...
+            address = Add(base, offset)
+
+        First, we convert it to the canonical form:
+            newOffset = Constant
+            newAddress = Add(base, offset)
+            memory = Load(base, 0) // move the offset and address to just before the memory
+            ...
+            offset = Identity(newOffset)
+            address = Identity(newAddress)
+
+        Next, lower to Air:
+            Move %base, %newAddress
+            Move (%newAddress, postfix(offset)), %memory
+
+        #############################
+        ## Pattern Match Algorithm ##
+        #############################
+
+        To detect the pattern for prefix/postfix increment address is tricky due to the structure in B3 IR. The 
+        algorithm used in this patch is to collect the first valid values (add/load), then search for any 
+        paired value (load/add) to match all of them. In worst case, the runtime complexity is O(n^2) 
+        when n is the number of all values.
+
+        After collecting two sets of candidates, we match the prefix incremental address first since it seems 
+        more beneficial to the compiler (shown in the next section). And then, go for the postfix one.
+
+        ##############################################
+        ## Test for Pre/Post-Increment Address Mode ##
+        ##############################################
+
+        Given Loop with Pre-Increment:
+        int64_t ldr_pre(int64_t *p) {
+            int64_t res = 0;
+            while (res < 10)
+                res += *++p;
+            return res;
+        }
+
+        B3 IR:
+        ------------------------------------------------------
+        BB#0: ; frequency = 1.000000
+            Int64 b@0 = Const64(0)
+            Int64 b@2 = ArgumentReg(%x0)
+            Void b@20 = Upsilon($0(b@0), ^18, WritesLocalState)
+            Void b@21 = Upsilon(b@2, ^19, WritesLocalState)
+            Void b@4 = Jump(Terminal)
+        Successors: #1
+        BB#1: ; frequency = 1.000000
+        Predecessors: #0, #2
+            Int64 b@18 = Phi(ReadsLocalState)
+            Int64 b@19 = Phi(ReadsLocalState)
+            Int64 b@7 = Const64(10)
+            Int32 b@8 = AboveEqual(b@18, $10(b@7))
+            Void b@9 = Branch(b@8, Terminal)
+        Successors: Then:#3, Else:#2
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Int64 b@10 = Const64(8)
+            Int64 b@11 = Add(b@19, $8(b@10))
+            Int64 b@13 = Load(b@11, ControlDependent|Reads:Top)
+            Int64 b@14 = Add(b@18, b@13)
+            Void b@22 = Upsilon(b@14, ^18, WritesLocalState)
+            Void b@23 = Upsilon(b@11, ^19, WritesLocalState)
+            Void b@16 = Jump(Terminal)
+        Successors: #1
+        BB#3: ; frequency = 1.000000
+        Predecessors: #1
+            Void b@17 = Return(b@18, Terminal)
+        Variables:
+            Int64 var0
+            Int64 var1
+        ------------------------------------------------------
+
+        W/O Pre-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Move $8, %x3, $8(b@12)
+            Add64 $8, %x0, %x1, b@11
+            Move (%x0,%x3), %x0, b@13
+            Add64 %x0, %x2, %x2, b@14
+            Move %x1, %x0, b@23
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        W/ Pre-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            MoveWithIncrement64 (%x0,Pre($8)), %x2, b@13
+            Add64 %x2, %x1, %x1, b@14
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        Given Loop with Post-Increment:
+        int64_t ldr_pre(int64_t *p) {
+            int64_t res = 0;
+            while (res < 10)
+                res += *p++;
+            return res;
+        }
+
+        B3 IR:
+        ------------------------------------------------------
+        BB#0: ; frequency = 1.000000
+            Int64 b@0 = Const64(0)
+            Int64 b@2 = ArgumentReg(%x0)
+            Void b@20 = Upsilon($0(b@0), ^18, WritesLocalState)
+            Void b@21 = Upsilon(b@2, ^19, WritesLocalState)
+            Void b@4 = Jump(Terminal)
+        Successors: #1
+        BB#1: ; frequency = 1.000000
+        Predecessors: #0, #2
+            Int64 b@18 = Phi(ReadsLocalState)
+            Int64 b@19 = Phi(ReadsLocalState)
+            Int64 b@7 = Const64(10)
+            Int32 b@8 = AboveEqual(b@18, $10(b@7))
+            Void b@9 = Branch(b@8, Terminal)
+        Successors: Then:#3, Else:#2
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Int64 b@10 = Load(b@19, ControlDependent|Reads:Top)
+            Int64 b@11 = Add(b@18, b@10)
+            Int64 b@12 = Const64(8)
+            Int64 b@13 = Add(b@19, $8(b@12))
+            Void b@22 = Upsilon(b@11, ^18, WritesLocalState)
+            Void b@23 = Upsilon(b@13, ^19, WritesLocalState)
+            Void b@16 = Jump(Terminal)
+        Successors: #1
+        BB#3: ; frequency = 1.000000
+        Predecessors: #1
+            Void b@17 = Return(b@18, Terminal)
+        Variables:
+            Int64 var0
+            Int64 var1
+        ------------------------------------------------------
+
+        W/O Post-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            Move (%x0), %x2, b@10
+            Add64 %x2, %x1, %x1, b@11
+            Add64 $8, %x0, %x0, b@13
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        W/ Post-Increment Address Mode:
+        ------------------------------------------------------
+        ...
+        BB#2: ; frequency = 1.000000
+        Predecessors: #1
+            MoveWithIncrement64 (%x0,Post($8)), %x2, b@10
+            Add64 %x2, %x1, %x1, b@11
+            Jump b@16
+        Successors: #1
+        ...
+        ------------------------------------------------------
+
+        * Sources.txt:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::PreIndexAddress::PreIndexAddress):
+        (JSC::AbstractMacroAssembler::PostIndexAddress::PostIndexAddress):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::load64):
+        (JSC::MacroAssemblerARM64::load32):
+        (JSC::MacroAssemblerARM64::store64):
+        (JSC::MacroAssemblerARM64::store32):
+        * assembler/testmasm.cpp:
+        (JSC::testStorePrePostIndex32):
+        (JSC::testStorePrePostIndex64):
+        (JSC::testLoadPrePostIndex32):
+        (JSC::testLoadPrePostIndex64):
+        * b3/B3CanonicalizePrePostIncrements.cpp: Added.
+        (JSC::B3::canonicalizePrePostIncrements):
+        * b3/B3CanonicalizePrePostIncrements.h: Copied from Source/JavaScriptCore/b3/B3ValueKeyInlines.h.
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3ValueKey.h:
+        * b3/B3ValueKeyInlines.h:
+        (JSC::B3::ValueKey::ValueKey):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::jsHash const):
+        (JSC::B3::Air::Arg::dump const):
+        (WTF::printInternal):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::preIndex):
+        (JSC::B3::Air::Arg::postIndex):
+        (JSC::B3::Air::Arg::isPreIndex const):
+        (JSC::B3::Air::Arg::isPostIndex const):
+        (JSC::B3::Air::Arg::isMemory const):
+        (JSC::B3::Air::Arg::base const):
+        (JSC::B3::Air::Arg::offset const):
+        (JSC::B3::Air::Arg::isGP const):
+        (JSC::B3::Air::Arg::isFP const):
+        (JSC::B3::Air::Arg::isValidPreIndexForm):
+        (JSC::B3::Air::Arg::isValidPostIndexForm):
+        (JSC::B3::Air::Arg::isValidForm const):
+        (JSC::B3::Air::Arg::forEachTmpFast):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::asPreIndexAddress const):
+        (JSC::B3::Air::Arg::asPostIndexAddress const):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.h:
+        * b3/testb3_3.cpp:
+        (testLoadPreIndex32):
+        (testLoadPreIndex64):
+        (testLoadPostIndex32):
+        (testLoadPostIndex64):
+        (addShrTests):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::jitWriteThunkGenerator):
+
+2021-07-30  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        REGRESSION (r280460): 42 JSC test failures on Debug arm64 with ASSERTION FAILED: !m_needExceptionCheck
+        https://bugs.webkit.org/show_bug.cgi?id=228652
+
+        Unreviewed unchecked exception fix.
+
+        Release scope before calling RegExpGlobalData::getBackref().
+
+        * runtime/RegExpConstructor.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
+2021-07-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use UCPURegister argument to remove zero extension in JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=228625
+
+        Reviewed by Robin Morisset.
+
+        Yarr JIT code emits zeroExtend32ToWord for some arguments, but this is not necessary if
+        argument is defined as UCPURegister. In that case, caller guarantees that top 32bits are
+        cleared.
+
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJIT.h:
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        This patch deletes the existing implementation just to reduce binary size in releases of WebKit
+        which don't enable WebGPU by default. It doesn't represent a change in direction or policy or
+        anything regarding WebGPU. It's a (somewhat temporary) pragmatic change.
+
+        Our current implementation of WebGPU:
+        1. Is off by default on all platforms
+        2. Is extremely outdated
+        3. Has no notion of the GPU Process, and therefore needs to be redesigned and largely rewritten
+        4. Only implements a fraction of what is in the spec
+
+        Removing the code from the tree doesn't delete it from existence; it's still in source control.
+        The benefit of reducing binary size seems to outweigh having this code in the tree.
+
+        * inspector/protocol/Canvas.json:
+        * inspector/scripts/codegen/generator.py:
+
+2021-07-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][GTK] build broken with python2 after r280382
+        https://bugs.webkit.org/show_bug.cgi?id=228629
+
+        Reviewed by Philippe Normand.
+
+        Call {PYTHON_EXECUTABLE} instead of python3.
+
+        * PlatformGTK.cmake:
+
+2021-07-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+        definePropertyOnReceiver should check if receiver canPerformFastPutInline
+        https://bugs.webkit.org/show_bug.cgi?id=227963
+        <rdar://80259710>
+
+        Reviewed by Alexey Shvayka.
+
+        definePropertyOnReceiver has a fast path if the slot is not opaque and the receiver doesn't
+        have a custom defineOwnProperty implementation, in which case it calls putInlineFast (and
+        transitively putDirectInternal<PutModePut>). The issue is that putDirectInternal does not
+        handle customValues correctly: it just overwrites the property without changing the attributes.
+        To fix that, we should first check if the property might be a custom value, and if that's the case
+        we now call `definePropertyOnReceiverSlow`, which has been updated to handle custom values correctly.
+        I also added assertions to putInlineFastReplacingStaticPropertyIfNeeded and putDirectInternal
+        to make sure we don't accidentally overwrite custom values in the future.
+
+        * runtime/JSObject.cpp:
+        (JSC::definePropertyOnReceiverSlow):
+        (JSC::JSObject::definePropertyOnReceiver):
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+
+2021-07-29  Yusuke Suzuki  <ysuzuki@apple.com> and Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Legacy RegExp fields should be accessors
+        https://bugs.webkit.org/show_bug.cgi?id=220233
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch implements a part of Legacy RegExp features proposal [1], replacing
+        custom values with custom accessors that require |this| value to be RegExp
+        constructor of the same realm.
+
+        Apart from fixing property descriptors, this change brings legacy RegExpConstructor
+        fields in compliance with invariants of internal methods [2] (described in #151348),
+        aligning JSC with V8 and SpiderMonkey.
+
+        It doesn't, however, implement [[LegacyFeaturesEnabled]] and RegExp.prototype.compile
+        changes.
+
+        [1]: https://github.com/tc39/proposal-regexp-legacy-features
+        [2]: https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::JSC_DEFINE_CUSTOM_SETTER):
+        (JSC::regExpConstructorDollarImpl): Deleted.
+        * tools/JSDollarVM.cpp:
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add WebGPU to webkit.org/status
+        https://bugs.webkit.org/show_bug.cgi?id=228623
+
+        Reviewed by Robin Morisset.
+
+        * features.json:
+
+2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Yarr should perform BoyerMoore search
+        https://bugs.webkit.org/show_bug.cgi?id=228301
+
+        Reviewed by Saam Barati.
+
+        This patch emits skipping fast-path at the beginning of body alternatives with a large stride. So we can quickly discard unrelated characters
+        and attempt to find possibly related sequence in the long sequence. The method is derived from V8's implementation (with some extensions).
+
+        If we have a searching pattern /abcdef/, then we can check the 6th character against a set of {a, b, c, d, e, f}.
+        If it does not match, we can shift 6 characters. We use this strategy since this way can be extended easily to support
+        disjunction, character-class, and ignore-cases. For example, in the case of /(?:abc|def)/, we can check 3rd character
+        against {a, b, c, d, e, f} and shift 3 characters if it does not match.
+
+        Then, the best way to perform the above shifting is that finding the longest character sequence which does not have
+        many candidates. In the case of /[a-z]aaaaaaa[a-z]/, we can extract "aaaaaaa" sequence and check 8th character against {a}.
+        If it does not match, then we can shift 7 characters (length of "aaaaaaa"). This shifting is better than using "[a-z]aaaaaaa[a-z]"
+        sequence and {a-z} set since {a-z} set will almost always match.
+
+        We first collect possible characters for each character position. Then, apply heuristics to extract good character sequence from
+        that and construct fast searching with long stride.
+
+        Microbenchmark which performs RegExp ops in Speedometer2/jQuery-TodoMVC shows 25% improvement.
+
+                                              ToT                     Patched
+
+            jquery-todomvc-regexp      723.9739+-1.3997     ^    579.1698+-1.2505        ^ definitely 1.2500x faster
+
+        This improves Speedometer2/jQuery-TodoMVC by 3%.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |123.365625   |123.456250   |1.000735  | 0.804077                                         |
+            | VueJS-TodoMVC                        |26.912500    |26.925000    |1.000464  | 0.969603                                         |
+            | EmberJS-TodoMVC                      |127.540625   |127.562500   |1.000172  | 0.960474                                         |
+            | BackboneJS-TodoMVC                   |50.606250    |50.518750    |0.998271  | 0.670313                                         |
+            | Preact-TodoMVC                       |21.018750    |20.850000    |0.991971  | 0.563818                                         |
+            | AngularJS-TodoMVC                    |136.943750   |137.271875   |1.002396  | 0.531513                                         |
+            | Vanilla-ES2015-TodoMVC               |68.521875    |68.593750    |1.001049  | 0.701376                                         |
+            | Inferno-TodoMVC                      |65.559375    |65.803125    |1.003718  | 0.414418                                         |
+            | Flight-TodoMVC                       |77.284375    |76.715625    |0.992641  | 0.219870                                         |
+            | Angular2-TypeScript-TodoMVC          |40.725000    |40.318750    |0.990025  | 0.281212                                         |
+            | VanillaJS-TodoMVC                    |55.209375    |54.715625    |0.991057  | 0.056921                                         |
+            | jQuery-TodoMVC                       |266.396875   |258.471875   |0.970251  | 0.000000 (significant)                           |
+            | EmberJS-Debug-TodoMVC                |341.550000   |341.856250   |1.000897  | 0.618140                                         |
+            | React-TodoMVC                        |88.731250    |88.871875    |1.001585  | 0.512407                                         |
+            | React-Redux-TodoMVC                  |150.340625   |150.065625   |0.998171  | 0.412940                                         |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |65.390625    |65.362500    |0.999570  | 0.834760                                         |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 245.96997
+            b mean = 246.86366
+            pValue = 0.0061448402
+            (Bigger means are better.)
+            1.004 times better
+            Results ARE significant
+
+        * runtime/OptionsList.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::BoyerMooreInfo::BoyerMooreInfo):
+        (JSC::Yarr::BoyerMooreInfo::length const):
+        (JSC::Yarr::BoyerMooreInfo::set):
+        (JSC::Yarr::BoyerMooreInfo::index const):
+        (JSC::Yarr::BoyerMooreInfo::setIndex):
+        (JSC::Yarr::BoyerMooreInfo::create):
+        (JSC::Yarr::BoyerMooreInfo::findBestCharacterSequence const):
+        (JSC::Yarr::BoyerMooreInfo::findWorthwhileCharacterSequenceForLookahead const):
+        (JSC::Yarr::BoyerMooreInfo::createCandidateBitmap const):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::BoyerMooreBitmap::count const):
+        (JSC::Yarr::BoyerMooreBitmap::map const):
+        (JSC::Yarr::BoyerMooreBitmap::isMaskEffective const):
+        (JSC::Yarr::BoyerMooreBitmap::add):
+        (JSC::Yarr::BoyerMooreByteVector::BoyerMooreByteVector):
+        (JSC::Yarr::YarrCodeBlock::set8BitCode):
+        (JSC::Yarr::YarrCodeBlock::set16BitCode):
+        (JSC::Yarr::YarrCodeBlock::set8BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::set16BitCodeMatchOnly):
+        (JSC::Yarr::YarrCodeBlock::clear):
+        (JSC::Yarr::YarrCodeBlock::findSameVector const):
+
 2021-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] load/store with BaseIndex is inefficient in ARM64

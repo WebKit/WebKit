@@ -50,6 +50,8 @@ class ImageBuffer;
 enum class PixelFormat : uint8_t;
 enum class VolatilityState : uint8_t;
 
+using IOSurfaceSeed = uint32_t;
+
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -143,6 +145,8 @@ public:
     WEBCORE_EXPORT Format format() const;
     WEBCORE_EXPORT IOSurfaceID surfaceID() const;
     size_t bytesPerRow() const;
+
+    IOSurfaceSeed seed() const;
 
     WEBCORE_EXPORT bool isInUse() const;
 

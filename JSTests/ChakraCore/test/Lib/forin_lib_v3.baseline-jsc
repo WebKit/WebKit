@@ -78,38 +78,8 @@ for..in Date (with prototype.blah2)
   blah2 = Date
 
 for..in RegExp
-  input = 
-  multiline = false
-  lastMatch = 
-  lastParen = 
-  leftContext = 
-  rightContext = 
-  $1 = 
-  $2 = 
-  $3 = 
-  $4 = 
-  $5 = 
-  $6 = 
-  $7 = 
-  $8 = 
-  $9 = 
   blah2 = Function
 for..in RegExp (with blah)
-  input = 
-  multiline = false
-  lastMatch = 
-  lastParen = 
-  leftContext = 
-  rightContext = 
-  $1 = 
-  $2 = 
-  $3 = 
-  $4 = 
-  $5 = 
-  $6 = 
-  $7 = 
-  $8 = 
-  $9 = 
   blah = b
   blah2 = Function
 for..in new RegExp

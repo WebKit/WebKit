@@ -64,9 +64,6 @@ public:
     virtual bool isWebGL1() const { return false; }
     virtual bool isWebGL2() const { return false; }
     bool isWebGL() const { return isWebGL1() || isWebGL2(); }
-#if ENABLE(WEBGPU)
-    virtual bool isWebGPU() const { return false; }
-#endif
     virtual bool isGPUBased() const { return false; }
     virtual bool isAccelerated() const { return false; }
     virtual bool isBitmapRenderer() const { return false; }

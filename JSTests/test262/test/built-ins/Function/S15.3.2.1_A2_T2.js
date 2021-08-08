@@ -15,15 +15,15 @@ description: >
 try {
   var f = Function("arg1, arg2", "arg3", "return arg1+arg2+arg3;");
 } catch (e) {
-  $ERROR('#1: test failed');
+  throw new Test262Error('#1: test failed');
 }
 
 //CHECK#2
 if (!(f instanceof Function)) {
-  $ERROR('#2: It is permissible but not necessary to have one argument for each formal parameter to be specified');
+  throw new Test262Error('#2: It is permissible but not necessary to have one argument for each formal parameter to be specified');
 }
 
 //CHECK#3
 if (f("AB", "BA", 1) !== "ABBA1") {
-  $ERROR('#3: It is permissible but not necessary to have one argument for each formal parameter to be specified');
+  throw new Test262Error('#3: It is permissible but not necessary to have one argument for each formal parameter to be specified');
 }

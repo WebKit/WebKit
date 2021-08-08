@@ -16,24 +16,24 @@ var g = Function.call(this, "return this.color;");
 
 //CHECK#1
 if (f() !== undefined) {
-  $ERROR('#2: ');
+  throw new Test262Error('#2: ');
 }
 
 var planet = "mars";
 
 //CHECK#2
 if (f() !== "mars") {
-  $ERROR('#2: ');
+  throw new Test262Error('#2: ');
 }
 
 //CHECK#3
 if (g() !== undefined) {
-  $ERROR('#3: ');
+  throw new Test262Error('#3: ');
 }
 
 this.color = "red";
 
 //CHECK#4
 if (g() !== "red") {
-  $ERROR('#4: ');
+  throw new Test262Error('#4: ');
 }

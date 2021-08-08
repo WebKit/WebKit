@@ -19,7 +19,7 @@ Function.prototype.substring = String.prototype.substring;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__func.substring(null, Function()) !== "") {
-  $ERROR('#1: __func.valueOf=function(){return "gnulluna"}; Function.prototype.substring=String.prototype.substring; function __func(){}; __func.substring(null, Function()) === "". Actual: ' + __func.substring(null, Function()));
+  throw new Test262Error('#1: __func.valueOf=function(){return "gnulluna"}; Function.prototype.substring=String.prototype.substring; function __func(){}; __func.substring(null, Function()) === "". Actual: ' + __func.substring(null, Function()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

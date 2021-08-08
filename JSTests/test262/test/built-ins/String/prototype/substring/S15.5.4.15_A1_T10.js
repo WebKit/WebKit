@@ -22,7 +22,7 @@ var __str = "\u0035ABBBABAB";
 if (__str.substring(__obj, function() {
     return __str.substring(0, 1);
   }()) !== "BBB") {
-  $ERROR('#1: var __obj = {valueOf:function(){return 2;}}; var __str = "\u0035ABBBABAB"; __str.substring(__obj, function(){return __str.substring(0,1);}()) === "BBB". Actual: ' + __str.substring(__obj, function() {
+  throw new Test262Error('#1: var __obj = {valueOf:function(){return 2;}}; var __str = "\u0035ABBBABAB"; __str.substring(__obj, function(){return __str.substring(0,1);}()) === "BBB". Actual: ' + __str.substring(__obj, function() {
     return __str.substring(0, 1);
   }()));
 }

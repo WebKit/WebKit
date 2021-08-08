@@ -14,7 +14,7 @@ __instance.charCodeAt = String.prototype.charCodeAt;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ((__instance.charCodeAt(false) !== 52) || (__instance.charCodeAt(true) !== 50)) {
-  $ERROR('#1: __instance = new Object(42); __instance.charCodeAt = String.prototype.charCodeAt;  __instance.charCodeAt(false) === 52 and __instance.charCodeAt(true) === 50. Actual: __instance.charCodeAt(false) ===' + __instance.charCodeAt(false) + ' and __instance.charCodeAt(true) ===' + __instance.charCodeAt(true));
+  throw new Test262Error('#1: __instance = new Object(42); __instance.charCodeAt = String.prototype.charCodeAt;  __instance.charCodeAt(false) === 52 and __instance.charCodeAt(true) === 50. Actual: __instance.charCodeAt(false) ===' + __instance.charCodeAt(false) + ' and __instance.charCodeAt(true) ===' + __instance.charCodeAt(true));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

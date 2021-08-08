@@ -11,15 +11,15 @@ description: Array constructor is given no arguments or at least two arguments
 
 //CHECK#1
 if (Array().length !== 0) {
-  $ERROR('#1: (Array().length === 0. Actual: ' + (Array().length));
+  throw new Test262Error('#1: (Array().length === 0. Actual: ' + (Array().length));
 }
 
 //CHECK#2
 if (Array(0, 1, 0, 1).length !== 4) {
-  $ERROR('#2: (Array(0,1,0,1).length === 4. Actual: ' + (Array(0, 1, 0, 1).length));
+  throw new Test262Error('#2: (Array(0,1,0,1).length === 4. Actual: ' + (Array(0, 1, 0, 1).length));
 }
 
 //CHECK#3
 if (Array(undefined, undefined).length !== 2) {
-  $ERROR('#3: (Array(undefined, undefined).length === 2. Actual: ' + (Array(undefined, undefined).length));
+  throw new Test262Error('#3: (Array(undefined, undefined).length === 2. Actual: ' + (Array(undefined, undefined).length));
 }

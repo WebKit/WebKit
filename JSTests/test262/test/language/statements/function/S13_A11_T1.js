@@ -15,7 +15,7 @@ function __func(){ return delete arguments;}
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__func("A","B",1,2)) {
-	$ERROR('#1: arguments property has attribute { DontDelete }');
+	throw new Test262Error('#1: arguments property has attribute { DontDelete }');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -9,10 +9,10 @@ description: Type(x) is undefined or null
 
 //CHECK#1
 if (~void 0 !== -1) {
-  $ERROR('#1: ~void 0 === -1. Actual: ' + (~void 0));
+  throw new Test262Error('#1: ~void 0 === -1. Actual: ' + (~void 0));
 }
 
 //CHECK#2
 if (~null !== -1) {
-  $ERROR('#2: ~null === -1. Actual: ' + (~null));
+  throw new Test262Error('#2: ~null === -1. Actual: ' + (~null));
 }

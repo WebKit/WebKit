@@ -15,11 +15,11 @@ try {
   var s1 = new String();
   s1.valueOf = Number.prototype.valueOf;
   var v1 = s1.valueOf();
-  $ERROR('#1: Number.prototype.valueOf on not a Number object should throw TypeError');
+  throw new Test262Error('#1: Number.prototype.valueOf on not a Number object should throw TypeError');
 }
 catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1: Number.prototype.valueOf on not a Number object should throw TypeError, not ' + e);
+    throw new Test262Error('#1: Number.prototype.valueOf on not a Number object should throw TypeError, not ' + e);
   }
 }
 
@@ -28,10 +28,10 @@ try {
   var s2 = new String();
   s2.myValueOf = Number.prototype.valueOf;
   var v2 = s2.myValueOf();
-  $ERROR('#2: Number.prototype.valueOf on not a Number object should throw TypeError');
+  throw new Test262Error('#2: Number.prototype.valueOf on not a Number object should throw TypeError');
 }
 catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#2: Number.prototype.valueOf on not a Number object should throw TypeError, not ' + e);
+    throw new Test262Error('#2: Number.prototype.valueOf on not a Number object should throw TypeError, not ' + e);
   }
 }

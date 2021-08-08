@@ -20,7 +20,7 @@ var __instance = new __FACTORY;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.charCodeAt(eval("1"), true, null, {}) !== 0x69) {
-  $ERROR('#1: __instance.charCodeAt(eval("1"),true,null,{})=== 0x69. Actual: __instance.charCodeAt(eval("1"),true,null,{})===' + __instance.charCodeAt(eval("1"), true, null, {}));
+  throw new Test262Error('#1: __instance.charCodeAt(eval("1"),true,null,{})=== 0x69. Actual: __instance.charCodeAt(eval("1"),true,null,{})===' + __instance.charCodeAt(eval("1"), true, null, {}));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

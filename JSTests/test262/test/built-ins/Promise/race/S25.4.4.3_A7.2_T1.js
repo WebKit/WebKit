@@ -18,10 +18,10 @@ var p1 = Promise.reject(1),
 sequence.push(1);
 
 p.then(function() {
-  $ERROR("Should not be fulfilled - expected rejection.");
+  throw new Test262Error("Should not be fulfilled - expected rejection.");
 }, function(arg) {
   if (arg !== 1) {
-    $ERROR("Expected rejection reason to be 1, got " + arg);
+    throw new Test262Error("Expected rejection reason to be 1, got " + arg);
   }
 
   sequence.push(4);

@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+bool AudioSession::s_shouldManageAudioSessionCategory { false };
+
 static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
 {
     static NeverDestroyed<std::optional<UniqueRef<AudioSession>>> session;

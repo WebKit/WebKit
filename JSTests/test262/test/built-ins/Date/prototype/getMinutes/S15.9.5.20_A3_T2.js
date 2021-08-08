@@ -11,9 +11,9 @@ description: Checking DontDelete attribute
 ---*/
 
 if (delete Date.prototype.getMinutes.length !== true) {
-  $ERROR('#1: The Date.prototype.getMinutes.length property does not have the attributes DontDelete');
+  throw new Test262Error('#1: The Date.prototype.getMinutes.length property does not have the attributes DontDelete');
 }
 
 if (Date.prototype.getMinutes.hasOwnProperty('length')) {
-  $ERROR('#2: The Date.prototype.getMinutes.length property does not have the attributes DontDelete');
+  throw new Test262Error('#2: The Date.prototype.getMinutes.length property does not have the attributes DontDelete');
 }

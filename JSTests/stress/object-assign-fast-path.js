@@ -32,7 +32,11 @@ function checkProperty(object, name, value, attributes = { writable: true, enume
 
 {
     let result = Object.assign({}, RegExp);
-    shouldBe(JSON.stringify(Object.getOwnPropertyNames(result).sort()), `["$1","$2","$3","$4","$5","$6","$7","$8","$9","input","lastMatch","lastParen","leftContext","multiline","rightContext"]`);
+    shouldBe(JSON.stringify(Object.getOwnPropertyNames(result).sort()), `[]`);
+}
+{
+    let result = Object.assign({}, $vm.createCustomTestGetterSetter());
+    shouldBe(JSON.stringify(Object.getOwnPropertyNames(result).sort()), `["customAccessor","customAccessorGlobalObject","customAccessorReadOnly","customFunction","customValue","customValue2","customValueGlobalObject","customValueNoSetter"]`);
 }
 {
     function Hello() { }

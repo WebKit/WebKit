@@ -16,7 +16,7 @@ __instance.concat = String.prototype.concat;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.concat("\u0041", true, true + 1) !== "falseAtrue2") {
-  $ERROR('#1: __instance = new Boolean; __instance.concat = String.prototype.concat;  __instance.concat("\\u0041",true,true+1) === "falseAtrue2". Actual: ' + __instance.concat("\u0041", true, true + 1));
+  throw new Test262Error('#1: __instance = new Boolean; __instance.concat = String.prototype.concat;  __instance.concat("\\u0041",true,true+1) === "falseAtrue2". Actual: ' + __instance.concat("\u0041", true, true + 1));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -10,5 +10,5 @@ flags: [noStrict]
 
 //CHECK#1
 if ((y = 1) >> y !== 0) {
-  $ERROR('#1: (y = 1) >> y === 0. Actual: ' + ((y = 1) >> y));
+  throw new Test262Error('#1: (y = 1) >> y === 0. Actual: ' + ((y = 1) >> y));
 }

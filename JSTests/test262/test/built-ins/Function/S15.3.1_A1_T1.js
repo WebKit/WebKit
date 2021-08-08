@@ -13,12 +13,12 @@ var f = Function("return arguments[0];");
 
 //CHECK#1
 if (!(f instanceof Function)) {
-  $ERROR('#1: f instanceof Function');
+  throw new Test262Error('#1: f instanceof Function');
 }
 
 //CHECK#2
 if (f(1) !== 1) {
-  $ERROR('#2: f(1) !== 1');
+  throw new Test262Error('#2: f(1) !== 1');
 }
 
 var g = new Function("return arguments[0];");
@@ -26,15 +26,15 @@ var g = new Function("return arguments[0];");
 
 //CHECK#3
 if (!(g instanceof Function)) {
-  $ERROR('#3: g instanceof Function');
+  throw new Test262Error('#3: g instanceof Function');
 }
 
 //CHECK#4
 if (g("A") !== "A") {
-  $ERROR('#4: g("A") !== "A"');
+  throw new Test262Error('#4: g("A") !== "A"');
 }
 
 //CHECK#5
 if (g("A") !== f("A")) {
-  $ERROR('#5: g("A") !== f("A")');
+  throw new Test262Error('#5: g("A") !== f("A")');
 }

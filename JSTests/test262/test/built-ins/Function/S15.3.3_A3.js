@@ -9,10 +9,10 @@ description: Checking Function.length property
 
 //CHECK#1
 if (!Function.hasOwnProperty("length")) {
-  $ERROR('#1: Function constructor has length property');
+  throw new Test262Error('#1: Function constructor has length property');
 }
 
 //CHECK#2
 if (Function.length !== 1) {
-  $ERROR('#2: Function constructor length property value is 1');
+  throw new Test262Error('#2: Function constructor length property value is 1');
 }

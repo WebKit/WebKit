@@ -22,13 +22,13 @@ try {
   });
 
   if (!arrObj.hasOwnProperty("0")) {
-    $ERROR("Expected arrObj.hasOwnProperty('0') === true, actually " + arrObj.hasOwnProperty("0"));
+    throw new Test262Error("Expected arrObj.hasOwnProperty('0') === true, actually " + arrObj.hasOwnProperty("0"));
   }
   if (Array.prototype[0] !== 11) {
-    $ERROR("Expected Array.prototype[0] === 11), actually " + Array.prototype[0]);
+    throw new Test262Error("Expected Array.prototype[0] === 11), actually " + Array.prototype[0]);
   }
   if (typeof arrObj[0] !== "undefined") {
-    $ERROR("Expected typeof arrObj[0] === 'undefined'), actually " + typeof arrObj[0]);
+    throw new Test262Error("Expected typeof arrObj[0] === 'undefined'), actually " + typeof arrObj[0]);
   }
 
 } finally {

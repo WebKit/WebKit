@@ -13,20 +13,20 @@ description: >
 
 //CHECK#1
 if (1 <= 1 !== true) {
-  $ERROR('#1: 1 <= 1 === true');
+  throw new Test262Error('#1: 1 <= 1 === true');
 }
 
 //CHECK#2
 if (new Number(1) <= 1 !== true) {
-  $ERROR('#2: new Number(1) <= 1 === true');
+  throw new Test262Error('#2: new Number(1) <= 1 === true');
 }
 
 //CHECK#3
 if (1 <= new Number(1) !== true) {
-  $ERROR('#3: 1 <= new Number(1) === true');
+  throw new Test262Error('#3: 1 <= new Number(1) === true');
 }
 
 //CHECK#4
 if (new Number(1) <= new Number(1) !== true) {
-  $ERROR('#4: new Number(1) <= new Number(1) === true');
+  throw new Test262Error('#4: new Number(1) <= new Number(1) === true');
 }

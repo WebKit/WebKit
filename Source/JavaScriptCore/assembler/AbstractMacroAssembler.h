@@ -245,6 +245,34 @@ public:
         }
     };
 
+    // PreIndexAddress:
+    //
+    // Describes an address with base address and pre-increment/decrement index.
+    struct PreIndexAddress {
+        PreIndexAddress(RegisterID base, int index)
+            : base(base)
+            , index(index)
+        {
+        }
+
+        RegisterID base;
+        int index;
+    };
+
+    // PostIndexAddress:
+    //
+    // Describes an address with base address and post-increment/decrement index.
+    struct PostIndexAddress {
+        PostIndexAddress(RegisterID base, int index)
+            : base(base)
+            , index(index)
+        {
+        }
+
+        RegisterID base;
+        int index;
+    };
+
     // AbsoluteAddress:
     //
     // Describes an memory operand given by a pointer.  For regular load & store
@@ -322,9 +350,9 @@ public:
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
     struct TrustedImm32 : public TrustedImm {
-        TrustedImm32() { }
+        constexpr TrustedImm32() = default;
         
-        explicit TrustedImm32(int32_t value)
+        explicit constexpr TrustedImm32(int32_t value)
             : m_value(value)
         {
         }
@@ -336,7 +364,7 @@ public:
         }
 #endif
 
-        int32_t m_value;
+        int32_t m_value { 0 };
     };
 
 

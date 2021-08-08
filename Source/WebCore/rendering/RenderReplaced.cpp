@@ -363,7 +363,7 @@ bool RenderReplaced::hasReplacedLogicalHeight() const
         return !hasAutoHeightOrContainingBlockWithAutoHeight();
 
     if (style().logicalHeight().isIntrinsic())
-        return true;
+        return !style().hasAspectRatio();
 
     return false;
 }

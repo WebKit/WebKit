@@ -33,6 +33,14 @@
 
 namespace JSC { namespace B3 {
 
+inline ValueKey::ValueKey(Value* child, int64_t value)
+{
+    m_kind = Oops;
+    m_type = Void;
+    u.indices[0] = child->index();
+    u.value = value;
+}
+
 inline ValueKey::ValueKey(Kind kind, Type type, Value* child)
     : m_kind(kind)
     , m_type(type)

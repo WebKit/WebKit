@@ -11,5 +11,5 @@ flags: [onlyStrict]
 
 var that = (function() { return this; })();
 if (that !== undefined) {
-  $ERROR('#1: "this" leaked as: ' + that);
+  throw new Test262Error('#1: "this" leaked as: ' + that);
 }

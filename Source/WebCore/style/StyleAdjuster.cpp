@@ -412,14 +412,25 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     else
         style.setTextDecorationsInEffect(style.textDecoration());
 
-    // If either overflow value is not visible, change to auto.
-    if (style.overflowX() == Overflow::Visible && style.overflowY() != Overflow::Visible) {
-        // FIXME: Once we implement pagination controls, overflow-x should default to hidden
-        // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
-        // default to auto so we can at least scroll through the pages.
-        style.setOverflowX(Overflow::Auto);
-    } else if (style.overflowY() == Overflow::Visible && style.overflowX() != Overflow::Visible)
-        style.setOverflowY(Overflow::Auto);
+    auto overflowReplacement = [] (Overflow overflow, Overflow overflowInOtherDimension) -> std::optional<Overflow> {
+        if (overflow != Overflow::Visible && overflow != Overflow::Clip) {
+            if (overflowInOtherDimension == Overflow::Visible)
+                return Overflow::Auto;
+            if (overflowInOtherDimension == Overflow::Clip)
+                return Overflow::Hidden;
+        }
+        return std::nullopt;
+    };
+
+    // If either overflow value is not visible, change to auto. Similarly if either overflow
+    // value is not clip, change to hidden.
+    // FIXME: Once we implement pagination controls, overflow-x should default to hidden
+    // if overflow-y is set to -webkit-paged-x or -webkit-page-y. For now, we'll let it
+    // default to auto so we can at least scroll through the pages.
+    if (auto replacement = overflowReplacement(style.overflowY(), style.overflowX()))
+        style.setOverflowX(*replacement);
+    else if (auto replacement = overflowReplacement(style.overflowX(), style.overflowY()))
+        style.setOverflowY(*replacement);
 
     // Call setStylesForPaginationMode() if a pagination mode is set for any non-root elements. If these
     // styles are specified on a root element, then they will be incorporated in

@@ -14,7 +14,7 @@ var __str = String(0);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#1: __str = String(0); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: __str = String(0); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "0") {
-  $ERROR('#2: __str = String(0); __str === "0". Actual: __str ===' + __str);
+  throw new Test262Error('#2: __str = String(0); __str === "0". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ __str = String(-0);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "string") {
-  $ERROR('#3: __str = String(-0); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#3: __str = String(-0); typeof __str === "string". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ if (typeof __str !== "string") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str !== "0") {
-  $ERROR('#4: __str = String(-0); __str === "0". Actual: __str ===' + __str);
+  throw new Test262Error('#4: __str = String(-0); __str === "0". Actual: __str ===' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

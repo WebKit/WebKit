@@ -13,15 +13,15 @@ description: >
 
 //CHECK#0
 if (!(Object.prototype.valueOf.hasOwnProperty('length'))) {
-  $ERROR('#0: the Object.prototype.valueOf has length property');
+  throw new Test262Error('#0: the Object.prototype.valueOf has length property');
 }
 
 //CHECK#1
 if (!delete Object.prototype.valueOf.length) {
-  $ERROR('#1: The Object.prototype.valueOf.length property does not have the attributes DontDelete');
+  throw new Test262Error('#1: The Object.prototype.valueOf.length property does not have the attributes DontDelete');
 }
 
 //CHECK#2
 if (Object.prototype.valueOf.hasOwnProperty('length')) {
-  $ERROR('#2: The Object.prototype.valueOf.length property does not have the attributes DontDelete');
+  throw new Test262Error('#2: The Object.prototype.valueOf.length property does not have the attributes DontDelete');
 }

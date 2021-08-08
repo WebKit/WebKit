@@ -10,7 +10,7 @@ description: Checking returned result
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("Hello, WoRlD!".toUpperCase() !== "HELLO, WORLD!") {
-  $ERROR('#1: "Hello, WoRlD!".toUpperCase() === "HELLO, WORLD!". Actual: ' + ("Hello, WoRlD!".toUpperCase()));
+  throw new Test262Error('#1: "Hello, WoRlD!".toUpperCase() === "HELLO, WORLD!". Actual: ' + ("Hello, WoRlD!".toUpperCase()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if ("Hello, WoRlD!".toUpperCase() !== "HELLO, WORLD!") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if ("Hello, WoRlD!".toUpperCase() !== String("HELLO, WORLD!")) {
-  $ERROR('#2: "Hello, WoRlD!".toUpperCase() === String("HELLO, WORLD!"). Actual: ' + ("Hello, WoRlD!".toUpperCase()));
+  throw new Test262Error('#2: "Hello, WoRlD!".toUpperCase() === String("HELLO, WORLD!"). Actual: ' + ("Hello, WoRlD!".toUpperCase()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ if ("Hello, WoRlD!".toUpperCase() !== String("HELLO, WORLD!")) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if ("Hello, WoRlD!".toUpperCase() === new String("HELLO, WORLD!")) {
-  $ERROR('#3: "Hello, WoRlD!".toUpperCase() !== new String("HELLO, WORLD!")');
+  throw new Test262Error('#3: "Hello, WoRlD!".toUpperCase() !== new String("HELLO, WORLD!")');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

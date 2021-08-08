@@ -1,3 +1,1668 @@
+2021-08-02  Sonia Singla  <soniasingla.1812@gmail.com>
+
+        [css-cleanup] Replace webkit- prefix properties with Standard CSS Properties in Source/**
+        https://bugs.webkit.org/show_bug.cgi?id=228697
+
+        Reviewed by Frédéric Wang.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-closed-captions-container h3,):
+        * Modules/mediacontrols/mediaControlsBase.css:
+        (video::-webkit-media-controls-closed-captions-container h3,):
+        (video::-webkit-media-controls-closed-captions-container li.selected::before,):
+        * css/html.css:
+        (p):
+        (blockquote):
+        (figure):
+        (hr):
+        (h1):
+        (:is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1):
+        (h2):
+        (h3):
+        (h4):
+        (h5):
+        (h6):
+        (ul, menu, dir):
+        (ol):
+        (dd):
+        (dl):
+        (ol ul, ul ol, ul ul, ol ol):
+        (legend):
+        (fieldset):
+        * css/mathml.css:
+        (mi):
+        (msub > mi:first-child, msubsup > mi:first-child):
+        (msubsup > mi:first-child + * + *):
+
+2021-08-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion is not acquired in network process when opening a SQLite database
+        https://bugs.webkit.org/show_bug.cgi?id=228705
+
+        Reviewed by Chris Dumez.
+
+        Opening database may require database file lock.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
+2021-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Calling unobserve on ResizeObserver should not clear existing observations in active targets
+        https://bugs.webkit.org/show_bug.cgi?id=228693
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by ResizeObserver::removeObservation removing it from the active targets.
+
+        Note that there is nothing in the specification which alludes to this behavior,
+        and the new behavior is consistent with Firefox and the way IntersectionObserver works:
+        https://drafts.csswg.org/resize-observer/#dom-resizeobserver-unobserve
+
+        To keep elements alive while they're in the active targets but not in the observation targets,
+        this patch also makes each element of the active observation as opaque roots of ResizeObserver
+        in ResizeObserver::isReachableFromOpaqueRoots.
+
+        Test: resize-observer/resize-observer-keeps-element-of-queued-entry-alive.html
+
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::deliverObservations):
+        (WebCore::ResizeObserver::isReachableFromOpaqueRoots const):
+        (WebCore::ResizeObserver::removeObservation):
+
+2021-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r279800): IntersectionObserver may never get a delivery of an observation if the element
+        has been unobserved and is disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=228679
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by the elements of the pending entries not being considered as opaque roots
+        of the intersection observer. If the intersection observer is no longer observing those elements,
+        the JS wrapper of the intersection observer may be collected erroneously.
+
+        This patch addresses this issue by explicitly treating the elements of pending entries as
+        opaque roots of the intersection observer in IntersectionObserver::isReachableFromOpaqueRoots.
+
+        Test: intersection-observer/intersection-observer-keeps-element-of-queued-entry-alive.html
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::isReachableFromOpaqueRoots const):
+
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Use iBeam cursor when hovering over selectable text inside image links
+        https://bugs.webkit.org/show_bug.cgi?id=228700
+        rdar://81210248
+
+        Reviewed by Tim Horton.
+
+        Make a couple of small adjustments to allow the cursor to change to an I-beam when hovering over selectable Live
+        Text inside images in links, but only in the case where the computed cursor type is Auto. Currently, this always
+        results in a Hand cursor type because of the link ancestor, despite the injected Live Text being selectable.
+
+        Test: fast/images/text-recognition/mac/cursor-types-for-recognized-text.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+
+        Drive-by fix an adjacent bug, wherein we try to check whether the image element has `user-select: none;` before
+        the style has been resolved, which results in injecting selectable Live Text even when the page has explicitly
+        disabled text selection on the image element. Instead, move this code to right after we update layout after
+        ensuring the UA shadow DOM structure for Live Text, so that the bool flag is meaningful.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        The test was flaky because it is trying to send a Blob via BroadcastChannel.postMessage()
+        without keeping the blob alive. When GC triggers, the Blob would go away and trying to
+        decode the Blob upon receiving would fail.
+
+        To address the issue, I introduced a Blob::Handle class that wraps the Blob's internal URL
+        and keeps the Blob data alive as long as as someone is holding such handle. Previously,
+        the Blob destructor would unregister the internal URL and the Blob data would go away.
+
+        I then updated SerializedScriptValue to hold on to Blob::Handle objects instead of Blob
+        URLs. This guarantees that when using postMessage() to send a message to a worker, the
+        Blob data will stay alive until we dispatch the message event on the worker side and try
+        and deserialized the SerializedScriptValue.
+
+        For BroadcastChannel.postMessage() though, we end up going via the network process and
+        the SerializedScriptValue ends up getting serialized/deserialized over IPC. I added a
+        CompletionHandler to BroadcastChannelRegistry::postMessage() which only gets called
+        once the message event has successfully been dispatched. I use this completion handler
+        to make sure the SerializedScriptValue's Blob URLs stay valid until the the message has
+        been dispatched by holding on to the Blob::Handles.
+
+        No new tests, unskipped existing test.
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::computeMemoryCost const):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::blobURLs const):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::hasBlobURLs const):
+        (WebCore::SerializedScriptValue::blobHandles const):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * dom/BroadcastChannel.cpp:
+        (WebCore::BroadcastChannel::postMessage):
+        (WebCore::BroadcastChannel::dispatchMessageTo):
+        * dom/BroadcastChannel.h:
+        * dom/BroadcastChannelRegistry.h:
+        * fileapi/Blob.cpp:
+        (WebCore::BlobInternalURL::create):
+        (WebCore::BlobInternalURL::~BlobInternalURL):
+        (WebCore::BlobInternalURL::url const):
+        (WebCore::BlobInternalURL::BlobInternalURL):
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::~Blob):
+        (WebCore::Blob::url const):
+        (WebCore::Blob::slice const):
+        (WebCore::Blob::size const):
+        (WebCore::Blob::handle const):
+        (WebCore::Blob::Handle::Handle):
+        (WebCore::Blob::Handle::url const):
+        * fileapi/Blob.h:
+        * loader/EmptyClients.cpp:
+
+2021-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (Safari 15): Unable to repaint canvases with software filters when GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=228682
+        rdar://79699997
+
+        Reviewed by Simon Fraser.
+
+        In the case where GPU process is enabled for canvas rendering but is not enabled for DOM rendering, canvas
+        elements with software CSS filters fail to repaint as the canvas' backing image buffer changes. In this
+        particular scenario, we first paint the canvas' remotely-backed image buffer into the filter's input buffer,
+        which is backed by an unaccelerated graphics context. The filter is then applied, producing an output image
+        buffer which we then paint into the page. The bug occurs during the initial step of painting the contents of the
+        canvas' remote image buffer into the filter's input context, which involves creating a CGImageRef from the
+        `ImageBufferCGBackend::draw`.
+
+        When asking for a CGImageRef from the canvas' image buffer (which is backed by an IOSurface that's drawn into in
+        the GPU process), QuartzCore caches the resulting CGImageRef corresponding to the IOSurface handle in the web
+        process. Subsequently, when we try to repaint the canvas, we'll end up using this same initial cached CGImageRef
+        because the graphics context of the IOSurface handle in the web process hasn't been drawn into (because all the
+        actual draw calls are made in the GPU process). As such, regardless of the current state of the canvas' image
+        buffer, the input to the filter will always be the initial native image created from the canvas' image buffer.
+
+        We avoid this problem when GPU process is disabled because the calls to update the canvas' 2D context in the
+        web process will clear out the cached CGImageRef in QuartzCore. Additionally, we avoid this problem when drawing
+        into accelerated contexts because QuartzCore will draw the cached CGImageRef using a codepath that reads back
+        the up-to-date contents from the IOSurface. However, in the QuartzCore's unaccelerated (ripc) image drawing
+        codepath, we copy the contents of the cached image right away, causing us to end up with stale image data that
+        does not reflect the current state of the IOSurface.
+
+        To work around this in Safari 15 (in both Monterey as well as downlevel versions of macOS), we deploy a similar
+        technique as we'd previously used in r201334 to invalidate QuartzCore's cached image, but only:
+
+        1. If the seed value of the backing IOSurface has changed since the last time we've drawn the image buffer, and
+        2. The destination context we're painting the image buffer into is unaccelerated.
+
+        Test: css3/filters/canvas-with-filter-after-repaint.html
+
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::draw):
+        (WebCore::ImageBufferCGBackend::drawPattern):
+
+        Call into `prepareToDrawIntoContext` (see below).
+
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::prepareToDrawIntoContext):
+        * platform/graphics/cg/ImageBufferCGBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::prepareToDrawIntoContext):
+
+        Add a new subclassable method on ImageBufferCGBackend that's invoked before drawing the contents of the image
+        buffer into a given destination GraphicsContext. We use this opportunity in ImageBufferIOSurfaceBackend to
+        notice if the IOSurface seed count has updated since we've last drawn the image buffer, and intentionally emit a
+        no-op drawing command (i.e. filling an empty rect) in the graphics context to invalidate QuartzCore's cached
+        CGImageRef. Note that we only deploy this workaround when drawing into unaccelerated contexts (see above for
+        more details).
+
+        (WebCore::ImageBufferIOSurfaceBackend::invalidateCachedNativeImage const):
+
+        Pull the no-op drawing command out into a separate helper method, with a comment describing why this exists.
+
+        (WebCore::ImageBufferIOSurfaceBackend::drawConsuming):
+        (WebCore::ImageBufferIOSurfaceBackend::copyCGImageForEncoding const):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::seed const):
+
+        Add a helper method to grab the seed value of an IOSurface.
+
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+        <rdar://problem/81333038>
+
+        Reviewed by Darin Adler.
+
+        HTMLElement.innerText setter should convert new lines to <br>:
+        - https://html.spec.whatwg.org/multipage/dom.html#the-innertext-idl-attribute:dom-innertext-3
+        - https://html.spec.whatwg.org/multipage/dom.html#rendered-text-fragment
+
+        Our innerText setter had some logic that was specific to render styles that isn't part of
+        the specification. It was causing us to not replace the new lines with <br> in some
+        web-observable cases. I dropped this logic to align with Blink and Gecko.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+
+2021-08-02  Sam Weinig  <weinig@apple.com>
+
+        [Modern Media Controls] Address additional feedback on LayoutTraits refactor
+        https://bugs.webkit.org/show_bug.cgi?id=227489
+        <rdar://problem/80215569>
+
+        Reviewed by Devin Rousso.
+
+        Splitting up larger change to land pieces incrementally.
+
+        Part 1:
+        - Replaces eval() based lexical lookup with an explicit `window.layoutTraitsClasses`
+          registry map.
+
+        * Modules/modern-media-controls/controls/ios-layout-traits.js:
+        * Modules/modern-media-controls/controls/layout-traits.js:
+        * Modules/modern-media-controls/controls/macos-layout-traits.js:
+        * Modules/modern-media-controls/controls/watchos-layout-traits.js:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.get layoutTraits):
+
+2021-08-02  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+
+        Reviewed by Eric Carlson.
+
+        AVAssetImageGenerator is used when there is not yet an available image from
+        AVPlayerItemVideoOutput. However, AVAssetImageGenerator is a synchronous API call; if data
+        for the current time is not available, the generator will cause a request for that data to
+        be issued, and if the main thread is blocked in a synchronous call to the generator, that
+        request can never be completed, causing a deadlock.
+
+        Instead, always block moving to a readyState >= HAVE_CURRENT_DATA until either the
+        AVPlayerLayer or the AVPlayerItemVideoOutput report having an available frame. This
+        prevents clients from attempting to paint until a frame is available, and ensures that we
+        will always have an available frame for painting, removing the need for the synchronous
+        generator call.
+
+        To ensure the readyState is updated when AVPlayerItemVideoOutput has an available image,
+        register with the output at creation time for a notification as soon as an image is
+        available. And in the existing delegate object, send a message back to the
+        MediaPlayerPrivateAVFoundationObjC when that occurs.
+
+        No tests needed; this should reduce flakiness of existing tests and cause no regression in
+        behavior.
+
+        Note, changes from last attempt:
+
+        AVPlayerLayer will fail to move to the -readyForDisplay state if it's not attached to a
+        layer tree, so when we remove the HTMLMediaElement from the DOM, we must send MediaPlayer a
+        acceleratedRenderingStateChanged() notification. This will cause the
+        MediaPlayerPrivateAVFoundationObjC to throw away its AVPlayerLayer, and will not block
+        moving to HAVE_CURRENT_DATA waiting for the layer to become readyForDisplay.
+
+        When we throw away (or create) the AVPlayerLayer, we must conditionally call updateStates
+        () to recalculate the readyState; but because updateStates() may try to create or destroy
+        an AVPlayerLayer, we must do this on a task to avoid re-entrancy. Adopt these changes
+        inside MediaPlayerPrivateAVFoundationCF as well.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pauseAfterDetachedTask):
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareForRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::renderingModeChanged):
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleUpdateStates):
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasContextRenderer const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (-[WebCoreAVFPullDelegate setParent:]):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::destroyVideoLayer):
+
+2021-08-02  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r273072): Images do not layout correctly on walmart.com/grocery
+        https://bugs.webkit.org/show_bug.cgi?id=228656
+        <rdar://80418083>
+
+        Reviewed by Sergio Villar Senin.
+
+        Take the min/max values into account when computing the definite size (https://drafts.csswg.org/css-sizing-3/#definite)
+        for the flex child.
+
+        Test: fast/flexbox/flex-with-min-max-height.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeCrossSizeForChildUsingContainerCrossSize const):
+
+2021-08-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for [WebAccessibilityObjectWrapper lineRectsAndText] to properly handle replacement nodes and SVG text.
+        https://bugs.webkit.org/show_bug.cgi?id=228336
+        <rdar://problem/81172124>
+
+        Reviewed by Chris Fleizach and Darin Adler.
+
+        Test: LayoutTests/accessibility/ios-simulator/element-line-rects-and-text.html
+
+        - Renamed stringsForSimpleRange to better reflect the fact that this
+        method can return strings and AXObjects.
+        - Handles the case where contentForSimpleRange returns AXObjects
+        corresponding to replacement objects. This fixes the cases of images and
+        SVG text.
+        - Fixed the problem with soft linebreaks where the start of the next
+        line was skipping the first character in the line.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper contentForSimpleRange:attributed:]):
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        (-[WebAccessibilityObjectWrapper lineRectsAndText]):
+        (-[WebAccessibilityObjectWrapper stringsForSimpleRange:attributed:]):
+        Renamed to contentForSimpleRange since it is returns an array of strings
+        and AXObjects.
+
+2021-08-02  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Consider all snap areas at a given snap offset when snapping
+        https://bugs.webkit.org/show_bug.cgi?id=228141
+
+        Reviewed by Frédéric Wang.
+
+        When deciding whether to snap to snap areas that overflow the snap port, don't
+        just consider the first snap area at a given snap offset. Instead, keep information
+        about all snap areas in the ScrolSnapOffsetInfo. In order to avoid iterating over
+        arrays of hundreds of rectangles, also record whether any of them are larger than
+        the viewport. This will avoid extra work on the most common usecase of large sets
+        of snap areas (gridded table layouts).
+
+        This change is tested by extending an existing WPT test.
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::rangeForAxis): Added this helper.
+        (WebCore::searchForPotentialSnapPoints): When deciding if a particular snap area
+        overflows the snap port, look at all available snap areas instead of just the
+        first one.
+        (WebCore::updateSnapOffsetsForScrollableArea): Instead of only recording the first
+        snap area, record all of them in the list of snap area rectangles.
+        (WebCore::convertOffsetInfo): Convert the list of snap ares.
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+        (WebCore::operator==): Added this operator which is necessary now that snapAreaIndices
+        is a vector.
+
+2021-08-01  Rob Buis  <rbuis@igalia.com>
+
+        Migrate GlyphOverflow to LayoutUnits instead of ints
+        https://bugs.webkit.org/show_bug.cgi?id=133040
+
+        Reviewed by Darin Adler.
+
+        Migrate GlyphOverflow to LayoutUnits instead of ints. This
+        is another step in the direction of subpixel layout/rendering.
+
+        * platform/graphics/FontCascade.h:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::ascentAndDescentForBox const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::extendIntToFloat):
+
+2021-07-31  Maciej Stachowiak  <mjs@apple.com>
+
+        ListAttributeTargetObserver is needlessly created even when there is no list attribute
+        https://bugs.webkit.org/show_bug.cgi?id=228541
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests because no behavior change.
+
+        This is possibly a small improvement (~0.5%) on Speedometer subtests that do innerHTML, but not statistically significant.
+
+        Ported from a Chromium change by Adithya Srinivasan
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::resetListAttributeTargetObserver): check if there's a list attribute before making an observer.
+
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Improve LocalSampleBufferDisplayLayer logging
+        https://bugs.webkit.org/show_bug.cgi?id=228582
+
+        Reviewed by Eric Carlson.
+
+        Add logging to correlate a LocalSampleBufferDisplayLayer to its HTMLMediaElement and its MediaStreamTrack.
+        Introduce setLogIdentifer for that purpose.
+        No observable change of behavior.
+
+        * platform/graphics/avfoundation/SampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        (WebCore::LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
+        AVVideoCaptureSource should not start/stop the camera if trying to apply the same size/frame rate configuration
+        https://bugs.webkit.org/show_bug.cgi?id=228634
+        <rdar://81174160>
+
+        Reviewed by Eric Carlson.
+
+        In some configurations, pages want to set a frame rate of 30, but the actual frame rate set will be 29.9999.
+        In that case, our heuristic to not recalibrate the camera fails.
+        To prevent this, we add checks in AVVideoCaptureSource to validate whether the new presets are the same as the already applied ones.
+
+        Manually tested.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setSessionSizeAndFrameRate):
+
+2021-07-31  Martin Robinson  <mrobinson@webkit.org>
+
+        REGRESSION(r279564): [GTK] Mouse wheel scrolling scrolls too little (take two)
+        https://bugs.webkit.org/show_bug.cgi?id=228572
+
+        Reviewed by Adrian Perez de Castro.
+
+        Test: platform/gtk/fast/scrolling/scroll-wheel-repeated-events.html
+
+        When scrolling by a delta with ScrollAnimationSmooth, base the target point
+        on the current scroll target instead of on the current position. We also
+        pass the point to updatePerAxisData instead of the delta in order to make
+        it more explicit what the desired behavior is for this method.
+
+        * platform/ScrollAnimationSmooth.h: Update argument name.
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::scroll): Base the delta on the target position and
+        pass that as the argument to updatePerAxisData. When scrolling to a point, simply
+        pass that to updatePerAxisData.
+        (WebCore::ScrollAnimationSmooth::updatePerAxisData): Accept a point instead of a
+        delta, which makes it more obvious how to use this function and allows it to
+        be used the same way by both version of ScrollAnimationSmooth::scroll.
+
+2021-07-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r280488.
+        https://bugs.webkit.org/show_bug.cgi?id=228677
+
+        media/modern-media-controls/ tests are failing or timed-out
+
+        Reverted changeset:
+
+        "[Cocoa] Remove support for AVAssetImageGenerator"
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+        https://commits.webkit.org/r280488
+
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [css-overflow] Implement clip value for overflow
+        https://bugs.webkit.org/show_bug.cgi?id=198230
+
+        Reviewed by Simon Fraser.
+
+        Implement overflow: clip. Parsing is like the other
+        overflow values but special logic is added to handle
+        the case where only one of overflow-x/overflow-y uses
+        'clip' [1]. Also adjusts code that computes layout and
+        visual overflow to take overflow: clip into account.
+
+        This matches Chrome and Firefox.
+
+        [1] https://drafts.csswg.org/css-overflow/#propdef-overflow-x
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator Overflow const):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::operator==):
+        (WebCore::add):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * page/FrameView.cpp: handle scrollbars
+        on viewport element same as overflow: hidden.
+        (WebCore::FrameView::applyOverflowToViewport):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::scrollWidth const): overflow clip
+        forbids all scrolling.
+        (WebCore::RenderBox::scrollHeight const): Ditto.
+        (WebCore::RenderBox::setScrollLeft): Ditto.
+        (WebCore::RenderBox::setScrollTop): Ditto.
+        (WebCore::RenderBox::setScrollPosition): Ditto.
+        (WebCore::RenderBox::requiresLayerWithScrollableArea const): do
+        not create layer with scrollable area for overflow: clip.
+        (WebCore::RenderBox::canBeProgramaticallyScrolled const): overflow clip
+        forbids all scrolling.
+        (WebCore::RenderBox::scrollPosition const): overflow clip
+        forbids all scrolling.
+        (WebCore::RenderBox::overflowClipRect const): only clip the rect horizontally
+        for overflow-x: clip and only vertically for overflow-y: clip.
+        (WebCore::RenderBox::createsNewFormattingContext const): do
+        not create formatting context for overflow: clip.
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingScrollableContainerForSnapping const):
+        * rendering/RenderObject.h: Add helper method that excludes overflow-x/y: clip.
+        (WebCore::RenderObject::hasPotentiallyScrollableOverflow const):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * style/StyleAdjuster.cpp: Add special logic is to handle the case where only
+        one of overflow-x/overflow-y uses 'clip'.
+        (WebCore::Style::Adjuster::adjust const):
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for 'Cross-Origin-Opener-Policy' HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=192193
+        <rdar://problem/42013525>
+
+        Reviewed by Geoff Garen.
+
+        Add initial support for 'Cross-Origin-Opener-Policy' HTTP header:
+        - https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy-value
+
+        Support is complete enough to pass most WPT tests with the exception of:
+        - The ones involving blob. Support for Blob does not seem trivial so I will address
+          separately (https://github.com/whatwg/html/issues/5198).
+        - The ones that requires reporting COOP enforcement as this is not supported yet.
+          This is a fairly large task so I'll handle separately.
+        - The ones that involve Cross-Origin-Embedder-Policy (COEP) and this is not yet
+          supported.
+
+        I tried to stay as close as possible to the HTML specification as possible in terms
+        of structuring and naming. I also have code comments to link to the relevant HTML
+        spec sections.
+
+        Note that as it stands, we do not currently swap process based on COOP header. We
+        merely do isolation of the new browsing context at JS level for now. At some point,
+        we'll want to actually process-swap, once we support COEP and we want to re-enable
+        some Web APIs such as SharedArrayBuffer.
+
+        No new tests, covered by web-plaform-tests/html/cross-origin-opener-policy.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::shouldForceNoOpenerBasedOnCOOP const):
+        (WebCore::Document::crossOriginOpenerPolicy const):
+        (WebCore::Document::setCrossOriginOpenerPolicy):
+        * dom/Document.h:
+        (WebCore::Document::isSameOriginAsTopDocument const):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::enforceSandboxFlags):
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::creationSandboxFlags const):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openURLExternally):
+        * loader/CrossOriginEmbedderPolicy.cpp: Copied from Source/WebCore/page/AbstractFrame.cpp.
+        (WebCore::obtainCrossOriginEmbedderPolicy):
+        * loader/CrossOriginEmbedderPolicy.h: Copied from Source/WebCore/page/AbstractFrame.cpp.
+        * loader/CrossOriginOpenerPolicy.cpp: Added.
+        (WebCore::obtainCrossOriginOpenerPolicy):
+        * loader/CrossOriginOpenerPolicy.h: Copied from Source/WebCore/page/AbstractFrame.h.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::checkIfCOOPValuesRequireBrowsingContextGroupSwitch):
+        (WebCore::computeResponseOriginAndCOOP):
+        (WebCore::DocumentLoader::doCrossOriginOpenerHandlingOfResponse):
+        (WebCore::DocumentLoader::enforceResponseCrossOriginOpenerPolicy):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::crossOriginOpenerPolicy const):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::createWindow):
+        (WebCore::FrameLoader::switchBrowsingContextsGroup):
+        * loader/FrameLoader.h:
+        * loader/NavigationAction.cpp:
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::Requester::securityOrigin const):
+        (WebCore::NavigationAction::Requester::topOrigin const):
+        (WebCore::NavigationAction::Requester::crossOriginOpenerPolicy const):
+        * page/AbstractFrame.cpp:
+        (WebCore::AbstractFrame::resetWindowProxy):
+        * page/AbstractFrame.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::crossOriginIsolated const):
+        (WebCore::DOMWindow::createWindow):
+        * page/DOMWindow.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::resetScript):
+        * page/Frame.h:
+        * page/Page.h:
+        (WebCore::Page::setOpenedByDOMWithOpener):
+        * page/WindowOrWorkerGlobalScope.idl:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::applyPolicyToScriptExecutionContext):
+        * platform/network/HTTPHeaderNames.in:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseStructuredFieldValue):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isSafeRedirectionResponseHeader):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::crossOriginIsolated const):
+        * workers/WorkerGlobalScope.h:
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r280482.
+
+        Will take a more conservative approach
+
+        Reverted changeset:
+
+        "HTMLElement.innerText setter should convert new lines to
+        <br>"
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+        https://commits.webkit.org/r280482
+
+2021-07-30  Dana Estra  <destra@apple.com>
+
+        Add spacebar functionality for macOS smooth scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=228155
+
+        Reviewed by Tim Horton.
+        
+        Fixed bug that was causing spacebar events to return false from beginKeyboardScrollGesture.
+
+        Manually tested on webpage.
+
+        * platform/KeyboardScrollingAnimator.cpp:
+        (WebCore::KeyboardScrollingAnimator::beginKeyboardScrollGesture):
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed follow-up to r280491 to address review feedback from Darin Adler.
+
+        Use URL::isBlankURL() instead of a case-sensitive match for aboutBlankURL().
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+
+2021-07-30  Dana Estra  <destra@apple.com>
+
+        Add key-driven smooth scrolling to macOS
+        https://bugs.webkit.org/show_bug.cgi?id=228009
+
+        Reviewed by Tim Horton.
+
+        Cause keyboard scroll event to trigger start of smooth scroll animation, using same physics implementation as iOS smooth scrolling.
+
+        No tests yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::defaultEventHandler):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        (WebCore::EventHandler::scrollDistance):
+        (WebCore::EventHandler::stopKeyboardScrolling):
+        (WebCore::EventHandler::startKeyboardScrolling):
+        * platform/KeyboardScrollingAnimator.cpp: Added.
+        * platform/KeyboardScrollingAnimator.h: Added.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::startAnimationCallback):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::animationCallback):
+        (WebCore::ScrollController::startOrStopAnimationCallbacks):
+        (WebCore::ScrollController::beginKeyboardScrolling):
+        (WebCore::ScrollController::stopKeyboardScrolling):
+        (WebCore::ScrollController::setIsAnimatingKeyboardScrolling):
+        (WebCore::ScrollController::updateKeyboardScrollingAnimatingState):
+        * platform/ScrollController.h:
+        (WebCore::ScrollControllerClient::updateKeyboardScrollPosition):
+        
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Document's fallback base URL should be deduced from its creator when URL is about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=228624
+
+        Reviewed by Geoffrey Garen.
+
+        Document's fallback base URL should be deduced from its creator when URL is about:blank:
+        - https://html.spec.whatwg.org/multipage/urls-and-fetching.html#fallback-base-url
+
+        Chrome and Firefox match the specification here.
+
+        Tests: http/tests/dom/iframe-no-src-local-origin-allow.html
+               http/tests/dom/iframe-no-src-set-location.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateBaseURL):
+
+2021-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+
+        Reviewed by Eric Carlson.
+
+        AVAssetImageGenerator is used when there is not yet an available image from AVPlayerItemVideoOutput.
+        However, AVAssetImageGenerator is a synchronous API call; if data for the current time is not available,
+        the generator will cause a request for that data to be issued, and if the main thread is blocked in a
+        synchronous call to the generator, that request can never be completed, causing a deadlock.
+
+        Instead, always block moving to a readyState >= HAVE_CURRENT_DATA until either the AVPlayerLayer or
+        the AVPlayerItemVideoOutput report having an available frame. This prevents clients from attempting
+        to paint until a frame is available, and ensures that we will always have an available frame for
+        painting, removing the need for the synchronous generator call.
+
+        To ensure the readyState is updated when AVPlayerItemVideoOutput has an available image, register
+        with the output at creation time for a notification as soon as an image is available. And in the existing
+        delegate object, send a message back to the MediaPlayerPrivateAVFoundationObjC when that occurs.
+
+        No tests needed; this should reduce flakiness of existing tests and cause no regression in behavior.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasContextRenderer const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (-[WebCoreAVFPullDelegate setParent:]):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator): Deleted.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect): Deleted.
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.innerText setter should convert new lines to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=228605
+
+        Reviewed by Sam Weinig.
+
+        HTMLElement.innerText setter should convert new lines to <br>:
+        - https://html.spec.whatwg.org/multipage/dom.html#the-innertext-idl-attribute:dom-innertext-3
+        - https://html.spec.whatwg.org/multipage/dom.html#rendered-text-fragment
+
+        Our innerText setter had some logic that was specific to form elements and specific render
+        styles that wasn't part of the specification. It was causing us to not replace the new lines
+        with <br> in some cases. I dropped this logic to align with Blink and Gecko, as those are
+        passing the same WPT tests.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Clicking an HTMLLinkElement should not trigger a navigation
+        https://bugs.webkit.org/show_bug.cgi?id=228618
+
+        Reviewed by Sam Weinig.
+
+        Clicking an HTMLLinkElement should not trigger a navigation because HTMLLinkElement has no activation
+        behavior as per the HTML specification:
+        - https://html.spec.whatwg.org/multipage/semantics.html#htmllinkelement
+
+        Firefox and Chrome follow the specification here.
+
+        No new tests, updated/rebaselined existing tests.
+
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLLinkElement.h:
+
+2021-07-30  Dean Jackson  <dino@apple.com>
+
+        [Media Controls] Add an option for having no scrubber on the time control and parameterize margin
+        https://bugs.webkit.org/show_bug.cgi?id=228633
+        rdar://81314458
+
+        Reviewed by Tim Horton.
+
+        Add support for a scrubber bar that does not have a knob (or, to be clear, an
+        invisible knob). While here, move the constant for the margin into a custom
+        CSS property so it can be easily overridden.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (*): Add --scrubber-margin custom property.
+        * Modules/modern-media-controls/controls/slider.css:
+        (.slider > .custom-slider > .knob.none): Add style for a "none" knob.
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.commit): Support "none".
+        * Modules/modern-media-controls/controls/time-control.js: Get the margin from
+        the new custom property.
+        (TimeControl.prototype.get minimumWidth):
+        (TimeControl.prototype.get idealMinimumWidth):
+        (TimeControl.prototype.layout):
+        (TimeControl.prototype._performIdealLayout):
+
+2021-07-30  Chris Dumez  <cdumez@apple.com>
+
+        postMessage() should throw if any duplicate transferable is found in transferList
+        https://bugs.webkit.org/show_bug.cgi?id=228608
+
+        Reviewed by Youenn Fablet.
+
+        postMessage() should throw if any duplicate transferable is found in transferList:
+        - https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializewithtransfer (Step 2.3)
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+
+2021-07-30  Rob Buis  <rbuis@igalia.com>
+
+        [AspectRatio] Fix replaced-element-034.html
+        https://bugs.webkit.org/show_bug.cgi?id=228223
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Fix replaced-element-034.html by making hasReplacedLogicalHeight
+        return false for *-content when aspect-ratio is provided and relying
+        on computeReplacedLogicalHeight to take aspect-ratio into account.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::hasReplacedLogicalHeight const):
+
+2021-07-29  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Missing playing events when the ready state becomes HAVE_FUTURE_DATA/HAVE_ENOUGH_DATA from HAVE_METADATA state
+        https://bugs.webkit.org/show_bug.cgi?id=228531
+
+        Reviewed by Eric Carlson.
+
+        The main issue is that missing playing event when the ready state becomes HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA from HAVE_METADATA.
+        According to the specification, we need to "notify about playing" in the following cases:
+        - If the previous ready state was HAVE_CURRENT_DATA or less, and the new ready state is HAVE_FUTURE_DATA, and it's not paused.
+        - If the new ready state is HAVE_ENOUGH_DATA, and it's eligible for autoplay
+        The implementation didn't cover these cases and had web compatibility issues.
+
+        We also should move scheduleNotifyAboutPlaying from setPlaying to playInternal and checks the ready state.
+        - Without this change, playing event is fired twice. The first one is fired by setReadyState, and the second is called from setPlaying.
+        - According to the specification, scheduleNotifyAboutPlaying should be in  "internal play steps" and check the ready state.
+          Checking ready state fixes the issue where playing event is fired twice.
+
+        Test: media/media-source/media-source-monitor-playing-event.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Added missing scheduleNotifyAboutPlaying calls. Added do-while to make the implementation similar to the specification text
+        (WebCore::HTMLMediaElement::playInternal): Added scheduleNotifyAboutPlaying call.
+                                                   According to the specification, "internal play steps" should "notify about playing" when
+                                                   the ready state is HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA.
+        (WebCore::HTMLMediaElement::setPlaying): Removed scheduleNotifyAboutPlaying call because playInternal now calls scheduleNotifyAboutPlaying instead.
+
+        Reference:
+        - https://html.spec.whatwg.org/multipage/media.html#internal-play-steps
+        - https://html.spec.whatwg.org/multipage/media.html#ready-states
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUBindGroupLayoutBinding.h: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutBinding.idl: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.h: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.idl: Removed.
+        * Modules/webgpu/GPUBlendDescriptor.idl: Removed.
+        * Modules/webgpu/GPUBufferDescriptor.idl: Removed.
+        * Modules/webgpu/GPUBufferUsage.idl: Removed.
+        * Modules/webgpu/GPUCanvasContext.cpp: Removed.
+        * Modules/webgpu/GPUCanvasContext.h: Removed.
+        * Modules/webgpu/GPUCanvasContext.idl: Removed.
+        * Modules/webgpu/GPUColor.idl: Removed.
+        * Modules/webgpu/GPUColorStateDescriptor.idl: Removed.
+        * Modules/webgpu/GPUColorWrite.idl: Removed.
+        * Modules/webgpu/GPUCompareFunction.idl: Removed.
+        * Modules/webgpu/GPUDepthStencilStateDescriptor.idl: Removed.
+        * Modules/webgpu/GPUErrorFilter.idl: Removed.
+        * Modules/webgpu/GPUExtent3D.idl: Removed.
+        * Modules/webgpu/GPULoadOp.idl: Removed.
+        * Modules/webgpu/GPUOrigin3D.h: Removed.
+        * Modules/webgpu/GPUOrigin3D.idl: Removed.
+        * Modules/webgpu/GPUOutOfMemoryError.idl: Removed.
+        * Modules/webgpu/GPURequestAdapterOptions.idl: Removed.
+        * Modules/webgpu/GPUSamplerDescriptor.idl: Removed.
+        * Modules/webgpu/GPUShaderStage.h: Removed.
+        * Modules/webgpu/GPUShaderStage.idl: Removed.
+        * Modules/webgpu/GPUStoreOp.idl: Removed.
+        * Modules/webgpu/GPUTextureDescriptor.idl: Removed.
+        * Modules/webgpu/GPUTextureFormat.idl: Removed.
+        * Modules/webgpu/GPUTextureUsage.idl: Removed.
+        * Modules/webgpu/GPUUncapturedErrorEvent.cpp: Removed.
+        * Modules/webgpu/GPUUncapturedErrorEvent.h: Removed.
+        * Modules/webgpu/GPUUncapturedErrorEvent.idl: Removed.
+        * Modules/webgpu/GPUValidationError.idl: Removed.
+        * Modules/webgpu/GPUVertexAttributeDescriptor.idl: Removed.
+        * Modules/webgpu/GPUVertexBufferDescriptor.idl: Removed.
+        * Modules/webgpu/GPUVertexInputDescriptor.idl: Removed.
+        * Modules/webgpu/Navigator+GPU.idl: Removed.
+        * Modules/webgpu/NavigatorGPU.cpp: Removed.
+        * Modules/webgpu/NavigatorGPU.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAST.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressEscapeMode.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAddressSpace.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayReferenceType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLArrayType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLAssignmentExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseFunctionAttribute.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBaseSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBlock.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBooleanLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBreak.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLBuiltInSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLCommaExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLConstantExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLContinue.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDefaultDelete.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDereferenceExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDoWhileLoop.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLDotExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEffectfulExpressionStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEntryPointType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMember.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLEnumerationMemberLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFallthrough.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFloatLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLForLoop.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionAttribute.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLFunctionDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLGlobalVariableReference.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIfStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIndexExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLLogicalNotExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLMakeArrayReferenceExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLMakePointerExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNameSpace.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNamedType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeFunctionDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLNumThreadsFunctionAttribute.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLPointerType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLPropertyAccessExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLQualifier.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReadModifyWriteExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReferenceType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReplaceWith.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLResolvableType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLResourceSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSpecializationConstantSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStageInOutSemantic.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLStructureElement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchCase.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLSwitchStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTernaryExpression.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeArgument.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeDefinition.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnnamedTypeHash.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclaration.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableDeclarationsStatement.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h: Removed.
+        * Modules/webgpu/WHLSL/AST/WHLSLWhileLoop.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMangledNames.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.cpp: Removed.
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLASTDumper.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckReferenceTypes.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckReferenceTypes.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCheckTextureReferences.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLCodeLocation.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLComputeDimensions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLError.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLFunctionStageChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLHighZombieFinder.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLexer.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameContext.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameContext.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLParser.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLParsingMode.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPipelineDescriptor.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPreserveVariableLifetimes.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLProgram.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPropertyResolver.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLPruneUnreachableStandardLibraryFunctions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursionChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLResolvingType.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLScopedSetAdder.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryFunctionMap.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStandardLibraryUtilities.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLStatementBehaviorChecker.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.h: Removed.
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp: Removed.
+        * Modules/webgpu/WHLSL/WHLSLVisitor.h: Removed.
+        * Modules/webgpu/WebGPU.cpp: Removed.
+        * Modules/webgpu/WebGPU.h: Removed.
+        * Modules/webgpu/WebGPU.idl: Removed.
+        * Modules/webgpu/WebGPUAdapter.cpp: Removed.
+        * Modules/webgpu/WebGPUAdapter.h: Removed.
+        * Modules/webgpu/WebGPUAdapter.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroup.cpp: Removed.
+        * Modules/webgpu/WebGPUBindGroup.h: Removed.
+        * Modules/webgpu/WebGPUBindGroup.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroupBinding.h: Removed.
+        * Modules/webgpu/WebGPUBindGroupBinding.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUBindGroupLayout.cpp: Removed.
+        * Modules/webgpu/WebGPUBindGroupLayout.h: Removed.
+        * Modules/webgpu/WebGPUBindGroupLayout.idl: Removed.
+        * Modules/webgpu/WebGPUBuffer.cpp: Removed.
+        * Modules/webgpu/WebGPUBuffer.h: Removed.
+        * Modules/webgpu/WebGPUBuffer.idl: Removed.
+        * Modules/webgpu/WebGPUBufferBinding.h: Removed.
+        * Modules/webgpu/WebGPUBufferBinding.idl: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.h: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.idl: Removed.
+        * Modules/webgpu/WebGPUCommandEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPUCommandEncoder.h: Removed.
+        * Modules/webgpu/WebGPUCommandEncoder.idl: Removed.
+        * Modules/webgpu/WebGPUComputePassEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPUComputePassEncoder.h: Removed.
+        * Modules/webgpu/WebGPUComputePassEncoder.idl: Removed.
+        * Modules/webgpu/WebGPUComputePipeline.cpp: Removed.
+        * Modules/webgpu/WebGPUComputePipeline.h: Removed.
+        * Modules/webgpu/WebGPUComputePipeline.idl: Removed.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUDevice.cpp: Removed.
+        * Modules/webgpu/WebGPUDevice.h: Removed.
+        * Modules/webgpu/WebGPUDevice.idl: Removed.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.cpp: Removed.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.h: Removed.
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl: Removed.
+        * Modules/webgpu/WebGPUDeviceEventHandler.idl: Removed.
+        * Modules/webgpu/WebGPUPipeline.cpp: Removed.
+        * Modules/webgpu/WebGPUPipeline.h: Removed.
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.h: Removed.
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.cpp: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.h: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.idl: Removed.
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h: Removed.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl: Removed.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUQueue.cpp: Removed.
+        * Modules/webgpu/WebGPUQueue.h: Removed.
+        * Modules/webgpu/WebGPUQueue.idl: Removed.
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPassDescriptor.h: Removed.
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPassEncoder.h: Removed.
+        * Modules/webgpu/WebGPURenderPassEncoder.idl: Removed.
+        * Modules/webgpu/WebGPURenderPipeline.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPipeline.h: Removed.
+        * Modules/webgpu/WebGPURenderPipeline.idl: Removed.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h: Removed.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUSampler.cpp: Removed.
+        * Modules/webgpu/WebGPUSampler.h: Removed.
+        * Modules/webgpu/WebGPUSampler.idl: Removed.
+        * Modules/webgpu/WebGPUShaderModule.cpp: Removed.
+        * Modules/webgpu/WebGPUShaderModule.h: Removed.
+        * Modules/webgpu/WebGPUShaderModule.idl: Removed.
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl: Removed.
+        * Modules/webgpu/WebGPUSwapChain.cpp: Removed.
+        * Modules/webgpu/WebGPUSwapChain.h: Removed.
+        * Modules/webgpu/WebGPUSwapChain.idl: Removed.
+        * Modules/webgpu/WebGPUSwapChainDescriptor.cpp: Removed.
+        * Modules/webgpu/WebGPUSwapChainDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUTexture.cpp: Removed.
+        * Modules/webgpu/WebGPUTexture.h: Removed.
+        * Modules/webgpu/WebGPUTexture.idl: Removed.
+        * Modules/webgpu/WebGPUTextureView.cpp: Removed.
+        * Modules/webgpu/WebGPUTextureView.h: Removed.
+        * Modules/webgpu/WebGPUTextureView.idl: Removed.
+        * Modules/webgpu/WorkerNavigator+GPU.idl: Removed.
+        * Modules/webgpu/WorkerNavigatorGPU.cpp: Removed.
+        * Modules/webgpu/WorkerNavigatorGPU.h: Removed.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::isWebGPUType): Deleted.
+        (WebCore::HTMLCanvasElement::createContextWebGPU): Deleted.
+        (WebCore::HTMLCanvasElement::getContextWebGPU): Deleted.
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isWebGL const):
+        (WebCore::CanvasRenderingContext::isWebGPU const): Deleted.
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::InspectorCanvas):
+        (WebCore::InspectorCanvas::canvasElement const):
+        (WebCore::InspectorCanvas::scriptExecutionContext const):
+        (WebCore::InspectorCanvas::resolveContext const):
+        (WebCore:: const):
+        (WebCore::InspectorCanvas::resetRecordingData):
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        (WebCore::InspectorCanvas::releaseObjectForRecording):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::canvasIfContextMatchesDevice): Deleted.
+        (WebCore::InspectorCanvas::deviceContext const): Deleted.
+        (WebCore::InspectorCanvas::isDeviceForCanvasContext const): Deleted.
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDeviceImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDeviceImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willConfigureSwapChainImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipelineImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUPipelineImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateWebGPUDevice): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUDevice): Deleted.
+        (WebCore::InspectorInstrumentation::willConfigureSwapChain): Deleted.
+        (WebCore::InspectorInstrumentation::didCreateWebGPUPipeline): Deleted.
+        (WebCore::InspectorInstrumentation::willDestroyWebGPUPipeline): Deleted.
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::requestShaderSource):
+        (WebCore::InspectorShaderProgram::updateShader):
+        (WebCore::InspectorShaderProgram::buildObjectForShaderProgram):
+        (WebCore::InspectorShaderProgram::pipeline const): Deleted.
+        * inspector/InspectorShaderProgram.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::stopRecording):
+        (WebCore::InspectorCanvasAgent::didChangeCanvasMemory):
+        (WebCore::InspectorCanvasAgent::recordAction):
+        (WebCore::InspectorCanvasAgent::reset):
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUDevice): Deleted.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGPUDevice): Deleted.
+        (WebCore::InspectorCanvasAgent::willConfigureSwapChain): Deleted.
+        (WebCore::InspectorCanvasAgent::didCreateWebGPUPipeline): Deleted.
+        (WebCore::InspectorCanvasAgent::willDestroyWebGPUPipeline): Deleted.
+        * inspector/agents/InspectorCanvasAgent.h:
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmGlobally):
+        * platform/Logging.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        * platform/graphics/cocoa/WebGPULayer.h: Removed.
+        * platform/graphics/cocoa/WebGPULayer.mm: Removed.
+        * platform/graphics/gpu/GPUBindGroup.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupAllocator.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupBinding.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUBindGroupLayout.h: Removed.
+        * platform/graphics/gpu/GPUBlendDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUBuffer.cpp: Removed.
+        * platform/graphics/gpu/GPUBuffer.h: Removed.
+        * platform/graphics/gpu/GPUBufferBinding.h: Removed.
+        * platform/graphics/gpu/GPUBufferDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUBufferUsage.h: Removed.
+        * platform/graphics/gpu/GPUColor.h: Removed.
+        * platform/graphics/gpu/GPUColorStateDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUColorWrite.h: Removed.
+        * platform/graphics/gpu/GPUCommandBuffer.h: Removed.
+        * platform/graphics/gpu/GPUCompareFunction.h: Removed.
+        * platform/graphics/gpu/GPUComputePassEncoder.h: Removed.
+        * platform/graphics/gpu/GPUComputePipeline.h: Removed.
+        * platform/graphics/gpu/GPUComputePipelineDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUDepthStencilStateDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUDevice.cpp: Removed.
+        * platform/graphics/gpu/GPUDevice.h:
+        (WebCore::GPUDevice::platformDevice const): Deleted.
+        (WebCore::GPUDevice::swapChain const): Deleted.
+        (WebCore::GPUDevice::setErrorScopes): Deleted.
+        * platform/graphics/gpu/GPUError.cpp: Removed.
+        * platform/graphics/gpu/GPUError.h: Removed.
+        * platform/graphics/gpu/GPUErrorFilter.h: Removed.
+        * platform/graphics/gpu/GPUErrorScopes.cpp: Removed.
+        * platform/graphics/gpu/GPUErrorScopes.h: Removed.
+        * platform/graphics/gpu/GPUExtent3D.h: Removed.
+        * platform/graphics/gpu/GPULimits.h: Removed.
+        * platform/graphics/gpu/GPULoadOp.h: Removed.
+        * platform/graphics/gpu/GPUObjectBase.h: Removed.
+        * platform/graphics/gpu/GPUOutOfMemoryError.h: Removed.
+        * platform/graphics/gpu/GPUPipeline.cpp: Removed.
+        * platform/graphics/gpu/GPUPipeline.h: Removed.
+        * platform/graphics/gpu/GPUPipelineDescriptorBase.h: Removed.
+        * platform/graphics/gpu/GPUPipelineLayout.cpp: Removed.
+        * platform/graphics/gpu/GPUPipelineLayout.h: Removed.
+        * platform/graphics/gpu/GPUPipelineLayoutDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUPlatformTypes.h: Removed.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.cpp: Removed.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h: Removed.
+        * platform/graphics/gpu/GPUProgrammableStageDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUQueue.h: Removed.
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: Removed.
+        * platform/graphics/gpu/GPURenderPassEncoder.h: Removed.
+        * platform/graphics/gpu/GPURenderPipeline.h: Removed.
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Removed.
+        * platform/graphics/gpu/GPURequestAdapterOptions.h: Removed.
+        * platform/graphics/gpu/GPUSampler.h: Removed.
+        * platform/graphics/gpu/GPUSamplerDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUShaderModule.h: Removed.
+        * platform/graphics/gpu/GPUShaderModuleDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUStoreOp.h: Removed.
+        * platform/graphics/gpu/GPUSwapChain.h: Removed.
+        * platform/graphics/gpu/GPUSwapChainDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUTexture.h: Removed.
+        * platform/graphics/gpu/GPUTextureDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUTextureFormat.h: Removed.
+        * platform/graphics/gpu/GPUTextureUsage.h: Removed.
+        * platform/graphics/gpu/GPUUtils.h: Removed.
+        * platform/graphics/gpu/GPUValidationError.cpp: Removed.
+        * platform/graphics/gpu/GPUValidationError.h: Removed.
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUVertexBufferDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h: Removed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::prewarmGPU):
+        (WebCore::isAcceptableDevice): Deleted.
+        (WebCore::GPUDevice::prewarm): Deleted.
+        (WebCore::GPUDevice::tryCreate): Deleted.
+        (WebCore::GPUDevice::GPUDevice): Deleted.
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.cpp: Removed.
+        * platform/graphics/gpu/cocoa/GPUPipelineMetalConvertLayout.h: Removed.
+        * platform/graphics/gpu/cocoa/GPUPlatformTypesMetal.h: Removed.
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUSamplerMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm: Removed.
+        * platform/graphics/gpu/cocoa/GPUUtilsMetal.mm: Removed.
+        * platform/graphics/gpu/dawn/GPUBindGroupAllocatorDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUBindGroupDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUBindGroupLayoutDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUBufferDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUCommandBufferDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUComputePassEncoderDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUComputePipelineDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUDeviceDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUPlatformTypesDawn.h: Removed.
+        * platform/graphics/gpu/dawn/GPUProgrammablePassEncoderDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUQueueDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPURenderPassEncoderDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPURenderPipelineDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUSamplerDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUShaderModuleDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUSwapChainDawn.cpp: Removed.
+        * platform/graphics/gpu/dawn/GPUTextureDawn.cpp: Removed.
+        * platform/ios/DragImageIOS.mm:
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::contentChanged):
+
+2021-07-29  Andres Gonzalez  <andresg_22@apple.com>
+
+        Crash at WebCore: -[WebAccessibilityObjectWrapper _accessibilityTableAncestor].
+        https://bugs.webkit.org/show_bug.cgi?id=228600
+        rdar://79910135
+
+        Reviewed by Chris Fleizach.
+
+        The cause of the crash was that [WebAccessibilityObjectWrapper
+        _accessibilityTableAncestor] was dereferencing self.axBackingObject
+        which can be null.
+        The same problem was present in a number of methods that are retrieving
+        an ancestor of a given role. This patch solves this problem by calling
+        _prepareAccessibilityCall before trying to dereference the backing core
+        object.
+        Avoided code repetition by adding the helper function ancestorWithRole.
+
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (ancestorWithRole):
+        (-[WebAccessibilityObjectWrapper _accessibilityTreeAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityDescriptionListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityArticleAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityLandmarkAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTableAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityIsInTableCell]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFieldsetAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFrameAncestor]):
+
+2021-07-29  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa|WK1] -[NSAttributeString loadFromHTML...] methods will disable bluetooth route switching
+        https://bugs.webkit.org/show_bug.cgi?id=228593
+        <rdar://81160969>
+
+        Reviewed by Eric Carlson.
+
+        NSAttributedString will use WebKitLegacy APIs to load provided HTML; in so doing, an AudioSessionIOS
+        singleton object is created, and -[AVAudioSession setEligibleForBTSmartRoutingConsideration:error:]
+        is called with a NO parameter, disabling smart routing for the calling process.
+
+        Disable this behavior if DeprecatedGlobalSettings::shouldManageAudioSessionCategory() returns false;
+        this setting is disabled for all WK1 clients, and enabled for WK2.
+
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory):
+        (WebCore::DeprecatedGlobalSettings::shouldManageAudioSessionCategory):
+        * page/DeprecatedGlobalSettings.h:
+        (WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory): Deleted.
+        (WebCore::DeprecatedGlobalSettings::shouldManageAudioSessionCategory): Deleted.
+        * platform/audio/AudioSession.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::setEligibleForSmartRouting):
+
+2021-07-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
+        https://bugs.webkit.org/show_bug.cgi?id=228599
+        <rdar://problem/81190366>
+
+        Reviewed by Andy Estes.
+
+        r275169 made it so that `paymentMethodType` is no longer `required` so that `additionalShippingMethods`
+        can be specified without having to limit it to a specific payment method type. While this
+        works in theory, WebKit doesn't know about the user's selected payment method type until the
+        user actually selects a payment method, meaning that until then the `additionalShippingMethods`
+        are not used. Unfortunately (until now) `PKPaymentRequestPaymentMethodUpdate` did not
+        support providing a `NSArray<PKShippingMethod *> *`, so there was no way to update the list
+        of shipping methods when the user changed their selected payment method, meaning that WebKit
+        would have to wait/rely on the user to change their shipping address _after_ selecting a
+        payment method in order for `additionalShippingMethods` to take effect.
+
+        This also fixes an issue with WebKit's implementation of the W3C Payment Request API by
+        allowing any generic (i.e. things not specific to Apple Pay) `shippingOptions` provided in
+        `PaymentDetailsUpdate` to actually be used and update the Apple Pay sheet accordingly.
+
+        Test: http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html
+
+        * Modules/applepay/ApplePayModifier.idl:
+        * Modules/applepay/ApplePayModifier.h:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.idl:
+        * Modules/applepay/ApplePayPaymentMethodUpdate.h:
+        (WebCore::ApplePayPaymentMethodUpdate::encode const):
+        (WebCore::ApplePayPaymentMethodUpdate::decode):
+        * Modules/applepay/ApplePayShippingMethodUpdate.idl:
+        * Modules/applepay/ApplePayShippingMethodUpdate.h:
+        (WebCore::ApplePayShippingMethodUpdate::encode const):
+        (WebCore::ApplePayShippingMethodUpdate::decode):
+        Add (or wrap existing) `additionalShippingMethods`/`newShippingMethods` properties.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::computeShippingMethods):
+        (WebCore::ApplePayPaymentHandler::detailsUpdated):
+        (WebCore::ApplePayPaymentHandler::shippingOptionUpdated):
+        (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+        Also call `computeShippingMethods()` and add the result to the update.
+
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::completeShippingMethodSelection):
+        (WebCore::MockPaymentCoordinator::completeShippingContactSelection):
+        (WebCore::MockPaymentCoordinator::completePaymentMethodSelection):
+        (WebCore::MockPaymentCoordinator::completeCouponCodeChange):
+        Support for testing.
+
+2021-07-29  Alex Christensen  <achristensen@webkit.org>
+
+        [ Mac ] fast/dom/webtiming-document-open.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=228571
+
+        Reviewed by Chris Dumez.
+
+        In r278391 I made PerformanceTiming::monotonicTimeToIntegerMilliseconds call MonotonicTime::approximateWallTime,
+        which, if called multiple times, can give slightly different values, usually differing by 1 (millisecond, in this case).
+        To fix this, cache the value from the first call.  This uses an additional 168 bytes per frame in pages that use PerformanceTiming.
+        Once bug 227336 is turned on and the web is given a year or so to move to that replacement API, this whole API will be removed.
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::navigationStart const):
+        (WebCore::PerformanceTiming::unloadEventStart const):
+        (WebCore::PerformanceTiming::unloadEventEnd const):
+        (WebCore::PerformanceTiming::redirectStart const):
+        (WebCore::PerformanceTiming::redirectEnd const):
+        (WebCore::PerformanceTiming::fetchStart const):
+        (WebCore::PerformanceTiming::domainLookupStart const):
+        (WebCore::PerformanceTiming::domainLookupEnd const):
+        (WebCore::PerformanceTiming::connectStart const):
+        (WebCore::PerformanceTiming::connectEnd const):
+        (WebCore::PerformanceTiming::secureConnectionStart const):
+        (WebCore::PerformanceTiming::requestStart const):
+        (WebCore::PerformanceTiming::responseStart const):
+        (WebCore::PerformanceTiming::responseEnd const):
+        (WebCore::PerformanceTiming::domLoading const):
+        (WebCore::PerformanceTiming::domInteractive const):
+        (WebCore::PerformanceTiming::domContentLoadedEventStart const):
+        (WebCore::PerformanceTiming::domContentLoadedEventEnd const):
+        (WebCore::PerformanceTiming::domComplete const):
+        (WebCore::PerformanceTiming::loadEventStart const):
+        (WebCore::PerformanceTiming::loadEventEnd const):
+        * page/PerformanceTiming.h:
+
+2021-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wreturn-type warning in SQLiteDatabase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=228602
+
+        Unreviewed, add missing RELEASE_ASSERT_NOT_REACHED().
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::checkpointModeValue):
+
+2021-07-29  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Disable hanging punctuation content
+        https://bugs.webkit.org/show_bug.cgi?id=228598
+
+        Reviewed by Antti Koivisto.
+
+        Currently we only check the root for hanging punctuation, but it is applicable to all elements including inline boxes.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Patch by David Kilzer.
+
+        Reviewed by David Kilzer.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale):
+        - Switch to use
+          CopyIdentifierStringForPreferredVoiceInListWithLocale()
+          in Monterey.
+        - Change to return RetainPtr<> to handle lifetime of
+          object returned from new function.
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        - Change varible type to 'auto' since return type of
+          speechSynthesisGetDefaultVoiceIdentifierForLocale()
+          changed.
+
 2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use an imported target for the libgcrypt library

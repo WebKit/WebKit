@@ -23,6 +23,8 @@
 import io
 import sys
 
+
+basestring = str if sys.version_info > (3, 0) else basestring
 BytesIO = io.BytesIO
 if sys.version_info > (3, 0):
     StringIO = io.StringIO

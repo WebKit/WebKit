@@ -13,5 +13,5 @@ if (x === 1)
 else
   Date.parse = 1;
 if (Date.parse === x) {
-  $ERROR('#1: The Date.parse has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.parse has not the attribute ReadOnly');
 }

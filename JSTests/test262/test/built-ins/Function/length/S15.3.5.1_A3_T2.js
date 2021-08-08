@@ -14,7 +14,7 @@ var f = Function("arg1,arg2,arg3", null);
 
 //CHECK#1
 if (!(f.hasOwnProperty('length'))) {
-  $ERROR('#1: the function has length property.');
+  throw new Test262Error('#1: the function has length property.');
 }
 
 var flength = f.length;
@@ -23,18 +23,18 @@ verifyNotWritable(f, "length", null, function() {});
 
 //CHECK#2
 if (f.length !== flength) {
-  $ERROR('#2: the function.length property has the attributes ReadOnly');
+  throw new Test262Error('#2: the function.length property has the attributes ReadOnly');
 }
 
 //CHECK#3
 try {
   f.length();
-  $ERROR('#3: the function.length property has the attributes ReadOnly');
+  throw new Test262Error('#3: the function.length property has the attributes ReadOnly');
 } catch (e) {
   if (e instanceof Test262Error) throw e;
 }
 
 //CHECK#4
 if (f.length !== 3) {
-  $ERROR('#4: the length property has the attributes { ReadOnly }');
+  throw new Test262Error('#4: the length property has the attributes { ReadOnly }');
 }

@@ -65,3 +65,9 @@ webkit.org/b/228285 [ Debug ] editing/pasteboard/smart-paste-paragraph-004.html 
 
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
+
+webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
+
+webkit.org/b/228718 editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Pass Failure ]
+
+webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]

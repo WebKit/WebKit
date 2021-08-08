@@ -17,7 +17,7 @@ var p1 = Promise.reject(1),
 sequence.push(1);
 
 p.then(function() {
-  $ERROR("Should not fulfill.");
+  throw new Test262Error("Should not fulfill.");
 }, function() {
   sequence.push(4);
   assert.sameValue(sequence.length, 4);

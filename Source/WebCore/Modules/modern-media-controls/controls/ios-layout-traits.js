@@ -85,3 +85,5 @@ class IOSLayoutTraits extends LayoutTraits
         return `[IOSLayoutTraits]`;
     }
 }
+
+window.layoutTraitsClasses["IOSLayoutTraits"] = IOSLayoutTraits;

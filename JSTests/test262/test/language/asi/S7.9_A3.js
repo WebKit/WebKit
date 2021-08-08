@@ -12,16 +12,16 @@ function f1()
 {
   return 1;
 }
-if (f1() !== 1) { 
-  $ERROR('#1: Check return statement for automatic semicolon insertion');
-}  
+if (f1() !== 1) {
+  throw new Test262Error('#1: Check return statement for automatic semicolon insertion');
+}
 
 //CHECK#2
 function f2()
 {
-  return 
+  return
   1;
 }
-if (f2() !== undefined) { 
-  $ERROR('#2: Check return statement for automatic semicolon insertion');
+if (f2() !== undefined) {
+  throw new Test262Error('#2: Check return statement for automatic semicolon insertion');
 }

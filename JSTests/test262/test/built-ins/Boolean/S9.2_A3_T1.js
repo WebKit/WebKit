@@ -9,10 +9,10 @@ description: true and false convert to Boolean by explicit transformation
 
 // CHECK#1
 if (Boolean(true) !== true) {
-  $ERROR('#1: Boolean(true) === true. Actual: ' + (Boolean(true)));
+  throw new Test262Error('#1: Boolean(true) === true. Actual: ' + (Boolean(true)));
 }
 
 // CHECK#2
 if (Boolean(false) !== false) {
-  $ERROR('#2: Boolean(false) === false. Actual: ' + (Boolean(false)));
+  throw new Test262Error('#2: Boolean(false) === false. Actual: ' + (Boolean(false)));
 }

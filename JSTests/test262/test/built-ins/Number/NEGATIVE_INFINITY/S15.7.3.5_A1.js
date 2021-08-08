@@ -9,9 +9,9 @@ description: Checking sign and finiteness of Number.NEGATIVE_INFINITY
 
 // CHECK#1
 if (isFinite(Number.NEGATIVE_INFINITY) !== false) {
-  $ERROR('#1: Number.NEGATIVE_INFINITY === Not-a-Finite');
+  throw new Test262Error('#1: Number.NEGATIVE_INFINITY === Not-a-Finite');
 } else {
   if ((Number.NEGATIVE_INFINITY < 0) !== true) {
-    $ERROR('#1: Number.NEGATIVE_INFINITY === -Infinity');
+    throw new Test262Error('#1: Number.NEGATIVE_INFINITY === -Infinity');
   }
 }

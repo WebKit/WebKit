@@ -36,7 +36,6 @@
 #include "Element.h"
 #include "EventLoop.h"
 #include "Frame.h"
-#include "GPUCanvasContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -68,11 +67,6 @@
 #include "WebGLTransformFeedback.h"
 #include "WebGLUniformLocation.h"
 #include "WebGLVertexArrayObject.h"
-#include "WebGPUComputePipeline.h"
-#include "WebGPUDevice.h"
-#include "WebGPUPipeline.h"
-#include "WebGPURenderPipeline.h"
-#include "WebGPUSwapChain.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -100,9 +94,9 @@ InspectorCanvasAgent::InspectorCanvasAgent(PageAgentContext& context)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
     , m_canvasDestroyedTimer(*this, &InspectorCanvasAgent::canvasDestroyedTimerFired)
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
     , m_programDestroyedTimer(*this, &InspectorCanvasAgent::programDestroyedTimerFired)
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL)
 {
 }
 
@@ -141,26 +135,11 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
     {
         Locker locker { CanvasRenderingContext::instancesLock() };
         for (auto* context : CanvasRenderingContext::instances()) {
-#if ENABLE(WEBGPU)
-            // The actual "context" for WebGPU is the `WebGPUDevice`, not the <canvas>.
-            if (is<GPUCanvasContext>(context))
-                continue;
-#endif // ENABLE(WEBGPU)
 
             if (existsInCurrentPage(context->canvasBase().scriptExecutionContext()))
                 bindCanvas(*context, false);
         }
     }
-
-#if ENABLE(WEBGPU)
-    {
-        Locker locker { WebGPUDevice::instancesLock() };
-        for (auto* device : WebGPUDevice::instances()) {
-            if (existsInCurrentPage(device->scriptExecutionContext()))
-                bindCanvas(*device, false);
-        }
-    }
-#endif // ENABLE(WEBGPU)
 
 #if ENABLE(WEBGL)
     {
@@ -171,16 +150,6 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
         }
     }
 #endif // ENABLE(WEBGL)
-
-#if ENABLE(WEBGPU)
-    {
-        Locker locker { WebGPUPipeline::instancesLock() };
-        for (auto& [pipeline, device] : WebGPUPipeline::instances()) {
-            if (device && existsInCurrentPage(device->scriptExecutionContext()) && pipeline->isValid())
-                didCreateWebGPUPipeline(*device, *pipeline);
-        }
-    }
-#endif // ENABLE(WEBGPU)
 
     return { };
 }
@@ -336,7 +305,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::stopRecording(const Protocol
     return { };
 }
 
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
 Protocol::ErrorStringOr<String> InspectorCanvasAgent::requestShaderSource(const Protocol::Canvas::ProgramId& programId, Protocol::Canvas::ShaderType shaderType)
 {
     Protocol::ErrorString errorString;
@@ -366,7 +335,6 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::updateShader(const Protocol:
     return { };
 }
 
-#if ENABLE(WEBGL)
 Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramDisabled(const Protocol::Canvas::ProgramId& programId, bool disabled)
 {
     Protocol::ErrorString errorString;
@@ -393,7 +361,6 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::setShaderProgramHighlighted(
     return { };
 }
 #endif // ENABLE(WEBGL)
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
 void InspectorCanvasAgent::frameNavigated(Frame& frame)
 {
@@ -449,17 +416,6 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(CanvasRenderingContex
 void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context)
 {
     RefPtr<InspectorCanvas> inspectorCanvas;
-
-#if ENABLE(WEBGPU)
-    if (is<GPUCanvasContext>(context)) {
-        for (auto& item : m_identifierToInspectorCanvas.values()) {
-            if (item->isDeviceForCanvasContext(context)) {
-                inspectorCanvas = item;
-                break;
-            }
-        }
-    }
-#endif
 
     if (!inspectorCanvas)
         inspectorCanvas = findInspectorCanvas(context);
@@ -617,69 +573,6 @@ bool InspectorCanvasAgent::isWebGLProgramHighlighted(WebGLProgram& program)
 }
 #endif // ENABLE(WEBGL)
 
-#if ENABLE(WEBGPU)
-void InspectorCanvasAgent::didCreateWebGPUDevice(WebGPUDevice& device)
-{
-    if (findInspectorCanvas(device)) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    bindCanvas(device, true);
-}
-
-void InspectorCanvasAgent::willDestroyWebGPUDevice(WebGPUDevice& device)
-{
-    auto inspectorCanvas = findInspectorCanvas(device);
-    ASSERT(inspectorCanvas);
-    if (!inspectorCanvas)
-        return;
-
-    unbindCanvas(*inspectorCanvas);
-}
-
-void InspectorCanvasAgent::willConfigureSwapChain(GPUCanvasContext& contextGPU, WebGPUSwapChain& newSwapChain)
-{
-    auto notifyDeviceForSwapChain = [&] (WebGPUSwapChain& webGPUSwapChain) {
-        for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
-            if (auto* device = inspectorCanvas->deviceContext()) {
-                if (device->device().swapChain() == webGPUSwapChain.swapChain())
-                    m_frontendDispatcher->clientNodesChanged(inspectorCanvas->identifier());
-            }
-        }
-    };
-
-    if (auto* existingSwapChain = contextGPU.swapChain())
-        notifyDeviceForSwapChain(*existingSwapChain);
-
-    notifyDeviceForSwapChain(newSwapChain);
-}
-
-void InspectorCanvasAgent::didCreateWebGPUPipeline(WebGPUDevice& device, WebGPUPipeline& pipeline)
-{
-    auto inspectorCanvas = findInspectorCanvas(device);
-    ASSERT(inspectorCanvas);
-    if (!inspectorCanvas)
-        return;
-
-    ASSERT(pipeline.isValid());
-
-    auto inspectorProgramRef = InspectorShaderProgram::create(pipeline, *inspectorCanvas);
-    auto& inspectorProgram = inspectorProgramRef.get();
-    m_identifierToInspectorProgram.set(inspectorProgram.identifier(), WTFMove(inspectorProgramRef));
-    m_frontendDispatcher->programCreated(inspectorProgram.buildObjectForShaderProgram());
-}
-
-void InspectorCanvasAgent::willDestroyWebGPUPipeline(WebGPUPipeline& pipeline)
-{
-    auto inspectorProgram = findInspectorProgram(pipeline);
-    if (!inspectorProgram)
-        return;
-
-    unbindProgram(*inspectorProgram);
-}
-#endif // ENABLE(WEBGPU)
-
 #define PROCESS_ARGUMENT_DEFINITION(ArgumentType) \
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasAgent::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
 { \
@@ -777,7 +670,7 @@ void InspectorCanvasAgent::canvasDestroyedTimerFired()
     m_removedCanvasIdentifiers.clear();
 }
 
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
 void InspectorCanvasAgent::programDestroyedTimerFired()
 {
     if (!m_removedProgramIdentifiers.size())
@@ -788,7 +681,7 @@ void InspectorCanvasAgent::programDestroyedTimerFired()
 
     m_removedProgramIdentifiers.clear();
 }
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL)
 
 void InspectorCanvasAgent::reset()
 {
@@ -802,12 +695,12 @@ void InspectorCanvasAgent::reset()
     if (m_canvasDestroyedTimer.isActive())
         m_canvasDestroyedTimer.stop();
 
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
     m_identifierToInspectorProgram.clear();
     m_removedProgramIdentifiers.clear();
     if (m_programDestroyedTimer.isActive())
         m_programDestroyedTimer.stop();
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
+#endif // ENABLE(WEBGL)
 
     m_recordingCanvasIdentifiers.clear();
 }
@@ -835,18 +728,6 @@ InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& contex
 
     return inspectorCanvas;
 }
-
-#if ENABLE(WEBGPU)
-InspectorCanvas& InspectorCanvasAgent::bindCanvas(WebGPUDevice& device, bool captureBacktrace)
-{
-    auto inspectorCanvas = InspectorCanvas::create(device);
-    m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas.copyRef());
-
-    m_frontendDispatcher->canvasAdded(inspectorCanvas->buildObjectForCanvas(captureBacktrace));
-
-    return inspectorCanvas;
-}
-#endif // ENABLE(WEBGPU)
 
 void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
 {
@@ -895,18 +776,7 @@ RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(CanvasRenderin
     return nullptr;
 }
 
-#if ENABLE(WEBGPU)
-RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(WebGPUDevice& device)
-{
-    for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
-        if (inspectorCanvas->deviceContext() == &device)
-            return inspectorCanvas;
-    }
-    return nullptr;
-}
-#endif // ENABLE(WEBGPU)
-
-#if ENABLE(WEBGL) || ENABLE(WEBGPU)
+#if ENABLE(WEBGL)
 void InspectorCanvasAgent::unbindProgram(InspectorShaderProgram& inspectorProgram)
 {
     String identifier = inspectorProgram.identifier();
@@ -931,7 +801,6 @@ RefPtr<InspectorShaderProgram> InspectorCanvasAgent::assertInspectorProgram(Prot
     return inspectorProgram;
 }
 
-#if ENABLE(WEBGL)
 RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(WebGLProgram& program)
 {
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
@@ -941,17 +810,5 @@ RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(WebGLP
     return nullptr;
 }
 #endif // ENABLE(WEBGL)
-
-#if ENABLE(WEBGPU)
-RefPtr<InspectorShaderProgram> InspectorCanvasAgent::findInspectorProgram(WebGPUPipeline& pipeline)
-{
-    for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {
-        if (inspectorProgram->pipeline() == &pipeline)
-            return inspectorProgram;
-    }
-    return nullptr;
-}
-#endif // ENABLE(WEBGPU)
-#endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
 } // namespace WebCore

@@ -13,13 +13,15 @@ info: |
     4. Perform CreateDataProperty(unscopableList, "fill", true).
     5. Perform CreateDataProperty(unscopableList, "find", true).
     6. Perform CreateDataProperty(unscopableList, "findIndex", true).
-    7. Perform CreateDataProperty(unscopableList, "flat", true).
-    8. Perform CreateDataProperty(unscopableList, "flatMap", true).
-    9. Perform CreateDataProperty(unscopableList, "includes", true).
-    10. Perform CreateDataProperty(unscopableList, "keys", true).
-    11. Perform CreateDataProperty(unscopableList, "values", true).
-    12. Assert: Each of the above calls returns true.
-    13. Return unscopableList.
+    7. Perform CreateDataProperty(unscopableList, "findLast", true).
+    8. Perform CreateDataProperty(unscopableList, "findLastIndex", true).
+    9. Perform CreateDataProperty(unscopableList, "flat", true).
+    10. Perform CreateDataProperty(unscopableList, "flatMap", true).
+    11. Perform CreateDataProperty(unscopableList, "includes", true).
+    12. Perform CreateDataProperty(unscopableList, "keys", true).
+    13. Perform CreateDataProperty(unscopableList, "values", true).
+    14. Assert: Each of the above calls returns true.
+    15. Return unscopableList.
 includes: [propertyHelper.js]
 features: [Symbol.unscopables]
 ---*/
@@ -52,6 +54,17 @@ assert.sameValue(unscopables.findIndex, true, '`findIndex` property value');
 verifyEnumerable(unscopables, 'findIndex');
 verifyWritable(unscopables, 'findIndex');
 verifyConfigurable(unscopables, 'findIndex');
+
+
+assert.sameValue(unscopables.findLast, true, '`findLast` property value');
+verifyEnumerable(unscopables, 'findLast');
+verifyWritable(unscopables, 'findLast');
+verifyConfigurable(unscopables, 'findLast');
+
+assert.sameValue(unscopables.findLastIndex, true, '`findLastIndex` property value');
+verifyEnumerable(unscopables, 'findLastIndex');
+verifyWritable(unscopables, 'findLastIndex');
+verifyConfigurable(unscopables, 'findLastIndex');
 
 assert.sameValue(unscopables.flat, true, '`flat` property value');
 verifyEnumerable(unscopables, 'flat');

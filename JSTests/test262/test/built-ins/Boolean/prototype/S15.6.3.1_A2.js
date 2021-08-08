@@ -12,5 +12,5 @@ includes: [propertyHelper.js]
 var x = Boolean.prototype;
 verifyNotWritable(Boolean, "prototype", null, 1);
 if (Boolean.prototype !== x) {
-  $ERROR('#1: Boolean.prototype has the attribute ReadOnly');
+  throw new Test262Error('#1: Boolean.prototype has the attribute ReadOnly');
 }

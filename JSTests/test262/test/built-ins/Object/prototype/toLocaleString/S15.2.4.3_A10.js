@@ -14,7 +14,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (!(Object.prototype.toLocaleString.hasOwnProperty('length'))) {
-  $ERROR('#1: the Object.prototype.toLocaleString has length property.');
+  throw new Test262Error('#1: the Object.prototype.toLocaleString has length property.');
 }
 
 var obj = Object.prototype.toLocaleString.length;
@@ -25,5 +25,5 @@ verifyNotWritable(Object.prototype.toLocaleString, "length", null, function() {
 
 //CHECK#2
 if (Object.prototype.toLocaleString.length !== obj) {
-  $ERROR('#2: the Object.prototype.toLocaleString length property has the attributes ReadOnly.');
+  throw new Test262Error('#2: the Object.prototype.toLocaleString length property has the attributes ReadOnly.');
 }

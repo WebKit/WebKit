@@ -12,40 +12,40 @@ description: length is object or primitve
 var x = [];
 x.length = true;
 if (x.length !== 1) {
-  $ERROR('#1: x = []; x.length = true; x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#1: x = []; x.length = true; x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x = [0];
 x.length = null;
 if (x.length !== 0) {
-  $ERROR('#2: x = [0]; x.length = null; x.length === 0. Actual: ' + (x.length));
+  throw new Test262Error('#2: x = [0]; x.length = null; x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#3
 x = [0];
 x.length = new Boolean(false);
 if (x.length !== 0) {
-  $ERROR('#3: x = [0]; x.length = new Boolean(false); x.length === 0. Actual: ' + (x.length));
+  throw new Test262Error('#3: x = [0]; x.length = new Boolean(false); x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#4
 x = [];
 x.length = new Number(1);
 if (x.length !== 1) {
-  $ERROR('#4: x = []; x.length = new Number(1); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#4: x = []; x.length = new Number(1); x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#5
 x = [];
 x.length = "1";
 if (x.length !== 1) {
-  $ERROR('#5: x = []; x.length = "1"; x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#5: x = []; x.length = "1"; x.length === 1. Actual: ' + (x.length));
 }
 
 //CHECK#6
 x = [];
 x.length = new String("1");
 if (x.length !== 1) {
-  $ERROR('#6: x = []; x.length = new String("1"); x.length === 1. Actual: ' + (x.length));
+  throw new Test262Error('#6: x = []; x.length = new String("1"); x.length === 1. Actual: ' + (x.length));
 }

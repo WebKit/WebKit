@@ -20,10 +20,10 @@ for (var x of iterator) {
     i++;
     continue;
 
-    $ERROR('This code is unreachable (following `continue` statement).');
+    throw new Test262Error('This code is unreachable (following `continue` statement).');
   } catch (err) {}
 
-  $ERROR('This code is unreachable (following `try` statement).');
+  throw new Test262Error('This code is unreachable (following `try` statement).');
 }
 
 assert.sameValue(i, 2);

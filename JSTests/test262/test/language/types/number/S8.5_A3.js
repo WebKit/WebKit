@@ -12,7 +12,7 @@ var x=NaN;
 ///////////////////////////////////////////////////////
 // CHECK#1
 if (typeof(x) !== "number"){
-  $ERROR('#1: var x=NaN; typeof(x) === "number". Actual: ' + (typeof(x)));
+  throw new Test262Error('#1: var x=NaN; typeof(x) === "number". Actual: ' + (typeof(x)));
 }
 //
 //////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if (typeof(x) !== "number"){
 ///////////////////////////////////////////////////////
 // CHECK#2
 if (typeof(NaN) !== "number"){
-  $ERROR('#2: typeof(NaN) === "number". Actual: ' + (typeof(NaN)));
+  throw new Test262Error('#2: typeof(NaN) === "number". Actual: ' + (typeof(NaN)));
 }
 //
 //////////////////////////////////////////////////////////

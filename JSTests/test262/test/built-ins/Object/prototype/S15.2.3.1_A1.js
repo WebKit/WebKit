@@ -15,13 +15,13 @@ verifyNotWritable(Object, "prototype", null, function() {
 
 //CHECK#1
 if (Object.prototype !== obj) {
-  $ERROR('#1: the Object.prototype property has the attributes ReadOnly.');
+  throw new Test262Error('#1: the Object.prototype property has the attributes ReadOnly.');
 }
 
 //CHECK#2
 try {
   Object.prototype();
-  $ERROR('#2: the Object.prototype property has the attributes ReadOnly');
+  throw new Test262Error('#2: the Object.prototype property has the attributes ReadOnly');
 } catch (e) {
   if (e instanceof Test262Error) throw e;
 }

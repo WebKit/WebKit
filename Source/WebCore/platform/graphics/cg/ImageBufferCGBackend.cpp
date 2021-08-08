@@ -134,6 +134,8 @@ RefPtr<Image> ImageBufferCGBackend::sinkIntoImage(PreserveResolution preserveRes
 
 void ImageBufferCGBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
+    prepareToDrawIntoContext(destContext);
+
     FloatRect srcRectScaled = srcRect;
     srcRectScaled.scale(resolutionScale());
 
@@ -143,6 +145,8 @@ void ImageBufferCGBackend::draw(GraphicsContext& destContext, const FloatRect& d
 
 void ImageBufferCGBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
+    prepareToDrawIntoContext(destContext);
+
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(resolutionScale());
 
@@ -243,6 +247,10 @@ String ImageBufferCGBackend::toDataURL(const String& mimeType, std::optional<dou
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
 {
     return WTF::makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
+}
+
+void ImageBufferCGBackend::prepareToDrawIntoContext(GraphicsContext&)
+{
 }
 
 } // namespace WebCore

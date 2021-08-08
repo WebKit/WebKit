@@ -28,7 +28,7 @@ var __str = new String(__obj);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __str !== "object") {
-  $ERROR('#1: function __obj(){}; __str = new String(__obj); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
+  throw new Test262Error('#1: function __obj(){}; __str = new String(__obj); typeof __str === "object". Actual: typeof __str ===' + typeof __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ if (typeof __str !== "object") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1.5
 if (__str.constructor !== String) {
-  $ERROR('#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
+  throw new Test262Error('#1.5: __str = new String(__obj); __str.constructor === String. Actual: __str.constructor ===' + __str.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ if (__str.constructor !== String) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__str != "true") {
-  $ERROR('#2: function __obj(){}; __str = new String(__obj); __str =="true". Actual: __str ==' + __str);
+  throw new Test262Error('#2: function __obj(){}; __str = new String(__obj); __str =="true". Actual: __str ==' + __str);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

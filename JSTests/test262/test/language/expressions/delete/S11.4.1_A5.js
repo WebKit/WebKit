@@ -22,12 +22,12 @@ for (var i = 0, len = reNames.length; i < len; i++) {
       deleted = delete RegExp[reName];
     } catch (err) {
       if (!(err instanceof TypeError)) {
-        $ERROR('#1: strict delete threw a non-TypeError: ' + err);
+        throw new Test262Error('#1: strict delete threw a non-TypeError: ' + err);
       }
       // fall through
     }
     if (deleted === false) {
-      $ERROR('#2: Strict delete returned false');
+      throw new Test262Error('#2: Strict delete returned false');
     }
   }
 }

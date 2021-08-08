@@ -607,69 +607,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/webdriver/Navigator+WebDriver.idl
 
-    Modules/webgpu/GPUBindGroupLayoutBinding.idl
-    Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
-    Modules/webgpu/GPUBlendDescriptor.idl
-    Modules/webgpu/GPUBufferDescriptor.idl
-    Modules/webgpu/GPUBufferUsage.idl
-    Modules/webgpu/GPUCanvasContext.idl
-    Modules/webgpu/GPUColor.idl
-    Modules/webgpu/GPUColorStateDescriptor.idl
-    Modules/webgpu/GPUColorWrite.idl
-    Modules/webgpu/GPUCompareFunction.idl
-    Modules/webgpu/GPUDepthStencilStateDescriptor.idl
-    Modules/webgpu/GPUErrorFilter.idl
-    Modules/webgpu/GPUExtent3D.idl
-    Modules/webgpu/GPULoadOp.idl
-    Modules/webgpu/GPUOrigin3D.idl
-    Modules/webgpu/GPUOutOfMemoryError.idl
-    Modules/webgpu/GPURequestAdapterOptions.idl
-    Modules/webgpu/GPUSamplerDescriptor.idl
-    Modules/webgpu/GPUShaderStage.idl
-    Modules/webgpu/GPUStoreOp.idl
-    Modules/webgpu/GPUTextureDescriptor.idl
-    Modules/webgpu/GPUTextureFormat.idl
-    Modules/webgpu/GPUTextureUsage.idl
-    Modules/webgpu/GPUUncapturedErrorEvent.idl
-    Modules/webgpu/GPUValidationError.idl
-    Modules/webgpu/GPUVertexAttributeDescriptor.idl
-    Modules/webgpu/GPUVertexBufferDescriptor.idl
-    Modules/webgpu/GPUVertexInputDescriptor.idl
-    Modules/webgpu/Navigator+GPU.idl
-    Modules/webgpu/WebGPU.idl
-    Modules/webgpu/WebGPUAdapter.idl
-    Modules/webgpu/WebGPUBindGroup.idl
-    Modules/webgpu/WebGPUBindGroupBinding.idl
-    Modules/webgpu/WebGPUBindGroupDescriptor.idl
-    Modules/webgpu/WebGPUBindGroupLayout.idl
-    Modules/webgpu/WebGPUBuffer.idl
-    Modules/webgpu/WebGPUBufferBinding.idl
-    Modules/webgpu/WebGPUCommandBuffer.idl
-    Modules/webgpu/WebGPUCommandEncoder.idl
-    Modules/webgpu/WebGPUComputePassEncoder.idl
-    Modules/webgpu/WebGPUComputePipeline.idl
-    Modules/webgpu/WebGPUComputePipelineDescriptor.idl
-    Modules/webgpu/WebGPUDevice.idl
-    Modules/webgpu/WebGPUDeviceErrorScopes.idl
-    Modules/webgpu/WebGPUDeviceEventHandler.idl
-    Modules/webgpu/WebGPUPipelineDescriptorBase.idl
-    Modules/webgpu/WebGPUPipelineLayout.idl
-    Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl
-    Modules/webgpu/WebGPUProgrammableStageDescriptor.idl
-    Modules/webgpu/WebGPUProgrammablePassEncoder.idl
-    Modules/webgpu/WebGPUQueue.idl
-    Modules/webgpu/WebGPURenderPassDescriptor.idl
-    Modules/webgpu/WebGPURenderPassEncoder.idl
-    Modules/webgpu/WebGPURenderPipeline.idl
-    Modules/webgpu/WebGPURenderPipelineDescriptor.idl
-    Modules/webgpu/WebGPUSampler.idl
-    Modules/webgpu/WebGPUShaderModule.idl
-    Modules/webgpu/WebGPUShaderModuleDescriptor.idl
-    Modules/webgpu/WebGPUSwapChain.idl
-    Modules/webgpu/WebGPUTexture.idl
-    Modules/webgpu/WebGPUTextureView.idl
-    Modules/webgpu/WorkerNavigator+GPU.idl
-
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
 

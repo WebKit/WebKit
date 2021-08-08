@@ -23,7 +23,7 @@ while(function f(){}){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (check !== 1) {
-	$ERROR('#1: FunctionExpression inside while construction expression allowed but function not declare');
+	throw new Test262Error('#1: FunctionExpression inside while construction expression allowed but function not declare');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

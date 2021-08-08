@@ -1,10 +1,10 @@
 
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "unsafe-none" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_unsafe-none"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "jibberish" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_jibberish"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-site" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_same-site"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-site unsafe-allow-outgoing" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_same-site-unsafe-allow-outgoing"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-origin unsafe-allow-outgoing" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_same-origin-unsafe-allow-outgoing"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-origin" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_same-origin"
-FAIL same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-origin-allow-popups" assert_equals: name expected "" but got "same-origin_to_CROSS_ORIGIN_same-origin-allow-popups"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: ""
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "unsafe-none"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "jibberish"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-site"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-site unsafe-allow-outgoing"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-origin unsafe-allow-outgoing"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-origin"
+PASS same-origin document opening popup to https://127.0.0.1:9443 with COOP: "same-origin-allow-popups"
 

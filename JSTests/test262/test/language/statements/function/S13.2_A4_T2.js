@@ -19,7 +19,7 @@ var __gunc = function(){};
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __gunc.prototype !== 'object') {
-	$ERROR('#1: typeof __gunc.prototype === \'object\'. Actual: typeof __gunc.prototype ==='+typeof __gunc.prototype);
+	throw new Test262Error('#1: typeof __gunc.prototype === \'object\'. Actual: typeof __gunc.prototype ==='+typeof __gunc.prototype);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ if (typeof __gunc.prototype !== 'object') {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__gunc.prototype.constructor !== __gunc) {
-	$ERROR('#2: __gunc.prototype.constructor === __gunc. Actual: __gunc.prototype.constructor ==='+__gunc.prototype.constructor);
+	throw new Test262Error('#2: __gunc.prototype.constructor === __gunc. Actual: __gunc.prototype.constructor ==='+__gunc.prototype.constructor);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ for (__prop in __gunc.prototype){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__constructor_was__enumed) {
-	$ERROR('#3: __constructor_was__enumed === false. Actual: __constructor_was__enumed ==='+__constructor_was__enumed);
+	throw new Test262Error('#3: __constructor_was__enumed === false. Actual: __constructor_was__enumed ==='+__constructor_was__enumed);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

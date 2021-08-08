@@ -62,19 +62,6 @@ bool isFeatureFlagEnabled(const String& featureName)
 
 #endif
 
-#if ENABLE(WEBGPU)
-
-bool defaultWebGPUEnabled()
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("WebGPU");
-#endif
-
-    return false;
-}
-
-#endif // ENABLE(WEBGPU)
-
 #if HAVE(INCREMENTAL_PDF_APIS)
 
 bool defaultIncrementalPDFEnabled()

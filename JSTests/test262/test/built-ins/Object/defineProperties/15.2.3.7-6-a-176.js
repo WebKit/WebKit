@@ -28,7 +28,7 @@ try {
     }
   });
 
-  $ERROR("Expected to throw TypeError");
+  throw new Test262Error("Expected to throw TypeError");
 } catch (e) {
   assert(e instanceof TypeError);
   assert(arr.hasOwnProperty("1"));

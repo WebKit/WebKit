@@ -1,3 +1,496 @@
+2021-08-02  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] RemoteAudioSession::setPreferredBufferSize() does not change its preferredBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=228720
+
+        Reviewed by Jer Noble.
+
+        `RemoteAudioSession` should update its `preferredBufferSize` in
+        `setPreferredBufferSize()`. Otherwise, the `preferredBufferSize`
+        will become inconsistent with the value in the GPU process.
+
+        No new tests. Fix API test failures.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setPreferredBufferSize):
+
+2021-08-02  Kate Cheney  <katherine_cheney@apple.com>
+
+        [App Privacy Report] Domains are deleted for ephemeral website data stores
+        https://bugs.webkit.org/show_bug.cgi?id=228708
+        <rdar://problem/81282432>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. Since this data is not stored in WebKit, we have no
+        way to test when it gets deleted or not. I tested manually and requested
+        an automated test at the correct networking layer.
+
+        Only clear Privacy Report data if the website data store is
+        persistent. Safari calls the SPI to remove website data for ephemeral
+        data stores in some cases that are unrelated to a user clearing
+        website data or history and thus should not clear App Privacy Report
+        data. Additionally, it is unexpected that clearing an ephemeral data
+        store would clear disk data, as website data is only stored in memory
+        in this case.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::removeNetworkWebsiteData):
+
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio] Add webm/vorbis container support
+        https://bugs.webkit.org/show_bug.cgi?id=228139
+        rdar://80883073
+
+        Reviewed by Jer Noble.
+
+        Access to the com.apple.audio.AudioComponentRegistrar is denied by the sandbox which
+        prevents registering the Vorbis Audio Component. So we instantiate the decoder right before
+        setting up the sandbox.
+        This is a workaround for rdar://81137953.
+        Test: webaudio/decode-audio-data-webm-vorbis.html
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox):
+
+2021-08-02  Jean-Yves Avenard  <jya@apple.com>
+
+        Crash in -[WKFullScreenWindowController windowDidExitFullScreen:]
+        https://bugs.webkit.org/show_bug.cgi?id=228694
+        rdar://79569881
+
+        Reviewed by Jer Noble.
+
+        It appears that [WKFullScreenWindowController finishedEnterFullScreenAnimation] can
+        cause the retain count to be decreased (this is the only explanation that makes any
+        sense considering the crash and when the regression started following bug 227243).
+        No test, can't reproduce.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController setVideoFullscreenManagerClient:]): Add utility method
+        to remove duplicated code.
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        (-[WKFullScreenWindowController windowDidEnterFullScreen:]):
+        (-[WKFullScreenWindowController windowDidFailToExitFullScreen:]):
+        (-[WKFullScreenWindowController windowDidExitFullScreen:]):
+        (-[WKFullScreenWindowController _manager]): fly-by make style consistent with other
+        similar methods.
+
+2021-08-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add log when experimental network loader is used
+        https://bugs.webkit.org/show_bug.cgi?id=227932
+
+        Reviewed by Chris Dumez.
+
+        We are seeing some reports of serious loading issues in bugs related to rdar://80330028
+        and we think they are because of problems related to the experimental network loader, which can be
+        enabled in experimental features but is not ready for use on the internet yet.
+        Add a log so we can determine for sure that is what is going on in those cases.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
+2021-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] ASSERTION FAILED: evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent in WebView::interpretKeyEvent since r280492
+        https://bugs.webkit.org/show_bug.cgi?id=228690
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent): Return early unless the event is keydown or keypress.
+
+2021-08-02  Alex Christensen  <achristensen@webkit.org>
+
+        Don't change invalid baseURLs from loadData or loadHTMLString to about:blank
+        https://bugs.webkit.org/show_bug.cgi?id=228717
+        <rdar://79909343>
+
+        Reviewed by Chris Dumez.
+
+        r278737 fixed a compatibility bug from r272469 but introduced a crash when the base URL does not successfully parse.
+        r279450 fixed that crash but introduced a new behavior change that changes the URL to about:blank.  This didn't seem
+        to change anything because window.location is about:blank with and without the change, but WKWebView.URL did change,
+        which broke at least one app.  This undoes the functionality change from r279450 and keeps the crash fix, which are
+        both covered by API tests.  I also manually verified this fixes the app in the radar.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+
+2021-08-02  Devin Rousso  <drousso@apple.com>
+
+        [Live Text] SPI for machine readable codes is only available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=228711
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _setUpImageAnalysis]):
+        (-[WKContentView _tearDownImageAnalysis]):
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+        (-[WKContentView imageAnalysisGestureDidTimeOut:]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+
+2021-08-02  Youenn Fablet  <youenn@apple.com>
+
+        Attribute nw connections to the page bundle identifier
+        https://bugs.webkit.org/show_bug.cgi?id=228649
+
+        Reviewed by Eric Carlson.
+
+        Send page identifier from WebProcess to NetworkProcess when creating a WebRTC socket.
+        Use page identifier to get the attributed bundle identifier.
+        For that purpose, we need to hop to main thread to get it, then go back to rtc thread to create it.
+        We do so by using callOnMainRunLoopAndWait when NetworkRTCProvider does not have the information for the provided page identifier.
+        We then make use of nw_parameters_set_source_application_by_bundle_id to set the bundle identifier on TCP and UDP connections.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::attributedBundleIdentifierFromPageIdentifier const):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::addWebPageNetworkParameters):
+        (WebKit::NetworkSessionCocoa::removeWebPageNetworkParameters):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::createClientTCPSocket):
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::create):
+        (WebKit::NetworkRTCUDPSocketCocoa::createUDPSocket):
+        (WebKit::NetworkRTCUDPSocketCocoa::NetworkRTCUDPSocketCocoa):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::configureParameters):
+        * Platform/spi/Cocoa/NWParametersSPI.h:
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::RTCSocketFactory):
+        (WebKit::RTCSocketFactory::CreateUdpSocket):
+        (WebKit::RTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkBroadcastChannelRegistry.cpp:
+        (WebKit::NetworkBroadcastChannelRegistry::postMessage):
+        * NetworkProcess/NetworkBroadcastChannelRegistry.h:
+        * NetworkProcess/NetworkBroadcastChannelRegistry.messages.in:
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageAsyncWantsConnection):
+        handleMessageAsyncWantsConnection() had gotten out of sync with handleMessageAsync(). This was causing IPC decoding
+        failures when using both "Async" and "WantsConnection" for the IPC message.
+
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebKit::WebBroadcastChannelRegistry::postMessage):
+        (WebKit::WebBroadcastChannelRegistry::postMessageToRemote):
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.h:
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in:
+
+2021-08-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove unneeded sandbox extension member
+        https://bugs.webkit.org/show_bug.cgi?id=228584
+
+        Reviewed by Darin Adler.
+
+        Remove unneeded sandbox extension handle member, since this extension is never revoked.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::switchFromStaticFontRegistryToUserFontRegistry):
+
+2021-08-02  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Remove support for AVAssetImageGenerator
+        https://bugs.webkit.org/show_bug.cgi?id=228560
+        <rdar://problem/81336280>
+
+        Reviewed by Eric Carlson.
+
+        Drive-by fix: Passing the wrong value down to the GPU process when the acceleratedRenderingStateChanged().
+        We should be passing the results of MediaPlayer::renderingCanBeAccelerated() which comes down from HTMLMediaElement,
+        not MediaPlayer::supportsAcceleratedRendering(), which comes up from the GPU process.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+
+2021-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Consider all snap areas at a given snap offset when snapping
+        https://bugs.webkit.org/show_bug.cgi?id=228141
+
+        Reviewed by Frédéric Wang.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<SnapOffset<float>>::encode): Serialize new members.
+        (ArgumentCoder<SnapOffset<float>>::decode): Deserialize new members.
+
+2021-08-01  Youenn Fablet  <youenn@apple.com>
+
+        Introduce an experimental feature to toggle WebRTC socket proxying
+        https://bugs.webkit.org/show_bug.cgi?id=228681
+
+        Reviewed by Eric Carlson.
+
+        Decide whether to disable proxying based on experimental feature in WebProcess.
+        Send the disable relay value from WebProcess to NetworkProcess for TCP sockets.
+        Manually tested.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::createClientTCPSocket):
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::CreateClientTcpSocket):
+        (WebKit::LibWebRTCProvider::createSocketFactory):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Improve LocalSampleBufferDisplayLayer logging
+        https://bugs.webkit.org/show_bug.cgi?id=228582
+
+        Reviewed by Eric Carlson.
+
+        Send through IPC the log identifier to the GPU display layer.
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::setLogIdentifier):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::setLogIdentifier):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+
+2021-07-31  Youenn Fablet  <youenn@apple.com>
+
+        RemoteAudioMediaStreamTrackRendererInternalUnit should handle changes of requested sampleCount
+        https://bugs.webkit.org/show_bug.cgi?id=228631
+        <rdar://80690191>
+
+        Reviewed by Eric Carlson.
+
+        The requested number of samples might change in case the output device changes.
+        When changing device, we might have a generated buffer of 4096 while 1024 samples are requested.
+        For each 1024 sample chunk, we will request a buffer of 4096, which cannot be provided by WebProcess.
+        To prevent this case, we keep track of a requested sample count overshoot so that next time the render callback is called,
+        we might not request to generate another chunk.
+
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::start):
+        (WebKit::RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::render):
+
+2021-07-30  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION (r274460?): Infinite recursion on fullscreen/full-screen-remove-ancestor.html in WTR::InjectedBundlePage::closeFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=224085
+        rdar://75576840
+
+        Reviewed by Eric Carlson.
+
+        WebFullScreenManager::close() is used to cleanup a transient error when exiting or
+        attempting to exit fullscreen; it then calls InjectedBundleXXX::closeFullScreen().
+        It is possible for the injected bundle's closeFullScreen() to attempt to exit full
+        screen mode again.
+        Rather than making the bundle responsible for doing the right thing, we add a
+        workaround in the fullscreen manager to ensure no recursion is happening.
+
+        Covered by existing test.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::close):
+        * WebProcess/FullScreen/WebFullScreenManager.h: Make close() method private
+
+2021-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        Accessibility code logs to stderr in many layout test runs
+        https://bugs.webkit.org/show_bug.cgi?id=228653
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+        r279342 accidentally landed a WTFLogAlways in a common codepath. Remove it.
+
+2021-07-30  Youenn Fablet  <youenn@apple.com>
+
+        softlink nw_parameters_allow_sharing_port_with_listener
+        https://bugs.webkit.org/show_bug.cgi?id=228636
+
+        Reviewed by Eric Carlson.
+
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::createNWConnection):
+        This helps compiling/running WebKit on older OSes.
+        Also make use of nw_endpoint_create_host_with_numeric_port to remove the need for string to int conversion.
+        * Platform/spi/Cocoa/NWParametersSPI.h:
+
+2021-07-30  Youenn Fablet  <youenn@apple.com>
+
+        Attribute nw connections to the source application
+        https://bugs.webkit.org/show_bug.cgi?id=228641
+        <rdar://81039713>
+
+        Reviewed by Alex Christensen.
+
+        Add source application token for every nw connection/listener, like done for WebSocket or NSURLSession tasks.
+        This will allow the nw layer to do custom processing based on the application doing the loads.
+        Introduce an audit_token_t getter on NetworkProcess.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::sourceApplicationAuditData const):
+        (WebKit::NetworkProcess::sourceApplicationAuditToken const):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::sourceApplicationAuditToken const):
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::configureParameters):
+        * Platform/spi/Cocoa/NWParametersSPI.h:
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebGPUEnabled): Deleted.
+        * Shared/WebPreferencesDefaultValues.h:
+
+2021-07-29  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][GTK] build broken with python2 after r280382
+        https://bugs.webkit.org/show_bug.cgi?id=228629
+
+        Reviewed by Philippe Normand.
+
+        Call {PYTHON_EXECUTABLE} instead of python3. Our build currently
+        supports both versions of python (2 and 3). If the user wants
+        to force a specific version it can do that via the CMake argument
+        -DPYTHON_EXECUTABLE=/path/to/python/interpreter
+
+        No new tests, is a build fix.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
+2021-07-29  Jer Noble  <jer.noble@apple.com>
+
+        [macOS|AS] VTImageRotationSession returns a kVTImageRotationNotSupportedErr, breaks painting rotated videos
+        https://bugs.webkit.org/show_bug.cgi?id=228620
+
+        Reviewed by Per Arne Vollan.
+
+        Error is thrown from ImageRotationSessionVT, forcing WebKit to go down software rotation path.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
+2021-07-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
+        https://bugs.webkit.org/show_bug.cgi?id=228599
+        <rdar://problem/81190366>
+
+        Reviewed by Andy Estes.
+
+        r275169 made it so that `paymentMethodType` is no longer `required` so that `additionalShippingMethods`
+        can be specified without having to limit it to a specific payment method type. While this
+        works in theory, WebKit doesn't know about the user's selected payment method type until the
+        user actually selects a payment method, meaning that until then the `additionalShippingMethods`
+        are not used. Unfortunately (until now) `PKPaymentRequestPaymentMethodUpdate` did not
+        support providing a `NSArray<PKShippingMethod *> *`, so there was no way to update the list
+        of shipping methods when the user changed their selected payment method, meaning that WebKit
+        would have to wait/rely on the user to change their shipping address _after_ selecting a
+        payment method in order for `additionalShippingMethods` to take effect.
+
+        This also fixes an issue with WebKit's implementation of the W3C Payment Request API by
+        allowing any generic (i.e. things not specific to Apple Pay) `shippingOptions` provided in
+        `PaymentDetailsUpdate` to actually be used and update the Apple Pay sheet accordingly.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection):
+        Also convert and set the `shippingMethods` on the update.
+
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r278877) [Cocoa] WebAuthn stopped working for non-Safari browsers 
+        https://bugs.webkit.org/show_bug.cgi?id=228116
+        <rdar://problem/80693607>
+
+        Patch by Brent Fulgham.
+
+        Reviewed by Per Arne Vollan.
+
+        We should not be using the PAC key to confirm a valid WebContent process is the source of
+        WebAuthn-related messages. Instead, we should confirm the message source is an Apple-signed
+        executable, and that the signining identity is for the WebContent process.
+
+        * Shared/Cocoa/CodeSigning.h: Renamed from Source/WebKit/Shared/mac/CodeSigning.h.
+        * Shared/Cocoa/CodeSigning.mm: Renamed from Source/WebKit/Shared/mac/CodeSigning.mm.
+        (WebKit::codeSigningIdentifier):
+        (WebKit::codeSigningIdentifierForCurrentProcess):
+        (WebKit::currentProcessIsPlatformBinary):
+        (WebKit::codeSigningIdentifierAndPlatformBinaryStatus):
+        * Shared/Cocoa/XPCEndpoint.mm:
+        (WebKit::XPCEndpoint::XPCEndpoint):
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::messageSourceIsValidWebContentProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getWebAuthnProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-07-29  Peng Liu  <peng.liu6@apple.com>
+
+        The bundle path of downlevel Safari is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=228339
+
+        Reviewed by Tim Horton.
+
+        Use the same approach as `isSystemWebKit` to check whether the WebKit bundle
+        is from the staged framework.
+
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         CORS preflight checks not attributed to the correct application

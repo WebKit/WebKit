@@ -20,7 +20,7 @@ try {
   Object.defineProperty(obj, "foo", {
     value: +0
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
 
   verifyEqualTo(obj, "foo", -0);
@@ -32,7 +32,7 @@ try {
   verifyNotConfigurable(obj, "foo");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

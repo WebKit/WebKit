@@ -14,28 +14,28 @@ var g = Function.call(this, "return color;");
 
 //CHECK#1
 if (f() !== undefined) {
-  $ERROR('#1: ');
+  throw new Test262Error('#1: ');
 }
 
 var planet = "mars";
 
 //CHECK#2
 if (f() !== "mars") {
-  $ERROR('#2: ');
+  throw new Test262Error('#2: ');
 }
 
 //CHECK#3
 try {
   g();
-  $ERROR('#3: ');
+  throw new Test262Error('#3: ');
 } catch (e) {
   if (!(e instanceof ReferenceError))
-    $ERROR('#3.1: ');
+    throw new Test262Error('#3.1: ');
 }
 
 this.color = "red";
 
 //CHECK#4
 if (g() !== "red") {
-  $ERROR('#4: ');
+  throw new Test262Error('#4: ');
 }

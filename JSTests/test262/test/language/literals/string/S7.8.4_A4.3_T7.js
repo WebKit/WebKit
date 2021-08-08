@@ -9,25 +9,25 @@ description: "EscapeCharacter :: SingleEscapeCharacter :: one of b f n r t v"
 
 //CHECK#bfnrtv
 if ("b" === "\b") {
-  $ERROR('#b');
+  throw new Test262Error('#b');
 }
 
 if ("f" === "\f") {
-  $ERROR('#f');
+  throw new Test262Error('#f');
 }
 
 if ("n" === "\n") {
-  $ERROR('#n');
+  throw new Test262Error('#n');
 }
 
 if ("r" === "\r") {
-  $ERROR('#r');
+  throw new Test262Error('#r');
 }
 
 if ("t" === "\t") {
-  $ERROR('#t');
+  throw new Test262Error('#t');
 }
 
 if ("v" === "\v") {
-  $ERROR('#v');
+  throw new Test262Error('#v');
 }

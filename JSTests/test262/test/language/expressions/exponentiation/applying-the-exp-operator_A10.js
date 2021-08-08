@@ -18,6 +18,6 @@ bases[5] = -0.999999999999999;
 
 for (var i = 0; i < bases.length; i++) {
   if (Math.pow(bases[i], exponent) !== +Infinity) {
-    $ERROR("(" + bases[i] + " ** " + exponent + ") !== +Infinity");
+    throw new Test262Error("(" + bases[i] + " ** " + exponent + ") !== +Infinity");
   }
 }

@@ -10,7 +10,7 @@ description: Declaring a function within an "if" Expression
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof f !== 'undefined') {
-	$ERROR('#1: typeof f === \'undefined\'. Actual:  typeof f ==='+ typeof f  );
+	throw new Test262Error('#1: typeof f === \'undefined\'. Actual:  typeof f ==='+ typeof f  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ if (function f(arg){
 	else
 	   return f(arg-1)*arg;
 }(3)!==6) {
-	$ERROR('#2: FunctionDeclaration cannot be localed inside an Expression');
+	throw new Test262Error('#2: FunctionDeclaration cannot be localed inside an Expression');
 };
 //
 //////////////////////////////////////////////////////////////////////////////

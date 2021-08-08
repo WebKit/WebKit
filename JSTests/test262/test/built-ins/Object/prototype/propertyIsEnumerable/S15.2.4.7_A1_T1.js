@@ -13,7 +13,7 @@ description: >
 
 //CHECK#1
 if (typeof Object.prototype.propertyIsEnumerable !== "function") {
-  $ERROR('#1: propertyIsEnumerable method is defined');
+  throw new Test262Error('#1: propertyIsEnumerable method is defined');
 }
 
 var proto = {
@@ -30,16 +30,16 @@ var seagull = new AVISFACTORY("seagull");
 
 //CHECK#2
 if (typeof seagull.propertyIsEnumerable !== "function") {
-  $ERROR('#2: propertyIsEnumerable method is accessed');
+  throw new Test262Error('#2: propertyIsEnumerable method is accessed');
 }
 
 //CHECK#3
 if (!(seagull.propertyIsEnumerable("name"))) {
-  $ERROR('#3: propertyIsEnumerable method works properly');
+  throw new Test262Error('#3: propertyIsEnumerable method works properly');
 }
 
 //CHECK#4
 if (seagull.propertyIsEnumerable("rootprop")) {
-  $ERROR('#4: propertyIsEnumerable method does not consider objects in the prototype chain');
+  throw new Test262Error('#4: propertyIsEnumerable method does not consider objects in the prototype chain');
 }
 //

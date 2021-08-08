@@ -1,3 +1,15 @@
+2021-08-02  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html is a flaky failure since implementing BlobChannel
+        https://bugs.webkit.org/show_bug.cgi?id=228168
+        <rdar://problem/80922502>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebBroadcastChannelRegistry::postMessage):
+        * WebCoreSupport/WebBroadcastChannelRegistry.h:
+
 2021-07-19  Sihui Liu  <sihui_liu@apple.com>
 
         Implement IDBTransaction.commit()

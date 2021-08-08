@@ -13,5 +13,5 @@ if (x === 1)
 else
   Date.prototype.getUTCHours = 1;
 if (Date.prototype.getUTCHours === x) {
-  $ERROR('#1: The Date.prototype.getUTCHours has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getUTCHours has not the attribute ReadOnly');
 }

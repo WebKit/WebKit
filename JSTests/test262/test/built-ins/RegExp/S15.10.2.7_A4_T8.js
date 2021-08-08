@@ -15,5 +15,5 @@ var __executed = /["'][^"']*["']/.test('alice cries out: don\'t');
 
 //CHECK#1
 if (__executed) {
-	$ERROR('#1: /["\'][^"\']*["\']/.test(\'alice cries out: don\'t\') === false');
+	throw new Test262Error('#1: /["\'][^"\']*["\']/.test(\'alice cries out: don\'t\') === false');
 }

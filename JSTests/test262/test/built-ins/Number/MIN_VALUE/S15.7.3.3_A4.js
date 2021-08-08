@@ -10,10 +10,10 @@ description: Checking if enumerating Number.MIN_VALUE fails
 //CHECK#1
 for (var x in Number) {
   if (x === "MIN_VALUE") {
-    $ERROR('#1: Number.MIN_VALUE has the attribute DontEnum');
+    throw new Test262Error('#1: Number.MIN_VALUE has the attribute DontEnum');
   }
 }
 
 if (Number.propertyIsEnumerable('MIN_VALUE')) {
-  $ERROR('#2: Number.MIN_VALUE has the attribute DontEnum');
+  throw new Test262Error('#2: Number.MIN_VALUE has the attribute DontEnum');
 }

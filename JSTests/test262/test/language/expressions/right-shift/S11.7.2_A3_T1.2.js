@@ -9,20 +9,20 @@ description: Type(x) and Type(y) vary between primitive number and Number object
 
 //CHECK#1
 if (1 >> 1 !== 0) {
-  $ERROR('#1: 1 >> 1 === 0. Actual: ' + (1 >> 1));
+  throw new Test262Error('#1: 1 >> 1 === 0. Actual: ' + (1 >> 1));
 }
 
 //CHECK#2
 if (new Number(1) >> 1 !== 0) {
-  $ERROR('#2: new Number(1) >> 1 === 0. Actual: ' + (new Number(1) >> 1));
+  throw new Test262Error('#2: new Number(1) >> 1 === 0. Actual: ' + (new Number(1) >> 1));
 }
 
 //CHECK#3
 if (1 >> new Number(1) !== 0) {
-  $ERROR('#3: 1 >> new Number(1) === 0. Actual: ' + (1 >> new Number(1)));
+  throw new Test262Error('#3: 1 >> new Number(1) === 0. Actual: ' + (1 >> new Number(1)));
 }
 
 //CHECK#4
 if (new Number(1) >> new Number(1) !== 0) {
-  $ERROR('#4: new Number(1) >> new Number(1) === 0. Actual: ' + (new Number(1) >> new Number(1)));
+  throw new Test262Error('#4: new Number(1) >> new Number(1) === 0. Actual: ' + (new Number(1) >> new Number(1)));
 }

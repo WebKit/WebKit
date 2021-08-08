@@ -11,9 +11,9 @@ var __FACTORY = RegExp.prototype.exec;
 
 try {
   var __instance = new __FACTORY;
-  $ERROR('#1.1: __FACTORY = RegExp.prototype.exec throw TypeError. Actual: ' + (__instance));
+  throw new Test262Error('#1.1: __FACTORY = RegExp.prototype.exec throw TypeError. Actual: ' + (__instance));
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: __FACTORY = RegExp.prototype.exec throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: __FACTORY = RegExp.prototype.exec throw TypeError. Actual: ' + (e));
   }
 }

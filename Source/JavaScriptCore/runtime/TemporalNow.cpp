@@ -29,7 +29,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalNow);
 
-const ClassInfo TemporalNow::s_info = { "Temporal.now", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalNow) };
+const ClassInfo TemporalNow::s_info = { "Temporal.Now", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalNow) };
 
 TemporalNow::TemporalNow(VM& vm, Structure* structure)
     : Base(vm, structure)

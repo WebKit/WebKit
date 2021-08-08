@@ -10,5 +10,5 @@ description: If ToBoolean(x) is false and GetBase(y) is null, return z
 //CHECK#1
 var z = new Object();
 if ((false ? y : z) !== z) {
-  $ERROR('#1: var z = new Object(); (false ? y : z) === z');
+  throw new Test262Error('#1: var z = new Object(); (false ? y : z) === z');
 }

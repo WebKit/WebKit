@@ -11,7 +11,7 @@ description: Checking Object object and Function object cases
 function MyFunction() {}
 var MyObject = new MyFunction();
 if (delete MyObject.prop !== true) {
-  $ERROR(
+  throw new Test262Error(
     '#1: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject.prop === true'
   );
 }
@@ -19,5 +19,5 @@ if (delete MyObject.prop !== true) {
 //CHECK#2
 var MyObject = new Object();
 if (delete MyObject.prop !== true) {
-  $ERROR('#2: var MyObject = new Object(); delete MyObject.prop === true');
+  throw new Test262Error('#2: var MyObject = new Object(); delete MyObject.prop === true');
 }

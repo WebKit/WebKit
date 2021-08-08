@@ -9,10 +9,10 @@ description: Checking Number prototype itself
 
 //CHECK#1
 if (Number.prototype.toFixed.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The length property of the toFixed method is 1');
+  throw new Test262Error('#1: The length property of the toFixed method is 1');
 }
 
 //CHECK#2
 if (Number.prototype.toFixed.length !== 1) {
-  $ERROR('#2: The length property of the toFixed method is 1');
+  throw new Test262Error('#2: The length property of the toFixed method is 1');
 }

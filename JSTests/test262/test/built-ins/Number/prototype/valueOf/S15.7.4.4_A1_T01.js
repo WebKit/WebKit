@@ -9,27 +9,27 @@ description: Call without argument
 
 //CHECK#1
 if (Number.prototype.valueOf() !== 0) {
-  $ERROR('#1: Number.prototype.valueOf() === 0');
+  throw new Test262Error('#1: Number.prototype.valueOf() === 0');
 }
 
 //CHECK#2
 if ((new Number()).valueOf() !== 0) {
-  $ERROR('#2: (new Number()).valueOf() === 0');
+  throw new Test262Error('#2: (new Number()).valueOf() === 0');
 }
 
 //CHECK#3
 if ((new Number(0)).valueOf() !== 0) {
-  $ERROR('#3: (new Number(0)).valueOf() === 0');
+  throw new Test262Error('#3: (new Number(0)).valueOf() === 0');
 }
 
 //CHECK#4
 if ((new Number(-1)).valueOf() !== -1) {
-  $ERROR('#4: (new Number(-1)).valueOf() === -1');
+  throw new Test262Error('#4: (new Number(-1)).valueOf() === -1');
 }
 
 //CHECK#5
 if ((new Number(1)).valueOf() !== 1) {
-  $ERROR('#5: (new Number(1)).valueOf() === 1');
+  throw new Test262Error('#5: (new Number(1)).valueOf() === 1');
 }
 
 //CHECK#6
@@ -41,10 +41,10 @@ assert.sameValue(
 
 //CHECK#7
 if ((new Number(Number.POSITIVE_INFINITY)).valueOf() !== Number.POSITIVE_INFINITY) {
-  $ERROR('#7: (new Number(Number.POSITIVE_INFINITY)).valueOf() === Infinity');
+  throw new Test262Error('#7: (new Number(Number.POSITIVE_INFINITY)).valueOf() === Infinity');
 }
 
 //CHECK#8
 if ((new Number(Number.NEGATIVE_INFINITY)).valueOf() !== Number.NEGATIVE_INFINITY) {
-  $ERROR('#8: (new Number(Number.NEGATIVE_INFINITY)).valueOf() === -Infinity');
+  throw new Test262Error('#8: (new Number(Number.NEGATIVE_INFINITY)).valueOf() === -Infinity');
 }

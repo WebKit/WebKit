@@ -18,7 +18,7 @@ var __instance = new __FACTORY(void 0);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.slice(0, 100) !== "undefined") {
-  $ERROR('#1: __instance.slice(0,100) === "undefined". Actual: ' + __instance.slice(0, 100));
+  throw new Test262Error('#1: __instance.slice(0,100) === "undefined". Actual: ' + __instance.slice(0, 100));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -8361,6 +8361,8 @@
 				A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */,
 				A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */,
 				1A698F171E4910220064E881 /* AuxiliaryProcessCocoa.mm */,
+				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
+				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
 				37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */,
 				37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */,
 				1C739E872347BD0F00C621EC /* CoreTextHelpers.h */,
@@ -10534,8 +10536,6 @@
 			children = (
 				A15799AC2584433100528236 /* MediaFormatReader */,
 				9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */,
-				CE11AD511CBC482F00681EE5 /* CodeSigning.h */,
-				CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */,
 				1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */,
 				2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,

@@ -13,12 +13,12 @@ var n_obj = new Object(func);
 
 //CHECK#1
 if (n_obj !== func) {
-  $ERROR('#1: When the Object constructor is called and if the value is an Object simply value returns');
+  throw new Test262Error('#1: When the Object constructor is called and if the value is an Object simply value returns');
 }
 
 //CHECK#2
 if (n_obj() !== 1) {
-  $ERROR('When the Object constructor is called and if the value is an Object simply value returns');
+  throw new Test262Error('When the Object constructor is called and if the value is an Object simply value returns');
 }
 
 function func() {

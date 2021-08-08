@@ -17,25 +17,25 @@ var arr = x.concat([], [, ]);
 //CHECK#0
 arr.getClass = Object.prototype.toString;
 if (arr.getClass() !== "[object " + "Array" + "]") {
-  $ERROR('#0: var x = [,1]; var arr = x.concat([], [,]); arr is Array object. Actual: ' + (arr.getClass()));
+  throw new Test262Error('#0: var x = [,1]; var arr = x.concat([], [,]); arr is Array object. Actual: ' + (arr.getClass()));
 }
 
 //CHECK#1
 if (arr[0] !== undefined) {
-  $ERROR('#1: var x = [,1]; var arr = x.concat([], [,]); arr[0] === undefined. Actual: ' + (arr[0]));
+  throw new Test262Error('#1: var x = [,1]; var arr = x.concat([], [,]); arr[0] === undefined. Actual: ' + (arr[0]));
 }
 
 //CHECK#2
 if (arr[1] !== 1) {
-  $ERROR('#2: var x = [,1]; var arr = x.concat([], [,]); arr[1] === 1. Actual: ' + (arr[1]));
+  throw new Test262Error('#2: var x = [,1]; var arr = x.concat([], [,]); arr[1] === 1. Actual: ' + (arr[1]));
 }
 
 //CHECK#2
 if (arr[2] !== undefined) {
-  $ERROR('#2: var x = [,1]; var arr = x.concat([], [,]); arr[2] === undefined. Actual: ' + (arr[2]));
+  throw new Test262Error('#2: var x = [,1]; var arr = x.concat([], [,]); arr[2] === undefined. Actual: ' + (arr[2]));
 }
 
 //CHECK#4
 if (arr.length !== 3) {
-  $ERROR('#4: var x = [,1]; var arr = x.concat([], [,]); arr.length === 3. Actual: ' + (arr.length));
+  throw new Test262Error('#4: var x = [,1]; var arr = x.concat([], [,]); arr.length === 3. Actual: ' + (arr.length));
 }

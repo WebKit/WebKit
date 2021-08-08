@@ -460,68 +460,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdriver/Navigator+WebDriver.idl \
-    $(WebCore)/Modules/webgpu/GPUCanvasContext.idl \
-    $(WebCore)/Modules/webgpu/GPUColor.idl \
-    $(WebCore)/Modules/webgpu/GPUColorStateDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUColorWrite.idl \
-    $(WebCore)/Modules/webgpu/GPUBindGroupLayoutBinding.idl \
-    $(WebCore)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUBlendDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUBufferDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUBufferUsage.idl \
-    $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
-    $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUErrorFilter.idl \
-    $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
-    $(WebCore)/Modules/webgpu/GPULoadOp.idl \
-    $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
-    $(WebCore)/Modules/webgpu/GPUOutOfMemoryError.idl \
-    $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
-    $(WebCore)/Modules/webgpu/GPUSamplerDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUShaderStage.idl \
-    $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
-    $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
-    $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
-    $(WebCore)/Modules/webgpu/GPUUncapturedErrorEvent.idl \
-    $(WebCore)/Modules/webgpu/GPUValidationError.idl \
-    $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUVertexBufferDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
-    $(WebCore)/Modules/webgpu/Navigator+GPU.idl \
-    $(WebCore)/Modules/webgpu/WebGPU.idl \
-    $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBindGroup.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBindGroupBinding.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBindGroupDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBindGroupLayout.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
-    $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
-    $(WebCore)/Modules/webgpu/WebGPUCommandEncoder.idl \
-    $(WebCore)/Modules/webgpu/WebGPUComputePassEncoder.idl \
-    $(WebCore)/Modules/webgpu/WebGPUComputePipeline.idl \
-    $(WebCore)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
-    $(WebCore)/Modules/webgpu/WebGPUDeviceErrorScopes.idl \
-    $(WebCore)/Modules/webgpu/WebGPUDeviceEventHandler.idl \
-    $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
-    $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
-    $(WebCore)/Modules/webgpu/WebGPUPipelineLayout.idl \
-    $(WebCore)/Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUProgrammableStageDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUProgrammablePassEncoder.idl \
-    $(WebCore)/Modules/webgpu/WebGPURenderPassDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPURenderPassEncoder.idl \
-    $(WebCore)/Modules/webgpu/WebGPURenderPipeline.idl \
-    $(WebCore)/Modules/webgpu/WebGPURenderPipelineDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUSampler.idl \
-    $(WebCore)/Modules/webgpu/WebGPUShaderModule.idl \
-    $(WebCore)/Modules/webgpu/WebGPUShaderModuleDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
-    $(WebCore)/Modules/webgpu/WebGPUTexture.idl \
-    $(WebCore)/Modules/webgpu/WebGPUTextureView.idl \
-    $(WebCore)/Modules/webgpu/WorkerNavigator+GPU.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/Modules/webxr/Navigator+WebXR.idl \
@@ -1843,18 +1781,6 @@ all : $(GENERATE_SETTINGS)
 
 $(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/Scripts/GenerateSettings.rb
 	$(RUBY) $(WebCore)/Scripts/GenerateSettings.rb --base ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_BUILD_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --additionalSettings $(WebCore)/page/Settings.yaml --template $<
-
-# --------
-
-# WHLSL Standard Library
-
-all : WHLSLStandardLibrary.h WHLSLStandardLibraryFunctionMap.cpp
-
-WHLSLStandardLibrary.h : $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
-	bash -c "$(PERL) $< WHLSLStandardLibrary <(gzip -cn $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt) $@"
-
-WHLSLStandardLibraryFunctionMap.cpp : $(WebCore)/Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
-	$(PYTHON) $< $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt $@
 
 # --------
 

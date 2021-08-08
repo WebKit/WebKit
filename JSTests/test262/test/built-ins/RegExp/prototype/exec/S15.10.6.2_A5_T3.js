@@ -16,12 +16,12 @@ var __executed = __re.exec("aacd22 ");
 
 //CHECK#1
 if (__executed[0] !== "cd2") {
-	$ERROR('#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __executed[0] === "cd2"');
+	throw new Test262Error('#1: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __executed[0] === "cd2"');
 }
 
 //CHECK#2
 if (__re.lastIndex !== 5) {
-	$ERROR('#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex === 5. Actual: ' + (__re.lastIndex));
+	throw new Test262Error('#2: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex === 5. Actual: ' + (__re.lastIndex));
 }
 
 __re.lastIndex=-100;
@@ -29,10 +29,10 @@ __executed = __re.exec("aacd22 ");
 
 //CHECK#3
 if (__executed[0] !== "cd2") {
-	$ERROR('#3: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex=-100; __executed = __re.exec("aacd22 "); __executed[0] === "cd2"');
+	throw new Test262Error('#3: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex=-100; __executed = __re.exec("aacd22 "); __executed[0] === "cd2"');
 }
 
 //CHECK#4
 if (__re.lastIndex !== 5) {
-	$ERROR('#4: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex=-100; __executed = __re.exec("aacd22 "); __re.lastIndex === 5. Actual: ' + (__re.lastIndex));
+	throw new Test262Error('#4: __re = /(?:ab|cd)\\d?/g; __re.lastIndex=-1; __executed = __re.exec("aacd22 "); __re.lastIndex=-100; __executed = __re.exec("aacd22 "); __re.lastIndex === 5. Actual: ' + (__re.lastIndex));
 }

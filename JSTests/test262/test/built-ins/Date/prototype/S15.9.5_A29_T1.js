@@ -8,5 +8,5 @@ description: The Date.prototype has the property "setUTCMilliseconds"
 ---*/
 
 if (Date.prototype.hasOwnProperty("setUTCMilliseconds") !== true) {
-  $ERROR('#1: The Date.prototype has the property "setUTCMilliseconds"');
+  throw new Test262Error('#1: The Date.prototype has the property "setUTCMilliseconds"');
 }

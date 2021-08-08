@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToInteger(undefined) evaluates to 0 charCodeAt() evaluates to charCodeAt(0)
 if (new String("lego").charCodeAt(x) !== 0x6C) {
-  $ERROR('#1: var x; new String("lego").charCodeAt(x) === 0x6C. Actual: new String("lego").charCodeAt(x) ===' + new String("lego").charCodeAt(x));
+  throw new Test262Error('#1: var x; new String("lego").charCodeAt(x) === 0x6C. Actual: new String("lego").charCodeAt(x) ===' + new String("lego").charCodeAt(x));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

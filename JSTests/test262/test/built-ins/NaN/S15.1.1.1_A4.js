@@ -10,6 +10,6 @@ description: Use for-in statement
 // CHECK#1
 for (var prop in this) {
   if (prop === "NaN") {
-    $ERROR('#1: The NaN is DontEnum');
+    throw new Test262Error('#1: The NaN is DontEnum');
   }
 }

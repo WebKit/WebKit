@@ -27,7 +27,7 @@ Object.defineProperty(promise, 'then', {
 });
 
 Promise.allSettled([promise]).then(function() {
-  $ERROR('The promise should be rejected');
+  throw new Test262Error('The promise should be rejected');
 }, function(reason) {
   assert.sameValue(reason, error);
 }).then($DONE, $DONE);

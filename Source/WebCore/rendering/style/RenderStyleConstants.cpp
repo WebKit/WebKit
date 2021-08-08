@@ -802,6 +802,7 @@ TextStream& operator<<(TextStream& ts, Overflow overflow)
     case Overflow::Auto: ts << "auto"; break;
     case Overflow::PagedX: ts << "paged-x"; break;
     case Overflow::PagedY: ts << "paged-y"; break;
+    case Overflow::Clip: ts << "clip"; break;
     }
     return ts;
 }

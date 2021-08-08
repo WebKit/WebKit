@@ -17,22 +17,22 @@ assert.sameValue(x["4294967296"], 1, "x['4294967296'] !== 1");
 var y = [];
 y[4294967297] = 1;
 if (y[1] !== undefined) {
-  $ERROR('#3: y = []; y[4294967297] = 1; y[1] === undefined. Actual: ' + (y[1]));
+  throw new Test262Error('#3: y = []; y[4294967297] = 1; y[1] === undefined. Actual: ' + (y[1]));
 }
 
 //CHECK#4
 if (y["4294967297"] !== 1) {
-  $ERROR('#4: y = []; y[4294967297] = 1; y["4294967297"] === 1. Actual: ' + (y["4294967297"]));
+  throw new Test262Error('#4: y = []; y[4294967297] = 1; y["4294967297"] === 1. Actual: ' + (y["4294967297"]));
 }
 
 //CHECK#5
 var z = [];
 z[1.1] = 1;
 if (z[1] !== undefined) {
-  $ERROR('#5: z = []; z[1.1] = 1; z[1] === undefined. Actual: ' + (z[1]));
+  throw new Test262Error('#5: z = []; z[1.1] = 1; z[1] === undefined. Actual: ' + (z[1]));
 }
 
 //CHECK#6
 if (z["1.1"] !== 1) {
-  $ERROR('#6: z = []; z[1.1] = 1; z["1.1"] === 1. Actual: ' + (z["1.1"]));
+  throw new Test262Error('#6: z = []; z[1.1] = 1; z["1.1"] === 1. Actual: ' + (z["1.1"]));
 }

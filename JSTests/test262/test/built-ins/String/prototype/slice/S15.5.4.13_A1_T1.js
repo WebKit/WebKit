@@ -14,7 +14,7 @@ __instance.slice = String.prototype.slice;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.slice(false, true) !== "t") {
-  $ERROR('#1: __instance = new Object(true); __instance.slice = String.prototype.slice;  __instance.slice(false, true) === "t". Actual: ' + __instance.slice(false, true));
+  throw new Test262Error('#1: __instance = new Object(true); __instance.slice = String.prototype.slice;  __instance.slice(false, true) === "t". Actual: ' + __instance.slice(false, true));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

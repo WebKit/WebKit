@@ -11,5 +11,5 @@ description: Insert real CARRIAGE RETURN between tokens of var x=1
 varx=1;
 
 if (x !== 1) {
-  $ERROR('#1: var\\nx\\n=\\n1\\n; x === 1. Actual: ' + (x));
+  throw new Test262Error('#1: var\\nx\\n=\\n1\\n; x === 1. Actual: ' + (x));
 }

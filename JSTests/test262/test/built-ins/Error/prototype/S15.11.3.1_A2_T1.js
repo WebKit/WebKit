@@ -10,7 +10,7 @@ description: Checking if enumerating the Error.prototype property fails
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#0
 if (!(Error.hasOwnProperty('prototype'))) {
-  $ERROR('#0: Error.hasOwnProperty(\'prototype\') return true. Actual: ' + Error.hasOwnProperty('prototype'));
+  throw new Test262Error('#0: Error.hasOwnProperty(\'prototype\') return true. Actual: ' + Error.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ if (!(Error.hasOwnProperty('prototype'))) {
 //////////////////////////////////////////////////////////////////////////////
 // CHECK#1
 if (Error.propertyIsEnumerable('prototype')) {
-  $ERROR('#1: Error.propertyIsEnumerable(\'prototype\') return false. Actual: ' + Error.propertyIsEnumerable('prototype'));
+  throw new Test262Error('#1: Error.propertyIsEnumerable(\'prototype\') return false. Actual: ' + Error.propertyIsEnumerable('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ for (var p in Error) {
 }
 
 if (cout !== 0) {
-  $ERROR('#2: cout === 0. Actual: ' + cout);
+  throw new Test262Error('#2: cout === 0. Actual: ' + cout);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

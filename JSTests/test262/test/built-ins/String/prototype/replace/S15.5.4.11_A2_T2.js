@@ -15,7 +15,7 @@ var __re = /sh/g;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str.replace(__re, "$$" + 'sch') !== 'She sells sea$schells by the sea$schore.') {
-  $ERROR('#1: var __str = \'She sells seashells by the seashore.\'; var __re = /sh/g; __str.replace(__re,"$$" + \'sch\')===\'She sells sea$schells by the sea$schore.\'. Actual: ' + __str.replace(__re, "$$" + 'sch'));
+  throw new Test262Error('#1: var __str = \'She sells seashells by the seashore.\'; var __re = /sh/g; __str.replace(__re,"$$" + \'sch\')===\'She sells sea$schells by the sea$schore.\'. Actual: ' + __str.replace(__re, "$$" + 'sch'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

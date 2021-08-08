@@ -21,6 +21,6 @@ k = 1;
 for (i = 0; i < 32; i++) {
   k = k * 2;
   if (x[k - 2] !== k) {
-    $ERROR('#' + (k - 2) + ': ');
+    throw new Test262Error('#' + (k - 2) + ': ');
   }
 }

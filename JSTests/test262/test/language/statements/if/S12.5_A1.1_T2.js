@@ -13,59 +13,59 @@ var c=0;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if(0)
-	$ERROR('#1.1: 0 in expression is evaluated to false ');
+	throw new Test262Error('#1.1: 0 in expression is evaluated to false ');
 else
   c++;
-if (c!=1) $ERROR('#1.2: else branch don`t execute');
+if (c!=1) throw new Test262Error('#1.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if(false)
-    $ERROR('#2.1: false in expression is evaluated to false ');
+    throw new Test262Error('#2.1: false in expression is evaluated to false ');
 else
   c++;
-if (c!=2) $ERROR('#2.2: else branch don`t execute');
+if (c!=2) throw new Test262Error('#2.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if(null)
-	$ERROR('#3.1: null in expression is evaluated to false ');
+	throw new Test262Error('#3.1: null in expression is evaluated to false ');
 else
   c++;
-if (c!=3) $ERROR('#3.2: else branch don`t execute');
+if (c!=3) throw new Test262Error('#3.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#4
 if(undefined)
-	$ERROR('#4.1: undefined in expression is evaluated to false ');
+	throw new Test262Error('#4.1: undefined in expression is evaluated to false ');
 else
   c++;
-if (c!=4) $ERROR('#4.2: else branch don`t execute');
+if (c!=4) throw new Test262Error('#4.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#5
 if("")
-    $ERROR('#5.1: empty string in expression is evaluated to false ');
+    throw new Test262Error('#5.1: empty string in expression is evaluated to false ');
 else
   c++;
-if (c!=5) $ERROR('#5.2: else branch don`t execute');
+if (c!=5) throw new Test262Error('#5.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
 if(NaN)
-    $ERROR('#6.1: NaN in expression is evaluated to false ');
+    throw new Test262Error('#6.1: NaN in expression is evaluated to false ');
 else
   c++;
-if (c!=6) $ERROR('#6.2: else branch don`t execute');
+if (c!=6) throw new Test262Error('#6.2: else branch don`t execute');
 //
 //////////////////////////////////////////////////////////////////////////////

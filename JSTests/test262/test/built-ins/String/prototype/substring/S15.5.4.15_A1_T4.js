@@ -14,7 +14,7 @@ description: >
 if (function() {
     return "gnulluna"
   }().substring(null, -3) !== "") {
-  $ERROR('#1: function(){return "gnulluna"}().substring(null, -3) === "". Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "gnulluna"}().substring(null, -3) === "". Actual: ' + function() {
     return "gnulluna"
   }().substring(null, -3));
 }

@@ -12,7 +12,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (RegExp.prototype.toString.hasOwnProperty('length') !== true) {
-	$ERROR('#1: RegExp.prototype.toString.hasOwnProperty(\'length\') === true');
+	throw new Test262Error('#1: RegExp.prototype.toString.hasOwnProperty(\'length\') === true');
 }
 
 var __obj = RegExp.prototype.toString.length;
@@ -21,5 +21,5 @@ verifyNotWritable(RegExp.prototype.toString, "length", null, function(){return "
 
 //CHECK#2
 if (RegExp.prototype.toString.length !== __obj) {
-	$ERROR('#2: __obj = RegExp.prototype.toString.length; RegExp.prototype.toString.length = function(){return "shifted";}; RegExp.prototype.toString.length === __obj. Actual: ' + (RegExp.prototype.toString.length));
+	throw new Test262Error('#2: __obj = RegExp.prototype.toString.length; RegExp.prototype.toString.length = function(){return "shifted";}; RegExp.prototype.toString.length === __obj. Actual: ' + (RegExp.prototype.toString.length));
 }

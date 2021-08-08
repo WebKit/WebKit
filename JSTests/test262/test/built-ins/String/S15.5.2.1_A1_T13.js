@@ -28,10 +28,10 @@ __obj.valueOf = function() {
 //CHECK#1
 try {
   var __str = new String(__obj);
-  $ERROR('#1: __obj.valueOf=function(){throw "invalueof"}; __str = new String(__obj) lead throwing exception');
+  throw new Test262Error('#1: __obj.valueOf=function(){throw "invalueof"}; __str = new String(__obj) lead throwing exception');
 } catch (e) {
   if (e !== "invalueof") {
-    $ERROR('#1.1: e==="invalueof". Actual: e===' + e);
+    throw new Test262Error('#1.1: e==="invalueof". Actual: e===' + e);
   }
 }
 //

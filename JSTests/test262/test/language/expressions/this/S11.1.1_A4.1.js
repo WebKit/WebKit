@@ -12,11 +12,11 @@ description: Creating function with new Function() constructor
 //CHECK#1
 var MyFunction = new Function("return this");
 if (MyFunction() !== this) {
-  $ERROR('#1: var MyFunction = new Function("return this"); MyFunction() === this. Actual: ' + (MyFunction()));
+  throw new Test262Error('#1: var MyFunction = new Function("return this"); MyFunction() === this. Actual: ' + (MyFunction()));
 }
 
 //CHECK#2
 MyFunction = new Function("return eval(\'this\')");
 if (MyFunction() !== this) {
-  $ERROR('#2: var MyFunction = new Function("return eval(\'this\')"); MyFunction() === this. Actual: ' + (MyFunction()));
+  throw new Test262Error('#2: var MyFunction = new Function("return eval(\'this\')"); MyFunction() === this. Actual: ' + (MyFunction()));
 }

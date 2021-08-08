@@ -1,3 +1,55 @@
+2021-08-02  Devin Rousso  <drousso@apple.com>
+
+        [Live Text] SPI for machine readable codes is only available on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=228711
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/VisionKitCoreSPI.h:
+
+2021-07-29  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] `additionalShippingMethods` are not used if a `paymentMethodType` is provided
+        https://bugs.webkit.org/show_bug.cgi?id=228599
+        <rdar://problem/81190366>
+
+        Reviewed by Andy Estes.
+
+        r275169 made it so that `paymentMethodType` is no longer `required` so that `additionalShippingMethods`
+        can be specified without having to limit it to a specific payment method type. While this
+        works in theory, WebKit doesn't know about the user's selected payment method type until the
+        user actually selects a payment method, meaning that until then the `additionalShippingMethods`
+        are not used. Unfortunately (until now) `PKPaymentRequestPaymentMethodUpdate` did not
+        support providing a `NSArray<PKShippingMethod *> *`, so there was no way to update the list
+        of shipping methods when the user changed their selected payment method, meaning that WebKit
+        would have to wait/rely on the user to change their shipping address _after_ selecting a
+        payment method in order for `additionalShippingMethods` to take effect.
+
+        This also fixes an issue with WebKit's implementation of the W3C Payment Request API by
+        allowing any generic (i.e. things not specific to Apple Pay) `shippingOptions` provided in
+        `PaymentDetailsUpdate` to actually be used and update the Apple Pay sheet accordingly.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+         - add the new `shippingMethods` property on `PKPaymentRequestUpdate`
+         - add the existing `errors` property on `PKPaymentRequestPaymentMethodUpdate`
+
+2021-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        GetIdentifierStringForPreferredVoiceInListWithLocale() is deprecated in Monterey
+        <https://webkit.org/b/228066>
+        <rdar://problem/80577312>
+
+        Patch by David Kilzer.
+
+        Reviewed by David Kilzer.
+
+        * pal/spi/mac/SpeechSynthesisSPI.h:
+        * pal/spi/mac/SpeechSynthesisSPI.h:
+        (CopyIdentifierStringForPreferredVoiceInListWithLocale): Add.
+        - Define replacement function for
+          GetIdentifierStringForPreferredVoiceInListWithLocale()
+          in Monterey.
+
 2021-07-28  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio] Add webm/opus container support

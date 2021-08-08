@@ -45,7 +45,7 @@ testWithTypedArrayConstructors(function(TA) {
   var expected;
   try {
     ab.resize(BPE * 2);
-    expected = "false,false,false,false,falsex";
+    expected = "false,false,false,false,false";
   } catch (_) {
     expected = "true,true,false,false,false";
   }

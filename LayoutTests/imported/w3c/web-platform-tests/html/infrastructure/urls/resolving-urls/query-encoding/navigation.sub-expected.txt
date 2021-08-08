@@ -1,7 +1,7 @@
 
 PASS follow hyperlink <a href>
 PASS follow hyperlink <area href>
-FAIL don't follow hyperlink <link href> assert_equals: The <a> navigation should occur instead of the <link> navigation. expected "/html/infrastructure/urls/resolving-urls/query-encoding/resources/blank.py" but got "/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py"
+PASS don't follow hyperlink <link href>
 PASS hyperlink auditing <a ping>
 PASS hyperlink auditing <area ping>
 PASS meta refresh

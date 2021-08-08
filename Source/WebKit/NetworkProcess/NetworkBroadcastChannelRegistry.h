@@ -47,7 +47,7 @@ public:
 
     void registerChannel(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier);
     void unregisterChannel(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier);
-    void postMessage(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&&);
+    void postMessage(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
 private:
     struct GlobalBroadcastChannelIdentifier {

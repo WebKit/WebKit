@@ -13,20 +13,20 @@ description: >
 
 //CHECK#1
 if (Number.NEGATIVE_INFINITY * Number.NEGATIVE_INFINITY !== Number.POSITIVE_INFINITY) {
-  $ERROR('#1: -Infinity * -Infinity === Infinity. Actual: ' + (-Infinity * -Infinity));
+  throw new Test262Error('#1: -Infinity * -Infinity === Infinity. Actual: ' + (-Infinity * -Infinity));
 }
 
 //CHECK#2
 if (Number.POSITIVE_INFINITY * Number.POSITIVE_INFINITY !== Number.POSITIVE_INFINITY) {
-  $ERROR('#2: Infinity * Infinity === Infinity. Actual: ' + (Infinity * Infinity));
+  throw new Test262Error('#2: Infinity * Infinity === Infinity. Actual: ' + (Infinity * Infinity));
 }
 
 //CHECK#3
 if (Number.NEGATIVE_INFINITY * Number.POSITIVE_INFINITY !== Number.NEGATIVE_INFINITY) {
-  $ERROR('#3: -Infinity * Infinity === -Infinity. Actual: ' + (-Infinity * Infinity));
+  throw new Test262Error('#3: -Infinity * Infinity === -Infinity. Actual: ' + (-Infinity * Infinity));
 }
 
 //CHECK#4
 if (Number.POSITIVE_INFINITY * Number.NEGATIVE_INFINITY !== Number.NEGATIVE_INFINITY) {
-  $ERROR('#4: Infinity * -Infinity === -Infinity. Actual: ' + (Infinity * -Infinity));
+  throw new Test262Error('#4: Infinity * -Infinity === -Infinity. Actual: ' + (Infinity * -Infinity));
 }

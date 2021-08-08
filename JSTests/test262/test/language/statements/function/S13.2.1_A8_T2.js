@@ -22,9 +22,9 @@ var __func = function (message){
 
 try{
     var x=__func(CATCH_ME_IF_YOU_CAN)
-    $ERROR('#0: var x=__func(CATCH_ME_IF_YOU_CAN) lead to throwing exception');
+    throw new Test262Error('#0: var x=__func(CATCH_ME_IF_YOU_CAN) lead to throwing exception');
 } catch(e){
     if (!e) {
-    	$ERROR('#1: Exception === true. Actual: exception ==='+e);
+    	throw new Test262Error('#1: Exception === true. Actual: exception ==='+e);
     }
 }

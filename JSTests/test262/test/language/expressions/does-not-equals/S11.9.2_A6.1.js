@@ -9,30 +9,30 @@ description: Checking all combinations
 
 //CHECK#1
 if ((undefined != undefined) !== false) {
-  $ERROR('#1: (undefined != undefined) === false');
+  throw new Test262Error('#1: (undefined != undefined) === false');
 }
 
 //CHECK#2
 if ((void 0 != undefined) !== false) {
-  $ERROR('#2: (void 0 != undefined) === false');
+  throw new Test262Error('#2: (void 0 != undefined) === false');
 }
 
 //CHECK#3
 if ((undefined != eval("var x")) !== false) {
-  $ERROR('#3: (undefined != eval("var x")) === false');
+  throw new Test262Error('#3: (undefined != eval("var x")) === false');
 }
 
 //CHECK#4
 if ((undefined != null) !== false) {
-  $ERROR('#4: (undefined != null) === false');
+  throw new Test262Error('#4: (undefined != null) === false');
 }
 
 //CHECK#5
 if ((null != void 0) !== false) {
-  $ERROR('#5: (null != void 0) === false');
+  throw new Test262Error('#5: (null != void 0) === false');
 }
 
 //CHECK#6
 if ((null != null) !== false) {
-  $ERROR('#6: (null != null) === false');
+  throw new Test262Error('#6: (null != null) === false');
 }

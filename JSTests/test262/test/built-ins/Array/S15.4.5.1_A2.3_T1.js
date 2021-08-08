@@ -13,11 +13,11 @@ description: length = 100, P in [100, 199]
 var x = Array(100);
 x[100] = 1;
 if (x.length !== 101) {
-  $ERROR('#1: x = Array(100); x[100] = 1; x.length === 101. Actual: ' + (x.length));
+  throw new Test262Error('#1: x = Array(100); x[100] = 1; x.length === 101. Actual: ' + (x.length));
 }
 
 //CHECK#2
 x[199] = 1;
 if (x.length !== 200) {
-  $ERROR('#2: x = Array(100); x[100] = 1; x[199] = 1; x.length === 100. Actual: ' + (x.length));
+  throw new Test262Error('#2: x = Array(100); x[100] = 1; x[199] = 1; x.length === 100. Actual: ' + (x.length));
 }

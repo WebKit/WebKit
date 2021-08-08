@@ -14,7 +14,7 @@ __instance.toLowerCase = String.prototype.toLowerCase;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.toLowerCase() !== "true") {
-  $ERROR('#1: __instance = new Object(true); __instance.toLowerCase = String.prototype.toLowerCase;  __instance.toLowerCase() === "true". Actual: ' + __instance.toLowerCase());
+  throw new Test262Error('#1: __instance = new Object(true); __instance.toLowerCase = String.prototype.toLowerCase;  __instance.toLowerCase() === "true". Actual: ' + __instance.toLowerCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -15,26 +15,26 @@ var x;
 x = true;
 x -= undefined;
 if (isNaN(x) !== true) {
-  $ERROR('#1: x = true; x -= undefined; x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#1: x = true; x -= undefined; x === Not-a-Number. Actual: ' + (x));
 }
 
 //CHECK#2
 x = undefined;
 x -= true;
 if (isNaN(x) !== true) {
-  $ERROR('#2: x = undefined; x -= true; x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#2: x = undefined; x -= true; x === Not-a-Number. Actual: ' + (x));
 }
 
 //CHECK#3
 x = new Boolean(true);
 x -= undefined;
 if (isNaN(x) !== true) {
-  $ERROR('#3: x = new Boolean(true); x -= undefined; x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#3: x = new Boolean(true); x -= undefined; x === Not-a-Number. Actual: ' + (x));
 }
 
 //CHECK#4
 x = undefined;
 x -= new Boolean(true);
 if (isNaN(x) !== true) {
-  $ERROR('#4: x = undefined; x -= new Boolean(true); x === Not-a-Number. Actual: ' + (x));
+  throw new Test262Error('#4: x = undefined; x -= new Boolean(true); x === Not-a-Number. Actual: ' + (x));
 }

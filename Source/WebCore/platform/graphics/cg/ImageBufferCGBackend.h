@@ -59,6 +59,8 @@ protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     void setupContext() const;
 
+    virtual void prepareToDrawIntoContext(GraphicsContext&);
+
     virtual RetainPtr<CGImageRef> copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution) const;
 };
 

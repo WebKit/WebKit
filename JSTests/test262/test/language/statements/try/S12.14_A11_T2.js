@@ -23,7 +23,7 @@ for(var i=0;i<5;i++){
   fin=-1;
 }
 if(fin!==1){
-  $ERROR('#1: "finally" block must be evaluated at "try{continue} catch finally" construction');
+  throw new Test262Error('#1: "finally" block must be evaluated at "try{continue} catch finally" construction');
 }
 
 // CHECK#2
@@ -42,10 +42,10 @@ for(var i=0;i<5;i++){
   fin2=-1;
 }
 if(fin2!==1){
-  $ERROR('#2.1: "finally" block must be evaluated');
+  throw new Test262Error('#2.1: "finally" block must be evaluated');
 }
 if(c2!==5){
-  $ERROR('#2.1: "try catch{continue} finally" must work correctly');
+  throw new Test262Error('#2.1: "try catch{continue} finally" must work correctly');
 }
 
 // CHECK#3
@@ -64,10 +64,10 @@ for(var i=0;i<5;i++){
   fin3=0;
 }
 if(fin3!==1){
-  $ERROR('#3.1: "finally" block must be evaluated');
+  throw new Test262Error('#3.1: "finally" block must be evaluated');
 }
 if(c3!==5){
-  $ERROR('#3.2: "try catch finally{continue}" must work correctly');
+  throw new Test262Error('#3.2: "try catch finally{continue}" must work correctly');
 }
 
 // CHECK#4
@@ -83,7 +83,7 @@ for(var i=0;i<5;i++){
   fin=-1;
 };
 if(fin!==1){
-  $ERROR('#4: "finally" block must be evaluated at "try{continue} finally" construction');
+  throw new Test262Error('#4: "finally" block must be evaluated at "try{continue} finally" construction');
 }
 
 // CHECK#5
@@ -99,7 +99,7 @@ for(var c5=0;c5<10;){
   c5+=12;
 };
 if(c5!==10){
-  $ERROR('#5: "try catch{continue} must work correctly');
+  throw new Test262Error('#5: "try catch{continue} must work correctly');
 }
 
 // CHECK#6
@@ -116,8 +116,8 @@ for(var c6=0;c6<10;){
   fin6=-1;
 };
 if(fin6!==1){
-  $ERROR('#6.1: "finally" block must be evaluated');
+  throw new Test262Error('#6.1: "finally" block must be evaluated');
 }
 if(c6!==10){
-  $ERROR('#6.2: "try finally{continue}" must work correctly');
+  throw new Test262Error('#6.2: "try finally{continue}" must work correctly');
 }

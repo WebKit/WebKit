@@ -11,10 +11,10 @@ description: Checking if creating "new String" fails
 //CHECK#1
 try {
   new new String;
-  $ERROR('#1: "new new String" lead to throwing exception');
+  throw new Test262Error('#1: "new new String" lead to throwing exception');
 } catch (e) {
   if (!(e instanceof TypeError)) {
-    $ERROR('#1.1: Exception is instance of TypeError. Actual: exception is ' + e);
+    throw new Test262Error('#1.1: Exception is instance of TypeError. Actual: exception is ' + e);
   }
 }
 //

@@ -41,7 +41,9 @@ struct ApplePayModifier {
     std::optional<ApplePayPaymentMethodType> paymentMethodType;
     std::optional<ApplePayLineItem> total;
     Vector<ApplePayLineItem> additionalLineItems;
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
     Vector<ApplePayShippingMethod> additionalShippingMethods;
+#endif
 
 #if defined(ApplePayModifierAdditions_members)
     ApplePayModifierAdditions_members

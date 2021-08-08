@@ -17,7 +17,7 @@ var __obj = {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String(__obj).slice(-4, void 0) !== "ined") {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).slice(-4,void 0) === "ined". Actual: ' + String(__obj).slice(-4, void 0));
+  throw new Test262Error('#1: __obj = {toString:function(){}}; String(__obj).slice(-4,void 0) === "ined". Actual: ' + String(__obj).slice(-4, void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

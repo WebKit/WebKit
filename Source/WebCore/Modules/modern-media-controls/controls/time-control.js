@@ -101,13 +101,15 @@ class TimeControl extends LayoutItem
     get minimumWidth()
     {
         this._performIdealLayout();
-        return MinimumScrubberWidth + ScrubberMargin + this._durationOrRemainingTimeLabel().width;
+        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
+        return MinimumScrubberWidth + scrubberMargin + this._durationOrRemainingTimeLabel().width;
     }
 
     get idealMinimumWidth()
     {
         this._performIdealLayout();
-        return this.elapsedTimeLabel.width + ScrubberMargin + MinimumScrubberWidth + ScrubberMargin + this._durationOrRemainingTimeLabel().width;
+        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
+        return this.elapsedTimeLabel.width + MinimumScrubberWidth + (2 * scrubberMargin) + this._durationOrRemainingTimeLabel().width;
     }
 
     // Protected
@@ -130,8 +132,9 @@ class TimeControl extends LayoutItem
         // We drop the elapsed time label if width is constrained and we can't guarantee
         // the scrubber minimum size otherwise.
         this.scrubber.x = 0;
-        this.scrubber.width = this.width - ScrubberMargin - durationOrRemainingTimeLabel.width;
-        durationOrRemainingTimeLabel.x = this.scrubber.x + this.scrubber.width + ScrubberMargin;
+        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
+        this.scrubber.width = this.width - scrubberMargin - durationOrRemainingTimeLabel.width;
+        durationOrRemainingTimeLabel.x = this.scrubber.x + this.scrubber.width + scrubberMargin;
         this.elapsedTimeLabel.visible = false;
     }
 
@@ -196,9 +199,10 @@ class TimeControl extends LayoutItem
 
         let durationOrRemainingTimeLabel = this._durationOrRemainingTimeLabel();
 
-        this.scrubber.x = (this._loading ? this.activityIndicator.width : this.elapsedTimeLabel.width) + ScrubberMargin;
-        this.scrubber.width = this.width - this.scrubber.x - ScrubberMargin - durationOrRemainingTimeLabel.width;
-        durationOrRemainingTimeLabel.x = this.scrubber.x + this.scrubber.width + ScrubberMargin;
+        const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
+        this.scrubber.x = (this._loading ? this.activityIndicator.width : this.elapsedTimeLabel.width) + scrubberMargin;
+        this.scrubber.width = this.width - this.scrubber.x - scrubberMargin - durationOrRemainingTimeLabel.width;
+        durationOrRemainingTimeLabel.x = this.scrubber.x + this.scrubber.width + scrubberMargin;
 
         this.children = [this._loading ? this.activityIndicator : this.elapsedTimeLabel, this.scrubber, durationOrRemainingTimeLabel];
     }

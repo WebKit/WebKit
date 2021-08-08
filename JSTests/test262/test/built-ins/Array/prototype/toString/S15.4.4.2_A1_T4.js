@@ -18,10 +18,10 @@ var object = {
 };
 var x = new Array(object);
 if (x.toString() !== x.join()) {
-  $ERROR('#1.1: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.toString() === x.join(). Actual: ' + (x.toString()));
+  throw new Test262Error('#1.1: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.toString() === x.join(). Actual: ' + (x.toString()));
 } else {
   if (x.toString() !== "[object Object]") {
-    $ERROR('#1.2: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.toString() === "[object Object]". Actual: ' + (x.toString()));
+    throw new Test262Error('#1.2: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.toString() === "[object Object]". Actual: ' + (x.toString()));
   }
 }
 
@@ -36,10 +36,10 @@ var object = {
 };
 var x = new Array(object);
 if (x.toString() !== x.join()) {
-  $ERROR('#2.1: var object = {valueOf: function() {return "+"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+  throw new Test262Error('#2.1: var object = {valueOf: function() {return "+"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
 } else {
   if (x.toString() !== "*") {
-    $ERROR('#2.2: var object = {valueOf: function() {return "+"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+    throw new Test262Error('#2.2: var object = {valueOf: function() {return "+"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
   }
 }
 
@@ -54,10 +54,10 @@ var object = {
 };
 var x = new Array(object);
 if (x.toString() !== x.join()) {
-  $ERROR('#3.1: var object = {valueOf: function() {return x.join()}, toString: function() {return {}}} var x = new Array(object); x.toString() === "+". Actual: ' + (x.toString()));
+  throw new Test262Error('#3.1: var object = {valueOf: function() {return x.join()}, toString: function() {return {}}} var x = new Array(object); x.toString() === "+". Actual: ' + (x.toString()));
 } else {
   if (x.toString() !== "+") {
-    $ERROR('#3.2: var object = {valueOf: function() {return "+"}, toString: function() {return {}}} var x = new Array(object); x.toString() === "+". Actual: ' + (x.toString()));
+    throw new Test262Error('#3.2: var object = {valueOf: function() {return "+"}, toString: function() {return {}}} var x = new Array(object); x.toString() === "+". Actual: ' + (x.toString()));
   }
 }
 
@@ -73,18 +73,18 @@ try {
   };
   var x = new Array(object);
   if (x.toString() !== x.join()) {
-    $ERROR('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+    throw new Test262Error('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
   } else {
     if (x.toString() !== "*") {
-      $ERROR('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+      throw new Test262Error('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
     }
   }
 }
 catch (e) {
   if (e === "error") {
-    $ERROR('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() not throw "error"');
+    throw new Test262Error('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() not throw "error"');
   } else {
-    $ERROR('#4.4: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() not throw Error. Actual: ' + (e));
+    throw new Test262Error('#4.4: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() not throw Error. Actual: ' + (e));
   }
 }
 
@@ -96,10 +96,10 @@ var object = {
 };
 var x = new Array(object);
 if (x.toString() !== x.join()) {
-  $ERROR('#5.1: var object = {toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+  throw new Test262Error('#5.1: var object = {toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
 } else {
   if (x.toString() !== "*") {
-    $ERROR('#5.2: var object = {toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+    throw new Test262Error('#5.2: var object = {toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
   }
 }
 
@@ -114,10 +114,10 @@ var object = {
 }
 var x = new Array(object);
 if (x.toString() !== x.join()) {
-  $ERROR('#6.1: var object = {valueOf: function() {return {}}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+  throw new Test262Error('#6.1: var object = {valueOf: function() {return {}}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
 } else {
   if (x.toString() !== "*") {
-    $ERROR('#6.2: var object = {valueOf: function() {return {}}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
+    throw new Test262Error('#6.2: var object = {valueOf: function() {return {}}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
   }
 }
 
@@ -133,11 +133,11 @@ try {
   };
   var x = new Array(object);
   x.toString();
-  $ERROR('#7.1: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (x.toString()));
+  throw new Test262Error('#7.1: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (x.toString()));
 }
 catch (e) {
   if (e !== "error") {
-    $ERROR('#7.2: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (e));
+    throw new Test262Error('#7.2: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (e));
   }
 }
 
@@ -153,10 +153,10 @@ try {
   };
   var x = new Array(object);
   x.toString();
-  $ERROR('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (x.toString()));
+  throw new Test262Error('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (x.toString()));
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (e));
   }
 }

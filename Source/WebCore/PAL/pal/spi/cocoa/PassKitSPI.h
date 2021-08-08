@@ -449,13 +449,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PKPaymentRequestUpdate : NSObject
 - (instancetype)initWithPaymentSummaryItems:(NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems;
 @property (nonatomic, copy) NSArray<PKPaymentSummaryItem *> *paymentSummaryItems;
-#if HAVE(PASSKIT_COUPON_CODE)
+#if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
 @property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
 #endif
-
 @end
 
 @interface PKPaymentRequestPaymentMethodUpdate : PKPaymentRequestUpdate
+- (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems;
+@property (null_resettable, nonatomic, copy) NSArray<NSError *> *errors;
 @end
 
 @interface PKPaymentRequestShippingContactUpdate : PKPaymentRequestUpdate

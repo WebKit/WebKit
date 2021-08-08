@@ -84,8 +84,8 @@ public:
 #endif
 
 #if USE(AUDIO_SESSION)
-    static void setShouldManageAudioSessionCategory(bool flag) { gManageAudioSession = flag; }
-    static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
+    WEBCORE_EXPORT static void setShouldManageAudioSessionCategory(bool flag);
+    WEBCORE_EXPORT static bool shouldManageAudioSessionCategory();
 #endif
 
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);

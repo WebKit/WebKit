@@ -661,6 +661,12 @@ x86_64: Swap64 UD:G:64, UD:G:64
     Tmp, Tmp
     Tmp, Addr
 
+arm64: MoveWithIncrement64 UD:G:64, D:G:64
+    PreIndex, Tmp as load64
+    PostIndex, Tmp as load64
+    Tmp, PreIndex as store64
+    Tmp, PostIndex as store64
+
 Move32 U:G:32, ZD:G:32
     Tmp, Tmp as zeroExtend32ToWord
     Addr, Tmp as load32
@@ -670,6 +676,12 @@ Move32 U:G:32, ZD:G:32
     x86: Imm, Tmp as zeroExtend32ToWord
     x86: Imm, Addr as store32
     x86: Imm, Index as store32
+
+arm64: MoveWithIncrement32 UD:G:32, ZD:G:32
+    PreIndex, Tmp as load32
+    PostIndex, Tmp as load32
+    Tmp, PreIndex as store32
+    Tmp, PostIndex as store32
 
 # This is for moving between spill slots.
 Move32 U:G:32, ZD:G:32, S:G:32
@@ -941,6 +953,60 @@ arm64: SubRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Imm, Tmp
 
 arm64: SubUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: AndUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: XorUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrLeftShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrUnsignedRightShift32 U:G:32, U:G:32, U:G:32, ZD:G:32
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrLeftShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
+    Tmp, Tmp, Imm, Tmp
+
+arm64: OrUnsignedRightShift64 U:G:64, U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Imm, Tmp
 
 # The first operand is rax.

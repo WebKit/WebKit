@@ -13,14 +13,14 @@ function myFunction1(){
     return 1;
   }
   catch(err){
-  	$ERROR('#1.1: "return 1" inside function does not lead to throwing exception');
+  	throw new Test262Error('#1.1: "return 1" inside function does not lead to throwing exception');
     return 0;
   }
   return 2;
 }
 var x1=myFunction1();
 if(x1!==1){
-  $ERROR('#1.2: x1===1. Actual: x1==='+x1);
+  throw new Test262Error('#1.2: x1===1. Actual: x1==='+x1);
 }
 
 // CHECK#2
@@ -35,7 +35,7 @@ function myFunction2(){
 }
 var x2=myFunction2();
 if (x2!==2){
-  $ERROR('#2: x2===2. Actual: x2==='+x2);
+  throw new Test262Error('#2: x2===2. Actual: x2==='+x2);
 }
 
 // CHECK#3
@@ -49,7 +49,7 @@ function myFunction3(){
 }
 var x3=myFunction3();
 if (x3!==1){
-  $ERROR('#3: x3===1. Actual: x3==='+x3);
+  throw new Test262Error('#3: x3===1. Actual: x3==='+x3);
 }
 
 // CHECK#4
@@ -65,13 +65,13 @@ function myFunction4(){
 }
 try{
   var x4=myFunction4();
-  $ERROR('#4.1: Throwing exception inside function lead to throwing exception outside this function');
+  throw new Test262Error('#4.1: Throwing exception inside function lead to throwing exception outside this function');
 }
 catch(e){
   if(e==="ex1"){
-    $ERROR('#4.2: Exception !=="ex1". Actual: catch previous exception');
+    throw new Test262Error('#4.2: Exception !=="ex1". Actual: catch previous exception');
   }
   if(e!=="ex2"){
-    $ERROR('#4.3: Exception ==="ex2". Actual:  Exception ==='+ e  );
+    throw new Test262Error('#4.3: Exception ==="ex2". Actual:  Exception ==='+ e  );
   }
 }

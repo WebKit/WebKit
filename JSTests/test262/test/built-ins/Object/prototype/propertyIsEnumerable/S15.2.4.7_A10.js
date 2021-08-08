@@ -14,7 +14,7 @@ includes: [propertyHelper.js]
 
 //CHECK#1
 if (!(Object.prototype.propertyIsEnumerable.hasOwnProperty('length'))) {
-  $ERROR('#1: the Object.prototype.propertyIsEnumerable has length property');
+  throw new Test262Error('#1: the Object.prototype.propertyIsEnumerable has length property');
 }
 
 var obj = Object.prototype.propertyIsEnumerable.length;
@@ -25,5 +25,5 @@ verifyNotWritable(Object.prototype.propertyIsEnumerable, "length", null, functio
 
 //CHECK#2
 if (Object.prototype.propertyIsEnumerable.length !== obj) {
-  $ERROR('#2: the Object.prototype.propertyIsEnumerable length property has the attributes ReadOnly');
+  throw new Test262Error('#2: the Object.prototype.propertyIsEnumerable length property has the attributes ReadOnly');
 }

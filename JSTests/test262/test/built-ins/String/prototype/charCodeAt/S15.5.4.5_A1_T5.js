@@ -13,7 +13,7 @@ description: Call charCodeAt() function with null argument of function object
 if (function() {
     return "lego"
   }().charCodeAt(null) !== 0x6C) {
-  $ERROR('#1: function(){return "lego"}().charCodeAt(null) === 0x6C. Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "lego"}().charCodeAt(null) === 0x6C. Actual: ' + function() {
     return "lego"
   }().charCodeAt(null));
 }

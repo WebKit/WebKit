@@ -14,5 +14,5 @@ includes: [propertyHelper.js]
 var x = Date.prototype.getFullYear.length;
 verifyNotWritable(Date.prototype.getFullYear, "length", null, 1);
 if (Date.prototype.getFullYear.length !== x) {
-  $ERROR('#1: The Date.prototype.getFullYear.length has the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.getFullYear.length has the attribute ReadOnly');
 }

@@ -19,7 +19,7 @@ function __func(){
 //CHECK#
 try {
 	x=x;
-	$ERROR('#0: "x=x" lead to throwing exception');
+	throw new Test262Error('#0: "x=x" lead to throwing exception');
 } catch (e) {
     if (e instanceof Test262Error) throw e;
 }
@@ -31,7 +31,7 @@ try {
 try{
     var __x=__func()
 } catch(e){
-    $ERROR('#1: var __x=__func() does not lead to throwing exception. Actual: exception is '+e);
+    throw new Test262Error('#1: var __x=__func() does not lead to throwing exception. Actual: exception is '+e);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ try{
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (!(__x)) {
-	$ERROR('#2: __x === true. Actual: __x ==='+__x);
+	throw new Test262Error('#2: __x === true. Actual: __x ==='+__x);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ if (!(__x)) {
 //CHECK#3
 try {
 	x=x;
-	$ERROR('#3: "x=x" lead to throwing exception');
+	throw new Test262Error('#3: "x=x" lead to throwing exception');
 } catch (e) {
     if (e instanceof Test262Error) throw e;
 }

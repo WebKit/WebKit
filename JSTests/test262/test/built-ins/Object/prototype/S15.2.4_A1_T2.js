@@ -11,7 +11,7 @@ description: >
 
 //CHECK#1
 if (Object.prototype.toString() == false) {
-  $ERROR('#1: Object prototype object has not prototype');
+  throw new Test262Error('#1: Object prototype object has not prototype');
 }
 
 delete Object.prototype.toString;
@@ -19,10 +19,10 @@ delete Object.prototype.toString;
 // CHECK#2
 try {
   Object.prototype.toString();
-  $ERROR('#2: Object prototype object has not prototype');
+  throw new Test262Error('#2: Object prototype object has not prototype');
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.1: delete Object.prototype.toString; Object.prototype.toString() throw a TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.1: delete Object.prototype.toString; Object.prototype.toString() throw a TypeError. Actual: ' + (e));
   }
 }
 //

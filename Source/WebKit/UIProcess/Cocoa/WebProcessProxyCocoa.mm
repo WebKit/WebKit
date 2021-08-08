@@ -27,6 +27,7 @@
 #import "WebProcessProxy.h"
 
 #import "AccessibilitySupportSPI.h"
+#import "CodeSigning.h"
 #import "HighPerformanceGPUManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
@@ -309,28 +310,31 @@ void WebProcessProxy::sendAudioComponentRegistrations()
     });
 }
 
-bool WebProcessProxy::hasCorrectPACEntitlement()
+bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 {
     if (!hasConnection()) {
         ASSERT_NOT_REACHED();
         return false;
     }
 
-#if HAVE(PAC_SHARED_REGION_ID)
-    auto auditToken = connection()->getAuditToken();
-    if (!auditToken) {
-        ASSERT_NOT_REACHED();
-        RELEASE_LOG_ERROR(Process, "Unable to get parent web process audit token");
-        return false;
-    }
-
 #if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(IOS)
+    // FIXME(rdar://80908833): On iOS, we can only perform the below checks for platform binaries until rdar://80908833 is fixed.
+    if (!currentProcessIsPlatformBinary())
+        return true;
+#endif
+
+    // WebKitTestRunner does not pass the isPlatformBinary check, we should return early in this case.
+    if (isRunningTest(WebCore::applicationBundleIdentifier()))
+        return true;
+
     // Confirm that the connection is from a WebContent process:
-    if (!WTF::hasEntitlementValue(auditToken.value(), "com.apple.pac.shared_region_id", "WebContent")) {
-        RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process. Process shared_region_id is incorrect.");
+    auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection()->xpcConnection());
+
+    if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent")) {
+        RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process.");
         return false;
     }
-#endif
 #endif
 
     return true;

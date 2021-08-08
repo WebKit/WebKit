@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToString(void 0) evaluates to "undefined" concat(void 0) evaluates to concat("undefined")
 if (String(42).concat(void 0) !== "42undefined") {
-  $ERROR('#1: String(42).concat(void 0) === "42undefined". Actual: ' + String(42).concat(void 0));
+  throw new Test262Error('#1: String(42).concat(void 0) === "42undefined". Actual: ' + String(42).concat(void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

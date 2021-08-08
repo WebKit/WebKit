@@ -88,7 +88,9 @@ void LibWebRTCProvider::registerMDNSName(DocumentIdentifier documentIdentifier, 
 class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RTCSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&&);
+    RTCSocketFactory(WebPageProxyIdentifier, String&& userAgent, bool isFirstParty, RegistrableDomain&&);
+
+    void disableRelay() final { m_isRelayDisabled = true; }
 
 private:
     // SuspendableSocketFactory
@@ -98,17 +100,18 @@ private:
     rtc::AsyncResolverInterface* CreateAsyncResolver() final;
     void suspend() final;
     void resume() final;
-    void disableRelay() final { m_isRelayDisabled = true; }
 
 private:
+    WebPageProxyIdentifier m_pageIdentifier;
     String m_userAgent;
     bool m_isFirstParty { false };
     bool m_isRelayDisabled { false };
     RegistrableDomain m_domain;
 };
 
-RTCSocketFactory::RTCSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&& domain)
-    : m_userAgent(WTFMove(userAgent))
+RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, String&& userAgent, bool isFirstParty, RegistrableDomain&& domain)
+    : m_pageIdentifier(pageIdentifier)
+    , m_userAgent(WTFMove(userAgent))
     , m_isFirstParty(isFirstParty)
     , m_domain(WTFMove(domain))
 {
@@ -116,7 +119,7 @@ RTCSocketFactory::RTCSocketFactory(String&& userAgent, bool isFirstParty, Regist
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateUdpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createUdpSocket(this, address, minPort, maxPort, m_isFirstParty, m_isRelayDisabled, m_domain);
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createUdpSocket(this, address, minPort, maxPort, m_pageIdentifier, m_isFirstParty, m_isRelayDisabled, m_domain);
 }
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options)
@@ -126,7 +129,7 @@ rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::Socke
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions& options)
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options);
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_isRelayDisabled);
 }
 
 rtc::AsyncResolverInterface* RTCSocketFactory::CreateAsyncResolver()
@@ -159,7 +162,13 @@ void LibWebRTCProvider::startedNetworkThread()
 
 std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& userAgent, bool isFirstParty, RegistrableDomain&& domain)
 {
-    return makeUnique<RTCSocketFactory>(WTFMove(userAgent), isFirstParty, WTFMove(domain));
+    auto factory = makeUnique<RTCSocketFactory>(m_webPage.webPageProxyIdentifier(), WTFMove(userAgent), isFirstParty, WTFMove(domain));
+
+    auto* page = m_webPage.corePage();
+    if (!page || !page->settings().webRTCSocketsProxyingEnabled())
+        factory->disableRelay();
+
+    return factory;
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> LibWebRTCProvider::createRTCDataChannelRemoteHandlerConnection()

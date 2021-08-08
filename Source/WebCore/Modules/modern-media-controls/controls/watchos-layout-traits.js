@@ -85,3 +85,5 @@ class WatchOSLayoutTraits extends LayoutTraits
         return `[WatchOSLayoutTraits]`;
     }
 }
+
+window.layoutTraitsClasses["WatchOSLayoutTraits"] = WatchOSLayoutTraits;

@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToString(undefined) evaluates to "undefined" concat(undefined) evaluates to concat("undefined")
 if (new String(42).concat(function() {}()) !== "42undefined") {
-  $ERROR('#1: new String(42).concat(function(){}()) === "42undefined". Actual: ' + new String(42).concat(function() {}()));
+  throw new Test262Error('#1: new String(42).concat(function(){}()) === "42undefined". Actual: ' + new String(42).concat(function() {}()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

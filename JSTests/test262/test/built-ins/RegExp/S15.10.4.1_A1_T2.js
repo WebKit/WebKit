@@ -16,22 +16,22 @@ var __re = new RegExp(__pattern, x);
 
 //CHECK#1
 if (__re.source !== __pattern.source) {
-  $ERROR('#1: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.source === __pattern.source. Actual: '+ (__re.source));
+  throw new Test262Error('#1: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.source === __pattern.source. Actual: '+ (__re.source));
 }
 
 //CHECK#2
 if (__re.multiline !== __pattern.multiline) {
-  $ERROR('#2: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.multiline === __pattern.multiline. Actual: ' + (__re.multiline));
+  throw new Test262Error('#2: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.multiline === __pattern.multiline. Actual: ' + (__re.multiline));
 }
 
 //CHECK#3
 if (__re.global !== __pattern.global) {
-  $ERROR('#3: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.global === __pattern.global. Actual: ' + (__re.global));
+  throw new Test262Error('#3: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.global === __pattern.global. Actual: ' + (__re.global));
 }
 
 //CHECK#4
 if (__re.ignoreCase !== __pattern.ignoreCase) {
-  $ERROR('#4: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.ignoreCase === __pattern.ignoreCase. Actual: ' + (__re.ignoreCase));
+  throw new Test262Error('#4: __pattern = /\\t/m; _re = new RegExp(__pattern, x); var x; __re.ignoreCase === __pattern.ignoreCase. Actual: ' + (__re.ignoreCase));
 }
 
 var x;

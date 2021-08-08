@@ -22,7 +22,7 @@ function __FUNC(){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__FUNC()()(__ROBOT) !== __ROBOT) {
-	$ERROR('#1: __FUNC()()(__ROBOT) === __ROBOT. Actual: __FUNC()()(__ROBOT) ==='+__FUNC()()(__ROBOT));
+	throw new Test262Error('#1: __FUNC()()(__ROBOT) === __ROBOT. Actual: __FUNC()()(__ROBOT) ==='+__FUNC()()(__ROBOT));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

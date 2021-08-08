@@ -9,10 +9,10 @@ description: Checking Boolean.length property
 
 //CHECK#1
 if (!Boolean.hasOwnProperty("length")) {
-  $ERROR('#1: Boolean constructor has length property');
+  throw new Test262Error('#1: Boolean constructor has length property');
 }
 
 //CHECK#2
 if (Boolean.length !== 1) {
-  $ERROR('#2: Boolean constructor length property value is 1');
+  throw new Test262Error('#2: Boolean constructor length property value is 1');
 }

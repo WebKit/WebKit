@@ -13,10 +13,10 @@ description: The first statement is "(function(){throw "instatement"})()"
 //CHECK#1
 try {
 	if (true) (function(){throw "instatement"})();
-	$ERROR("#1 failed")
+	throw new Test262Error("#1 failed")
 } catch (e) {
 	if (e !== "instatement") {
-		$ERROR('#1: Exception === "instatement". Actual:  Exception ==='+ e);
+		throw new Test262Error('#1: Exception === "instatement". Actual:  Exception ==='+ e);
 	}
 }
 //
@@ -26,10 +26,10 @@ try {
 //CHECK#2
 try {
 	if (false) (function(){throw "truebranch"})(); (function(){throw "missbranch"})();
-	$ERROR("#2 failed")
+	throw new Test262Error("#2 failed")
 } catch (e) {
 	if (e !== "missbranch") {
-		$ERROR('#2: Exception === "missbranch". Actual:  Exception ==='+ e);
+		throw new Test262Error('#2: Exception === "missbranch". Actual:  Exception ==='+ e);
 	}
 }
 //

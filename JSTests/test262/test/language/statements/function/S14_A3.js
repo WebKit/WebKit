@@ -12,7 +12,7 @@ description: Declaring a function within the body of another function
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (typeof __func !== "function") {
-	$ERROR('#1: typeof __func === "function". Actual:  typeof __func ==='+ typeof __func  );
+	throw new Test262Error('#1: typeof __func === "function". Actual:  typeof __func ==='+ typeof __func  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ if (typeof __func !== "function") {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (typeof __gunc !== "undefined") {
-	$ERROR('#2: typeof __gunc === "undefined". Actual:  typeof __gunc ==='+ typeof __gunc  );
+	throw new Test262Error('#2: typeof __gunc === "undefined". Actual:  typeof __gunc ==='+ typeof __gunc  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

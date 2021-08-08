@@ -1545,38 +1545,6 @@ webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailu
 
 webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
 
-# rdar://55405851 ([ macOS ] Layout tests webgpu/*-triangle-strip.html are flaky failures. (201827))
-webkit.org/b/201827 webgpu/blend-color-triangle-strip.html [ Pass ImageOnlyFailure ]
-webkit.org/b/201827 webgpu/blend-triangle-strip.html [ Pass ImageOnlyFailure ]
-webkit.org/b/201827 webgpu/color-write-mask-triangle-strip.html [ Pass ImageOnlyFailure ]
-webkit.org/b/201827 webgpu/depth-enabled-triangle-strip.html [ Pass ImageOnlyFailure ]
-webkit.org/b/201827 webgpu/simple-triangle-strip.html [ Pass ImageOnlyFailure ]
-webkit.org/b/201827 webgpu/texture-triangle-strip.html [ Pass ImageOnlyFailure ]
-webkit.org/b/201827 webgpu/viewport-scissor-rect-triangle-strip.html [ Pass ImageOnlyFailure ]
-
-# rdar://55204775 (REGRESSION (MacOS): Many webgpu/whlsl/* tests are flaky failures)
-webgpu/whlsl/arbitrary-vertex-attribute-locations.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/nested-dot-expression-rvalue.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/ensure-proper-variable-lifetime-3.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-2.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-10.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-11.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-12.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-13.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-14.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-15.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-16.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-17.html [ Pass ImageOnlyFailure ] 
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-18.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-19.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-24.html [ Pass ImageOnlyFailure ]
-webgpu/whlsl/separate-shader-modules/separate-shader-modules-26.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/205524 webgpu/whlsl/loops-continue.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/205525 webgpu/whlsl/buffer-fragment.html [ Pass ImageOnlyFailure ]
-
 # The test runner is failing in an unrelated, unexplained, invisible to the human eye, 2 pixels difference.
 webkit.org/b/201401 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ Skip ]
 
@@ -1612,10 +1580,6 @@ webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass 
 
 webkit.org/b/205756 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Pass Failure ]
 
-webkit.org/b/205862 webgpu/whlsl/while-loop-break.html [ Pass ImageOnlyFailure ]
-webkit.org/b/205865 webgpu/whlsl/ensure-proper-variable-lifetime-2.html [ Pass ImageOnlyFailure ]
-webkit.org/b/205867 webgpu/draw-indexed-triangles.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
 # Locale-specific shaping is only enabled on certain OSes.
@@ -1637,8 +1601,6 @@ webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/fon
 webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-matching.html [ Failure ]
 
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
-
-webkit.org/b/201481 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
 
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
 
@@ -1695,8 +1657,6 @@ webkit.org/b/208722 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/208592 svg/custom/object-sizing-explicit-height.xhtml [ Pass Failure ]
 
 webkit.org/b/209257 svg/as-object/object-box-sizing-no-width-height.html [ Pass Failure ]
-
-webkit.org/b/209056 webgpu/whlsl/uint-bitwise.html [ Pass Crash ]
 
 webkit.org/b/209072 [ Debug ] http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Pass Crash Failure ]
 
@@ -1756,6 +1716,7 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 [ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
 [ Catalina Mojave BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
 [ Catalina Mojave BigSur ] webaudio/decode-audio-data-webm-opus.html [ Skip ]
+[ Catalina Mojave BigSur ] webaudio/decode-audio-data-webm-vorbis.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
@@ -1770,8 +1731,6 @@ webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass 
 webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
 
 webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state.html [ Pass Failure ]
-
-webkit.org/b/215247 webgpu/whlsl/dont-crash-parsing-enum.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
 
@@ -1868,11 +1827,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without
 
 # <rdar://problem/62317723> [ Guard-Malloc ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing with 'WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()' alert.
 [ Mojave ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Pass Crash ]
-
-# <rdar://problem/56961499> Many webGPU test fail on production and crash on Debug
-[ BigSur+ ] inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
-[ BigSur+ ] inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
-[ BigSur+ ] inspector/canvas/updateShader-webgpu.html [ Skip ]
 
 # WebP images
 [ BigSur+ ] fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
@@ -2343,10 +2297,6 @@ webkit.org/b/228011 inspector/canvas/setRecordingAutoCaptureFrameCount.html [ Pa
 
 webkit.org/b/214574 svg/animations/smil-leak-list-property-instances.svg [ Pass Failure ]
 
-webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Failure ]
-
-webkit.org/b/228168 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/blobs.html [ Pass Failure ]
-
 webkit.org/b/222385 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.any.worker.html [ Pass Failure ]
 
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
@@ -2363,7 +2313,7 @@ webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-
 [ Monterey ] model-element/model-element-graphics-layers-opacity.html [ Pass Failure ]
 [ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]
 
-webkit.org/b/228571 fast/dom/webtiming-document-open.html [ Pass Failure ]
+webkit.org/b/228640 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.tentative.https.html [ Pass Failure ]
 
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 

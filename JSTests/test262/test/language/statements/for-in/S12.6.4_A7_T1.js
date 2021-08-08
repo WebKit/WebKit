@@ -29,7 +29,7 @@ for (__key in __obj){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!((__accum.indexOf("aa1")!==-1)&&(__accum.indexOf("ca3")!==-1))) {
-	$ERROR('#1: (__accum.indexOf("aa1")!==-1)&&(__accum.indexOf("ca3")!==-1)');
+	throw new Test262Error('#1: (__accum.indexOf("aa1")!==-1)&&(__accum.indexOf("ca3")!==-1)');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ if (!((__accum.indexOf("aa1")!==-1)&&(__accum.indexOf("ca3")!==-1))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__accum.indexOf("ba2")!==-1) {
-	$ERROR('#2: __accum.indexOf("ba2") === -1. Actual:  __accum.indexOf("ba2") ==='+ __accum.indexOf("ba2")  );
+	throw new Test262Error('#2: __accum.indexOf("ba2") === -1. Actual:  __accum.indexOf("ba2") ==='+ __accum.indexOf("ba2")  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

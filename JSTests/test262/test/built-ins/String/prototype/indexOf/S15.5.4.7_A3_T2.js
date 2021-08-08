@@ -12,7 +12,7 @@ description: Call "$$abcdabcd".indexOf("ab",eval("\"-99\"")) and check result
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("$$abcdabcd".indexOf("ab", eval("\"-99\"")) !== 2) {
-  $ERROR('#1: "$$abcdabcd".indexOf("ab",eval("\\"-99\\""))===2. Actual: ' + ("$$abcdabcd".indexOf("ab", eval("\"-99\""))));
+  throw new Test262Error('#1: "$$abcdabcd".indexOf("ab",eval("\\"-99\\""))===2. Actual: ' + ("$$abcdabcd".indexOf("ab", eval("\"-99\""))));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

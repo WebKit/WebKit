@@ -333,17 +333,8 @@ var testList = [{
     name: "transfer list multiple",
     send: function(name) {
         var buffer = createBuffer(arraySize);
-        wrapSend(name, { buffer : buffer }, [buffer,buffer]);
-        assertBufferClosed(name, buffer);
-        wrapFailSend(name, [buffer], [buffer]);
-        wrapFailSend(name, [], [buffer]);
-        var buffer2 = createBuffer(arraySize);
-        wrapFailSend(name, [], [buffer2, buffer]);
-        checkBuffer(name, buffer2, arraySize);
-        wrapFailSend(name, [], [buffer, buffer2]);
-        checkBuffer(name, buffer2, arraySize);
-        wrapFailSend(name, [buffer2], [buffer2, buffer]);
-        checkBuffer(name, buffer2, arraySize);
+        wrapFailSend(name, { buffer : buffer }, [buffer,buffer]);
+        wrapSend(name, { buffer : buffer }, [buffer]);
     },
     test: function (name, e) {
         return checkBuffer(name, e.data.buffer, arraySize);

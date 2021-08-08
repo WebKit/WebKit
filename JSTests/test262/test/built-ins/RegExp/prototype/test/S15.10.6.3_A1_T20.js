@@ -11,7 +11,7 @@ var __re = /[a-f]d/;
 
 //CHECK#0
 if (__re.test(x) !== (__re.exec(x) !== null)) {
-	$ERROR('#0: __re = /[a-f]d/; __re.test(x) === (__re.exec(x) !== null); var x;');
+	throw new Test262Error('#0: __re = /[a-f]d/; __re.test(x) === (__re.exec(x) !== null); var x;');
 }
 
 var x;

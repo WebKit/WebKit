@@ -12,7 +12,7 @@ var __string = new String("this is a string object");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.slice(-0.01, 0) !== "") {
-  $ERROR('#1: __string = new String("this is a string object"); __string.slice(-0.01,0) === "". Actual: ' + __string.slice(-0.01, 0));
+  throw new Test262Error('#1: __string = new String("this is a string object"); __string.slice(-0.01,0) === "". Actual: ' + __string.slice(-0.01, 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

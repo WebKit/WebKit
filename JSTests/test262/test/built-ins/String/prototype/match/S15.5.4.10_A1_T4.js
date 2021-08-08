@@ -14,7 +14,7 @@ var __expected = RegExp().exec("");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__matched.length !== __expected.length) {
-  $ERROR('#1: __matched = "".match(); __expected = RegExp().exec(""); __matched.length === __expected.length. Actual: ' + __matched.length);
+  throw new Test262Error('#1: __matched = "".match(); __expected = RegExp().exec(""); __matched.length === __expected.length. Actual: ' + __matched.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ if (__matched.length !== __expected.length) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__matched.index !== __expected.index) {
-  $ERROR('#2: __matched = "".match(); __expected = RegExp().exec(""); __matched.index === __expected.index. Actual: ' + __matched.index);
+  throw new Test262Error('#2: __matched = "".match(); __expected = RegExp().exec(""); __matched.index === __expected.index. Actual: ' + __matched.index);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ if (__matched.index !== __expected.index) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
 if (__matched.input !== __expected.input) {
-  $ERROR('#3: __matched = "".match(); __expected = RegExp().exec(""); __matched.input === __expected.input. Actual: ' + __matched.input);
+  throw new Test262Error('#3: __matched = "".match(); __expected = RegExp().exec(""); __matched.input === __expected.input. Actual: ' + __matched.input);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ if (__matched.input !== __expected.input) {
 //CHECK#4
 for (var index = 0; index < __expected.length; index++) {
   if (__matched[index] !== __expected[index]) {
-    $ERROR('#4.' + index + ': __matched = "".match(); __expected = RegExp().exec(""); __matched[' + index + ']===__expected[' + index + ']. Actual: ' + __matched[index]);
+    throw new Test262Error('#4.' + index + ': __matched = "".match(); __expected = RegExp().exec(""); __matched[' + index + ']===__expected[' + index + ']. Actual: ' + __matched[index]);
   }
 }
 //

@@ -58,7 +58,6 @@ bool DeprecatedGlobalSettings::gNetworkDataUsageTrackingEnabled = false;
 bool DeprecatedGlobalSettings::gShouldOptOutOfNetworkStateObservation = false;
 bool DeprecatedGlobalSettings::gDisableScreenSizeOverride = false;
 #endif
-bool DeprecatedGlobalSettings::gManageAudioSession = false;
 
 #if PLATFORM(WIN)
 void DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
@@ -181,6 +180,18 @@ void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInte
 const String& DeprecatedGlobalSettings::networkInterfaceName()
 {
     return sharedNetworkInterfaceNameGlobal();
+}
+#endif
+
+#if USE(AUDIO_SESSION)
+void DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(bool flag)
+{
+    AudioSession::setShouldManageAudioSessionCategory(flag);
+}
+
+bool DeprecatedGlobalSettings::shouldManageAudioSessionCategory()
+{
+    return AudioSession::shouldManageAudioSessionCategory();
 }
 #endif
 

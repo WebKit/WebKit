@@ -11,15 +11,15 @@ description: >
 
 // CHECK#1
 if (undefined + "" !== "undefined") {
-  $ERROR('#1: undefined + "" === "undefined". Actual: ' + (undefined + ""));
+  throw new Test262Error('#1: undefined + "" === "undefined". Actual: ' + (undefined + ""));
 }
 
 // CHECK#2
 if (void 0 + "" !== "undefined") {
-  $ERROR('#2: void 0 + "" === "undefined". Actual: ' + (void 0 + ""));
+  throw new Test262Error('#2: void 0 + "" === "undefined". Actual: ' + (void 0 + ""));
 }
 
 // CHECK#3
 if (eval("var x") + "" !== "undefined") {
-  $ERROR('#3: eval("var x") + "" === "undefined". Actual: ' + (eval("var x") + ""));
+  throw new Test262Error('#3: eval("var x") + "" === "undefined". Actual: ' + (eval("var x") + ""));
 }

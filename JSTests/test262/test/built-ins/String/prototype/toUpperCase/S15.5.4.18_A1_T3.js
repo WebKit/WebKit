@@ -10,7 +10,7 @@ description: Checking by using eval
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (eval("\"bj\"").toUpperCase() !== "BJ") {
-  $ERROR('#1: eval("\\"bj\\"").toUpperCase() === "BJ". Actual: ' + eval("\"bj\"").toUpperCase());
+  throw new Test262Error('#1: eval("\\"bj\\"").toUpperCase() === "BJ". Actual: ' + eval("\"bj\"").toUpperCase());
 }
 //
 //////////////////////////////////////////////////////////////////////////////

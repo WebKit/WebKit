@@ -12,9 +12,9 @@ flags: [async]
 var nonIterable = 3;
 
 Promise.race(nonIterable).then(function() {
-  $ERROR('Promise unexpectedly fulfilled: Promise.race(nonIterable) should throw TypeError');
+  throw new Test262Error('Promise unexpectedly fulfilled: Promise.race(nonIterable) should throw TypeError');
 }, function(err) {
   if (!(err instanceof TypeError)) {
-    $ERROR('Expected TypeError, got ' + err);
+    throw new Test262Error('Expected TypeError, got ' + err);
   }
 }).then($DONE, $DONE);

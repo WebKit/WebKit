@@ -1,3 +1,13 @@
+2021-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] ASSERTION FAILED: evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent in WebView::interpretKeyEvent since r280492
+        https://bugs.webkit.org/show_bug.cgi?id=228690
+
+        Reviewed by Brent Fulgham.
+
+        * WebView.cpp:
+        (WebView::handleEditingKeyboardEvent): Return early unless the event is keydown or keypress.
+
 2021-07-16  Megan Gardner  <megan_gardner@apple.com>
 
         Pipe App Highlight scrolling through UI Process in preparation for Note Overlay avoidance.

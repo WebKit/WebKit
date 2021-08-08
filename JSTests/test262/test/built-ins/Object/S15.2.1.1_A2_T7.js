@@ -13,22 +13,22 @@ var str = '';
 
 // CHECK#1
 if (typeof(str) !== 'string') {
-  $ERROR('#1: "" is NOT a String');
+  throw new Test262Error('#1: "" is NOT a String');
 }
 
 var obj = Object(str);
 
 //CHECK#2
 if (obj.constructor !== String) {
-  $ERROR('#2: Object("") returns ToObject("")');
+  throw new Test262Error('#2: Object("") returns ToObject("")');
 }
 
 //CHECK#3
 if (typeof obj !== "object") {
-  $ERROR('#3: Object("") returns ToObject("")');
+  throw new Test262Error('#3: Object("") returns ToObject("")');
 }
 
 //CHECK#4
 if ((obj != "") || (obj === "")) {
-  $ERROR('#4: Object("") returns ToObject("")');
+  throw new Test262Error('#4: Object("") returns ToObject("")');
 }

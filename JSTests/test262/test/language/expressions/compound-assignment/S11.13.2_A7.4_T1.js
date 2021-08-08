@@ -18,7 +18,7 @@ assert.throws(DummyError, function() {
     throw new DummyError();
   };
   var expr = function() {
-    $ERROR("right-hand side expression evaluated");
+    throw new Test262Error("right-hand side expression evaluated");
   };
 
   base[prop()] += expr();
@@ -28,11 +28,11 @@ assert.throws(TypeError, function() {
   var base = null;
   var prop = {
     toString: function() {
-      $ERROR("property key evaluated");
+      throw new Test262Error("property key evaluated");
     }
   };
   var expr = function() {
-    $ERROR("right-hand side expression evaluated");
+    throw new Test262Error("right-hand side expression evaluated");
   };
 
   base[prop] += expr();

@@ -1,3 +1,40 @@
+2021-07-30  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Fix fallback methods in the libgcrypt find module
+        https://bugs.webkit.org/show_bug.cgi?id=228581
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/FindLibGcrypt.cmake: Make sure to use the libgcrypt-config script as
+        first fallback if libgcrypt.pc is not present, and fix the regexp used as last fallback
+        that checks the version from the gcrypt.h header as last fallback to only include digits
+        and periods.
+
+2021-07-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop building WebGPU and the WHLSL compiler to decrease binary size
+        https://bugs.webkit.org/show_bug.cgi?id=228179
+
+        Reviewed by Dean Jackson, Robin Morisset, and Devin Rousso.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
+2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Fix missing libgpg-error not added to link commands as libgcrypt dep after r280423
+        https://bugs.webkit.org/show_bug.cgi?id=228581
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Source/cmake/FindLibGcrypt.cmake: Manually search for libgpg-error, which is not listed
+        in libgcrypt.pc as a dependency, add an imported target for it, and add it as a dependency
+        of LibGcrypt::LibGcrypt to avoid missing symbols at link time.
+
 2021-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use an imported target for the libgcrypt library

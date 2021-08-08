@@ -10,7 +10,7 @@ description: Checking String.prototype.substring.length
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.prototype.substring.hasOwnProperty("length"))) {
-  $ERROR('#1: String.prototype.substring.hasOwnProperty("length") return true. Actual: ' + String.prototype.substring.hasOwnProperty("length"));
+  throw new Test262Error('#1: String.prototype.substring.hasOwnProperty("length") return true. Actual: ' + String.prototype.substring.hasOwnProperty("length"));
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ if (!(String.prototype.substring.hasOwnProperty("length"))) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (String.prototype.substring.length !== 2) {
-  $ERROR('#2: String.prototype.substring.length === 2. Actual: ' + String.prototype.substring.length);
+  throw new Test262Error('#2: String.prototype.substring.length === 2. Actual: ' + String.prototype.substring.length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

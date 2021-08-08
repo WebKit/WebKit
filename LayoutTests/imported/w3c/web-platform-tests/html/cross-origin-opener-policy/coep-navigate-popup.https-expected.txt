@@ -1,14 +1,14 @@
 
 PASS Popup navigating to same-origin with coop/coep
-FAIL Popup navigating to same-site with coop/coep assert_equals: name expected "" but got "Popup-navigating-to-same-site-with-coop/coep"
-FAIL Popup navigating to same-origin with no coop/coep assert_equals: name expected "" but got "Popup-navigating-to-same-origin-with-no-coop/coep"
-FAIL Popup navigating to same-site with no coop/coep assert_equals: name expected "" but got "Popup-navigating-to-same-site-with-no-coop/coep"
-FAIL Popup navigating to same-origin with coop/no coep assert_equals: name expected "" but got "Popup-navigating-to-same-origin-with-coop/no-coep"
-FAIL Popup navigating to same-site with coop/no coep assert_equals: name expected "" but got "Popup-navigating-to-same-site-with-coop/no-coep"
-FAIL Popup navigating to same-origin with no coop/no coep assert_equals: name expected "" but got "Popup-navigating-to-same-origin-with-no-coop/no-coep"
-FAIL Popup navigating to same-site with no coop/no coep assert_equals: name expected "" but got "Popup-navigating-to-same-site-with-no-coop/no-coep"
-FAIL Popup navigating to same-origin with coop unsafe-none/coep assert_equals: name expected "" but got "Popup-navigating-to-same-origin-with-coop-unsafe-none/coep"
-FAIL Popup navigating to same-site with coop unsafe-none/coep assert_equals: name expected "" but got "Popup-navigating-to-same-site-with-coop-unsafe-none/coep"
-FAIL Popup navigating to same-origin with coop unsafe-none/no coep assert_equals: name expected "" but got "Popup-navigating-to-same-origin-with-coop-unsafe-none/no-coep"
-FAIL Popup navigating to same-site with coop unsafe-none/no coep assert_equals: name expected "" but got "Popup-navigating-to-same-site-with-coop-unsafe-none/no-coep"
+PASS Popup navigating to same-site with coop/coep
+PASS Popup navigating to same-origin with no coop/coep
+PASS Popup navigating to same-site with no coop/coep
+PASS Popup navigating to same-origin with coop/no coep
+PASS Popup navigating to same-site with coop/no coep
+PASS Popup navigating to same-origin with no coop/no coep
+PASS Popup navigating to same-site with no coop/no coep
+PASS Popup navigating to same-origin with coop unsafe-none/coep
+PASS Popup navigating to same-site with coop unsafe-none/coep
+PASS Popup navigating to same-origin with coop unsafe-none/no coep
+PASS Popup navigating to same-site with coop unsafe-none/no coep
 

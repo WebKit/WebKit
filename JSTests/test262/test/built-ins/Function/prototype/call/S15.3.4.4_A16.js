@@ -16,11 +16,11 @@ if (typeof re === 'function') {
 } else {
   try {
     Function.prototype.bind.call(re, undefined);
-    $ERROR('#1: If IsCallable(func) is false, ' +
+    throw new Test262Error('#1: If IsCallable(func) is false, ' +
       'then (bind should) throw a TypeError exception');
   } catch (e) {
     if (!(e instanceof TypeError)) {
-      $ERROR('#1: TypeError expected. Actual: ' + e);
+      throw new Test262Error('#1: TypeError expected. Actual: ' + e);
     }
   }
 }

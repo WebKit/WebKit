@@ -97,6 +97,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
+    , overflowClipEnabled { document.settings().overflowClipEnabled() }
 {
 }
 
@@ -139,6 +140,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
+        && a.overflowClipEnabled == b.overflowClipEnabled
     ;
 }
 
@@ -175,7 +177,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #if ENABLE(ATTACHMENT_ELEMENT)
         | context.attachmentEnabled                         << 22
 #endif
-        | context.mode                                      << 23; // This is multiple bits, so keep it last.
+        | context.overflowClipEnabled                       << 23
+        | context.mode                                      << 24; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 

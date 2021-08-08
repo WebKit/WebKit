@@ -12,21 +12,21 @@ description: Expression statement. Eval return primitive value
 var x;
 //CHECK#1
 if (eval("x = 1") !== 1) {
-  $ERROR('#1: eval("x = 1") === 1. Actual: ' + (eval("x = 1")));
+  throw new Test262Error('#1: eval("x = 1") === 1. Actual: ' + (eval("x = 1")));
 }
 
 //CHECK#2
 if (eval("1") !== 1) {
-  $ERROR('#2: eval("1") === 1. Actual: ' + (eval("1")));
+  throw new Test262Error('#2: eval("1") === 1. Actual: ' + (eval("1")));
 }
 
 //CHECK#3
 if (eval("'1'") !== '1') {
-  $ERROR('#3: eval("\'1\'") === \'1\'. Actual: ' + (eval("'1'")));
+  throw new Test262Error('#3: eval("\'1\'") === \'1\'. Actual: ' + (eval("'1'")));
 }
 
 //CHECK#4
 x = 1;
 if (eval("++x") !== 2) {
-  $ERROR('#4: x = 1; eval("++x") === 2. Actual: ' + (x));
+  throw new Test262Error('#4: x = 1; eval("++x") === 2. Actual: ' + (x));
 }

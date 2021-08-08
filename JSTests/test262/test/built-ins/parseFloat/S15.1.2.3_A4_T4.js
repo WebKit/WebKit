@@ -11,15 +11,15 @@ description: "\"Infinity\"+\"some string\""
 
 //CHECK#1
 if (parseFloat("Infinity1") !== Number.POSITIVE_INFINITY) {
-  $ERROR('#1: parseFloat("Infinity1") === Number.POSITIVE_INFINITY. Actual: ' + (parseFloat("Infinity1")));
+  throw new Test262Error('#1: parseFloat("Infinity1") === Number.POSITIVE_INFINITY. Actual: ' + (parseFloat("Infinity1")));
 }
 
 //CHECK#2
 if (parseFloat("Infinityx") !== Number.POSITIVE_INFINITY) {
-  $ERROR('#2: parseFloat("Infinityx") === Number.POSITIVE_INFINITY. Actual: ' + (parseFloat("Infinityx")));
+  throw new Test262Error('#2: parseFloat("Infinityx") === Number.POSITIVE_INFINITY. Actual: ' + (parseFloat("Infinityx")));
 }
 
 //CHECK#3
 if (parseFloat("Infinity+1") !== Number.POSITIVE_INFINITY) {
-  $ERROR('#3: parseFloat("Infinity+1") === Number.POSITIVE_INFINITY. Actual: ' + (parseFloat("Infinity+1")));
+  throw new Test262Error('#3: parseFloat("Infinity+1") === Number.POSITIVE_INFINITY. Actual: ' + (parseFloat("Infinity+1")));
 }

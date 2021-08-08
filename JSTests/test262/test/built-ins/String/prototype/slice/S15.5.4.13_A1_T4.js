@@ -15,7 +15,7 @@ description: >
 if (function() {
     return "gnulluna"
   }().slice(null, -3) !== "gnull") {
-  $ERROR('#1: function(){return "gnulluna"}().slice(null, -3) === "gnull". Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "gnulluna"}().slice(null, -3) === "gnull". Actual: ' + function() {
     return "gnulluna"
   }().slice(null, -3));
 }

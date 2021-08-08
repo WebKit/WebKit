@@ -23,7 +23,7 @@ for (var index = 0; index < hex.length; index++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: RUSSIAN CAPITAL ALPHABET');
+  throw new Test262Error('#1: RUSSIAN CAPITAL ALPHABET');
 }  
 
 //CHECK#0430-044F, 0451
@@ -38,5 +38,5 @@ for (index = 0; index < hex.length; index++) {
 }
 
 if (result !== true) {
-  $ERROR('#1: russian small alphabet');
+  throw new Test262Error('#1: russian small alphabet');
 }

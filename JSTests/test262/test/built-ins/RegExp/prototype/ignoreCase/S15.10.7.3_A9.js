@@ -13,15 +13,15 @@ var __re = RegExp.prototype;
 
 //CHECK#0
 if (__re.hasOwnProperty('ignoreCase') !== true) {
-  $ERROR('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'ignoreCase\') === true');
+  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'ignoreCase\') === true');
 }
 
 //CHECK#1
 if ((delete __re.ignoreCase) !== true) {
-  $ERROR('#1: __re = RegExp.prototype; (delete __re.ignoreCase) === true');
+  throw new Test262Error('#1: __re = RegExp.prototype; (delete __re.ignoreCase) === true');
 }
 
 //CHECK#2
 if (__re.hasOwnProperty('ignoreCase') !== false) {
-  $ERROR('#2: __re = RegExp.prototype;delete __re.ignoreCase === true; __re.hasOwnProperty(\'ignoreCase\') === false');
+  throw new Test262Error('#2: __re = RegExp.prototype;delete __re.ignoreCase === true; __re.hasOwnProperty(\'ignoreCase\') === false');
 }

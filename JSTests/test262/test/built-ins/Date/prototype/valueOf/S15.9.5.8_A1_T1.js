@@ -13,5 +13,5 @@ if (x === 1)
 else
   Date.prototype.valueOf = 1;
 if (Date.prototype.valueOf === x) {
-  $ERROR('#1: The Date.prototype.valueOf has not the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.prototype.valueOf has not the attribute ReadOnly');
 }

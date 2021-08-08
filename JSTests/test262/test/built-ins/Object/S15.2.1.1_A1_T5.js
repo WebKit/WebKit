@@ -14,23 +14,23 @@ var __obj = Object(x);
 var n__obj = new Object(x);
 
 if (__obj.toString() !== n__obj.toString()) {
-  $ERROR('#1');
+  throw new Test262Error('#1');
 }
 
 if (__obj.constructor !== n__obj.constructor) {
-  $ERROR('#2');
+  throw new Test262Error('#2');
 }
 
 if (__obj.prototype !== n__obj.prototype) {
-  $ERROR('#3');
+  throw new Test262Error('#3');
 }
 
 if (__obj.toLocaleString() !== n__obj.toLocaleString()) {
-  $ERROR('#4');
+  throw new Test262Error('#4');
 }
 
 if (typeof __obj !== typeof n__obj) {
-  $ERROR('#5');
+  throw new Test262Error('#5');
 }
 
 var x;

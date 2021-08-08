@@ -15,10 +15,10 @@ try {
 	for(;;(function(){throw "SecondExpression";})()){
         var __in__for = "reached";
     }
-    $ERROR('#1: (function(){throw "SecondExpression"}() lead to throwing exception');
+    throw new Test262Error('#1: (function(){throw "SecondExpression"}() lead to throwing exception');
 } catch (e) {
 	if (e !== "SecondExpression") {
-		$ERROR('#1: When for ( ;  ; Expression) Statement is evaluated Statement evaluates first then Expression evaluates');
+		throw new Test262Error('#1: When for ( ;  ; Expression) Statement is evaluated Statement evaluates first then Expression evaluates');
 	}
 }
 //
@@ -27,7 +27,7 @@ try {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__in__for !== "reached") {
-	$ERROR('#2: __in__for === "reached". Actual:  __in__for ==='+ __in__for  );
+	throw new Test262Error('#2: __in__for === "reached". Actual:  __in__for ==='+ __in__for  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -263,8 +263,12 @@ void WebFullScreenManager::requestExitFullScreen()
 
 void WebFullScreenManager::close()
 {
+    if (m_closing)
+        return;
+    m_closing = true;
     LOG(Fullscreen, "WebFullScreenManager %p close()", this);
     m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
+    m_closing = false;
 }
 
 void WebFullScreenManager::saveScrollPosition()

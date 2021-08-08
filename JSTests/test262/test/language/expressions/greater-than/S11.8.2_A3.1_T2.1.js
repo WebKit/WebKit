@@ -14,40 +14,40 @@ description: >
 
 //CHECK#1
 if (true > 1 !== false) {
-  $ERROR('#1: true > 1 === false');
+  throw new Test262Error('#1: true > 1 === false');
 }
 
 //CHECK#2
 if (1 > true !== false) {
-  $ERROR('#2: 1 > true === false');
+  throw new Test262Error('#2: 1 > true === false');
 }
 
 //CHECK#3
 if (new Boolean(true) > 1 !== false) {
-  $ERROR('#3: new Boolean(true) > 1 === false');
+  throw new Test262Error('#3: new Boolean(true) > 1 === false');
 }
 
 //CHECK#4
 if (1 > new Boolean(true) !== false) {
-  $ERROR('#4: 1 > new Boolean(true) === false');
+  throw new Test262Error('#4: 1 > new Boolean(true) === false');
 }
 
 //CHECK#5
 if (true > new Number(1) !== false) {
-  $ERROR('#5: true > new Number(1) === false');
+  throw new Test262Error('#5: true > new Number(1) === false');
 }
 
 //CHECK#6
 if (new Number(1) > true !== false) {
-  $ERROR('#6: new Number(1) > true === false');
+  throw new Test262Error('#6: new Number(1) > true === false');
 }
 
 //CHECK#7
 if (new Boolean(true) > new Number(1) !== false) {
-  $ERROR('#7: new Boolean(true) > new Number(1) === false');
+  throw new Test262Error('#7: new Boolean(true) > new Number(1) === false');
 }
 
 //CHECK#8
 if (new Number(1) > new Boolean(true) !== false) {
-  $ERROR('#8: new Number(1) > new Boolean(true) === false');
+  throw new Test262Error('#8: new Number(1) > new Boolean(true) === false');
 }

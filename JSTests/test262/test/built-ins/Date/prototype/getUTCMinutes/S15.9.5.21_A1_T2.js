@@ -8,9 +8,9 @@ description: Checking absence of DontDelete attribute
 ---*/
 
 if (delete Date.prototype.getUTCMinutes === false) {
-  $ERROR('#1: The Date.prototype.getUTCMinutes property has not the attributes DontDelete');
+  throw new Test262Error('#1: The Date.prototype.getUTCMinutes property has not the attributes DontDelete');
 }
 
 if (Date.prototype.hasOwnProperty('getUTCMinutes')) {
-  $ERROR('#2: The Date.prototype.getUTCMinutes property has not the attributes DontDelete');
+  throw new Test262Error('#2: The Date.prototype.getUTCMinutes property has not the attributes DontDelete');
 }

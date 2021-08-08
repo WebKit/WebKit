@@ -11,20 +11,20 @@ description: >
 
 //CHECK#1
 if ((true & undefined) !== 0) {
-  $ERROR('#1: (true & undefined) === 0. Actual: ' + ((true & undefined)));
+  throw new Test262Error('#1: (true & undefined) === 0. Actual: ' + ((true & undefined)));
 }
 
 //CHECK#2
 if ((undefined & true) !== 0) {
-  $ERROR('#2: (undefined & true) === 0. Actual: ' + ((undefined & true)));
+  throw new Test262Error('#2: (undefined & true) === 0. Actual: ' + ((undefined & true)));
 }
 
 //CHECK#3
 if ((new Boolean(true) & undefined) !== 0) {
-  $ERROR('#3: (new Boolean(true) & undefined) === 0. Actual: ' + ((new Boolean(true) & undefined)));
+  throw new Test262Error('#3: (new Boolean(true) & undefined) === 0. Actual: ' + ((new Boolean(true) & undefined)));
 }
 
 //CHECK#4
 if ((undefined & new Boolean(true)) !== 0) {
-  $ERROR('#4: (undefined & new Boolean(true)) === 0. Actual: ' + ((undefined & new Boolean(true))));
+  throw new Test262Error('#4: (undefined & new Boolean(true)) === 0. Actual: ' + ((undefined & new Boolean(true))));
 }

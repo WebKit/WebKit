@@ -8,5 +8,5 @@ description: The Date.prototype has the property "setTime"
 ---*/
 
 if (Date.prototype.hasOwnProperty("setTime") !== true) {
-  $ERROR('#1: The Date.prototype has the property "setTime"');
+  throw new Test262Error('#1: The Date.prototype has the property "setTime"');
 }

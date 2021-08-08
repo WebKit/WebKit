@@ -9,15 +9,15 @@ description: Checking String case
 
 //CHECK#1
 if ("" instanceof String) {
-	$ERROR('#1: "" is not instanceof String');
+	throw new Test262Error('#1: "" is not instanceof String');
 }
 
 //CHECK#2
 if (String("") instanceof String) {
-	$ERROR('#2: String("") is not instanceof String');
+	throw new Test262Error('#2: String("") is not instanceof String');
 }
 
 //CHECK#3
 if (new String instanceof String !== true) {
-	$ERROR('#3: new String instanceof String');
+	throw new Test262Error('#3: new String instanceof String');
 }

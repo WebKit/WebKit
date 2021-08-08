@@ -8,5 +8,5 @@ description: The Date.prototype has the property "valueOf"
 ---*/
 
 if (Date.prototype.hasOwnProperty("valueOf") !== true) {
-  $ERROR('#1: The Date.prototype has the property "valueOf"');
+  throw new Test262Error('#1: The Date.prototype has the property "valueOf"');
 }

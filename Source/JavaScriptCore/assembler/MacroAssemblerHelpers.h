@@ -113,6 +113,12 @@ inline typename MacroAssemblerType::TrustedImm32 mask8OnCondition(MacroAssembler
 template<typename MacroAssemblerType>
 inline typename MacroAssemblerType::TrustedImm32 mask8OnCondition(MacroAssemblerType&, typename MacroAssemblerType::ResultCondition cond, typename MacroAssemblerType::TrustedImm32 value)
 {
+    // If condition is Zero or NonZero, upper bits are unrelated.
+    // Since branchTest32 handles -1 in an optimized manner, we keep -1 as is instead of converting it to 255.
+    if (cond == MacroAssemblerType::Zero || cond == MacroAssemblerType::NonZero) {
+        if (value.m_value == -1)
+            return value;
+    }
     if (isUnsigned<MacroAssemblerType>(cond))
         return typename MacroAssemblerType::TrustedImm32(static_cast<uint8_t>(value.m_value));
     ASSERT_WITH_MESSAGE(cond != MacroAssemblerType::Overflow, "Overflow is not used for 8bit test operations.");

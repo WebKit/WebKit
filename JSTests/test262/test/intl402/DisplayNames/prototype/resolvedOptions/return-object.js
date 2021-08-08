@@ -25,6 +25,7 @@ info: |
   [[Style]]: "style"
   [[Type]]: "type"
   [[Fallback]]: "fallback"
+  [[LanguageDisplay]]: "languageDisplay"
 
   Intl.DisplayNames ( locales , options )
 
@@ -50,7 +51,7 @@ info: |
     [[Configurable]]: true }.
   ...
 locale: [en-US]
-features: [Intl.DisplayNames, Reflect]
+features: [Intl.DisplayNames-v2, Reflect]
 includes: [propertyHelper.js, compareArray.js]
 ---*/
 
@@ -66,7 +67,7 @@ assert.sameValue(Object.getPrototypeOf(other), Object.prototype, 'ordinary objec
 
 assert.compareArray(
   Reflect.ownKeys(options),
-  ['locale', 'style', 'type', 'fallback'],
+  ['locale', 'style', 'type', 'fallback', 'languageDisplay'],
   'all the data properties set to this object, in order of creation'
 );
 
@@ -91,7 +92,7 @@ const extra = new Intl.DisplayNames(
 
 assert.compareArray(
   Reflect.ownKeys(extra),
-  ['locale', 'style', 'type', 'fallback'],
+  ['locale', 'style', 'type', 'fallback', 'languageDisplay'],
   'extra properties are not reflected in the resolvedOptions'
 );
 

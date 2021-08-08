@@ -22,5 +22,5 @@ try{
   }
 }
 catch(e){
-  if(e!=="ex")$ERROR('#1: Exception ==="ex". Actual:  Exception ==='+ e  );
+  if(e!=="ex")throw new Test262Error('#1: Exception ==="ex". Actual:  Exception ==='+ e  );
 }

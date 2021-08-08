@@ -13,12 +13,12 @@ description: Checking this algorithm
 var x = new Array();
 var pop = x.pop();
 if (pop !== undefined) {
-  $ERROR('#1: var x = new Array(); x.pop() === undefined. Actual: ' + (pop));
+  throw new Test262Error('#1: var x = new Array(); x.pop() === undefined. Actual: ' + (pop));
 }
 
 //CHECK#2
 if (x.length !== 0) {
-  $ERROR('#2: var x = new Array(); x.pop(); x.length === 0. Actual: ' + (x.length));
+  throw new Test262Error('#2: var x = new Array(); x.pop(); x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#3
@@ -26,10 +26,10 @@ var x = Array(1, 2, 3);
 x.length = 0;
 var pop = x.pop();
 if (pop !== undefined) {
-  $ERROR('#2: var x = Array(1,2,3); x.length = 0; x.pop() === undefined. Actual: ' + (pop));
+  throw new Test262Error('#2: var x = Array(1,2,3); x.length = 0; x.pop() === undefined. Actual: ' + (pop));
 }
 
 //CHECK#4
 if (x.length !== 0) {
-  $ERROR('#4: var x = new Array(1,2,3); x.length = 0; x.pop(); x.length === 0. Actual: ' + (x.length));
+  throw new Test262Error('#4: var x = new Array(1,2,3); x.length = 0; x.pop(); x.length === 0. Actual: ' + (x.length));
 }

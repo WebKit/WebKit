@@ -14,7 +14,7 @@ var __repl = "$1";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__str.replace(__pattern, __repl) !== 'aaaaa') {
-  $ERROR('#1: var __str = "aaaaaaaaaa,aaaaaaaaaaaaaaa"; var __pattern = /^(a+)\\1*,\\1+$/; var __repl = "$1"; __str.replace(__pattern, __repl)===\'aaaaa\'. Actual: ' + __str.replace(__pattern, __repl));
+  throw new Test262Error('#1: var __str = "aaaaaaaaaa,aaaaaaaaaaaaaaa"; var __pattern = /^(a+)\\1*,\\1+$/; var __repl = "$1"; __str.replace(__pattern, __repl)===\'aaaaa\'. Actual: ' + __str.replace(__pattern, __repl));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

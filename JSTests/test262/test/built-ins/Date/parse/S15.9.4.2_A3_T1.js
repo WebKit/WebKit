@@ -13,5 +13,5 @@ includes: [propertyHelper.js]
 var x = Date.parse.length;
 verifyNotWritable(Date.parse, "length", null, 1);
 if (Date.parse.length !== x) {
-  $ERROR('#1: The Date.parse.length has the attribute ReadOnly');
+  throw new Test262Error('#1: The Date.parse.length has the attribute ReadOnly');
 }

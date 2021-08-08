@@ -3170,16 +3170,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitWebGL2EnabledPreferenceKey];
 }
 
-- (BOOL)webGPUEnabled
-{
-    return [self _boolValueForKey:WebKitWebGPUEnabledPreferenceKey];
-}
-
-- (void)setWebGPUEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitWebGPUEnabledPreferenceKey];
-}
-
 - (BOOL)maskWebGLStringsEnabled
 {
     return [self _boolValueForKey:WebKitMaskWebGLStringsEnabledPreferenceKey];

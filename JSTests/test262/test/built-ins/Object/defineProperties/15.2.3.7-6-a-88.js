@@ -32,7 +32,7 @@ try {
       set: set_Func
     }
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyNotEnumerable(obj, "foo");
 
@@ -40,12 +40,12 @@ try {
   var desc = Object.getOwnPropertyDescriptor(obj, "foo");
 
   if (typeof(desc.set) !== "undefined") {
-    $ERROR('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
+    throw new Test262Error('Expected typeof (desc.set) === "undefined", actually ' + typeof(desc.set));
   }
 
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

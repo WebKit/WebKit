@@ -132,6 +132,15 @@ class Svn(mocks.Subprocess):
                     begin=int(args[3].split(':')[-1]),
                 ) if self.connected else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'log',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    self._log_range(
+                        branch='trunk',
+                        begin=self.commits['trunk'][0].revision,
+                        end=self.commits['trunk'][-1].revision,
+                    ) if self.connected else mocks.ProcessCompletion(returncode=1)
+            ), mocks.Subprocess.Route(
                 self.executable, 'up', '-r', re.compile(r'\d+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:

@@ -23,9 +23,9 @@ while (loop) {
     i++;
     continue outer;
 
-    $ERROR('This code is unreachable (inside for-of).');
+    throw new Test262Error('This code is unreachable (inside for-of).');
   }
-  $ERROR('This code is unreachable (inside while).');
+  throw new Test262Error('This code is unreachable (inside while).');
 }
 
 assert.sameValue(i, 1);

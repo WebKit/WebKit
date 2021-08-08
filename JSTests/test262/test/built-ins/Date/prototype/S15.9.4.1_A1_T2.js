@@ -14,7 +14,7 @@ verifyNotConfigurable(Date, "prototype");
 
 try {
   if (delete Date.prototype !== false) {
-    $ERROR('#1: The Date.prototype property has the attributes DontDelete');
+    throw new Test262Error('#1: The Date.prototype property has the attributes DontDelete');
   }
 } catch (e) {
   if (e instanceof Test262Error) throw e;
@@ -22,5 +22,5 @@ try {
 }
 
 if (!Date.hasOwnProperty('prototype')) {
-  $ERROR('#2: The Date.prototype property has the attributes DontDelete');
+  throw new Test262Error('#2: The Date.prototype property has the attributes DontDelete');
 }

@@ -11,40 +11,40 @@ description: >
 
 //CHECK#1
 if (true % 1 !== 0) {
-  $ERROR('#1: true % 1 === 0. Actual: ' + (true % 1));
+  throw new Test262Error('#1: true % 1 === 0. Actual: ' + (true % 1));
 }
 
 //CHECK#2
 if (1 % true !== 0) {
-  $ERROR('#2: 1 % true === 0. Actual: ' + (1 % true));
+  throw new Test262Error('#2: 1 % true === 0. Actual: ' + (1 % true));
 }
 
 //CHECK#3
 if (new Boolean(true) % 1 !== 0) {
-  $ERROR('#3: new Boolean(true) % 1 === 0. Actual: ' + (new Boolean(true) % 1));
+  throw new Test262Error('#3: new Boolean(true) % 1 === 0. Actual: ' + (new Boolean(true) % 1));
 }
 
 //CHECK#4
 if (1 % new Boolean(true) !== 0) {
-  $ERROR('#4: 1 % new Boolean(true) === 0. Actual: ' + (1 % new Boolean(true)));
+  throw new Test262Error('#4: 1 % new Boolean(true) === 0. Actual: ' + (1 % new Boolean(true)));
 }
 
 //CHECK#5
 if (true % new Number(1) !== 0) {
-  $ERROR('#5: true % new Number(1) === 0. Actual: ' + (true % new Number(1)));
+  throw new Test262Error('#5: true % new Number(1) === 0. Actual: ' + (true % new Number(1)));
 }
 
 //CHECK#6
 if (new Number(1) % true !== 0) {
-  $ERROR('#6: new Number(1) % true === 0. Actual: ' + (new Number(1) % true));
+  throw new Test262Error('#6: new Number(1) % true === 0. Actual: ' + (new Number(1) % true));
 }
 
 //CHECK#7
 if (new Boolean(true) % new Number(1) !== 0) {
-  $ERROR('#7: new Boolean(true) % new Number(1) === 0. Actual: ' + (new Boolean(true) % new Number(1)));
+  throw new Test262Error('#7: new Boolean(true) % new Number(1) === 0. Actual: ' + (new Boolean(true) % new Number(1)));
 }
 
 //CHECK#8
 if (new Number(1) % new Boolean(true) !== 0) {
-  $ERROR('#8: new Number(1) % new Boolean(true) === 0. Actual: ' + (new Number(1) % new Boolean(true)));
+  throw new Test262Error('#8: new Number(1) % new Boolean(true) === 0. Actual: ' + (new Number(1) % new Boolean(true)));
 }

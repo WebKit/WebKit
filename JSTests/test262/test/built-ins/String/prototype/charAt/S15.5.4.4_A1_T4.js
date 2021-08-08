@@ -11,7 +11,7 @@ description: Call charAt() function without argument of string object
 //CHECK#1
 //since ToInteger() evaluates to 0 charAt() evaluates to charAt(0)
 if ("lego".charAt() !== "l") {
-  $ERROR('#1: "lego".charAt() === "l". Actual: "lego".charAt() ===' + ("lego".charAt()));
+  throw new Test262Error('#1: "lego".charAt() === "l". Actual: "lego".charAt() ===' + ("lego".charAt()));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,0 @@
-
-PASS builtinVectorGetters
-PASS builtinVectorSetters
-

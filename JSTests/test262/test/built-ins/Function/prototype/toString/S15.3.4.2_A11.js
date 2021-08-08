@@ -9,10 +9,10 @@ description: Checking Function.prototype.toString.length
 
 //CHECK#1
 if (!(Function.prototype.toString.hasOwnProperty("length"))) {
-  $ERROR('#1: The Function.prototype.toString has the length property');
+  throw new Test262Error('#1: The Function.prototype.toString has the length property');
 }
 
 //CHECK#2
 if (Function.prototype.toString.length !== 0) {
-  $ERROR('#2: The length property of the toString method is 0');
+  throw new Test262Error('#2: The length property of the toString method is 0');
 }

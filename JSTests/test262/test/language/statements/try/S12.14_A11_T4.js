@@ -25,10 +25,10 @@ for(var i=0;i<5;i++){
   c1+=2;
 }
 if(fin!==1){
-  $ERROR('#1.1: "finally" block must be evaluated');
+  throw new Test262Error('#1.1: "finally" block must be evaluated');
 }
 if(c1!==5){
-  $ERROR('#1.2: "try{break} catch finally{continue}" must work correctly');
+  throw new Test262Error('#1.2: "try{break} catch finally{continue}" must work correctly');
 }
 
 // CHECK#2
@@ -49,8 +49,8 @@ for(var i=0;i<5;i++){
   fin2=-1;
 }
 if(fin2!==1){
-  $ERROR('#2.1: "finally" block must be evaluated');
+  throw new Test262Error('#2.1: "finally" block must be evaluated');
 }
 if(c2!==5){
-  $ERROR('#2.2: "try catch{break} finally{continue}" must work correctly');
+  throw new Test262Error('#2.2: "try catch{break} finally{continue}" must work correctly');
 }

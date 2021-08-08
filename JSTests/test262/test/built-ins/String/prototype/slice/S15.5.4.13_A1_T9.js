@@ -19,7 +19,7 @@ var __obj = {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (new String(__obj).slice( /*(function(){})()*/ undefined, __obj) !== "") {
-  $ERROR('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).slice(//*(function(){})()*//undefined,__obj) === "". Actual: ' + new String(__obj).slice( /*(function(){})()*/ undefined, __obj));
+  throw new Test262Error('#1: __obj = {valueOf:function(){}, toString:void 0}; new String(__obj).slice(//*(function(){})()*//undefined,__obj) === "". Actual: ' + new String(__obj).slice( /*(function(){})()*/ undefined, __obj));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -49,6 +49,7 @@
 #include "ContentFilter.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginAccessControl.h"
 #include "DOMWindow.h"
 #include "DatabaseManager.h"
 #include "DiagnosticLoggingClient.h"
@@ -761,6 +762,10 @@ void FrameLoader::didBeginDocument(bool dispatch)
             if (!headerContentLanguage.isEmpty())
                 m_frame.document()->setContentLanguage(headerContentLanguage);
         }
+
+        // https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object (Step 7)
+        if (m_frame.isMainFrame())
+            m_frame.document()->setCrossOriginOpenerPolicy(m_documentLoader->crossOriginOpenerPolicy());
     }
 
     history().restoreDocumentState();
@@ -1042,7 +1047,7 @@ void FrameLoader::setOpener(Frame* opener)
     if (opener) {
         opener->loader().m_openedFrames.add(&m_frame);
         if (auto* page = m_frame.page())
-            page->setOpenedByDOMWithOpener();
+            page->setOpenedByDOMWithOpener(true);
     }
     m_opener = makeWeakPtr(opener);
 
@@ -1358,6 +1363,13 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     AllowNavigationToInvalidURL allowNavigationToInvalidURL = frameLoadRequest.allowNavigationToInvalidURL();
     if (!targetFrame && !effectiveFrameName.isEmpty()) {
         action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
+
+        // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
+        if (frameLoadRequest.requester().shouldForceNoOpenerBasedOnCOOP()) {
+            effectiveFrameName = "_blank"_s;
+            openerPolicy = NewFrameOpenerPolicy::Suppress;
+        }
+
         policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(request), WTFMove(formState), effectiveFrameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
@@ -3056,6 +3068,12 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
             return;
         }
 
+        // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
+        if (request.requester().shouldForceNoOpenerBasedOnCOOP()) {
+            frameName = "_blank"_s;
+            openerPolicy = NewFrameOpenerPolicy::Suppress;
+        }
+
         policyChecker().checkNewWindowPolicy(WTFMove(action), WTFMove(workingResourceRequest), WTFMove(formState), frameName, [this, allowNavigationToInvalidURL, openerPolicy, completionHandler = WTFMove(completionHandler)] (const ResourceRequest& request, WeakPtr<FormState>&& formState, const String& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue) mutable {
             continueLoadAfterNewWindowPolicy(request, formState.get(), frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
             completionHandler();
@@ -4063,7 +4081,7 @@ bool FrameLoaderClient::hasHTMLView() const
     return true;
 }
 
-RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequest&& request, const WindowFeatures& features, bool& created)
+RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequest&& request, WindowFeatures& features, bool& created)
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
     ASSERT(request.resourceRequest().httpMethod() == "GET");
@@ -4082,6 +4100,12 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
             }
             return frame;
         }
+    }
+
+    // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
+    if (openerFrame.document()->shouldForceNoOpenerBasedOnCOOP()) {
+        request.setFrameName("_blank"_s);
+        features.noopener = true;
     }
 
     // Sandboxed frames cannot open new auxiliary browsing contexts.
@@ -4183,6 +4207,30 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
 
     created = true;
     return frame;
+}
+
+// At the moment, we do not actually create a new browsing context / frame. We merely make it so that existing windowProxy for the
+// current browsing context lose their browsing context. We also clear properties of the frame (opener, openees, name), so that it
+// appears the same as a new browsing context.
+void FrameLoader::switchBrowsingContextsGroup()
+{
+    // Disown opener.
+    setOpener(nullptr);
+    if (auto* page = m_frame.page())
+        page->setOpenedByDOMWithOpener(false);
+
+    detachFromAllOpenedFrames();
+
+    m_frame.tree().clearName();
+
+    // Make sure we use fresh Window proxies. The old window proxies will keep pointing to the old window which will be frameless when
+    // a new window is created for this frame.
+    m_frame.resetScript();
+
+    // On same-origin navigation from the initial empty document, we normally reuse the window for the new document. We need to prevent
+    // this when we want to isolate so old window proxies will indeed start pointing to a frameless window and appear closed.
+    if (auto* window = m_frame.window())
+        window->setMayReuseForNavigation(false);
 }
 
 bool FrameLoader::shouldSuppressTextInputFromEditing() const

@@ -12,7 +12,7 @@ var __string = new String("this is a string object");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.substring(__string.length, __string.length) !== "") {
-  $ERROR('#1: __string = new String("this is a string object"); __string.substring(__string.length, __string.length) === "". Actual: ' + __string.substring(__string.length, __string.length));
+  throw new Test262Error('#1: __string = new String("this is a string object"); __string.substring(__string.length, __string.length) === "". Actual: ' + __string.substring(__string.length, __string.length));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

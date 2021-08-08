@@ -1,4 +1,0 @@
-
-PASS vectorClamp
-PASS matrixClamp
-

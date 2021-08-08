@@ -23,7 +23,7 @@ try {
       configurable: true
     }
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 } catch (e) {
   verifyEqualTo(str, "prop", 11);
 
@@ -34,7 +34,7 @@ try {
   verifyNotConfigurable(str, "prop");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

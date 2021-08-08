@@ -819,6 +819,8 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     if (!m_player)
         return;
 
+    m_player->acceleratedRenderingStateChanged();
+
     size_t extraMemoryCost = m_player->extraMemoryCost();
     if (extraMemoryCost > m_reportedExtraMemoryCost) {
         JSC::VM& vm = commonVM();
@@ -2403,65 +2405,105 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         }
     }
 
-    if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
-        prepareMediaFragmentURI();
-        scheduleEvent(eventNames().durationchangeEvent);
-        scheduleResizeEvent();
-        scheduleEvent(eventNames().loadedmetadataEvent);
+    // Apply the first applicable set of substeps from the following list:
+    do {
+        // FIXME: The specification seems to only say HAVE_METADATA
+        // explicitly (rather than or higher) for this state. It's unclear
+        // if/how things like loadedmetadataEvent should happen if
+        // we go directly from below HAVE_METADATA to higher than
+        // HAVE_METADATA.
+        if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
+            prepareMediaFragmentURI();
+            scheduleEvent(eventNames().durationchangeEvent);
+            scheduleResizeEvent();
+            scheduleEvent(eventNames().loadedmetadataEvent);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
-            enqueuePlaybackTargetAvailabilityChangedEvent();
+            if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
+                enqueuePlaybackTargetAvailabilityChangedEvent();
 #endif
-        m_initiallyMuted = m_volume < 0.05 || muted();
+            m_initiallyMuted = m_volume < 0.05 || muted();
 
-        updateRenderer();
+            updateRenderer();
 
-        if (is<MediaDocument>(document()))
-            downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
+            if (is<MediaDocument>(document()))
+                downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
 
-        logMediaLoadRequest(document().page(), m_player->engineDescription(), String(), true);
+            logMediaLoadRequest(document().page(), m_player->engineDescription(), String(), true);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        scheduleUpdateMediaState();
+            scheduleUpdateMediaState();
 #endif
 
-        mediaSession().clientCharacteristicsChanged();
-    }
+            mediaSession().clientCharacteristicsChanged();
 
-    if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA) {
-        if (!m_haveFiredLoadedData) {
-            m_haveFiredLoadedData = true;
-            scheduleEvent(eventNames().loadeddataEvent);
-            // FIXME: It's not clear that it's correct to skip these this operation just
-            // because m_haveFiredLoadedData is already true. At one time we were skipping
-            // the call to setShouldDelayLoadEvent, which was definitely incorrect.
-            applyMediaFragmentURI();
+            // As the spec only mentiones HAVE_METADATA, run the later
+            // steps if we are moving to a higher state.
+            if (m_readyState == HAVE_METADATA)
+                break;
         }
-        setShouldDelayLoadEvent(false);
-    }
 
-    if (m_readyState == HAVE_FUTURE_DATA && oldState <= HAVE_CURRENT_DATA && tracksAreReady)
-        scheduleEvent(eventNames().canplayEvent);
+        if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA) {
+            if (!m_haveFiredLoadedData) {
+                m_haveFiredLoadedData = true;
+                scheduleEvent(eventNames().loadeddataEvent);
+                // FIXME: It's not clear that it's correct to skip these this operation just
+                // because m_haveFiredLoadedData is already true. At one time we were skipping
+                // the call to setShouldDelayLoadEvent, which was definitely incorrect.
+                applyMediaFragmentURI();
+            }
+            setShouldDelayLoadEvent(false);
 
-    if (m_readyState == HAVE_ENOUGH_DATA && oldState < HAVE_ENOUGH_DATA && tracksAreReady) {
-        if (oldState <= HAVE_CURRENT_DATA)
+            // If the new ready state is HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA, then the relevant steps below must then be run also.
+            if (m_readyState < HAVE_FUTURE_DATA)
+                break;
+        }
+
+        if (!tracksAreReady)
+            break;
+
+        if (m_readyState == HAVE_FUTURE_DATA && oldState <= HAVE_CURRENT_DATA) {
             scheduleEvent(eventNames().canplayEvent);
 
-        scheduleEvent(eventNames().canplaythroughEvent);
-
-        auto canTransition = canTransitionFromAutoplayToPlay();
-        if (canTransition) {
-            m_paused = false;
-            setShowPosterFlag(false);
-            invalidateCachedTime();
-            setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithoutUserGesture);
-            m_playbackStartedTime = currentMediaTime().toDouble();
-            scheduleEvent(eventNames().playEvent);
-        } else if (canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired) {
-            ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
-            setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
+            // If the element’s paused attribute is false, the user agent must queue a task to fire a simple event named playing at the element.
+            if (!paused())
+                scheduleNotifyAboutPlaying();
+            break;
         }
-    }
+
+        if (m_readyState == HAVE_ENOUGH_DATA && oldState < HAVE_ENOUGH_DATA) {
+            // If the previous ready state was HAVE_CURRENT_DATA or less,
+            // the user agent must queue a media element task given the media element to fire an event named canplay at the element,
+            // and, if the element's paused attribute is false, notify about playing for the element.
+            if (oldState <= HAVE_CURRENT_DATA) {
+                scheduleEvent(eventNames().canplayEvent);
+                if (!paused())
+                    scheduleNotifyAboutPlaying();
+            }
+
+            // The user agent must queue a media element task given the media element to fire an event named canplaythrough at the element.
+            scheduleEvent(eventNames().canplaythroughEvent);
+
+            // If the element is not eligible for autoplay, then the user agent must abort these substeps.
+            // The user agent may run the following substeps:
+            // Set the paused attribute to false.
+            // If the element's show poster flag is true, set it to false and run the time marches on steps.
+            // Queue a media element task given the element to fire an event named play at the element.
+            // Notify about playing for the element.
+            auto canTransition = canTransitionFromAutoplayToPlay();
+            if (canTransition) {
+                m_paused = false;
+                setShowPosterFlag(false);
+                invalidateCachedTime();
+                setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithoutUserGesture);
+                m_playbackStartedTime = currentMediaTime().toDouble();
+                scheduleEvent(eventNames().playEvent);
+                scheduleNotifyAboutPlaying();
+            } else if (canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired) {
+                ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
+                setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
+            }
+        }
+    } while (false);
 
     // If we transition to the Future Data state and we're about to begin playing, ensure playback is actually permitted first,
     // honoring any playback denial reasons such as the requirement of a user gesture.
@@ -3545,8 +3587,14 @@ void HTMLMediaElement::playInternal()
 
         scheduleEvent(eventNames().playEvent);
 
+        // If the media element's readyState attribute has the value HAVE_NOTHING, HAVE_METADATA, or HAVE_CURRENT_DATA,
+        // queue a media element task given the media element to fire an event named waiting at the element.
+        // Otherwise, the media element's readyState attribute has the value HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA:
+        // notify about playing for the element.
         if (m_readyState <= HAVE_CURRENT_DATA)
             scheduleEvent(eventNames().waitingEvent);
+        else
+            scheduleNotifyAboutPlaying();
     } else if (m_readyState >= HAVE_FUTURE_DATA)
         scheduleResolvePendingPlayPromises();
 
@@ -5008,6 +5056,9 @@ bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated()
     if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture)
         return true;
 
+    if (!m_inActiveDocument)
+        return false;
+
     auto* renderer = this->renderer();
     return is<RenderVideo>(renderer)
         && downcast<RenderVideo>(*renderer).view().compositor().canAccelerateVideoRendering(downcast<RenderVideo>(*renderer));
@@ -5481,9 +5532,6 @@ void HTMLMediaElement::setPlaying(bool playing)
         return;
 
     m_playing = playing;
-
-    if (m_playing)
-        scheduleNotifyAboutPlaying();
 
     document().updateIsPlayingMedia();
 

@@ -67,16 +67,26 @@ struct GlyphOverflow {
         bottom = std::max(bottom, other.bottom);
     }
 
+    void extendTop(float extendTo)
+    {
+        top = std::max(top, LayoutUnit(ceilf(extendTo)));
+    }
+
+    void extendBottom(float extendTo)
+    {
+        bottom = std::max(bottom, LayoutUnit(ceilf(extendTo)));
+    }
+
     bool operator!=(const GlyphOverflow& other)
     {
         // FIXME: Probably should name this rather than making it the != operator since it ignores the value of computeBounds.
         return left != other.left || right != other.right || top != other.top || bottom != other.bottom;
     }
 
-    int left { 0 };
-    int right { 0 };
-    int top { 0 };
-    int bottom { 0 };
+    LayoutUnit left;
+    LayoutUnit right;
+    LayoutUnit top;
+    LayoutUnit bottom;
     bool computeBounds { false };
 };
 

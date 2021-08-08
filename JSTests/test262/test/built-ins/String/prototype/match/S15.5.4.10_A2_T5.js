@@ -14,7 +14,7 @@ var __string = "123456abcde7890";
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.match(/\D{2}/g).length !== 2) {
-  $ERROR('#1: __string = "123456abcde7890"; __string.match(/\\D{2}/g).length=== 2. Actual: ' + __string.match(/\D{2}/g).length);
+  throw new Test262Error('#1: __string = "123456abcde7890"; __string.match(/\\D{2}/g).length=== 2. Actual: ' + __string.match(/\D{2}/g).length);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ if (__string.match(/\D{2}/g).length !== 2) {
 //CHECK#2
 for (var mi = 0; mi < __matches.length; mi++) {
   if (__string.match(/\D{2}/g)[mi] !== __matches[mi]) {
-    $ERROR('#2.' + mi + ': __matches=["ab", "cd"]; __string = "123456abcde7890"; __string.match(/\\D{2}/g)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(/\D{2}/g)[mi]);
+    throw new Test262Error('#2.' + mi + ': __matches=["ab", "cd"]; __string = "123456abcde7890"; __string.match(/\\D{2}/g)[' + mi + ']===__matches[' + mi + ']. Actual: ' + __string.match(/\D{2}/g)[mi]);
   }
 }
 //

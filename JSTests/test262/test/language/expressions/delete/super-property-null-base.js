@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-delete-operator-runtime-semantics-evaluation
-description: The restriction on the base of a super property must be enforced before the delete expression is evaluated.
+description: The restriction on the base of a super property must not be enforced before the delete expression is evaluated.
 info: |
   # 13.3.7.3 MakeSuperPropertyReference ( actualThis, propertyKey, strict )
 
@@ -15,9 +15,11 @@ info: |
   UnaryExpression : delete UnaryExpression
 
   1. Let ref be the result of evaluating UnaryExpression.
+  2. ReturnIfAbrupt(ref).
   [...]
   5. If IsPropertyReference(ref) is true, then
-    a. If IsSuperReference(ref) is true, throw a ReferenceError exception.
+    a. Assert: ! IsPrivateReference(ref) is false.
+    b. If IsSuperReference(ref) is true, throw a ReferenceError exception.
 features: [class]
 ---*/
 
@@ -29,6 +31,6 @@ class C {
 
 Object.setPrototypeOf(C, null);
 
-assert.throws(TypeError, () => {
+assert.throws(ReferenceError, () => {
   C.m();
 });

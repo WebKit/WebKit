@@ -13,7 +13,7 @@ description: >
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (new String("undefined").replace(x, Function("return arguments[1]+42;")) !== "42") {
-  $ERROR('#1: var x; new String("undefined").replace(x,Function("return arguments[1]+42;")) === "42". Actual: ' + new String("undefined").replace(x, Function("return arguments[1]+42;")));
+  throw new Test262Error('#1: var x; new String("undefined").replace(x,Function("return arguments[1]+42;")) === "42". Actual: ' + new String("undefined").replace(x, Function("return arguments[1]+42;")));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

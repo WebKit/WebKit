@@ -45,13 +45,13 @@ class Scm(ScmBase):
         return os.path.realpath(path)
 
     @classmethod
-    def from_path(cls, path, contributors=None):
+    def from_path(cls, path, contributors=None, **kwargs):
         from webkitscmpy import local
 
         if local.Git.is_checkout(path):
-            return local.Git(path, contributors=contributors)
+            return local.Git(path, contributors=contributors, **kwargs)
         if local.Svn.is_checkout(path):
-            return local.Svn(path, contributors=contributors)
+            return local.Svn(path, contributors=contributors, **kwargs)
         raise OSError("'{}' is not a known SCM type".format(path))
 
     def __init__(self, path, dev_branches=None, prod_branches=None, contributors=None, id=None):

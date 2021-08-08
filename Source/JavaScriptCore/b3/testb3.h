@@ -471,6 +471,28 @@ void testSubWithUnsignedRightShift32();
 void testSubWithLeftShift64();
 void testSubWithRightShift64();
 void testSubWithUnsignedRightShift64();
+
+void testAndLeftShift32();
+void testAndRightShift32();
+void testAndUnsignedRightShift32();
+void testAndLeftShift64();
+void testAndRightShift64();
+void testAndUnsignedRightShift64();
+
+void testXorLeftShift32();
+void testXorRightShift32();
+void testXorUnsignedRightShift32();
+void testXorLeftShift64();
+void testXorRightShift64();
+void testXorUnsignedRightShift64();
+
+void testOrLeftShift32();
+void testOrRightShift32();
+void testOrUnsignedRightShift32();
+void testOrLeftShift64();
+void testOrRightShift64();
+void testOrUnsignedRightShift64();
+
 void testSelectCompareDouble();
 void testSelectCompareFloat(float, float);
 void testSelectCompareFloatToDouble(float, float);
@@ -1139,5 +1161,10 @@ void testByteCopyLoopBoundIsLoopDependent();
 void addCopyTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>&);
 
 bool shouldRun(const char* filter, const char* testName);
+
+void testLoadPreIndex32();
+void testLoadPreIndex64();
+void testLoadPostIndex32();
+void testLoadPostIndex64();
 
 #endif // ENABLE(B3_JIT)

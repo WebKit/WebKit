@@ -9,5 +9,5 @@ description: Checking if obtaining Object.prototype.prototype fails
 
 // CHECK#1
 if (Object.prototype.prototype !== undefined) {
-  $ERROR('#1: Object prototype has not prototype');
+  throw new Test262Error('#1: Object prototype has not prototype');
 }

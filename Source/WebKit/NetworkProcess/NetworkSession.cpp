@@ -406,4 +406,9 @@ NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
     return *m_networkLoadScheduler;
 }
 
+String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier identifier) const
+{
+    return m_attributedBundleIdentifierFromPageIdentifiers.get(identifier);
+}
+
 } // namespace WebKit

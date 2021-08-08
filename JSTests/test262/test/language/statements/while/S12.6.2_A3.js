@@ -16,7 +16,7 @@ __evaluated = eval("while (false) __in__do=1;");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#
 if (__in__do !== undefined) {
-	$ERROR('#1: __in__do === undefined. Actual:  __in__do ==='+ __in__do  );
+	throw new Test262Error('#1: __in__do === undefined. Actual:  __in__do ==='+ __in__do  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ if (__in__do !== undefined) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__evaluated !== undefined) {
-	$ERROR('#2: __evaluated === undefined. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#2: __evaluated === undefined. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

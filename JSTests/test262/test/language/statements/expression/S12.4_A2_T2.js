@@ -20,7 +20,7 @@ __evaluated = eval(x);
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__evaluated !== 7) {
-	$ERROR('#1: __evaluated === 7. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#1: __evaluated === 7. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ __evaluated = eval("2*"+x+">-1");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__evaluated !== 11) {
-	$ERROR('#2: __evaluated === 11. Actual:  __evaluated ==='+ __evaluated  );
+	throw new Test262Error('#2: __evaluated === 11. Actual:  __evaluated ==='+ __evaluated  );
 }
 //
 //////////////////////////////////////////////////////////////////////////////

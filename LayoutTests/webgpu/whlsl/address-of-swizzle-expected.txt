@@ -1,4 +1,0 @@
-
-PASS cantTakeAddressOfSwizzle
-PASS cantAssignRvalueSwizzle
-

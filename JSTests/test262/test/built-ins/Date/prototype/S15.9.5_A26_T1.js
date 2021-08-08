@@ -8,5 +8,5 @@ description: The Date.prototype has the property "getTimezoneOffset"
 ---*/
 
 if (Date.prototype.hasOwnProperty("getTimezoneOffset") !== true) {
-  $ERROR('#1: The Date.prototype has the property "getTimezoneOffset"');
+  throw new Test262Error('#1: The Date.prototype has the property "getTimezoneOffset"');
 }

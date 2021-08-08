@@ -15,26 +15,26 @@ var x;
 x = 1;
 x &= undefined;
 if (x !== 0) {
-  $ERROR('#1: x = 1; x &= undefined; x === 0. Actual: ' + (x));
+  throw new Test262Error('#1: x = 1; x &= undefined; x === 0. Actual: ' + (x));
 }
 
 //CHECK#2
 x = undefined;
 x &= 1;
 if (x !== 0) {
-  $ERROR('#2: x = undefined; x &= 1; x === 0. Actual: ' + (x));
+  throw new Test262Error('#2: x = undefined; x &= 1; x === 0. Actual: ' + (x));
 }
 
 //CHECK#3
 x = new Number(1);
 x &= undefined;
 if (x !== 0) {
-  $ERROR('#3: x = new Number(1); x &= undefined; x === 0. Actual: ' + (x));
+  throw new Test262Error('#3: x = new Number(1); x &= undefined; x === 0. Actual: ' + (x));
 }
 
 //CHECK#4
 x = undefined;
 x &= new Number(1);
 if (x !== 0) {
-  $ERROR('#4: x = undefined; x &= new Number(1); x === 0. Actual: ' + (x));
+  throw new Test262Error('#4: x = undefined; x &= new Number(1); x === 0. Actual: ' + (x));
 }

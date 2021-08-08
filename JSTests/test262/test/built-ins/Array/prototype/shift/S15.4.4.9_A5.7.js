@@ -13,9 +13,9 @@ description: >
 
 try {
   new Array.prototype.shift();
-  $ERROR('#1.1: new Array.prototype.shift() throw TypeError. Actual: ' + (new Array.prototype.shift()));
+  throw new Test262Error('#1.1: new Array.prototype.shift() throw TypeError. Actual: ' + (new Array.prototype.shift()));
 } catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#1.2: new Array.prototype.shift() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#1.2: new Array.prototype.shift() throw TypeError. Actual: ' + (e));
   }
 }

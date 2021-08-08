@@ -17,12 +17,12 @@ flags:
   TypedArray.prototype.at: useAtMethod
   String.prototype.at: useAtMethod
   top-level-await: useTopLevelAwait
+  array-find-from-last: useArrayFindLastMethod
 skip:
   features:
     - Atomics.waitAsync
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
-    - legacy-regexp
     - cleanupSome
     - Intl.Locale-info
     - resizable-arraybuffer
@@ -30,6 +30,10 @@ skip:
     - Temporal
     - import-assertions
     - json-modules
+    - class-static-block
+    - Intl.DisplayNames-v2
+    - Intl.DateTimeFormat-extend-timezonename
+    - callable-boundary-realms
   paths:
   files:
     # https://github.com/claudepache/es-legacy-function-reflection

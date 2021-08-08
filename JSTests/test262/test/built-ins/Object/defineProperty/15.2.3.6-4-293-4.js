@@ -23,7 +23,7 @@ flags: [onlyStrict]
     value: 20
   });
   if (a !== 0) {
-    $ERROR('Expected "a === 0", actually ' + a);
+    throw new Test262Error('Expected "a === 0", actually ' + a);
   }
 
   verifyEqualTo(arguments, "0", 20);

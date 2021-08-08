@@ -2359,6 +2359,9 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent& event)
     if (!keyEvent || keyEvent->isSystemKey())  // do not treat this as text input if it's a system key event
         return false;
 
+    if (event.type() != eventNames().keydownEvent && event.type() != eventNames().keypressEvent)
+        return false;
+
     auto command = frame->editor().command(interpretKeyEvent(&event));
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {

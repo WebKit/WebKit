@@ -16,7 +16,7 @@ __instance.slice = String.prototype.slice;
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__instance.slice(8, __instance.toString().length) !== "Object]") {
-  $ERROR('#1: __instance = new Object(); __instance.slice = String.prototype.slice; __instance.slice(8,__instance.toString().length) === "Object]". Actual: ' + __instance.slice(8, __instance.toString().length));
+  throw new Test262Error('#1: __instance = new Object(); __instance.slice = String.prototype.slice; __instance.slice(8,__instance.toString().length) === "Object]". Actual: ' + __instance.slice(8, __instance.toString().length));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

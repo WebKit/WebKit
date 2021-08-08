@@ -11,17 +11,17 @@ description: Checking use hasOwnProperty, delete
 
 //CHECK#1
 if (decodeURIComponent.hasOwnProperty('length') !== true) {
-  $ERROR('#1: decodeURIComponent.hasOwnProperty(\'length\') === true. Actual: ' + (decodeURIComponent.hasOwnProperty('length')));
+  throw new Test262Error('#1: decodeURIComponent.hasOwnProperty(\'length\') === true. Actual: ' + (decodeURIComponent.hasOwnProperty('length')));
 }
 
 delete decodeURIComponent.length;
 
 //CHECK#2
 if (decodeURIComponent.hasOwnProperty('length') !== false) {
-  $ERROR('#2: delete decodeURIComponent.length; decodeURIComponent.hasOwnProperty(\'length\') === false. Actual: ' + (decodeURIComponent.hasOwnProperty('length')));
+  throw new Test262Error('#2: delete decodeURIComponent.length; decodeURIComponent.hasOwnProperty(\'length\') === false. Actual: ' + (decodeURIComponent.hasOwnProperty('length')));
 }
 
 //CHECK#3
 if (decodeURIComponent.length === undefined) {
-  $ERROR('#3: delete decodeURIComponent.length; decodeURIComponent.length !== undefined');
+  throw new Test262Error('#3: delete decodeURIComponent.length; decodeURIComponent.length !== undefined');
 }

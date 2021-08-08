@@ -25,10 +25,10 @@ includes: [propertyHelper.js]
     Object.defineProperty(arguments, "genericProperty", {
       enumerable: false
     });
-    $ERROR("Expected an exception.");
+    throw new Test262Error("Expected an exception.");
   } catch (e) {
     if (c !== 3) {
-      $ERROR('Expected c === 3, actually ' + c);
+      throw new Test262Error('Expected c === 3, actually ' + c);
     }
     verifyWritable(arguments, "genericProperty", "genericPropertyString");
 
@@ -37,7 +37,7 @@ includes: [propertyHelper.js]
     verifyNotConfigurable(arguments, "genericProperty");
 
     if (!(e instanceof TypeError)) {
-      $ERROR("Expected TypeError, got " + e);
+      throw new Test262Error("Expected TypeError, got " + e);
     }
 
   }

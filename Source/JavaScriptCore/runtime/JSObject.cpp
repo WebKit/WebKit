@@ -874,6 +874,12 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
         if (slot.attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
             return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
+        if (slot.attributes() & PropertyAttribute::CustomValue) {
+            PutPropertySlot::PutValueFunc customSetter = slot.customSetter();
+            if (customSetter)
+                RELEASE_AND_RETURN(scope, customSetter(receiver->globalObject(vm), JSValue::encode(receiver), JSValue::encode(value), propertyName));
+        }
+
         PropertyDescriptor descriptor;
         descriptor.setValue(value);
         RELEASE_AND_RETURN(scope, receiver->methodTable(vm)->defineOwnProperty(receiver, globalObject, propertyName, descriptor, shouldThrow));
@@ -903,6 +909,12 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
             return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
     }
 
+    if (receiver->structure(vm)->hasCustomGetterSetterProperties()) {
+        unsigned attributes;
+        if (receiver->getDirectOffset(vm, propertyName, attributes) != invalidOffset && (attributes & PropertyAttribute::CustomValue))
+            return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
+    }
+
     if (UNLIKELY(receiver->hasNonReifiedStaticProperties(vm)))
         return receiver->putInlineFastReplacingStaticPropertyIfNeeded(globalObject, propertyName, value, slot);
     return receiver->putInlineFast(globalObject, propertyName, value, slot);
@@ -923,6 +935,11 @@ bool JSObject::putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject* glob
                 ASSERT(slot.context() == PutPropertySlot::ReflectSet);
                 // FIXME: For an accessor with setter, the error message is misleading.
                 return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+            }
+            if (entry->value->attributes() & PropertyAttribute::CustomValue) {
+                PutValueFunc customSetter = entry->value->propertyPutter();
+                if (customSetter)
+                    RELEASE_AND_RETURN(scope, customSetter(structure->globalObject(), JSValue::encode(this), JSValue::encode(value), propertyName));
             }
             // Avoid PutModePut because it fails for non-extensible structures.
             putDirect(vm, propertyName, value, attributesForStructure(entry->value->attributes()) & ~PropertyAttribute::CustomValue, slot);

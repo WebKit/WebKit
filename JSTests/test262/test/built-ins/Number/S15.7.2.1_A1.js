@@ -11,44 +11,44 @@ description: Checking type of the newly created object and it value
 
 //CHECK#1
 if (typeof new Number() !== "object") {
-  $ERROR("#1: typeof new Number() === 'object'");
+  throw new Test262Error("#1: typeof new Number() === 'object'");
 }
 
 //CHECK#2
 if (new Number() === undefined) {
-  $ERROR("#2: new Number() should not be undefined");
+  throw new Test262Error("#2: new Number() should not be undefined");
 }
 
 //CHECK#3
 var x3 = new Number();
 if (typeof x3 !== "object") {
-  $ERROR("#3: typeof new Number() === 'object'");
+  throw new Test262Error("#3: typeof new Number() === 'object'");
 }
 
 //CHECK#4
 var x4 = new Number();
 if (x4 === undefined) {
-  $ERROR("#4: new Number() should not be undefined");
+  throw new Test262Error("#4: new Number() should not be undefined");
 }
 
 //CHECK#5
 if (typeof new Number(10) !== "object") {
-  $ERROR("#5: typeof new Number(10) === 'object'");
+  throw new Test262Error("#5: typeof new Number(10) === 'object'");
 }
 
 //CHECK#6
 if (new Number(10) === undefined) {
-  $ERROR("#6: new Number(10) should not be undefined");
+  throw new Test262Error("#6: new Number(10) should not be undefined");
 }
 
 //CHECK#7
 var x7 = new Number(10);
 if (typeof x7 !== "object") {
-  $ERROR("#7: typeof new Number(10) === 'object'");
+  throw new Test262Error("#7: typeof new Number(10) === 'object'");
 }
 
 //CHECK#8
 var x8 = new Number(10);
 if (x8 === undefined) {
-  $ERROR("#8: new Number(10) should not be undefined");
+  throw new Test262Error("#8: new Number(10) should not be undefined");
 }

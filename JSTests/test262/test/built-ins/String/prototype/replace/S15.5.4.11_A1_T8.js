@@ -16,7 +16,7 @@ var __obj = {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (String(__obj).replace(/e/g, void 0) !== "undundefinedfinundefinedd") {
-  $ERROR('#1: __obj = {toString:function(){}}; String(__obj).replace(/e/g,void 0) === "undundefinedfinundefinedd". Actual: ' + String(__obj).replace(/e/g, void 0));
+  throw new Test262Error('#1: __obj = {toString:function(){}}; String(__obj).replace(/e/g,void 0) === "undundefinedfinundefinedd". Actual: ' + String(__obj).replace(/e/g, void 0));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

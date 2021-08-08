@@ -15,9 +15,9 @@ var obj = {};
 var p = Promise.reject(obj);
 
 p.then(function() {
-  $ERROR("Should not be called: did not expect promise to be fulfilled");
+  throw new Test262Error("Should not be called: did not expect promise to be fulfilled");
 }).catch(function(arg) {
   if (arg !== obj) {
-    $ERROR("Should have been rejected with reason obj, got " + arg);
+    throw new Test262Error("Should have been rejected with reason obj, got " + arg);
   }
 }).then($DONE, $DONE);

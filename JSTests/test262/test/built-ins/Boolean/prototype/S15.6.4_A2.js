@@ -11,5 +11,5 @@ description: Checking Object.prototype.isPrototypeOf(Boolean.prototype)
 
 //CHECK#1
 if (!Object.prototype.isPrototypeOf(Boolean.prototype)) {
-  $ERROR('#1: Object prototype object is the prototype of Boolean prototype object');
+  throw new Test262Error('#1: Object prototype object is the prototype of Boolean prototype object');
 }

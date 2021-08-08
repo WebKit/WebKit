@@ -12,7 +12,7 @@ var __re = RegExp.prototype;
 
 //CHECK#1
 if (__re.hasOwnProperty('global') !== true) {
-  $ERROR('#1: __re = RegExp.prototype; __re.hasOwnProperty(\'global\') === true');
+  throw new Test262Error('#1: __re = RegExp.prototype; __re.hasOwnProperty(\'global\') === true');
 }
 
 var __sample = /^|^/;
@@ -22,5 +22,5 @@ verifyNotWritable(__sample, "global", "global", "shifted");
 
 //CHECK#2
 if (__sample.global !== __obj) {
-  $ERROR('#2: __sample = /^|^/; __obj = __sample.global; __sample.global = "shifted"; __sample.global === __obj. Actual: ' + (__sample.global));
+  throw new Test262Error('#2: __sample = /^|^/; __obj = __sample.global; __sample.global = "shifted"; __sample.global === __obj. Actual: ' + (__sample.global));
 }

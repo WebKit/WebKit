@@ -10,9 +10,9 @@ description: Checking absence of DontDelete attribute
 ---*/
 
 if (delete Date.prototype.getTimezoneOffset === false) {
-  $ERROR('#1: The Date.prototype.getTimezoneOffset property has not the attributes DontDelete');
+  throw new Test262Error('#1: The Date.prototype.getTimezoneOffset property has not the attributes DontDelete');
 }
 
 if (Date.prototype.hasOwnProperty('getTimezoneOffset')) {
-  $ERROR('#2: The Date.prototype.getTimezoneOffset property has not the attributes DontDelete');
+  throw new Test262Error('#2: The Date.prototype.getTimezoneOffset property has not the attributes DontDelete');
 }

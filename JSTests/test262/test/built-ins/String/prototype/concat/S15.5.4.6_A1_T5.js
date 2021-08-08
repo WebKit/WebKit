@@ -15,7 +15,7 @@ description: >
 if (function() {
     return "lego"
   }().concat(null) !== "legonull") {
-  $ERROR('#1: function(){return "lego"}().concat(null) === "legonull". Actual: ' + function() {
+  throw new Test262Error('#1: function(){return "lego"}().concat(null) === "legonull". Actual: ' + function() {
     return "lego"
   }().concat(null));
 }

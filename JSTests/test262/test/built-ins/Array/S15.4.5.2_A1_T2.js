@@ -14,7 +14,7 @@ description: P = "2^32 - 1" is not index array
 var x = [];
 x[4294967295] = 1;
 if (x.length !== 0) {
-  $ERROR('#1: x = []; x[4294967295] = 1; x.length === 0. Actual: ' + (x.length));
+  throw new Test262Error('#1: x = []; x[4294967295] = 1; x.length === 0. Actual: ' + (x.length));
 }
 
 //CHECK#2
@@ -22,5 +22,5 @@ var y = [];
 y[1] = 1;
 y[4294967295] = 1;
 if (y.length !== 2) {
-  $ERROR('#2: y = []; y[1] = 1; y[4294967295] = 1; y.length === 2. Actual: ' + (y.length));
+  throw new Test262Error('#2: y = []; y[1] = 1; y[4294967295] = 1; y.length === 2. Actual: ' + (y.length));
 }

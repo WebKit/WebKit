@@ -11,20 +11,20 @@ description: >
 
 // CHECK#1
 if (Number("0xa") !== 10) {
-  $ERROR('#1: Number("0xa") === 10. Actual: ' + (Number("0xa")));
+  throw new Test262Error('#1: Number("0xa") === 10. Actual: ' + (Number("0xa")));
 }
 
 // CHECK#2
 if (Number("0xA") !== 10) {
-  $ERROR('#2: Number("0xA") === 10. Actual: ' + (Number("0xA")));
+  throw new Test262Error('#2: Number("0xA") === 10. Actual: ' + (Number("0xA")));
 }
 
 // CHECK#3
 if (Number("0Xa") !== 10) {
-  $ERROR('#3: Number("0Xa") === 10. Actual: ' + (Number("0Xa")));
+  throw new Test262Error('#3: Number("0Xa") === 10. Actual: ' + (Number("0Xa")));
 }
 
 // CHECK#4
 if (+("0XA") !== 10) {
-  $ERROR('#4: +("0XA") === 10. Actual: ' + (+("0XA")));
+  throw new Test262Error('#4: +("0XA") === 10. Actual: ' + (+("0XA")));
 }

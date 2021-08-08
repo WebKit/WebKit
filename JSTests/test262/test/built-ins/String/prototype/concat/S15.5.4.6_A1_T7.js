@@ -13,7 +13,7 @@ description: >
 //CHECK#1
 //since ToString(undefined) evaluates to "undefined" concat(undefined) evaluates to concat("undefined")
 if (String("lego").concat(undefined) !== "legoundefined") {
-  $ERROR('#1: String("lego").concat(undefined) === "legoundefined". Actual: ' + String("lego").concat(undefined));
+  throw new Test262Error('#1: String("lego").concat(undefined) === "legoundefined". Actual: ' + String("lego").concat(undefined));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

@@ -14,20 +14,20 @@ description: >
 
 //CHECK#1
 if (({} + function(){return 1}) !== ({}.toString() + function(){return 1}.toString())) {
-  $ERROR('#1: ({} + function(){return 1}) === ({}.toString() + function(){return 1}.toString()). Actual: ' + (({} + function(){return 1})));
+  throw new Test262Error('#1: ({} + function(){return 1}) === ({}.toString() + function(){return 1}.toString()). Actual: ' + (({} + function(){return 1})));
 }
 
 //CHECK#2
 if ((function(){return 1} + {}) !== (function(){return 1}.toString() + {}.toString())) {
-  $ERROR('#2: (function(){return 1} + {}) === (function(){return 1}.toString() + {}.toString()). Actual: ' + ((function(){return 1} + {})));
+  throw new Test262Error('#2: (function(){return 1} + {}) === (function(){return 1}.toString() + {}.toString()). Actual: ' + ((function(){return 1} + {})));
 }
 
 //CHECK#3
 if ((function(){return 1} + function(){return 1}) !== (function(){return 1}.toString() + function(){return 1}.toString())) {
-  $ERROR('#3: (function(){return 1} + function(){return 1}) === (function(){return 1}.toString() + function(){return 1}.toString()). Actual: ' + ((function(){return 1} + function(){return 1})));
+  throw new Test262Error('#3: (function(){return 1} + function(){return 1}) === (function(){return 1}.toString() + function(){return 1}.toString()). Actual: ' + ((function(){return 1} + function(){return 1})));
 }
 
 //CHECK#4
 if (({} + {}) !== ({}.toString() + {}.toString())) {
-  $ERROR('#4: ({} + {}) === ({}.toString() + {}.toString()). Actual: ' + (({} + {})));
+  throw new Test262Error('#4: ({} + {}) === ({}.toString() + {}.toString()). Actual: ' + (({} + {})));
 }

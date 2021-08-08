@@ -177,6 +177,7 @@ public:
     FrameTree& tree() const;
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
+    void resetScript();
 
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
     WEBCORE_EXPORT std::optional<FrameIdentifier> frameID() const;

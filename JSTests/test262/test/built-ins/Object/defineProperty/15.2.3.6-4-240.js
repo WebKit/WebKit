@@ -27,7 +27,7 @@ try {
   Object.defineProperty(arrObj, "1", {
     value: 13
   });
-  $ERROR("Expected an exception.");
+  throw new Test262Error("Expected an exception.");
 
 } catch (e) {
   verifyWritable(arrObj, "1", "setVerifyHelpProp");
@@ -37,7 +37,7 @@ try {
   verifyNotConfigurable(arrObj, "1");
 
   if (!(e instanceof TypeError)) {
-    $ERROR("Expected TypeError, got " + e);
+    throw new Test262Error("Expected TypeError, got " + e);
   }
 
 }

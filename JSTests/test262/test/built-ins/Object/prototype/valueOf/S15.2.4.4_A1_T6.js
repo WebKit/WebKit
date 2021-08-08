@@ -9,17 +9,17 @@ description: "\"this\" value is \"undefined\""
 
 //CHECK#1
 if (typeof Object.prototype.valueOf !== "function") {
-  $ERROR('#1: valueOf method defined');
+  throw new Test262Error('#1: valueOf method defined');
 }
 
 var obj = new Object(undefined);
 
 //CHECK#2
 if (typeof obj.valueOf !== "function") {
-  $ERROR('#2: valueOf method accessed');
+  throw new Test262Error('#2: valueOf method accessed');
 }
 
 //CHECK#3
 if (obj.valueOf() !== obj) {
-  $ERROR('#3: The valueOf method returns its this value');
+  throw new Test262Error('#3: The valueOf method returns its this value');
 }

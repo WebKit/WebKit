@@ -14,6 +14,6 @@ var unicode = ["\u0041", "\u0042", "\u0043", "\u0044", "\u0045", "\u0046", "\u00
 var character = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 for (var index = 0; index <= 25; index++) {
   if (unicode[index] !== character[index]) {
-    $ERROR('#' + character[index] + ' ');
+    throw new Test262Error('#' + character[index] + ' ');
   }
 }

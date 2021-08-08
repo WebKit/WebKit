@@ -10,7 +10,7 @@ description: Checking String.hasOwnProperty('prototype')
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (!(String.hasOwnProperty('prototype'))) {
-  $ERROR('#1: String.hasOwnProperty(\'prototype\') return true. Actual: ' + String.hasOwnProperty('prototype'));
+  throw new Test262Error('#1: String.hasOwnProperty(\'prototype\') return true. Actual: ' + String.hasOwnProperty('prototype'));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

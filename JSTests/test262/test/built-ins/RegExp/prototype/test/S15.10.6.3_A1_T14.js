@@ -12,5 +12,5 @@ var __re = /AL|se/;
 
 //CHECK#0
 if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	$ERROR('#0: var __string = new Boolean;__re = /AL|se/; __re.test(__string) === (__re.exec(__string) !== null)');
+	throw new Test262Error('#0: var __string = new Boolean;__re = /AL|se/; __re.test(__string) === (__re.exec(__string) !== null)');
 }

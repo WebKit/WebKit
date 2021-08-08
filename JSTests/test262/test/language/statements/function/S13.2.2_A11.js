@@ -25,7 +25,7 @@ function FACTORY(){
 //CHECK#1
 try {
 	var obj = new FACTORY();
-	$ERROR('#1: var obj = new FACTORY() lead to throwing exception');
+	throw new Test262Error('#1: var obj = new FACTORY() lead to throwing exception');
 } catch (e) {
     if (e instanceof Test262Error) throw e;
 }

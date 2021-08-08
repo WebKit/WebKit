@@ -10,7 +10,7 @@ description: Checking this use new Array() and []
 //CHECK#1
 var x = new Array(0, 1, 2, 3);
 if (x.join(undefined) !== "0,1,2,3") {
-  $ERROR('#1: x = new Array(0,1,2,3); x.join(undefined) === "0,1,2,3". Actual: ' + (x.join(undefined)));
+  throw new Test262Error('#1: x = new Array(0,1,2,3); x.join(undefined) === "0,1,2,3". Actual: ' + (x.join(undefined)));
 }
 
 //CHECK#2
@@ -18,12 +18,12 @@ x = [];
 x[0] = 0;
 x[3] = 3;
 if (x.join(undefined) !== "0,,,3") {
-  $ERROR('#2: x = []; x[0] = 0; x[3] = 3; x.join(undefined) === "0,,,3". Actual: ' + (x.join(undefined)));
+  throw new Test262Error('#2: x = []; x[0] = 0; x[3] = 3; x.join(undefined) === "0,,,3". Actual: ' + (x.join(undefined)));
 }
 
 //CHECK#3
 x = [];
 x[0] = 0;
 if (x.join(undefined) !== "0") {
-  $ERROR('#3: x = []; x[0] = 0; x.join(undefined) === "0". Actual: ' + (x.join(undefined)));
+  throw new Test262Error('#3: x = []; x[0] = 0; x.join(undefined) === "0". Actual: ' + (x.join(undefined)));
 }

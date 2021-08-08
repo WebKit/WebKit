@@ -114,7 +114,10 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
             break;
         }
 
-        m_openError = sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), &m_db, flags, nullptr);
+        {
+            SQLiteTransactionInProgressAutoCounter transactionCounter;
+            m_openError = sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), &m_db, flags, nullptr);
+        }
         if (m_openError != SQLITE_OK) {
             m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
             LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
@@ -200,6 +203,7 @@ static int checkpointModeValue(SQLiteDatabase::CheckpointMode mode)
     case SQLiteDatabase::CheckpointMode::Truncate:
         return SQLITE_CHECKPOINT_TRUNCATE;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void SQLiteDatabase::checkpoint(CheckpointMode mode)

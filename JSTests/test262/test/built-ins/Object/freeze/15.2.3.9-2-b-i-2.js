@@ -48,17 +48,17 @@ verifyNotEnumerable(obj, "foo2");
 verifyNotConfigurable(obj, "foo2");
 
 if (desc1.configurable !== false) {
-  $ERROR('Expected desc1.configurable === false, actually ' + desc1.configurable);
+  throw new Test262Error('Expected desc1.configurable === false, actually ' + desc1.configurable);
 }
 
 if (desc1.writable !== false) {
-  $ERROR('Expected desc1.writable === false, actually ' + desc1.writable);
+  throw new Test262Error('Expected desc1.writable === false, actually ' + desc1.writable);
 }
 
 if (desc2.configurable !== false) {
-  $ERROR('Expected desc2.configurable === false, actually ' + desc2.configurable);
+  throw new Test262Error('Expected desc2.configurable === false, actually ' + desc2.configurable);
 }
 
 if (desc2.writable !== false) {
-  $ERROR('Expected desc2.writable === false, actually ' + desc2.writable);
+  throw new Test262Error('Expected desc2.writable === false, actually ' + desc2.writable);
 }

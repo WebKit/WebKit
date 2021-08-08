@@ -16,12 +16,12 @@ var resolveP1,
   obj = {};
 
 if (p1 !== p2) {
-  $ERROR("Expected p1 === Promise.resolve(p1) because they have same constructor");
+  throw new Test262Error("Expected p1 === Promise.resolve(p1) because they have same constructor");
 }
 
 p2.then(function(arg) {
   if (arg !== obj) {
-    $ERROR("Expected promise to be resolved with obj, actually " + arg);
+    throw new Test262Error("Expected promise to be resolved with obj, actually " + arg);
   }
 }).then($DONE, $DONE);
 

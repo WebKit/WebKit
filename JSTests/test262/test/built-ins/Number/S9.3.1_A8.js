@@ -13,10 +13,10 @@ description: >
 
 // CHECK#1
 if (Number("1234e5") !== Number("1234") * 1e5) {
-  $ERROR('#1: Number("1234e5") === Number("1234")*1e5');
+  throw new Test262Error('#1: Number("1234e5") === Number("1234")*1e5');
 }
 
 // CHECK#2
 if (Number("1234.e5") !== +("1234") * 1e5) {
-  $ERROR('#2: Number("1234.e5") === +("1234")*1e5');
+  throw new Test262Error('#2: Number("1234.e5") === +("1234")*1e5');
 }

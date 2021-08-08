@@ -12,7 +12,7 @@ var __string = new String('this is a string object');
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if (__string.slice(NaN, Infinity) !== "this is a string object") {
-  $ERROR('#1: __string = new String(\'this is a string object\'); __string.slice(NaN, Infinity) === "this is a string object". Actual: ' + __string.slice(NaN, Infinity));
+  throw new Test262Error('#1: __string = new String(\'this is a string object\'); __string.slice(NaN, Infinity) === "this is a string object". Actual: ' + __string.slice(NaN, Infinity));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

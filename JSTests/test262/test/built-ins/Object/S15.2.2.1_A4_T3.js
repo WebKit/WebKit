@@ -13,20 +13,20 @@ var n_obj = new Object((1 === 1) && !(false));
 
 //CHECK#2
 if (n_obj.constructor !== Boolean) {
-  $ERROR('#2: When the Object constructor is called with Boolean argument return ToObject(boolean)');
+  throw new Test262Error('#2: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }
 
 //CHECK#3
 if (typeof n_obj !== 'object') {
-  $ERROR('#3: When the Object constructor is called with Boolean argument return ToObject(boolean)');
+  throw new Test262Error('#3: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }
 
 //CHECK#4
 if (n_obj != true) {
-  $ERROR('#4: When the Object constructor is called with Boolean argument return ToObject(boolean)');
+  throw new Test262Error('#4: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }
 
 //CHECK#5
 if (n_obj === true) {
-  $ERROR('#5: When the Object constructor is called with Boolean argument return ToObject(boolean)');
+  throw new Test262Error('#5: When the Object constructor is called with Boolean argument return ToObject(boolean)');
 }

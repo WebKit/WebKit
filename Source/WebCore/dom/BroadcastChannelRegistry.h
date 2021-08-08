@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BroadcastChannelIdentifier.h"
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ public:
     virtual ~BroadcastChannelRegistry() { }
     virtual void registerChannel(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier) = 0;
     virtual void unregisterChannel(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier) = 0;
-    virtual void postMessage(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier source, Ref<SerializedScriptValue>&&) = 0;
+    virtual void postMessage(const SecurityOriginData&, const String& name, BroadcastChannelIdentifier source, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) = 0;
 };
 
 } // namespace WebCore

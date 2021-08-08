@@ -27,6 +27,7 @@
 
 #include <WebCore/BroadcastChannel.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -65,9 +66,11 @@ void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::SecurityOrigi
     channelsForNameIterator->value.removeFirst(identifier);
 }
 
-void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message)
+void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainThread());
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
     auto channelsForOriginIterator = m_channels.find(origin);
     ASSERT(channelsForOriginIterator != m_channels.end());
     if (channelsForOriginIterator == m_channels.end())
@@ -78,6 +81,6 @@ void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData&
     for (auto& channelIdentifier : channelsForNameIterator->value) {
         if (channelIdentifier == source)
             continue;
-        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, message.copyRef());
+        WebCore::BroadcastChannel::dispatchMessageTo(channelIdentifier, message.copyRef(), [callbackAggregator] { });
     }
 }

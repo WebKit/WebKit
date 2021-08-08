@@ -25,21 +25,20 @@
 
 #pragma once
 
-#include <wtf/HashTraits.h>
-#include <wtf/RawPtrTraits.h>
+#include <wtf/CheckedRef.h>
 
 namespace WTF {
 
-template<typename T, typename PtrTraits = RawPtrTraits<T>>
+template<typename T, typename PtrTraits>
 class CheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    CheckedPtr()
+    constexpr CheckedPtr()
         : m_ptr(nullptr)
     { }
 
-    CheckedPtr(std::nullptr_t)
+    constexpr CheckedPtr(std::nullptr_t)
         : m_ptr(nullptr)
     { }
 
@@ -65,14 +64,32 @@ public:
     }
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr(const CheckedPtr<OtherType, OtherPtrTraits>& other)
-        : m_ptr { other.m_ptr }
-    {
-        refIfNotNull();
-    }
+        : CheckedPtr(OtherPtrTraits::unwrap(other.m_ptr))
+    { }
 
     template<typename OtherType, typename OtherPtrTraits> CheckedPtr(CheckedPtr<OtherType, OtherPtrTraits>&& other)
         : m_ptr { PtrTraits::exchange(other.m_ptr, nullptr) }
     { }
+
+    CheckedPtr(CheckedRef<T, PtrTraits>& other)
+        : CheckedPtr(PtrTraits::unwrap(other.m_ptr))
+    { }
+
+    template<typename OtherType, typename OtherPtrTraits> CheckedPtr(const CheckedRef<OtherType, OtherPtrTraits>& other)
+        : CheckedPtr(OtherPtrTraits::unwrap(other.m_ptr))
+    { }
+
+    CheckedPtr(CheckedRef<T, PtrTraits>&& other)
+        : m_ptr { other.releasePtr() }
+    {
+        ASSERT(get());
+    }
+
+    template<typename OtherType, typename OtherPtrTraits> CheckedPtr(CheckedRef<OtherType, OtherPtrTraits>&& other)
+        : m_ptr { other.releasePtr() }
+    {
+        ASSERT(get());
+    }
 
     CheckedPtr(HashTableDeletedValueType)
         : m_ptr(PtrTraits::hashTableDeletedValue())
@@ -163,16 +180,6 @@ private:
     typename PtrTraits::StorageType m_ptr;
 };
 
-template<typename T, typename PtrTraits = RawPtrTraits<T>> inline CheckedPtr<T, PtrTraits> makeCheckedPtr(T* pointer)
-{
-    return pointer;
-}
-
-template<typename T, typename PtrTraits = RawPtrTraits<T>> inline CheckedPtr<T, PtrTraits> makeCheckedPtr(T& reference)
-{
-    return &reference;
-}
-
 template <typename T, typename PtrTraits>
 struct GetPtrHelper<CheckedPtr<T, PtrTraits>> {
     typedef T* PtrType;
@@ -196,17 +203,6 @@ inline bool is(const CheckedPtr<ArgType, ArgPtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
-class CanMakeCheckedPtr {
-public:
-    ~CanMakeCheckedPtr() { RELEASE_ASSERT(!m_count); }
-
-    uint16_t ptrCount() const { return m_count; }
-    void incrementPtrCount() { ++m_count; }
-    void decrementPtrCount() { ASSERT(m_count); --m_count; }
-private:
-    uint16_t m_count { 0 };
-};
-
 template<typename P> struct HashTraits<CheckedPtr<P>> : SimpleClassHashTraits<CheckedPtr<P>> {
     static P* emptyValue() { return nullptr; }
 
@@ -228,6 +224,4 @@ template<typename P> struct DefaultHash<CheckedPtr<P>> : PtrHash<CheckedPtr<P>> 
 } // namespace WTF
 
 using WTF::CheckedPtr;
-using WTF::CanMakeCheckedPtr;
-using WTF::makeCheckedPtr;
 

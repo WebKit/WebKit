@@ -8,9 +8,9 @@ description: The "length" property of the "setUTCDate" is 1
 ---*/
 
 if (Date.prototype.setUTCDate.hasOwnProperty("length") !== true) {
-  $ERROR('#1: The setUTCDate has a "length" property');
+  throw new Test262Error('#1: The setUTCDate has a "length" property');
 }
 
 if (Date.prototype.setUTCDate.length !== 1) {
-  $ERROR('#2: The "length" property of the setUTCDate is 1');
+  throw new Test262Error('#2: The "length" property of the setUTCDate is 1');
 }

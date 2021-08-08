@@ -5461,6 +5461,762 @@ void testSubWithUnsignedRightShift64()
     }
 }
 
+void testAndLeftShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n & (m << amount)
+    auto test = [&] (int32_t n, int32_t m, int32_t amount) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*and.*,.*,.*,.*lsl #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                int32_t n = nOperand.value;
+                int32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n & (m << amount));
+            }
+        }
+    }
+}
+
+void testAndRightShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n & (m >> amount)
+    auto test = [&] (int32_t n, int32_t m, int32_t amount) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*and.*,.*,.*,.*asr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                int32_t n = nOperand.value;
+                int32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n & (m >> amount));
+            }
+        }
+    }
+}
+
+void testAndUnsignedRightShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n & (m >> amount)
+    auto test = [&] (uint32_t n, uint32_t m, uint32_t amount) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*and.*,.*,.*,.*lsr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<uint32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                uint32_t n = nOperand.value;
+                uint32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n & (m >> amount));
+            }
+        }
+    }
+}
+
+void testAndLeftShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 34, 63 };
+
+    // Test Pattern: d = n & (m << amount)
+    auto test = [&] (int64_t n, int64_t m, int32_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*and.*,.*,.*,.*lsl #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                int64_t n = nOperand.value;
+                int64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n & (m << amount));
+            }
+        }
+    }
+}
+
+void testAndRightShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 34, 63 };
+
+    // Test Pattern: d = n & (m >> amount)
+    auto test = [&] (int64_t n, int64_t m, int32_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*and.*,.*,.*,.*asr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                int64_t n = nOperand.value;
+                int64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n & (m >> amount));
+            }
+        }
+    }
+}
+
+void testAndUnsignedRightShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n & (m >> amount)
+    auto test = [&] (uint64_t n, uint64_t m, uint32_t amount) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitAnd, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*and.*,.*,.*,.*lsr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<uint64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                uint64_t n = nOperand.value;
+                uint64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n & (m >> amount));
+            }
+        }
+    }
+}
+
+void testXorLeftShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n ^ (m << amount)
+    auto test = [&] (int32_t n, int32_t m, int32_t amount) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitXor, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*eor.*,.*,.*,.*lsl #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                int32_t n = nOperand.value;
+                int32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n ^ (m << amount));
+            }
+        }
+    }
+}
+
+void testXorRightShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n ^ (m >> amount)
+    auto test = [&] (int32_t n, int32_t m, int32_t amount) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitXor, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*eor.*,.*,.*,.*asr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                int32_t n = nOperand.value;
+                int32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n ^ (m >> amount));
+            }
+        }
+    }
+}
+
+void testXorUnsignedRightShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n ^ (m >> amount)
+    auto test = [&] (uint32_t n, uint32_t m, uint32_t amount) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitXor, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*eor.*,.*,.*,.*lsr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<uint32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                uint32_t n = nOperand.value;
+                uint32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n ^ (m >> amount));
+            }
+        }
+    }
+}
+
+void testXorLeftShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 34, 63 };
+
+    // Test Pattern: d = n ^ (m << amount)
+    auto test = [&] (int64_t n, int64_t m, int32_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitXor, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*eor.*,.*,.*,.*lsl #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                int64_t n = nOperand.value;
+                int64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n ^ (m << amount));
+            }
+        }
+    }
+}
+
+void testXorRightShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 34, 63 };
+
+    // Test Pattern: d = n ^ (m >> amount)
+    auto test = [&] (int64_t n, int64_t m, int32_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitXor, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*eor.*,.*,.*,.*asr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                int64_t n = nOperand.value;
+                int64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n ^ (m >> amount));
+            }
+        }
+    }
+}
+
+void testXorUnsignedRightShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n ^ (m >> amount)
+    auto test = [&] (uint64_t n, uint64_t m, uint32_t amount) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitXor, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*eor.*,.*,.*,.*lsr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<uint64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                uint64_t n = nOperand.value;
+                uint64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n ^ (m >> amount));
+            }
+        }
+    }
+}
+
+void testOrLeftShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n | (m << amount)
+    auto test = [&] (int32_t n, int32_t m, int32_t amount) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*orr.*,.*,.*,.*lsl #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                int32_t n = nOperand.value;
+                int32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n | (m << amount));
+            }
+        }
+    }
+}
+
+void testOrRightShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n | (m >> amount)
+    auto test = [&] (int32_t n, int32_t m, int32_t amount) -> int32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*orr.*,.*,.*,.*asr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                int32_t n = nOperand.value;
+                int32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n | (m >> amount));
+            }
+        }
+    }
+}
+
+void testOrUnsignedRightShift32()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n | (m >> amount)
+    auto test = [&] (uint32_t n, uint32_t m, uint32_t amount) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        Value* mValue = root->appendNew<Value>(
+            proc, Trunc, Origin(), 
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*orr.*,.*,.*,.*lsr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<uint32_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int32Operands()) {
+        for (auto mOperand : int32Operands()) {
+            for (auto amount : amounts) {
+                uint32_t n = nOperand.value;
+                uint32_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n | (m >> amount));
+            }
+        }
+    }
+}
+
+void testOrLeftShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 34, 63 };
+
+    // Test Pattern: d = n | (m << amount)
+    auto test = [&] (int64_t n, int64_t m, int32_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, Shl, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*orr.*,.*,.*,.*lsl #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                int64_t n = nOperand.value;
+                int64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n | (m << amount));
+            }
+        }
+    }
+}
+
+void testOrRightShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> amounts = { 1, 34, 63 };
+
+    // Test Pattern: d = n | (m >> amount)
+    auto test = [&] (int64_t n, int64_t m, int32_t amount) -> int64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, SShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*orr.*,.*,.*,.*asr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<int64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                int64_t n = nOperand.value;
+                int64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n | (m >> amount));
+            }
+        }
+    }
+}
+
+void testOrUnsignedRightShift64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> amounts = { 1, 17, 31 };
+
+    // Test Pattern: d = n | (m >> amount)
+    auto test = [&] (uint64_t n, uint64_t m, uint32_t amount) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* nValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* mValue = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* amountValue = root->appendNew<Const32Value>(proc, Origin(), amount);
+
+        Value* shiftValue = root->appendNew<Value>(proc, ZShr, Origin(), mValue, amountValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(), 
+            root->appendNew<Value>(proc, BitOr, Origin(), nValue, shiftValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            std::string regex(".*orr.*,.*,.*,.*lsr #");
+            regex += std::to_string(amount) + ".*";
+            checkUsesInstruction(*code, regex.c_str(), true);
+        }
+        return invoke<uint64_t>(*code, n, m);
+    };
+
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            for (auto amount : amounts) {
+                uint64_t n = nOperand.value;
+                uint64_t m = mOperand.value;
+                CHECK_EQ(test(n, m, amount), n | (m >> amount));
+            }
+        }
+    }
+}
+
 void testBitAndZeroShiftRightArgImmMask32()
 {
     // Turn this: (tmp >> imm) & mask 
@@ -6389,6 +7145,28 @@ void addBitTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testSubWithLeftShift64());
     RUN(testSubWithRightShift64());
     RUN(testSubWithUnsignedRightShift64());
+
+    RUN(testAndLeftShift32());
+    RUN(testAndRightShift32());
+    RUN(testAndUnsignedRightShift32());
+    RUN(testAndLeftShift64());
+    RUN(testAndRightShift64());
+    RUN(testAndUnsignedRightShift64());
+
+    RUN(testXorLeftShift32());
+    RUN(testXorRightShift32());
+    RUN(testXorUnsignedRightShift32());
+    RUN(testXorLeftShift64());
+    RUN(testXorRightShift64());
+    RUN(testXorUnsignedRightShift64());
+
+    RUN(testOrLeftShift32());
+    RUN(testOrRightShift32());
+    RUN(testOrUnsignedRightShift32());
+    RUN(testOrLeftShift64());
+    RUN(testOrRightShift64());
+    RUN(testOrUnsignedRightShift64());
+
     RUN(testBitAndZeroShiftRightArgImmMask32());
     RUN(testBitAndZeroShiftRightArgImmMask64());
     RUN(testBitAndArgs(43, 43));

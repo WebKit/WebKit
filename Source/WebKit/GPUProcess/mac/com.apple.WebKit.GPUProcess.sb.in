@@ -982,5 +982,7 @@
 (when (equal? (param "CPU") "arm64")
     (allow iokit-open
         (iokit-user-client-class "IOMobileFramebufferUserClient")
+        ;; VideoToolbox VTImageRotationSession
+        (iokit-user-client-class "IOSurfaceAcceleratorClient")
     )
 )

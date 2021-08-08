@@ -35,11 +35,11 @@ for (var indexB1 = 0xE0; indexB1 <= 0xEF; indexB1++) {
           if ((indexP - indexO) !== 0) {
             var hexP = decimalToHexString(indexP);
             var hexO = decimalToHexString(indexO);
-            $ERROR('#' + hexO + '-' + hexP + ' ');
+            throw new Test262Error('#' + hexO + '-' + hexP + ' ');
           }
           else {
             var hexP = decimalToHexString(indexP);
-            $ERROR('#' + hexP + ' ');
+            throw new Test262Error('#' + hexP + ' ');
           }
           indexO = index;
         }
@@ -54,10 +54,10 @@ if (errorCount > 0) {
   if ((indexP - indexO) !== 0) {
     var hexP = decimalToHexString(indexP);
     var hexO = decimalToHexString(indexO);
-    $ERROR('#' + hexO + '-' + hexP + ' ');
+    throw new Test262Error('#' + hexO + '-' + hexP + ' ');
   } else {
     var hexP = decimalToHexString(indexP);
-    $ERROR('#' + hexP + ' ');
+    throw new Test262Error('#' + hexP + ' ');
   }
-  $ERROR('Total error: ' + errorCount + ' bad Unicode character in ' + count + ' ');
+  throw new Test262Error('Total error: ' + errorCount + ' bad Unicode character in ' + count + ' ');
 }

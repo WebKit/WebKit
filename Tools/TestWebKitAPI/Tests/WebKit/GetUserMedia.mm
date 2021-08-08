@@ -648,7 +648,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 }
 
-TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
+TEST(WebKit2, DISABLED_CrashGPUProcessAfterApplyingConstraints)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];

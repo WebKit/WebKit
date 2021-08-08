@@ -12,7 +12,7 @@ var __reg = new RegExp("77");
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ("ABB\u0041BABAB\u0037\u0037BBAA".search(__reg) !== 9) {
-  $ERROR('#1: var __reg = new RegExp("77"); "ABB\\u0041BABAB\\u0037\\u0037BBAA".search(__reg) === 9. Actual: ' + ("ABB\u0041BABAB\u0037\u0037BBAA".search(__reg)));
+  throw new Test262Error('#1: var __reg = new RegExp("77"); "ABB\\u0041BABAB\\u0037\\u0037BBAA".search(__reg) === 9. Actual: ' + ("ABB\u0041BABAB\u0037\u0037BBAA".search(__reg)));
 }
 //
 //////////////////////////////////////////////////////////////////////////////

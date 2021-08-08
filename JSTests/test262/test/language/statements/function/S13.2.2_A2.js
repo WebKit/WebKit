@@ -18,7 +18,7 @@ try{
     __PROTO.type=__PLANT;
 }
 catch(e){
-    $ERROR('#0: __PROTO.type=__PLANT does not lead to throwing exception')
+    throw new Test262Error('#0: __PROTO.type=__PLANT does not lead to throwing exception')
 }
 
 function __FACTORY(){};
@@ -31,10 +31,10 @@ var __rose = new __FACTORY();
 //CHECK#1
 try{
     __rose();
-    $ERROR('#1: __rose() lead to throwing exception');
+    throw new Test262Error('#1: __rose() lead to throwing exception');
 } catch(e){
     if (!(e instanceof TypeError)) {
-    	$ERROR('#2: Exception Type is TypeError. Actual: exception ==='+e);
+    	throw new Test262Error('#2: Exception Type is TypeError. Actual: exception ==='+e);
     }
 }
 //

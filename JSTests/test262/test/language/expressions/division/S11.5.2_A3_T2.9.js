@@ -11,20 +11,20 @@ description: >
 
 //CHECK#1
 if (true / null !== Number.POSITIVE_INFINITY) {
-  $ERROR('#1: true / null === +Infinity. Actual: ' + (true / null));
+  throw new Test262Error('#1: true / null === +Infinity. Actual: ' + (true / null));
 }
 
 //CHECK#2
 if (null / true !== 0) {
-  $ERROR('#2: null / true === 0. Actual: ' + (null / true));
+  throw new Test262Error('#2: null / true === 0. Actual: ' + (null / true));
 }
 
 //CHECK#3
 if (new Boolean(true) / null !== Number.POSITIVE_INFINITY) {
-  $ERROR('#3: new Boolean(true) / null === +Infinity. Actual: ' + (new Boolean(true) / null));
+  throw new Test262Error('#3: new Boolean(true) / null === +Infinity. Actual: ' + (new Boolean(true) / null));
 }
 
 //CHECK#4
 if (null / new Boolean(true) !== 0) {
-  $ERROR('#4: null / new Boolean(true) === 0. Actual: ' + (null / new Boolean(true)));
+  throw new Test262Error('#4: null / new Boolean(true) === 0. Actual: ' + (null / new Boolean(true)));
 }

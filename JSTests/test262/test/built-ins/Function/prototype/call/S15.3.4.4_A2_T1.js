@@ -9,15 +9,15 @@ description: Checking Function.prototype.call.length
 
 //CHECK#1
 if (typeof Function.prototype.call !== "function") {
-  $ERROR('#1: call method defined');
+  throw new Test262Error('#1: call method defined');
 }
 
 //CHECK#2
 if (typeof Function.prototype.call.length === "undefined") {
-  $ERROR('#2: length property of call method defined');
+  throw new Test262Error('#2: length property of call method defined');
 }
 
 //CHECK#3
 if (Function.prototype.call.length !== 1) {
-  $ERROR('#3: The length property of the call method is 1');
+  throw new Test262Error('#3: The length property of the call method is 1');
 }

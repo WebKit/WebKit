@@ -39,6 +39,7 @@
 #include "ContentExtensionError.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginOpenerPolicy.h"
 #include "CustomHeaderFields.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -694,6 +695,9 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         }
     }
 
+    if (didReceiveRedirectResponse && !doCrossOriginOpenerHandlingOfResponse(redirectResponse))
+        return;
+
     if (!newRequest.url().host().isEmpty() && SecurityOrigin::shouldIgnoreHost(newRequest.url())) {
         auto url = newRequest.url();
         url.setHostAndPort({ });
@@ -731,6 +735,99 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     auto& policyChecker = frameLoader()->policyChecker();
     RELEASE_ASSERT(!isBackForwardLoadType(policyChecker.loadType()) || frameLoader()->history().provisionalItem());
     policyChecker.checkNavigationPolicy(WTFMove(newRequest), redirectResponse, WTFMove(navigationPolicyCompletionHandler));
+}
+
+// https://html.spec.whatwg.org/multipage/origin.html#check-browsing-context-group-switch-coop-value
+static bool checkIfCOOPValuesRequireBrowsingContextGroupSwitch(bool isInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin)
+{
+    // If the result of matching activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, and responseOrigin is true, return false.
+    // https://html.spec.whatwg.org/multipage/origin.html#matching-coop
+    if (activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone && responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
+        return false;
+    if (activeDocumentCOOPValue == responseCOOPValue && activeDocumentNavigationOrigin.isSameOriginAs(responseOrigin))
+        return false;
+
+    // If all of the following are true:
+    // - isInitialAboutBlank,
+    // - activeDocumentCOOPValue's value is "same-origin-allow-popups".
+    // - responseCOOPValue is "unsafe-none",
+    // then return false.
+    if (isInitialAboutBlank && activeDocumentCOOPValue == CrossOriginOpenerPolicyValue::SameOriginAllowPopups && responseCOOPValue == CrossOriginOpenerPolicyValue::UnsafeNone)
+        return false;
+
+    return true;
+}
+
+static std::tuple<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOriginAndCOOP(const ResourceResponse& response, const Document& document, const std::optional<NavigationAction::Requester>& requester)
+{
+    // Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document,
+    // if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
+    // https://github.com/whatwg/html/issues/6913
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
+        return std::make_tuple(makeRef(requester->securityOrigin()), requester->securityOrigin().isSameOriginAs(requester->topOrigin()) ? requester->crossOriginOpenerPolicy() : CrossOriginOpenerPolicy { });
+
+    return std::make_tuple(SecurityOrigin::create(response.url()), obtainCrossOriginOpenerPolicy(response, document));
+}
+
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 12.5.6)
+bool DocumentLoader::doCrossOriginOpenerHandlingOfResponse(const ResourceResponse& response)
+{
+    // COOP only applies to top-level browsing contexts.
+    if (!m_frame->isMainFrame())
+        return true;
+
+    if (!m_frame->document() || !m_frame->document()->settings().crossOriginOpenerPolicyEnabled())
+        return true;
+
+    auto [responseOrigin, responseCOOP] = computeResponseOriginAndCOOP(response, *m_frame->document(), m_triggeringAction.requester());
+
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 12.5.6.2)
+    // If sandboxFlags is not empty and responseCOOP's value is not "unsafe-none", then set response to an appropriate network error and break.
+    if (responseCOOP.value != CrossOriginOpenerPolicyValue::UnsafeNone && m_frame->document()->creationSandboxFlags() != SandboxNone) {
+        cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
+        return false;
+    }
+
+    m_currentCoopEnforcementResult = enforceResponseCrossOriginOpenerPolicy(response.url(), responseOrigin, responseCOOP);
+    if (m_currentCoopEnforcementResult->needsBrowsingContextGroupSwitch)
+        frameLoader()->switchBrowsingContextsGroup();
+
+    return true;
+}
+
+// https://html.spec.whatwg.org/multipage/origin.html#coop-enforce
+CrossOriginOpenerPolicyEnforcementResult DocumentLoader::enforceResponseCrossOriginOpenerPolicy(const URL& responseURL, SecurityOrigin& responseOrigin, const CrossOriginOpenerPolicy& responseCOOP)
+{
+    ASSERT(m_frame->isMainFrame());
+    ASSERT(m_frame->document());
+    ASSERT(m_frame->document()->settings().crossOriginOpenerPolicyEnabled());
+
+    if (!m_currentCoopEnforcementResult) {
+        auto requester = m_triggeringAction.requester();
+        bool currentContextIsSource = requester && m_frame->document()->securityOrigin().isSameOriginAs(requester->securityOrigin());
+        m_currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult {
+            false,
+            false,
+            m_frame->document()->url(),
+            m_frame->document()->securityOrigin(),
+            m_frame->document()->crossOriginOpenerPolicy(),
+            currentContextIsSource,
+        };
+    }
+
+    CrossOriginOpenerPolicyEnforcementResult newCOOPEnforcementResult = {
+        m_currentCoopEnforcementResult->needsBrowsingContextGroupSwitch,
+        m_currentCoopEnforcementResult->needsBrowsingContextGroupSwitchDueToReportOnly,
+        responseURL,
+        responseOrigin,
+        responseCOOP,
+        true
+    };
+
+    if (checkIfCOOPValuesRequireBrowsingContextGroupSwitch(frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), m_currentCoopEnforcementResult->crossOriginOpenerPolicy.value, m_currentCoopEnforcementResult->currentOrigin, responseCOOP.value, responseOrigin))
+        newCOOPEnforcementResult.needsBrowsingContextGroupSwitch = true;
+
+    return newCOOPEnforcementResult;
 }
 
 bool DocumentLoader::tryLoadingRequestFromApplicationCache()
@@ -900,6 +997,9 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
             }
         }
     }
+
+    if (!doCrossOriginOpenerHandlingOfResponse(response))
+        return;
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
@@ -1907,6 +2007,10 @@ bool DocumentLoader::maybeLoadEmpty()
 
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client().generatedMIMETypeForURLScheme(m_request.url().protocol().toStringWithoutCopying());
     m_response = ResourceResponse(m_request.url(), mimeType, 0, "UTF-8"_s);
+
+    if (frameLoader()->stateMachine().committedFirstRealDocumentLoad())
+        doCrossOriginOpenerHandlingOfResponse(m_response);
+
     finishedLoading();
     return true;
 }

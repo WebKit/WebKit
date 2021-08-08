@@ -27,17 +27,16 @@ AXRole: AXStaticText AXValue: TEST COMPLETE
 AXRole: AXStaticText AXValue: ".
 AXRole: AXGroup AXValue:
 AXRole: AXStaticText AXValue: AXRole: AXScrollArea AXValue:
-AXRole: AXWebArea AXValue:
-AXRole: AXGroup AXValue:
-AXRole: AXStaticText AXValue: Hello
-AXRole: AXGroup AXValue:
-AXRole: AXStaticText AXValue: This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.
-AXRole: AXGroup AXValue:
-AXRole: AXStaticText AXValue: On success, you will see a series of "
-AXRole: AXStaticText AXValue: PASS
-AXRole: AXStaticText AXValue: " messages, followed by "
-AXRole: AXStaticText AXValue: TEST COMPLETE
-AXRole: AXStaticText AXValue: ".
-AXRole: AXGroup AXValue:
-
+AXRole: AXStaticText AXValue: AXRole: AXWebArea AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: Hello
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: On success, you will see a series of "
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: PASS
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: " messages, followed by "
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: TEST COMPLETE
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: ".
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
 

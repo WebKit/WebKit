@@ -21,7 +21,7 @@ obj.length = {
   }
 };
 if (obj.join() !== ",,") {
-  $ERROR('#1: obj.length = {valueOf: function() {return 3}}  obj.join() === ",,". Actual: ' + (obj.join()));
+  throw new Test262Error('#1: obj.length = {valueOf: function() {return 3}}  obj.join() === ",,". Actual: ' + (obj.join()));
 }
 
 //CHECK#2
@@ -34,7 +34,7 @@ obj.length = {
   }
 };
 if (obj.join() !== ",,") {
-  $ERROR('#2: obj.length = {valueOf: function() {return 3}, toString: function() {return 2}}  obj.join() === ",,". Actual: ' + (obj.join()));
+  throw new Test262Error('#2: obj.length = {valueOf: function() {return 3}, toString: function() {return 2}}  obj.join() === ",,". Actual: ' + (obj.join()));
 }
 
 //CHECK#3
@@ -47,7 +47,7 @@ obj.length = {
   }
 };
 if (obj.join() !== ",,") {
-  $ERROR('#3: obj.length = {valueOf: function() {return 3}, toString: function() {return {}}}  obj.join() === ",,". Actual: ' + (obj.join()));
+  throw new Test262Error('#3: obj.length = {valueOf: function() {return 3}, toString: function() {return {}}}  obj.join() === ",,". Actual: ' + (obj.join()));
 }
 
 //CHECK#4
@@ -61,14 +61,14 @@ try {
     }
   };
   if (obj.join() !== ",,") {
-    $ERROR('#4.1: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() === ",". Actual: ' + (obj.join()));
+    throw new Test262Error('#4.1: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() === ",". Actual: ' + (obj.join()));
   }
 }
 catch (e) {
   if (e === "error") {
-    $ERROR('#4.2: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() not throw "error"');
+    throw new Test262Error('#4.2: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() not throw "error"');
   } else {
-    $ERROR('#4.3: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() not throw Error. Actual: ' + (e));
+    throw new Test262Error('#4.3: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() not throw Error. Actual: ' + (e));
   }
 }
 
@@ -79,7 +79,7 @@ obj.length = {
   }
 };
 if (obj.join() !== ",") {
-  $ERROR('#5: obj.length = {toString: function() {return 2}}  obj.join() === ",". Actual: ' + (obj.join()));
+  throw new Test262Error('#5: obj.length = {toString: function() {return 2}}  obj.join() === ",". Actual: ' + (obj.join()));
 }
 
 //CHECK#6
@@ -92,7 +92,7 @@ obj.length = {
   }
 }
 if (obj.join() !== ",") {
-  $ERROR('#6: obj.length = {valueOf: function() {return {}}, toString: function() {return 2}}  obj.join() === ",". Actual: ' + (obj.join()));
+  throw new Test262Error('#6: obj.length = {valueOf: function() {return {}}, toString: function() {return 2}}  obj.join() === ",". Actual: ' + (obj.join()));
 }
 
 //CHECK#7
@@ -106,11 +106,11 @@ try {
     }
   };
   obj.join();
-  $ERROR('#7.1: obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}}; obj.join() throw "error". Actual: ' + (obj.join()));
+  throw new Test262Error('#7.1: obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}}; obj.join() throw "error". Actual: ' + (obj.join()));
 }
 catch (e) {
   if (e !== "error") {
-    $ERROR('#7.2: obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}}; obj.join() throw "error". Actual: ' + (e));
+    throw new Test262Error('#7.2: obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}}; obj.join() throw "error". Actual: ' + (e));
   }
 }
 
@@ -125,10 +125,10 @@ try {
     }
   };
   obj.join();
-  $ERROR('#8.1: obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.join() throw TypeError. Actual: ' + (obj.join()));
+  throw new Test262Error('#8.1: obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.join() throw TypeError. Actual: ' + (obj.join()));
 }
 catch (e) {
   if ((e instanceof TypeError) !== true) {
-    $ERROR('#8,2: obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.join() throw TypeError. Actual: ' + (e));
+    throw new Test262Error('#8,2: obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.join() throw TypeError. Actual: ' + (e));
   }
 }

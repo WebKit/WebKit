@@ -23,6 +23,6 @@ for (var i = 0; i < 100; i++)
 
   if (val < 0 || val >= 1)
   {
-    $ERROR("#1: Math.random() = " + val);
+    throw new Test262Error("#1: Math.random() = " + val);
   }
 }

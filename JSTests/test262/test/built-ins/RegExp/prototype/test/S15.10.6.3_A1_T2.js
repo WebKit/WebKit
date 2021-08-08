@@ -14,5 +14,5 @@ var __re = /((1)|(12))((3)|(23))/;
 
 //CHECK#0
 if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	$ERROR('#0: var __string = new String("123"); __re = /((1)|(12))((3)|(23))/; __re.test(__string) === (__re.exec(__string) !== null)');
+	throw new Test262Error('#0: var __string = new String("123"); __re = /((1)|(12))((3)|(23))/; __re.test(__string) === (__re.exec(__string) !== null)');
 }

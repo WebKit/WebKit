@@ -19,7 +19,7 @@ function __func(){
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
 if ( __func() === THE_ANSWER) {
-	$ERROR('#1: __func() !== THE_ANSWER');
+	throw new Test262Error('#1: __func() !== THE_ANSWER');
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ if ( __func() === THE_ANSWER) {
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#2
 if (__func("The Ultimate Question") === "The Ultimate Question") {
-	$ERROR('#2: __func("The Ultimate Question") !== "The Ultimate Question"');
+	throw new Test262Error('#2: __func("The Ultimate Question") !== "The Ultimate Question"');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

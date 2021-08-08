@@ -11,11 +11,11 @@ description: >
 
 //CHECK#1
 if (typeof Number.prototype !== "object") {
-  $ERROR('#1: typeof Number.prototype === "object"');
+  throw new Test262Error('#1: typeof Number.prototype === "object"');
 }
 
 delete Number.prototype.toString;
 
 if (Number.prototype.toString() !== "[object Number]") {
-  $ERROR('#3: The [[Class]] property of the Number prototype object is set to "Number"');
+  throw new Test262Error('#3: The [[Class]] property of the Number prototype object is set to "Number"');
 }

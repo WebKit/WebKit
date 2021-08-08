@@ -18,7 +18,7 @@ for (var __prop in this){
         enumed=true;
 }
 if (!(enumed)) {
-	$ERROR('#1: When using property attributes, {DontEnum} not used');
+	throw new Test262Error('#1: When using property attributes, {DontEnum} not used');
 }
 //
 //////////////////////////////////////////////////////////////////////////////

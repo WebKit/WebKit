@@ -56,7 +56,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
         try:
             if keyring:
                 username = keyring.get_password(url, 'username')
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             pass
 
         if not username and required:
@@ -71,7 +71,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password')
         try:
             if keyring:
                 key = keyring.get_password(url, username)
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             pass
 
         if not key and required:

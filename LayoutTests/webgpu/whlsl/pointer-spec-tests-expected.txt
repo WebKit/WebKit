@@ -1,4 +1,0 @@
-
-PASS pointerToPointer
-PASS pointerToMember
-

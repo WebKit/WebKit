@@ -11,7 +11,7 @@ description: The value is a function declaration
 
 //CHECK#0
 if (typeof func !== 'undefined') {
-  $ERROR('#0: function expression can\'t be declarated');
+  throw new Test262Error('#0: function expression can\'t be declarated');
 }
 
 var n_obj = new Object(function func() {
@@ -20,15 +20,15 @@ var n_obj = new Object(function func() {
 
 //CHECK#1
 if (n_obj.constructor !== Function) {
-  $ERROR('#1: When the Object constructor is called and if the value is an Object simply value returns');
+  throw new Test262Error('#1: When the Object constructor is called and if the value is an Object simply value returns');
 }
 
 //CHECK#2
 if (n_obj() !== 1) {
-  $ERROR('#2: When the Object constructor is called and if the value is an Object simply value returns');
+  throw new Test262Error('#2: When the Object constructor is called and if the value is an Object simply value returns');
 }
 
 //CHECK#3
 if (typeof func !== 'undefined') {
-  $ERROR('#3: function expression can\'t be declarated');
+  throw new Test262Error('#3: function expression can\'t be declarated');
 }

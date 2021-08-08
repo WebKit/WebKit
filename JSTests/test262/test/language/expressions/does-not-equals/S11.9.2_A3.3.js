@@ -11,20 +11,20 @@ description: x is primitive number, y is primitive boolean
 
 //CHECK#1
 if ((0 != false) !== false) {
-  $ERROR('#1: (0 != false) === false');
+  throw new Test262Error('#1: (0 != false) === false');
 }
 
 //CHECK#2
 if (("1" != true) !== false) {
-  $ERROR('#2: ("1" != true) === false');
+  throw new Test262Error('#2: ("1" != true) === false');
 }
 
 //CHECK#3
 if ((new Boolean(false) != false) !== false) {
-  $ERROR('#3: (new Boolean(false) != false) === false');
+  throw new Test262Error('#3: (new Boolean(false) != false) === false');
 }
 
 //CHECK#4
 if (({valueOf: function () {return "0"}} != false) !== false) {
-  $ERROR('#4: ({valueOf: function () {return "0"}} != false) === false');
+  throw new Test262Error('#4: ({valueOf: function () {return "0"}} != false) === false');
 }

@@ -12,7 +12,7 @@ description: Declaring variable within "try-catch" statement
 try{
 	intry__var=intry__var;
 }catch(e){
-	$ERROR('#1: Variable declaration inside "try" block is admitted');
+	throw new Test262Error('#1: Variable declaration inside "try" block is admitted');
 };
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ try{
 try{
 	incatch__var=incatch__var;
 }catch(e){
-	$ERROR('#2: Variable declaration inside "catch" block is admitted');
+	throw new Test262Error('#2: Variable declaration inside "catch" block is admitted');
 };
 //
 //////////////////////////////////////////////////////////////////////////////

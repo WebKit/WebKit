@@ -11,18 +11,18 @@ description: Checking type and value of Number.prototype property
 
 //CHECK#1
 if (typeof Number.prototype !== "object") {
-  $ERROR('#1: typeof Number.prototype === "object"');
+  throw new Test262Error('#1: typeof Number.prototype === "object"');
 }
 
 //CHECK#2
 if (Number.prototype != 0) {
-  $ERROR('#2: Number.prototype == +0');
+  throw new Test262Error('#2: Number.prototype == +0');
 } else if (1 / Number.prototype != Number.POSITIVE_INFINITY) {
-  $ERROR('#2: Number.prototype == +0');
+  throw new Test262Error('#2: Number.prototype == +0');
 }
 
 delete Number.prototype.toString;
 
 if (Number.prototype.toString() !== "[object Number]") {
-  $ERROR('#3: The [[Class]] property of the Number prototype object is set to "Number"');
+  throw new Test262Error('#3: The [[Class]] property of the Number prototype object is set to "Number"');
 }
