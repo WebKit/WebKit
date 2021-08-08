@@ -1,3 +1,15 @@
+2021-08-07  David Kilzer  <ddkilzer@apple.com>
+
+        UBSan: KeyboardScrollingAnimator.cpp:303:10: runtime error: load of value nnn, which is not a valid value for type 'bool'
+        <https://webkit.org/b/228901>
+
+        Reviewed by Tim Horton.
+
+        Covered by running 78 layout tests with UBSan enabled.
+
+        * platform/KeyboardScrollingAnimator.h:
+        - Initialize m_scrollTriggeringKeyIsPressed to false.
+
 2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Web process crashes when detaching Document with uncommitted marked text

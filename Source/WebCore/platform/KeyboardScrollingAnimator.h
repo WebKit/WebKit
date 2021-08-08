@@ -51,7 +51,7 @@ private:
     ScrollAnimator& m_scrollAnimator;
     ScrollController& m_scrollController;
     std::optional<WebCore::KeyboardScroll> m_currentKeyboardScroll;
-    bool m_scrollTriggeringKeyIsPressed;
+    bool m_scrollTriggeringKeyIsPressed { false };
     FloatSize m_velocity;
     MonotonicTime m_timeAtLastFrame;
     FloatPoint m_idealPositionForMinimumTravel;
