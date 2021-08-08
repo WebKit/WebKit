@@ -837,18 +837,6 @@ test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
-test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
-  default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-test/intl402/Intl/getCanonicalLocales/complex-language-subtag-replacement.js:
-  default: 'Test262Error: Expected SameValue(«sh», «sr-Latn») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«sh», «sr-Latn») to be true'
-test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js:
-  default: 'Test262Error: Expected SameValue(«ru-SU», «ru-RU») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«ru-SU», «ru-RU») to be true'
-test/intl402/Intl/getCanonicalLocales/grandfathered.js:
-  default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
@@ -864,12 +852,6 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
 test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
   default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js:
-  default: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
-test/intl402/Locale/constructor-options-region-valid.js:
-  default: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
-  strict mode: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
@@ -879,9 +861,6 @@ test/intl402/Locale/likely-subtags-grandfathered.js:
 test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js:
   default: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
   strict mode: 'Test262Error: "und".minimize() should be "en" Expected SameValue(«en-u-va-posix», «en») to be true'
-test/intl402/supportedLocalesOf-unicode-extensions-ignored.js:
-  default: "SyntaxError: Unexpected token ')'. Expected ';' after variable declaration."
-  strict mode: "SyntaxError: Unexpected token ')'. Expected ';' after variable declaration."
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-function.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-name-redeclaration-attempt-with-async-generator.js:
@@ -1748,15 +1727,6 @@ test/language/statements/for-in/head-lhs-let.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expression-not-strict.js:
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
-test/language/statements/for-in/scope-body-lex-open.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/statements/for-in/scope-head-lex-close.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/statements/for-in/scope-head-lex-open.js:
-  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/language/statements/for-of/dstr/array-elem-iter-rtrn-close-err.js:
   default: "TypeError: undefined is not a function (near '...[ {}[ yield ] ]...')"
   strict mode: "TypeError: undefined is not a function (near '...[ {}[ yield ] ]...')"

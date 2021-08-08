@@ -71,12 +71,19 @@ skip:
     - test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js
 
     # New ICU (66~) raises a different failure
+    - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
     - test/intl402/Locale/constructor-non-iana-canon.js
-    # New ICU (68~) raises a different failure
     - test/intl402/Locale/likely-subtags.js
+
     # Pass only in ICU 68~
+    - test/intl402/Locale/constructor-options-region-valid.js
     - test/intl402/Locale/constructor-tag.js
+    - test/intl402/Intl/getCanonicalLocales/complex-language-subtag-replacement.js
+    - test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js
+    - test/intl402/Intl/getCanonicalLocales/grandfathered.js
+    - test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js
+    - test/intl402/supportedLocalesOf-unicode-extensions-ignored.js
 
     # ICU canonicalization bug
     # https://unicode-org.atlassian.net/browse/ICU-21367
@@ -217,8 +224,3 @@ skip:
     - test/intl402/NumberFormat/prototype/formatToParts/unit.js
     - test/intl402/NumberFormat/prototype/resolvedOptions/compactDisplay.js
     - test/intl402/NumberFormat/style-unit.js
-
-    # These tests become obsolete. Will be updated.
-    # https://github.com/tc39/test262/pull/2952
-    - test/intl402/Segmenter/constructor/constructor/options-toobject.js
-    - test/intl402/Segmenter/constructor/constructor/options-toobject-prototype.js
