@@ -342,6 +342,8 @@ webkit.org/b/221447 accessibility/aria-current-state-changed-notification.html [
 webkit.org/b/221645 accessibility/aria-sort.html [ Failure ]
 webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
 
+webkit.org/b/228915 accessibility/selected-state-changed-notifications.html [ Timeout ]
+
 # Not supported
 accessibility/embedded-image-description.html [ Skip ]
 

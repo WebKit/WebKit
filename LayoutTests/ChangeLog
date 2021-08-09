@@ -1,3 +1,11 @@
+2021-08-09  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden accessibility/selected-state-changed-notifications.html timeouts
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         caret-color does not work on first click in ios
