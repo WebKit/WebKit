@@ -353,7 +353,7 @@ private:
     float m_videoContentScale { 1.0 };
 
     bool m_bufferedChanged { true };
-    bool m_renderingCanBeAccelerated { true };
+    bool m_renderingCanBeAccelerated { false };
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };

@@ -196,6 +196,7 @@ enum MediaPlayerAVFoundationObservationContext {
 @interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
     BinarySemaphore m_semaphore;
 }
+- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
 - (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
 
@@ -1070,9 +1071,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
     }
 
-    if (player()->isVideoPlayer())
-        createAVPlayerLayer();
-
     if (m_avPlayerItem)
         setAVPlayerItem(m_avPlayerItem.get());
 
@@ -1802,19 +1800,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    // Callers of this will often call copyVideoTextureToPlatformTexture first,
-    // which calls updateLastPixelBuffer, which clears m_lastImage whenever the
-    // video delivers a new frame. This breaks videoOutputHasAvailableFrame's
-    // short-circuiting when m_lastImage is non-null, but the video often
-    // doesn't have a new frame to deliver since the last time
-    // hasNewPixelBufferForItemTime was called against m_videoOutput. To avoid
-    // changing the semantics of videoOutputHasAvailableFrame in ways that might
-    // break other callers, look for production of a recent pixel buffer from
-    // the video output, too.
-    if (videoOutputHasAvailableFrame() || (m_videoOutput && m_lastPixelBuffer))
-        paintWithVideoOutput(context, rect);
-    else
-        paintWithImageGenerator(context, rect);
+    paintWithVideoOutput(context, rect);
 
     END_BLOCK_OBJC_EXCEPTIONS
     setDelayCallbacks(false);
@@ -2439,7 +2425,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
         return;
     }
 
-    m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] init]);
+    m_videoOutputDelegate = adoptNS([[WebCoreAVFPullDelegate alloc] initWithPlayer:makeWeakPtr(*this)]);
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
 
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
@@ -2523,11 +2509,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
-    // It's crucial to not wait synchronously for the next image. Videos that
-    // come down this path are performing slow-case software uploads, and such
-    // videos may not return metadata in a timely fashion. Use the most recently
-    // available pixel buffer, if any.
-    updateLastImage();
+    updateLastImage(UpdateType::UpdateSynchronously);
     if (!m_lastImage)
         return;
 
@@ -2567,9 +2549,28 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
 
     // Wait for 1 second.
-    bool satisfied = [m_videoOutputDelegate semaphore].waitFor(1_s);
+    MonotonicTime start = MonotonicTime::now();
+
+    RunLoop::Timer<MediaPlayerPrivateAVFoundationObjC> timeoutTimer { RunLoop::main(), [] {
+        RunLoop::main().stop();
+    } };
+    timeoutTimer.startOneShot(1_s);
+
+    m_runningModalPaint = true;
+    RunLoop::run();
+    m_runningModalPaint = false;
+
+    bool satisfied = timeoutTimer.isActive();
     if (!satisfied)
         ERROR_LOG(LOGIDENTIFIER, "timed out");
+    else
+        INFO_LOG(LOGIDENTIFIER, "waiting for videoOutput took ", (MonotonicTime::now() - start).seconds());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
+{
+    if (m_runningModalPaint)
+        RunLoop::main().stop();
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -3899,14 +3900,29 @@ NSArray* playerKVOProperties()
 
 @end
 
-@implementation WebCoreAVFPullDelegate
+@implementation WebCoreAVFPullDelegate {
+    WeakPtr<WebCore::MediaPlayerPrivateAVFoundationObjC> _player;
+}
 
 @synthesize semaphore = m_semaphore;
+
+- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _player = WTFMove(player);
+    return self;
+}
 
 - (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
 {
     UNUSED_PARAM(output);
     m_semaphore.signal();
+    RunLoop::main().dispatch([player = _player] {
+        if (player)
+            player->outputMediaDataWillChange();
+    });
 }
 
 - (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output
