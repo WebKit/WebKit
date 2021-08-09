@@ -35,6 +35,11 @@
 #include <windows.h>
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/Function.h>
+#include <wtf/Variant.h>
+#endif
+
 namespace IPC {
 
 class Decoder;
@@ -49,6 +54,7 @@ public:
 #if USE(UNIX_DOMAIN_SOCKETS)
         SocketType,
         MappedMemoryType,
+        CustomWriterType,
 #elif OS(DARWIN)
         MachPortType
 #endif
@@ -60,6 +66,11 @@ public:
     Attachment(int fileDescriptor, size_t);
     Attachment(int fileDescriptor);
     ~Attachment();
+
+    using SocketDescriptor = int;
+    using CustomWriterFunc = WTF::Function<void(SocketDescriptor)>;
+    using CustomWriter = Variant<CustomWriterFunc, SocketDescriptor>;
+    Attachment(CustomWriter&&);
 #elif OS(DARWIN)
     Attachment(mach_port_name_t, mach_msg_type_name_t disposition);
 #elif OS(WINDOWS)
@@ -75,6 +86,7 @@ public:
 
     int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
     int fileDescriptor() const { return m_fileDescriptor; }
+    const CustomWriter& customWriter() const { return m_customWriter; }
 #elif OS(DARWIN)
     void release();
 
@@ -94,6 +106,7 @@ private:
 #if USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor { -1 };
     size_t m_size;
+    CustomWriter m_customWriter;
 #elif OS(DARWIN)
     mach_port_name_t m_port { 0 };
     mach_msg_type_name_t m_disposition { 0 };

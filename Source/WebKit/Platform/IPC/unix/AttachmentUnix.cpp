@@ -49,10 +49,19 @@ Attachment::Attachment(Attachment&& attachment)
     : m_type(attachment.m_type)
     , m_fileDescriptor(attachment.m_fileDescriptor)
     , m_size(attachment.m_size)
+    , m_customWriter(WTFMove(attachment.m_customWriter))
 {
     attachment.m_type = Uninitialized;
     attachment.m_fileDescriptor = -1;
     attachment.m_size = 0;
+}
+
+Attachment::Attachment(CustomWriter&& writer)
+    : m_type(CustomWriterType)
+    , m_fileDescriptor(-1)
+    , m_size(0)
+    , m_customWriter(WTFMove(writer))
+{
 }
 
 Attachment& Attachment::operator=(Attachment&& attachment)
@@ -63,6 +72,7 @@ Attachment& Attachment::operator=(Attachment&& attachment)
     attachment.m_fileDescriptor = -1;
     m_size = attachment.m_size;
     attachment.m_size = 0;
+    m_customWriter = WTFMove(attachment.m_customWriter);
 
     return *this;
 }

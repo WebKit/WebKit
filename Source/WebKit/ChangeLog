@@ -1,3 +1,18 @@
+2021-08-09  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Allow custom IPC::Attachment messaging in ConnectionUnix.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=227740
+
+        Reviewed by Žan Doberšek.
+
+        In order to share AHardwareBuffer handles via IPC we need to use the AHardwareBuffer_sendHandleToUnixSocket()
+        and AHardwareBuffer_recvHandleFromUnixSocket() functions. This is not currently compatible with the Attachment
+        API used in UnixConnection, as those functions use custom messaging into the socked fd.
+
+        This patch adds a CustomWriterType Attachment that allows custom messaging going into the socket fd.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+
 2021-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         caret-color does not work on first click in ios
