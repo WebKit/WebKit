@@ -1530,7 +1530,7 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     if (!collection)
         return;
 
-    callOnMainThread([player = makeWeakPtr(*this), collection = WTFMove(collection)] {
+    callOnMainThreadAndWait([player = makeWeakPtr(*this), collection = WTFMove(collection)] {
         if (player)
             player->updateTracks(collection);
     });

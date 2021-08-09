@@ -1,3 +1,23 @@
+2021-08-09  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Update tracks synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=228825
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A mistake introduced with the WebKitMediaSrc v2 patch made the call to
+        updateTracks() in MediaPlayerPrivateGStreamer asynchronous.
+
+        This introduced a subtle race condition in which the "resize" event
+        may be handled before updateTracks() is called, therefore m_hasVideo
+        has not yet been set to true, and querying the video size from the
+        "resize" event handler returns 0x0.
+
+        This fixes a timeout flake in media/media-source/media-source-resize.html.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleStreamCollectionMessage):
+
 2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, remove WTFLogAlways
