@@ -12,6 +12,7 @@ editing/editable-region [ Pass ]
 editing/execCommand/ios [ Pass ]
 editing/deleting/ios [ Pass ]
 editing/input/cocoa [ Pass ]
+editing/selection/ios [ Pass ]
 http/tests/quicklook [ Pass ]
 media/ios [ Pass ]
 model-element [ Pass ]
@@ -3012,7 +3013,6 @@ webkit.org/b/197778 [ Debug ] webgl/2.0.0/conformance2/attribs/gl-vertexattribip
 
 # FIXME: Unskip the following test once we have the fix for <rdar://problem/48322899>.
 editing/selection/ios/select-non-editable-text-using-keyboard.html [ Skip ]
-editing/selection/ios/select-all-non-editable-text-using-keyboard.html [ Skip ]
 
 # Dark Mode is iOS 13 and later.
 css-dark-mode [ Pass ]

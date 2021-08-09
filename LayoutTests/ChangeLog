@@ -1,3 +1,24 @@
+2021-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable layout tests in editing/selection/ios by default in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=228916
+
+        Reviewed by Tim Horton.
+
+        Enable tests in editing/selection/ios in OpenSource EWS. This greatly improves pre-commit test coverage of
+        various WebKit2 editing behaviors that are currently only covered by Apple-internal post-commit testers.
+
+        * fast/events/touch/ios/become-key-window-when-focusing-editable-area-expected.txt: Renamed from LayoutTests/editing/selection/ios/become-key-window-when-focusing-editable-area-expected.txt.
+        * fast/events/touch/ios/become-key-window-when-focusing-editable-area.html: Renamed from LayoutTests/editing/selection/ios/become-key-window-when-focusing-editable-area.html.
+        * fast/events/touch/ios/selection-handles-after-touch-end-expected.txt: Renamed from LayoutTests/editing/selection/ios/selection-handles-after-touch-end-expected.txt.
+        * fast/events/touch/ios/selection-handles-after-touch-end.html: Renamed from LayoutTests/editing/selection/ios/selection-handles-after-touch-end.html.
+
+        Move a couple of tests that rely on touch events out of this directory, and into `fast/events/touch/ios`
+        instead.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-08-09  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Mark 2 imported/w3c/web-platform-tests/css/css-overflow/clip-* tests as failing.
