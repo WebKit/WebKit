@@ -1,3 +1,12 @@
+2021-08-09  Robert Jenner  <Jenner@apple.com>
+
+        (rebaseline) [ iOS ] 2 imported/w3c/web-platform-tests/css/cssom/* tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=228200
+
+        Unreviewed iOS 15 rebase being added to OpenSource.
+
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Added.
+
 2021-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable layout tests in editing/selection/ios by default in EWS
