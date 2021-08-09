@@ -1,3 +1,23 @@
+2021-08-09  Dean Jackson  <dino@apple.com>
+
+        WebGL 2.0 doesn't work on A8 devices (iPad mini 4, iPad Air 2)
+        https://bugs.webkit.org/show_bug.cgi?id=228904
+        rdar://79198313
+
+        Reviewed by Anders Carlsson.
+
+        We can't use the ANGLE Metal backend for WebGL 2 on A8 devices (e.g. iPad Mini 4
+        and iPad Air 2). In this case revert back to the OpenGL backend.
+
+        It would be better if this check was exposed as API from ANGLE, but
+        its only a small number of devices, and this code can be removed once
+        they are no longer supported.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::platformSupportsMetal): Add a parameter to indicate WebGL 2, and
+        check the Metal device family support.
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+
 2021-08-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Warray-bounds, -Wstringop-truncation warnings in Packed.h
