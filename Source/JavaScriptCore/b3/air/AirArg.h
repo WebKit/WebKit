@@ -1280,15 +1280,7 @@ public:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    static bool isValidPreIndexForm(Int offset)
-    {
-        if (isARM64())
-            return isValidSignedImm9(offset);
-        return false;
-    }
-
-    template<typename Int, typename = Value::IsLegalOffset<Int>>
-    static bool isValidPostIndexForm(Int offset)
+    static bool isValidIncrementIndexForm(Int offset)
     {
         if (isARM64())
             return isValidSignedImm9(offset);
@@ -1324,9 +1316,8 @@ public:
         case Index:
             return isValidIndexForm(scale(), offset(), width);
         case PreIndex:
-            return isValidPreIndexForm(offset());
         case PostIndex:
-            return isValidPostIndexForm(offset());
+            return isValidIncrementIndexForm(offset());
         case RelCond:
         case ResCond:
         case DoubleCond:

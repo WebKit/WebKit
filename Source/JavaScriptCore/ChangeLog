@@ -1,3 +1,39 @@
+2021-08-09  Yijia Huang  <yijia_huang@apple.com>
+
+        [ARM64] Clean up and fix Pre/Post-Indexed Address Mode to Air for ARM64 (Load Instruction)
+        https://bugs.webkit.org/show_bug.cgi?id=228890
+
+        Reviewed by Keith Miller.
+
+        This patch cleans up and does minor fix to the previous patch (https://bugs.webkit.org/show_bug.cgi?id=228047).
+
+        For the modifications in b3/B3Generate.cpp and b3/B3CanonicalizePrePostIncrements.cpp, we
+        need to convert post-index candidates to the canonical form. So, the address value needs to
+        be moved immediately before the load. This is subject to the dominance constraints that add
+        must be controlled equivalent to the load. So, similarly, if we need to move the offset to
+        just before the load, the dominance constraints must be satisfied. Since it is a constant
+        value, a better approach is to add a new constant value before the memory value. Then,
+        eliminate the dead code.
+
+        There is a bug in b3/B3CanonicalizePrePostIncrements.cpp. The insertionSet.execute(BasicBlock)
+        will reorder value indexes in the basic block. So, we should re-search for the value index in
+        the block every time after the execution.
+
+        In b3/B3LowerToAir.cpp, we need m_locked checks on address and base values. If they are already
+        locked, there is no need to convert the Load instruction to the pre/post-increment form.
+
+        * b3/B3CanonicalizePrePostIncrements.cpp:
+        (JSC::B3::canonicalizePrePostIncrements):
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3LowerToAir.cpp:
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isValidIncrementIndexForm):
+        (JSC::B3::Air::Arg::isValidForm const):
+        (JSC::B3::Air::Arg::isValidPreIndexForm): Deleted.
+        (JSC::B3::Air::Arg::isValidPostIndexForm): Deleted.
+        * b3/air/opcode_generator.rb:
+
 2021-08-09  Keith Miller  <keith_miller@apple.com>
 
         Revert bad assert about the number of upsilons going into a phi

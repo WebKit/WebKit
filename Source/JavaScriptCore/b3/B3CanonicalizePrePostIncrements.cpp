@@ -50,38 +50,37 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     PhaseScope phaseScope(proc, "canonicalizePrePostIncrements");
     using Arg = Air::Arg;
 
+    unsigned index { 0 };
     InsertionSet insertionSet { proc };
     BlockInsertionSet blockInsertionSet { proc };
-    unsigned index { 0 };
 
     Dominators& dominators = proc.dominators();
     BackwardsDominators& backwardsDominators = proc.backwardsDominators();
 
-    HashMap<ValueKey, Vector<Value*>> baseOffsetToAddresses;
-    HashMap<MemoryValue*, Value*> preIndexCandidates;
-    HashMap<Value*, Vector<MemoryValue*>> baseToMemories;
-    HashMap<MemoryValue*, Value*> postIndexCandidates;
-    HashMap<Value*, unsigned> valueToIndex;
     IndexSet<Value*> ignoredValues;
+    HashMap<MemoryValue*, Value*> preIndexCandidates;
+    HashMap<MemoryValue*, Value*> postIndexCandidates;
+    HashMap<Value*, Vector<MemoryValue*>> baseToMemories;
+    HashMap<ValueKey, Vector<Value*>> baseOffsetToAddresses;
 
     // Pre-Index Pattern:
     //     address = Add(base, offset)
-    //     ...
+    //     ***
     //     memory = Load(base, offset)
     // Post-Index Pattern:
     //     memory = Load(base, 0)
-    //     ...
+    //     ***
     //     address = Add(base, offset)
-    auto tryPrePostIndex = [&] (Value* value) {
+    auto tryAddPrePostIndexCandidate = [&] (Value* value) {
         switch (value->opcode()) {
         case Load: {
             MemoryValue* memory = value->as<MemoryValue>();
 
-            auto tryPrePostIndexMemory = [&] () {
+            auto tryAddPreIndexCandidates = [&] () {
                 if (memory->type() != Int32 && memory->type() != Int64)
                     return;
                 if (memory->offset()) {
-                    if (!Arg::isValidPreIndexForm(memory->offset()))
+                    if (!Arg::isValidIncrementIndexForm(memory->offset()))
                         return;
                     ValueKey baseOffsetkey = ValueKey(memory->child(0), static_cast<int64_t>(memory->offset()));
                     if (!baseOffsetToAddresses.contains(baseOffsetkey))
@@ -90,10 +89,9 @@ bool canonicalizePrePostIncrements(Procedure& proc)
                         preIndexCandidates.add(memory, address);
                 } else
                     baseToMemories.add(memory->child(0), Vector<MemoryValue*>()).iterator->value.append(memory);
-                valueToIndex.add(value, index);
             };
 
-            tryPrePostIndexMemory();
+            tryAddPreIndexCandidates();
             break;
         }
 
@@ -101,24 +99,23 @@ bool canonicalizePrePostIncrements(Procedure& proc)
             Value* left = value->child(0);
             Value* right = value->child(1);
 
-            auto tryPotentialPostIndexAddress = [&] () {
+            auto tryAddPostIndexCandidates = [&] () {
                 if (!right->hasIntPtr() || value->type() != Int64)
                     return;
                 intptr_t offset = right->asIntPtr();
                 Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
-                if (smallOffset != offset || !Arg::isValidPreIndexForm(smallOffset))
+                if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
                     return;
                 // so far this Add value is a valid address candidate for both prefix and postfix pattern
                 ValueKey baseOffsetkey = ValueKey(left, static_cast<int64_t>(smallOffset));
                 baseOffsetToAddresses.add(baseOffsetkey, Vector<Value*>()).iterator->value.append(value);
-                valueToIndex.add(value, index);
                 if (!baseToMemories.contains(left))
                     return;
                 for (MemoryValue* memory : baseToMemories.get(left))
                     postIndexCandidates.add(memory, value);
             };
 
-            tryPotentialPostIndexAddress();
+            tryAddPostIndexCandidates();
             break;
         }
 
@@ -128,10 +125,8 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     };
 
     for (BasicBlock* basicBlock : proc.blocksInPreOrder()) {
-        for (index = 0; index < basicBlock->size(); ++index) {
-            Value* value = basicBlock->at(index);
-            tryPrePostIndex(value);
-        }
+        for (index = 0; index < basicBlock->size(); ++index)
+            tryAddPrePostIndexCandidate(basicBlock->at(index));
     }
 
     auto controlEquivalent = [&] (Value* v1, Value* v2) -> bool {
@@ -139,33 +134,42 @@ bool canonicalizePrePostIncrements(Procedure& proc)
             || (dominators.dominates(v2->owner, v1->owner) && backwardsDominators.dominates(v1->owner, v2->owner));
     };
 
-    auto detect = [&] (HashMap<MemoryValue*, Value*> candidates) {
-        for (auto itr = candidates.begin(); itr != candidates.end(); ++itr) {
-            MemoryValue* memory = itr->key;
-            Value* address = itr->value;
+    auto valueIndexInBasicBlock = [&] (Value* value) -> unsigned {
+        unsigned index = 0;
+        BasicBlock* block = value->owner;
+        for (index = 0; index < block->size(); ++index) {
+            if (block->at(index) == value)
+                return index;
+        }
+        return index;
+    };
+
+    auto detect = [&] (const HashMap<MemoryValue*, Value*>& candidates, bool isPreIndexCandidates) {
+        for (auto pair : candidates) {
+            MemoryValue* memory = pair.key;
+            Value* address = pair.value;
             if (ignoredValues.contains(memory) || ignoredValues.contains(address) || !controlEquivalent(memory, address))
                 continue;
 
-            if (candidates == preIndexCandidates) {
+            if (isPreIndexCandidates) {
                 // address = Add(base, offset)       address = Add(base, offset)
-                //                              -->  newMemory = Load(base, offset)
-                // ...                               ...
+                // ***                          -->  newMemory = Load(base, offset)
+                // ***                               ***
                 // memory = Load(base, offset)       memory = Identity(newMemory)
-                MemoryValue* newMemory = insertionSet.insert<MemoryValue>(valueToIndex.get(address) + 1, Load, memory->type(), address->origin(), memory->lastChild());
+                unsigned insertionIndex = valueIndexInBasicBlock(address) + 1;
+                MemoryValue* newMemory = insertionSet.insert<MemoryValue>(insertionIndex, Load, memory->type(), address->origin(), memory->lastChild());
                 newMemory->setOffset(memory->offset());
                 memory->replaceWithIdentity(newMemory);
                 insertionSet.execute(address->owner);
             } else {
-                //                                   newOffset = Constant
-                //                                   newAddress = Add(base, newOffset)
+                // ***                               newOffset = Constant
+                // ***                               newAddress = Add(base, newOffset)
                 // memory = Load(base, 0)            memory = Load(base, 0)
-                // ...                          -->  ...
-                // offset = Constant                 offset = Identity(newOffset)
+                // ***                          -->  ***
                 // address = Add(base, offset)       address = Identity(newAddress)
-                unsigned memoryIndex = valueToIndex.get(memory);
-                Value* newOffset = insertionSet.insert<Const64Value>(memoryIndex, memory->origin(), address->child(1)->asInt());
-                Value* newAddress = insertionSet.insert<Value>(memoryIndex, Add, memory->origin(), address->child(0), newOffset);
-                address->child(1)->replaceWithIdentity(newOffset);
+                unsigned insertionIndex = valueIndexInBasicBlock(memory);
+                Value* newOffset = insertionSet.insert<Const64Value>(insertionIndex, memory->origin(), address->child(1)->asInt());
+                Value* newAddress = insertionSet.insert<Value>(insertionIndex, Add, memory->origin(), address->child(0), newOffset);
                 address->replaceWithIdentity(newAddress);
                 insertionSet.execute(memory->owner);
             }
@@ -175,8 +179,8 @@ bool canonicalizePrePostIncrements(Procedure& proc)
         }
     };
 
-    detect(preIndexCandidates);
-    detect(postIndexCandidates);
+    detect(preIndexCandidates, true);
+    detect(postIndexCandidates, false);
     return true;
 }
 
