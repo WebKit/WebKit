@@ -1,3 +1,13 @@
+2021-08-09  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix yet another -Wreturn-type warning
+        https://bugs.webkit.org/show_bug.cgi?id=228928
+
+        Unreviewed.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByValImpl):
+
 2021-08-09  Yijia Huang  <yijia_huang@apple.com>
 
         [ARM64] Clean up and fix Pre/Post-Indexed Address Mode to Air for ARM64 (Load Instruction)

@@ -5456,6 +5456,7 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return nullptr;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void compileGetByVal()
