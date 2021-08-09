@@ -1,5 +1,47 @@
 2021-08-09  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280586. rdar://problem/81706593
+
+    Check that shadow root is connected in invalidateStyleAfterStyleSheetChange
+    https://bugs.webkit.org/show_bug.cgi?id=227383
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2021-08-03
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Check that shadow root is connected in invalidateStyleAfterStyleSheetChange.
+    
+    Test: fast/shadow-dom/shadow-tree-removal-crash.html
+    
+    * style/StyleScope.cpp:
+    (WebCore::Style::Scope::updateActiveStyleSheets):
+    
+    LayoutTests:
+    
+    Add test for this.
+    
+    * fast/shadow-dom/shadow-tree-removal-crash-expected.txt: Added.
+    * fast/shadow-dom/shadow-tree-removal-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280586 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-03  Rob Buis  <rbuis@igalia.com>
+
+            Check that shadow root is connected in invalidateStyleAfterStyleSheetChange
+            https://bugs.webkit.org/show_bug.cgi?id=227383
+
+            Reviewed by Antti Koivisto.
+
+            Check that shadow root is connected in invalidateStyleAfterStyleSheetChange.
+
+            Test: fast/shadow-dom/shadow-tree-removal-crash.html
+
+            * style/StyleScope.cpp:
+            (WebCore::Style::Scope::updateActiveStyleSheets):
+
+2021-08-09  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r280782. rdar://problem/81706720
 
     WebGL 2.0 doesn't work on A8 devices (iPad mini 4, iPad Air 2)
