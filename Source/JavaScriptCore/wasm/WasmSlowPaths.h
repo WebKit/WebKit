@@ -47,7 +47,7 @@ namespace LLInt {
     extern "C" SlowPathReturnType slow_path_wasm_##name(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance)
 
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
-    WASM_SLOW_PATH_DECL(name) WTF_INTERNAL
+    WASM_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
 WASM_SLOW_PATH_HIDDEN_DECL(prologue_osr);
@@ -82,9 +82,9 @@ WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait32);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait64);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
 
-extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const Instruction*, Wasm::Instance* instance, Wasm::ExceptionType) WTF_INTERNAL;
-extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t) WTF_INTERNAL;
-extern "C" SlowPathReturnType slow_path_wasm_popcountll(const Instruction* pc, uint64_t) WTF_INTERNAL;
+extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const Instruction*, Wasm::Instance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" SlowPathReturnType slow_path_wasm_popcountll(const Instruction* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 } } // namespace JSC::LLInt
 
