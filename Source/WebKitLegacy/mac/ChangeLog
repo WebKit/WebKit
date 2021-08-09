@@ -1,3 +1,13 @@
+2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support WTF logging channels
+        https://bugs.webkit.org/show_bug.cgi?id=228768
+
+        Reviewed by Fujii Hironori.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2021-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Deduplicate logging channel algorithms

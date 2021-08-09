@@ -64,6 +64,7 @@ list(APPEND WTF_SOURCES
     cocoa/Entitlements.mm
     cocoa/FileSystemCocoa.mm
     cocoa/LanguageCocoa.mm
+    cocoa/LoggingCocoa.mm
     cocoa/MachSendRight.cpp
     cocoa/MainThreadCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp

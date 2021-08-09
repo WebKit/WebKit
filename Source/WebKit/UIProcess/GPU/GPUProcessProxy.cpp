@@ -49,6 +49,7 @@
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/LogInitialization.h>
 #include <wtf/TranslatedProcess.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -607,6 +608,7 @@ void GPUProcessProxy::didBecomeUnresponsive()
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    parameters.wtfLoggingChannels = WTF::logLevelString();
     parameters.webCoreLoggingChannels = WebCore::logLevelString();
     parameters.webKitLoggingChannels = WebKit::logLevelString();
 #endif

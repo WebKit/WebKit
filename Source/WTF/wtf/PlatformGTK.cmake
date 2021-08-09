@@ -44,6 +44,7 @@ list(APPEND WTF_SOURCES
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
     unix/LanguageUnix.cpp
+    unix/LoggingUnix.cpp
     unix/UniStdExtrasUnix.cpp
 )
 

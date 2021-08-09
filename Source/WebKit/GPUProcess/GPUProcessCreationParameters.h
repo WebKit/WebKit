@@ -57,6 +57,7 @@ struct GPUProcessCreationParameters {
     SandboxExtension::HandleArray dynamicMachExtensionHandles;
 #endif
 
+    String wtfLoggingChannels;
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
 

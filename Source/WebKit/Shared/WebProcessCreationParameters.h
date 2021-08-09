@@ -94,6 +94,7 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle audioCaptureExtensionHandle;
 #endif
 
+    String wtfLoggingChannels;
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
 

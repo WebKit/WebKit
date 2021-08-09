@@ -15,6 +15,7 @@ list(APPEND WTF_SOURCES
 
     text/unix/TextBreakIteratorInternalICUUnix.cpp
 
+    unix/LoggingUnix.cpp
     unix/MemoryPressureHandlerUnix.cpp
 )
 

@@ -100,6 +100,7 @@
 #import <stdio.h>
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
+#import <wtf/LogInitialization.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -279,6 +280,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    WTF::logChannels().initializeLogChannelsIfNecessary(parameters.wtfLoggingChannels);
     WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
     WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
 #endif

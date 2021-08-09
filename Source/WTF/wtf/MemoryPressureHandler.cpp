@@ -26,15 +26,12 @@
 #include "config.h"
 #include <wtf/MemoryPressureHandler.h>
 
+#include <wtf/Logging.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RAMSize.h>
 
-#define LOG_CHANNEL_PREFIX Log
-
 namespace WTF {
-
-DEFINE_LOG_CHANNEL(MemoryPressure, LOG_CHANNEL_WEBKIT_SUBSYSTEM);
 
 WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = false;
 
@@ -53,9 +50,6 @@ MemoryPressureHandler& MemoryPressureHandler::singleton()
     static LazyNeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        WTFLogChannel* channels[] = { &LogMemoryPressure };
-        WTFInitializeLogChannelStatesFromString(channels, 1, "");
-
         memoryPressureHandler.construct();
     });
     return memoryPressureHandler;

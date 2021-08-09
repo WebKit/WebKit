@@ -30,15 +30,9 @@
 #include <mach/mach_init.h>
 #include <utility>
 
-#define LOG_CHANNEL_PREFIX Log
+#include <wtf/Logging.h>
 
 namespace WTF {
-
-#if RELEASE_LOG_DISABLED
-WTFLogChannel LogProcess = { WTFLogChannelState::On, "Process", WTFLogLevel::Error };
-#else
-WTFLogChannel LogProcess = { WTFLogChannelState::On, "Process", WTFLogLevel::Error, LOG_CHANNEL_WEBKIT_SUBSYSTEM, OS_LOG_DEFAULT };
-#endif
 
 static void retainSendRight(mach_port_t port)
 {

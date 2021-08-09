@@ -1,3 +1,44 @@
+2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Support WTF logging channels
+        https://bugs.webkit.org/show_bug.cgi?id=228768
+
+        This patch builds on top of https://bugs.webkit.org/show_bug.cgi?id=228809, which added shared infrastructure
+        for logging. This patch simply triggers that shared infrastructure for WTF. There is no change in behavior -
+        the existing WTF logging channels currently are all implemented independently in custom ways, so this patch
+        just migrates them over to use the shared infrastructure.
+
+        Reviewed by Fujii Hironori.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.h:
+        * wtf/CMakeLists.txt:
+        * wtf/LogInitialization.cpp: Added.
+        (WTF::logChannels):
+        * wtf/LogInitialization.h: Added.
+        * wtf/Logging.cpp: Added.
+        * wtf/Logging.h: Added.
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::singleton):
+        * wtf/MemoryPressureHandler.h:
+        * wtf/PlatformFTW.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/RefCountedLeakCounter.cpp:
+        * wtf/cocoa/LoggingCocoa.mm: Copied from Source/WebKit/UIProcess/Cocoa/GPUProcessProxyCocoa.mm.
+        (WTF::logLevelString):
+        * wtf/cocoa/MachSendRight.cpp:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        * wtf/unix/LoggingUnix.cpp: Added.
+        (WTF::logLevelString):
+        * wtf/win/LoggingWin.cpp: Added.
+        (WTF::logLevelString):
+
 2021-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Deduplicate logging channel algorithms

@@ -124,8 +124,10 @@ set(WTF_PUBLIC_HEADERS
     Locker.h
     LocklessBag.h
     LogChannels.h
+    LogInitialization.h
     Logger.h
     LoggerHelper.h
+    Logging.h
     LoggingAccumulator.h
     LoggingHashID.h
     LoggingHashMap.h
@@ -424,7 +426,9 @@ set(WTF_SOURCES
     Lock.cpp
     LockedPrintStream.cpp
     LogChannels.cpp
+    LogInitialization.cpp
     Logger.cpp
+    Logging.cpp
     MainThread.cpp
     MediaTime.cpp
     MemoryPressureHandler.cpp

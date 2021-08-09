@@ -23,24 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "GPUProcessProxy.h"
+#import "config.h"
+#import <wtf/LogInitialization.h>
 
-#if ENABLE(GPU_PROCESS)
-
-#include "GPUProcessCreationParameters.h"
-
-namespace WebKit {
-
-void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
-{
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    parameters.wtfLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"];
-    parameters.webCoreLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
-    parameters.webKitLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
+
+namespace WTF {
+
+String logLevelString()
+{
+#if !LOG_DISABLED
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"WTFLogging"];
+#else
+    return String();
 #endif
 }
 
-}
+} // namespace WebKit
 
 #endif

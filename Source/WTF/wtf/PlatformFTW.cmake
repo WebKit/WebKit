@@ -24,6 +24,7 @@ list(APPEND WTF_SOURCES
     win/DbgHelperWin.cpp
     win/FileSystemWin.cpp
     win/LanguageWin.cpp
+    win/LoggingWin.cpp
     win/MainThreadWin.cpp
     win/MemoryFootprintWin.cpp
     win/MemoryPressureHandlerWin.cpp

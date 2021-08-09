@@ -187,18 +187,24 @@ typedef struct {
 
 #if !defined(DEFINE_LOG_CHANNEL)
 #if RELEASE_LOG_DISABLED
-#define DEFINE_LOG_CHANNEL(name, subsystem) \
-    WTFLogChannel LOG_CHANNEL(name) = { (WTFLogChannelState)0, #name, (WTFLogLevel)1 };
+#define DEFINE_LOG_CHANNEL_WITH_DETAILS(name, initialState, level, subsystem) \
+    WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level };
 #endif
 #if USE(OS_LOG) && !RELEASE_LOG_DISABLED
-#define DEFINE_LOG_CHANNEL(name, subsystem) \
-    WTFLogChannel LOG_CHANNEL(name) = { (WTFLogChannelState)0, #name, (WTFLogLevel)1, subsystem, OS_LOG_DEFAULT };
+#define DEFINE_LOG_CHANNEL_WITH_DETAILS(name, initialState, level, subsystem) \
+    WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level, subsystem, OS_LOG_DEFAULT };
 #endif
 #if USE(JOURNALD) && !RELEASE_LOG_DISABLED
-#define DEFINE_LOG_CHANNEL(name, subsystem)                             \
-    WTFLogChannel LOG_CHANNEL(name) = { (WTFLogChannelState)0, #name, (WTFLogLevel)1, subsystem };
+#define DEFINE_LOG_CHANNEL_WITH_DETAILS(name, initialState, level, subsystem) \
+    WTFLogChannel LOG_CHANNEL(name) = { initialState, #name, level, subsystem };
 #endif
 #endif
+
+// This file is included from C (not C++) files, so we can't say things like WTFLogChannelState::Off.
+static const WTFLogChannelState logChannelStateOff = (WTFLogChannelState)0;
+static const WTFLogChannelState logChannelStateOn = (WTFLogChannelState)1;
+static const WTFLogLevel logLevelError = (WTFLogLevel)1;
+#define DEFINE_LOG_CHANNEL(name, subsystem) DEFINE_LOG_CHANNEL_WITH_DETAILS(name, logChannelStateOff, logLevelError, subsystem);
 
 WTF_EXPORT_PRIVATE void WTFReportNotImplementedYet(const char* file, int line, const char* function);
 WTF_EXPORT_PRIVATE void WTFReportAssertionFailure(const char* file, int line, const char* function, const char* assertion);

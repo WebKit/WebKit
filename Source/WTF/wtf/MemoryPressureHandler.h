@@ -272,8 +272,6 @@ private:
 #endif
 };
 
-extern WTFLogChannel LogMemoryPressure;
-
 } // namespace WTF
 
 using WTF::Critical;

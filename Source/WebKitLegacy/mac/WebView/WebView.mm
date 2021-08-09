@@ -252,6 +252,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
 #import <wtf/Language.h>
+#import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
 #import <wtf/MathExtras.h>
 #import <wtf/ProcessPrivilege.h>
@@ -1481,6 +1482,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
     if (!didOneTimeInitialization) {
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+        WTF::logChannels().initializeLogChannelsIfNecessary();
         WebCore::logChannels().initializeLogChannelsIfNecessary();
         WebKit::logChannels().initializeLogChannelsIfNecessary();
 #endif
