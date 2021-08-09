@@ -444,6 +444,8 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
 
     if (g_str_equal(path, "/unknown") || g_str_equal(path, "/ua-test"))
         path = "/test.pdf";
+    else if (g_str_equal(path, "/text"))
+        path = "/text";
 
     GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), path, nullptr));
     char* contents;
@@ -745,6 +747,23 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
     test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
 }
 
+static void testDownloadTextPlainMIMEType(DownloadTest* test, gconstpointer)
+{
+    GRefPtr<WebKitDownload> download = test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/text"));
+    g_assert_null(webkit_download_get_web_view(download.get()));
+
+    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    g_assert_true(WEBKIT_IS_URI_REQUEST(request));
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/text"));
+
+    WebKitURIResponse* response = webkit_download_get_response(download.get());
+    g_assert_true(WEBKIT_IS_URI_RESPONSE(response));
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "text/plain");
+    g_assert_nonnull(webkit_download_get_destination(download.get()));
+    g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
+    test->checkDestinationAndDeleteFile(download.get(), kServerSuggestedFilename);
+}
+
 static void testDownloadUserAgent(DownloadTest* test, gconstpointer)
 {
     s_userAgentMap.clear();
@@ -892,6 +911,7 @@ void beforeAll()
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download-cancel", testPolicyResponseDownloadCancel);
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
+    DownloadTest::add("Downloads", "text-plain-mime-type", testDownloadTextPlainMIMEType);
     DownloadTest::add("Downloads", "user-agent", testDownloadUserAgent);
     Test::add("Downloads", "ephemeral-context", testDownloadEphemeralContext);
     // FIXME: Implement keyStroke in WPE.

@@ -1,3 +1,16 @@
+2021-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [WPE][GTK] .asc file extension is appended to filename of text/plain downloads
+        https://bugs.webkit.org/show_bug.cgi?id=228566
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (serverCallback):
+        (testDownloadTextPlainMIMEType):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/resources/text: Added.
+
 2021-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         Perform port blocking earlier in the load
