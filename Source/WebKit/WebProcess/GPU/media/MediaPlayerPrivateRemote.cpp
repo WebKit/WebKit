@@ -455,7 +455,7 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
     if (auto player = makeRefPtr(m_player.get()))
-        connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(player->renderingCanBeAccelerated()), m_id);
+        connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(player->supportsAcceleratedRendering()), m_id);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -105,7 +105,7 @@ MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundatio
 
 MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundation::preferredRenderingMode() const
 {
-    if (assetStatus() == MediaPlayerAVAssetStatusUnknown)
+    if (!m_visible || assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaRenderingNone;
 
     if (supportsAcceleratedRendering() && m_player->renderingCanBeAccelerated())
@@ -125,13 +125,11 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
     if (preferredMode == MediaRenderingNone)
         preferredMode = MediaRenderingToContext;
 
-    if (currentMode == preferredMode)
+    if (currentMode == preferredMode && currentMode != MediaRenderingNone)
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "preferredMode: ", preferredMode, ", currentMode: ", currentMode);
-
-    if (currentMode == MediaRenderingToLayer)
-        destroyVideoLayer();
+    if (currentMode != MediaRenderingNone)
+        tearDownVideoRendering();
 
     switch (preferredMode) {
     case MediaRenderingNone:
@@ -143,6 +141,10 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
         createVideoLayer();
         break;
     }
+
+    // If using a movie layer, inform the client so the compositing tree is updated.
+    if (currentMode == MediaRenderingToLayer || preferredMode == MediaRenderingToLayer)
+        m_player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
@@ -441,6 +443,9 @@ void MediaPlayerPrivateAVFoundation::prepareForRendering()
     m_isAllowedToRender = true;
 
     setUpVideoRendering();
+
+    if (currentRenderingMode() == MediaRenderingToLayer || preferredRenderingMode() == MediaRenderingToLayer)
+        m_player->renderingModeChanged();
 }
 
 bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
@@ -464,20 +469,6 @@ void MediaPlayerPrivateAVFoundation::setResolvedURL(URL&& resolvedURL)
 {
     m_resolvedURL = WTFMove(resolvedURL);
     m_resolvedOrigin = SecurityOrigin::create(m_resolvedURL);
-}
-
-void MediaPlayerPrivateAVFoundation::renderingModeChanged()
-{
-    scheduleUpdateStates();
-    m_player->renderingModeChanged();
-}
-
-void MediaPlayerPrivateAVFoundation::scheduleUpdateStates()
-{
-    queueTaskOnEventLoop([weakThis = makeWeakPtr(*this)] {
-        if (weakThis)
-            weakThis->updateStates();
-    });
 }
 
 void MediaPlayerPrivateAVFoundation::updateStates()
@@ -552,21 +543,11 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         }
     }
 
-    // Do not advance to HaveCurrentData unless there is a decoded frame available for display
-    if (newReadyState >= MediaPlayer::ReadyState::HaveCurrentData
-        && m_readyState < MediaPlayer::ReadyState::HaveCurrentData
-        && m_cachedHasVideo && !hasAvailableVideoFrame()) {
-        newReadyState = MediaPlayer::ReadyState::HaveMetadata;
-        m_delayingReadyState = true;
-        ALWAYS_LOG(LOGIDENTIFIER, "!hasAvailableVideoFrame(), lowering readyState to ", newReadyState);
-    } else
-        m_delayingReadyState = false;
-
     if (isReadyForVideoSetup() && currentRenderingMode() != preferredRenderingMode())
         setUpVideoRendering();
 
     if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo && hasAvailableVideoFrame()) {
-        if (newReadyState < MediaPlayer::ReadyState::HaveCurrentData)
+        if (m_readyState < MediaPlayer::ReadyState::HaveCurrentData)
             newReadyState = MediaPlayer::ReadyState::HaveCurrentData;
         m_haveReportedFirstVideoFrame = true;
         m_player->firstVideoFrameAvailable();

@@ -1,3 +1,41 @@
+2021-08-09  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280624. rdar://problem/81700532
+
+    Unreviewed, reverting r280531 and r280589.
+    
+    caused
+    
+    Reverted changesets:
+    
+    "[Cocoa] Remove support for AVAssetImageGenerator"
+    https://bugs.webkit.org/show_bug.cgi?id=228560
+    https://commits.webkit.org/r280531
+    
+    "REGRESSION (r280531): multiple modern-media-controls tests
+    have become flaky timeouts"
+    https://bugs.webkit.org/show_bug.cgi?id=228714
+    https://commits.webkit.org/r280589
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280624 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Unreviewed, reverting r280531 and r280589.
+
+            caused
+
+            Reverted changesets:
+
+            "[Cocoa] Remove support for AVAssetImageGenerator"
+            https://bugs.webkit.org/show_bug.cgi?id=228560
+            https://commits.webkit.org/r280531
+
+            "REGRESSION (r280531): multiple modern-media-controls tests
+            have become flaky timeouts"
+            https://bugs.webkit.org/show_bug.cgi?id=228714
+            https://commits.webkit.org/r280589
+
 2021-08-02  Chris Dumez  <cdumez@apple.com>
 
         HTMLElement.innerText setter should convert new lines to <br>
