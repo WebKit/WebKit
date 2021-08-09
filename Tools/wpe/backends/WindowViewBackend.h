@@ -64,6 +64,12 @@ private:
     static const struct zxdg_surface_v6_listener s_xdgSurfaceListener;
     static const struct zxdg_toplevel_v6_listener s_xdgToplevelListener;
 
+#if WPE_CHECK_VERSION(1, 11, 1)
+    static bool onDOMFullscreenRequest(void* data, bool fullscreen);
+    void dispatchFullscreenEvent();
+#endif
+    void onFullscreenChanged(bool fullscreen);
+
     void handleKeyEvent(uint32_t key, uint32_t state, uint32_t time);
     uint32_t modifiers() const;
 
@@ -131,6 +137,10 @@ private:
     unsigned m_textureUniform { 0 };
     unsigned m_viewTexture { 0 };
     struct wpe_fdo_egl_exported_image* m_committedImage { nullptr };
+    bool m_is_fullscreen { false };
+#if WPE_CHECK_VERSION(1, 11, 1)
+    bool m_waiting_fullscreen_notify { false };
+#endif
 };
 
 } // WPEToolingBackends

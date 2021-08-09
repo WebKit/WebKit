@@ -100,7 +100,7 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     bool isFullScreen() { return m_fullScreenModeActive; };
-    void setFullScreen(bool fullScreenState) { m_fullScreenModeActive = fullScreenState; };
+    bool setFullScreen(bool);
 #endif
 
 #if ENABLE(ACCESSIBILITY)

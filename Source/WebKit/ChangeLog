@@ -1,5 +1,19 @@
 2021-08-09  Imanol Fernandez  <ifernandez@igalia.com>
 
+        Implement fullscreen in WPEView
+        https://bugs.webkit.org/show_bug.cgi?id=227951
+
+        Reviewed by Adrian Perez de Castro.
+
+        Notify DOM fullscreen enter request to libwpe and handle exit fullscreen from libwpe.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        (WKWPE::View::setFullScreen):
+        * UIProcess/API/wpe/WPEView.h:
+
+2021-08-09  Imanol Fernandez  <ifernandez@igalia.com>
+
         Allow custom IPC::Attachment messaging in ConnectionUnix.cpp
         https://bugs.webkit.org/show_bug.cgi?id=227740
 

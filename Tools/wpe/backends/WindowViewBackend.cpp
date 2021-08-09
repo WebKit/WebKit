@@ -527,6 +527,7 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
         window.resize(std::max(0, width), std::max(0, height));
 
         bool isFocused = false;
+        bool isFullscreen = false;
         // FIXME: It would be nice if the following loop could use
         // wl_array_for_each, but at the time of writing it relies on
         // GCC specific extension to work properly:
@@ -542,6 +543,8 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
                 isFocused = true;
                 break;
             case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
+                isFullscreen = true;
+                break;
             case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
             case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
             default:
@@ -553,6 +556,9 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
             window.addActivityState(wpe_view_activity_state_focused);
         else
             window.removeActivityState(wpe_view_activity_state_focused);
+
+        if (window.m_is_fullscreen != isFullscreen)
+            window.onFullscreenChanged(isFullscreen);
     },
     // close
     [](void* data, struct zxdg_toplevel_v6*)
@@ -561,6 +567,58 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
         window.removeActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
     },
 };
+
+#if WPE_CHECK_VERSION(1, 11, 1)
+
+bool WindowViewBackend::onDOMFullscreenRequest(void* data, bool fullscreen)
+{
+    auto& window = *static_cast<WindowViewBackend*>(data);
+    if (window.m_waiting_fullscreen_notify)
+        return false;
+
+    if (fullscreen == window.m_is_fullscreen) {
+        // Handle situations where DOM fullscreen requests are mixed with system fullscreen commands (e.g F11)
+        window.dispatchFullscreenEvent();
+        return true;
+    }
+
+    window.m_waiting_fullscreen_notify = true;
+    if (fullscreen)
+        zxdg_toplevel_v6_set_fullscreen(window.m_xdgToplevel, nullptr);
+    else
+        zxdg_toplevel_v6_unset_fullscreen(window.m_xdgToplevel);
+
+    return true;
+}
+
+void WindowViewBackend::dispatchFullscreenEvent()
+{
+    if (m_is_fullscreen)
+        wpe_view_backend_dispatch_did_enter_fullscreen(backend());
+    else
+        wpe_view_backend_dispatch_did_exit_fullscreen(backend());
+}
+
+void WindowViewBackend::onFullscreenChanged(bool fullscreen)
+{
+    bool wasRequestedFromDOM = m_waiting_fullscreen_notify;
+    m_waiting_fullscreen_notify= false;
+    m_is_fullscreen = fullscreen;
+
+    if (!fullscreen && !wasRequestedFromDOM)
+        wpe_view_backend_dispatch_request_exit_fullscreen(backend());
+    else if (wasRequestedFromDOM)
+        dispatchFullscreenEvent();
+}
+
+#else
+
+void WindowViewBackend::onFullscreenChanged(bool fullscreen)
+{
+    m_is_fullscreen = fullscreen;
+}
+
+#endif // WPE_CHECK_VERSION(1, 11, 1)
 
 WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
@@ -823,6 +881,10 @@ bool WindowViewBackend::initialize(EGLDisplay eglDisplay)
 
     };
     m_exportable = wpe_view_backend_exportable_fdo_egl_create(&exportableClient, this, m_width, m_height);
+
+#if WPE_CHECK_VERSION(1, 11, 1)
+    wpe_view_backend_set_fullscreen_handler(backend(), onDOMFullscreenRequest, this);
+#endif
 
     initializeAccessibility();
 
