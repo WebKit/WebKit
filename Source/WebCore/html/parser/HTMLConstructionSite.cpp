@@ -234,6 +234,7 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, ParserContentPoli
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(document.inQuirksMode())
+    , m_whitespaceCache(document.whitespaceCache())
 {
     ASSERT(m_document.isHTMLDocument() || m_document.isXHTMLDocument());
 }
@@ -246,6 +247,7 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, ParserCon
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(fragment.document().inQuirksMode())
+    , m_whitespaceCache(fragment.document().whitespaceCache())
 {
     ASSERT(m_document.isHTMLDocument() || m_document.isXHTMLDocument());
 }
@@ -574,10 +576,6 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     if (shouldFosterParent())
         findFosterSite(task);
 
-    // Strings composed entirely of whitespace are likely to be repeated.
-    // Turn them into AtomString so we share a single string for each.
-    bool shouldUseAtomString = whitespaceMode == AllWhitespace || (whitespaceMode == WhitespaceUnknown && isAllWhitespace(characters));
-
     unsigned currentPosition = 0;
     unsigned lengthLimit = shouldUseLengthLimit(*task.parent) ? Text::defaultLengthLimit : std::numeric_limits<unsigned>::max();
 
@@ -592,11 +590,13 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     }
 
     while (currentPosition < characters.length()) {
-        auto textNode = Text::createWithLengthLimit(task.parent->document(), shouldUseAtomString ? AtomString(characters).string() : characters, currentPosition, lengthLimit);
+        AtomString charactersAtom = m_whitespaceCache.lookup(characters, whitespaceMode);
+        auto textNode = Text::createWithLengthLimit(task.parent->document(), charactersAtom.isNull() ? characters : charactersAtom.string(), currentPosition, lengthLimit);
         // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
         if (!textNode->length()) {
             String substring = characters.substring(currentPosition);
-            textNode = Text::create(task.parent->document(), shouldUseAtomString ? AtomString(substring).string() : substring);
+            AtomString substringAtom = m_whitespaceCache.lookup(substring, whitespaceMode);
+            textNode = Text::create(task.parent->document(), substringAtom.isNull() ? substring : substringAtom.string());
         }
 
         currentPosition += textNode->length();
@@ -809,6 +809,113 @@ void HTMLConstructionSite::fosterParent(Ref<Node>&& node)
     ASSERT(task.parent);
 
     m_taskQueue.append(WTFMove(task));
+}
+
+// Compute a 64 bit code that represents a whitespace-only string's contents.
+//
+// The code format is a sequence of four pairs of an 8 bit whitespace character
+// and an 8 bit count of that character. For example, 0x0A_02_20_08 represents
+// two newlines followed by eight space characters.
+//
+// Returns 0 if any non-whitespace characters are found.
+//
+// Returns -1 if the code would overflow due to finding more than four
+// whitespace character runs.
+template<WhitespaceMode whitespaceMode>
+uint64_t WhitespaceCache::codeForString(const String& string)
+{
+    ASSERT(whitespaceMode != NotAllWhitespace);
+    ASSERT(string.is8Bit());
+    ASSERT(!string.isEmpty());
+    ASSERT(string.length() <= maximumCachedStringLength);
+    static_assert(maximumCachedStringLength <= 0xFF, "Code format requires whitespace run length fit in one byte");
+
+    auto startOfRun = string.characters8();
+
+    if constexpr (whitespaceMode == WhitespaceUnknown) {
+        if (!isHTMLSpace(*startOfRun))
+            return 0;
+    }
+
+    LChar currentWhitespaceCharacter = *startOfRun;
+    auto character = startOfRun + 1;
+    auto end = startOfRun + string.length();
+
+    uint64_t code = 0;
+    int runsRemaining = 4;
+
+    for (;;) {
+        while (character != end && *character == currentWhitespaceCharacter)
+            ++character;
+
+        if constexpr (whitespaceMode == WhitespaceUnknown) {
+            if (character != end && !isHTMLSpace(*character))
+                return 0;
+        }
+
+        code <<= 16;
+        code |= (currentWhitespaceCharacter << 8);
+        code |= (character - startOfRun);
+
+        if (character == end)
+            return code;
+
+        if (!--runsRemaining)
+            return overflowWhitespaceCode;
+
+        startOfRun = character;
+        currentWhitespaceCharacter = *character;
+        ++character;
+
+        ASSERT(isHTMLSpace(currentWhitespaceCharacter));
+    }
+
+    return code;
+}
+
+AtomString WhitespaceCache::lookup(const String& string, WhitespaceMode whitespaceMode)
+{
+    if (whitespaceMode == NotAllWhitespace || !string.is8Bit() || string.isEmpty())
+        return AtomString();
+
+    size_t length = string.length();
+    if (length > maximumCachedStringLength)
+        return whitespaceMode == AllWhitespace || isAllWhitespace(string) ? AtomString(string) : AtomString();
+
+    uint64_t code;
+    if (whitespaceMode == AllWhitespace)
+        code = codeForString<AllWhitespace>(string);
+    else
+        code = codeForString<WhitespaceUnknown>(string);
+
+    if (!code)
+        return AtomString();
+
+    if (m_codes[length] == code) {
+        ASSERT(m_atoms[m_indexes[length]] == string);
+        WTFLogAlways("reuse code %llx", code);
+        return m_atoms[m_indexes[length]];
+    }
+
+    if (code == overflowWhitespaceCode) {
+        WTFLogAlways("override");
+        return AtomString(string);
+    }
+
+    if (m_codes[length]) {
+        WTFLogAlways("replace code %llx", code);
+        AtomString whitespaceAtom(string);
+        m_codes[length] = code;
+        m_atoms[m_indexes[length]] = whitespaceAtom;
+        return whitespaceAtom;
+    }
+
+    WTFLogAlways("new code %llx", code);
+    AtomString whitespaceAtom(string);
+    m_codes[length] = code;
+    m_indexes[length] = m_atoms.size();
+    m_atoms.append(whitespaceAtom);
+    return whitespaceAtom;
 }
 
 }

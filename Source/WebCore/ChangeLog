@@ -1,5 +1,81 @@
 2021-08-09  Cameron McCormack  <heycam@apple.com>
 
+        Cache recently atomized all-whitespace strings for use by the HTML parser
+        https://bugs.webkit.org/show_bug.cgi?id=228858
+
+        Reviewed by Yusuke Suzuki.
+
+        We have a memory optimization where the HTML parser will atomize any
+        text node string that is all whitespace.  This can be expensive,
+        as we need to loop over the string's characters three times: to detect
+        that it is indeed all whitespace, to hash the string, and to compare
+        to any existing entry in the atom hash table.
+
+        Many whitespace strings encountered during parsing have a limited
+        form -- they have a few runs of consecutive equal whitespace
+        characters, e.g. it's common to see a newline followed by a number
+        of space characters.  We can take advantage of this by compressing
+        the whitespace string into a simple run-length encoded form while
+        we loop over the characters to check that the string is all
+        whitespace.  Unlike a hash, this encoded form perfectly identifies the
+        string content.
+
+        We add a WhitespaceCache that is owned by the Document, which stores
+        the most recently atomized all-whitespace string encountered by the
+        parser for a given length, and keys it with the encoded form.  The
+        parser can then look up the WhitespaceCache and find an AtomString
+        without the need to perform a lookup in the atom hash table.
+
+        The WhitespaceCache continues to hold on to the cached whitespace
+        atoms for the life of the document.  The WhitespaceCache itself
+        takes a bit over 1 KiB when empty, and if completely populated would
+        take a bit over 2 KiB plus 8 KiB of atom string data (a 1 byte string,
+        plus a 2 byte string, plus a 3 byte string, etc.).  This doesn't seem
+        high enough to be worth clearing this out just to avoid memory usage
+        from text nodes that have been removed from the document.
+
+        We have the Document own the WhitespaceCache so that it's not just the
+        initial document load, but any uses of innerHTML or other fragment
+        parsing APIs, that can re-use previously atomized whitespace strings.
+
+        The choice of WhitespaceCache::maximumCachedStringLength = 128 is
+        somewhat arbitrary.  The value must be <= 255 to avoid overflowing
+        the specific 64 bit code format used to encode the whitespace string.
+        Testing on Speedometer shows whitespace strings only up to length 26,
+        but it may be worth testing other content to see if it's worth
+        reducing maximumCachedStringLength.
+
+        When running Speedometer 2, no entries in the cache ever get replaced
+        by a different whitespace string of the same length, and 16 unique
+        whitespace string lengths are encountered.
+
+        We don't compute codes for 16 bit strings, since 16 bit strings passed
+        in to WhitespaceCache::lookup() are almost always the entirety of an
+        HTMLToken's data, and HTMLToken tracks whether any 16 bit characters are
+        present.  If there are any, then we know the string cannot be all
+        whitespace, and we use a WhitespaceMode value of NotAllWhitespace to
+        skip the atomization altogether.
+
+        This patch is an almost 1% improvement on Speedometer 2.
+
+        * dom/Document.cpp:
+        (WebCore::m_whitespaceCache):
+        * dom/Document.h:
+        (WebCore::Document::whitespaceCache):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::HTMLConstructionSite):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::WhitespaceCache::codeForString):
+        (WebCore::WhitespaceCache::lookup):
+        * html/parser/HTMLConstructionSite.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink):
+        (WebCore::HTMLTreeBuilder::linkifyPhoneNumbers):
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+        * html/parser/HTMLTreeBuilder.h:
+
+2021-08-09  Cameron McCormack  <heycam@apple.com>
+
         Increase inline size of HTMLToken::Attribute::value
         https://bugs.webkit.org/show_bug.cgi?id=228910
         <rdar://problem/81686150>

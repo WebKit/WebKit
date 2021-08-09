@@ -109,7 +109,7 @@ private:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     void insertPhoneNumberLink(const String&);
-    void linkifyPhoneNumbers(const String&);
+    void linkifyPhoneNumbers(const String&, WhitespaceMode);
 #endif
 
     void processToken(AtomHTMLToken&&);

@@ -233,6 +233,7 @@ class VisitedLinkState;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
+class WhitespaceCache;
 class WindowEventLoop;
 class WindowProxy;
 class XPathEvaluator;
@@ -1516,6 +1517,8 @@ public:
 
     HTMLDialogElement* activeModalDialog() const;
 
+    WhitespaceCache& whitespaceCache() { return m_whitespaceCache; }
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
@@ -2207,6 +2210,7 @@ private:
     UniqueRef<FrameSelection> m_selection;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
+    UniqueRef<WhitespaceCache> m_whitespaceCache;
 };
 
 Element* eventTargetElementForDocument(Document*);

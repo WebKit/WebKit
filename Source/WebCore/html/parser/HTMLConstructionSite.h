@@ -85,6 +85,7 @@ class Document;
 class Element;
 class HTMLFormElement;
 class JSCustomElementInterface;
+class WhitespaceCache;
 
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
@@ -219,6 +220,29 @@ private:
     unsigned m_maximumDOMTreeDepth;
 
     bool m_inQuirksMode;
+
+    WhitespaceCache& m_whitespaceCache;
+};
+
+class WhitespaceCache {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    WhitespaceCache() = default;
+
+    AtomString lookup(const String&, WhitespaceMode);
+
+private:
+    template<WhitespaceMode> uint64_t codeForString(const String&);
+
+    constexpr static uint64_t overflowWhitespaceCode = static_cast<uint64_t>(-1);
+    constexpr static size_t maximumCachedStringLength = 128;
+
+    // Parallel arrays storing a 64 bit code and an index into m_atoms for the
+    // most recently atomized whitespace-only string of a given length.
+    uint64_t m_codes[maximumCachedStringLength] { 0 };
+    uint8_t m_indexes[maximumCachedStringLength] { 0 };
+
+    Vector<AtomString, maximumCachedStringLength> m_atoms;
 };
 
 } // namespace WebCore

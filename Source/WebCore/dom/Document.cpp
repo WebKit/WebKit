@@ -92,6 +92,7 @@
 #include "HTMLBaseElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLConstructionSite.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
@@ -651,6 +652,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_undoManager(UndoManager::create(*this))
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
+    , m_whitespaceCache(makeUniqueRef<WhitespaceCache>())
 {
     addToDocumentsMap();
 
