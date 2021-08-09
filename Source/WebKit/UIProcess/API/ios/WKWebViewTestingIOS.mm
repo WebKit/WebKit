@@ -38,6 +38,8 @@
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKTextInputContextInternal.h"
+#import <WebCore/ColorIOS.h>
+#import <WebCore/ColorSerialization.h>
 #import <WebCore/ElementContext.h>
 
 @implementation WKWebView (WKTestingIOS)
@@ -414,6 +416,14 @@
 }
 #endif
 
+- (NSString *)_serializedSelectionCaretBackgroundColorForTesting
+{
+    UIColor *backgroundColor = [[_contentView textInteractionAssistant].selectionView valueForKeyPath:@"caretView.backgroundColor"];
+    if (!backgroundColor)
+        return nil;
+
+    return WebCore::serializationForCSS(WebCore::colorFromUIColor(backgroundColor));
+}
 
 @end
 

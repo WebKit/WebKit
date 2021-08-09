@@ -819,6 +819,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static selectionCaretBackgroundColor()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.uiScriptComplete(uiController.selectionCaretBackgroundColor)", resolve);
+        });
+    }
+
     static tapHighlightViewRect()
     {
         return new Promise(resolve => {

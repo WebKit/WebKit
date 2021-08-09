@@ -217,6 +217,7 @@ struct WKSelectionDrawingInfo {
     explicit WKSelectionDrawingInfo(const EditorState&);
     SelectionType type;
     WebCore::IntRect caretRect;
+    WebCore::Color caretColor;
     Vector<WebCore::SelectionGeometry> selectionGeometries;
     WebCore::IntRect selectionClipRect;
 };
@@ -797,6 +798,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if ENABLE(DRAG_SUPPORT)
 @property (nonatomic, readonly, getter=isAnimatingDragCancel) BOOL animatingDragCancel;
 #endif
+
+@property (nonatomic, readonly) UIWKTextInteractionAssistant *textInteractionAssistant;
 
 @end
 

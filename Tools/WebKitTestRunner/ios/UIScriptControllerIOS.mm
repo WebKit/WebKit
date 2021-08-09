@@ -1192,6 +1192,15 @@ bool UIScriptControllerIOS::isAnimatingDragCancel() const
     return webView()._animatingDragCancel;
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() const
+{
+    NSString *serializedColor = webView()._serializedSelectionCaretBackgroundColorForTesting;
+    if (!serializedColor)
+        return { };
+
+    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)serializedColor));
+}
+
 JSObjectRef UIScriptControllerIOS::tapHighlightViewRect() const
 {
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._tapHighlightViewRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);

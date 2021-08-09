@@ -1,0 +1,14 @@
+
+This test verifies that caret-color is applied upon focusing an input field. To manually test, focus the input field, dismiss the software keyboard, and then focus the input field again. The caret color should be default after initial focus, but red upon refocusing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Blurred input field.
+PASS newCaretBackgroundColor is "rgb(255, 0, 0)"
+PASS originalCaretBackgroundColor is not newCaretBackgroundColor
+PASS Blurred input field.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

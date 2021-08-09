@@ -1,3 +1,54 @@
+2021-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        caret-color does not work on first click in ios
+        https://bugs.webkit.org/show_bug.cgi?id=228859
+        rdar://81674787
+
+        Reviewed by Tim Horton.
+
+        Addresses a couple of issues that cause the `caret-color` CSS property to not be applied when focusing editable
+        content on iOS. See below for more details.
+
+        Test: editing/caret/ios/caret-color-after-refocusing-input.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _serializedSelectionCaretBackgroundColorForTesting]):
+
+        Add support for a new test-only helper method. See Tools/ChangeLog for more information.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (WebKit::WKSelectionDrawingInfo::WKSelectionDrawingInfo):
+        (WebKit::operator==):
+        (WebKit::operator<<):
+
+        Make a minor adjustment to ensure that changes to `caretColor` in `EditorState` are propagated to UIKit's
+        selection views. To achieve this, we add `caretColor` to `WKSelectionDrawingInfo`, and force the text selection
+        view to update the caret background color when the caret color changes (alongside other selection UI geometry
+        changes, which are applied underneath the call to `-selectionChanged`).
+
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView textInteractionAssistant]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
+        Address an existing FIXME which (mostly) fixes this bug. Currently, the caret color is only computed when
+        `WebPage::m_focusedElement` is set. However, when resigning first responder, we clear out `WebPage`'s
+        `m_focusedElement`) right before updating the DOM selection, which creates a brief window during which we
+        compute an `EditorState` with a `caretColor` of transparent black.
+
+        To avoid this inconsistency, we instead compute the caret color from the selection container; this has the
+        additional benefit of allowing the caret color to change when changing selection within a single editable host
+        with multiple caret colors (instead of always just using the focused element's caret color).
+
+        Note that while this adjustment to `WebPage::getPlatformEditorState` is sufficient to ensure that the value of
+        `-[WKContentView insertionPointColor]` (which is based on `EditorState`) is always up-to-date, this doesn't
+        guarantee that the actual color of UIKit's caret view reflects the updated `-insertionPointColor`, which results
+        in situations where the caret color appears out-of-date after hiding the keyboard and refocusing an input field.
+        To fix this, we need the other adjustment in WKContentView (see above).
+
 2021-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Web process crashes when detaching Document with uncommitted marked text

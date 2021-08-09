@@ -181,6 +181,12 @@ public:
         return false;
     }
 
+    virtual JSRetainPtr<JSStringRef> selectionCaretBackgroundColor() const
+    {
+        notImplemented();
+        return { };
+    }
+
     virtual JSObjectRef tapHighlightViewRect() const
     {
         notImplemented();

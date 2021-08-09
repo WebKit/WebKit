@@ -1,3 +1,20 @@
+2021-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        caret-color does not work on first click in ios
+        https://bugs.webkit.org/show_bug.cgi?id=228859
+        rdar://81674787
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test that exercises the issue, as reported in Bugzilla (the call to `-resignFirstResponder`
+        simulates backgrounding Safari). To achieve this, we also introduce a script controller testing helper to grab
+        the native background color of the `UITextSelectionView`'s caret view; see Tools/ChangeLog for more details.
+
+        * editing/caret/ios/caret-color-after-refocusing-input-expected.txt: Added.
+        * editing/caret/ios/caret-color-after-refocusing-input.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.selectionCaretBackgroundColor):
+
 2021-08-08  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: http/tests/preload/onload_event.html is a flaky timeout on Big Sur wk1 Release

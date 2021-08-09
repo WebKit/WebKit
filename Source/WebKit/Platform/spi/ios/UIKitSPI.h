@@ -699,6 +699,13 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @property (nonatomic, assign) NSRange rangeInMarkedText;
 @end
 
+@interface UITextSelectionView : UIView
+@end
+
+@interface UITextInteractionAssistant (SPI)
+@property (nonatomic, readonly) UITextSelectionView *selectionView;
+@end
+
 @interface UIWKTextInteractionAssistant : UITextInteractionAssistant <UIResponderStandardEditActions>
 @end
 

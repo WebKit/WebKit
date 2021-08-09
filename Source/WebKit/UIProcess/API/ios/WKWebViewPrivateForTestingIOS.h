@@ -94,6 +94,8 @@
 - (void)_setUIEventAttributionForTesting:(UIEventAttribution *)attribution withNonce:(NSString *)nonce;
 #endif
 
+- (NSString *)_serializedSelectionCaretBackgroundColorForTesting;
+
 @end
 
 #endif // TARGET_OS_IPHONE
