@@ -1,3 +1,12 @@
+2021-08-09  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo][Debug] Build fix after r280756
+        https://bugs.webkit.org/show_bug.cgi?id=228918
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp: Update call to initializeLogChannelsIfNecessary
+
 2021-08-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] ASSERTION FAILED: evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent in WebView::interpretKeyEvent since r280492
