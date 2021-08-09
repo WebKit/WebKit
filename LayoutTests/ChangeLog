@@ -1,3 +1,12 @@
+2021-08-09  Robert Jenner  <Jenner@apple.com>
+
+        [ Monterey Release wk2 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=228200
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-09  Simon Fraser  <simon.fraser@apple.com>
 
         Vertical scroll with mouse wheel in horizontal scroller fails to propagate to the document

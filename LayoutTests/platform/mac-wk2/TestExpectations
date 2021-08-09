@@ -1483,7 +1483,7 @@ webkit.org/b/226054 [ BigSur Release ] imported/w3c/web-platform-tests/webrtc/RT
 [ Monterey ] webrtc/h264-high.html [ Timeout ]
 
 # rdar://80346382 ([ Monterey Release wk2 arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html is a flaky crash)
-[ Monterey arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure ]
+[ Monterey arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure Crash ]
 
 # rdar://80333935 (REGRESSION: [ Monterey wk2 arm64 ] fast/animation/request-animation-frame-throttling-detached-iframe.html and request-animation-frame-throttling-lowPowerMode.html failing)
 [ Monterey arm64 ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Failure ]
