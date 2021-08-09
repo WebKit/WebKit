@@ -1,3 +1,16 @@
+2021-08-09  Keith Miller  <keith_miller@apple.com>
+
+        Revert bad assert about the number of upsilons going into a phi
+        https://bugs.webkit.org/show_bug.cgi?id=228922
+
+        Reviewed by Yusuke Suzuki.
+
+        This assert was invalid because we sometimes emit unreachable phis
+        that don't have any incoming upsilons. Specifically for MultiGetByOffset.
+
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::phi):
+
 2021-08-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Adding missing REFERENCED_FROM_ASM annotations to facilitate LTO

@@ -482,7 +482,6 @@ inline LValue Output::phi(LType type, ValueFromBlock value, Params... theRest)
 template<typename VectorType>
 inline LValue Output::phi(LType type, const VectorType& vector)
 {
-    ASSERT(vector.size());
     LValue phiNode = phi(type);
     for (const ValueFromBlock& valueFromBlock : vector)
         addIncomingToPhi(phiNode, valueFromBlock);
