@@ -1,5 +1,36 @@
 2021-08-09  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280727. rdar://problem/81700728
+
+    Crash at WebKit::WebPage::requestTextRecognition caused by accessibility invocation.
+    https://bugs.webkit.org/show_bug.cgi?id=228864
+    rdar://80679512
+    
+    Reviewed by Chris Fleizach.
+    
+    * accessibility/AXImage.cpp:
+    (WebCore::AXImage::imageOverlayElements):
+    It was calling requestTextRecognition with *element(), but element() can
+    return nullptr, which would lead to the crash.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280727 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-06  Andres Gonzalez  <andresg_22@apple.com>
+
+            Crash at WebKit::WebPage::requestTextRecognition caused by accessibility invocation.
+            https://bugs.webkit.org/show_bug.cgi?id=228864
+            rdar://80679512
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/AXImage.cpp:
+            (WebCore::AXImage::imageOverlayElements):
+            It was calling requestTextRecognition with *element(), but element() can
+            return nullptr, which would lead to the crash.
+
+2021-08-09  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r280723. rdar://problem/81700532
 
     [Cocoa] Remove support for AVAssetImageGenerator
