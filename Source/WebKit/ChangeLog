@@ -1,3 +1,26 @@
+2021-08-09  Said Abou-Hallawa  <said@apple.com>
+
+        Ease sandboxing restrictions for Mail to allow HEIF image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=228812
+        <rdar://80967782>
+
+        Reviewed by Per Arne Vollan.
+
+        If the running application is Mail, add a sandbox extension to allow HEIF
+        image decoding. There is no plan right now to enable HEIF in WebKit. So 
+        do not try to support decoding it outside Mail.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::initializeSandbox):
+        (WebKit::restrictImageAndVideoDecoders): Deleted.
+
 2021-08-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa|GPU] platformLayer() not always added to remotedly hosted context; black video while playing

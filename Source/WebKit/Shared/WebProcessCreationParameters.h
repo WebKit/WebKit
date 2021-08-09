@@ -210,8 +210,8 @@ struct WebProcessCreationParameters {
     std::optional<SandboxExtension::Handle> containerManagerExtensionHandle;
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
-#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
-    std::optional<SandboxExtension::Handle> trustdAgentExtensionHandle;
+#if HAVE(VIDEO_RESTRICTED_DECODING)
+    SandboxExtension::HandleArray videoDecoderExtensionHandles;
 #endif
 
     SandboxExtension::HandleArray diagnosticsExtensionHandles;

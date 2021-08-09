@@ -464,10 +464,14 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.launchServicesExtensionHandle = WTFMove(launchServicesExtensionHandle);
 #endif
 
-#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
-    SandboxExtension::Handle trustdAgentExtensionHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt, trustdAgentExtensionHandle);
-    parameters.trustdAgentExtensionHandle = WTFMove(trustdAgentExtensionHandle);
+#if HAVE(VIDEO_RESTRICTED_DECODING)
+#if PLATFORM(MAC)
+    if (MacApplication::isAppleMail())
+        parameters.videoDecoderExtensionHandles = SandboxExtension::createHandlesForMachLookup({ "com.apple.coremedia.videodecoder"_s, "com.apple.trustd.agent"_s }, std::nullopt);
+#elif PLATFORM(IOS_FAMILY)
+    if (IOSApplication::isMobileMail() || IOSApplication::isMailCompositionService())
+        parameters.videoDecoderExtensionHandles = SandboxExtension::createHandlesForMachLookup({ "com.apple.coremedia.decompressionsession"_s }, std::nullopt);
+#endif
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)

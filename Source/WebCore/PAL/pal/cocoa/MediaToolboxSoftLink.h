@@ -76,7 +76,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginTrackReaderGetClassID, 
 #define MTPluginTrackReaderGetClassID PAL::softLink_MediaToolbox_MTPluginTrackReaderGetClassID
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, MediaToolbox, MTPluginTrackReaderGetTypeID, CFTypeID, (), ())
 #define MTPluginTrackReaderGetTypeID PAL::softLink_MediaToolbox_MTPluginTrackReaderGetTypeID
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, MediaToolbox, FigPhotoSupportsHEVCHWDecode, Boolean, (void), ())
 
 #endif // HAVE(MT_PLUGIN_FORMAT_READER)
 

@@ -1511,7 +1511,6 @@ webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 # <rdar://problem/48781098>
 [ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
 [ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]
-[ BigSur+ ] fast/images/heic-as-background-image.html [ Pass ]
 
 # <rdar://problem/40172428>
 webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailure ]

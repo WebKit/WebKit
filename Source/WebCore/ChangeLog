@@ -1,3 +1,16 @@
+2021-08-09  Said Abou-Hallawa  <said@apple.com>
+
+        Ease sandboxing restrictions for Mail to allow HEIF image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=228812
+        <rdar://80967782>
+
+        Reviewed by Per Arne Vollan.
+
+        No need to pass kCGImageSourceEnableRestrictedDecoding to ImageIO anymore.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::createImageSourceOptions):
+
 2021-08-09  Dean Jackson  <dino@apple.com>
 
         WebGL 2.0 doesn't work on A8 devices (iPad mini 4, iPad Air 2)

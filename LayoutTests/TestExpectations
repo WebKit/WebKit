@@ -2160,7 +2160,6 @@ fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 # HEIF images are only supported on macOS and iOS post Mojave
 fast/images/animated-heics-draw.html [ Skip ]
 fast/images/animated-heics-verify.html [ Skip ]
-fast/images/heic-as-background-image.html [ Skip ]
 
 # WebP images are only supported on macOS and iOS post Catalina
 fast/images/webp-as-image.html [ Skip ]

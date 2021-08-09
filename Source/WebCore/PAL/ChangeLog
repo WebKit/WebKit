@@ -1,3 +1,21 @@
+2021-08-09  Said Abou-Hallawa  <said@apple.com>
+
+        Ease sandboxing restrictions for Mail to allow HEIF image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=228812
+        <rdar://80967782>
+
+        Reviewed by Per Arne Vollan.
+
+        Delete unneeded SPIs and their soft-linking.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cf/VideoToolboxSoftLink.cpp:
+        * pal/cf/VideoToolboxSoftLink.h:
+        * pal/cocoa/MediaToolboxSoftLink.cpp:
+        * pal/cocoa/MediaToolboxSoftLink.h:
+        * pal/spi/cg/ImageIOSPI.h:
+        * pal/spi/cocoa/VideoToolboxSPI.h: Removed.
+
 2021-08-03  Devin Rousso  <drousso@apple.com>
 
         [Live Text] [iOS] Provide a presenting `UIViewController` for machine readable code actions so that they are related to the same view
