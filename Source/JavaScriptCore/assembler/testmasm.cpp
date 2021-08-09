@@ -1740,6 +1740,441 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
 
 #endif // CPU(X86_64) || CPU(ARM64)
 
+#if CPU(ARM64)
+void testLoadStorePair64Int64()
+{
+    constexpr uint64_t initialValue = 0x5555aaaabbbb8800ull;
+    constexpr uint64_t value1 = 42;
+    constexpr uint64_t value2 = 0xcafebabe12345678ull;
+
+    uint64_t buffer[10];
+
+    auto initBuffer = [&] {
+        for (unsigned i = 0; i < 10; ++i)
+            buffer[i] = initialValue + i;
+    };
+
+    struct Pair {
+        uint64_t value1;
+        uint64_t value2;
+    };
+
+    Pair pair;
+    auto initPair = [&] {
+        pair = { 0, 0 };
+    };
+
+    // Test loadPair64.
+    auto testLoadPair = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR0;
+        constexpr GPRReg pairGPR = GPRInfo::argumentGPR1;
+        jit.loadPair64(bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(CPURegister)), GPRInfo::regT2, GPRInfo::regT3);
+
+        jit.store64(GPRInfo::regT2, CCallHelpers::Address(pairGPR, 0));
+        jit.store64(GPRInfo::regT3, CCallHelpers::Address(pairGPR, sizeof(uint64_t)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testLoadPair0 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, 0);
+    });
+
+    initBuffer();
+
+    initPair();
+    invoke<void>(testLoadPair0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4);
+    CHECK_EQ(pair.value2, initialValue + 5);
+
+    initPair();
+    buffer[4] = value1;
+    buffer[5] = value2;
+    invoke<void>(testLoadPair0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value1);
+    CHECK_EQ(pair.value2, value2);
+
+    auto testLoadPairMinus2 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, -2);
+    });
+
+    initPair();
+    invoke<void>(testLoadPairMinus2, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4 - 2);
+    CHECK_EQ(pair.value2, initialValue + 5 - 2);
+
+    initPair();
+    buffer[4 - 2] = value2;
+    buffer[5 - 2] = value1;
+    invoke<void>(testLoadPairMinus2, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value2);
+    CHECK_EQ(pair.value2, value1);
+
+    auto testLoadPairPlus3 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, 3);
+    });
+
+    initPair();
+    invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4 + 3);
+    CHECK_EQ(pair.value2, initialValue + 5 + 3);
+
+    initPair();
+    buffer[4 + 3] = value1;
+    buffer[5 + 3] = value2;
+    invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value1);
+    CHECK_EQ(pair.value2, value2);
+
+    // Test storePair64.
+    auto testStorePair = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR2;
+        jit.storePair64(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(CPURegister)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testStorePair0 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, 0);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePair0, value1, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], value1);
+    CHECK_EQ(buffer[5], value2);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairMinus2 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, -2);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairMinus2, value1, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], value1);
+    CHECK_EQ(buffer[3], value2);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairPlus3 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, 3);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairPlus3, value1, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], value1);
+    CHECK_EQ(buffer[8], value2);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    // Test storePair64 from 1 register.
+    auto testStorePairFromOneReg = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR1;
+        jit.storePair64(GPRInfo::argumentGPR0, GPRInfo::argumentGPR0, bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(CPURegister)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testStorePairFromOneReg0 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, 0);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneReg0, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], value2);
+    CHECK_EQ(buffer[5], value2);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairFromOneRegMinus2 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, -2);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneRegMinus2, value1, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], value1);
+    CHECK_EQ(buffer[3], value1);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairFromOneRegPlus3 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, 3);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneRegPlus3, value2, &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], value2);
+    CHECK_EQ(buffer[8], value2);
+    CHECK_EQ(buffer[9], initialValue + 9);
+}
+
+void testLoadStorePair64Double()
+{
+    constexpr double initialValue = 10000.275;
+    constexpr double value1 = 42.89;
+    constexpr double value2 = -555.321;
+
+    double buffer[10];
+
+    auto initBuffer = [&] {
+        for (unsigned i = 0; i < 10; ++i)
+            buffer[i] = initialValue + i;
+    };
+
+    struct Pair {
+        double value1;
+        double value2;
+    };
+
+    Pair pair;
+    auto initPair = [&] {
+        pair = { 0, 0 };
+    };
+
+    // Test loadPair64.
+    auto testLoadPair = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR0;
+        constexpr GPRReg pairGPR = GPRInfo::argumentGPR1;
+        jit.loadPair64(bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(double)), FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+
+        jit.storeDouble(FPRInfo::fpRegT0, CCallHelpers::Address(pairGPR, 0));
+        jit.storeDouble(FPRInfo::fpRegT1, CCallHelpers::Address(pairGPR, sizeof(uint64_t)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testLoadPair0 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, 0);
+    });
+
+    initBuffer();
+
+    initPair();
+    invoke<void>(testLoadPair0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4);
+    CHECK_EQ(pair.value2, initialValue + 5);
+
+    initPair();
+    buffer[4] = value1;
+    buffer[5] = value2;
+    invoke<void>(testLoadPair0, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value1);
+    CHECK_EQ(pair.value2, value2);
+
+    auto testLoadPairMinus2 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, -2);
+    });
+
+    initPair();
+    invoke<void>(testLoadPairMinus2, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4 - 2);
+    CHECK_EQ(pair.value2, initialValue + 5 - 2);
+
+    initPair();
+    buffer[4 - 2] = value2;
+    buffer[5 - 2] = value1;
+    invoke<void>(testLoadPairMinus2, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value2);
+    CHECK_EQ(pair.value2, value1);
+
+    auto testLoadPairPlus3 = compile([&] (CCallHelpers& jit) {
+        testLoadPair(jit, 3);
+    });
+
+    initPair();
+    invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, initialValue + 4 + 3);
+    CHECK_EQ(pair.value2, initialValue + 5 + 3);
+
+    initPair();
+    buffer[4 + 3] = value1;
+    buffer[5 + 3] = value2;
+    invoke<void>(testLoadPairPlus3, &buffer[4], &pair);
+    CHECK_EQ(pair.value1, value1);
+    CHECK_EQ(pair.value2, value2);
+
+    // Test storePair64.
+    auto testStorePair = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR2;
+        jit.move64ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
+        jit.move64ToDouble(GPRInfo::argumentGPR1, FPRInfo::fpRegT1);
+        jit.storePair64(FPRInfo::fpRegT0, FPRInfo::fpRegT1, bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(double)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto asInt64 = [] (double value) {
+        return bitwise_cast<int64_t>(value);
+    };
+
+    auto testStorePair0 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, 0);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePair0, asInt64(value1), asInt64(value2), &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], value1);
+    CHECK_EQ(buffer[5], value2);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairMinus2 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, -2);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairMinus2, asInt64(value1), asInt64(value2), &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], value1);
+    CHECK_EQ(buffer[3], value2);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairPlus3 = compile([&] (CCallHelpers& jit) {
+        testStorePair(jit, 3);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairPlus3, asInt64(value1), asInt64(value2), &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], value1);
+    CHECK_EQ(buffer[8], value2);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    // Test storePair64 from 1 register.
+    auto testStorePairFromOneReg = [] (CCallHelpers& jit, int offset) {
+        emitFunctionPrologue(jit);
+
+        constexpr GPRReg bufferGPR = GPRInfo::argumentGPR1;
+        jit.move64ToDouble(GPRInfo::argumentGPR0, FPRInfo::fpRegT0);
+        jit.storePair64(FPRInfo::fpRegT0, FPRInfo::fpRegT0, bufferGPR, CCallHelpers::TrustedImm32(offset * sizeof(double)));
+
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    };
+
+    auto testStorePairFromOneReg0 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, 0);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneReg0, asInt64(value2), &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], value2);
+    CHECK_EQ(buffer[5], value2);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairFromOneRegMinus2 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, -2);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneRegMinus2, asInt64(value1), &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], value1);
+    CHECK_EQ(buffer[3], value1);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], initialValue + 7);
+    CHECK_EQ(buffer[8], initialValue + 8);
+    CHECK_EQ(buffer[9], initialValue + 9);
+
+    auto testStorePairFromOneRegPlus3 = compile([&] (CCallHelpers& jit) {
+        testStorePairFromOneReg(jit, 3);
+    });
+
+    initBuffer();
+    invoke<void>(testStorePairFromOneRegPlus3, asInt64(value2), &buffer[4]);
+    CHECK_EQ(buffer[0], initialValue + 0);
+    CHECK_EQ(buffer[1], initialValue + 1);
+    CHECK_EQ(buffer[2], initialValue + 2);
+    CHECK_EQ(buffer[3], initialValue + 3);
+    CHECK_EQ(buffer[4], initialValue + 4);
+    CHECK_EQ(buffer[5], initialValue + 5);
+    CHECK_EQ(buffer[6], initialValue + 6);
+    CHECK_EQ(buffer[7], value2);
+    CHECK_EQ(buffer[8], value2);
+    CHECK_EQ(buffer[9], initialValue + 9);
+}
+#endif // CPU(ARM64)
+
 #if ENABLE(MASM_PROBE)
 void testProbeReadsArgumentRegisters()
 {
@@ -2654,6 +3089,8 @@ void run(const char* filter)
 #endif
 
 #if CPU(ARM64)
+    RUN(testLoadStorePair64Int64());
+    RUN(testLoadStorePair64Double());
     RUN(testMul32SignExtend());
 #endif
 

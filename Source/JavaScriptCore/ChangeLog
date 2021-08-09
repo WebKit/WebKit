@@ -1,3 +1,64 @@
+2021-06-14  Mark Lam  <mark.lam@apple.com>
+
+        Add ldp and stp support for FP registers, plus some bug fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=226998
+        rdar://79313717
+
+        Reviewed by Robin Morisset.
+
+        This patch does the following:
+        1. Add ldp and stp support for FP registers.
+           This simply entails providing wrappers that take FPRegisterID and passing true
+           for the V bit to the underlying loadStoreRegisterPairXXX encoding function.
+           V is for vector (aka floating point).  This will cause bit 26 in the instruction
+           to be set indicating that it's loading / storing floating point registers.
+
+        2. Add ARM64 disassembler support ldp and stp for FP registers.
+           This includes fixing A64DOpcodeLoadStoreRegisterPair::mask to not exclude the
+           FP versions of the instructions.
+
+        3. Add ARM64Assembler query methods for determining if an immediate is encodable
+           as the signed 12 bit immediate of ldp and stp instructions.
+
+        4. Fix ldp and stp offset form to take an int instead of an unsigned.  The
+           immediate it takes is a 12-bit signed int, not unsigned.
+
+        5. In loadStoreRegisterPairXXX encoding functions used by the forms of ldp and stp,
+           RELEASE_ASSERT that the passed in immediate is encodable.  Unlike ldur / stur,
+           there is no form of ldp / stp that takes the offset in a register that can be
+           used as a fail over.  Hence, if the immediate is not encodable, this is a
+           non-recoverable event.  The client is responsible for ensuring that the offset
+           is encodable.
+
+        6. Added some testmasm tests for testing the offset form (as opposed to PreIndex
+           and PostIndex forms) of ldp and stp.  We currently only use the offset form
+           in our JITs.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::isValidLDPImm):
+        (JSC::ARM64Assembler::isValidLDPFPImm):
+        (JSC::ARM64Assembler::ldp):
+        (JSC::ARM64Assembler::ldnp):
+        (JSC::ARM64Assembler::isValidSTPImm):
+        (JSC::ARM64Assembler::isValidSTPFPImm):
+        (JSC::ARM64Assembler::stp):
+        (JSC::ARM64Assembler::stnp):
+        (JSC::ARM64Assembler::loadStoreRegisterPairPostIndex):
+        (JSC::ARM64Assembler::loadStoreRegisterPairPreIndex):
+        (JSC::ARM64Assembler::loadStoreRegisterPairOffset):
+        (JSC::ARM64Assembler::loadStoreRegisterPairNonTemporal):
+        * assembler/AssemblerCommon.h:
+        (JSC::isValidSignedImm7):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::loadPair64):
+        (JSC::MacroAssemblerARM64::storePair64):
+        * assembler/testmasm.cpp:
+        (JSC::testLoadStorePair64Int64):
+        (JSC::testLoadStorePair64Double):
+        * disassembler/ARM64/A64DOpcode.cpp:
+        (JSC::ARM64Disassembler::A64DOpcodeLoadStoreRegisterPair::format):
+        * disassembler/ARM64/A64DOpcode.h:
+
 2021-06-13  Saam Barati  <sbarati@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=226576

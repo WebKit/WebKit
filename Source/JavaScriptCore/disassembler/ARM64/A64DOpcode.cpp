@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,8 @@ static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x0a, A64DOpcodeLogicalShiftedRegister),
     OPCODE_GROUP_ENTRY(0x0b, A64DOpcodeAddSubtractExtendedRegister),
     OPCODE_GROUP_ENTRY(0x0b, A64DOpcodeAddSubtractShiftedRegister),
+    OPCODE_GROUP_ENTRY(0x0c, A64DOpcodeLoadStoreRegisterPair),
+    OPCODE_GROUP_ENTRY(0x0d, A64DOpcodeLoadStoreRegisterPair),
     OPCODE_GROUP_ENTRY(0x11, A64DOpcodeAddSubtractImmediate),
     OPCODE_GROUP_ENTRY(0x12, A64DOpcodeMoveWide),
     OPCODE_GROUP_ENTRY(0x12, A64DOpcodeLogicalImmediate),
@@ -1363,9 +1365,9 @@ const char* A64DOpcodeLoadStoreRegisterPair::format()
     appendInstructionName(thisOpName);
     unsigned offsetShift;
     if (vBit()) {
-        appendFPRegisterName(rt(), size());
+        appendFPRegisterName(rt(), size() + 2);
         appendSeparator();
-        appendFPRegisterName(rt2(), size());
+        appendFPRegisterName(rt2(), size() + 2);
         offsetShift = size() + 2;
     } else {
         if (!lBit())
