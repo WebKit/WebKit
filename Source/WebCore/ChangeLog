@@ -1,3 +1,20 @@
+2021-08-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add console logging to encourage the use of authenticated encryption in WebCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=228879
+        <rdar://problem/80655397>
+
+        Reviewed by Brent Fulgham.
+
+        Warn about risks of using AES-CBC and AES-CTR modes in WebCrypto,
+        based on recommendations in
+        https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/encrypt.
+        We should encourage authenticated encryption instead.
+
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::encrypt):
+        (WebCore::SubtleCrypto::decrypt):
+
 2021-08-09  Said Abou-Hallawa  <said@apple.com>
 
         Ease sandboxing restrictions for Mail to allow HEIF image decoding

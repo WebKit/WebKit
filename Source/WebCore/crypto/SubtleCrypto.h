@@ -50,6 +50,7 @@ class BufferSource;
 class CryptoKey;
 class DeferredPromise;
 
+enum class CryptoAlgorithmIdentifier;
 enum class CryptoKeyUsage;
 
 class SubtleCrypto : public ContextDestructionObserver, public RefCounted<SubtleCrypto>, public CanMakeWeakPtr<SubtleCrypto> {
@@ -78,6 +79,7 @@ public:
 private:
     explicit SubtleCrypto(ScriptExecutionContext*);
 
+    void addAuthenticatedEncryptionWarningIfNecessary(CryptoAlgorithmIdentifier);
     inline friend RefPtr<DeferredPromise> getPromise(DeferredPromise*, WeakPtr<SubtleCrypto>);
 
     Ref<WorkQueue> m_workQueue;

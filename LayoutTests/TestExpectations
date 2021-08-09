@@ -5116,3 +5116,10 @@ webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/webkit-line
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-037.html [ Skip ]
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-invalid.html [ Skip ]
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-valid.html [ Skip ]
+
+# Console logging interferes with imported test expectations and/or results in
+# hundreds of extra lines in test expectation files.
+http/wpt/crypto/aes-cbc-crash.any.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/crypto/aes-ctr-crash.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.html [ DumpJSConsoleLogInStdErr ]

@@ -1,3 +1,30 @@
+2021-08-09  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add console logging to encourage the use of authenticated encryption in WebCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=228879
+        <rdar://problem/80655397>
+
+        Reviewed by Brent Fulgham.
+
+        Update layout tests.
+
+        * crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-cbc-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-import-key-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-import-key-encrypt-expected.txt:
+        * crypto/subtle/aes-ctr-encrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/aes-ctr-generate-key-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-ctr-import-key-decrypt-expected.txt:
+        * crypto/subtle/aes-ctr-import-key-encrypt-expected.txt:
+        * crypto/subtle/decrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/encrypt-malformed-parameters-expected.txt:
+        * TestExpectations:
+        We should probably not change imported test expectations, this marks
+        those tests as having console logging go to stderr. Additionally, some
+        tests call encrypt/decrypt functions up to 1000 times to test for
+        crashing, we should probably not log console to stdout in that case.
+
 2021-08-09  Said Abou-Hallawa  <said@apple.com>
 
         Ease sandboxing restrictions for Mail to allow HEIF image decoding

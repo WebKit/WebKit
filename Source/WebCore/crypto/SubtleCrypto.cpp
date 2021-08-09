@@ -530,10 +530,18 @@ static std::unique_ptr<CryptoAlgorithmParameters> crossThreadCopyImportParams(co
     }
 }
 
+void SubtleCrypto::addAuthenticatedEncryptionWarningIfNecessary(CryptoAlgorithmIdentifier algorithmIdentifier)
+{
+    if (algorithmIdentifier == CryptoAlgorithmIdentifier::AES_CBC || algorithmIdentifier == CryptoAlgorithmIdentifier::AES_CTR)
+        scriptExecutionContext()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.");
+}
+
 // MARK: - Exposed functions.
 
 void SubtleCrypto::encrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algorithmIdentifier, CryptoKey& key, BufferSource&& dataBufferSource, Ref<DeferredPromise>&& promise)
 {
+    addAuthenticatedEncryptionWarningIfNecessary(key.algorithmIdentifier());
+
     auto paramsOrException = normalizeCryptoAlgorithmParameters(state, WTFMove(algorithmIdentifier), Operations::Encrypt);
     if (paramsOrException.hasException()) {
         promise->reject(paramsOrException.releaseException());
@@ -572,6 +580,8 @@ void SubtleCrypto::encrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
 
 void SubtleCrypto::decrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algorithmIdentifier, CryptoKey& key, BufferSource&& dataBufferSource, Ref<DeferredPromise>&& promise)
 {
+    addAuthenticatedEncryptionWarningIfNecessary(key.algorithmIdentifier());
+
     auto paramsOrException = normalizeCryptoAlgorithmParameters(state, WTFMove(algorithmIdentifier), Operations::Decrypt);
     if (paramsOrException.hasException()) {
         promise->reject(paramsOrException.releaseException());
