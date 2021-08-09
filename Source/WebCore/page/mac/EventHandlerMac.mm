@@ -799,8 +799,6 @@ static ScrollableArea* scrollableAreaForBox(RenderBox& box)
 // FIXME: This could be written in terms of ScrollableArea::enclosingScrollableArea().
 static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, const PlatformWheelEvent& wheelEvent)
 {
-    auto biasedDelta = ScrollController::wheelDeltaBiasingTowardsVertical(wheelEvent);
-
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
     for (ContainerNode* candidate = node; candidate; candidate = candidate->parentOrShadowHostNode()) {
@@ -821,10 +819,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
             return candidate;
 
-        if (biasedDelta.height() && !scrollableArea->isPinnedForScrollDeltaOnAxis(-biasedDelta.height(), ScrollEventAxis::Vertical))
-            return candidate;
-
-        if (biasedDelta.width() && !scrollableArea->isPinnedForScrollDeltaOnAxis(-biasedDelta.width(), ScrollEventAxis::Horizontal))
+        if (EventHandler::scrollableAreaCanHandleEvent(wheelEvent, *scrollableArea))
             return candidate;
     }
     

@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .scroller {
+            margin: 50px;
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+            width: 500%;
+            height: 100%;
+            background-image: repeating-linear-gradient(to right, silver, white 250px);
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        let overflowScrollEventCount = 0;
+        let windowScrollEventCount = 0;
+
+        async function mouseWheelScrollAt(x, y, deltaX, deltaY)
+        {
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(deltaX, deltaY, "none", "none");
+            return new Promise(resolve => {
+                eventSender.callAfterScrollingCompletes(() => {
+                    requestAnimationFrame(resolve);
+                });
+            });
+        }
+
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test that a non-momentum scroll over a horizontal scroller with a non-passive wheel event listener scrolls the document.');
+            await mouseWheelScrollAt(100, 100, 0, -10);
+
+            shouldBe('overflowScrollEventCount', '0');
+            shouldBe('windowScrollEventCount > 0', 'true');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            let scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            scroller.addEventListener('wheel', () => {
+                debug('Received wheel event');
+            }, { passive: false });
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <div id='console'></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

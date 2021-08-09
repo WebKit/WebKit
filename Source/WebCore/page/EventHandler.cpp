@@ -3051,14 +3051,14 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
 
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
     while (currentEnclosingBox) {
-        if (auto* boxLayer = currentEnclosingBox->layer() ? currentEnclosingBox->layer()->scrollableArea() : nullptr) {
+        if (auto* boxScrollableArea = currentEnclosingBox->layer() ? currentEnclosingBox->layer()->scrollableArea() : nullptr) {
             auto platformEvent = wheelEvent.underlyingPlatformEvent();
             bool scrollingWasHandled;
             if (platformEvent) {
                 auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
-                scrollingWasHandled = handleWheelEventInScrollableArea(copiedEvent, *boxLayer, eventHandling);
+                scrollingWasHandled = scrollableAreaCanHandleEvent(copiedEvent, *boxScrollableArea) && handleWheelEventInScrollableArea(copiedEvent, *boxScrollableArea, eventHandling);
             } else
-                scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
+                scrollingWasHandled = didScrollInScrollableArea(*boxScrollableArea, wheelEvent);
 
             if (scrollingWasHandled)
                 return true;
@@ -3068,6 +3068,23 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
         if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
             return false;
     }
+    return false;
+}
+
+bool EventHandler::scrollableAreaCanHandleEvent(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea)
+{
+#if PLATFORM(MAC)
+    auto biasedDelta = ScrollController::wheelDeltaBiasingTowardsVertical(wheelEvent);
+#else
+    auto biasedDelta = wheelEvent.delta();
+#endif
+
+    if (biasedDelta.height() && !scrollableArea.isPinnedForScrollDeltaOnAxis(-biasedDelta.height(), ScrollEventAxis::Vertical))
+        return true;
+
+    if (biasedDelta.width() && !scrollableArea.isPinnedForScrollDeltaOnAxis(-biasedDelta.width(), ScrollEventAxis::Horizontal))
+        return true;
+
     return false;
 }
 

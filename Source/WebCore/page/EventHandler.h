@@ -355,6 +355,8 @@ public:
 
     WEBCORE_EXPORT void invalidateClick();
 
+    static bool scrollableAreaCanHandleEvent(const PlatformWheelEvent&, ScrollableArea&);
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();

@@ -1,3 +1,17 @@
+2021-08-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Vertical scroll with mouse wheel in horizontal scroller fails to propagate to the document
+        https://bugs.webkit.org/show_bug.cgi?id=228891
+        <rdar://81640239>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/mac/vertical-scroll-in-horizontal-scroller-expected.txt: Added.
+        * fast/scrolling/mac/vertical-scroll-in-horizontal-scroller.html: Added.
+        * tiled-drawing/scrolling/overflow-scroll-reduced-content.html: Convert this test to use 
+        async scrolling. webkit.org/b/228898 tracks an existing problem that caused the test
+        to fail with non-async scrolling.
+
 2021-08-09  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk2 ] tiled-drawing/scrolling/scroll-snap/scroll-snap-momentum-in-non-snapping-axis.html is a flaky timeout.
