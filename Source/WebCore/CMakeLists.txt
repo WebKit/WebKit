@@ -2199,3 +2199,10 @@ if (MSVC)
         COMPILE_PDB_NAME ${WebCore_OUTPUT_NAME}
     )
 endif ()
+
+# Special compiler flags may be used for individual files only if the file is excluded from unified
+# build.
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    # This warning cannot be suppressed with a pragma.
+    set_source_files_properties(Modules/websockets/WebSocket.cpp PROPERTIES COMPILE_FLAGS -Wno-stringop-overread)
+endif ()

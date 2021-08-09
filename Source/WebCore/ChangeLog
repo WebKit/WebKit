@@ -1,3 +1,20 @@
+2021-08-09  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds, -Wstringop-truncation warnings in Packed.h
+        https://bugs.webkit.org/show_bug.cgi?id=226557
+        <rdar://problem/79103658>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Suppressing the -Warray-bounds warning introduces the -Wstringop-truncation warning, which
+        cannot be suppressed with pragmas. The only solution I found is -Wno-stringop-truncation. I
+        could apply it globally, but this warning does not have many false positives, so I think
+        it's better to suppress the warning only for WebSocket.cpp. Unfortunately we have to remove
+        it from the unified build in order to add custom flags, but it seems worth it to avoid
+        suppressing the warning globally.
+
+        * CMakeLists.txt:
+
 2021-08-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa|GPU] platformLayer() not always added to remotedly hosted context; black video while playing
