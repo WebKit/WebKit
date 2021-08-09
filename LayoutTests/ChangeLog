@@ -1,3 +1,15 @@
+2021-08-09  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html fails due to rounded corners
+        https://bugs.webkit.org/show_bug.cgi?id=228877
+
+        Reviewed by Adrian Perez de Castro.
+
+        In the test, move the cursor to the center of the input element to be
+        clicked on to avoid issues with rounded corners.
+
+        * fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html:
+
 2021-08-09  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Garden accessibility/selected-state-changed-notifications.html timeouts

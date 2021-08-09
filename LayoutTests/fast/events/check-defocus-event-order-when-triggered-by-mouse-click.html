@@ -20,7 +20,8 @@ function runTest()
     beginRecordingEvents();
     firstInput.focus();
     eventSender.keyDown("A");
-    eventSender.mouseMoveTo(secondInput.offsetLeft, secondInput.offsetTop);
+    eventSender.mouseMoveTo(secondInput.offsetLeft + secondInput.offsetWidth / 2,
+                            secondInput.offsetTop + secondInput.offsetHeight / 2);
     eventSender.mouseDown();
     eventSender.mouseUp(); // Transfers focus to text field "second input".
     endRecordingEvents();
