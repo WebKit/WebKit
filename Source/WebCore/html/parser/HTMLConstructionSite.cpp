@@ -893,24 +893,19 @@ AtomString WhitespaceCache::lookup(const String& string, WhitespaceMode whitespa
 
     if (m_codes[length] == code) {
         ASSERT(m_atoms[m_indexes[length]] == string);
-        WTFLogAlways("reuse code %llx", code);
         return m_atoms[m_indexes[length]];
     }
 
-    if (code == overflowWhitespaceCode) {
-        WTFLogAlways("override");
+    if (code == overflowWhitespaceCode)
         return AtomString(string);
-    }
 
     if (m_codes[length]) {
-        WTFLogAlways("replace code %llx", code);
         AtomString whitespaceAtom(string);
         m_codes[length] = code;
         m_atoms[m_indexes[length]] = whitespaceAtom;
         return whitespaceAtom;
     }
 
-    WTFLogAlways("new code %llx", code);
     AtomString whitespaceAtom(string);
     m_codes[length] = code;
     m_indexes[length] = m_atoms.size();

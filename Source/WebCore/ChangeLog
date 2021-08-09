@@ -1,3 +1,11 @@
+2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, remove WTFLogAlways
+        https://bugs.webkit.org/show_bug.cgi?id=228858
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::WhitespaceCache::lookup):
+
 2021-08-09  Cameron McCormack  <heycam@apple.com>
 
         Cache recently atomized all-whitespace strings for use by the HTML parser
