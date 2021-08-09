@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<video id="video1" autoplay playsInline></video>
+<video id="video2" autoplay playsInline style="visibility:hidden"></video>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+promise_test(async() => {
+    if (!window.internals)
+       return Promise.reject("Test requires internals API");
+
+    const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    video1.srcObject = stream;
+    await video1.play();
+
+    assert_true(internals.isPlayerVisibleInViewport(video1), "video1");
+}, "Check default media stream player visibility");
+
+promise_test(async() => {
+   if (!window.internals)
+        return Promise.reject("Test requires internals API");
+
+    const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    video2.srcObject = stream;
+    await video2.play();
+
+    assert_false(internals.isPlayerVisibleInViewport(video2), "video2");
+
+    video2.style.visibility = "visible";
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert_true(internals.isPlayerVisibleInViewport(video2), "video2 2");
+
+    video2.style.visibility = "hidden";
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert_false(internals.isPlayerVisibleInViewport(video2), "video2 3");
+}, "Check media stream player visibility with CSS");
+
+promise_test(async() => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+
+    const video3 = document.createElement("video");
+    const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    video3.srcObject = stream;
+    video3.playsInline = true;
+    await video3.play();
+
+    assert_false(internals.isPlayerVisibleInViewport(video3), "video3");
+
+    document.body.appendChild(video3);
+    await video3.play();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert_false(internals.isPlayerVisibleInViewport(video3), "video3 2");
+}, "Check media stream player visibility of unattached media element");
+</script>
+</body>
+</html>

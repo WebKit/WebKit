@@ -282,6 +282,7 @@ void RenderVideo::updatePlayer()
     IntRect videoBounds = videoBox(); 
     mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
     mediaPlayer->setVisible(!videoElement().elementIsHidden());
+    mediaPlayer->setVisibleInViewport(videoElement().isVisibleInViewport());
     mediaPlayer->setShouldMaintainAspectRatio(style().objectFit() != ObjectFit::Fill);
 }
 

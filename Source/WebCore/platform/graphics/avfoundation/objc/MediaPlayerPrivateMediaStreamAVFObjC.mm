@@ -252,7 +252,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sam
 
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaSample& sample)
 {
-    if (!m_visible)
+    if (!m_isPageVisible || !m_isVisibleInViewPort)
         return;
 
     if (!m_sampleBufferDisplayLayerLock.tryLock())
@@ -614,17 +614,22 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
     return !m_audioTrackMap.isEmpty();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool visible)
+void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool isVisible)
 {
-    if (m_visible == visible)
+    if (m_isPageVisible == isVisible)
         return;
 
-    m_visible = visible;
+    m_isPageVisible = isVisible;
     flushRenderers();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas(bool)
 {
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleInViewport(bool isVisible)
+{
+    m_isVisibleInViewPort = isVisible;
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
@@ -861,7 +866,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
         if (m_displayMode == None)
             m_waitingForFirstImage = true;
     }
-    ensureLayers();
+
+    updateLayersAsNeeded();
+
     if (m_sampleBufferDisplayLayer) {
         if (!m_activeVideoTrack)
             m_sampleBufferDisplayLayer->clearEnqueuedSamples();
@@ -998,7 +1005,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), transformedDestRect, imageRect);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::acceleratedRenderingStateChanged()
+void MediaPlayerPrivateMediaStreamAVFObjC::updateLayersAsNeeded()
 {
     if (m_player->renderingCanBeAccelerated())
         ensureLayers();
