@@ -55,7 +55,7 @@ public:
 
     struct Attribute {
         Vector<UChar, 32> name;
-        Vector<UChar, 32> value;
+        Vector<UChar, 64> value;
 
         // Used by HTMLSourceTracker.
         unsigned startOffset;

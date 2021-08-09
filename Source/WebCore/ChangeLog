@@ -1,3 +1,18 @@
+2021-08-09  Cameron McCormack  <heycam@apple.com>
+
+        Increase inline size of HTMLToken::Attribute::value
+        https://bugs.webkit.org/show_bug.cgi?id=228910
+        <rdar://problem/81686150>
+
+        Reviewed by Yusuke Suzuki.
+
+        Some attributes we encounter during HTML parsing are longer than 32
+        characters, and this shows up on profiles.
+
+        This patch improves Speedometer 2 by a modest amount (~0.3%).
+
+        * html/parser/HTMLToken.h:
+
 2021-08-08  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: http/tests/preload/onload_event.html is a flaky timeout on Big Sur wk1 Release
