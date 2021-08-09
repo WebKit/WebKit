@@ -606,7 +606,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_avPlayer || m_haveBeenAskedToCreateLayer)
         return;
 
-    callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+    ensureOnMainThread([this, weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
 
@@ -619,8 +619,6 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 
         if (!m_videoOutput)
             createVideoOutput();
-
-        player()->renderingModeChanged();
     });
 }
 
@@ -645,6 +643,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
         [m_videoLayer setPIPModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #endif
+
+    setNeedsRenderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
@@ -659,6 +659,8 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
     m_videoLayerManager->didDestroyVideoLayer();
 
     m_videoLayer = nil;
+
+    setNeedsRenderingModeChanged();
 }
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::getStartDate() const
@@ -2432,6 +2434,8 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
 
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
+
+    setNeedsRenderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
@@ -2445,6 +2449,8 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
     INFO_LOG(LOGIDENTIFIER);
 
     m_videoOutput = 0;
+
+    setNeedsRenderingModeChanged();
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()

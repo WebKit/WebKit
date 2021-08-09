@@ -1,3 +1,27 @@
+2021-08-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa|GPU] platformLayer() not always added to remotedly hosted context; black video while playing
+        https://bugs.webkit.org/show_bug.cgi?id=228873
+        <rdar://81271107>
+
+        Reviewed by Eric Carlson.
+
+        Currently, the RemoteMediaPlayerProxy will insert its MediaPlayer's platformLayer() into the
+        remotely hosted context when it receives a "firstVideoFrameAvailable()" notification.
+        However this is problematic for two reasons: AVPlayerLayer may not become "ready for
+        playback" when it is not in an active CALayer heirarchy, and for
+        MediaPlayerPrivateAVFoundation, firstVideoFrameAvailable() is only fired during
+        updateStates(), which is not guaranteed to occur unless another state change occurs.
+
+        Instead, reparent the MediaPlayer's platformLayer() when we receive a
+        mediaPlayerRenderingModeChanged() notification, which notifies the client whenever a
+        platformLayer() is created or destroyed.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged):
+
 2021-08-09  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement fullscreen in WPEView
