@@ -50,5 +50,4 @@ clean:
 
 installsrc:
 	@$(build_target_for_each_module)
-	cp -R . $(SRCROOT)/Source/cmake
-	rm $(SRCROOT)/Source/cmake/makefile
+	cp -R ../Source/cmake $(SRCROOT)/Source/
