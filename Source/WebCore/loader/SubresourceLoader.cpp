@@ -196,7 +196,6 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
     }
 
     if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
-        tracePoint(SubresourceLoadWillStart);
         ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse,
             (isScriptLikeDestination(options().destination) ? ResourceLoadObserver::FetchDestinationIsScriptLike::Yes : ResourceLoadObserver::FetchDestinationIsScriptLike::No));
     }
@@ -211,6 +210,8 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         }
 
         ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
+            tracePoint(SubresourceLoadWillStart, identifier(), PAGE_ID, FRAME_ID);
+
             if (reachedTerminalState()) {
                 SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: reached terminal state; calling completion handler");
                 return completionHandler(WTFMove(request));
@@ -740,7 +741,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     }
 
     if (m_resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd);
+        tracePoint(SubresourceLoadDidEnd, identifier());
 
     m_state = Finishing;
     m_resource->finishLoading(resourceData(), networkLoadMetrics);
@@ -786,7 +787,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     m_state = Finishing;
 
     if (m_resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd);
+        tracePoint(SubresourceLoadDidEnd, identifier());
 
     if (m_resource->resourceToRevalidate())
         MemoryCache::singleton().revalidationFailed(*m_resource);
@@ -839,7 +840,7 @@ void SubresourceLoader::didCancel(const ResourceError&)
     ASSERT(m_resource);
 
     if (m_resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd);
+        tracePoint(SubresourceLoadDidEnd, identifier());
 
     m_resource->cancelLoad();
     notifyDone(LoadCompletionType::Cancel);

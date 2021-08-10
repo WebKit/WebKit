@@ -1063,7 +1063,7 @@ void FrameLoader::provisionalLoadStarted()
     m_client->provisionalLoadStarted();
 
     if (m_frame.isMainFrame()) {
-        tracePoint(MainResourceLoadDidStartProvisional);
+        tracePoint(MainResourceLoadDidStartProvisional, PAGE_ID);
 
         if (auto* page = m_frame.page())
             page->didStartProvisionalLoad();
@@ -2570,7 +2570,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         Page* page = m_frame.page();
         if (page) {
             if (m_frame.isMainFrame()) {
-                tracePoint(MainResourceLoadDidEnd);
+                tracePoint(MainResourceLoadDidEnd, PAGE_ID);
                 page->didFinishLoad();
             }
         }

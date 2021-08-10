@@ -66,6 +66,21 @@
                  <string>5001</string>
                  <key>CodeEnd</key>
                  <string>5002</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Page ID</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                 </dict>
+                 <key>EventsMatchedBy</key>
+                 <array>
+                     <string>Thread</string>
+                     <string>Arg1</string>
+                 </array>
              </dict>
              <dict>
                  <key>Name</key>
@@ -78,6 +93,29 @@
                  <string>5003</string>
                  <key>CodeEnd</key>
                  <string>5004</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Resource ID</string>
+                     <key>Arg2</key>
+                     <string>Page ID</string>
+                     <key>Arg3</key>
+                     <string>Frame ID</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                     <key>Arg2</key>
+                     <string>UInt64</string>
+                     <key>Arg3</key>
+                     <string>UInt64</string>
+                 </dict>
+                 <key>EventsMatchedBy</key>
+                 <array>
+                     <string>Thread</string>
+                     <string>Arg1</string>
+                 </array>
              </dict>
              <dict>
                  <key>Name</key>

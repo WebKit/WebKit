@@ -1,3 +1,15 @@
+2021-08-10  Ben Nham  <nham@apple.com>
+
+        Fix nested resource load tracepoints
+        https://bugs.webkit.org/show_bug.cgi?id=228242
+
+        Reviewed by Alex Christensen.
+
+        Use page and resource ids to properly handle nested main resource and subresource load
+        tracepoint intervals.
+
+        * Tracing/SystemTracePoints.plist:
+
 2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit
