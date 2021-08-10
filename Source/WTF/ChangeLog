@@ -1,3 +1,15 @@
+2021-08-10  Keith Miller  <keith_miller@apple.com>
+
+        CallFrame::returnPC should untag the return address before passing it to ReturnAddressPtr
+        https://bugs.webkit.org/show_bug.cgi?id=228931
+
+        Reviewed by Mark Lam.
+
+        Add a new helper to untag the return pc from a stack frame.
+
+        * wtf/PtrTag.h:
+        (WTF::untagReturnPC):
+
 2021-08-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK][WPE] REGRESSION(r280795): MemoryPressureHandlerUnix.cpp:45:28: error: ‘LogMemoryPressure’ was not declared in this scope

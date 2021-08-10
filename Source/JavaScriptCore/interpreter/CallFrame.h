@@ -149,7 +149,7 @@ namespace JSC  {
 
         static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
-        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(callerFrameAndPC().returnPC); }
+        ReturnAddressPtr returnPC() const { return ReturnAddressPtr::fromTaggedPC(callerFrameAndPC().returnPC, this + CallerFrameAndPC::sizeInRegisters); }
         bool hasReturnPC() const { return !!callerFrameAndPC().returnPC; }
         void clearReturnPC() { callerFrameAndPC().returnPC = nullptr; }
         static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, returnPC); }

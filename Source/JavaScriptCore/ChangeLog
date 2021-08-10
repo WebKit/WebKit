@@ -1,3 +1,25 @@
+2021-08-10  Keith Miller  <keith_miller@apple.com>
+
+        CallFrame::returnPC should untag the return address before passing it to ReturnAddressPtr
+        https://bugs.webkit.org/show_bug.cgi?id=228931
+
+        Reviewed by Mark Lam.
+
+        Right now current debugging code expects that the JS return PC on
+        the stack is already unsigned. This is not true on arm64e.
+        This patch now properly unsigns the return PC before passing it to
+        the ReturnAddressPC constructor.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::ReturnAddressPtr::fromTaggedPC):
+        * interpreter/AbstractPC.cpp:
+        (JSC::AbstractPC::AbstractPC):
+        * interpreter/AbstractPC.h:
+        (JSC::AbstractPC::AbstractPC):
+        (JSC::AbstractPC::jitReturnAddress const):
+        * interpreter/CallFrame.h:
+        (JSC::CallFrame::returnPC const):
+
 2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit

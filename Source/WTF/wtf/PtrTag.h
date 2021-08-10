@@ -411,6 +411,13 @@ inline PtrType untagCFunctionPtr(PtrType ptr) { return untagCFunctionPtrImpl<Ptr
 
 #if CPU(ARM64E)
 
+inline const void* untagReturnPC(const void* pc, const void* sp)
+{
+    auto ptr = __builtin_ptrauth_auth(pc, ptrauth_key_return_address, sp);
+    assertIsNotTagged(ptr);
+    return ptr;
+}
+
 template <typename IntType>
 inline IntType untagInt(IntType ptrInt, PtrTag tag)
 {
@@ -475,6 +482,11 @@ inline bool usesPointerTagging() { return true; }
     __ptrauth(ptrauth_key_process_independent_code, 1, ptrauth_string_discriminator(discriminatorStr))
 
 #else // not CPU(ARM64E)
+
+inline const void* untagReturnPC(const void* pc, const void*)
+{
+    return pc;
+}
 
 template<typename T>
 inline T* tagArrayPtr(std::nullptr_t, size_t size)
@@ -547,6 +559,7 @@ using WTF::PtrTagCalleeType;
 
 using WTF::reportBadTag;
 
+using WTF::untagReturnPC;
 using WTF::tagArrayPtr;
 using WTF::untagArrayPtr;
 using WTF::retagArrayPtr;

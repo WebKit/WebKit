@@ -44,17 +44,16 @@ public:
     
 #if ENABLE(JIT)
     AbstractPC(ReturnAddressPtr ptr)
-        : m_pointer(ptr.value())
+        : m_pointer(ptr)
         , m_mode(JIT)
     {
-        assertIsTaggedWith<ReturnAddressPtrTag>(m_pointer);
     }
     
     bool hasJITReturnAddress() const { return m_mode == JIT; }
     ReturnAddressPtr jitReturnAddress() const
     {
         ASSERT(hasJITReturnAddress());
-        return ReturnAddressPtr(m_pointer);
+        return m_pointer;
     }
 #endif
 
@@ -63,7 +62,7 @@ public:
 
 private:
 #if ENABLE(JIT)
-    const void* m_pointer { nullptr };
+    ReturnAddressPtr m_pointer;
 #endif
 
     enum Mode { None, JIT, Interpreter };

@@ -38,7 +38,7 @@ AbstractPC::AbstractPC(VM& vm, CallFrame* callFrame)
     
 #if ENABLE(JIT)
     if (Options::useJIT()) {
-        m_pointer = callFrame->returnPC().value();
+        m_pointer = callFrame->returnPC();
         m_mode = JIT;
         return;
     }

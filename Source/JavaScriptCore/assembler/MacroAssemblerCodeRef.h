@@ -243,6 +243,11 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
+    static ReturnAddressPtr fromTaggedPC(const void* pc, const void* sp)
+    {
+        return ReturnAddressPtr(untagReturnPC(pc, sp));
+    }
+
     const void* value() const
     {
         return m_value;
