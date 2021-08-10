@@ -4382,13 +4382,14 @@ void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
 
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
+    MESSAGE_CHECK(m_process, WebNavigationState::NavigationMap::isValidKey(navigationID));
+
     PageClientProtector protector(pageClient());
 
     // On process-swap, the previous process tries to destroy the navigation but the provisional process is actually taking over the navigation.
     if (m_provisionalPage && m_provisionalPage->navigationID() == navigationID)
         return;
 
-    // FIXME: Message check the navigationID.
     m_navigationState->didDestroyNavigation(navigationID);
 }
 
