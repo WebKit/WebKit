@@ -210,6 +210,7 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
 {
     NodeVector postInsertionNotificationTargets;
     {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         if (UNLIKELY(containerNode.isShadowRoot() || containerNode.isInShadowTree()))
