@@ -656,7 +656,7 @@ private:
     void emitThrowException(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
-    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack);
+    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -2640,7 +2640,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
     emitPatchpoint(patch, Tmp(), countdownPtr);
 }
 
-void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack)
+void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack)
 {
     uint32_t outerLoopIndex = this->outerLoopIndex();
     m_outerLoops.append(loopIndex);
@@ -2679,6 +2679,8 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclos
             patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
     }
     for (TypedExpression value : enclosingStack)
+        patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
+    for (TypedExpression value : newStack)
         patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
@@ -2731,7 +2733,7 @@ auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     m_currentBlock->setSuccessors(body);
 
     m_currentBlock = body;
-    emitLoopTierUpCheck(loopIndex, enclosingStack);
+    emitLoopTierUpCheck(loopIndex, enclosingStack, newStack);
 
     return { };
 }
