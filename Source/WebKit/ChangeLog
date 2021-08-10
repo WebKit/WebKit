@@ -1,3 +1,28 @@
+2021-08-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r279254. rdar://problem/80635931
+
+    Crash in WebFrameLoaderClient::dispatchDidStartProvisionalLoad after provisionalLoader is gone.
+    https://bugs.webkit.org/show_bug.cgi?id=226979
+    
+    Patch by Venky Dass <yaranamavenkataramana@apple.com> on 2021-06-24
+    Reviewed by Ryosuke Niwa.
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279254 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-24  Venky Dass  <yaranamavenkataramana@apple.com>
+
+            Crash in WebFrameLoaderClient::dispatchDidStartProvisionalLoad after provisionalLoader is gone.
+            https://bugs.webkit.org/show_bug.cgi?id=226979
+
+            Reviewed by Ryosuke Niwa.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+
 2021-06-17  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r278870. rdar://problem/79473993
