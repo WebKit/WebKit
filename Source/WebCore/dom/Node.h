@@ -193,6 +193,11 @@ public:
     bool isSVGElement() const { return hasNodeFlag(NodeFlag::IsSVGElement); }
     bool isMathMLElement() const { return hasNodeFlag(NodeFlag::IsMathMLElement); }
 
+    bool isUnknownElement() const { return hasNodeFlag(NodeFlag::IsUnknownElement); }
+    bool isHTMLUnknownElement() const { return isHTMLElement() && isUnknownElement(); }
+    bool isSVGUnknownElement() const { return isSVGElement() && isUnknownElement(); }
+    bool isMathMLUnknownElement() const { return isMathMLElement() && isUnknownElement(); }
+
     bool isPseudoElement() const { return pseudoId() != PseudoId::None; }
     bool isBeforePseudoElement() const { return pseudoId() == PseudoId::Before; }
     bool isAfterPseudoElement() const { return pseudoId() == PseudoId::After; }
@@ -535,8 +540,8 @@ protected:
         IsShadowRoot = 1 << 9,
         IsConnected = 1 << 10,
         IsInShadowTree = 1 << 11,
-        HasEventTargetData = 1 << 12,
-        // UnusedFlag = 1 << 13,
+        IsUnknownElement = 1 << 12,
+        HasEventTargetData = 1 << 13,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.

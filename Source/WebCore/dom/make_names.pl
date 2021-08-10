@@ -1277,8 +1277,15 @@ END
 
     if ($parameters{customElementInterfaceName}) {
         print F <<END
-    if (element->isCustomElementUpgradeCandidate())
+    if (!element->isUnknownElement())
         return createWrapper<$parameters{customElementInterfaceName}>(globalObject, WTFMove(element));
+END
+;
+    }
+
+    if ("$parameters{namespace}Element" eq $parameters{fallbackJSInterfaceName}) {
+        print F <<END
+    ASSERT(element->is$parameters{fallbackJSInterfaceName}());
 END
 ;
     }

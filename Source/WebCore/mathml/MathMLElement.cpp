@@ -50,8 +50,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(MathMLElement);
 
 using namespace MathMLNames;
 
-MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document)
-    : StyledElement(tagName, document, CreateMathMLElement)
+MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document, ConstructionType constructionType)
+    : StyledElement(tagName, document, constructionType)
 {
 }
 
