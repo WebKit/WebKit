@@ -99,7 +99,7 @@ public:
     bool hasBlobURLs() const { return !m_blobHandles.isEmpty(); }
 
     Vector<String> blobURLs() const;
-    const Vector<Blob::Handle>& blobHandles() const { return m_blobHandles; }
+    const Vector<BlobURLHandle>& blobHandles() const { return m_blobHandles; }
     void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
@@ -123,7 +123,7 @@ private:
 #endif
         );
 
-    SerializedScriptValue(Vector<unsigned char>&&, const Vector<Blob::Handle>& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
+    SerializedScriptValue(Vector<unsigned char>&&, const Vector<BlobURLHandle>& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
 #endif
@@ -152,7 +152,7 @@ private:
     std::unique_ptr<WasmModuleArray> m_wasmModulesArray;
     std::unique_ptr<WasmMemoryHandleArray> m_wasmMemoryHandlesArray;
 #endif
-    Vector<Blob::Handle> m_blobHandles;
+    Vector<BlobURLHandle> m_blobHandles;
     size_t m_memoryCost { 0 };
 };
 

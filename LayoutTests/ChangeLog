@@ -1,3 +1,15 @@
+2021-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Blob URL changes after loading it
+        https://bugs.webkit.org/show_bug.cgi?id=228923
+
+        Reviewed by Geoff Garen.
+
+        Add layout test coverage.
+
+        * fast/files/blob-as-frame-url-expected.txt: Added.
+        * fast/files/blob-as-frame-url.html: Added.
+
 2021-08-09  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Garden two getUserMedia timeouts

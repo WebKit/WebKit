@@ -63,6 +63,9 @@ public:
 
     virtual void unregisterBlobURL(const URL&) = 0;
 
+    virtual void registerBlobURLHandle(const URL&) = 0;
+    virtual void unregisterBlobURLHandle(const URL&) = 0;
+
     virtual unsigned long long blobSize(const URL&) = 0;
 
     virtual void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;

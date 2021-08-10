@@ -866,6 +866,24 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
     session->blobRegistry().unregisterBlobURL(url);
 }
 
+void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url)
+{
+    auto* session = networkSession();
+    if (!session)
+        return;
+
+    session->blobRegistry().registerBlobURLHandle(url);
+}
+
+void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url)
+{
+    auto* session = networkSession();
+    if (!session)
+        return;
+
+    session->blobRegistry().unregisterBlobURLHandle(url);
+}
+
 void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     auto* session = networkSession();

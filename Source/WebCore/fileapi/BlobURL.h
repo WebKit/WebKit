@@ -58,27 +58,31 @@ private:
     BlobURL() { }
 };
 
-class URLWithBlobURLLifetimeExtension {
+// Extends the lifetime of the Blob URL. This means that the blob URL will remain valid after
+// revokeObjectURL() has been called, as long as BlobURLHandle objects refer to the blob URL.
+class BlobURLHandle {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(URLWithBlobURLLifetimeExtension);
 public:
-    URLWithBlobURLLifetimeExtension() = default;
-    explicit URLWithBlobURLLifetimeExtension(const URL&);
-    ~URLWithBlobURLLifetimeExtension();
+    BlobURLHandle() = default;
+    explicit BlobURLHandle(const URL&);
+    ~BlobURLHandle();
 
-    URLWithBlobURLLifetimeExtension(URLWithBlobURLLifetimeExtension&& other)
+    BlobURLHandle(const BlobURLHandle&);
+    BlobURLHandle(BlobURLHandle&& other)
         : m_url(std::exchange(other.m_url, { }))
     { }
 
-    URLWithBlobURLLifetimeExtension& operator=(URLWithBlobURLLifetimeExtension&&);
-    URLWithBlobURLLifetimeExtension& operator=(URL&&);
+    BlobURLHandle& operator=(const BlobURLHandle&);
+    BlobURLHandle& operator=(BlobURLHandle&&);
+    BlobURLHandle& operator=(const URL&);
 
-    operator const URL&() const { return m_url; }
-    const URL& url() const { return m_url; }
+    URL url() const { return m_url.isolatedCopy(); }
+
+    void clear();
 
 private:
-    void unregisterCurrentURLIfNecessary();
-    void extendBlobURLLifetimeIfNecessary();
+    void unregisterBlobURLHandleIfNecessary();
+    void registerBlobURLHandleIfNecessary();
 
     URL m_url;
 };

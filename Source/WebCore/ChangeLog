@@ -1,3 +1,83 @@
+2021-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Blob URL changes after loading it
+        https://bugs.webkit.org/show_bug.cgi?id=228923
+
+        Reviewed by Geoff Garen.
+
+        Blob URL changes after loading it. This is because we use URLWithBlobURLLifetimeExtension to
+        extend the lifetime of the Blob URL during the load and URLWithBlobURLLifetimeExtension ends
+        up creating a new public Blob URL. This is Web-observable so we need a way to extend the
+        lifetime of a Blob URL without actually generating a new Blob URL.
+
+        This patch replaces URLWithBlobURLLifetimeExtension with a new BlobURLHandle class which
+        extends the lifetime of a Blob URL as long as there are BlobURLHandle objects referring
+        to it. BlobURLHandle works with both private and public Blob URLs so it replaces
+        Blob::Handle as well (which I recently introduced via r280547). The Blob URL no longer
+        changes when we extend its lifetime. Instead, the Blob registry now keeps track of
+        references to a given Blob and only removes a Blob URL once there are no longer any
+        references to it.
+
+        Test: fast/files/blob-as-frame-url.html
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::blobHandles const):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::slice const):
+        (WebCore::Blob::size const):
+        (WebCore::Blob::handle const):
+        * fileapi/Blob.h:
+        (WebCore::Blob::url const):
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURLHandle::BlobURLHandle):
+        (WebCore::BlobURLHandle::~BlobURLHandle):
+        (WebCore::BlobURLHandle::registerBlobURLHandleIfNecessary):
+        (WebCore::BlobURLHandle::unregisterBlobURLHandleIfNecessary):
+        (WebCore::BlobURLHandle::operator=):
+        (WebCore::BlobURLHandle::clear):
+        * fileapi/BlobURL.h:
+        (WebCore::BlobURLHandle::BlobURLHandle):
+        (WebCore::BlobURLHandle::url const):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURLHandle):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURLHandle):
+        * fileapi/ThreadableBlobRegistry.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary const):
+        (WebCore::FrameLoader::PolicyChecker::checkNavigationPolicy):
+        (WebCore::FrameLoader::PolicyChecker::checkNewWindowPolicy):
+        * loader/PolicyChecker.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerFileBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLOptionallyFileBacked):
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        (WebCore::BlobRegistryImpl::unregisterBlobURL):
+        (WebCore::BlobRegistryImpl::addBlobData):
+        (WebCore::BlobRegistryImpl::registerBlobURLHandle):
+        (WebCore::BlobRegistryImpl::unregisterBlobURLHandle):
+        * platform/network/BlobRegistryImpl.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setResponseType):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::prepareToSend):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::clearRequest):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+
 2021-08-09  Simon Fraser  <simon.fraser@apple.com>
 
         Vertical scroll with mouse wheel in horizontal scroller fails to propagate to the document

@@ -87,6 +87,8 @@ private:
     void unregisterBlobURL(const URL& url) final { m_blobRegistry.unregisterBlobURL(url); }
     unsigned long long blobSize(const URL& url) final { return m_blobRegistry.blobSize(url); }
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler) final { m_blobRegistry.writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler)); }
+    void registerBlobURLHandle(const URL& url) final { m_blobRegistry.registerBlobURLHandle(url); }
+    void unregisterBlobURLHandle(const URL& url) final { m_blobRegistry.unregisterBlobURLHandle(url); }
 
     BlobRegistryImpl* blobRegistryImpl() final { return &m_blobRegistry; }
 

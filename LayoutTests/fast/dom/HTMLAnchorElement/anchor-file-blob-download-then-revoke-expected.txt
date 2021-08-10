@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: PASS: URL was revoked
 Download started.
 Downloading URL with suggested filename "foo.txt"
 Download completed.

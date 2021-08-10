@@ -1,3 +1,22 @@
+2021-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Blob URL changes after loading it
+        https://bugs.webkit.org/show_bug.cgi?id=228923
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLHandle):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURLHandle):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createBlobRegistry):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerBlobURLHandle):
+        (WebKit::BlobRegistryProxy::unregisterBlobURLHandle):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+
 2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Create a Language log channel

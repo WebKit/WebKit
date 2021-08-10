@@ -155,12 +155,22 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
     if (isBlobURLContainsNullOrigin(url))
         originMap()->remove(url.string());
 
-    if (isMainThread()) {
+    ensureOnMainThread([url = url.isolatedCopy()] {
         blobRegistry().unregisterBlobURL(url);
-        return;
-    }
-    callOnMainThread([url = url.isolatedCopy()] {
-        blobRegistry().unregisterBlobURL(url);
+    });
+}
+
+void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url)
+{
+    ensureOnMainThread([url = url.isolatedCopy()] {
+        blobRegistry().registerBlobURLHandle(url);
+    });
+}
+
+void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url)
+{
+    ensureOnMainThread([url = url.isolatedCopy()] {
+        blobRegistry().unregisterBlobURLHandle(url);
     });
 }
 

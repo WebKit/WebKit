@@ -39,6 +39,8 @@ public:
     void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final;
     unsigned long long blobSize(const URL&) final;
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
+    void registerBlobURLHandle(const URL&) final;
+    void unregisterBlobURLHandle(const URL&) final;
 };
 
 }

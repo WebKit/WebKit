@@ -32,6 +32,7 @@
 #pragma once
 
 #include "BlobPropertyBag.h"
+#include "BlobURL.h"
 #include "FileReaderLoader.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
@@ -57,7 +58,6 @@ class SharedBuffer;
 template<typename> class ExceptionOr;
 
 using BlobPartVariant = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
-class BlobInternalURL;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob>, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
@@ -93,7 +93,7 @@ public:
 
     virtual ~Blob();
 
-    WEBCORE_EXPORT URL url() const;
+    URL url() const { return m_internalURL; }
     const String& type() const { return m_type; }
 
     WEBCORE_EXPORT unsigned long long size() const;
@@ -117,19 +117,8 @@ public:
     void arrayBuffer(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     ExceptionOr<Ref<ReadableStream>> stream(ScriptExecutionContext&);
 
-    class Handle {
-    public:
-        explicit Handle(Ref<BlobInternalURL>&&);
-        ~Handle();
-        Handle(Handle&&);
-        Handle(const Handle&);
-        URL url() const;
-    private:
-        Ref<BlobInternalURL> m_internalURL;
-    };
-
     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
-    Handle handle() const;
+    BlobURLHandle handle() const;
 
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
@@ -160,7 +149,7 @@ private:
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
-    Ref<BlobInternalURL> m_internalURL;
+    URL m_internalURL;
 
     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };

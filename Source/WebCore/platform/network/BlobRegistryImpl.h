@@ -33,6 +33,7 @@
 
 #include "BlobData.h"
 #include "BlobRegistry.h"
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
@@ -65,6 +66,9 @@ public:
     void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType);
     void unregisterBlobURL(const URL&);
 
+    void registerBlobURLHandle(const URL&);
+    void unregisterBlobURLHandle(const URL&);
+
     unsigned long long blobSize(const URL&);
 
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
@@ -78,6 +82,9 @@ public:
     Vector<RefPtr<BlobDataFileReference>> filesInBlob(const URL&) const;
 
 private:
+    void addBlobData(const String& url, RefPtr<BlobData>&&);
+
+    HashCountedSet<String> m_blobReferences;
     HashMap<String, RefPtr<BlobData>> m_blobs;
 };
 

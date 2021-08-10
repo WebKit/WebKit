@@ -115,7 +115,7 @@ void BlobRegistryImpl::registerFileBlobURL(const URL& url, Ref<BlobDataFileRefer
 
     auto blobData = BlobData::create(contentType);
     blobData->appendFile(WTFMove(file));
-    m_blobs.set(url.string(), WTFMove(blobData));
+    addBlobData(url.string(), WTFMove(blobData));
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
@@ -149,7 +149,7 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
         }
     }
 
-    m_blobs.set(url.string(), WTFMove(blobData));
+    addBlobData(url.string(), WTFMove(blobData));
 }
 
 void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
@@ -164,7 +164,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
 
     BlobData* src = getBlobDataFromURL(srcURL);
     if (src) {
-        m_blobs.set(url.string(), src);
+        addBlobData(url.string(), src);
         return;
     }
 
@@ -174,7 +174,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
     auto backingFile = BlobData::create(contentType);
     backingFile->appendFile(file.releaseNonNull());
 
-    m_blobs.set(url.string(), WTFMove(backingFile));
+    addBlobData(url.string(), WTFMove(backingFile));
 }
 
 void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
@@ -210,13 +210,14 @@ void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL
 
     appendStorageItems(newData.ptr(), originalData->items(), start, newLength);
 
-    m_blobs.set(url.string(), WTFMove(newData));
+    addBlobData(url.string(), WTFMove(newData));
 }
 
 void BlobRegistryImpl::unregisterBlobURL(const URL& url)
 {
     ASSERT(isMainThread());
-    m_blobs.remove(url.string());
+    if (m_blobReferences.remove(url.string()))
+        m_blobs.remove(url.string());
 }
 
 BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
@@ -357,6 +358,25 @@ Vector<RefPtr<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& u
     }
 
     return result;
+}
+
+void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobData)
+{
+    auto addResult = m_blobs.set(url, WTFMove(blobData));
+    if (addResult.isNewEntry)
+        m_blobReferences.add(url);
+}
+
+void BlobRegistryImpl::registerBlobURLHandle(const URL& url)
+{
+    if (m_blobs.contains(url.string()))
+        m_blobReferences.add(url.string());
+}
+
+void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url)
+{
+    if (m_blobReferences.remove(url.string()))
+        m_blobs.remove(url.string());
 }
 
 } // namespace WebCore

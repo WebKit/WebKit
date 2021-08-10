@@ -56,6 +56,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     UnregisterBlobURL(URL url)
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
+    RegisterBlobURLHandle(URL url);
+    UnregisterBlobURLHandle(URL url);
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 

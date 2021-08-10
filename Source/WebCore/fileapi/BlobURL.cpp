@@ -96,45 +96,67 @@ URL BlobURL::createBlobURL(const String& originString)
     return URL({ }, urlString);
 }
 
-URLWithBlobURLLifetimeExtension::URLWithBlobURLLifetimeExtension(const URL& url)
-    : m_url(url)
+BlobURLHandle::BlobURLHandle(const BlobURLHandle& other)
+    : m_url(other.m_url.isolatedCopy())
 {
-    extendBlobURLLifetimeIfNecessary();
+    registerBlobURLHandleIfNecessary();
 }
 
-URLWithBlobURLLifetimeExtension::~URLWithBlobURLLifetimeExtension()
+BlobURLHandle::BlobURLHandle(const URL& url)
+    : m_url(url.isolatedCopy())
 {
-    unregisterCurrentURLIfNecessary();
+    ASSERT(m_url.protocolIsBlob());
+    registerBlobURLHandleIfNecessary();
 }
 
-void URLWithBlobURLLifetimeExtension::extendBlobURLLifetimeIfNecessary()
+BlobURLHandle::~BlobURLHandle()
 {
-    if (m_url.protocolIsBlob()) {
-        auto origin = SecurityOrigin::create(BlobURL::getOriginURL(m_url));
-        URL temporaryBlobURL = BlobURL::createPublicURL(origin.ptr());
-        ThreadableBlobRegistry::registerBlobURL(origin.ptr(), temporaryBlobURL, m_url);
-        m_url = WTFMove(temporaryBlobURL);
-    }
+    unregisterBlobURLHandleIfNecessary();
 }
 
-void URLWithBlobURLLifetimeExtension::unregisterCurrentURLIfNecessary()
+void BlobURLHandle::registerBlobURLHandleIfNecessary()
 {
     if (m_url.protocolIsBlob())
-        ThreadableBlobRegistry::unregisterBlobURL(m_url);
+        ThreadableBlobRegistry::registerBlobURLHandle(m_url);
 }
 
-URLWithBlobURLLifetimeExtension& URLWithBlobURLLifetimeExtension::operator=(URLWithBlobURLLifetimeExtension&& other)
+void BlobURLHandle::unregisterBlobURLHandleIfNecessary()
 {
-    unregisterCurrentURLIfNecessary();
+    if (m_url.protocolIsBlob())
+        ThreadableBlobRegistry::unregisterBlobURLHandle(m_url);
+}
+
+BlobURLHandle& BlobURLHandle::operator=(const BlobURLHandle& other)
+{
+    if (this == &other)
+        return *this;
+
+    unregisterBlobURLHandleIfNecessary();
+    m_url = other.m_url.isolatedCopy();
+    registerBlobURLHandleIfNecessary();
+
+    return *this;
+}
+
+void BlobURLHandle::clear()
+{
+    unregisterBlobURLHandleIfNecessary();
+    m_url = { };
+}
+
+BlobURLHandle& BlobURLHandle::operator=(BlobURLHandle&& other)
+{
+    unregisterBlobURLHandleIfNecessary();
     m_url = std::exchange(other.m_url, { });
     return *this;
 }
 
-URLWithBlobURLLifetimeExtension& URLWithBlobURLLifetimeExtension::operator=(URL&& url)
+BlobURLHandle& BlobURLHandle::operator=(const URL& url)
 {
-    unregisterCurrentURLIfNecessary();
-    m_url = WTFMove(url);
-    extendBlobURLLifetimeIfNecessary();
+    ASSERT(url.protocolIsBlob());
+    unregisterBlobURLHandleIfNecessary();
+    m_url = url.isolatedCopy();
+    registerBlobURLHandleIfNecessary();
     return *this;
 }
 

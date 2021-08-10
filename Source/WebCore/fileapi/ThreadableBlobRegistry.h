@@ -47,6 +47,9 @@ public:
     static void registerBlobURLForSlice(const URL& newURL, const URL& srcURL, long long start, long long end, const String& contentType);
     static void unregisterBlobURL(const URL&);
 
+    static void registerBlobURLHandle(const URL&);
+    static void unregisterBlobURLHandle(const URL&);
+
     static unsigned long long blobSize(const URL&);
 
     // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL

@@ -1,3 +1,12 @@
+2021-08-09  Chris Dumez  <cdumez@apple.com>
+
+        Blob URL changes after loading it
+        https://bugs.webkit.org/show_bug.cgi?id=228923
+
+        Reviewed by Geoff Garen.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2021-08-09  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo][Debug] Build fix after r280756

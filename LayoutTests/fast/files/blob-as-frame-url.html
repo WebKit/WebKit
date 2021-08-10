@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Makes sure that using a Blob URL as frame URL works as expected.");
+jsTestIsAsync = true;
+
+let blobContents = `<body>FOO</body>`;
+let iframe = document.createElement("iframe");
+let blob = new Blob([blobContents], { type: "text/html" });
+let blobURL = URL.createObjectURL(blob);
+iframe.src = blobURL;
+iframe.onload = () => {
+    shouldBeEqualToString("iframe.contentDocument.body.innerText", "FOO");
+    shouldBeTrue("iframe.contentWindow.location.href == blobURL");
+    shouldBeTrue("iframe.contentDocument.URL == blobURL");
+    finishJSTest();
+};
+document.body.append(iframe);
+blob = null;
+gc();
+setTimeout(gc, 0);
+</script>
+</body>
+</html>

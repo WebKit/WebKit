@@ -216,7 +216,8 @@ private:
 
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
-    URLWithBlobURLLifetimeExtension m_url;
+    URL m_url;
+    BlobURLHandle m_blobURLLifetimeExtension;
     String m_method;
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;

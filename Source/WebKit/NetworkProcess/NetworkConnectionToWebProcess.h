@@ -236,6 +236,9 @@ private:
     void unregisterBlobURL(const URL&);
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 
+    void registerBlobURLHandle(const URL&);
+    void unregisterBlobURLHandle(const URL&);
+
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
 
     void createSocketStream(URL&&, String cachePartition, WebCore::WebSocketIdentifier);

@@ -598,6 +598,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     fileapi/AsyncFileStream.h
     fileapi/Blob.h
     fileapi/BlobPropertyBag.h
+    fileapi/BlobURL.h
     fileapi/EndingType.h
     fileapi/File.h
     fileapi/FileList.h

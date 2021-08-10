@@ -251,7 +251,7 @@ ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
     // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
     // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
     // such as file: and data: still make sense to allow.
-    if (!m_async && scriptExecutionContext()->isDocument() && m_url.url().protocolIsInHTTPFamily()) {
+    if (!m_async && scriptExecutionContext()->isDocument() && m_url.protocolIsInHTTPFamily()) {
         logConsoleError(scriptExecutionContext(), "XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.");
         return Exception { InvalidAccessError };
     }
@@ -382,9 +382,10 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     clearResponse();
     clearRequest();
 
-    auto upgradedURL = url;
-    context->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedURL, ContentSecurityPolicy::InsecureRequestType::Load);
-    m_url = WTFMove(upgradedURL);
+    m_url = url;
+    context->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
+    if (m_url.protocolIsBlob())
+        m_blobURLLifetimeExtension = m_url;
 
     m_async = async;
 
@@ -417,7 +418,7 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     auto& context = *scriptExecutionContext();
 
     if (is<Document>(context) && downcast<Document>(context).shouldIgnoreSyncXHRs()) {
-        logConsoleError(scriptExecutionContext(), makeString("Ignoring XMLHttpRequest.send() call for '", m_url.url().string(), "' because the maximum number of synchronous failures was reached."));
+        logConsoleError(scriptExecutionContext(), makeString("Ignoring XMLHttpRequest.send() call for '", m_url.string(), "' because the maximum number of synchronous failures was reached."));
         return ExceptionOr<void> { };
     }
 
@@ -521,7 +522,7 @@ ExceptionOr<void> XMLHttpRequest::send(Blob& body)
         return WTFMove(result.value());
 
     if (m_method != "GET" && m_method != "HEAD") {
-        if (!m_url.url().protocolIsInHTTPFamily()) {
+        if (!m_url.protocolIsInHTTPFamily()) {
             // FIXME: We would like to support posting Blobs to non-http URLs (e.g. custom URL schemes)
             // but because of the architecture of blob-handling that will require a fair amount of work.
             
@@ -594,8 +595,10 @@ ExceptionOr<void> XMLHttpRequest::sendBytesData(const void* data, size_t length)
 ExceptionOr<void> XMLHttpRequest::createRequest()
 {
     // Only GET request is supported for blob URL.
-    if (!m_async && m_url.url().protocolIsBlob() && m_method != "GET")
+    if (!m_async && m_url.protocolIsBlob() && m_method != "GET") {
+        m_blobURLLifetimeExtension.clear();
         return Exception { NetworkError };
+    }
 
     if (m_async && m_upload && m_upload->hasEventListeners())
         m_uploadListenerFlag = true;
@@ -747,6 +750,7 @@ void XMLHttpRequest::clearRequest()
     m_requestHeaders.clear();
     m_requestEntityBody = nullptr;
     m_url = URL { };
+    m_blobURLLifetimeExtension.clear();
 }
 
 void XMLHttpRequest::genericError()
@@ -939,6 +943,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long)
 
     m_loadingActivity = std::nullopt;
     m_url = URL { };
+    m_blobURLLifetimeExtension.clear();
 
     m_sendFlag = false;
     changeState(DONE);

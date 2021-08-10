@@ -76,75 +76,19 @@ URLRegistry& BlobURLRegistry::registry()
     return instance;
 }
 
-// Unregisters the Blob's internal URL upon destruction. This can be used to extend the lifetime of the Blob data
-// without actually keeping the Blob object alive.
-class BlobInternalURL : public ThreadSafeRefCounted<BlobInternalURL> {
-public:
-    static Ref<BlobInternalURL> create(Vector<BlobPart>&& blobParts, const String& contentType)
-    {
-        return adoptRef(*new BlobInternalURL(WTFMove(blobParts), contentType));
-    }
-
-    static Ref<BlobInternalURL> createForDeserialization(const URL& sourceURL, const String& fileBackedPath, const String& type)
-    {
-        return adoptRef(*new BlobInternalURL(sourceURL, fileBackedPath, type));
-    }
-
-    static Ref<BlobInternalURL> createForSlice(const URL& sourceURL, long long start, long long end, const String& type)
-    {
-        return adoptRef(*new BlobInternalURL(sourceURL, start, end, type));
-    }
-
-    static Ref<BlobInternalURL> adoptInternalURL(const URL& url)
-    {
-        return adoptRef(*new BlobInternalURL(crossThreadCopy(url)));
-    }
-
-    ~BlobInternalURL()
-    {
-        ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
-    }
-
-    URL url() const { return m_internalURL.isolatedCopy(); }
-
-private:
-    BlobInternalURL(Vector<BlobPart>&& blobParts, const String& contentType)
-        : m_internalURL(BlobURL::createInternalURL())
-    {
-        ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
-    }
-    BlobInternalURL(const URL& sourceURL, long long start, long long end, const String& type)
-        : m_internalURL(BlobURL::createInternalURL())
-    {
-        ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, sourceURL, start, end, type);
-    }
-    BlobInternalURL(const URL& sourceURL, const String& fileBackedPath, const String& type)
-        : m_internalURL(BlobURL::createInternalURL())
-    {
-        if (fileBackedPath.isEmpty())
-            ThreadableBlobRegistry::registerBlobURL(nullptr, m_internalURL, sourceURL);
-        else
-            ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, sourceURL, fileBackedPath, type);
-    }
-    BlobInternalURL(URL&& internalURL)
-        : m_internalURL(WTFMove(internalURL))
-    { }
-
-    URL m_internalURL;
-};
-
 Blob::Blob(UninitializedContructor, ScriptExecutionContext* context, URL&& url, String&& type)
     : ActiveDOMObject(context)
     , m_type(WTFMove(type))
-    , m_internalURL(BlobInternalURL::adoptInternalURL(url))
+    , m_internalURL(WTFMove(url))
 {
 }
 
 Blob::Blob(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_size(0)
-    , m_internalURL(BlobInternalURL::create({ }, { }))
+    , m_internalURL(BlobURL::createInternalURL())
 {
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { }, { });
 }
 
 static Vector<BlobPart> buildBlobData(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
@@ -163,40 +107,48 @@ static Vector<BlobPart> buildBlobData(Vector<BlobPartVariant>&& blobPartVariants
 Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     : ActiveDOMObject(&context)
     , m_type(normalizedContentType(propertyBag.type))
-    , m_internalURL(BlobInternalURL::create(buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type))
+    , m_internalURL(BlobURL::createInternalURL())
 {
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type);
 }
 
 Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
     : ActiveDOMObject(context)
     , m_type(contentType)
     , m_size(data.size())
-    , m_internalURL(BlobInternalURL::create({ BlobPart(WTFMove(data)) }, contentType))
+    , m_internalURL(BlobURL::createInternalURL())
 {
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
 }
 
 Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, const Blob& blob)
     : ActiveDOMObject(context)
     , m_type(blob.type())
     , m_size(blob.size())
-    , m_internalURL(BlobInternalURL::create({ BlobPart(blob.url()) } , m_type))
+    , m_internalURL(BlobURL::createInternalURL())
 {
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
 Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, std::optional<unsigned long long> size, const String& fileBackedPath)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
     , m_size(size)
-    , m_internalURL(BlobInternalURL::createForDeserialization(srcURL, fileBackedPath, m_type))
+    , m_internalURL(BlobURL::createInternalURL())
 {
+    if (fileBackedPath.isEmpty())
+        ThreadableBlobRegistry::registerBlobURL(nullptr, m_internalURL, srcURL);
+    else
+        ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
 Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, const String& type)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
-    , m_internalURL(BlobInternalURL::createForSlice(srcURL, start, end, m_type))
+    , m_internalURL(BlobURL::createInternalURL())
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
+    ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end, m_type);
 }
 
 Blob::~Blob()
@@ -205,14 +157,9 @@ Blob::~Blob()
         (*m_blobLoaders.begin())->cancel();
 }
 
-URL Blob::url() const
-{
-    return m_internalURL->url();
-}
-
 Ref<Blob> Blob::slice(ScriptExecutionContext& context, long long start, long long end, const String& contentType) const
 {
-    auto blob = adoptRef(*new Blob(&context, m_internalURL->url(), start, end, contentType));
+    auto blob = adoptRef(*new Blob(&context, m_internalURL, start, end, contentType));
     blob->suspendIfNeeded();
     return blob;
 }
@@ -222,7 +169,7 @@ unsigned long long Blob::size() const
     if (!m_size) {
         // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
         // come up with an exception to throw if file size is not representable.
-        unsigned long long actualSize = ThreadableBlobRegistry::blobSize(m_internalURL->url());
+        unsigned long long actualSize = ThreadableBlobRegistry::blobSize(m_internalURL);
         m_size = isInBounds<long long>(actualSize) ? actualSize : 0;
     }
 
@@ -395,23 +342,9 @@ const char* Blob::activeDOMObjectName() const
     return "Blob";
 }
 
-Blob::Handle Blob::handle() const
+BlobURLHandle Blob::handle() const
 {
-    return Handle { m_internalURL.copyRef() };
-}
-
-Blob::Handle::Handle(Ref<BlobInternalURL>&& internalURL)
-    : m_internalURL(WTFMove(internalURL))
-{ }
-
-Blob::Handle::~Handle() = default;
-
-Blob::Handle::Handle(Handle&&) = default;
-Blob::Handle::Handle(const Handle&) = default;
-
-URL Blob::Handle::url() const
-{
-    return m_internalURL->url();
+    return BlobURLHandle { m_internalURL };
 }
 
 } // namespace WebCore

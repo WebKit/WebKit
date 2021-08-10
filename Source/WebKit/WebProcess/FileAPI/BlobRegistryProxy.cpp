@@ -74,6 +74,16 @@ void BlobRegistryProxy::registerBlobURLForSlice(const URL& url, const URL& srcUR
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLForSlice(url, srcURL, start, end, contentType), 0);
 }
 
+void BlobRegistryProxy::registerBlobURLHandle(const URL& url)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLHandle(url), 0);
+}
+
+void BlobRegistryProxy::unregisterBlobURLHandle(const URL& url)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UnregisterBlobURLHandle(url), 0);
+}
+
 unsigned long long BlobRegistryProxy::blobSize(const URL& url)
 {
     uint64_t resultSize;
