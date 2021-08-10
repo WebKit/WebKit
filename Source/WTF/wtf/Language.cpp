@@ -28,7 +28,9 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/Logging.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF) && !PLATFORM(WIN)
@@ -95,9 +97,12 @@ void languageDidChange()
 String defaultLanguage(ShouldMinimizeLanguages shouldMinimizeLanguages)
 {
     auto languages = userPreferredLanguages(shouldMinimizeLanguages);
-    if (languages.size())
+    if (languages.size()) {
+        LOG_WITH_STREAM(Language, stream << "defaultLanguage() is returning " << languages[0]);
         return languages[0];
+    }
 
+    LOG(Language, "defaultLanguage() is returning the empty string.");
     return emptyString();
 }
 
@@ -109,6 +114,7 @@ Vector<String> userPreferredLanguagesOverride()
 
 void overrideUserPreferredLanguages(const Vector<String>& override)
 {
+    LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
     {
         Locker locker { preferredLanguagesOverrideLock };
         preferredLanguagesOverride() = override;
@@ -130,14 +136,19 @@ Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLang
     {
         Locker locker { preferredLanguagesOverrideLock };
         Vector<String>& override = preferredLanguagesOverride();
-        if (!override.isEmpty())
+        if (!override.isEmpty()) {
+            LOG_WITH_STREAM(Language, stream << "Languages are overridden: " << override);
             return isolatedCopy(override);
+        }
     }
 
     Locker locker { cachedPlatformPreferredLanguagesLock };
     auto& languages = shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes ? cachedMinimizedPlatformPreferredLanguages() : cachedFullPlatformPreferredLanguages();
-    if (languages.isEmpty())
+    if (languages.isEmpty()) {
+        LOG(Language, "userPreferredLanguages() cache miss");
         languages = platformUserPreferredLanguages(shouldMinimizeLanguages);
+    } else
+        LOG(Language, "userPreferredLanguages() cache hit");
     return isolatedCopy(languages);
 }
 

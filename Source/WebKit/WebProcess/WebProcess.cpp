@@ -456,8 +456,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setCacheModel(parameters.cacheModel);
 
-    if (!parameters.overrideLanguages.isEmpty())
+    if (!parameters.overrideLanguages.isEmpty()) {
+        LOG_WITH_STREAM(Language, stream << "Web Process initialization is setting overrideLanguages: " << parameters.overrideLanguages);
         overrideUserPreferredLanguages(parameters.overrideLanguages);
+    } else
+        LOG(Language, "Web process initialization is not setting overrideLanguages");
 
     m_textCheckerState = parameters.textCheckerState;
 
@@ -727,6 +730,7 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
 
 void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
 {
+    LOG_WITH_STREAM(Language, stream << "The web process's userPreferredLanguagesChanged: " << languages);
     overrideUserPreferredLanguages(languages);
 }
 

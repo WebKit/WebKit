@@ -1,5 +1,26 @@
 2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Create a Language log channel
+        https://bugs.webkit.org/show_bug.cgi?id=228764
+
+        Reviewed by Simon Fraser.
+
+        * Platform/Logging.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::setAppleLanguagesPreference):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setOverrideLanguages):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::userPreferredLanguagesChanged const):
+
+2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Support WTF logging channels
         https://bugs.webkit.org/show_bug.cgi?id=228768
 

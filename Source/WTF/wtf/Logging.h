@@ -37,6 +37,7 @@ namespace WTF {
 #endif
 
 #define WTF_LOG_CHANNELS(M) \
+    M(Language) \
     M(RefCountedLeaks) \
     M(Process) \
     M(Threading) \

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
+#import "Logging.h"
 #import "ReasonSPI.h"
 #import "WebPreferencesDefaultValues.h"
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -151,6 +152,7 @@ void ProcessLauncher::launchProcess()
 
     auto languagesIterator = m_launchOptions.extraInitializationData.find("OverrideLanguages");
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
+        LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
         auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
         for (auto& language : languagesIterator->value.split(','))
             xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());

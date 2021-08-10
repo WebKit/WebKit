@@ -1,5 +1,38 @@
 2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Create a Language log channel
+        https://bugs.webkit.org/show_bug.cgi?id=228764
+
+        Reviewed by Simon Fraser.
+
+        There have been a variety of bug reports over the past months/years about the procedure
+        by which we determine navigator.language. It's actually somewhat convoluted, so this
+        patch adds a (debug) log channel for it so we can follow what it's doing easily.
+
+        To enable all the logging, run these commands:
+
+        % defaults write com.apple.WebKit.WebContent.Development WTFLogging Language
+        % defaults write com.apple.WebKit.WebContent.Development WebKit2Logging Language
+        % defaults write com.apple.WebKit.WebContent WTFLogging Language
+        % defaults write com.apple.WebKit.WebContent WebKit2Logging Language
+        % defaults write -g WTFLogging Language
+        % defaults write -g WebKit2Logging Language
+        % defaults write /Users/$USER/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari.plist WTFLogging Language
+        % defaults write /Users/$USER/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari.plist WebKit2Logging Language
+
+        * wtf/Language.cpp:
+        (WTF::defaultLanguage):
+        (WTF::overrideUserPreferredLanguages):
+        (WTF::userPreferredLanguages):
+        * wtf/Logging.cpp:
+        * wtf/Logging.h:
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::platformUserPreferredLanguages):
+        * wtf/cocoa/LanguageCocoa.mm:
+        (WTF::minimizedLanguagesFromLanguages):
+
+2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Support WTF logging channels
         https://bugs.webkit.org/show_bug.cgi?id=228768
 

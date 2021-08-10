@@ -30,8 +30,10 @@
 #include <mutex>
 #include <unicode/uloc.h>
 #include <wtf/Assertions.h>
+#include <wtf/Logging.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cf/CFBundleSPI.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -88,8 +90,12 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMini
 {
     auto platformLanguages = adoptCF(CFLocaleCopyPreferredLanguages());
 
+    LOG_WITH_STREAM(Language, stream << "CFLocaleCopyPreferredLanguages() returned: " << reinterpret_cast<id>(const_cast<CFMutableArrayRef>(platformLanguages.get())));
+
     if (shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes)
         platformLanguages = minimizedLanguagesFromLanguages(platformLanguages.get());
+
+    LOG_WITH_STREAM(Language, stream << "Minimized languages: " << reinterpret_cast<id>(const_cast<CFMutableArrayRef>(platformLanguages.get())));
 
     CFIndex platformLanguagesCount = CFArrayGetCount(platformLanguages.get());
     if (!platformLanguagesCount)
@@ -100,6 +106,9 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages shouldMini
         auto platformLanguage = static_cast<CFStringRef>(CFArrayGetValueAtIndex(platformLanguages.get(), i));
         languages.append(httpStyleLanguageCode(platformLanguage, shouldMinimizeLanguages));
     }
+
+    LOG_WITH_STREAM(Language, stream << "After passing through httpStyleLanguageCode: " << languages);
+
     return languages;
 }
 

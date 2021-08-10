@@ -26,6 +26,7 @@
 #import "config.h"
 #import <wtf/Language.h>
 
+#import <wtf/Logging.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -70,8 +71,10 @@ bool canMinimizeLanguages()
 
 RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef languages)
 {
-    if (!canMinimizeLanguages())
+    if (!canMinimizeLanguages()) {
+        LOG(Language, "Could not minimize languages.");
         return languages;
+    }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     return (__bridge CFArrayRef)[NSLocale minimizedLanguagesFromLanguages:(__bridge NSArray<NSString *> *)languages];

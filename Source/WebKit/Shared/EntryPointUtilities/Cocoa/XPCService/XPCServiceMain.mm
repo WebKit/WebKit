@@ -54,10 +54,14 @@ static void setAppleLanguagesPreference()
                 [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
                 return true;
             });
+
+            LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages.get());
+
             [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
             [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
         }
-    }
+    } else
+        LOG(Language, "Bootstrap message does not contain OverrideLanguages");
 }
 
 static void XPCServiceEventHandler(xpc_connection_t peer)

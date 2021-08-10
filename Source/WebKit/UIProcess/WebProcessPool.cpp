@@ -368,6 +368,7 @@ void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 {
     m_configuration->setOverrideLanguages(WTFMove(languages));
 
+    LOG_WITH_STREAM(Language, stream << "WebProcessPool is setting OverrideLanguages: " << languages);
     sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()));
 #if USE(SOUP)
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
@@ -754,6 +755,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
     parameters.overrideLanguages = configuration().overrideLanguages();
+    LOG_WITH_STREAM(Language, stream << "WebProcessPool is initializing a new web process with overrideLanguages: " << parameters.overrideLanguages);
 
     parameters.urlSchemesRegisteredAsEmptyDocument = copyToVector(m_schemesToRegisterAsEmptyDocument);
     parameters.urlSchemesRegisteredAsSecure = copyToVector(LegacyGlobalSettings::singleton().schemesToRegisterAsSecure());
