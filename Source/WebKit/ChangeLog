@@ -1,3 +1,15 @@
+2021-08-10  Peng Liu  <peng.liu6@apple.com>
+
+        RemoteImageDecoderAVF::clearFrameBufferCache() uses a weak pointer without checking its validity
+        https://bugs.webkit.org/show_bug.cgi?id=228925
+
+        Reviewed by Eric Carlson.
+
+        Only use `m_gpuProcessConnection` when it is a valid pointer.
+
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::clearFrameBufferCache):
+
 2021-08-10  Megan Gardner  <megan_gardner@apple.com>
 
         Don't instantiate a SYNotesActivationObserver to just say that it's not active or visible. 

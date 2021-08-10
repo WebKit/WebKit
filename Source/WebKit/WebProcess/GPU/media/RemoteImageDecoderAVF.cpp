@@ -229,7 +229,8 @@ void RemoteImageDecoderAVF::clearFrameBufferCache(size_t index)
     for (size_t i = 0; i < std::min(index + 1, m_frameCount); ++i)
         m_frameImages.remove(i);
 
-    m_gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::ClearFrameBufferCache(m_identifier, index), 0);
+    if (m_gpuProcessConnection)
+        m_gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::ClearFrameBufferCache(m_identifier, index), 0);
 }
 
 void RemoteImageDecoderAVF::encodedDataStatusChanged(size_t frameCount, const WebCore::IntSize& size, bool hasTrack)
