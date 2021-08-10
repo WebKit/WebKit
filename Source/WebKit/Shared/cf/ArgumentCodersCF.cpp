@@ -458,11 +458,11 @@ bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     for (uint64_t i = 0; i < size; ++i) {
         RetainPtr<CFTypeRef> key;
-        if (!decode(decoder, key))
+        if (!decode(decoder, key) || !key)
             return false;
 
         RetainPtr<CFTypeRef> value;
-        if (!decode(decoder, value))
+        if (!decode(decoder, value) || !value)
             return false;
 
         CFDictionarySetValue(dictionary.get(), key.get(), value.get());

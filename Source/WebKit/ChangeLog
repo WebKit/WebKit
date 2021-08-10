@@ -1,5 +1,18 @@
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
+        [IPC Hardening] IPC::decode(Decoder& decoder, RetainPtr<CFDictionaryRef>&) should make sure keys & values aren't null
+        https://bugs.webkit.org/show_bug.cgi?id=222980
+
+        Reviewed by Geoffrey Garen.
+
+        [NSMutableDictionary setObject:forKey:] throws an exception when the given object or key is nil. The dictionary decoder
+        should therefore fail nicely when either of these is nil, instead of crashing.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] SandboxExtension::HandleArray IPC decoder should not call Vector::resize()
         https://bugs.webkit.org/show_bug.cgi?id=222977
         <rdar://problem/75218451>
