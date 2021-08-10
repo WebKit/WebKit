@@ -1,3 +1,39 @@
+2021-08-10  Cameron McCormack  <heycam@apple.com>
+
+        Restore color profiles correctly on displays with multiple named modes
+        https://bugs.webkit.org/show_bug.cgi?id=228313
+        <rdar://problem/81146417>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Look up a device's current color profile by checking the default mode
+        rather than assuming it is "1".  The device info dictionary returned
+        by ColorSyncDeviceCopyDeviceInfo has this shape:
+
+        {
+            CustomProfiles = {
+                ModeName1 = "file:///path/to/custom/profile.ics";
+            };
+            FactoryProfiles = {
+                DeviceDefaultProfileID = "ModeName1";
+                ModeName1 = {
+                    DeviceModeDescription = "Mode Name 1";
+                    DeviceProfileURL = "file:///path/to/factory/profile1.ics";
+                };
+                ModeName2 = {
+                    DeviceModeDescription = "Mode Name 2";
+                    DeviceProfileURL = "file:///path/to/factory/profile2.ics";
+                };
+            };
+        }
+
+        where CustomProfiles is only present if a custom profile has been
+        selected, and the default mode name is "1".  Displays connected over
+        HDMI don't use the default mode name.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (colorProfileURLForDisplay):
+
 2021-08-09  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Add results-summary API
