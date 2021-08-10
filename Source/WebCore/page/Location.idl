@@ -45,9 +45,10 @@
 ] interface Location {
     [SetterCallWith=IncumbentWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
-    [CallWith=IncumbentWindow&FirstWindow] undefined assign(USVString url);
-    [CallWith=IncumbentWindow&FirstWindow, DoNotCheckSecurity] undefined replace(USVString url);
-    [CallWith=IncumbentWindow] undefined reload();
+    // FIXME: We should use IncumbentWindow once we found why https://bugs.webkit.org/show_bug.cgi?id=228943 issue occured.
+    [CallWith=ActiveWindow&FirstWindow] undefined assign(USVString url);
+    [CallWith=ActiveWindow&FirstWindow, DoNotCheckSecurity] undefined replace(USVString url);
+    [CallWith=ActiveWindow] undefined reload();
 
     // URI decomposition attributes
     [SetterCallWith=IncumbentWindow&FirstWindow] attribute USVString protocol;

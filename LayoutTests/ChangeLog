@@ -1,3 +1,15 @@
+2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Partially revert r280256 behavior change since it broke Facetime
+        https://bugs.webkit.org/show_bug.cgi?id=228943
+        rdar://81700268
+
+        Reviewed by Mark Lam.
+
+        * fast/frames/sandboxed-iframe-navigation-parent-expected.txt:
+        * fast/frames/sandboxed-iframe-navigation-parent.html:
+        * http/tests/security/frameNavigation/context-for-location-assign-expected.txt:
+
 2021-08-09  Chris Dumez  <cdumez@apple.com>
 
         Blob URL changes after loading it

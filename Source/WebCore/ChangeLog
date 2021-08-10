@@ -1,3 +1,30 @@
+2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Partially revert r280256 behavior change since it broke Facetime
+        https://bugs.webkit.org/show_bug.cgi?id=228943
+        rdar://81700268
+
+        Reviewed by Mark Lam.
+
+        In r280256, custom accessors start getting holder's JSGlobalObject (this is right behavior).
+        We also introduced IncumbentWindow IDL attribute to get the caller's JSGlobalObject, which is
+        necessary in Location. At that time, we replaced all ActiveWindow to IncumbentWindow, but it
+        changes the JSGlobalObject of `replace`, `assign`, and `reload` since they are functions (not
+        custom accessors). We observed that, after this change, facetime Web page is broken: when opening
+        the link to Facetime, it should show the prompt of "Open in Facetime app" in iOS. But after this
+        change, it won't happen.
+
+        We revert the semantic change by using ActiveWindow for replace, assign, and reload. This is
+        not the correct semantics from the spec, but this is the same to one before r280256, and we
+        will change this once we find the way to bypass this issue.
+
+        * page/Location.cpp:
+        (WebCore::Location::assign):
+        (WebCore::Location::replace):
+        (WebCore::Location::reload):
+        * page/Location.h:
+        * page/Location.idl:
+
 2021-08-09  Chris Dumez  <cdumez@apple.com>
 
         Blob URL changes after loading it

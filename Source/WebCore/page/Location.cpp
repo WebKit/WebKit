@@ -210,14 +210,14 @@ ExceptionOr<void> Location::setHash(DOMWindow& incumbentWindow, DOMWindow& first
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
-ExceptionOr<void> Location::assign(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String& url)
+ExceptionOr<void> Location::assign(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url)
 {
     if (!frame())
         return { };
-    return setLocation(incumbentWindow, firstWindow, url);
+    return setLocation(activeWindow, firstWindow, url);
 }
 
-ExceptionOr<void> Location::replace(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String& urlString)
+ExceptionOr<void> Location::replace(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString)
 {
     auto* frame = this->frame();
     if (!frame)
@@ -234,21 +234,21 @@ ExceptionOr<void> Location::replace(DOMWindow& incumbentWindow, DOMWindow& first
         return Exception { SyntaxError };
 
     // We call DOMWindow::setLocation directly here because replace() always operates on the current frame.
-    frame->document()->domWindow()->setLocation(incumbentWindow, completedURL, LockHistoryAndBackForwardList);
+    frame->document()->domWindow()->setLocation(activeWindow, completedURL, LockHistoryAndBackForwardList);
     return { };
 }
 
-void Location::reload(DOMWindow& incumbentWindow)
+void Location::reload(DOMWindow& activeWindow)
 {
     auto* frame = this->frame();
     if (!frame)
         return;
 
-    ASSERT(incumbentWindow.document());
+    ASSERT(activeWindow.document());
     ASSERT(frame->document());
     ASSERT(frame->document()->domWindow());
 
-    auto& activeDocument = *incumbentWindow.document();
+    auto& activeDocument = *activeWindow.document();
     auto& targetDocument = *frame->document();
 
     // FIXME: It's not clear this cross-origin security check is valuable.
@@ -256,7 +256,7 @@ void Location::reload(DOMWindow& incumbentWindow)
     // Other location operations simply block use of JavaScript URLs cross origin.
     if (!activeDocument.securityOrigin().isSameOriginDomain(targetDocument.securityOrigin())) {
         auto& targetWindow = *targetDocument.domWindow();
-        targetWindow.printErrorMessage(targetWindow.crossDomainAccessErrorMessage(incumbentWindow, IncludeTargetOrigin::Yes));
+        targetWindow.printErrorMessage(targetWindow.crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
         return;
     }
 
