@@ -1,3 +1,14 @@
+2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update logging docs after r280758
+        https://bugs.webkit.org/show_bug.cgi?id=228899
+
+        Reviewed by Fujii Hironori.
+
+        Add more information about logging.
+
+        * Introduction.md:
+
 2021-08-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         GCC 11 builds should use -Wno-array-bounds, -Wno-nonnull
