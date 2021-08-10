@@ -598,15 +598,13 @@ void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHi
 
 bool WebPageProxy::appHighlightsVisibility()
 {
-    if (!m_appHighlightsObserver)
-        setUpHighlightsObserver();
     return [m_appHighlightsObserver isVisible];
 }
 
 CGRect WebPageProxy::appHighlightsOverlayRect()
 {
     if (!m_appHighlightsObserver)
-        setUpHighlightsObserver();
+        return CGRectNull;
     return [m_appHighlightsObserver visibleFrame];
 }
 

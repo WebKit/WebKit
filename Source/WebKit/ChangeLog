@@ -1,3 +1,19 @@
+2021-08-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't instantiate a SYNotesActivationObserver to just say that it's not active or visible. 
+        https://bugs.webkit.org/show_bug.cgi?id=228929
+        rdar://81634182
+
+        Reviewed by Wenson Hsieh.
+
+        If we do not have an SYNotesActivationObserver then we do not need to make one to say that it is not visible
+        or that it's not occuding the screen. This is a performance optimization for all WebViews that are not 
+        in Safari as well as all pages that do not have highlights to restore.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::appHighlightsVisibility):
+        (WebKit::WebPageProxy::appHighlightsOverlayRect):
+
 2021-08-10  David Kilzer  <ddkilzer@apple.com>
 
         ThreadSanitizer: data race in WTF::StringImpl::deref() under WebKit::WebProcessPool::setMediaAccessibilityPreferences()
