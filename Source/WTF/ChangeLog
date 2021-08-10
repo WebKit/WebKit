@@ -2,6 +2,18 @@
 
         [WTF][Win] REGRESSION(r280795) error LNK2019: unresolved external symbol "class WTF::String __cdecl WTF::logLevelString(void)"
         https://bugs.webkit.org/show_bug.cgi?id=228937
+        <rdar://problem/81722757>
+
+        Unresolved build fix.
+        The previous attempt (r280819) didn't actually fix the build
+        error. LoggingWin.cpp has to include LogInitialization.h.
+
+        * wtf/win/LoggingWin.cpp:
+
+2021-08-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF][Win] REGRESSION(r280795) error LNK2019: unresolved external symbol "class WTF::String __cdecl WTF::logLevelString(void)"
+        https://bugs.webkit.org/show_bug.cgi?id=228937
 
         Unreviewed build fix.
 
