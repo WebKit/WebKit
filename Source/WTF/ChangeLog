@@ -1,3 +1,15 @@
+2021-08-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WTF][PlayStation] REGRESSION(r280795) error: undefined symbol: WTF::logLevelString()
+        https://bugs.webkit.org/show_bug.cgi?id=228959
+
+        Reviewed by Fujii Hironori.
+
+        As per followup win fix, for declspec platforms, LoggingUnix needs
+        to include LogInitialization to get the export declaration.
+
+        * wtf/unix/LoggingUnix.cpp:
+
 2021-08-10  Keith Miller  <keith_miller@apple.com>
 
         CallFrame::returnPC should untag the return address before passing it to ReturnAddressPtr
