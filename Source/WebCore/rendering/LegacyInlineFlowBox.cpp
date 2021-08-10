@@ -1167,17 +1167,6 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
             return false;
     }
 
-    // Constrain our hit testing to the line top and bottom if necessary.
-    bool noQuirksMode = renderer().document().inNoQuirksMode();
-    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-        LegacyRootInlineBox& rootBox = root();
-        LayoutUnit top { isHorizontal() ? y() : x()};
-        LayoutUnit logicalHeight { isHorizontal() ? height() : width() };
-        LayoutUnit bottom = std::min(rootBox.lineBottom(), top + logicalHeight);
-        top = std::max(rootBox.lineTop(), top);
-        logicalHeight = bottom - top;
-    }
-
     // Move x/y to our coordinates.
     FloatRect rect(frameRect());
     flipForWritingMode(rect);

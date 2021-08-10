@@ -1,3 +1,16 @@
+2021-08-10  Antti Koivisto  <antti@apple.com>
+
+        Remove some dead code from LegacyInlineFlowBox::nodeAtPoint
+        https://bugs.webkit.org/show_bug.cgi?id=228960
+
+        Reviewed by Alan Bujtas.
+
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::nodeAtPoint):
+
+        This hit test quirk got accidentally disabled 7 years ago (in http://trac.webkit.org/changeset/170875/webkit)
+        and this became dead code. No one has complained.
+
 2021-08-10  Ben Nham  <nham@apple.com>
 
         Fix nested resource load tracepoints
