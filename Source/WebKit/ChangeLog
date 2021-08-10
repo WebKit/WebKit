@@ -1,3 +1,17 @@
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] Protect WebPageProxy::willSubmitForm() against bad Strings
+        https://bugs.webkit.org/show_bug.cgi?id=222955
+        <rdar://problem/75195062>
+
+        Reviewed by Anders Carlsson.
+
+        The Strings passed in textFieldValues are used as keys in a HashMap later on so we need
+        to validate them.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willSubmitForm):
+
 2021-03-05  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] Protect against bad navigationID in WebPageProxy::didDestroyNavigation()
