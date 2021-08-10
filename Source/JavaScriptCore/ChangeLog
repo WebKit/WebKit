@@ -1,3 +1,17 @@
+2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] super-Latin1 white space and line terminator after regular expression literal misinterpreted as flags
+        https://bugs.webkit.org/show_bug.cgi?id=227944
+
+        Reviewed by Alexey Shvayka.
+
+        There are non-Latin1 white-spaces and line-terminators, but Lexer::scanRegExp's code did not assume that.
+        As a result, if there is a non-Latin1 white-spaces or line-terminators after RegExp, we raise SyntaxError
+        while this is valid. This patch fixes that.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::scanRegExp):
+
 2021-08-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix yet another -Wreturn-type warning
