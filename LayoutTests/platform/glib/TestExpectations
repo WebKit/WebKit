@@ -623,6 +623,9 @@ webkit.org/b/227661 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeou
 webkit.org/b/227934 media/media-source/media-webm-vorbis-partial.html [ Failure ]
 webkit.org/b/227934 media/media-source/media-webm-opus-partial.html [ Failure ]
 
+webkit.org/b/228941 fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout Failure ]
+webkit.org/b/228941 fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
