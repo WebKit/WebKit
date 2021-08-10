@@ -21,10 +21,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from flask import abort, jsonify
-from resultsdbpy.controller.commit_controller import uuid_range_for_query, HasCommitContext
+from heapq import merge
+from resultsdbpy.controller.commit_controller import uuid_range_for_query, commit_for_query, HasCommitContext
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.controller.configuration_controller import configuration_for_query
 from resultsdbpy.controller.suite_controller import time_range_for_query
+from resultsdbpy.model.test_context import Expectations
 from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, boolean_query
 
 
@@ -102,3 +104,107 @@ class TestController(HasCommitContext):
                     results=sorted(results, key=sort_function),
                 ))
             return jsonify(response)
+
+    @query_as_kwargs()
+    @commit_for_query()
+    @limit_for_query(100)
+    @configuration_for_query()
+    def summarize_test_results(
+        self, suite=None, test=None,
+        configurations=None, recent=None,
+        branch=None, commit=None,
+        limit=None, include_expectations=None, **kwargs
+    ):
+        AssertRequest.is_type(['GET'])
+        AssertRequest.query_kwargs_empty(**kwargs)
+
+        recent = boolean_query(*recent)[0] if recent else True
+        include_expectations = boolean_query(*include_expectations)[0] if include_expectations else False
+
+        if not suite:
+            abort(400, description='No suite specified')
+        if not test:
+            abort(400, description='No test specified')
+
+        limit += 1
+        before_commits = []
+        after_commits = []
+        with self.commit_context:
+            for repo_id in self.commit_context.repositories.keys():
+                if commit:
+                    before_commits = sorted(list(reversed(self.commit_context.find_commits_in_range(
+                        repository_id=repo_id,
+                        end=commit, branch=branch[0], limit=limit,
+                    ))) + before_commits)
+                    after_commits = sorted(list(reversed(self.commit_context.find_commits_in_range(
+                        repository_id=repo_id,
+                        begin=commit, branch=branch[0], limit=limit,
+                    ))) + after_commits)
+                else:
+                    before_commits = list(merge(
+                        self.commit_context.find_commits_in_range(repository_id=repo_id, branch=branch[0], limit=limit),
+                        before_commits,
+                    ))
+                    before_commits.reverse()
+                after_commits.reverse()
+
+        before_commits = sorted(before_commits)
+        after_commits = sorted(after_commits)
+
+        before_commits = before_commits[-limit:]
+        after_commits = after_commits[:limit]
+        if before_commits and after_commits and before_commits[-1] == after_commits[0]:
+            del before_commits[-1]
+
+        if not before_commits and not after_commits:
+            return abort(400, description='No commits in specified range')
+
+        # Use the linear distance from the specified commit
+        scale_for_uuid = {}
+        count = limit - 1
+        for c in reversed(before_commits):
+            scale_for_uuid[c.uuid] = count
+            count -= 1
+        count = limit
+        for c in after_commits:
+            scale_for_uuid[c.uuid] = count
+            count -= 1
+
+        # A direct match to the provided commit matters most
+        if commit:
+            scale_for_uuid[commit.uuid] = limit * 2
+
+        response = {}
+        for value in Expectations.STATE_ID_TO_STRING.values():
+            response[value.lower()] = {} if include_expectations else 0
+
+        with self.test_context:
+            for config, results in self.test_context.find_by_commit(
+                suite=suite, test=test,
+                configurations=configurations, recent=recent,
+                branch=branch[0],
+                limit=limit * 4,
+                begin=(before_commits or after_commits)[0], end=(after_commits or before_commits)[-1],
+            ).items():
+                for result in results:
+                    scale = scale_for_uuid.get(int(result['uuid']), 0)
+                    if not scale:
+                        continue
+                    tag = result.get('actual', 'PASS').lower()
+                    if include_expectations:
+                        expected = 'expected' if not result.get('expected') or result['actual'] == result['expected'] else 'unexpected'
+                        response[tag][expected] = response[tag].get(expected, 0) + scale
+                    else:
+                        response[tag] = response[tag] + scale
+
+        aggregate = sum([sum(value.values()) if include_expectations else value for value in response.values()])
+        if not aggregate:
+            return abort(400, description='No results for specified test and configuration in provided commit range')
+        for key in response.keys():
+            if include_expectations:
+                for expectation in response[key].keys():
+                    response[key][expectation] = 100 * response[key][expectation] // (aggregate or 1)
+            else:
+                response[key] = 100 * response[key] // (aggregate or 1)
+
+        return jsonify(response)

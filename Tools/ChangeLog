@@ -1,3 +1,35 @@
+2021-08-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Add results-summary API
+        https://bugs.webkit.org/show_bug.cgi?id=226894
+        <rdar://problem/79155181>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/api_routes.py:
+        (APIRoutes.__init__): Add aggregate-results endpoint.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/commit_controller.py:
+        (commit_for_query): Add decorator which converts a set of arguments into a single commit.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/test_controller.py:
+        (TestController):
+        (TestController.summarize_test_results): Given a single commit and suite/test combination, compute
+        the liklihood of each potential result.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/controller/test_controller_unittest.py:
+        (TestControllerTest.test_summarize_general): Added.
+        (TestControllerTest.test_summarize_specific): Added.
+        (TestControllerTest.test_summarize_expectations): Added.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context.py:
+        (CommitContext.find_commits_in_range): Use ascended table if user only provides lower bound.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/commit_context_unittest.py:
+        (CommitContextTest.test_stash_commits_before): Verify upper bound.
+        (CommitContextTest.test_svn_commits_before): Ditto.
+        (CommitContextTest.test_stash_commits_after): Verify lower bound.
+        (CommitContextTest.test_svn_commits_after): Ditto.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/templates/documentation.html: Add aggregate-results
+        documentation.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
 2021-08-10  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Flexible viewport tests that dump the window size fail because it doesn't match iPad

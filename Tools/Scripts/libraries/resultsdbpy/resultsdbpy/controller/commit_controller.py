@@ -125,6 +125,26 @@ def uuid_range_for_query():
     return decorator
 
 
+def commit_for_query():
+    def decorator(method):
+        def real_method(obj, repository_id=None, branch=None, id=None, ref=None, uuid=None, timestamp=None, **kwargs):
+            # We're making an assumption that the class using this decorator actually has a commit_context, if it does not,
+            # this decorator will fail spectacularly
+            with obj.commit_context:
+                if not branch:
+                    branch = [None]
+                return method(obj, branch=branch, commit=_find_comparison(
+                    obj.commit_context, repository_id=repository_id, branch=branch,
+                    ref=ref or id,
+                    uuid=uuid, timestamp=timestamp, priority=max,
+                ), **kwargs)
+
+        real_method.__name__ = method.__name__
+        return real_method
+
+    return decorator
+
+
 class HasCommitContext(object):
     def __init__(self, commit_context):
         self.commit_context = commit_context

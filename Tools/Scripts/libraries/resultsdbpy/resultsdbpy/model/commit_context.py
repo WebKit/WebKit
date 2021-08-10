@@ -213,16 +213,20 @@ class CommitContext(object):
         if branch is None:
             branch = self.repositories[repository_id].default_branch
 
+        use_ascending = begin and not end
         begin = self.convert_to_uuid(begin)
         end = self.convert_to_uuid(end, self.timestamp_to_uuid())
 
         with self:
-            return [model.to_commit() for model in self.cassandra.select_from_table(
-                self.CommitByUuidDescending.__table_name__, limit=limit,
-                repository_id=repository_id, branch=branch,
+            result = [model.to_commit() for model in self.cassandra.select_from_table(
+                self.CommitByUuidAscending.__table_name__ if use_ascending else self.CommitByUuidDescending.__table_name__,
+                limit=limit, repository_id=repository_id, branch=branch,
                 uuid__gte=begin,
                 uuid__lte=end,
             )]
+            if use_ascending:
+                result.reverse()
+            return result
 
     def _adjacent_commit(self, commit, ascending=True):
         if not isinstance(commit, Commit):

@@ -56,10 +56,9 @@ function documentEndpoint(endpoint, actions, queries, documentation) {
                     ${queries.map((query) => {
                         return `<div class="badge">
                                 <div class="text block">
-                                    <a class="text tiny" href="#Query-Parameters-${query}">${query}</a>
+                                    <a class="text tiny" href="#Query-Parameters-${query.replace(/\s/g, '-')}">${query}</a>
                                 </div>
                             </div>`;
-                        //return `<button class="button" onclick="window.location.href = '/documentation#Query-Parameters-${query}';">${query}</button>`
                     }).join('')}
                 </div>
             </div>
@@ -359,6 +358,20 @@ const documentation = {
                     `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}' and &ltrun-a1&gt, &ltrun-a2&gt, &ltrun-b1&gt and &ltrun-b2&gt are all the afformentioned single test result dictionary.`,
                 ],
             ),
+            documentEndpoint(
+                '/api/results-summary/&ltsuite&gt/&lttest&gt',
+                ['GET'],
+                ['Branch', 'Configuration', 'Include Expectations', 'Limit', 'Repository', 'Ref', 'UUID'],
+                [
+                    `Compute the combined results of a given test by aggregating results from a set of runs surrounding a specific commit:`,
+                    codeBlock('{\n' +
+                    '    "pass": 80,\n' +
+                    '    "fail": 15,\n' +
+                    '    "crash": 5,\n' +
+                    '}'),
+                    `These results are always the weighted aggregation of results for the provided configurations, with weights to be understood as percent liklihood a test will have a certain result on a given revision.`,
+                ],
+            ),
         ], 'Failure Analysis': [
             `Results databases provide a few APIs to assist in the investigation of test failures. These analysis endpoints aggregate data from multiple test runs for consumption by both humans and automated systems.`,
             documentEndpoint(
@@ -507,6 +520,10 @@ const documentation = {
             `Endpoints which support querying by configurations are optimized to only search the last 2 weeks of configurations. This means that if a configuration has not reported results in more than 2 weeks, it's data will not be accessable by default. To search all historic configurations, add this:`,
             codeBlock('recent=False'),
             `to your query. The downside of searching all configurations is that the default behavior of searching all recent configurations if no query parameters are provided is disabled because the results database cannot search by an unbounded number of configurations.`,
+        ],
+        'Include Expectations': [
+            `Some endpoints return different results if the caller requests expectations be taken into consideration. By default, this flag is disabled, but may be enabled on supporting enpoints with this query:`,
+            codeBlock('include_expectations=False'),
         ],
         'Limit': [
             `The underlying architecture of the results database does not allow unlimited query sizes. Most endpoints accept a limit query which looks like this:`,

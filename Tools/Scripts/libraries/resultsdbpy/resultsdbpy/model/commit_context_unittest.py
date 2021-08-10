@@ -180,6 +180,58 @@ class CommitContextTest(WaitForDockerTestCase):
             self.assertEqual(commits, self.database.find_commits_in_range(repository_id='webkit', branch='main', begin=commits[-1], end=commits[0]))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_stash_commits_before(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.add_all_commits_to_database()
+
+            commits = [
+                self.stash_repository.commit(ref='1abe25b443e9'),
+                self.stash_repository.commit(ref='fff83bb2d917'),
+                self.stash_repository.commit(ref='9b8311f25a77'),
+            ]
+            self.assertEqual(commits, self.database.find_commits_in_range(repository_id='safari', branch='main', end=commits[0], limit=3))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_svn_commits_before(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.add_all_commits_to_database()
+
+            commits = [
+                self.svn_repository.commit(ref=6),
+                self.svn_repository.commit(ref=4),
+                self.svn_repository.commit(ref=2),
+            ]
+            self.assertEqual(commits, self.database.find_commits_in_range(repository_id='webkit', branch='main', end=commits[0], limit=3))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_stash_commits_after(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.add_all_commits_to_database()
+
+            commits = [
+                self.stash_repository.commit(ref='1abe25b443e9'),
+                self.stash_repository.commit(ref='fff83bb2d917'),
+                self.stash_repository.commit(ref='9b8311f25a77'),
+            ]
+            self.assertEqual(commits, self.database.find_commits_in_range(repository_id='safari', branch='main', begin=commits[-1], limit=3))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_svn_commits_after(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            self.init_database(redis=redis, cassandra=cassandra)
+            self.add_all_commits_to_database()
+
+            commits = [
+                self.svn_repository.commit(ref=6),
+                self.svn_repository.commit(ref=4),
+                self.svn_repository.commit(ref=2),
+            ]
+            self.assertEqual(commits, self.database.find_commits_in_range(repository_id='webkit', branch='main', begin=commits[-1], limit=3))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_commit_from_stash_repo(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             self.init_database(redis=redis, cassandra=cassandra)
