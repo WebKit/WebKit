@@ -1,3 +1,18 @@
+2021-08-10  David Kilzer  <ddkilzer@apple.com>
+
+        ThreadSanitizer: data race in WTF::StringImpl::deref() under WebKit::WebProcessPool::setMediaAccessibilityPreferences()
+        <https://webkit.org/b/228932>
+
+        Reviewed by Chris Dumez.
+
+        Covered by numerous layout tests running with TSan including:
+            crypto/crypto-random-values-types.html
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::setMediaAccessibilityPreferences):
+        - Make an isolatedCopy() of Vector<String> object before passing
+          it to the main thread.
+
 2021-08-09  Chris Dumez  <cdumez@apple.com>
 
         Blob URL changes after loading it
