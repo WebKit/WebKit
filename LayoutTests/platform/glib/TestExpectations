@@ -1193,6 +1193,9 @@ webkit.org/b/213678 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_key
 # TODO: This failure exists in the general TestExpectations, I got in a GTK run.
 # I think marking the whole folder as 'Slow' makes the expected result for this test 'Pass'.
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Failure Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.html [ Failure Pass ]
 
 webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
 
