@@ -939,11 +939,6 @@ void WebProcess::destroyRenderingResources()
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
-{
-    UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
-}
-
 void WebProcess::userInterfaceIdiomDidChange(bool isPhoneOrWatch)
 {
     WebKit::setCurrentUserInterfaceIdiomIsPhoneOrWatch(isPhoneOrWatch);

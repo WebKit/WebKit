@@ -340,10 +340,6 @@ public:
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
 
-#if PLATFORM(IOS_FAMILY)
-    void accessibilityProcessSuspendedNotification(bool);
-#endif
-
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     float backlightLevel() const { return m_backlightLevel; }
 #endif

@@ -656,4 +656,6 @@ private:
     static std::atomic<unsigned> unboundedSynchronousIPCCount;
 };
 
+void AccessibilityProcessSuspendedNotification(bool suspended);
+
 } // namespace IPC

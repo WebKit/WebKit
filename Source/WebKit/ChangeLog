@@ -1,3 +1,29 @@
+2021-08-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        Notify accessibility that WebProcess is suspended when in process cache.
+        https://bugs.webkit.org/show_bug.cgi?id=228936
+        rdar://80911502
+
+        Reviewed by Chris Dumez.
+
+        Need to notify accessibility clients that a WebProcess in the process
+        cache is suspended. Otherwise accessibility clients may continue making
+        requests to the cached Webprocess and be waiting indefinitely for a
+        suspended process.
+        Deleted WebProcess::accessibilityProcessSuspendedNotification and
+        instead use IPC::AccessibilityProcessSuspendedNotification
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::AccessibilityProcessSuspendedNotification):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setIsInProcessCache):
+        (WebKit::WebProcess::prepareToSuspend):
+        (WebKit::WebProcess::processDidResume):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::accessibilityProcessSuspendedNotification): Deleted.
+
 2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit

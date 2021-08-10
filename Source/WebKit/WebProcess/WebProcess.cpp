@@ -628,6 +628,8 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache)
     }
 
     updateProcessName(IsInProcessInitialization::No);
+
+    IPC::AccessibilityProcessSuspendedNotification(isInProcessCache);
 #else
     UNUSED_PARAM(isInProcessCache);
 #endif
@@ -1518,7 +1520,7 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<v
     SQLiteDatabase::setIsDatabaseOpeningForbidden(true);
     if (DatabaseTracker::isInitialized())
         DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
-    accessibilityProcessSuspendedNotification(true);
+    IPC::AccessibilityProcessSuspendedNotification(true);
     updateFreezerStatus();
 #endif
 
@@ -1580,7 +1582,7 @@ void WebProcess::processDidResume()
 #if PLATFORM(IOS_FAMILY)
     m_webSQLiteDatabaseTracker.setIsSuspended(false);
     SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
-    accessibilityProcessSuspendedNotification(false);
+    IPC::AccessibilityProcessSuspendedNotification(false);
 #endif
 
 #if ENABLE(VIDEO)

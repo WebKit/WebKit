@@ -615,8 +615,8 @@ bool Connection::kill()
 
     return false;
 }
-    
-static void AccessibilityProcessSuspendedNotification(bool suspended)
+
+void AccessibilityProcessSuspendedNotification(bool suspended)
 {
 #if PLATFORM(MAC)
     _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
@@ -626,7 +626,7 @@ static void AccessibilityProcessSuspendedNotification(bool suspended)
     UNUSED_PARAM(suspended);
 #endif
 }
-    
+
 void Connection::willSendSyncMessage(OptionSet<SendSyncOption> sendSyncOptions)
 {
     if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
