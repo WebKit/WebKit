@@ -3406,6 +3406,30 @@ void Document::setURL(const URL& url)
     updateBaseURL();
 }
 
+// https://html.spec.whatwg.org/#fallback-base-url
+URL Document::fallbackBaseURL() const
+{
+    // The documentURI attribute is read-only from JavaScript, but writable from Objective C, so we need to retain
+    // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
+    // and DOM 3 Core does not specify how it should be resolved.
+    auto documentURL = URL({ }, documentURI());
+
+    if (documentURL.isAboutSrcDoc()) {
+        if (auto* parent = parentDocument())
+            return parent->baseURL();
+    }
+
+    if (documentURL.isAboutBlank()) {
+        auto* creator = parentDocument();
+        if (!creator && frame() && frame()->loader().opener())
+            creator = frame()->loader().opener()->document();
+        if (creator)
+            return creator->baseURL();
+    }
+
+    return documentURL;
+}
+
 void Document::updateBaseURL()
 {
     // DOM 3 Core: When the Document supports the feature "HTML" [DOM Level 2 HTML], the base URI is computed using
@@ -3415,20 +3439,8 @@ void Document::updateBaseURL()
         m_baseURL = m_baseElementURL;
     else if (!m_baseURLOverride.isEmpty())
         m_baseURL = m_baseURLOverride;
-    else {
-        // The documentURI attribute is read-only from JavaScript, but writable from Objective C, so we need to retain
-        // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
-        // and DOM 3 Core does not specify how it should be resolved.
-        m_baseURL = URL({ }, documentURI());
-
-        if (m_baseURL.isAboutBlank()) {
-            auto* creator = parentDocument();
-            if (!creator && frame() && frame()->loader().opener())
-                creator = frame()->loader().opener()->document();
-            if (creator)
-                m_baseURL = creator->baseURL();
-        }
-    }
+    else
+        m_baseURL = fallbackBaseURL();
 
     clearSelectorQueryCache();
 
@@ -3472,7 +3484,7 @@ void Document::processBaseElement()
     if (href) {
         String strippedHref = stripLeadingAndTrailingHTMLSpaces(*href);
         if (!strippedHref.isEmpty())
-            baseElementURL = URL(url(), strippedHref);
+            baseElementURL = URL(fallbackBaseURL(), strippedHref);
     }
     if (m_baseElementURL != baseElementURL && contentSecurityPolicy()->allowBaseURI(baseElementURL)) {
         if (settings().shouldRestrictBaseURLSchemes() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL))

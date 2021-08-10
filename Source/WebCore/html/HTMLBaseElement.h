@@ -31,7 +31,7 @@ class HTMLBaseElement final : public HTMLElement {
 public:
     static Ref<HTMLBaseElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT URL href() const;
+    WEBCORE_EXPORT String href() const;
     WEBCORE_EXPORT void setHref(const AtomString&);
 
 private:

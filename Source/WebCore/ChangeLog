@@ -1,3 +1,41 @@
+2021-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Document.baseURI is inaccurate for iframe srcdoc documents
+        https://bugs.webkit.org/show_bug.cgi?id=228933
+
+        Reviewed by Alex Christensen.
+
+        Document.baseURI is inaccurate for iframe srcdoc documents:
+        - https://html.spec.whatwg.org/#fallback-base-url
+
+        This aligns our behavior with both Chrome and Firefox.
+
+        No new tests, rebaselined existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::fallbackBaseURL const):
+        (WebCore::Document::updateBaseURL):
+        Extract "fallback base URL" logic out of updateBaseURL() and into its own function so that
+        it can be called from other places. Add logic to deal with iframe srcdoc documents to
+        our "fallback base URL" logic, as per:
+        - https://html.spec.whatwg.org/#fallback-base-url
+
+        (WebCore::Document::processBaseElement):
+        As per https://html.spec.whatwg.org/#set-the-frozen-base-url, we should use the document's fallback base URL
+        as base URL when parsing the base element's href attribute.
+
+        * dom/Document.h:
+
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::href const):
+        Per https://html.spec.whatwg.org/#dom-base-href, we should use the document's fallback base URL when
+        parsing the base element's href attribute. Also we should return the attribute value if the URL fails
+        parsing, not a null URL.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+        Keep in sync with HTMLBaseElement::href(), as per comment.
+
 2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit

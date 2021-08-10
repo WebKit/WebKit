@@ -1630,6 +1630,8 @@ public:
 
     String debugDescription() const;
 
+    URL fallbackBaseURL() const;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClassFlags = DefaultDocumentClass, unsigned constructionFlags = 0);

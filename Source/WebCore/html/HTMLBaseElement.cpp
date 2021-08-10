@@ -79,24 +79,20 @@ String HTMLBaseElement::target() const
     return attributeWithoutSynchronization(targetAttr);
 }
 
-URL HTMLBaseElement::href() const
+// https://html.spec.whatwg.org/#dom-base-href
+String HTMLBaseElement::href() const
 {
-    // This does not use the getURLAttribute function because that will resolve relative to the document's base URL;
-    // base elements like this one can be used to set that base URL. Thus we need to resolve relative to the document's
-    // URL and ignore the base URL.
-
-    const AtomString& attributeValue = attributeWithoutSynchronization(hrefAttr);
-    if (attributeValue.isNull())
-        return document().url();
+    AtomString url = attributeWithoutSynchronization(hrefAttr);
+    if (url.isNull())
+        url = emptyAtom();
 
     // Same logic as openFunc() in XMLDocumentParserLibxml2.cpp. Keep them in sync.
     auto* encoding = document().decoder() ? document().decoder()->encodingForURLParsing() : nullptr;
-    URL url(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), encoding);
+    URL urlRecord(document().fallbackBaseURL(), stripLeadingAndTrailingHTMLSpaces(url), encoding);
+    if (!urlRecord.isValid())
+        return url;
 
-    if (!url.isValid())
-        return URL();
-
-    return url;
+    return urlRecord.string();
 }
 
 void HTMLBaseElement::setHref(const AtomString& value)

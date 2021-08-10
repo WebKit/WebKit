@@ -1,3 +1,17 @@
+2021-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Document.baseURI is inaccurate for iframe srcdoc documents
+        https://bugs.webkit.org/show_bug.cgi?id=228933
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_about_blank-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_invalid-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_srcdoc-expected.txt:
+
 2021-08-10  Cathie Chen  <cathiechen@igalia.com>
 
         Import css/css-sizing/aspect-ratio tests from WPT

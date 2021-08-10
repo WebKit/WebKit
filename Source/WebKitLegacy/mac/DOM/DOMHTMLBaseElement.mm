@@ -42,7 +42,7 @@
 - (NSString *)href
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->href().string();
+    return IMPL->href();
 }
 
 - (void)setHref:(NSString *)newHref

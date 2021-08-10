@@ -1,3 +1,16 @@
+2021-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Document.baseURI is inaccurate for iframe srcdoc documents
+        https://bugs.webkit.org/show_bug.cgi?id=228933
+
+        Reviewed by Alex Christensen.
+
+        Update existing layout test to reflect behavior change.
+
+        * fast/dom/HTMLBaseElement/href-attribute-resolves-with-respect-to-document.html: Removed.
+        * http/tests/misc/href-attribute-resolves-with-respect-to-document-expected.txt: Renamed from LayoutTests/fast/dom/HTMLBaseElement/href-attribute-resolves-with-respect-to-document-expected.txt.
+        * http/tests/misc/href-attribute-resolves-with-respect-to-document.html: Added.
+
 2021-08-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update crypto test baselines after r280790
