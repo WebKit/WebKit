@@ -90,6 +90,7 @@ public:
         HandleArray& operator=(HandleArray&&) = default;
         ~HandleArray();
         void allocate(size_t);
+        void append(Handle&&);
         Handle& operator[](size_t i);
         Handle& at(size_t i) { return operator[](i); }
         const Handle& operator[](size_t i) const;
@@ -149,6 +150,7 @@ inline Optional<SandboxExtension::Handle> SandboxExtension::Handle::decode(IPC::
 inline SandboxExtension::HandleArray::HandleArray() { }
 inline SandboxExtension::HandleArray::~HandleArray() { }
 inline void SandboxExtension::HandleArray::allocate(size_t) { }
+inline void SandboxExtension::HandleArray::append(Handle&&) { }
 inline size_t SandboxExtension::HandleArray::size() const { return 0; }    
 inline const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) const { return m_emptyHandle; }
 inline SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) { return m_emptyHandle; }

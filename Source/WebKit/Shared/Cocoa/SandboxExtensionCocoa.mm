@@ -187,6 +187,11 @@ void SandboxExtension::HandleArray::allocate(size_t size)
     m_data.resize(size);
 }
 
+void SandboxExtension::HandleArray::append(Handle&& handle)
+{
+    m_data.append(WTFMove(handle));
+}
+
 SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i)
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < m_data.size());
@@ -217,14 +222,14 @@ Optional<SandboxExtension::HandleArray> SandboxExtension::HandleArray::decode(IP
     decoder >> size;
     if (!size)
         return WTF::nullopt;
+
     SandboxExtension::HandleArray handles;
-    handles.allocate(*size);
     for (size_t i = 0; i < *size; ++i) {
         Optional<SandboxExtension::Handle> handle;
         decoder >> handle;
         if (!handle)
             return WTF::nullopt;
-        handles[i] = WTFMove(*handle);
+        handles.append(WTFMove(*handle));
     }
     return WTFMove(handles);
 }
