@@ -1,5 +1,81 @@
 2021-08-10  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r279287. rdar://problem/80635807
+
+    Explicitly invalidate WKFullScreenViewController after a video exits fullscreen
+    https://bugs.webkit.org/show_bug.cgi?id=227372
+    
+    Reviewed by Eric Carlson.
+    
+    Since `WKFullScreenWindowController` owns `WKFullScreenViewController`,
+    we had better let `WKFullScreenWindowController` manage the life cycle
+    of `WKFullScreenViewController`.
+    
+    * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+    * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+    (-[WKFullScreenViewController initWithWebView:]):
+    (-[WKFullScreenViewController invalidate]):
+    (-[WKFullScreenViewController dealloc]):
+    (-[WKFullScreenViewController showUI]):
+    (-[WKFullScreenViewController hideUI]):
+    (-[WKFullScreenViewController videoControlsManagerDidChange]):
+    (-[WKFullScreenViewController setAnimatingViewAlpha:]):
+    (-[WKFullScreenViewController setPrefersStatusBarHidden:]):
+    (-[WKFullScreenViewController setPrefersHomeIndicatorAutoHidden:]):
+    (-[WKFullScreenViewController setPlaying:]):
+    (-[WKFullScreenViewController setPictureInPictureActive:]):
+    (-[WKFullScreenViewController setAnimating:]):
+    (-[WKFullScreenViewController _manager]):
+    (-[WKFullScreenViewController _effectiveFullscreenInsets]):
+    (-[WKFullScreenViewController _cancelAction:]):
+    (-[WKFullScreenViewController _togglePiPAction:]):
+    (-[WKFullScreenViewController _touchDetected:]):
+    (-[WKFullScreenViewController _statusBarFrameDidChange:]):
+    (-[WKFullScreenViewController _updateWebViewFullscreenInsets]):
+    (-[WKFullScreenViewController _showPhishingAlert]):
+    * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+    (-[WKFullScreenWindowController _completedExitFullScreen]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@279287 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-25  Peng Liu  <peng.liu6@apple.com>
+
+            Explicitly invalidate WKFullScreenViewController after a video exits fullscreen
+            https://bugs.webkit.org/show_bug.cgi?id=227372
+
+            Reviewed by Eric Carlson.
+
+            Since `WKFullScreenWindowController` owns `WKFullScreenViewController`,
+            we had better let `WKFullScreenWindowController` manage the life cycle
+            of `WKFullScreenViewController`.
+
+            * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+            * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+            (-[WKFullScreenViewController initWithWebView:]):
+            (-[WKFullScreenViewController invalidate]):
+            (-[WKFullScreenViewController dealloc]):
+            (-[WKFullScreenViewController showUI]):
+            (-[WKFullScreenViewController hideUI]):
+            (-[WKFullScreenViewController videoControlsManagerDidChange]):
+            (-[WKFullScreenViewController setAnimatingViewAlpha:]):
+            (-[WKFullScreenViewController setPrefersStatusBarHidden:]):
+            (-[WKFullScreenViewController setPrefersHomeIndicatorAutoHidden:]):
+            (-[WKFullScreenViewController setPlaying:]):
+            (-[WKFullScreenViewController setPictureInPictureActive:]):
+            (-[WKFullScreenViewController setAnimating:]):
+            (-[WKFullScreenViewController _manager]):
+            (-[WKFullScreenViewController _effectiveFullscreenInsets]):
+            (-[WKFullScreenViewController _cancelAction:]):
+            (-[WKFullScreenViewController _togglePiPAction:]):
+            (-[WKFullScreenViewController _touchDetected:]):
+            (-[WKFullScreenViewController _statusBarFrameDidChange:]):
+            (-[WKFullScreenViewController _updateWebViewFullscreenInsets]):
+            (-[WKFullScreenViewController _showPhishingAlert]):
+            * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+            (-[WKFullScreenWindowController _completedExitFullScreen]):
+
+2021-08-10  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r279254. rdar://problem/80635931
 
     Crash in WebFrameLoaderClient::dispatchDidStartProvisionalLoad after provisionalLoader is gone.
