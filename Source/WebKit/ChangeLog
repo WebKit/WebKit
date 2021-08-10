@@ -1,5 +1,20 @@
 2021-08-10  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/79924198
+
+    2021-08-10  Russell Epstein  <repstein@apple.com>
+
+            Deploy smart pointers in EventHandler and UserInputBridge
+            https://bugs.webkit.org/show_bug.cgi?id=227481
+
+            Reviewed by Wenson Hsieh and Chris Dumez.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::contextMenuAtPointInWindow):
+            (WebKit::handleContextMenuEvent):
+
+2021-08-10  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r279287. rdar://problem/80635807
 
     Explicitly invalidate WKFullScreenViewController after a video exits fullscreen
