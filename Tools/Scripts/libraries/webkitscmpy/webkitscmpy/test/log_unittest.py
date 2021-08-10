@@ -20,13 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
 import os
-import shutil
-import tempfile
+import sys
 
-from datetime import datetime
-from webkitcorepy import OutputCapture, testing
+from webkitcorepy import OutputCapture, Terminal, testing
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import program, mocks
 
@@ -40,7 +37,7 @@ class TestLog(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_git(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
             self.assertEqual(-1, program.main(
                 args=('log', 'main'),
                 path=self.path,
@@ -81,7 +78,7 @@ Date:   Sat Oct 03 01:33:20 2020 +0000
         )
 
     def test_git_svn(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
             self.assertEqual(-1, program.main(
                 args=('log', 'main'),
                 path=self.path,
@@ -127,7 +124,7 @@ Date:   Sat Oct 03 01:33:20 2020 +0000
             )
 
     def test_git_svn_revision(self):
-        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
             self.assertEqual(-1, program.main(
                 args=('log', 'main', '--revision'),
                 path=self.path,
@@ -174,7 +171,7 @@ Date:   Sat Oct 03 01:33:20 2020 +0000
             )
 
     def test_svn(self):
-        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
             self.assertEqual(-1, program.main(
                 args=('log',),
                 path=self.path,

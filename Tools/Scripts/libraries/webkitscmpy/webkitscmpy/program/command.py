@@ -27,6 +27,7 @@ import subprocess
 import sys
 import time
 
+from webkitcorepy import Terminal
 from webkitscmpy.commit import Commit
 from whichcraft import which
 
@@ -110,32 +111,35 @@ class FilteredCommand(object):
             repository.cache = repository.Cache(repository)
 
         # If we're a terminal, rely on 'more' to display output
-        if sys.stdin.isatty() and not isinstance(args, list) and file:
+        if Terminal.isatty(sys.stdin) and not isinstance(args, list) and file:
             environ = os.environ
             environ['PYTHONPATH'] = ':'.join(sys.path)
 
             child = subprocess.Popen(
-                [sys.executable, file, repository.root_path, args.representation] + args.args,
+                [sys.executable, file, repository.root_path, args.representation, 'isatty' if Terminal.isatty(sys.stdout) else 'notatty'] + args.args,
                 env=environ,
                 cwd=os.getcwd(),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            more = subprocess.Popen([which('more')] + ['-F'] if platform.system() == 'Darwin' else [], stdin=child.stdout)
+            more = subprocess.Popen([which('more')] + ['-F', '-R'] if platform.system() == 'Darwin' else [], stdin=child.stdout)
 
             try:
                 while more.poll() is None and not child.poll():
                     time.sleep(0.25)
             finally:
-                child.kill()
-                more.kill()
+                if child.returncode is None:
+                    child.kill()
+                if more.returncode is None:
+                    more.kill()
                 child_error = child.stderr.read()
                 if child_error:
-                    sys.stderr.buffer.write(b'\n' + child_error)
+                    (sys.stderr.buffer if sys.version_info > (3, 0) else sys.stderr).write(b'\n' + child_error)
 
             return child.returncode
 
-        return FilteredCommand.main(args, repository, command=cls.name, **kwargs)
+        with Terminal.override_atty(sys.stdout, isatty=kwargs.get('isatty')), Terminal.override_atty(sys.stderr, isatty=kwargs.get('isatty')):
+            return FilteredCommand.main(args, repository, command=cls.name, **kwargs)
 
     @classmethod
     def main(cls, args, repository, command=None, representation=None, **kwargs):
@@ -234,7 +238,13 @@ class FilteredCommand(object):
                     line,
                 )
                 if header != line:
-                    sys.stdout.write(header)
+                    with Terminal.Style(color=Terminal.Text.yellow, style=Terminal.Text.bold).apply(sys.stdout):
+                        sys.stdout.write(' '.join(header.split(' ')[:2]))
+
+                    sys.stdout.write(' ')
+                    with Terminal.Style(color=Terminal.Text.red).apply(sys.stdout):
+                        sys.stdout.write(' '.join(header.split(' ')[2:]))
+
                     line = log_output.stdout.readline()
                     continue
 
@@ -257,6 +267,8 @@ class FilteredCommand(object):
 
         finally:
             if not log_output.returncode:
-                sys.stderr.write(log_output.stderr.read())
-            log_output.kill()
+                with Terminal.Style(color=Terminal.Text.red).apply(sys.stderr):
+                    sys.stderr.write(log_output.stderr.read())
+            if log_output.returncode is None:
+                log_output.kill()
         return log_output.returncode

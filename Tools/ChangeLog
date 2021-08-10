@@ -1,3 +1,38 @@
+2021-08-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Color `log` output
+        https://bugs.webkit.org/show_bug.cgi?id=228662
+        <rdar://problem/81344181>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, export Terminal.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/terminal.py: Added.
+        (Terminal):
+        (Terminal.assert_writeable_stream): Assert that the provided object is a writable stream.
+        (Terminal.supports_color): Check if the provided file supports colored output.
+        (Terminal.isatty): Check if a stream is an atty, both according to the stream itself and our override.
+        (Terminal.override_atty): Allow callers to override and declare explicitly if a stream is an atty.
+        (Terminal.Text): Group text colors and styles.
+        (Terminal.Style): Group functions modifying style of a stream.
+        (Terminal.Style.enabled): Check if styled printing is enabled on a stream.
+        (Terminal.Style.disable): Disable styled printing on a stream.
+        (Terminal.Style.enable): Enable styled printing on a stream.
+        (Terminal.Style.is_styled): Check if a stream is currently styled.
+        (Terminal.Style.__init__): Construct a text style.
+        (Terminal.Style.__repr__): Output the terminal characters styling a stream.
+        (Terminal.Style.set): Apply style to a stream.
+        (Terminal.Style.apply): Apply style to a stream, unapply when exiting context.
+        * Scripts/libraries/webkitscmpy/setup.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/blame.py: Pass isatty to child process.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.pager): Pass isatty to child process, ask 'more' to display colors.
+        (FilteredCommand.main): Color header and error.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/log.py: Pass isatty to child process.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/log_unittest.py: Override atty behavior.
+
 2021-08-10  Ben Nham  <nham@apple.com>
 
         Fix nested resource load tracepoints

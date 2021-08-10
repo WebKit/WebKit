@@ -24,6 +24,7 @@
 
 import sys
 
+from webkitcorepy import Terminal
 from webkitscmpy import local
 from webkitscmpy.program.command import FilteredCommand
 
@@ -34,12 +35,15 @@ class Log(FilteredCommand):
 
     @classmethod
     def main(cls, args, repository, **kwargs):
+        config = getattr(repository, 'config', lambda: {})()
+        Terminal.colors = config.get('color.diff', config.get('color.ui', 'auto')) != 'false'
         return cls.pager(args, repository, file=__file__, **kwargs)
 
 
 if __name__ == '__main__':
     sys.exit(Log.main(
-        sys.argv[3:],
+        sys.argv[4:],
         local.Scm.from_path(path=sys.argv[1], cached=True),
         representation=sys.argv[2],
+        isatty=sys.argv[3] == 'isatty',
     ))

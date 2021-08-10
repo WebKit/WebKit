@@ -39,7 +39,8 @@ class Blame(FilteredCommand):
 
 if __name__ == '__main__':
     sys.exit(Blame.main(
-        sys.argv[3:],
+        sys.argv[4:],
         local.Scm.from_path(path=sys.argv[1], cached=True),
         representation=sys.argv[2],
+        isatty=sys.argv[3] == 'isatty',
     ))
