@@ -1913,9 +1913,17 @@ bool FrameSelection::contains(const LayoutPoint& point) const
 
     HitTestResult result(point);
     m_document->hitTest(HitTestRequest(), result);
-    Node* innerNode = result.innerNode();
+    RefPtr innerNode = result.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;
+
+    if (HTMLElement::isInsideImageOverlay(*range) && HTMLElement::isInsideImageOverlay(*innerNode)) {
+        for (auto quad : RenderObject::absoluteTextQuads(*range, { RenderObject::BoundingRectBehavior::UseSelectionHeight })) {
+            if (!quad.isEmpty() && quad.containsPoint(point))
+                return true;
+        }
+        return false;
+    }
 
     return WebCore::contains<ComposedTree>(*range, makeBoundaryPoint(innerNode->renderer()->positionForPoint(result.localPoint(), nullptr)));
 }

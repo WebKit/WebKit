@@ -1,3 +1,39 @@
+2021-08-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Unable to start drag on image when the first piece of text inside the image is selected
+        https://bugs.webkit.org/show_bug.cgi?id=228967
+        rdar://80471465
+
+        Reviewed by Tim Horton.
+
+        When selecting text inside an image element using Live Text, if the text selection contains the very first
+        character (in DOM order) that appears in the image element's shadow root, the user will be unable to start an
+        image drag on the same image by clicking another part of the image that does not contain Live Text. This happens
+        because `DragController::startDrag` to handle the drag as a selection drag rather than an image drag, which (in
+        turn) happens because `DragController::draggableElement` computes a drag source type of
+        `DragSourceAction::Selection`.
+
+        This occurs because `FrameSelection::contains(const LayoutPoint&)` returns `true` for any point inside the
+        shadow root of an image element with Live Text that does NOT hit-test to a text node, because we end up hit-
+        testing to the image overlay container `div` as our `innerNode`, which means that the DOM position for the given
+        point is going to be at the first position inside the image overlay container. Since this canonicalizes to the
+        beginning of the first text node (in DOM order) inside the image overlay, if that first text node happens to be
+        selected, we'll end up believing that the layout point (which is not over any text inside the image) is inside
+        the selection.
+
+        To avoid this, we make a minor adjustment to the logic in `FrameSelection::contains`, so that we handle text
+        inside image overlays by mapping the selected text range to absolute quads, and then checking whether the given
+        point (in absolute coordinates) is contained in any of those quads.
+
+        While we could theoretically use this approach for all selections, it's both more expensive than a hit-test and
+        might result in compatibility issues, so we just limit it to the case where we know (a-prior) that all
+        selectable text is arbitrarily positioned using transforms.
+
+        This change fixes an API test that currently fails on macOS: DragAndDropTests.DragElementWithImageOverlay
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains const):
+
 2021-08-10  Chris Dumez  <cdumez@apple.com>
 
         Meta HTTP refresh should not navigate if document has sandboxed automatic features browsing context flag set
