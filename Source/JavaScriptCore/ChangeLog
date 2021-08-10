@@ -1,3 +1,14 @@
+2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=228908
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/generate-derived-sources.sh:
+        Quote the use of CC so that future copy-paste does not make the same mistake
+        as this bug.
+
 2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] super-Latin1 white space and line terminator after regular expression literal misinterpreted as flags

@@ -12,11 +12,11 @@ export WebCore="WebCore"
 /bin/ln -sfh "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" JavaScriptCorePrivateHeaders
 export JavaScriptCore_SCRIPTS_DIR="JavaScriptCorePrivateHeaders"
 
-if [ ! $CC ]; then
+if [ ! "$CC" ]; then
     export CC="`xcrun -find clang`"
 fi
 
-if [ ! $GPERF ]; then
+if [ ! "$GPERF" ]; then
     export GPERF="`xcrun -find gperf`"
 fi
 

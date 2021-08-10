@@ -1,3 +1,15 @@
+2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=228908
+
+        Reviewed by Per Arne Vollan.
+
+        * DumpRenderTree/Scripts/generate-derived-sources.sh:
+        * WebKitTestRunner/Scripts/generate-derived-sources.sh:
+        Quote the use of CC so that future copy-paste does not make the same mistake
+        as this bug.
+
 2021-08-10  Devin Rousso  <drousso@apple.com>
 
         [macOS] REGRESSION(r278850): modifying `playbackRate` via JS on a TouchBar mac only sometimes works and also causes the `defaultPlaybackRate` to change

@@ -1,3 +1,27 @@
+2021-08-10  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Scripts/generate-derived-sources.sh: line 19: [: binary operator expected while building Source/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=228908
+
+        Reviewed by Per Arne Vollan.
+
+        Change variable references in the sh script to quoted "$VAR".
+        [ -z $VAR ] with VAR="a b" would mean
+        [ -z a b ].
+         -z is unary operator, so the expression b would be in position
+        where test would expect an operator.
+        The correct form is [ -z "a b" ].
+
+        In general, sh scripts usually refer to variables using quotes.
+
+        * Scripts/generate-derived-sources.sh:
+        Fix a bug where multiple space separated paths in
+        WEBKITADDITIONS_HEADER_SEARCH_PATHS would cause
+        test expression to receive arguments after the -z arg.
+
+        Quote the use of CC so future copy-paste does not make the same mistake
+        as this bug.
+
 2021-08-10  Peng Liu  <peng.liu6@apple.com>
 
         RemoteImageDecoderAVF::clearFrameBufferCache() uses a weak pointer without checking its validity

@@ -10,7 +10,7 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner"
 export WebKitTestRunner="${SRCROOT}"
 export WebCoreScripts="${WEBCORE_PRIVATE_HEADERS_DIR}"
 
-if [ ! $CC ]; then
+if [ ! "$CC" ]; then
     export CC="`xcrun -find clang`"
 fi
 
