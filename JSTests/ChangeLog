@@ -1,5 +1,55 @@
 2021-08-10  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r280507. rdar://problem/79730568
+
+    Improve OSR entry into Wasm loops with arguments
+    https://bugs.webkit.org/show_bug.cgi?id=228595
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    Just a straightforward test that counts to 1M in a loop, to exercise both OSR entry and a loop with an argument at the same time.
+    100k iterations was not enough to reliably complete an OSR entry.
+    
+    * wasm/stress/osr-entry-with-loop-arguments.js: Added.
+    (async test):
+    
+    Source/JavaScriptCore:
+    
+    This patch has two parts:
+    - improve the Wasm OSR code to fully support loop arguments (just some plumbing to make sure that the right values are propagated)
+    - improve the B3 validator to fix a hole I noticed while writing the first part: we were not detecting code that introduce Upsilons in the wrong blocks.
+      Naturally, this caused hard to debug issues, as B3 has no well-defined semantics for a Phi that is reached before the corresponding Upsilon(s).
+    
+    * b3/B3Validate.cpp:
+    * wasm/WasmAirIRGenerator.cpp:
+    (JSC::Wasm::AirIRGenerator::emitLoopTierUpCheck):
+    (JSC::Wasm::AirIRGenerator::addLoop):
+    * wasm/WasmB3IRGenerator.cpp:
+    (JSC::Wasm::B3IRGenerator::emitLoopTierUpCheck):
+    (JSC::Wasm::B3IRGenerator::addLoop):
+    * wasm/WasmLLIntGenerator.cpp:
+    (JSC::Wasm::LLIntGenerator::addLoop):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280507 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-30  Robin Morisset  <rmorisset@apple.com>
+
+            Improve OSR entry into Wasm loops with arguments
+            https://bugs.webkit.org/show_bug.cgi?id=228595
+
+            Reviewed by Yusuke Suzuki.
+
+            Just a straightforward test that counts to 1M in a loop, to exercise both OSR entry and a loop with an argument at the same time.
+            100k iterations was not enough to reliably complete an OSR entry.
+
+            * wasm/stress/osr-entry-with-loop-arguments.js: Added.
+            (async test):
+
+2021-08-10  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275472. rdar://problem/81710596
 
     DFG arity fixup nodes should exit to the caller's call opcode
