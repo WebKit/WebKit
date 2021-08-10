@@ -45,9 +45,9 @@ public:
     ExceptionOr<void> setHref(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
     String href() const;
 
-    ExceptionOr<void> assign(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
-    ExceptionOr<void> replace(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
-    void reload(DOMWindow& incumbentWindow);
+    ExceptionOr<void> assign(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
+    ExceptionOr<void> replace(DOMWindow& activeWindow, DOMWindow& firstWindow, const String&);
+    void reload(DOMWindow& activeWindow);
 
     ExceptionOr<void> setProtocol(DOMWindow& incumbentWindow, DOMWindow& firstWindow, const String&);
     String protocol() const;
