@@ -1,3 +1,13 @@
+2021-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r272900): Nullptr crash in ComposedTreeIterator::traverseNextInShadowTree() via ShadowRoot::hostChildElementDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=222720
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/html/details-set-inner-text-crash-expected.txt: Added.
+        * fast/html/details-set-inner-text-crash.html: Added.
+
 2021-04-15  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(Safari 14): iframe with blob url does not work with sandboxing

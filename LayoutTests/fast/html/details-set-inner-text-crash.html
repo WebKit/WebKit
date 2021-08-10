@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test() {
+    x4.click();
+    x4.innerText = "PASS";
+}
+
+function on_details_click() {
+    x4.prepend(document.getElementById("x43"));
+    x70.addEventListener("DOMNodeRemoved", on_details_click);
+}
+</script>
+<body onload="test()">
+<details id="x4" open="" onclick="on_details_click()">
+<summary id="x70" hidden="">
