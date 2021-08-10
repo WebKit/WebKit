@@ -1,3 +1,16 @@
+2021-08-10  Cameron McCormack  <heycam@apple.com>
+
+        Remove unused ColorSync SPI
+        https://bugs.webkit.org/show_bug.cgi?id=228306
+        <rdar://problem/81136866>
+
+        Reviewed by Darin Adler.
+
+        We now use -[NSScreen canRepresentDisplayGamut:displayGamut] and
+        kMGQHasExtendedColorDisplay.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2021-08-09  Said Abou-Hallawa  <said@apple.com>
 
         Ease sandboxing restrictions for Mail to allow HEIF image decoding

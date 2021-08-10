@@ -32,10 +32,6 @@
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
-#if PLATFORM(MAC)
-#include <ColorSync/ColorSync.h>
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
@@ -45,7 +41,6 @@
 #include <CoreGraphics/CGStylePrivate.h>
 
 #if PLATFORM(MAC)
-#include <ColorSync/ColorSyncPriv.h>
 #include <CoreGraphics/CGAccessibility.h>
 #endif
 
@@ -349,7 +344,6 @@ CGError CGSCopyConnectionProperty(CGSConnectionID, CGSConnectionID ownerCid, CFS
 CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
 CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
 CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
-bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
 
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
