@@ -281,9 +281,20 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     if (!test.options().useFlexibleViewport())
         return;
 
-    CGRect screenBounds = [UIScreen mainScreen].bounds;
+    UIWindowScene *scene = webView.window.windowScene;
+    CGRect sceneBounds = [UIScreen mainScreen].bounds;
+    if (scene.sizeRestrictions) {
+        // For platforms that support resizeable scenes, resize to match iPad 5th Generation,
+        // the default iPad device used for layout testing.
+        // We add the status bar in here because it is subtracted back out in viewRectForWindowRect.
+        static constexpr CGSize defaultTestingiPadViewSize = { 768, 1004 };
+        sceneBounds = CGRectMake(0, 0, defaultTestingiPadViewSize.width, defaultTestingiPadViewSize.height + CGRectGetHeight(UIApplication.sharedApplication.statusBarFrame));
+        scene.sizeRestrictions.minimumSize = sceneBounds.size;
+        scene.sizeRestrictions.maximumSize = sceneBounds.size;
+    }
+
     CGSize oldSize = webView.bounds.size;
-    mainWebView()->resizeTo(screenBounds.size.width, screenBounds.size.height, PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
+    mainWebView()->resizeTo(sceneBounds.size.width, sceneBounds.size.height, PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
     CGSize newSize = webView.bounds.size;
     
     if (!CGSizeEqualToSize(oldSize, newSize)) {

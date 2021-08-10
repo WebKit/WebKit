@@ -1,3 +1,18 @@
+2021-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Flexible viewport tests that dump the window size fail because it doesn't match iPad
+        https://bugs.webkit.org/show_bug.cgi?id=228964
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+        For platforms where we control the size of the window/scene, resize it
+        to match the chosen default testing iPad size (768x1024), but with the
+        default testing iPad's status bar subtracted out, and the current platform's
+        added in, so that the end result is a WKWebView of identical size to
+        one on the default testing iPad.
+
 2021-08-10  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Color `log` output
