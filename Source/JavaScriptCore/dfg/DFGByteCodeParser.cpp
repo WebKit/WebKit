@@ -746,15 +746,8 @@ private:
 
     NodeOrigin currentNodeOrigin()
     {
-        CodeOrigin semantic;
-        CodeOrigin forExit;
-
-        if (m_currentSemanticOrigin.isSet())
-            semantic = m_currentSemanticOrigin;
-        else
-            semantic = currentCodeOrigin();
-
-        forExit = currentCodeOrigin();
+        CodeOrigin semantic = m_currentSemanticOrigin.isSet() ? m_currentSemanticOrigin : currentCodeOrigin();
+        CodeOrigin forExit = m_currentExitOrigin.isSet() ? m_currentExitOrigin : currentCodeOrigin();
 
         return NodeOrigin(semantic, forExit, m_exitOK);
     }
@@ -1144,6 +1137,8 @@ private:
     BytecodeIndex m_currentIndex;
     // The semantic origin of the current node if different from the current Index.
     CodeOrigin m_currentSemanticOrigin;
+    // The exit origin of the current node if different from the current Index.
+    CodeOrigin m_currentExitOrigin;
     // True if it's OK to OSR exit right now.
     bool m_exitOK { false };
 
@@ -1711,6 +1706,31 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
         calleeVariable->mergeShouldNeverUnbox(true);
     }
 
+    // We want to claim the exit origin for the arity fixup nodes to be in the caller rather than the callee because
+    // otherwise phantom insertion phase will think the virtual registers in the callee's header have been alive from the last
+    // time they were set. For example:
+
+    // --> foo: loc10 is a local in foo.
+    //    ...
+    //    1: MovHint(loc10)
+    //    2: SetLocal(loc10)
+    // <-- foo: loc10 ten is now out of scope for the InlineCallFrame of the caller.
+    // ...
+    // --> bar: loc10 is an argument to bar and needs arity fixup.
+    //    ... // All of these nodes are ExitInvalid
+    //    3: MovHint(loc10, ExitInvalid)
+    //    4: SetLocal(loc10, ExitInvalid)
+    //    ...
+
+    // In this example phantom insertion phase will think @3 is always alive because it's in the header of bar. So,
+    // it will think we are about to kill the old value, as loc10 is in the header of bar and therefore always live, and
+    // thus need a Phantom. That Phantom, however, may be inserted  into the caller's NodeOrigin (all the nodes in bar
+    // before @3 are ExitInvalid), which doesn't know about loc10. If we move all of the arity fixup nodes into the
+    // caller's exit origin, forAllKilledOperands, which is how phantom insertion phase decides where phantoms are needed,
+    // will no longer say loc10 is always alive.
+    CodeOrigin oldExitOrigin = m_currentExitOrigin;
+    m_currentExitOrigin = currentCodeOrigin();
+
     InlineStackEntry* callerStackTop = m_inlineStackTop;
     InlineStackEntry inlineStackEntry(this, codeBlock, codeBlock, callee.function(), result,
         inlineCallFrameStart.virtualRegister(), argumentCountIncludingThis, kind, continuationBlock);
@@ -1813,6 +1833,8 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
         // At this point, it's OK to OSR exit because we finished setting up
         // our callee's frame. We emit an ExitOK below.
     }
+
+    m_currentExitOrigin = oldExitOrigin;
 
     // At this point, it's again OK to OSR exit.
     m_exitOK = true;

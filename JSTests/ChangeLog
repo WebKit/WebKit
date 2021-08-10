@@ -1,3 +1,71 @@
+2021-08-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275472. rdar://problem/81710596
+
+    DFG arity fixup nodes should exit to the caller's call opcode
+    https://bugs.webkit.org/show_bug.cgi?id=223278
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/dfg-arity-fixup-uses-callers-exit-origin.js: Added.
+    (main.v22):
+    (main.v30):
+    (main.try.v40):
+    (main.try.v47):
+    (main.try.v56):
+    (main.):
+    (main):
+    
+    Source/JavaScriptCore:
+    
+    Right now when we do arity fixup in the DFG we model it in the
+    same way that it executes, which means all the nodes are part of
+    the callee. Unfortunately, this causes PhantomInsertionPhase to
+    think those nodes could be replacing previously defined
+    VirtualRegisters as they are part of the callee's header (always
+    alive). When PhantomInsertionPhase then inserts a Phantom it will
+    put that node in the caller's frame as that's the first ExitOK
+    node. The caller however may have no knowledge of that
+    VirtualRegister though. For example:
+    
+    --> foo: loc10 is a local in foo.
+        ...
+        1: MovHint(loc10)
+        2: SetLocal(loc10)
+    <-- foo // loc10 ten is now out of scope for the InlineCallFrame of the caller.
+    ...
+    // Phantom will be inserted here refering to loc10, which doesn't make sense.
+    --> bar // loc10 is an argument to bar and needs arity fixup.
+        ... // All of these nodes are ExitInvalid
+        3: MovHint(loc10, ExitInvalid)
+        4: SetLocal(loc10, ExitInvalid)
+        ...
+    
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::currentNodeOrigin):
+    (JSC::DFG::ByteCodeParser::inlineCall):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275472 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-05  Keith Miller  <keith_miller@apple.com>
+
+            DFG arity fixup nodes should exit to the caller's call opcode
+            https://bugs.webkit.org/show_bug.cgi?id=223278
+
+            Reviewed by Saam Barati.
+
+            * stress/dfg-arity-fixup-uses-callers-exit-origin.js: Added.
+            (main.v22):
+            (main.v30):
+            (main.try.v40):
+            (main.try.v47):
+            (main.try.v56):
+            (main.):
+            (main):
+
 2021-06-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r278819. rdar://problem/79355258
