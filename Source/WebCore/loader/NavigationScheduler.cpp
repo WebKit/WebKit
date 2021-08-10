@@ -167,8 +167,9 @@ private:
 
 class ScheduledRedirect : public ScheduledURLNavigation {
 public:
-    ScheduledRedirect(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
+    ScheduledRedirect(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, LockHistory lockHistory, LockBackForwardList lockBackForwardList, IsMetaRefresh isMetaRefresh)
         : ScheduledURLNavigation(initiatingDocument, delay, securityOrigin, url, String(), lockHistory, lockBackForwardList, false, false)
+        , m_isMetaRefresh(isMetaRefresh)
     {
         clearUserGesture();
     }
@@ -180,6 +181,13 @@ public:
 
     void fire(Frame& frame) override
     {
+        if (m_isMetaRefresh == IsMetaRefresh::Yes) {
+            if (auto document = frame.document(); document && document->isSandboxed(SandboxAutomaticFeatures)) {
+                document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Unable to do meta refresh due to sandboxing"_s);
+                return;
+            }
+        }
+
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
         bool refresh = equalIgnoringFragmentIdentifier(frame.document()->url(), url());
@@ -194,6 +202,9 @@ public:
 
         frame.loader().changeLocation(WTFMove(frameLoadRequest));
     }
+
+private:
+    IsMetaRefresh m_isMetaRefresh;
 };
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
@@ -407,7 +418,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
     return NavigationDisabler::isNavigationAllowed(m_frame);
 }
 
-void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double delay, const URL& url)
+void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double delay, const URL& url, IsMetaRefresh isMetaRefresh)
 {
     if (!shouldScheduleNavigation(url))
         return;
@@ -419,7 +430,7 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
     // We want a new back/forward list item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay()) {
         auto lockBackForwardList = delay <= 1 ? LockBackForwardList::Yes : LockBackForwardList::No;
-        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, &m_frame.document()->securityOrigin(), url, LockHistory::Yes, lockBackForwardList));
+        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, &m_frame.document()->securityOrigin(), url, LockHistory::Yes, lockBackForwardList, isMetaRefresh));
     }
 }
 

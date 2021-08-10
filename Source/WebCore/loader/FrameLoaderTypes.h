@@ -69,6 +69,7 @@ enum class FrameLoadType : uint8_t {
     ReloadExpiredOnly
 };
 
+enum class IsMetaRefresh : bool { No, Yes };
 enum class WillContinueLoading : bool { No, Yes };
 
 class PolicyCheckIdentifier {

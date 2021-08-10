@@ -3736,7 +3736,7 @@ void Document::setHasElementUsingStyleBasedEditability()
     m_hasElementUsingStyleBasedEditability = true;
 }
 
-void Document::processHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead)
+void Document::processMetaHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead)
 {
     ASSERT(!equiv.isNull());
     ASSERT(!content.isNull());
@@ -3781,7 +3781,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
 
     case HTTPHeaderName::Refresh:
         if (frame)
-            frame->loader().scheduleRefreshIfNeeded(*this, content);
+            frame->loader().scheduleRefreshIfNeeded(*this, content, IsMetaRefresh::Yes);
         break;
 
     case HTTPHeaderName::SetCookie:

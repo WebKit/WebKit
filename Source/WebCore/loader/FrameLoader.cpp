@@ -713,7 +713,7 @@ void FrameLoader::receivedFirstData()
 
     LinkLoader::loadLinksFromHeader(documentLoader.response().httpHeaderField(HTTPHeaderName::Link), document.url(), document, LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
-    scheduleRefreshIfNeeded(document, documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh));
+    scheduleRefreshIfNeeded(document, documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh), IsMetaRefresh::No);
 }
 
 void FrameLoader::setOutgoingReferrer(const URL& url)
@@ -2968,14 +2968,14 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
         request.setIsAppInitiated(m_frame.mainFrame().loader().documentLoader()->lastNavigationWasAppInitiated());
 }
 
-void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content)
+void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content, IsMetaRefresh isMetaRefresh)
 {
     double delay = 0;
     String urlString;
     if (parseMetaHTTPEquivRefresh(content, delay, urlString)) {
         auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
         if (!completedURL.protocolIsJavaScript())
-            m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL);
+            m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL, isMetaRefresh);
         else {
             String message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
             document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);

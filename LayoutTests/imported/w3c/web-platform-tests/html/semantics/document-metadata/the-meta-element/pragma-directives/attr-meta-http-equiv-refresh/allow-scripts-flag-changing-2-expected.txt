@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+CONSOLE MESSAGE: Unable to do meta refresh due to sandboxing
 
-FAIL Meta refresh of the original iframe is not blocked if moved into a sandboxed iframe TypeError: Argument 1 ('node') to Node.appendChild must be an instance of Node
+PASS Meta refresh of the original iframe is not blocked if moved into a sandboxed iframe
 

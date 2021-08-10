@@ -1,3 +1,34 @@
+2021-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Meta HTTP refresh should not navigate if document has sandboxed automatic features browsing context flag set
+        https://bugs.webkit.org/show_bug.cgi?id=228965
+
+        Reviewed by Darin Adler.
+
+        Meta HTTP refresh should not navigate if document has sandboxed automatic features browsing context flag set:
+        - https://html.spec.whatwg.org/multipage/semantics.html#shared-declarative-refresh-steps (Step 13)
+
+        Firefox and Chrome already behave this way.
+
+        No new tests, rebaselined existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processMetaHttpEquiv):
+        * dom/Document.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::scheduleRefreshIfNeeded):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledRedirect::ScheduledRedirect):
+        (WebCore::NavigationScheduler::scheduleRedirect):
+        * loader/NavigationScheduler.h:
+
 2021-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy some more smart pointers in DOMWindow.cpp

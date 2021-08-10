@@ -181,7 +181,7 @@ void HTMLMetaElement::process()
 
     const AtomString& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);
     if (!httpEquivValue.isNull())
-        document().processHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document().head()));
+        document().processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document().head()));
 }
 
 const AtomString& HTMLMetaElement::content() const

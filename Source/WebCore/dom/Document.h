@@ -892,7 +892,7 @@ public:
     // when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
     // tag. This enables scripts to use meta tags to perform refreshes and set expiry dates in addition to them being
     // specified in an HTML file.
-    void processHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead);
+    void processMetaHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead);
 
 #if PLATFORM(IOS_FAMILY)
     void processFormatDetection(const String&);

@@ -54,7 +54,7 @@ public:
     bool redirectScheduledDuringLoad();
     bool locationChangePending();
 
-    void scheduleRedirect(Document& initiatingDocument, double delay, const URL&);
+    void scheduleRedirect(Document& initiatingDocument, double delay, const URL&, IsMetaRefresh);
     void scheduleLocationChange(Document& initiatingDocument, SecurityOrigin&, const URL&, const String& referrer, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes, CompletionHandler<void()>&& = [] { });
     void scheduleFormSubmission(Ref<FormSubmission>&&);
     void scheduleRefresh(Document& initiatingDocument);

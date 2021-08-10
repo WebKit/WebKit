@@ -1505,10 +1505,6 @@ webkit.org/b/191508 fast/css-grid-layout/crash-large-positions.html [ Skip ]
 # Flaky tests at import time
 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
 
-# Those WPT tests are flaky when failing.
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-1.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/allow-scripts-flag-changing-2.html [ Pass Failure ]
-
 # WPT tests for custom elements
 webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/Document-createElement-svg.svg [ Skip ]
 webkit.org/b/187800 imported/w3c/web-platform-tests/custom-elements/parser/parser-uses-create-an-element-for-a-token-svg.svg [ Skip ]
