@@ -130,9 +130,9 @@ void PlaybackSessionInterfaceAVKit::bufferedTimeChanged(double bufferedTime)
 
 void PlaybackSessionInterfaceAVKit::rateChanged(OptionSet<PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
-    [m_playerController setDefaultPlaybackRate:defaultPlaybackRate];
+    [m_playerController setDefaultPlaybackRate:defaultPlaybackRate fromJavaScript:YES];
     if (!playbackState.contains(PlaybackSessionModel::PlaybackState::Stalled))
-        [m_playerController setRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0.];
+        [m_playerController setRate:playbackState.contains(PlaybackSessionModel::PlaybackState::Playing) ? playbackRate : 0. fromJavaScript:YES];
 }
 
 void PlaybackSessionInterfaceAVKit::seekableRangesChanged(const TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)

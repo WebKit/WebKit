@@ -103,6 +103,9 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
 
 @property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *minTiming;
 @property (NS_NONATOMIC_IOSONLY, retain, readwrite) AVValueTiming *maxTiming;
+
+- (void)setDefaultPlaybackRate:(double)defaultPlaybackRate fromJavaScript:(BOOL)fromJavaScript;
+- (void)setRate:(double)rate fromJavaScript:(BOOL)fromJavaScript;
 @end
 
 #endif

@@ -97,8 +97,8 @@ void PlaybackSessionInterfaceMac::rateChanged(OptionSet<PlaybackSessionModel::Pl
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     auto isPlaying = playbackState.contains(PlaybackSessionModel::PlaybackState::Playing);
     WebPlaybackControlsManager* controlsManager = playBackControlsManager();
-    [controlsManager setRate:isPlaying ? playbackRate : 0.];
-    [controlsManager setDefaultPlaybackRate:defaultPlaybackRate];
+    [controlsManager setDefaultPlaybackRate:defaultPlaybackRate fromJavaScript:YES];
+    [controlsManager setRate:isPlaying ? playbackRate : 0. fromJavaScript:YES];
     [controlsManager setPlaying:isPlaying];
     updatePlaybackControlsManagerTiming(m_playbackSessionModel ? m_playbackSessionModel->currentTime() : 0, [[NSProcessInfo processInfo] systemUptime], playbackRate, isPlaying);
 #else

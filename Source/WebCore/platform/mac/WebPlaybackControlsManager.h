@@ -84,6 +84,9 @@ WEBCORE_EXPORT
 - (void)setLegibleMediaSelectionOptions:(const Vector<WebCore::MediaSelectionOption>&)options withSelectedIndex:(NSUInteger)selectedIndex;
 - (void)setAudioMediaSelectionIndex:(NSUInteger)selectedIndex;
 - (void)setLegibleMediaSelectionIndex:(NSUInteger)selectedIndex;
+
+- (void)setDefaultPlaybackRate:(double)defaultPlaybackRate fromJavaScript:(BOOL)fromJavaScript;
+- (void)setRate:(double)rate fromJavaScript:(BOOL)fromJavaScript;
 @end
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)

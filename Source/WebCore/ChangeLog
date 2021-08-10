@@ -1,3 +1,41 @@
+2021-08-10  Devin Rousso  <drousso@apple.com>
+
+        [macOS] REGRESSION(r278850): modifying `playbackRate` via JS on a TouchBar mac only sometimes works and also causes the `defaultPlaybackRate` to change
+        https://bugs.webkit.org/show_bug.cgi?id=228939
+        <rdar://problem/80427578>
+
+        Reviewed by Eric Carlson.
+
+        Test: VideoControlsManager.VideoControlsManagerDoesNotChangeValuesExposedToJavaScript
+
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::PlaybackSessionInterfaceMac::rateChanged):
+        Make sure to change the `defaultPlaybackRate` before the `rate` as otherwise the former will
+        override changes made to the latter (see r278850 (and r277203) for details as to why).
+
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager setDefaultPlaybackRate:]):
+        (-[WebPlaybackControlsManager setDefaultPlaybackRate:fromJavaScript:]): Added.
+        (-[WebPlaybackControlsManager setRate:]):
+        (-[WebPlaybackControlsManager setRate:fromJavaScript:]): Added.
+        Add a way to distinguish whether the change to the `rate`/`defaultPlaybackRate` came from JS
+        or some native call (e.g. AVKit). If the former, don't propagate the change to the playback
+        model (which eventually is the `HTMLMediaElement` in the WebProcess) as that's where the
+        value came from in the first place. Note that we still want to propagate the `rate` to the
+        `defaultPlaybackRate` (and vice versa when `isPlaying`) in the UIProcess for the reasons
+        described in r278850 (and r277203), but we don't want to expose it to JS.
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::rateChanged):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController setDefaultPlaybackRate:]):
+        (-[WebAVPlayerController setDefaultPlaybackRate:fromJavaScript:]): Added.
+        (-[WebAVPlayerController setRate:]):
+        (-[WebAVPlayerController setRate:fromJavaScript:]): Added.
+        Drive-by: r278850 was based r277203 (which added the above), so fix that code now too.
+
 2021-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Partially revert r280256 behavior change since it broke Facetime
