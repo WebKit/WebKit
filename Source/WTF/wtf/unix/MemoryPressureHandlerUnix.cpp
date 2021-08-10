@@ -30,6 +30,7 @@
 
 #include <malloc.h>
 #include <unistd.h>
+#include <wtf/Logging.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/text/WTFString.h>
@@ -41,8 +42,6 @@
 #include <sys/types.h>
 #include <sys/user.h>
 #endif
-
-#define LOG_CHANNEL_PREFIX Log
 
 namespace WTF {
 

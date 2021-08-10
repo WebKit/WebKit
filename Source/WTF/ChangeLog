@@ -1,5 +1,14 @@
 2021-08-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [GTK][WPE] REGRESSION(r280795): MemoryPressureHandlerUnix.cpp:45:28: error: ‘LogMemoryPressure’ was not declared in this scope
+        https://bugs.webkit.org/show_bug.cgi?id=228938
+
+        Unreviewed build fix.
+
+        * wtf/unix/MemoryPressureHandlerUnix.cpp:
+
+2021-08-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [WTF][Win] REGRESSION(r280795) error LNK2019: unresolved external symbol "class WTF::String __cdecl WTF::logLevelString(void)"
         https://bugs.webkit.org/show_bug.cgi?id=228937
         <rdar://problem/81722757>
