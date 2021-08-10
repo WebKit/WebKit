@@ -62,7 +62,7 @@ enum class NegotiatedLegacyTLS : bool { No, Yes };
 enum class AuthenticationChallengeDisposition : uint8_t;
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 
-class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver, public CanMakeWeakPtr<AuthenticationManager> {
+class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:

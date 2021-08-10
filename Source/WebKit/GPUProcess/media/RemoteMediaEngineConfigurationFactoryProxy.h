@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class RemoteMediaEngineConfigurationFactoryProxy final : private IPC::MessageReceiver, public CanMakeWeakPtr<RemoteMediaEngineConfigurationFactoryProxy> {
+class RemoteMediaEngineConfigurationFactoryProxy final : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaEngineConfigurationFactoryProxy();

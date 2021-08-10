@@ -45,8 +45,7 @@ struct RemoteMediaPlayerConfiguration;
 struct RemoteMediaPlayerProxyConfiguration;
 
 class RemoteMediaPlayerManagerProxy
-    : public CanMakeWeakPtr<RemoteMediaPlayerManagerProxy>
-    , private IPC::MessageReceiver
+    : public IPC::MessageReceiver
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:

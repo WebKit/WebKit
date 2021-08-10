@@ -52,8 +52,7 @@ namespace WebKit {
 class WebInspectorUI;
 
 class WebInspectorUIExtensionController
-    : public IPC::MessageReceiver
-    , public CanMakeWeakPtr<WebInspectorUIExtensionController> {
+    : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebInspectorUIExtensionController);
 public:

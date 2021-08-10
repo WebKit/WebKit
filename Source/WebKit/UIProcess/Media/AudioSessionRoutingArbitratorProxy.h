@@ -37,8 +37,7 @@ namespace WebKit {
 class WebProcessProxy;
 
 class AudioSessionRoutingArbitratorProxy
-    : public IPC::MessageReceiver
-    , public CanMakeWeakPtr<AudioSessionRoutingArbitratorProxy> {
+    : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AudioSessionRoutingArbitratorProxy(WebProcessProxy&);

@@ -49,7 +49,7 @@ namespace WebKit {
 
 class LayerHostingContext;
 
-class TiledCoreAnimationDrawingArea : public DrawingArea, public CanMakeWeakPtr<TiledCoreAnimationDrawingArea> {
+class TiledCoreAnimationDrawingArea : public DrawingArea {
 public:
     TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();

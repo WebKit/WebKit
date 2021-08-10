@@ -127,8 +127,7 @@ enum class ProcessSwapRequestedByClient : bool;
 
 class WebProcessPool final
     : public API::ObjectImpl<API::Object::Type::ProcessPool>
-    , public CanMakeWeakPtr<WebProcessPool>
-    , private IPC::MessageReceiver
+    , public IPC::MessageReceiver
 #if PLATFORM(MAC)
     , private PAL::SystemSleepListener::Client
 #endif

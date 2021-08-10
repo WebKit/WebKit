@@ -47,7 +47,7 @@ class RemoteLegacyCDMFactory;
 struct OverrideScreenDataForTesting;
 struct WebPageCreationParameters;
 
-class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public CanMakeWeakPtr<GPUProcessConnection>, IPC::Connection::Client {
+class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public IPC::Connection::Client {
 public:
     static Ref<GPUProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {

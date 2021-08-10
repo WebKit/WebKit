@@ -1,5 +1,83 @@
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
+        [IPC Hardening] Protect against bad input in WebProcessProxy::createSpeechRecognitionServer() and MessageReceiverMap
+        https://bugs.webkit.org/show_bug.cgi?id=222948
+        <rdar://problem/75191472>
+
+        Reviewed by Alex Christensen.
+
+        Update MessageReceiverMap so that:
+        1. Trying to remove a MessageReceiver that is not in the map does not
+           do dangerous things.
+        2. It stores weak pointers to the receivers instead of raw pointers. This
+           would avoid doing bad things when trying to remove a message receiver
+           that's already been destroyed.
+
+        Add a MESSAGE_CHECK() in WebProcessProxy::createSpeechRecognitionServer() to
+        make sure the identifier is not already in the map. There used to be a debug
+        assertion but we should MESSAGE_CHECK() too since the value is coming from
+        IPC.
+
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+        * GPUProcess/media/RemoteCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.h:
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaResourceManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * Platform/IPC/MessageReceiver.h:
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::addMessageReceiver):
+        (IPC::MessageReceiverMap::removeMessageReceiver):
+        (IPC::MessageReceiverMap::dispatchMessage):
+        (IPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/IPC/MessageReceiverMap.h:
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/AuxiliaryProcess.h:
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Inspector/WebInspectorProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.h:
+        * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.h:
+        * UIProcess/SpeechRecognitionServer.h:
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        * UIProcess/WebProcessProxy.h:
+        * WebAuthnProcess/WebAuthnProcess.h:
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebStorage/StorageAreaMap.h:
+
+2021-03-09  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] IPC::decode(Decoder& decoder, RetainPtr<CFDictionaryRef>&) should make sure keys & values aren't null
         https://bugs.webkit.org/show_bug.cgi?id=222980
 

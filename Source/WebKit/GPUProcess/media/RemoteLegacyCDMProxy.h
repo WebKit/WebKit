@@ -42,9 +42,8 @@ class SharedBuffer;
 namespace WebKit {
 
 class RemoteLegacyCDMProxy
-    : private IPC::MessageReceiver
-    , public WebCore::LegacyCDMClient
-    , public CanMakeWeakPtr<RemoteLegacyCDMProxy> {
+    : public IPC::MessageReceiver
+    , public WebCore::LegacyCDMClient {
 public:
     static std::unique_ptr<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
     ~RemoteLegacyCDMProxy();

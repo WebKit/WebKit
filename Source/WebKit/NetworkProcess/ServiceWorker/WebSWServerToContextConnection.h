@@ -52,7 +52,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class WebSWServerConnection;
 
-class WebSWServerToContextConnection: public CanMakeWeakPtr<WebSWServerToContextConnection>, public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWServerToContextConnection: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebCore::RegistrableDomain&&, WebCore::SWServer&);
     ~WebSWServerToContextConnection();

@@ -43,7 +43,7 @@ class RemoteCDMInstanceSessionProxy;
 class RemoteCDMProxy;
 struct RemoteCDMConfiguration;
 
-class RemoteCDMFactoryProxy final : private IPC::MessageReceiver, public CanMakeWeakPtr<RemoteCDMFactoryProxy> {
+class RemoteCDMFactoryProxy final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteCDMFactoryProxy(GPUConnectionToWebProcess&);

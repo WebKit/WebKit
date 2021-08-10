@@ -49,7 +49,7 @@ using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
 using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
-class SpeechRecognitionServer : public CanMakeWeakPtr<SpeechRecognitionServer>, public IPC::MessageReceiver, private IPC::MessageSender {
+class SpeechRecognitionServer : public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 #if ENABLE(MEDIA_STREAM)

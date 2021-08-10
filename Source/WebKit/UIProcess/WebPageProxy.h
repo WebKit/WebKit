@@ -431,13 +431,14 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #endif
 #if PLATFORM(MACCATALYST)
     , public EndowmentStateTracker::Client
-#else
-    , public CanMakeWeakPtr<WebPageProxy>
 #endif
     {
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
+
+    using IPC::MessageReceiver::weakPtrFactory;
+    using WeakValueType = IPC::MessageReceiver::WeakValueType;
 
     static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
 

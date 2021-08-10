@@ -82,6 +82,9 @@ public:
     static Ref<GPUConnectionToWebProcess> create(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier, PAL::SessionID, GPUProcessConnectionParameters&&);
     virtual ~GPUConnectionToWebProcess();
 
+    using WebCore::NowPlayingManager::Client::weakPtrFactory;
+    using WeakValueType = WebCore::NowPlayingManager::Client::WeakValueType;
+
     IPC::Connection& connection() { return m_connection.get(); }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
     GPUProcess& gpuProcess() { return m_gpuProcess.get(); }

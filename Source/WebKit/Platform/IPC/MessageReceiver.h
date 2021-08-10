@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 
@@ -33,7 +34,7 @@ class Connection;
 class Decoder;
 class Encoder;
 
-class MessageReceiver {
+class MessageReceiver : public CanMakeWeakPtr<MessageReceiver> {
 public:
     virtual ~MessageReceiver()
     {

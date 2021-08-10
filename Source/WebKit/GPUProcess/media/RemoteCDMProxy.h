@@ -49,7 +49,7 @@ class RemoteCDMInstanceProxy;
 struct RemoteCDMInstanceConfiguration;
 struct RemoteCDMConfiguration;
 
-class RemoteCDMProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<RemoteCDMProxy> {
+class RemoteCDMProxy : public IPC::MessageReceiver {
 public:
     static std::unique_ptr<RemoteCDMProxy> create(WeakPtr<RemoteCDMFactoryProxy>&&, std::unique_ptr<WebCore::CDMPrivate>&&);
     ~RemoteCDMProxy();

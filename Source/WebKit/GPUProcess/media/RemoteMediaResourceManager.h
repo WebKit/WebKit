@@ -49,8 +49,7 @@ namespace WebKit {
 class RemoteMediaResource;
 
 class RemoteMediaResourceManager
-    : public IPC::MessageReceiver
-    , public CanMakeWeakPtr<RemoteMediaResourceManager> {
+    : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteMediaResourceManager();

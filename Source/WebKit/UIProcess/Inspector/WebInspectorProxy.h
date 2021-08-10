@@ -84,7 +84,6 @@ class WebInspectorProxy
     : public API::ObjectImpl<API::Object::Type::Inspector>
     , public IPC::MessageReceiver
     , public Inspector::FrontendChannel
-    , public CanMakeWeakPtr<WebInspectorProxy>
 #if PLATFORM(WIN)
     , public WebCore::WindowMessageListener
 #endif

@@ -44,8 +44,7 @@ class WebPageProxy;
 
 class WebInspectorUIExtensionControllerProxy final
     : public RefCounted<WebInspectorUIExtensionControllerProxy>
-    , public IPC::MessageReceiver
-    , public CanMakeWeakPtr<WebInspectorUIExtensionControllerProxy> {
+    , public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebInspectorUIExtensionControllerProxy);
 public:

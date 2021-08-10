@@ -38,7 +38,7 @@ class CaptureDevice;
 
 namespace WebKit {
 
-class SpeechRecognitionRealtimeMediaSourceManager final : public CanMakeWeakPtr<SpeechRecognitionRealtimeMediaSourceManager>, public IPC::MessageReceiver, private IPC::MessageSender {
+class SpeechRecognitionRealtimeMediaSourceManager final : public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeechRecognitionRealtimeMediaSourceManager(Ref<IPC::Connection>&&);

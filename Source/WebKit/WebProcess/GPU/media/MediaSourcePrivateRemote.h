@@ -51,8 +51,7 @@ class SourceBufferPrivateRemote;
 
 class MediaSourcePrivateRemote final
     : public WebCore::MediaSourcePrivate
-    , public CanMakeWeakPtr<MediaSourcePrivateRemote>
-    , private IPC::MessageReceiver
+    , public IPC::MessageReceiver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif

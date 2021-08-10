@@ -36,7 +36,7 @@ namespace WebKit {
 
 class SampleBufferDisplayLayerManager;
 
-class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public CanMakeWeakPtr<SampleBufferDisplayLayer> {
+class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver {
 public:
     static std::unique_ptr<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, Client&);
     ~SampleBufferDisplayLayer();

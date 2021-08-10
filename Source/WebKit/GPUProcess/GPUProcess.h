@@ -49,7 +49,7 @@ struct GPUProcessSessionParameters;
 class LayerHostingContext;
 class RemoteAudioSessionProxyManager;
 
-class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess>, public CanMakeWeakPtr<GPUProcess> {
+class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
 public:
     explicit GPUProcess(AuxiliaryProcessInitializationParameters&&);

@@ -46,7 +46,7 @@ namespace WebKit {
 class StorageAreaImpl;
 class StorageNamespaceImpl;
 
-class StorageAreaMap final : private IPC::MessageReceiver, public CanMakeWeakPtr<StorageAreaMap> {
+class StorageAreaMap final : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StorageAreaMap(StorageNamespaceImpl&, Ref<WebCore::SecurityOrigin>&&);

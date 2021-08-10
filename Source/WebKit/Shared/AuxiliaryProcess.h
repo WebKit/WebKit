@@ -41,7 +41,7 @@ namespace WebKit {
 class SandboxInitializationParameters;
 struct AuxiliaryProcessInitializationParameters;
 
-class AuxiliaryProcess : protected IPC::Connection::Client, public IPC::MessageSender {
+class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
 
 public:
