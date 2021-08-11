@@ -174,12 +174,6 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     auto mediaQueries = MediaQuerySet::create(m_media, MediaQueryParserContext(document));
 
-    MediaQueryEvaluator screenEval("screen"_s, true);
-    MediaQueryEvaluator printEval("print"_s, true);
-    LOG(MediaQueries, "InlineStyleSheetOwner::createSheet evaluating queries");
-    if (!screenEval.evaluate(mediaQueries.get()) && !printEval.evaluate(mediaQueries.get()))
-        return;
-
     if (m_styleScope)
         m_styleScope->addPendingSheet(element);
 
