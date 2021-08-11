@@ -92,7 +92,7 @@ void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomStri
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
-    if (!isConnected())
+    if (!isInDocumentTree())
         return;
 
     if (name == nameAttr) {
@@ -152,8 +152,8 @@ void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode
 
 void HTMLMetaElement::process()
 {
-    // Changing a meta tag while it's not in the tree shouldn't have any effect on the document.
-    if (!isConnected())
+    // Changing a meta tag while it's not in the document tree shouldn't have any effect on the document.
+    if (!isInDocumentTree())
         return;
 
     const AtomString& contentValue = attributeWithoutSynchronization(contentAttr);

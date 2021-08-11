@@ -1,5 +1,27 @@
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
+        HTMLMetaElement http-equiv should not be processed in shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=228973
+
+        Reviewed by Geoffrey Garen.
+
+        HTMLMetaElement http-equiv should not be processed in shadow trees:
+        - https://html.spec.whatwg.org/#attr-meta-http-equiv
+        - https://html.spec.whatwg.org/multipage/infrastructure.html#insert-an-element-into-a-document
+        - https://dom.spec.whatwg.org/#in-a-document-tree
+
+        Firefox and Chrome already match the specification here.
+
+        No new tests, rebaselined existing test.
+
+        * dom/Node.h:
+        (WebCore::Node::isInDocumentTree const):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::attributeChanged):
+        (WebCore::HTMLMetaElement::process):
+
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
         HTMLStyleElement should create its style sheet even if its media attribute is invalid
         https://bugs.webkit.org/show_bug.cgi?id=228977
 

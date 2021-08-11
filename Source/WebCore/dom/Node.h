@@ -368,6 +368,9 @@ public:
     bool isInShadowTree() const { return hasNodeFlag(NodeFlag::IsInShadowTree); }
     bool isInTreeScope() const { return hasNodeFlag(NodeFlag::IsConnected) || hasNodeFlag(NodeFlag::IsInShadowTree); }
 
+    // https://dom.spec.whatwg.org/#in-a-document-tree
+    bool isInDocumentTree() const { return isConnected() && !isInShadowTree(); }
+
     bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
     unsigned countChildNodes() const;
