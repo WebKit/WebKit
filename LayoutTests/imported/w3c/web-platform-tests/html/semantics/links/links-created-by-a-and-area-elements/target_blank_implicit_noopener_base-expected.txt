@@ -3,14 +3,14 @@ Click me Click me Click me Click me Click me Click me Click me Click me
 PASS Anchor element with base target=_blank with rel=noopener
 PASS Anchor element with base target=_blank with rel=opener
 PASS Anchor element with base target=_blank with implicit rel=noopener
-FAIL Anchor element with base target=_blank with rel=opener+noopener assert_equals: expected false but got true
-FAIL Anchor element with base target=_blank with rel=noopener+opener assert_equals: expected false but got true
+PASS Anchor element with base target=_blank with rel=opener+noopener
+PASS Anchor element with base target=_blank with rel=noopener+opener
 PASS Anchor element with base target=_blank with rel=noreferrer
-FAIL Anchor element with base target=_blank with rel=opener+noreferrer assert_equals: expected false but got true
-FAIL Anchor element with base target=_blank with rel=noopener+opener+noreferrer assert_equals: expected false but got true
+PASS Anchor element with base target=_blank with rel=opener+noreferrer
+PASS Anchor element with base target=_blank with rel=noopener+opener+noreferrer
 PASS Area element with base target=_blank with rel=noopener
 PASS Area element with base target=_blank with rel=opener
 PASS Area element with base target=_blank with implicit rel=noopener
-FAIL Area element with base target=_blank with rel=opener+noopener assert_equals: expected false but got true
-FAIL Area element with base target=_blank with rel=noopener+opener assert_equals: expected false but got true
+PASS Area element with base target=_blank with rel=opener+noopener
+PASS Area element with base target=_blank with rel=noopener+opener
 

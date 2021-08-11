@@ -1,3 +1,20 @@
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
+        <a rel="opener noopener" target="_blank"> should create a window without opener
+        https://bugs.webkit.org/show_bug.cgi?id=229011
+
+        Reviewed by Alex Christensen.
+
+        <a rel="opener noopener" target="_blank"> should create a window without opener, as per:
+        - https://html.spec.whatwg.org/#get-an-element's-noopener (noopener is checked *before* opener).
+
+        Firefox and Chrome match the specification.
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2021-08-11  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r278392) performance.measure should never throw an InvalidAccessError for fetchStart

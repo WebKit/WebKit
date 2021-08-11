@@ -1,5 +1,17 @@
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
+        <a rel="opener noopener" target="_blank"> should create a window without opener
+        https://bugs.webkit.org/show_bug.cgi?id=229011
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener-expected.txt:
+        * web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base-expected.txt:
+
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
         Stop evaluating <script>s moved between Documents during fetching
         https://bugs.webkit.org/show_bug.cgi?id=202714
         <rdar://problem/56208425>
