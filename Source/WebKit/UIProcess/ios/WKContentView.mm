@@ -149,6 +149,7 @@
 
     uint64_t _pdfPrintCallbackID;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
+    Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
 }
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -313,7 +314,40 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     WebKit::WebProcessPool::statistics().wkViewCount--;
 
+    [self _removeTemporaryFilesIfNecessary];
+    
     [super dealloc];
+}
+
+- (void)_removeTemporaryFilesIfNecessary
+{
+    if (_temporaryURLsToDeleteWhenDeallocated.isEmpty())
+        return;
+    
+    auto deleteTemporaryFiles = makeBlockPtr([urls = std::exchange(_temporaryURLsToDeleteWhenDeallocated, { })] {
+        ASSERT(!RunLoop::isMain());
+        auto manager = adoptNS([[NSFileManager alloc] init]);
+        auto coordinator = adoptNS([[NSFileCoordinator alloc] init]);
+        for (auto& url : urls) {
+            if (![manager fileExistsAtPath:[url path]])
+                continue;
+            NSError *error = nil;
+            [coordinator coordinateWritingItemAtURL:url.get() options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL *coordinatedURL) {
+                NSError *error = nil;
+                if (![manager removeItemAtURL:coordinatedURL error:&error] || error)
+                    LOG_ERROR(OS_LOG_DEFAULT, "WKContentViewInteraction failed to remove file at path %@ with error %@", coordinatedURL.path, error);
+            }];
+            if (error)
+                LOG_ERROR(OS_LOG_DEFAULT, "WKContentViewInteraction failed to coordinate removal of temporary file at path %@ with error %@", url, error);
+        }
+    });
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), deleteTemporaryFiles.get());
+}
+
+- (void)_removeTemporaryDirectoriesWhenDeallocated:(Vector<RetainPtr<NSURL>>&&)urls
+{
+    _temporaryURLsToDeleteWhenDeallocated.appendVector(WTFMove(urls));
 }
 
 - (WebKit::WebPageProxy*)page

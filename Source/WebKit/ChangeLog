@@ -1,3 +1,26 @@
+2021-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        WebKitBlobResource error 1 exactly after 60 seconds when trying to read file input
+        https://bugs.webkit.org/show_bug.cgi?id=228683
+        <rdar://78448610>
+
+        Reviewed by Tim Horton.
+
+        To prevent UIKit from deleting our files to upload after 60 seconds, copy them to a temporary directory,
+        then delete the files when cleaning up the WKContentView.
+
+        I manually verified this makes the files able to upload after more than 60 seconds, then deletes them when you close the tab.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView dealloc]):
+        (-[WKContentView _removeTemporaryFilesIfNecessary]):
+        (-[WKContentView _removeTemporaryFilesWhenDeallocated:]):
+        * UIProcess/ios/WKContentViewInteraction.h.orig: Added.
+        * UIProcess/ios/WKContentViewInteraction.mm.orig: Added.
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel documentPicker:didPickDocumentsAtURLs:]):
+
 2021-08-10  Andres Gonzalez  <andresg_22@apple.com>
 
         Notify accessibility that WebProcess is suspended when in process cache.

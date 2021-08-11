@@ -648,11 +648,55 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
     return WebCore::multipleFileUploadText(urlsCount);
 }
 
-- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urlsFromUIKit
 {
     ASSERT(urls.count);
     [self _dismissDisplayAnimated:YES];
-    [self _chooseFiles:urls displayString:displayStringForDocumentsAtURLs(urls) iconImage:iconForFile(urls[0]).get()];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {
+
+        auto copyToNewTemporaryDirectory = [] (NSArray<NSURL *> *originalURLs) -> std::pair<RetainPtr<NSArray<NSURL *>>, Vector<RetainPtr<NSURL>>> {
+            ASSERT(!RunLoop::isMain());
+            auto maybeMovedURLs = adoptNS([[NSMutableArray alloc] initWithCapacity:originalURLs.count]);
+            __block Vector<RetainPtr<NSURL>> temporaryURLs;
+            auto manager = adoptNS([[NSFileManager alloc] init]);
+            auto coordinator = adoptNS([[NSFileCoordinator alloc] init]);
+            for (NSURL *originalURL in originalURLs) {
+                NSError *error = nil;
+                NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"WKFileUploadPanel");
+                if (!temporaryDirectory) {
+                    LOG_ERROR("WKFileUploadPanel: Failed to make temporary directory");
+                    [maybeMovedURLs addObject:originalURL];
+                    continue;
+                }
+                NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:originalURL.lastPathComponent];
+                auto destinationFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:filePath isDirectory:NO]);
+                [coordinator coordinateWritingItemAtURL:originalURL options:NSFileCoordinatorWritingForMoving error:&error byAccessor:^(NSURL *coordinatedOriginalURL) {
+                    NSError *error = nil;
+                    if (![manager moveItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error] || error) {
+                        LOG_ERROR("WKFileUploadPanel: Failed to move file to new path %@ with error %@", destinationFileURL.get(), error);
+                        // If moving fails, keep the original URL and our 60 second time limit before it is deleted. We tried our best to extend it.
+                        [maybeMovedURLs addObject:coordinatedOriginalURL];
+                    } else
+                        [maybeMovedURLs addObject:destinationFileURL.get()];
+                }];
+                if (error) {
+                    LOG_ERROR("WKFileUploadPanel: Failed to coordinate moving file with error %@", error);
+                    // If moving fails, keep the original URL and our 60 second time limit before it is deleted. We tried our best to extend it.
+                    [maybeMovedURLs addObject:originalURL];
+                }
+                temporaryURLs.append(adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]));
+            }
+            return { WTFMove(maybeMovedURLs), WTFMove(temporaryURLs) };
+        };
+
+        auto [maybeMovedURLs, temporaryURLs] = copyToNewTemporaryDirectory(urlsFromUIKit.get());
+        [retainedSelf->_view _removeTemporaryDirectoriesWhenDeallocated:WTFMove(temporaryURLs)];
+        RunLoop::main().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
+            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:iconForFile(maybeMovedURLs.get()[0]).get()];
+        });
+    }).get());
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)documentPicker
