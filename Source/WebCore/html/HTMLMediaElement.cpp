@@ -8092,12 +8092,16 @@ void HTMLMediaElement::updateShouldAutoplay()
         return;
 
     bool canAutoplay = mediaSession().autoplayPermitted();
-    if (canAutoplay
-        && mediaSession().state() == PlatformMediaSession::Interrupted
-        && mediaSession().interruptionType() == PlatformMediaSession::InvisibleAutoplay)
-        mediaSession().endInterruption(PlatformMediaSession::MayResumePlaying);
-    else if (!canAutoplay
-        && mediaSession().state() != PlatformMediaSession::Interrupted)
+
+    if (canAutoplay) {
+        if (mediaSession().state() == PlatformMediaSession::Interrupted) {
+            if (mediaSession().interruptionType() == PlatformMediaSession::InvisibleAutoplay)
+                mediaSession().endInterruption(PlatformMediaSession::MayResumePlaying);
+        } else if (!isPlaying())
+            resumeAutoplaying();
+        return;
+    }
+    if (mediaSession().state() != PlatformMediaSession::Interrupted)
         mediaSession().beginInterruption(PlatformMediaSession::InvisibleAutoplay);
 }
 

@@ -800,6 +800,101 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
 }
 #endif // ENABLE(GPU_PROCESS)
 
+#if PLATFORM(MAC)
+static const char* visibilityTestText = R"DOCDOCDOC(
+<html><body>
+<div id='log'></div>
+<video id='localVideo' autoplay muted playsInline width=160></video>
+<script>
+let string = '';
+onload = () => {
+    for (let i = 0; i < 1000; ++i)
+        string += '<br>test';
+    if (window.internals)
+        internals.setMediaElementRestrictions(localVideo, "invisibleautoplaynotpermitted");
+    document.onvisibilitychange = () => window.webkit.messageHandlers.gum.postMessage("PASS");
+    window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+function capture()
+{
+    navigator.mediaDevices.getUserMedia({video : true}).then(stream => {
+        log.innerHTML = string;
+        localVideo.srcObject = stream;
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+    });
+}
+
+async function checkLocalVideoPlaying()
+{
+    let counter = 0;
+    while (++counter < 200) {
+        if (!localVideo.paused)
+            return "PASS";
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return "FAIL";
+}
+
+function doTest()
+{
+    log.innerHTML = '';
+    checkLocalVideoPlaying().then(result => {
+        window.webkit.messageHandlers.gum.postMessage(result);
+    });
+}
+
+</script>
+</body></html>
+)DOCDOCDOC";
+
+TEST(WebKit, AutoplayOnVisibilityChange)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { visibilityTestText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+
+    done = false;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    webView.get().UIDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    auto *hostWindow = [webView hostWindow];
+    [hostWindow miniaturize:hostWindow];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [hostWindow deminiaturize:hostWindow];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"doTest()"];
+    TestWebKitAPI::Util::run(&done);
+}
+#endif // PLATFORM(MAC)
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

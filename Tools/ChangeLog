@@ -1,3 +1,13 @@
+2021-08-11  Youenn Fablet  <youenn@apple.com>
+
+        Media element is not always autoplaying when going from background to foreground if it is initially not in viewport
+        https://bugs.webkit.org/show_bug.cgi?id=228955
+        rdar://81751653
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+
 2021-08-11  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Handle escape key in wpeKeySymForKeyRef
