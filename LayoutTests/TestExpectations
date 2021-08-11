@@ -5117,3 +5117,12 @@ webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/webkit-line
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-037.html [ Skip ]
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-invalid.html [ Skip ]
 webkit.org/b/227849 imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-valid.html [ Skip ]
+
+# Skipping for disabled feature flag for branch
+platform/wpe/http/wpt/webxr [ Skip ]
+platform/wpe/imported/w3c/web-platform-tests/webxr [ Skip ]
+platform/mac/imported/w3c/web-platform-tests/webxr [ Skip ]
+http/wpt/webxr [ Skip ]
+imported/w3c/web-platform-tests/webxr [ Skip ]
+webxr [ Skip ]
+

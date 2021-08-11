@@ -79,10 +79,6 @@ bool defaultIncrementalPDFEnabled()
 
 bool defaultWebXREnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("WebXR");
-#endif
-
     return false;
 }
 
