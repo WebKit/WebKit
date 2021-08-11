@@ -123,6 +123,15 @@
 
         * platform/win/TestExpectations:
 
+2021-08-11  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur wk2] webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgb565-rgb-unsigned_short_5_6_5.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229015.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cherry-pick ANGLE: Revise WebGL's shaderSource validation

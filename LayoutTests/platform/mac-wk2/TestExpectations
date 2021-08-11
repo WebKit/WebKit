@@ -1536,6 +1536,8 @@ webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80640850>:
 [ Monterey ] imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub.html [ Failure ]
 
+webkit.org/b/229015 [ BigSur ] webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgb565-rgb-unsigned_short_5_6_5.html [ Pass Timeout Failure ]
+
 # webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
 [ Monterey ] imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-cross-origin.https.html [ Failure ]
 [ Monterey ] model-element/model-element-source.html [ Pass Crash ]
