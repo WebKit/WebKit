@@ -1,3 +1,20 @@
+2021-08-11  Cathie Chen  <cathiechen@igalia.com>
+
+        REGRESSION (r277997): Max-height not applied for image
+        https://bugs.webkit.org/show_bug.cgi?id=228872
+
+        Reviewed by Antti Koivisto.
+
+        The image get stretched because constrainLogicalHeightByMinMax uses the intrinsic height for the minimum height.
+        According to [1], the automatic minimum size in the ratio-dependent axis of a box is its min-content size,
+        not the intrinsic size. To fix this, the ratio-dependent minimum height of a box should be computed from aspect-ratio
+        if it doesn't have any child, otherwise, then it should consider the intrinsic height. 
+
+        [1] https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::constrainLogicalHeightByMinMax const): The minimum height is computed from aspect-ratio if it doesn't have any child.
+
 2021-08-11  Rob Buis  <rbuis@igalia.com>
 
         [SVG] Attribute change triggers redundant (and out of order) setNeedsLayout call
