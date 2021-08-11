@@ -1,3 +1,25 @@
+2021-08-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r273072): Caps lock indicator in password field is too large
+        https://bugs.webkit.org/show_bug.cgi?id=228970
+        rdar://81546781
+
+        Reviewed by Wenson Hsieh.
+
+        Added a layout test to verify that the width of the caps lock indicator
+        adapts to the height of the password field, but does not exceed a
+        maximum width.
+
+        The added test is skipped on WK1, since DumpRenderTree does not support
+        toggling caps lock state. Implementing the testing hook in DRT is made
+        difficult by the fact that, in WK1, the caps lock state is queried
+        directly from the OS, using GetCurrentKeyModifiers.
+
+        * fast/forms/caps-lock-indicator-width-expected.txt: Added.
+        * fast/forms/caps-lock-indicator-width.html: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-11  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] fast/forms/input-baseline.html is flaky crashing.

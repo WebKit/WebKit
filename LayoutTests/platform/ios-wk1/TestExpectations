@@ -1295,6 +1295,9 @@ http/tests/incremental/slow-utf8-text.pl [ Skip ]
 # Changing system language is not supported in DumpRenderTree.
 fast/text/international/system-language [ Skip ]
 
+# DumpRenderTree doesn't support toggling caps lock key state. WK1 reads caps lock key state directly from the OS.
+fast/forms/caps-lock-indicator-width.html [ Skip ]
+
 # Imported Blink tests.
 imported/blink/compositing/layer-creation/iframe-clip-removed.html [ ImageOnlyFailure ]
 imported/blink/compositing/repaint/end-of-opacity-transition.html [ ImageOnlyFailure Pass ]

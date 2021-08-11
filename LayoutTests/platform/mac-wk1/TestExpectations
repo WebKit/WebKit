@@ -322,6 +322,9 @@ webkit.org/b/119094 fast/forms/color/input-color-readonly.html [ Skip ]
 # DumpRenderTree doesn't support logging calls to runOpenPanel.
 fast/forms/file/open-file-panel.html [ Skip ]
 
+# DumpRenderTree doesn't support toggling caps lock key state. WK1 reads caps lock key state directly from the OS.
+fast/forms/caps-lock-indicator-width.html [ Skip ]
+
 # WK1 and WK2 mousemove events are subtly different in ways that break this test on WK1.
 fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 

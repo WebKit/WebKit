@@ -1,3 +1,44 @@
+2021-08-11  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r273072): Caps lock indicator in password field is too large
+        https://bugs.webkit.org/show_bug.cgi?id=228970
+        rdar://81546781
+
+        Reviewed by Wenson Hsieh.
+
+        r273072 made it so that flex items with an intrinsic size will honor
+        their aspect ratio when computing their content size. Prior to the
+        change, in taller password fields, the flex item representing the caps
+        lock indicator would be tall and narrow. The height would stretch to
+        fill the container, but the width would maintain its intrinsic width of
+        17px. Now that aspect ratio is accounted for, the width increases to
+        match the height, resulting in a much larger indicator in taller password
+        fields.
+
+        However, while r273072 regressed the appearance of the caps lock
+        indicator, it merely exposed an issue with the styling of the indicator.
+
+        Consider the following test case, which is a reduced version how the
+        caps lock indicator is styled:
+
+        <div style="display: flex; height: 100px">
+            <div style="content: url(17_x_17_blue_square.svg); align-self: stretch;"></div>
+        </div>
+
+        Prior to r273072, this displayed a 17x17 blue square (inside a 17x100
+        flex item). However, in Chrome, Firefox, and WebKit after r273072, this
+        shows a 100x100 blue square (inside a 100x100 flex item). This is the
+        expected behavior now that aspect ratio is accounted for.
+
+        Consequently, to fix the issue, the width of the indicator must be
+        limited to a maximum value. 17px was chosen to be the max-width, as the
+        indicator's width would not exceed 17px prior to r273072.
+
+        Test: fast/forms/caps-lock-indicator-width.html
+
+        * css/html.css:
+        (input::-webkit-caps-lock-indicator):
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         Stop evaluating <script>s moved between Documents during fetching
