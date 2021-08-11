@@ -1268,9 +1268,6 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 # rdar://80332615 ([Monterey Wk1 Debug] compositing/clipping/border-radius-on-webgl.html is a constant failure)
 [ Monterey Debug ] compositing/clipping/border-radius-on-webgl.html [ Pass ImageOnlyFailure ]
 
-# rdar://80343834 ([ Monterey wk1 Debug ] http/tests/xmlhttprequest/interactive-state.html is a flaky failure)
-[ Monterey Debug ] http/tests/xmlhttprequest/interactive-state.html [ Pass Failure ]
-
 # rdar://80346720 ([Monterey Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure)
 [ Monterey ] media/media-source/media-webm-opus-partial.html [ Failure ]
 

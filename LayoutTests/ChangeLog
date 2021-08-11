@@ -1,3 +1,24 @@
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/xmlhttprequest/interactive-state.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=229006
+        <rdar://80343834>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/interactive-state-expected.txt:
+        Rebaseline test as the output is a bit different now.
+
+        * http/tests/xmlhttprequest/interactive-state.cgi:
+        Use sleep instead of writing a lot of data to make sure that
+        the data is processed in chunks.
+
+        * http/tests/xmlhttprequest/interactive-state.html:
+        Modernize test a bit.
+
+        * platform/mac-wk1/TestExpectations:
+        Unskip test as it should no longer be flaky.
+
 2021-08-11  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r278392) performance.measure should never throw an InvalidAccessError for fetchStart
