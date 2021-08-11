@@ -1,3 +1,48 @@
+2021-08-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280926. rdar://problem/81810533
+
+    Avoid infinite recursion when command buffer creation fails
+    https://bugs.webkit.org/show_bug.cgi?id=228978
+    <rdar://79224824>
+    
+    Reviewed by Kenneth Russell.
+    
+    In cases where the MTLCommandBuffer is not a valid metal object,
+    we can end up in an infinite recursive loop during draw call setup. Refactor setupDraw to take no more than two attempts through the setup function.
+    
+    Testing: Ran WebGL tests, use case samples. Set up synthetic
+    repro forcing bail out path, saw WebGL content fail to render
+    instead of a web process crash.
+    
+    * src/libANGLE/renderer/metal/ContextMtl.h:
+    * src/libANGLE/renderer/metal/ContextMtl.mm:
+    (rx::ContextMtl::setupDraw):
+    (rx::ContextMtl::setupDrawImpl):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280926 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-11  Kyle Piddington  <kpiddington@apple.com>
+
+            Avoid infinite recursion when command buffer creation fails
+            https://bugs.webkit.org/show_bug.cgi?id=228978
+            <rdar://79224824>
+
+            Reviewed by Kenneth Russell.
+
+            In cases where the MTLCommandBuffer is not a valid metal object,
+            we can end up in an infinite recursive loop during draw call setup. Refactor setupDraw to take no more than two attempts through the setup function.
+
+            Testing: Ran WebGL tests, use case samples. Set up synthetic
+            repro forcing bail out path, saw WebGL content fail to render
+            instead of a web process crash.
+
+            * src/libANGLE/renderer/metal/ContextMtl.h:
+            * src/libANGLE/renderer/metal/ContextMtl.mm:
+            (rx::ContextMtl::setupDraw):
+            (rx::ContextMtl::setupDrawImpl):
+
 2021-07-23  Dean Jackson  <dino@apple.com>
 
         3.5 MB system-wide footprint impact due to thread-locals in libANGLE

@@ -2120,6 +2120,30 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
                                     const void *indices,
                                     bool transformFeedbackDraw)
 {
+    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone, indices, transformFeedbackDraw));
+    // Setting up the draw required us to call a command buffer flush, re-run setupDraw with state invaliated to restart the command buffer from the current draw with previously set state
+    if (!mCmdBuffer.valid())
+    {
+        invalidateState(context);
+        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone, indices, transformFeedbackDraw));
+    }
+    // If the command buffer still isn't valid after a second attempt, we have a problem and should stop the draw call to avoid infinite recursion.
+    if(!mCmdBuffer.valid())
+    {
+        return angle::Result::Stop;
+    }
+    return angle::Result::Continue;
+    
+}
+angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+                                    gl::PrimitiveMode mode,
+                                    GLint firstVertex,
+                                    GLsizei vertexOrIndexCount,
+                                    GLsizei instances,
+                                    gl::DrawElementsType indexTypeOrNone,
+                                    const void *indices,
+                                    bool transformFeedbackDraw)
+{
     ASSERT(mProgram);
 
     // Update transform feedback offsets on every draw call.
@@ -2249,12 +2273,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
                                   changedPipeline, textureChanged,
                                   uniformBuffersDirty, transformFeedbackDraw));
 
-    // Setting up the draw required us to call a command buffer flush, re-run setupDraw with state invaliated to restart the command buffer from the current draw with previously set state
-    if (!mCmdBuffer.valid())
-    {
-        invalidateState(context);
-        ANGLE_TRY(setupDraw(context, mode, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone, indices, transformFeedbackDraw));
-    }
+  
     mDirtyBits.reset();
     return angle::Result::Continue;
 }

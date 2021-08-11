@@ -381,6 +381,14 @@ class ContextMtl : public ContextImpl, public mtl::Context
                             gl::DrawElementsType indexTypeOrNone,
                             const void *indices,
                             bool transformFeedbackDraw);
+    angle::Result setupDrawImpl(const gl::Context *context,
+                            gl::PrimitiveMode mode,
+                            GLint firstVertex,
+                            GLsizei vertexOrIndexCount,
+                            GLsizei instanceCount,
+                            gl::DrawElementsType indexTypeOrNone,
+                            const void *indices,
+                            bool transformFeedbackDraw);
 
     angle::Result drawTriFanArrays(const gl::Context *context,
                                    GLint first,
