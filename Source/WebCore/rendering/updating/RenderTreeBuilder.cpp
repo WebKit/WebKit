@@ -425,7 +425,7 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
     parent.didAttachChild(newChild, beforeChild);
 }
 
-void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild, ReinsertAfterMove reinsertAfterMove)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
@@ -449,7 +449,9 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         if (is<RenderMultiColumnFlow>(fragmentedFlow))
             multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
 
-        if (is<RenderElement>(*newChild))
+        // FIXME: needsStateReset could probably be used for multicolumn as well.
+        auto needsStateReset = reinsertAfterMove == ReinsertAfterMove::No;
+        if (needsStateReset && is<RenderElement>(*newChild))
             RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
     }
 
@@ -480,7 +482,7 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         attach(to, WTFMove(childToMove), beforeChild);
     } else {
         auto childToMove = detachFromRenderElement(from, child);
-        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
+        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, ReinsertAfterMove::Yes);
     }
 }
 
