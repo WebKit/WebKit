@@ -163,6 +163,7 @@ static WebCore::PrivacyStance toPrivacyStance(nw_connection_privacy_stance_t sta
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
 static String stringForTLSProtocolVersion(tls_protocol_version_t protocol)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (protocol) {
     case tls_protocol_version_TLSv10:
         return "TLS 1.0"_s;
@@ -177,6 +178,7 @@ static String stringForTLSProtocolVersion(tls_protocol_version_t protocol)
     case tls_protocol_version_DTLSv12:
         return "DTLS 1.2"_s;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
     return { };
 }
 
@@ -710,8 +712,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = task._incompleteTaskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (negotiatedLegacyTLS == NegotiatedLegacyTLS::No && [task respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
@@ -935,8 +939,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else // We do not need to check _TLSNegotiatedProtocolVersion if we have metrics.negotiatedTLSProtocolVersion because it works at response time even before rdar://problem/56522601
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([dataTask respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {

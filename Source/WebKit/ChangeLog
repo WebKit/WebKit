@@ -1,3 +1,13 @@
+2021-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (stringForTLSProtocolVersion):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Ignore some slightly less unconventional deprecation warnings.
+
 2021-08-10  Alex Christensen  <achristensen@webkit.org>
 
         WebKitBlobResource error 1 exactly after 60 seconds when trying to read file input
