@@ -1,3 +1,15 @@
+2021-03-16  Saam Barati  <sbarati@apple.com>
+
+        Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=221069
+        <rdar://problem/73686589>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/allocation-sinking-scope-materialization-order.js: Added.
+        (var3.var2.x):
+        (var3):
+
 2021-06-13  Saam Barati  <sbarati@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=226576

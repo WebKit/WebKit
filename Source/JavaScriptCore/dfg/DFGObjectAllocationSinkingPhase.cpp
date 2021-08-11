@@ -1579,23 +1579,26 @@ private:
         // Nodes without remaining unmaterialized fields will be
         // materialized first - amongst the remaining unmaterialized
         // nodes
-        StdList<Allocation> toMaterialize;
-        auto firstPos = toMaterialize.begin();
+        Vector<Allocation> toMaterialize;
+        toMaterialize.resize(escapees.size());
+        size_t firstIndex = 0;
+        size_t lastIndex = toMaterialize.size();
         auto materializeFirst = [&] (Allocation&& allocation) {
+            RELEASE_ASSERT(firstIndex < lastIndex);
             materialize(allocation.identifier());
-            // We need to insert *after* the current position
-            if (firstPos != toMaterialize.end())
-                ++firstPos;
-            firstPos = toMaterialize.insert(firstPos, WTFMove(allocation));
+            toMaterialize[firstIndex] = WTFMove(allocation);
+            ++firstIndex;
         };
 
         // Nodes that no other unmaterialized node points to will be
         // materialized last - amongst the remaining unmaterialized
         // nodes
-        auto lastPos = toMaterialize.end();
         auto materializeLast = [&] (Allocation&& allocation) {
             materialize(allocation.identifier());
-            lastPos = toMaterialize.insert(lastPos, WTFMove(allocation));
+            RELEASE_ASSERT(firstIndex < lastIndex);
+            RELEASE_ASSERT(lastIndex);
+            --lastIndex;
+            toMaterialize[lastIndex] = WTFMove(allocation);
         };
 
         // These are the promoted locations that contains some of the
@@ -1653,6 +1656,8 @@ private:
             for (Node* identifier : materialized)
                 escapees.remove(identifier);
         }
+
+        RELEASE_ASSERT(firstIndex == lastIndex);
 
         materialized.clear();
 
