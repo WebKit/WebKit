@@ -642,43 +642,6 @@ class SimulatedDeviceTest(unittest.TestCase):
         runtime = SimulatedDeviceManager.get_runtime_for_device_type(DeviceType.from_string('iphone 5s', Version(9, 4)))
         self.assertEquals(runtime, None)
 
-    @staticmethod
-    def change_state_to(device, state):
-        assert isinstance(state, int)
-
-        # Reaching into device.plist to change device state. Note that this will not change the initial state of the device
-        # as determined from the .json output.
-        device_plist = device.filesystem.expanduser(device.filesystem.join(SimulatedDeviceManager.simulator_device_path, device.udid, 'device.plist'))
-        index_position = device.filesystem.files[device_plist].index(b'</integer>') - 1
-        device.filesystem.files[device_plist] = device.filesystem.files[device_plist][:index_position] + string_utils.encode(str(state)) + device.filesystem.files[device_plist][index_position + 1:]
-
-    def test_swapping_devices(self):
-        SimulatedDeviceTest.reset_simulated_device_manager()
-        host = SimulatedDeviceTest.mock_host_for_simctl()
-        SimulatedDeviceManager.available_devices(host)
-
-        # We won't test the creation and deletion of simulators, only managing existing sims
-        SimulatedDeviceTest.change_state_to(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone 8'), host)[0], SimulatedDevice.DeviceState.BOOTED)
-        SimulatedDeviceTest.change_state_to(SimulatedDeviceManager.device_by_filter(lambda device: device.device_type == DeviceType.from_string('iPhone X'), host)[0], SimulatedDevice.DeviceState.BOOTED)
-
-        SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string('iPhone 8')), host=host)
-
-        self.assertEquals(1, len(SimulatedDeviceManager.INITIALIZED_DEVICES))
-        self.assertEquals('17104B4F-E77D-4019-98E6-621FE3CC3653', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid)
-        self.assertEquals(SimulatedDevice.DeviceState.BOOTED, SimulatedDeviceManager.INITIALIZED_DEVICES[0].platform_device.state())
-
-        # Now swap for the X
-        SimulatedDeviceTest.change_state_to(SimulatedDeviceManager.INITIALIZED_DEVICES[0], SimulatedDevice.DeviceState.SHUT_DOWN)
-        SimulatedDeviceManager.swap(SimulatedDeviceManager.INITIALIZED_DEVICES[0], DeviceRequest(DeviceType.from_string('iPhone X')), host)
-
-        self.assertEquals(1, len(SimulatedDeviceManager.INITIALIZED_DEVICES))
-        self.assertEquals('4E6E7393-C4E3-4323-AA8B-4A42A45AE7B8', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid)
-        self.assertEquals(SimulatedDevice.DeviceState.BOOTED,  SimulatedDeviceManager.INITIALIZED_DEVICES[0].platform_device.state())
-
-        SimulatedDeviceTest.change_state_to(SimulatedDeviceManager.INITIALIZED_DEVICES[0], SimulatedDevice.DeviceState.SHUT_DOWN)
-        SimulatedDeviceManager.tear_down(host)
-        self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
-
     def test_no_state_files(self):
         SimulatedDeviceTest.reset_simulated_device_manager()
         host = SimulatedDeviceTest.mock_host_for_simctl()

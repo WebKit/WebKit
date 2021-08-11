@@ -1,3 +1,21 @@
+2021-08-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Stop relying on device.plist for simulated device state
+        https://bugs.webkit.org/show_bug.cgi?id=228974
+        <rdar://problem/81749547>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager):
+        (SimulatedDeviceManager.populate_available_devices): Device state check is now shared between simulators.
+        (SimulatedDeviceManager._disambiguate_device_type): Only extract hardware family and type from candidate.
+        (SimulatedDevice.__init__): Device state check is now shared between simulators.
+        (SimulatedDevice.state): Use 'xcrun simctl list' instead of device.plist.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (SimulatedDeviceTest.change_state_to): Deleted.
+        (SimulatedDeviceTest.test_swapping_devices): Deleted.
+
 2021-08-10  Cameron McCormack  <heycam@apple.com>
 
         Restore color profiles correctly on displays with multiple named modes

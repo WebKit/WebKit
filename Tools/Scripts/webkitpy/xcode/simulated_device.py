@@ -80,6 +80,7 @@ class SimulatedDeviceManager(object):
     simulator_bundle_id = 'com.apple.iphonesimulator'
     _device_identifier_to_name = {}
     _managing_simulator_app = False
+    _last_updated_state = 0
 
     @staticmethod
     def _create_runtimes(runtimes):
@@ -141,6 +142,7 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager._device_identifier_to_name = {device['identifier']: device['name'] for device in simctl_json['devicetypes']}
         SimulatedDeviceManager.AVAILABLE_RUNTIMES = SimulatedDeviceManager._create_runtimes(simctl_json['runtimes'])
 
+        SimulatedDeviceManager._last_updated_state = time.time()
         for runtime in SimulatedDeviceManager.AVAILABLE_RUNTIMES:
             # Needed for <rdar://problem/47122965>
             devices = []
@@ -159,7 +161,6 @@ class SimulatedDeviceManager(object):
 
                 # Update device state from simctl output.
                 device.platform_device._state = SimulatedDevice.NAME_FOR_STATE.index(device_json['state'].upper())
-                device.platform_device._last_updated_state = time.time()
         return
 
     @staticmethod
@@ -253,7 +254,8 @@ class SimulatedDeviceManager(object):
             for _, type_name in reversed(SimulatedDeviceManager._device_identifier_to_name.items()):
                 candidate = DeviceType.from_string(type_name)
                 if candidate == full_device_type:
-                    full_device_type = candidate
+                    full_device_type.hardware_family = candidate.hardware_family
+                    full_device_type.hardware_type = candidate.hardware_type
                     break
 
         full_device_type.check_consistency()
@@ -550,7 +552,6 @@ class SimulatedDevice(object):
         self.device_type = device_type
         self.build_version = build_version
         self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
-        self._last_updated_state = time.time()
 
         self.executive = host.executive
         self.filesystem = host.filesystem
@@ -562,16 +563,23 @@ class SimulatedDevice(object):
 
     def state(self, force_update=False):
         # Don't allow state to get stale
-        if not force_update and time.time() < self._last_updated_state + 1:
+        if not force_update and time.time() < SimulatedDeviceManager._last_updated_state + 10:
             return self._state
 
-        device_plist = self.filesystem.expanduser(self.filesystem.join(SimulatedDeviceManager.simulator_device_path, self.udid, 'device.plist'))
         try:
-            self._state = int(readPlist(self.filesystem.open_binary_file_for_reading(device_plist))['state'])
-        except IOError:
+            SimulatedDeviceManager._last_updated_state = time.time()
+            simctl_json = json.loads(self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'list', '--json'], decode_output=False, return_stderr=False))
+            state_map = {}
+            for devices in simctl_json['devices'].values():
+                for device in devices:
+                    if device.get('udid') and device.get('state'):
+                        state_map[device.get('udid')] = device.get('state')
+            for device in SimulatedDeviceManager.AVAILABLE_DEVICES:
+                device.platform_device._state = SimulatedDevice.NAME_FOR_STATE.index(state_map.get(device.platform_device.udid, 'SHUTDOWN').upper())
+        except (ValueError, ScriptError):
+            _log.error("Failed to decode 'simctl list' json output")
             self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
 
-        self._last_updated_state = time.time()
         return self._state
 
     def is_booted_or_booting(self, force_update=False):
