@@ -290,6 +290,8 @@ static uint32_t wpeKeySymForKeyRef(WKStringRef keyRef, unsigned location, uint32
         return WPE_KEY_F11;
     if (WKStringIsEqualToUTF8CString(keyRef, "F12"))
         return WPE_KEY_F12;
+    if (WKStringIsEqualToUTF8CString(keyRef, "escape"))
+        return WPE_KEY_Escape;
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
     auto buffer = makeUniqueArray<char>(bufferSize);

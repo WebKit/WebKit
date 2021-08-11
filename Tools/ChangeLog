@@ -1,3 +1,18 @@
+2021-08-11  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Handle escape key in wpeKeySymForKeyRef
+        https://bugs.webkit.org/show_bug.cgi?id=228981
+
+        Reviewed by Carlos Garcia Campos.
+
+        Some dialog tests were failing due to "escape" key ref being
+        translated to the 'e' keysym.
+
+        Covered by existing tests.
+
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::wpeKeySymForKeyRef):
+
 2021-08-10  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Stop relying on device.plist for simulated device state
