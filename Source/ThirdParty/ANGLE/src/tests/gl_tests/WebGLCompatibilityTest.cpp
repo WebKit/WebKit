@@ -2156,39 +2156,27 @@ void main()
     for (char invalidChar : invalidSet)
     {
         std::string invalidAttribName = validAttribName + invalidChar;
-        const char *invalidVert[]     = {
-            "attribute float ",
-            invalidAttribName.c_str(),
-            R"(;,
+        std::string invalidVert       = "attribute float ";
+        invalidVert += invalidAttribName;
+        invalidVert += R"(;,
 void main(),
 {,
     gl_Position = vec4(1.0);,
-})",
-        };
-
-        GLuint shader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(shader, static_cast<GLsizei>(ArraySize(invalidVert)), invalidVert, nullptr);
-        EXPECT_GL_ERROR(GL_INVALID_VALUE);
-        glDeleteShader(shader);
+})";
+        GLuint program = CompileProgram(invalidVert.c_str(), essl1_shaders::fs::Red());
+        EXPECT_EQ(0u, program);
     }
 }
 
-// Test that line continuation is handled correctly when valdiating shader source
+// Test that line continuation is handled correctly when validating shader source
 TEST_P(WebGLCompatibilityTest, ShaderSourceLineContinuation)
 {
-    // Verify that a line continuation character (i.e. backslash) cannot be used
-    // within a preprocessor directive in a ES2 context.
-    ANGLE_SKIP_TEST_IF(getClientMajorVersion() >= 3);
+    // With recent changes to WebGL's shader source validation in
+    // https://github.com/KhronosGroup/WebGL/pull/3206 and follow-ons,
+    // the backslash character can be used in both WebGL 1.0 and 2.0
+    // contexts.
 
     const char *validVert =
-        R"(#define foo this is a test
-precision mediump float;
-void main()
-{
-    gl_Position = vec4(1.0);
-})";
-
-    const char *invalidVert =
         R"(#define foo this \
     is a test
 precision mediump float;
@@ -2197,13 +2185,9 @@ void main()
     gl_Position = vec4(1.0);
 })";
 
-    GLuint shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(shader, 1, &validVert, nullptr);
-    EXPECT_GL_NO_ERROR();
-
-    glShaderSource(shader, 1, &invalidVert, nullptr);
-    EXPECT_GL_ERROR(GL_INVALID_VALUE);
-    glDeleteShader(shader);
+    GLuint program = CompileProgram(validVert, essl1_shaders::fs::Red());
+    EXPECT_NE(0u, program);
+    glDeleteProgram(program);
 }
 
 // Test that line continuation is handled correctly when valdiating shader source
@@ -2231,12 +2215,12 @@ oo = 1.0;
     gl_Position = vec4(foo);
 })";
 
-    GLuint shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(shader, 1, &validVert, nullptr);
-    EXPECT_GL_NO_ERROR();
-    glShaderSource(shader, 1, &invalidVert, nullptr);
-    EXPECT_GL_ERROR(GL_INVALID_VALUE);
-    glDeleteShader(shader);
+    GLuint program = CompileProgram(validVert, essl3_shaders::fs::Red());
+    EXPECT_NE(0u, program);
+    glDeleteProgram(program);
+
+    program = CompileProgram(invalidVert, essl3_shaders::fs::Red());
+    EXPECT_EQ(0u, program);
 }
 
 // Tests bindAttribLocations for reserved prefixes and length limits

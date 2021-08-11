@@ -1,3 +1,29 @@
+2021-08-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cherry-pick ANGLE: Revise WebGL's shaderSource validation
+        https://bugs.webkit.org/show_bug.cgi?id=228951
+
+        Reviewed by Kenneth Russell.
+
+        Cherry-pick ANGLE commit: b4fd46288aa65d61dc9c7140c7d1cdba3f4cdf9a
+        From: Kenneth Russell <kbr@chromium.org>
+        Date: Wed, 27 Jan 2021 15:56:58 -0800
+        Revise WebGL's shaderSource validation.
+
+        Per discussion in the WebGL working group, shaderSource no longer
+        generates INVALID_VALUE for sources containing characters outside the
+        ESSL character set. Compilation and/or linking is still specified to
+        fail when illegal constructs are used.
+
+        With this change, https://github.com/KhronosGroup/WebGL/pull/3206
+        passes with the passthrough command decoder.
+
+        Revise WebGL compatibility tests to follow the new rules.
+
+        * src/libANGLE/validationES2.cpp:
+        (gl::ValidateShaderSource):
+        * src/tests/gl_tests/WebGLCompatibilityTest.cpp:
+
 2021-07-23  Dean Jackson  <dino@apple.com>
 
         3.5 MB system-wide footprint impact due to thread-locals in libANGLE
