@@ -1,5 +1,32 @@
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
+        Stop evaluating <script>s moved between Documents during fetching
+        https://bugs.webkit.org/show_bug.cgi?id=202714
+        <rdar://problem/56208425>
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that more checks are passing. Note that these checks were already passing in both Firefox and Chrome.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-fetch-error-external-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-fetch-error-external-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-parse-error-external-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-parse-error-external-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-parse-error-inline-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-success-external-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-success-external-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-success-inline-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-fetch-error-external-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-fetch-error-external-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-parse-error-external-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-parse-error-external-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-parse-error-inline-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-external-classic-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-external-module-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-inline-classic-expected.txt:
+
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
         HTMLMetaElement http-equiv should not be processed in shadow trees
         https://bugs.webkit.org/show_bug.cgi?id=228973
 

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ContainerNode.h"
+#include "DocumentIdentifier.h"
 #include "LoadableScript.h"
 #include "ReferrerPolicy.h"
 #include "UserGestureIndicator.h"
@@ -135,6 +136,9 @@ private:
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
     RefPtr<LoadableScript> m_loadableScript;
+
+    // https://html.spec.whatwg.org/multipage/scripting.html#preparation-time-document
+    DocumentIdentifier m_preparationTimeDocumentIdentifier;
 
     MonotonicTime m_creationTime;
     RefPtr<UserGestureToken> m_userGestureToken;

@@ -216,6 +216,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (scriptType == ScriptType::Classic && hasNoModuleAttribute())
         return false;
 
+    m_preparationTimeDocumentIdentifier = document.identifier();
+
     if (!document.frame()->script().canExecuteScripts(AboutToExecuteScript))
         return false;
 
@@ -451,6 +453,11 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
 
 void ScriptElement::executePendingScript(PendingScript& pendingScript)
 {
+    if (m_element.document().identifier() != m_preparationTimeDocumentIdentifier) {
+        m_element.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not executing script because it moved between documents during fetching"_s);
+        return;
+    }
+
     if (auto* loadableScript = pendingScript.loadableScript())
         executeScriptAndDispatchEvent(*loadableScript);
     else {
