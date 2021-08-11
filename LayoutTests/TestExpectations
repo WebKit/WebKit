@@ -719,10 +719,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting [ Skip
 # test is served over HTTP.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html [ Skip ]
 
-# COOP tests that are failing and keep printing a different uuid in the error output.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/blob-popup.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Failure Pass ]
-
 # Newly imported WPT tests that are crashing.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
 

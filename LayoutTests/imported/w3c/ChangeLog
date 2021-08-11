@@ -1,5 +1,16 @@
 2021-08-10  Chris Dumez  <cdumez@apple.com>
 
+        Add Cross-Origin-Opener-Policy support for Blob URLs
+        https://bugs.webkit.org/show_bug.cgi?id=228924
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/html/cross-origin-opener-policy/blob-popup.https-expected.txt:
+
+2021-08-10  Chris Dumez  <cdumez@apple.com>
+
         Meta HTTP refresh should not navigate if document has sandboxed automatic features browsing context flag set
         https://bugs.webkit.org/show_bug.cgi?id=228965
 

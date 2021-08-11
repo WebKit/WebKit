@@ -31,6 +31,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/BlobDataFileReference.h>
+#include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/SWContextManager.h>
 
 namespace WebKit {
@@ -53,9 +54,9 @@ void BlobRegistryProxy::registerBlobURL(const URL& url, Vector<BlobPart>&& blobP
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURL(url, blobParts, contentType), 0);
 }
 
-void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL)
+void BlobRegistryProxy::registerBlobURL(const URL& url, const URL& srcURL, const CrossOriginOpenerPolicy& coop)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL { url, srcURL }, 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterBlobURLFromURL { url, srcURL, coop }, 0);
 }
 
 void BlobRegistryProxy::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&& file, const String& contentType)

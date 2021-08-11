@@ -45,7 +45,7 @@ CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse
 
     CrossOriginEmbedderPolicy policy;
     // FIXME: about:blank should be marked as secure as per https://w3c.github.io/webappsec-secure-contexts/#potentially-trustworthy-url.
-    if (!context.isSecureContext() && context.url() != aboutBlankURL())
+    if (!context.isSecureContext() && context.url() != aboutBlankURL() && !context.url().isEmpty())
         return policy;
 
     parseCOEPHeader(HTTPHeaderName::CrossOriginEmbedderPolicy, policy.value, policy.reportingEndpoint);

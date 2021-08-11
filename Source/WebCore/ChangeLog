@@ -1,3 +1,65 @@
+2021-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Add Cross-Origin-Opener-Policy support for Blob URLs
+        https://bugs.webkit.org/show_bug.cgi?id=228924
+
+        Reviewed by Alex Christensen.
+
+        Pass ScriptExecutionContext's cross-origin-opener-policy when registering a public
+        Blob URL and store it in the blob registry alongside the blob data. As a result,
+        we are able to service the right COOP headers on the blob response later on when
+        doing a load of this blob. In the future, we'll pass the cross-origin-embedder-policy
+        as well, once we support it.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::startLoadingBlobURL):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::crossOriginOpenerPolicy const):
+        * dom/ScriptExecutionContext.h:
+        * fileapi/Blob.cpp:
+        (WebCore::BlobURLRegistry::registerURL):
+        (WebCore::Blob::Blob):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+
+        * loader/CrossOriginEmbedderPolicy.cpp:
+        (WebCore::obtainCrossOriginEmbedderPolicy):
+        For WebKit1, the initial empty document seems to have an empty URL instead of
+        "about:blank" so I had to extend the check so that COEP properly gets enabled.
+
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::obtainCrossOriginOpenerPolicy):
+        For WebKit1, the initial empty document seems to have an empty URL instead of
+        "about:blank" so I had to extend the check so that COOP properly gets enabled.
+
+        (WebCore::crossOriginOpenerPolicyToString):
+        (WebCore::CrossOriginOpenerPolicy::isolatedCopy const):
+        (WebCore::addCrossOriginOpenerPolicyHeaders):
+        * loader/CrossOriginOpenerPolicy.h:
+        (WebCore::operator==):
+        (WebCore::CrossOriginOpenerPolicy::encode const):
+        (WebCore::CrossOriginOpenerPolicy::decode):
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobData::clone const):
+        * platform/network/BlobData.h:
+        (WebCore::BlobData::crossOriginOpenerPolicy const):
+        (WebCore::BlobData::setCrossOriginOpenerPolicy):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLOptionallyFileBacked):
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+
 2021-08-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Unable to start drag on image when the first piece of text inside the image is selected

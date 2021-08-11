@@ -31,6 +31,7 @@
 #include "CSSValuePool.h"
 #include "CachedScript.h"
 #include "CommonVM.h"
+#include "CrossOriginOpenerPolicy.h"
 #include "DOMTimer.h"
 #include "DOMWindow.h"
 #include "DatabaseContext.h"
@@ -333,6 +334,12 @@ void ScriptExecutionContext::stopActiveDOMObjects()
         activeDOMObject.stop();
         return ShouldContinue::Yes;
     });
+}
+
+const CrossOriginOpenerPolicy& ScriptExecutionContext::crossOriginOpenerPolicy() const
+{
+    static NeverDestroyed<CrossOriginOpenerPolicy> coop;
+    return coop;
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& activeDOMObject)

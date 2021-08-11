@@ -33,6 +33,20 @@
 
 namespace WebCore {
 
+static String crossOriginOpenerPolicyToString(const CrossOriginOpenerPolicyValue& coop)
+{
+    switch (coop) {
+    case CrossOriginOpenerPolicyValue::SameOrigin:
+    case CrossOriginOpenerPolicyValue::SameOriginPlusCOEP:
+        return "same-origin"_s;
+    case CrossOriginOpenerPolicyValue::SameOriginAllowPopups:
+        return "same-origin-allow-popups"_s;
+    case CrossOriginOpenerPolicyValue::UnsafeNone:
+        break;
+    }
+    return "unsafe-none"_s;
+}
+
 // https://html.spec.whatwg.org/multipage/origin.html#obtain-coop
 CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& response, const ScriptExecutionContext& context)
 {
@@ -61,12 +75,42 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
 
     CrossOriginOpenerPolicy policy;
     // FIXME: about:blank should be marked as secure as per https://w3c.github.io/webappsec-secure-contexts/#potentially-trustworthy-url.
-    if (!context.isSecureContext() && context.url() != aboutBlankURL())
+    if (!context.isSecureContext() && context.url() != aboutBlankURL() && !context.url().isEmpty())
         return policy;
 
     parseCOOP(HTTPHeaderName::CrossOriginOpenerPolicy, policy.value, policy.reportingEndpoint);
     parseCOOP(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, policy.reportOnlyValue, policy.reportOnlyReportingEndpoint);
     return policy;
+}
+
+CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const
+{
+    return {
+        value,
+        reportingEndpoint.isolatedCopy(),
+        reportOnlyValue,
+        reportOnlyReportingEndpoint.isolatedCopy()
+    };
+}
+
+void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOriginOpenerPolicy& coop)
+{
+    if (coop.value != CrossOriginOpenerPolicyValue::UnsafeNone) {
+        if (coop.reportingEndpoint.isEmpty())
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, crossOriginOpenerPolicyToString(coop.value));
+        else
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(coop.value), "; report-to=\"", coop.reportingEndpoint, '\"'));
+        if (coop.value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, "require-corp"_s); // FIXME: Pass in coep and set header value correctly.
+    }
+    if (coop.reportOnlyValue != CrossOriginOpenerPolicyValue::UnsafeNone) {
+        if (coop.reportOnlyReportingEndpoint.isEmpty())
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, crossOriginOpenerPolicyToString(coop.reportOnlyValue));
+        else
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(coop.reportOnlyValue), "; report-to=\"", coop.reportOnlyReportingEndpoint, '\"'));
+        if (coop.reportOnlyValue == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, "require-corp"_s); // FIXME: Pass in coep and set header value correctly.
+    }
 }
 
 } // namespace WebCore

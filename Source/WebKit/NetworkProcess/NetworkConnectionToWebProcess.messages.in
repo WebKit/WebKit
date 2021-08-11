@@ -50,7 +50,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     RegisterFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
     RegisterBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
-    RegisterBlobURLFromURL(URL url, URL srcURL)
+    RegisterBlobURLFromURL(URL url, URL srcURL, struct WebCore::CrossOriginOpenerPolicy coop)
     RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
     RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
     UnregisterBlobURL(URL url)

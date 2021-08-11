@@ -78,6 +78,14 @@ void BlobData::appendFile(Ref<BlobDataFileReference>&& file)
     m_items.append(BlobDataItem(WTFMove(file)));
 }
 
+Ref<BlobData> BlobData::clone() const
+{
+    auto blobData = BlobData::create(m_contentType);
+    blobData->m_coop = m_coop;
+    blobData->m_items = m_items;
+    return blobData;
+}
+
 void BlobData::appendFile(BlobDataFileReference* file, long long offset, long long length)
 {
     m_items.append(BlobDataItem(file, offset, length));

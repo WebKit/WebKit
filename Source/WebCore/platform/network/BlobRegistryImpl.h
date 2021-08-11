@@ -45,6 +45,7 @@ class ResourceHandle;
 class ResourceHandleClient;
 class ResourceRequest;
 class ThreadSafeDataBuffer;
+struct CrossOriginOpenerPolicy;
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
 class WEBCORE_EXPORT BlobRegistryImpl {
@@ -61,8 +62,8 @@ public:
 
     void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType);
     void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType);
-    void registerBlobURL(const URL&, const URL& srcURL);
-    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType);
+    void registerBlobURL(const URL&, const URL& srcURL, const CrossOriginOpenerPolicy&);
+    void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType, const CrossOriginOpenerPolicy&);
     void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType);
     void unregisterBlobURL(const URL&);
 

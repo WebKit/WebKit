@@ -62,7 +62,7 @@ public:
 void BlobURLRegistry::registerURL(ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
 {
     ASSERT(&blob.registry() == this);
-    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), publicURL, static_cast<Blob&>(blob).url());
+    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.crossOriginOpenerPolicy(), publicURL, static_cast<Blob&>(blob).url());
 }
 
 void BlobURLRegistry::unregisterURL(const URL& url)
@@ -137,7 +137,7 @@ Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL
     , m_internalURL(BlobURL::createInternalURL())
 {
     if (fileBackedPath.isEmpty())
-        ThreadableBlobRegistry::registerBlobURL(nullptr, m_internalURL, srcURL);
+        ThreadableBlobRegistry::registerBlobURL(nullptr, { }, m_internalURL, srcURL);
     else
         ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }

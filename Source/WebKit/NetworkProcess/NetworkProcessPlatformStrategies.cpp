@@ -59,7 +59,7 @@ BlobRegistry* NetworkProcessPlatformStrategies::createBlobRegistry()
     class EmptyBlobRegistry : public WebCore::BlobRegistry {
         void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& path, const String& contentType) final { ASSERT_NOT_REACHED(); }
         void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
-        void registerBlobURL(const URL&, const URL& srcURL) final { ASSERT_NOT_REACHED(); }
+        void registerBlobURL(const URL&, const URL& srcURL, const WebCore::CrossOriginOpenerPolicy&) final { ASSERT_NOT_REACHED(); }
         void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) final { ASSERT_NOT_REACHED(); }
         void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final { ASSERT_NOT_REACHED(); }
         void unregisterBlobURL(const URL&) final { ASSERT_NOT_REACHED(); }

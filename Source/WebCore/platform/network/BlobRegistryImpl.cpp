@@ -152,19 +152,25 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
     addBlobData(url.string(), WTFMove(blobData));
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
+void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const CrossOriginOpenerPolicy& coop)
 {
-    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { });
+    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, coop);
 }
 
-void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType)
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const CrossOriginOpenerPolicy& coop)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
     BlobData* src = getBlobDataFromURL(srcURL);
     if (src) {
-        addBlobData(url.string(), src);
+        if (src->crossOriginOpenerPolicy() == coop)
+            addBlobData(url.string(), src);
+        else {
+            auto clone = src->clone();
+            clone->setCrossOriginOpenerPolicy(coop);
+            addBlobData(url.string(), WTFMove(clone));
+        }
         return;
     }
 
@@ -173,6 +179,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
 
     auto backingFile = BlobData::create(contentType);
     backingFile->appendFile(file.releaseNonNull());
+    backingFile->setCrossOriginOpenerPolicy(coop);
 
     addBlobData(url.string(), WTFMove(backingFile));
 }

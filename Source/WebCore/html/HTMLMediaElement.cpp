@@ -1552,7 +1552,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         if (!m_blobURLForReading.isEmpty())
             ThreadableBlobRegistry::unregisterBlobURL(m_blobURLForReading);
         m_blobURLForReading = BlobURL::createPublicURL(&document().securityOrigin());
-        ThreadableBlobRegistry::registerBlobURL(&document().securityOrigin(), m_blobURLForReading, m_blob->url());
+        ThreadableBlobRegistry::registerBlobURL(&document().securityOrigin(), document().crossOriginOpenerPolicy(), m_blobURLForReading, m_blob->url());
 
         if (!m_player->load(m_blobURLForReading, contentType, keySystem))
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
