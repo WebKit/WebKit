@@ -335,10 +335,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
             [coordinator coordinateWritingItemAtURL:url.get() options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL *coordinatedURL) {
                 NSError *error = nil;
                 if (![manager removeItemAtURL:coordinatedURL error:&error] || error)
-                    LOG_ERROR(OS_LOG_DEFAULT, "WKContentViewInteraction failed to remove file at path %@ with error %@", coordinatedURL.path, error);
+                    LOG_ERROR("WKContentViewInteraction failed to remove file at path %@ with error %@", coordinatedURL.path, error);
             }];
             if (error)
-                LOG_ERROR(OS_LOG_DEFAULT, "WKContentViewInteraction failed to coordinate removal of temporary file at path %@ with error %@", url, error);
+                LOG_ERROR("WKContentViewInteraction failed to coordinate removal of temporary file at path %@ with error %@", url, error);
         }
     });
 
