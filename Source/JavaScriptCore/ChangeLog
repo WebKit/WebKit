@@ -1,3 +1,15 @@
+2021-08-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        WTFCrash in JSC::Lexer<char16_t>::append8
+        https://bugs.webkit.org/show_bug.cgi?id=228982
+
+        Reviewed by Mark Lam.
+
+        sourceURL / sourceMapURL directive should not assume Latin1 characters.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseCommentDirectiveValue):
+
 2021-08-10  Keith Miller  <keith_miller@apple.com>
 
         CallFrame::returnPC should untag the return address before passing it to ReturnAddressPtr
