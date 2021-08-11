@@ -1,3 +1,16 @@
+2021-08-11  Rob Buis  <rbuis@igalia.com>
+
+        [SVG] Attribute change triggers redundant (and out of order) setNeedsLayout call
+        https://bugs.webkit.org/show_bug.cgi?id=228125
+
+        Reviewed by Darin Adler.
+
+        As explained in the bug the setNeedsLayout call is redundant, however
+        keep using it for embedded SVG's to update width/height of the embedder.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+
 2021-08-10  Chris Dumez  <cdumez@apple.com>
 
         Add Cross-Origin-Opener-Policy support for Blob URLs

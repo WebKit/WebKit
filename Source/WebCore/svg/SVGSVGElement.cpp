@@ -209,11 +209,13 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationalHintStyle();
 
-        if (auto renderer = this->renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        if (auto renderer = this->renderer()) {
+            if (is<RenderSVGRoot>(renderer) && downcast<RenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument())
+                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
         return;
     }
-    
+
     if (SVGFitToViewBox::isKnownAttribute(attrName)) {
         if (auto* renderer = this->renderer()) {
             renderer->setNeedsTransformUpdate();
