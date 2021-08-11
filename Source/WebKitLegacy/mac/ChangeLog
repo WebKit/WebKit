@@ -1,3 +1,15 @@
+2021-08-10  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r280726): [ Big Sur wk1 ] 25 imported/w3c/web-platform-tests/fetch/ failing
+        https://bugs.webkit.org/show_bug.cgi?id=228926
+
+        Reviewed by Jer Noble.
+
+        Revert a part of r280726 while investigating the test failures.
+
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-08-10  Chris Dumez  <cdumez@apple.com>
 
         Add Cross-Origin-Opener-Policy support for Blob URLs

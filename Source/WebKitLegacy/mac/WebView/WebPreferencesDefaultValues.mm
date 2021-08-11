@@ -49,17 +49,9 @@ bool isFeatureFlagEnabled(const String& featureName, bool defaultValue)
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
 
-#if PLATFORM(MAC)
-    static bool isSystemWebKit = [] {
-        NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WebView")];
-        return [bundle.bundlePath hasPrefix:@"/System/"];
-    }();
-
-    if (isSystemWebKit)
-        return _os_feature_enabled_impl("WebKit", (const char*)featureName.characters8());
-
-    return defaultValue;
-#else
+    // FIXME: On MacOS, we need to deal with the cases when system feature flags are not available.
+    // But we need to fix <http://webkit.org/b/228926> first.
+#if PLATFORM(COCOA)
     UNUSED_PARAM(defaultValue);
     return _os_feature_enabled_impl("WebKit", (const char*)featureName.characters8());
 #endif // PLATFORM(MAC)
