@@ -1,3 +1,13 @@
+2021-08-11  Lauro Moura  <lmoura@igalia.com>
+
+        Remove leftover offscreen canvas test case after r280084
+
+        Unreviewed test gardening.
+
+        This test was replaced by others in r280084 but not fully removed.
+
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/2d.getcontext.extraargs.worker.html: Removed.
+
 2021-08-10  Chris Dumez  <cdumez@apple.com>
 
         Add Cross-Origin-Opener-Policy support for Blob URLs
