@@ -74,6 +74,7 @@ private:
     void setPreferredBufferSize(uint64_t);
     using SetActiveCompletion = CompletionHandler<void(bool)>;
     void tryToSetActive(bool, SetActiveCompletion&&);
+    void setIsPlayingToBluetoothOverride(std::optional<bool>&& value);
 
     RemoteAudioSessionProxyManager& audioSessionManager();
     IPC::Connection& connection();
@@ -83,6 +84,7 @@ private:
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     size_t m_preferredBufferSize { 0 };
     bool m_active { false };
+    bool m_isPlayingToBluetoothOverrideChanged { false };
 };
 
 }

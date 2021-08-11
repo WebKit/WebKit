@@ -1,3 +1,26 @@
+2021-08-11  Peng Liu  <peng.liu6@apple.com>
+
+        [BigSur] TestWebKitAPI.AudioRoutingArbitration.Updating fails after r280726
+        https://bugs.webkit.org/show_bug.cgi?id=228966
+
+        Reviewed by Eric Carlson.
+
+        Add an IPC message `RemoteAudioSessionProxy::SetIsPlayingToBluetoothOverride`
+        for testing purpose, so that the test `AudioRoutingArbitration.Updating` will
+        work as expected when "Media in GPU Process" is enabled.
+
+        No new tests. Fix an API test failure.
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::setCategory):
+        (WebKit::RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride):
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+        * GPUProcess/media/RemoteAudioSessionProxy.messages.in:
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setCategory):
+        (WebKit::RemoteAudioSession::setIsPlayingToBluetoothOverride):
+        * WebProcess/GPU/media/RemoteAudioSession.h:
+
 2021-08-11  David Kilzer  <ddkilzer@apple.com>
 
         ThreadSanitizer: data race in WTF::StringImpl::deref() under WebKit::NetworkCache::IOChannel::~IOChannel()

@@ -94,11 +94,12 @@ RemoteAudioSessionConfiguration& RemoteAudioSession::configuration()
 void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy policy)
 {
 #if PLATFORM(COCOA)
-    if (type == m_category && policy == m_routeSharingPolicy)
+    if (type == m_category && policy == m_routeSharingPolicy && !m_isPlayingToBluetoothOverrideChanged)
         return;
 
     m_category = type;
     m_routeSharingPolicy = policy;
+    m_isPlayingToBluetoothOverrideChanged = false;
 
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetCategory(type, policy), { });
 #else
@@ -131,6 +132,14 @@ void RemoteAudioSession::removeConfigurationChangeObserver(ConfigurationChangeOb
 {
     m_configurationChangeObservers.remove(observer);
 }
+
+#if ENABLE(ROUTING_ARBITRATION)
+void RemoteAudioSession::setIsPlayingToBluetoothOverride(std::optional<bool> value)
+{
+    m_isPlayingToBluetoothOverrideChanged = true;
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::SetIsPlayingToBluetoothOverride(value), { });
+}
+#endif
 
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
