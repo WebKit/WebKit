@@ -651,7 +651,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urlsFromUIKit
 {
-    ASSERT(urls.count);
+    ASSERT(urlsFromUIKit.count);
     [self _dismissDisplayAnimated:YES];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {

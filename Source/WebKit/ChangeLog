@@ -1,3 +1,10 @@
+2021-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix after r280875
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel documentPicker:didPickDocumentsAtURLs:]):
+
 2021-08-10  Chris Dumez  <cdumez@apple.com>
 
         Add Cross-Origin-Opener-Policy support for Blob URLs
