@@ -1150,9 +1150,7 @@ inline RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScop
 
 inline void Node::setRenderer(RenderObject* renderer)
 {
-    auto oldRenderer = this->renderer();
     m_rendererWithStyleFlags.setPointer(renderer);
-    didChangeRenderer(oldRenderer);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);

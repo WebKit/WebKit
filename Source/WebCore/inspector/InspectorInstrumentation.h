@@ -604,11 +604,11 @@ inline void InspectorInstrumentation::didRemoveDOMNode(Document& document, Node&
         didRemoveDOMNodeImpl(*agents, node);
 }
 
-inline void InspectorInstrumentation::nodeLayoutContextChanged(Node& node, RenderObject* oldRenderer)
+inline void InspectorInstrumentation::nodeLayoutContextChanged(Node& node, RenderObject* newRenderer)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(node.document()))
-        nodeLayoutContextChangedImpl(*agents, node, oldRenderer);
+        nodeLayoutContextChangedImpl(*agents, node, newRenderer);
 }
 
 inline void InspectorInstrumentation::willModifyDOMAttr(Document& document, Element& element, const AtomString& oldValue, const AtomString& newValue)

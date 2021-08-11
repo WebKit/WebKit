@@ -30,6 +30,7 @@
 #include "InspectorStyleSheet.h"
 #include "InspectorWebAgentBase.h"
 #include "SecurityContext.h"
+#include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -156,6 +157,7 @@ private:
     Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>&, Style::Resolver&, Element&, PseudoId);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
 
+    void layoutContextTypeChangedTimerFired();
 
     void resetPseudoStates();
 
@@ -172,6 +174,9 @@ private:
 
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
+
+    HashMap<Inspector::Protocol::DOM::NodeId, Optional<Inspector::Protocol::CSS::LayoutContextType>> m_nodesWithPendingLayoutContextTypeChanges;
+    Timer m_layoutContextTypeChangedTimer;
     Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
 };
 

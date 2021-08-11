@@ -729,8 +729,6 @@ private:
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
     
-    virtual void didChangeRenderer(RenderObject*) { };
-
     struct NodeRareDataDeleter {
         void operator()(NodeRareData*) const;
     };
