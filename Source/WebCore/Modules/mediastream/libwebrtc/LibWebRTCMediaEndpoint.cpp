@@ -64,7 +64,7 @@ namespace WebCore {
 
 LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client)
     : m_peerConnectionBackend(peerConnection)
-    , m_peerConnectionFactory(*client.factory())
+    , m_peerConnectionFactory(client.factory())
     , m_createSessionDescriptionObserver(*this)
     , m_setLocalSessionDescriptionObserver(*this)
     , m_setRemoteSessionDescriptionObserver(*this)
@@ -236,13 +236,13 @@ bool LibWebRTCMediaEndpoint::addTrack(LibWebRTCRtpSenderBackend& sender, MediaSt
     switch (track.privateTrack().type()) {
     case RealtimeMediaSource::Type::Audio: {
         auto audioSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
         source = WTFMove(audioSource);
         break;
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory.CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
         source = WTFMove(videoSource);
         break;
     }
@@ -456,13 +456,13 @@ std::pair<LibWebRTCRtpSenderBackend::Source, rtc::scoped_refptr<webrtc::MediaStr
         break;
     case RealtimeMediaSource::Type::Audio: {
         auto audioSource = RealtimeOutgoingAudioSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory.CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateAudioTrack(track.id().utf8().data(), audioSource.ptr());
         source = WTFMove(audioSource);
         break;
     }
     case RealtimeMediaSource::Type::Video: {
         auto videoSource = RealtimeOutgoingVideoSource::create(track.privateTrack());
-        rtcTrack = m_peerConnectionFactory.CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
+        rtcTrack = m_peerConnectionFactory->CreateVideoTrack(track.id().utf8().data(), videoSource.ptr());
         source = WTFMove(videoSource);
         break;
     }
