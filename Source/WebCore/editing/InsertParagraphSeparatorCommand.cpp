@@ -313,7 +313,7 @@ void InsertParagraphSeparatorCommand::doApply()
         insertionPosition = positionInParentAfterNode(br.ptr());
         // If the insertion point is a break element, there is nothing else
         // we need to do.
-        if (visiblePos.deepEquivalent().anchorNode()->renderer()->isBR()) {
+        if (auto* renderer = visiblePos.deepEquivalent().anchorNode()->renderer(); renderer && renderer->isBR()) {
             setEndingSelection(VisibleSelection(insertionPosition, Affinity::Downstream, endingSelection().isDirectional()));
             return;
         }
