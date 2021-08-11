@@ -1,3 +1,10 @@
+2021-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix.
+
+        * pal/spi/ios/CelestialSPI.h:
+        Ignore unconventional deprecation warnings until they can be fixed properly.
+
 2021-08-10  Cameron McCormack  <heycam@apple.com>
 
         Remove unused ColorSync SPI

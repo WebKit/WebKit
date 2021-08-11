@@ -29,7 +29,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-W#warnings"
 #import <Celestial/AVSystemController.h>
+#pragma clang diagnostic pop
 
 #else
 
