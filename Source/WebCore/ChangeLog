@@ -1,3 +1,15 @@
+2021-08-11  John Wilander  <wilander@apple.com>
+
+        PCM: Flip WebCore's FraudPreventionEnabled to true if HAVE(RSA_BSSA) to match the experimental setting
+        https://bugs.webkit.org/show_bug.cgi?id=228961
+
+        Reviewed by Tim Horton.
+
+        Existing tests use the affected anchor attribute.
+
+        * page/RuntimeEnabledFeatures.h:
+        * page/Settings.yaml:
+
 2021-08-11  Dana Estra  <destra@apple.com>
 
         Start smooth keyboard scrolling animation when pageUp or pageDown key is pressed.

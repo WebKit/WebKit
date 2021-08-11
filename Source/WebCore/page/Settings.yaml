@@ -441,6 +441,7 @@ PrivateClickMeasurementFraudPreventionEnabled:
   type: bool
   defaultValue:
     WebCore:
+      "HAVE(RSA_BSSA)": true
       default: false
 
 QuickTimePluginReplacementEnabled:

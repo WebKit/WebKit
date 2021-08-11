@@ -346,7 +346,11 @@ private:
     bool m_lineHeightUnitsEnabled { false };
 
     bool m_privateClickMeasurementDebugModeEnabled { false };
+#if HAVE(RSA_BSSA)
+    bool m_privateClickMeasurementFraudPreventionEnabled { true };
+#else
     bool m_privateClickMeasurementFraudPreventionEnabled { false };
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_mouseEventsSimulationEnabled { false };
