@@ -192,6 +192,8 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->contentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(existingDocument->contentSecurityPolicy()->takeNavigationRequestsToUpgrade());
     }
 
+    auto protectedFrame = makeRef(*m_frame);
+
     m_frame->loader().didBeginDocument(dispatch);
 
     document->implicitOpen();
