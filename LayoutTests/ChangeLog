@@ -1,3 +1,13 @@
+2021-08-10  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Garden new css-counter imageonly failures
+
+        Unreviewed test gardening.
+
+        Some width issues in some specific cases of upper/lower roman style.
+
+        * platform/wpe/TestExpectations:
+
 2021-08-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations after r280742

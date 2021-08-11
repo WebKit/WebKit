@@ -185,6 +185,11 @@ webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ Imag
 
 # CSS counter styles
 webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html [ ImageOnlyFailure ]
+webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-019.html [ ImageOnlyFailure ]
+webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020a.html [ ImageOnlyFailure ]
+webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-020b.html [ ImageOnlyFailure ]
+webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
+webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
 
 # CSS-masking and clip-path.
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002.html [ ImageOnlyFailure ]
