@@ -87,9 +87,12 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomStrin
                 scope->didChangeStyleSheetContents();
         } else
             m_styleSheetOwner.childrenChanged(*this);
-    } else if (name == typeAttr)
+    } else if (name == typeAttr) {
         m_styleSheetOwner.setContentType(value);
-    else
+        m_styleSheetOwner.childrenChanged(*this);
+        if (auto* scope = m_styleSheetOwner.styleScope())
+            scope->didChangeStyleSheetContents();
+    } else
         HTMLElement::parseAttribute(name, value);
 }
 
