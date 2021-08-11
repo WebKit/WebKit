@@ -1,3 +1,23 @@
+2021-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ iOS ] fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=228672
+        rdar://81348960
+
+        Reviewed by Simon Fraser.
+
+        On rare occasion, this test times out when the synthesized swipe gesture fails to cause the scrollable overflow
+        container to scroll past an arbitrary scroll position threshold (previously 400px). Mitigate this by rewriting
+        the test, such that we'll swipe _until_ we scroll past the threshold (which has also been lowered to just
+        100px).
+
+        Additionally, rewrite parts of this test to be generally easier to follow; for example, remove the scroll event
+        listener and instead just synthesize swipe gestures until `scroller.scrollTop` crosses 100px.
+
+        * fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body-expected.txt:
+        * fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html:
+        * platform/ios-wk2/TestExpectations: Remove the failing test expectation.
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         http/tests/xmlhttprequest/interactive-state.html is flaky

@@ -14,7 +14,7 @@ html, body {
 
 #scroller {
     width: 100%;
-    height: 50%;
+    height: 250px;
     overflow: scroll;
     border: 4px solid black;
     box-sizing: border-box;
@@ -29,59 +29,49 @@ html, body {
 }
 
 #target {
-    width: 100%;
-    height: 50px;
-    margin-top: 1em;
+    width: 100px;
+    height: 100px;
+    margin-top: 50px;
+    background-color: tomato;
+    color: white;
+    line-height: 100px;
+    text-align: center;
 }
 </style>
 <body onload="runTest()">
     <div id="scroller">
         <div id="content"></div>
     </div>
-    <div id="target"></div>
+    <div id="target">Tap here</div>
     <p id="description"></p>
     <p id="console"></p>
 </body>
 <script>
 jsTestIsAsync = true;
+observedClick = false;
 
-let reachedMinimumScrollPosition = false;
-const minimumExpectedScrollTop = 400;
+const minimumExpectedScrollTop = 100;
 const scroller = document.getElementById("scroller");
-
-scroller.addEventListener("scroll", observeScrollEvent);
-document.body.addEventListener("click", () => {
-    testPassed("Observed click event.");
-    noteTestProgress();
-}, { once: true });
-
-function noteTestProgress() {
-    if (!window.progress)
-        progress = 0;
-    if (++progress == 3)
-        finishJSTest();
-}
-
-async function observeScrollEvent() {
-    if (!window.testRunner || scroller.scrollTop < minimumExpectedScrollTop || reachedMinimumScrollPosition)
-        return;
-
-    reachedMinimumScrollPosition = true;
-    testPassed(`scroller.scrollTop passed ${minimumExpectedScrollTop}`);
-    removeEventListener("scroll", observeScrollEvent);
-    await UIHelper.activateElement(document.getElementById("target"));
-    noteTestProgress();
-}
-
+const target = document.getElementById("target");
 async function runTest()
 {
-    description("Verifies that tapping outside of a subscrollable region during momentum scrolling dispatches click events. To run the test manually, swipe up on the black box to scroll it; while scrolling, tap outside of the scrollable area. The page should observe click events.");
+    target.addEventListener("click", () => observedClick = true);
 
-    if (!window.testRunner)
-        return;
+    description("Verifies that tapping outside of a subscrollable region during momentum scrolling dispatches click events. To run the test manually, swipe up on the black box to scroll it; while scrolling, tap the red box and verify that a click event is dispatched.");
 
-    await UIHelper.dragFromPointToPoint(160, 200, 160, 50, 0.1);
-    noteTestProgress();
+    while (scroller.scrollTop < minimumExpectedScrollTop) {
+        if (window.testRunner)
+            await UIHelper.dragFromPointToPoint(250, 200, 250, 20, 0.1);
+        await UIHelper.delayFor(200);
+    }
+
+    testPassed("scrolled to minimum threshold");
+
+    if (window.testRunner)
+        await UIHelper.activateElement(target);
+
+    shouldBe("observedClick", "true");
+    finishJSTest();
 }
 </script>
 </html>

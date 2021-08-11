@@ -1850,8 +1850,6 @@ webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit
 
 webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ Pass Failure ]
 
-webkit.org/b/228672 fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html [ Pass Timeout ]
-
 http/tests/in-app-browser-privacy/ [ Pass ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
