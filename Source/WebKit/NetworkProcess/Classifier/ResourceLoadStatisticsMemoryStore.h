@@ -32,7 +32,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class KeyedDecoder;
@@ -47,7 +46,7 @@ namespace WebKit {
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsMemoryStore final : public ResourceLoadStatisticsStore {
 public:
-    ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
+    ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost);
 
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;

@@ -54,15 +54,11 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebKit {
 using namespace WebCore;
-
-static Lock globalSuspensionLock;
-static Condition globalSuspensionCondition;
-static bool globalShouldSuspend WTF_GUARDED_BY_LOCK(globalSuspensionLock) { false };
-static uint64_t globalSuspensionIdentifier WTF_GUARDED_BY_LOCK(globalSuspensionLock) { 0 };
 
 const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataTypes()
 {
@@ -147,9 +143,9 @@ void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecords
     });
 }
 
-static Ref<WorkQueue> sharedStatisticsQueue()
+static Ref<SuspendableWorkQueue> sharedStatisticsQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility));
+    static NeverDestroyed<Ref<SuspendableWorkQueue>> queue(SuspendableWorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue",  WorkQueue::QOS::Utility));
     return queue.get().copyRef();
 }
 
@@ -1448,33 +1444,19 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 
 void WebResourceLoadStatisticsStore::suspend(CompletionHandler<void()>&& completionHandler)
 {
-    Locker suspensionLocker { globalSuspensionLock };
-    globalShouldSuspend = true;
+    ASSERT(RunLoop::isMain());
 
-    sharedStatisticsQueue()->dispatch([suspensionIdentifier = ++globalSuspensionIdentifier, completionHandler = WTFMove(completionHandler)] () mutable {
-        Locker suspensionLocker { globalSuspensionLock };
-        if (!globalShouldSuspend || suspensionIdentifier != globalSuspensionIdentifier) {
-            postTaskReply(WTFMove(completionHandler));
-            return;
-        }
-
+    sharedStatisticsQueue()->suspend([]() mutable {
         for (auto& databaseStore : ResourceLoadStatisticsDatabaseStore::allStores())
             databaseStore->interrupt();
-
-        postTaskReply(WTFMove(completionHandler));
-
-        while (globalShouldSuspend)
-            globalSuspensionCondition.wait(globalSuspensionLock);
-    });
+    }, WTFMove(completionHandler));
 }
 
 void WebResourceLoadStatisticsStore::resume()
 {
     ASSERT(RunLoop::isMain());
 
-    Locker suspensionLocker { globalSuspensionLock };
-    globalShouldSuspend = false;
-    globalSuspensionCondition.notifyOne();
+    sharedStatisticsQueue()->resume();
 }
 
 void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const RegistrableDomain& domain, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)

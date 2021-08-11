@@ -1,3 +1,63 @@
+2021-08-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Suspend WorkQueue of ResourceLoadStatistics and LocalStorage sooner
+        https://bugs.webkit.org/show_bug.cgi?id=228748
+        <rdar://problem/81626714>
+
+        Reviewed by Chris Dumez.
+
+        When suspending ResourceLoadStatistics and LocalStorage, we dispatched a suspend task, which waits on a 
+        condition, to their WorkQueue. That means the queue will be suspended after completing all tasks scheduled 
+        before the suspend task. These tasks may take a long time to complete and assertion may be timed out.
+
+        When network process receives PrepareToSuspend message, we want the queues to suspend as soon as possible. To 
+        achieve that, now we check if the queue needs to be suspended before each task, which ensures the queue 
+        execute as most one task after suspend().
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::workQueue):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::sharedStatisticsQueue):
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+        (WebKit::WebResourceLoadStatisticsStore::resume):
+        (WebKit::WTF_GUARDED_BY_LOCK): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+        * NetworkProcess/WebStorage/SessionStorageNamespace.cpp:
+        (WebKit::SessionStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/SessionStorageNamespace.h:
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::StorageArea):
+        * NetworkProcess/WebStorage/StorageArea.h:
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::createLocalStorageArea):
+        (WebKit::StorageManager::createTransientLocalStorageArea):
+        (WebKit::StorageManager::createSessionStorageArea):
+        * NetworkProcess/WebStorage/StorageManager.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::StorageManagerSet):
+        (WebKit::StorageManagerSet::suspend):
+        (WebKit::StorageManagerSet::resume):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+        (WebKit::StorageManagerSet::WTF_GUARDED_BY_LOCK): Deleted.
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.cpp:
+        (WebKit::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        * NetworkProcess/WebStorage/TransientLocalStorageNamespace.h:
+
 2021-08-11  Dana Estra  <destra@apple.com>
 
         Start smooth keyboard scrolling animation when pageUp or pageDown key is pressed.

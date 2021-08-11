@@ -26,9 +26,9 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabase.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class SQLiteStatementAutoResetScope;
@@ -41,7 +41,7 @@ namespace WebKit {
 
 class LocalStorageDatabase : public RefCounted<LocalStorageDatabase>, public CanMakeWeakPtr<LocalStorageDatabase> {
 public:
-    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, String&& databasePath, unsigned quotaInBytes);
+    static Ref<LocalStorageDatabase> create(Ref<SuspendableWorkQueue>&&, String&& databasePath, unsigned quotaInBytes);
     ~LocalStorageDatabase();
 
     HashMap<String, String> items() const;
@@ -58,7 +58,7 @@ public:
     void handleLowMemoryWarning();
 
 private:
-    LocalStorageDatabase(Ref<WorkQueue>&&, String&& databasePath, unsigned quotaInBytes);
+    LocalStorageDatabase(Ref<SuspendableWorkQueue>&&, String&& databasePath, unsigned quotaInBytes);
 
     enum class ShouldCreateDatabase : bool { No, Yes };
     bool openDatabase(ShouldCreateDatabase);
@@ -71,7 +71,7 @@ private:
 
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query) const;
 
-    Ref<WorkQueue> m_workQueue;
+    Ref<SuspendableWorkQueue> m_workQueue;
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;
     std::unique_ptr<WebCore::SQLiteTransaction> m_transaction;

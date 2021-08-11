@@ -34,6 +34,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SuspendableWorkQueue.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -42,12 +43,12 @@ constexpr auto getItemsQueryString { "SELECT key, value FROM ItemTable"_s };
 constexpr unsigned maximumSizeForValuesKeptInMemory { 1024 }; // 1 KB
 constexpr Seconds transactionDuration { 500_ms };
 
-Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& workQueue, String&& databasePath, unsigned quotaInBytes)
+Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<SuspendableWorkQueue>&& workQueue, String&& databasePath, unsigned quotaInBytes)
 {
     return adoptRef(*new LocalStorageDatabase(WTFMove(workQueue), WTFMove(databasePath), quotaInBytes));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& workQueue, String&& databasePath, unsigned quotaInBytes)
+LocalStorageDatabase::LocalStorageDatabase(Ref<SuspendableWorkQueue>&& workQueue, String&& databasePath, unsigned quotaInBytes)
     : m_workQueue(WTFMove(workQueue))
     , m_databasePath(WTFMove(databasePath))
     , m_quotaInBytes(quotaInBytes)

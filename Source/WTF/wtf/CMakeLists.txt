@@ -266,6 +266,7 @@ set(WTF_PUBLIC_HEADERS
     StringExtras.h
     StringHashDumpContext.h
     StringPrintStream.h
+    SuspendableWorkQueue.h
     SynchronizedFixedQueue.h
     SystemFree.h
     SystemMalloc.h
@@ -462,6 +463,7 @@ set(WTF_SOURCES
     StackStats.cpp
     StackTrace.cpp
     StringPrintStream.cpp
+    SuspendableWorkQueue.cpp
     ThreadGroup.cpp
     ThreadMessage.cpp
     Threading.cpp

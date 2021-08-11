@@ -42,7 +42,7 @@ public:
     TransientLocalStorageNamespace();
     ~TransientLocalStorageNamespace();
 
-    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, Ref<SuspendableWorkQueue>&&);
     Vector<WebCore::SecurityOriginData> origins() const;
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);

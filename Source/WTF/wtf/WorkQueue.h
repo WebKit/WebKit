@@ -41,7 +41,7 @@
 
 namespace WTF {
 
-class WorkQueue final : public FunctionDispatcher {
+class WorkQueue : public FunctionDispatcher {
 
 public:
     enum class Type {
@@ -53,11 +53,11 @@ public:
     WTF_EXPORT_PRIVATE static WorkQueue& main();
 
     WTF_EXPORT_PRIVATE static Ref<WorkQueue> create(const char* name, Type = Type::Serial, QOS = QOS::Default);
-    ~WorkQueue() final;
+    ~WorkQueue() override;
 
-    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
-    WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&);
-    WTF_EXPORT_PRIVATE void dispatchSync(Function<void()>&&);
+    WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) override;
+    WTF_EXPORT_PRIVATE virtual void dispatchAfter(Seconds, Function<void()>&&);
+    WTF_EXPORT_PRIVATE virtual void dispatchSync(Function<void()>&&);
 
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, WTF::Function<void(size_t index)>&&);
 
@@ -67,9 +67,10 @@ public:
     RunLoop& runLoop() const { return *m_runLoop; }
 #endif
 
-private:
+protected:
     WorkQueue(const char* name, Type, QOS);
 
+private:
     static Ref<WorkQueue> constructMainWorkQueue();
 #if USE(COCOA_EVENT_LOOP)
     explicit WorkQueue(OSObjectPtr<dispatch_queue_t>&&);

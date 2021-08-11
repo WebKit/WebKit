@@ -52,6 +52,7 @@
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Scope.h>
 #include <wtf/StdSet.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
@@ -346,7 +347,7 @@ HashSet<ResourceLoadStatisticsDatabaseStore*>& ResourceLoadStatisticsDatabaseSto
     return map;
 }
 
-ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
+ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
     , m_storageDirectoryPath(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))
     , m_transaction(m_database)

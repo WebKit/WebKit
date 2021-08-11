@@ -42,6 +42,7 @@
 #include <WebCore/ResourceLoadObserver.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
+#include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -49,10 +50,6 @@
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WTF {
-class WorkQueue;
-}
 
 namespace WebCore {
 class ResourceRequest;
@@ -144,7 +141,7 @@ public:
 
     static const OptionSet<WebsiteDataType>& monitoredDataTypes();
 
-    WTF::WorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
+    SuspendableWorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
 
     void populateMemoryStoreFromDisk(CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(bool);
@@ -276,7 +273,7 @@ private:
     void destroyResourceLoadStatisticsStore(CompletionHandler<void()>&&);
 
     WeakPtr<NetworkSession> m_networkSession;
-    Ref<WTF::WorkQueue> m_statisticsQueue;
+    Ref<SuspendableWorkQueue> m_statisticsQueue;
     std::unique_ptr<ResourceLoadStatisticsStore> m_statisticsStore;
 
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;

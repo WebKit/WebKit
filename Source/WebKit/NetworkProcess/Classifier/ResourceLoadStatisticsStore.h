@@ -32,9 +32,9 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 #if HAVE(CORE_PREDICTION)
 #include "ResourceLoadStatisticsClassifierCocoa.h"
@@ -217,7 +217,7 @@ public:
 protected:
     static unsigned computeImportance(const WebCore::ResourceLoadStatistics&);
 
-    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
+    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost);
     
     bool dataRecordsBeingRemoved() const { return m_dataRecordsBeingRemoved; }
 
@@ -228,7 +228,7 @@ protected:
     virtual void pruneStatisticsIfNeeded() = 0;
 
     WebResourceLoadStatisticsStore& store() { return m_store; }
-    Ref<WorkQueue>& workQueue() { return m_workQueue; }
+    Ref<SuspendableWorkQueue>& workQueue() { return m_workQueue; }
 #if HAVE(CORE_PREDICTION)
     ResourceLoadStatisticsClassifierCocoa& classifier() { return m_resourceLoadStatisticsClassifier; }
 #else
@@ -278,7 +278,7 @@ private:
     void updateClientSideCookiesAgeCap();
 
     WebResourceLoadStatisticsStore& m_store;
-    Ref<WorkQueue> m_workQueue;
+    Ref<SuspendableWorkQueue> m_workQueue;
 #if HAVE(CORE_PREDICTION)
     ResourceLoadStatisticsClassifierCocoa m_resourceLoadStatisticsClassifier;
 #else

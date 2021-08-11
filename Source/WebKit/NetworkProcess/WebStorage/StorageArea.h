@@ -48,7 +48,7 @@ class StorageArea : public CanMakeWeakPtr<StorageArea> {
 public:
     using Identifier = StorageAreaIdentifier;
     
-    StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes, Ref<WorkQueue>&&);
+    StorageArea(LocalStorageNamespace*, const WebCore::SecurityOriginData&, unsigned quotaInBytes, Ref<SuspendableWorkQueue>&&);
     ~StorageArea();
 
     const WebCore::SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
@@ -90,7 +90,7 @@ private:
     HashSet<IPC::Connection::UniqueID> m_eventListeners;
 
     Identifier m_identifier;
-    Ref<WorkQueue> m_queue;
+    Ref<SuspendableWorkQueue> m_queue;
 };
 
 } // namespace WebKit

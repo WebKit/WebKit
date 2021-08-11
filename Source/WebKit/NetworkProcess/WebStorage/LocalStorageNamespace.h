@@ -31,7 +31,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
@@ -48,7 +47,7 @@ public:
     StorageManager* storageManager() const { return &m_storageManager; }
 
     enum class IsEphemeral : bool { No, Yes };
-    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, IsEphemeral, Ref<WorkQueue>&&);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, IsEphemeral, Ref<SuspendableWorkQueue>&&);
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();

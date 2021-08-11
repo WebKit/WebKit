@@ -1,3 +1,30 @@
+2021-08-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Suspend WorkQueue of ResourceLoadStatistics and LocalStorage sooner
+        https://bugs.webkit.org/show_bug.cgi?id=228748
+        <rdar://problem/81626714>
+
+        Reviewed by Chris Dumez.
+
+        Add SuspendableWorkQueue that would perform suspend check before each task.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Forward.h:
+        * wtf/SuspendableWorkQueue.cpp: Added.
+        (WTF::SuspendableWorkQueue::create):
+        (WTF::SuspendableWorkQueue::SuspendableWorkQueue):
+        (WTF::SuspendableWorkQueue::suspend):
+        (WTF::SuspendableWorkQueue::resume):
+        (WTF::SuspendableWorkQueue::dispatch):
+        (WTF::SuspendableWorkQueue::dispatchAfter):
+        (WTF::SuspendableWorkQueue::dispatchSync):
+        (WTF::SuspendableWorkQueue::invokeAllSuspensionCompletionHandlers):
+        (WTF::SuspendableWorkQueue::suspendIfNeeded):
+        * wtf/SuspendableWorkQueue.h: Added.
+        * wtf/WorkQueue.h:
+        (): Deleted.
+
 2021-08-11  Youenn Fablet  <youenn@apple.com>
 
         Enable WebRTC relay by default

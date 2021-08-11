@@ -41,7 +41,7 @@ Ref<StorageManagerSet> StorageManagerSet::create()
 }
 
 StorageManagerSet::StorageManagerSet()
-    : m_queue(WorkQueue::create("com.apple.WebKit.WebStorage"))
+    : m_queue(SuspendableWorkQueue::create("com.apple.WebKit.WebStorage"))
 {
     ASSERT(RunLoop::isMain());
 
@@ -177,34 +177,16 @@ void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    Locker suspensionLocker { m_suspensionLock };
-    m_shouldSuspend = true;
-
-    m_queue->dispatch([this, protectedThis = makeRef(*this), suspensionIdentifier = ++m_suspensionIdentifier, completionHandler = WTFMove(completionHandler)] () mutable {
-        Locker suspensionLocker { m_suspensionLock };
-        if (!m_shouldSuspend || suspensionIdentifier != m_suspensionIdentifier) {
-            RunLoop::main().dispatch(WTFMove(completionHandler));
-            return;
-        }
-
-        // Make sure we flush local storage to disk before we suspend the thread as we want to make sure any pending
-        // SQL transaction has been committed.
-        flushLocalStorage();
-
-        RunLoop::main().dispatch(WTFMove(completionHandler));
-
-        while (m_shouldSuspend)
-            m_suspensionCondition.wait(m_suspensionLock);
-    });
+    m_queue->suspend([protectedThis = makeRef(*this)] {
+        protectedThis->flushLocalStorage();
+    }, WTFMove(completionHandler));
 }
 
 void StorageManagerSet::resume()
 {
     ASSERT(RunLoop::isMain());
 
-    Locker suspensionLocker { m_suspensionLock };
-    m_shouldSuspend = false;
-    m_suspensionCondition.notifyOne();
+    m_queue->resume();
 }
 
 void StorageManagerSet::getSessionStorageOrigins(PAL::SessionID sessionID, GetOriginsCallback&& completionHandler)

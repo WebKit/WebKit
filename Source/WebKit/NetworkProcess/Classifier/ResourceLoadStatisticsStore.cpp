@@ -106,7 +106,7 @@ bool OperatingDate::operator<=(const OperatingDate& other) const
     return secondsSinceEpoch() <= other.secondsSinceEpoch();
 }
 
-ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
+ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
     : m_store(store)
     , m_workQueue(workQueue)
     , m_shouldIncludeLocalhost(shouldIncludeLocalhost)

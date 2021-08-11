@@ -38,7 +38,6 @@
 #include <wtf/Scope.h>
 #include <wtf/StdSet.h>
 #include <wtf/Vector.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class SQLiteDatabase;
@@ -76,7 +75,7 @@ typedef std::pair<String, std::optional<String>> TableAndIndexPair;
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
 public:
-    ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
+    ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, SuspendableWorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID);
     ~ResourceLoadStatisticsDatabaseStore();
 
     static HashSet<ResourceLoadStatisticsDatabaseStore*>& allStores();

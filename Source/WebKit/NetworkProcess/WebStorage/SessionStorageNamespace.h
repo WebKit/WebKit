@@ -44,7 +44,7 @@ public:
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, Ref<WorkQueue>&&);
+    StorageArea& getOrCreateStorageArea(WebCore::SecurityOriginData&&, Ref<SuspendableWorkQueue>&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 

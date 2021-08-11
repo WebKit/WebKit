@@ -69,7 +69,7 @@ static void pruneResources(HashMap<RegistrableDomain, UniqueRef<ResourceLoadStat
         statisticsMap.remove(statisticsToPrune[i].domain);
 }
 
-ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
+ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
 {
     RELEASE_ASSERT(!RunLoop::isMain());

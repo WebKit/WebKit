@@ -41,6 +41,7 @@
 #include <memory>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
@@ -211,7 +212,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<SecurityOr
     }
 }
 
-StorageArea* StorageManager::createLocalStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
+StorageArea* StorageManager::createLocalStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& origin, Ref<SuspendableWorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -221,7 +222,7 @@ StorageArea* StorageManager::createLocalStorageArea(StorageNamespaceIdentifier s
     return nullptr;
 }
 
-StorageArea* StorageManager::createTransientLocalStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& topLevelOrigin, SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
+StorageArea* StorageManager::createTransientLocalStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& topLevelOrigin, SecurityOriginData&& origin, Ref<SuspendableWorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT((HashMap<StorageNamespaceIdentifier, RefPtr<TransientLocalStorageNamespace>>::isValidKey(storageNamespaceID)));
@@ -232,7 +233,7 @@ StorageArea* StorageManager::createTransientLocalStorageArea(StorageNamespaceIde
     return nullptr;
 }
 
-StorageArea* StorageManager::createSessionStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& origin, Ref<WorkQueue>&& workQueue)
+StorageArea* StorageManager::createSessionStorageArea(StorageNamespaceIdentifier storageNamespaceID, SecurityOriginData&& origin, Ref<SuspendableWorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT((HashMap<StorageNamespaceIdentifier, RefPtr<SessionStorageNamespace>>::isValidKey(storageNamespaceID)));

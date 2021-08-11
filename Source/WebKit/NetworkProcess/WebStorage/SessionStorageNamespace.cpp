@@ -43,7 +43,7 @@ SessionStorageNamespace::~SessionStorageNamespace()
     ASSERT(!RunLoop::isMain());
 }
 
-StorageArea& SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, Ref<WorkQueue>&& workQueue)
+StorageArea& SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, Ref<SuspendableWorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {

@@ -47,7 +47,7 @@ LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(!RunLoop::isMain());
 }
 
-StorageArea& LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral, Ref<WorkQueue>&& workQueue)
+StorageArea& LocalStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin, IsEphemeral isEphemeral, Ref<SuspendableWorkQueue>&& workQueue)
 {
     ASSERT(!RunLoop::isMain());
     return *m_storageAreaMap.ensure(securityOrigin, [&]() mutable {

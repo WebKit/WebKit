@@ -30,12 +30,13 @@
 #include "LocalStorageNamespace.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManager.h"
+#include <wtf/SuspendableWorkQueue.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes, Ref<WorkQueue>&& queue)
+StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const SecurityOriginData& securityOrigin, unsigned quotaInBytes, Ref<SuspendableWorkQueue>&& queue)
     : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)

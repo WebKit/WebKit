@@ -33,6 +33,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/WeakPtr.h>
 
 using WebCore::SecurityOriginData;
@@ -98,12 +99,7 @@ private:
     HashMap<StorageAreaIdentifier, WeakPtr<StorageArea>> m_storageAreas;
 
     HashSet<IPC::Connection::UniqueID> m_connections;
-    Ref<WorkQueue> m_queue;
-
-    Lock m_suspensionLock;
-    Condition m_suspensionCondition;
-    bool m_shouldSuspend WTF_GUARDED_BY_LOCK(m_suspensionLock) { false };
-    uint64_t m_suspensionIdentifier WTF_GUARDED_BY_LOCK(m_suspensionLock) { 0 };
+    Ref<SuspendableWorkQueue> m_queue;
 };
 
 } // namespace WebKit
