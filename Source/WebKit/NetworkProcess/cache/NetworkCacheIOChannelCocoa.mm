@@ -51,11 +51,11 @@ static long dispatchQueueIdentifier(WorkQueue::QOS qos)
     }
 }
 
-IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos)
-    : m_path(filePath)
+IOChannel::IOChannel(String&& filePath, Type type, std::optional<WorkQueue::QOS> qos)
+    : m_path(WTFMove(filePath))
     , m_type(type)
 {
-    auto path = FileSystem::fileSystemRepresentation(filePath);
+    auto path = FileSystem::fileSystemRepresentation(m_path);
     int oflag;
     mode_t mode;
     WorkQueue::QOS dispatchQOS;

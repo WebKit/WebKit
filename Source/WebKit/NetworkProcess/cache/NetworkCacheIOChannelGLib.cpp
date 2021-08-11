@@ -37,11 +37,11 @@ namespace NetworkCache {
 
 static const size_t gDefaultReadBufferSize = 4096;
 
-IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS>)
-    : m_path(filePath)
+IOChannel::IOChannel(String&& filePath, Type type, std::optional<WorkQueue::QOS>)
+    : m_path(WTFMove(filePath))
     , m_type(type)
 {
-    auto path = FileSystem::fileSystemRepresentation(filePath);
+    auto path = FileSystem::fileSystemRepresentation(m_path);
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.data()));
     switch (m_type) {
     case Type::Create: {

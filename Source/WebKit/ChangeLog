@@ -1,3 +1,29 @@
+2021-08-11  David Kilzer  <ddkilzer@apple.com>
+
+        ThreadSanitizer: data race in WTF::StringImpl::deref() under WebKit::NetworkCache::IOChannel::~IOChannel()
+        <https://webkit.org/b/229003>
+        <rdar://problem/81795626>
+
+        Reviewed by Chris Dumez.
+
+        Covered by 3245 layout tests running with TSan including:
+            http/wpt/service-workers/file-upload.html
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        (WebKit::NetworkCache::IOChannel::open):
+        - Update to use #pragma once.
+        - Make an isolatedCopy() for m_path.
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        - Switch to using an rvalue reference.
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::IOChannel): Ditto.
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::IOChannel): Ditto.
+        * NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp:
+        (WebKit::NetworkCache::IOChannel::IOChannel): Ditto.
+        - Switch to use m_path instead of filePath to prevent
+          use-after-move.
+
 2021-08-11  Sihui Liu  <sihui_liu@apple.com>
 
         Suspend WorkQueue of ResourceLoadStatistics and LocalStorage sooner
