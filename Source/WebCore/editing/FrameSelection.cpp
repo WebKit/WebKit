@@ -369,6 +369,13 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
             return false;
         }
 
+        bool selectionEndpointsBelongToMultipleDocuments = newSelection.base().document() && !newSelection.document();
+        bool selectionIsInAnotherDocument = newSelection.document() && newSelection.document() != m_document.get();
+        if (selectionEndpointsBelongToMultipleDocuments || selectionIsInAnotherDocument) {
+            clear();
+            return false;
+        }
+
         if (closeTyping)
             TypingCommand::closeTyping(*m_document);
 
@@ -2791,6 +2798,11 @@ static bool containsEndpoints(const WeakPtr<Document>& document, const Range& li
 bool FrameSelection::isInDocumentTree() const
 {
     return containsEndpoints(m_document, m_selection.range());
+}
+
+bool FrameSelection::isConnectedToDocument() const
+{
+    return selection().document() == m_document.get();
 }
 
 RefPtr<Range> FrameSelection::associatedLiveRange()

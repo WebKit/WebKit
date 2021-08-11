@@ -144,6 +144,21 @@ bool VisibleSelection::isOrphan() const
     return false;
 }
 
+RefPtr<Document> VisibleSelection::document() const
+{
+    auto baseDocument = makeRefPtr(m_base.document());
+    if (!baseDocument)
+        return nullptr;
+
+    if (m_extent.document() != baseDocument.get() || m_start.document() != baseDocument.get() || m_end.document() != baseDocument.get())
+        return nullptr;
+
+    if (baseDocument->settings().liveRangeSelectionEnabled() && (m_anchor.document() != baseDocument.get() || m_focus.document() != baseDocument.get()))
+        return nullptr;
+
+    return baseDocument;
+}
+
 Optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())

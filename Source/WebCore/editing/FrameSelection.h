@@ -252,6 +252,8 @@ public:
     void setShouldShowBlockCursor(bool);
 
     bool isInDocumentTree() const;
+    bool isConnectedToDocument() const;
+
     RefPtr<Range> associatedLiveRange();
     void associateLiveRange(Range&);
     void disassociateLiveRange();
