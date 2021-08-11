@@ -4568,6 +4568,8 @@ fast/text/selection-is-prevent-defaulted.html [ Failure Pass ]
 fast/events/page-visibility-iframe-propagation-test.html [ Timeout Pass ]
 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Timeout Pass ]
 
+webkit.org/b/229007 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Pass Failure ]
+
 fast/css/aspect-ratio-invalidate-if-disabled.html [ Failure ]
 fast/css/rotate-invalidate-if-disabled.html [ Failure ]
 fast/css/scale-invalidate-if-disabled.html [ Failure ]
