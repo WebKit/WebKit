@@ -338,7 +338,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
                     LOG_ERROR("WKContentViewInteraction failed to remove file at path %@ with error %@", coordinatedURL.path, error);
             }];
             if (error)
-                LOG_ERROR("WKContentViewInteraction failed to coordinate removal of temporary file at path %@ with error %@", url, error);
+                LOG_ERROR("WKContentViewInteraction failed to coordinate removal of temporary file at path %@ with error %@", url.get(), error);
         }
     });
 

@@ -1,6 +1,14 @@
 2021-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS debug build after r280875
+        https://bugs.webkit.org/show_bug.cgi?id=228683
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _removeTemporaryFilesIfNecessary]):
+
+2021-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS debug build after r280875
        ​https://bugs.webkit.org/show_bug.cgi?id=228683
 
         * UIProcess/ios/WKContentView.mm:
