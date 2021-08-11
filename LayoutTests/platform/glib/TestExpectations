@@ -2333,9 +2333,6 @@ webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.docu
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.header.html [ Failure ]
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/document-cookie.non-secure.html [ Failure ]
 
-webkit.org/b/228160 fast/selectors/input-with-selection-pseudo-element.html [ ImageOnlyFailure ]
-webkit.org/b/228160 imported/blink/fast/table/whitespace-between-elements-with-table-cell-display-3.html [ ImageOnlyFailure ]
-
 webkit.org/b/228778 mhtml [ ImageOnlyFailure Pass ]
 
 # End: Common failures between GTK and WPE.
