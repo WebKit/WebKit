@@ -1,3 +1,15 @@
+2021-08-10  Peng Liu  <peng.liu6@apple.com>
+
+        Disable SYSTEM_FEATURE_FLAGS on iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=228979
+        <rdar://problem/81764452>
+
+        Reviewed by Tim Horton.
+
+        Stop using feature flags mechanism on iOS 14 to avoid some issues on iOS simulators.
+
+        * wtf/PlatformHave.h:
+
 2021-08-10  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WTF][PlayStation] REGRESSION(r280795) error: undefined symbol: WTF::logLevelString()
