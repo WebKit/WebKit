@@ -4661,4 +4661,6 @@ fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Crash ]
 
 webkit.org/b/228968 fast/forms/search/search-zoom-computed-style-height.html [ Pass Crash ]
 
+webkit.org/b/229005 fast/events/dropzone-005.html [ Pass Crash ]
+
 accessibility/selected-state-changed-notifications.html [ Skip ]
