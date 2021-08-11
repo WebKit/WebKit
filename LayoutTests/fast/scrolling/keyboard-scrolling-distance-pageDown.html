@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+
+<html>
+
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function checkSuccessfulScroll(scrollObj)
+        {
+            if (window.scrollY <= scrollObj.offset) {
+                debug("Unsuccessful Scroll - offset does not increase with each scroll event.");
+                testRunner.notifyDone();
+            }
+            
+            scrollObj.offset = window.scrollY;
+            scrollObj.count++;
+            
+            if (scrollObj.count == 2) {
+                debug("Successful Scroll");
+                testRunner.notifyDone();
+            }
+        }
+        
+        async function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+                
+            let scrollObj = {
+                count: 0,
+                offset: 0
+            }
+            
+            document.addEventListener("scroll", function () {
+                checkSuccessfulScroll(scrollObj);
+            });
+            
+            await UIHelper.keyDown("pageDown");
+        }
+    </script>
+    <style>
+    #placeholder {
+        width: 100px;
+        height: 5000px;
+    }
+    </style>
+</head>
+
+<body style="margin: 0;" onload="runTest()">
+    <div id="placeholder">
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+
+</html>

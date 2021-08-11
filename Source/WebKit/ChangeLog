@@ -1,3 +1,17 @@
+2021-08-11  Dana Estra  <destra@apple.com>
+
+        Start smooth keyboard scrolling animation when pageUp or pageDown key is pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=228156
+
+        Reviewed by Tim Horton.
+        
+        UIProcess now no longer handles scrollPageUp and scrollPageDown events. They return
+        to eventHandler as unhandled and the keyboard scroll animation is started.
+
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView scrollPageDown:]):
+        (-[WKWebView scrollPageUp:]):
+
 2021-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS debug build after r280875

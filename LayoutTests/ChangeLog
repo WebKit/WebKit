@@ -1,3 +1,18 @@
+2021-08-11  Dana Estra  <destra@apple.com>
+
+        Start smooth keyboard scrolling animation when pageUp or pageDown key is pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=228156
+
+        Reviewed by Tim Horton.
+        
+        Tests check that at least 2 scroll events occur when the downArrow key or pageDown key is pressed, and
+        that with each event, the page's offset from its original position increases.
+
+        * fast/scrolling/keyboard-scrolling-distance-downArrow-expected.txt: Added.
+        * fast/scrolling/keyboard-scrolling-distance-downArrow.html: Added.
+        * fast/scrolling/keyboard-scrolling-distance-pageDown-expected.txt: Added.
+        * fast/scrolling/keyboard-scrolling-distance-pageDown.html: Added.
+
 2021-08-11  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r273072): Caps lock indicator in password field is too large

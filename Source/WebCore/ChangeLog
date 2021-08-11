@@ -1,3 +1,21 @@
+2021-08-11  Dana Estra  <destra@apple.com>
+
+        Start smooth keyboard scrolling animation when pageUp or pageDown key is pressed.
+        https://bugs.webkit.org/show_bug.cgi?id=228156
+
+        Reviewed by Tim Horton.
+        
+        UIProcess now no longer handles scrollPageUp and scrollPageDown events. They return to eventHandler as
+        unhandled and the keyboard scroll animation is started.
+
+        Tests: fast/scrolling/keyboard-scrolling-distance-downArrow.html
+               fast/scrolling/keyboard-scrolling-distance-pageDown.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        * platform/KeyboardScrollingAnimator.cpp:
+        (WebCore::KeyboardScrollingAnimator::keyboardScrollForKeyboardEvent const):
+
 2021-08-11  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r273072): Caps lock indicator in password field is too large

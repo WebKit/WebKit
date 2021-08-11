@@ -142,15 +142,17 @@ float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, Scrol
         return m_scrollAnimator.scrollableArea().horizontalScrollbar();
     }();
 
-    switch (granularity) {
-    case ScrollGranularity::ScrollByLine:
-        return scrollbar->lineStep();
-    case ScrollGranularity::ScrollByPage:
-        return scrollbar->pageStep();
-    case ScrollGranularity::ScrollByDocument:
-        return scrollbar->totalSize();
-    case ScrollGranularity::ScrollByPixel:
-        return scrollbar->pixelStep();
+    if (scrollbar) {
+        switch (granularity) {
+        case ScrollGranularity::ScrollByLine:
+            return scrollbar->lineStep();
+        case ScrollGranularity::ScrollByPage:
+            return scrollbar->pageStep();
+        case ScrollGranularity::ScrollByDocument:
+            return scrollbar->totalSize();
+        case ScrollGranularity::ScrollByPixel:
+            return scrollbar->pixelStep();
+        }
     }
 
     return 0;
@@ -160,7 +162,7 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
 {
     // FIXME (bug 227459): This logic does not account for writing-mode.
 
-    enum class Key : uint8_t { LeftArrow, RightArrow, UpArrow, DownArrow, Space };
+    enum class Key : uint8_t { LeftArrow, RightArrow, UpArrow, DownArrow, Space, PageUp, PageDown };
 
     Key key;
     if (event.keyIdentifier() == "Left")
@@ -173,6 +175,10 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
         key = Key::DownArrow;
     else if (event.charCode() == ' ')
         key = Key::Space;
+    else if (event.keyIdentifier() == "PageUp")
+        key = Key::PageUp;
+    else if (event.keyIdentifier() == "PageDown")
+        key = Key::PageDown;
     else
         return std::nullopt;
 
@@ -189,6 +195,8 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
                 return ScrollGranularity::ScrollByPage;
             return ScrollGranularity::ScrollByLine;
         case Key::Space:
+        case Key::PageUp:
+        case Key::PageDown:
             return ScrollGranularity::ScrollByPage;
         };
         RELEASE_ASSERT_NOT_REACHED();
@@ -201,8 +209,10 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
         case Key::RightArrow:
             return ScrollDirection::ScrollRight;
         case Key::UpArrow:
+        case Key::PageUp:
             return ScrollDirection::ScrollUp;
         case Key::DownArrow:
+        case Key::PageDown:
             return ScrollDirection::ScrollDown;
         case Key::Space:
             return event.shiftKey() ? ScrollDirection::ScrollUp : ScrollDirection::ScrollDown;
@@ -211,6 +221,9 @@ std::optional<KeyboardScroll> KeyboardScrollingAnimator::keyboardScrollForKeyboa
     }();
 
     float distance = scrollDistance(direction, granularity);
+
+    if (!distance)
+        return std::nullopt;
 
     KeyboardScroll scroll;
 

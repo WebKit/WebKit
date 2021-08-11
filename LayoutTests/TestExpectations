@@ -92,6 +92,8 @@ compositing/layer-creation/clipping-scope [ Skip ]
 # WebKit2 only.
 printing/printing-events.html [ Skip ]
 fast/forms/enterkeyhint-attribute-values.html [ Skip ]
+fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ]
+fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Skip ]
 
 # Highlighting marked text ranges from layout tests is only supported in WebKit2.
 editing/input/composition-highlights.html [ Skip ]

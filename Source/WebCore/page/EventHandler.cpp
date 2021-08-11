@@ -3819,6 +3819,8 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
             defaultTabEventHandler(event);
         else if (event.keyIdentifier() == "U+0008")
             defaultBackspaceEventHandler(event);
+        else if (event.keyIdentifier() == "PageUp" || event.keyIdentifier() == "PageDown")
+            startKeyboardScrolling(event);
         else {
             FocusDirection direction = focusDirectionForKey(event.keyIdentifier());
             if (direction != FocusDirection::None)
