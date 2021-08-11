@@ -84,7 +84,7 @@ WK_AUDIO_UNIT_LDFLAGS = $(WK_AUDIO_UNIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_AUDIO_UNIT_LDFLAGS_macosx = -framework AudioUnit;
 
 WK_CARBON_LDFLAGS = $(WK_CARBON_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_CARBON_LDFLAGS_macosx = -framework Carbon -Xlinker --no-demangle;
+WK_CARBON_LDFLAGS_macosx = -framework Carbon;
 
 WK_CORE_UI_LDFLAGS = $(WK_CORE_UI_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_CORE_UI_LDFLAGS_macosx = -framework CoreUI;

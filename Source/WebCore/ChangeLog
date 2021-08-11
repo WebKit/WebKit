@@ -1,3 +1,16 @@
+2021-08-11  Youenn Fablet  <youenn@apple.com>
+
+        Remove --no-demangle XLinker option from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=228949
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove options that were added inadvertently.
+        No change of behavior as this is changing the linker log only.
+
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         HTMLMetaElement http-equiv should not be processed in shadow trees
