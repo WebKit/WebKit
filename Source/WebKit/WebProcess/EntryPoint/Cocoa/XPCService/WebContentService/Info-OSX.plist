@@ -55,5 +55,7 @@
 	</dict>
 	<key>NSColorPreferLocalNotifications</key>
 	<integer>1</integer>
+	<key>NSDisableKeyboardLayoutAdjustedShortcuts</key>
+	<true/>
 </dict>
 </plist>
