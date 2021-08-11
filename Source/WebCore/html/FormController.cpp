@@ -24,6 +24,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "ScriptDisallowedScope.h"
+#include "TypedElementDescendantIterator.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/StringBuilder.h>

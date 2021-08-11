@@ -28,6 +28,7 @@
 
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

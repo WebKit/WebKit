@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class Document;
 class FormKeyGenerator;
 class HTMLFormControlElementWithState;
 class HTMLFormElement;

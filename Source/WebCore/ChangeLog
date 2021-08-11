@@ -1,3 +1,16 @@
+2021-08-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid August 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=228985
+
+        Unreviewed non-unified build fixes.
+
+        * fileapi/ThreadableBlobRegistry.cpp: Add missing CrossOriginOpenerPolicy.h include.
+        * html/FormController.cpp: Add missing TypedElementDescendantIterator.h include.
+        * html/FormController.h: Add missing forward declaration for the Document type.
+        * loader/CrossOriginEmbedderPolicy.cpp: Add missing ResourceResponse.h include.
+        * loader/CrossOriginOpenerPolicy.cpp: Ditto.
+
 2021-08-11  Cathie Chen  <cathiechen@igalia.com>
 
         REGRESSION (r277997): Max-height not applied for image
