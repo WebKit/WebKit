@@ -65,7 +65,7 @@ public:
 
     ~RemoteImageBufferProxy()
     {
-        if (!m_remoteRenderingBackendProxy) {
+        if (!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isGPUProcessConnectionClosed()) {
             clearDisplayList();
             return;
         }
