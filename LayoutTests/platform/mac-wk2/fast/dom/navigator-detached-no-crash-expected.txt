@@ -32,7 +32,6 @@ navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
 navigator.webdriver is OK
-navigator.xr is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
@@ -65,5 +64,4 @@ navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
 navigator.webdriver is OK
-navigator.xr is OK
 
