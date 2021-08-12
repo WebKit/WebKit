@@ -69,6 +69,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         WI.Frame.addEventListener(WI.Frame.Event.PageExecutionContextChanged, this._handleFramePageExecutionContextChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._handleFrameExecutionContextsCleared, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextAdded, this._handleFrameExecutionContextAdded, this);
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ActiveCallFrameDidChange, this._handleDebuggerActiveCallFrameDidChange, this);
 
@@ -370,6 +371,11 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         this._useExecutionContextOfInspectedNode = false;
         this._setActiveExecutionContext(frame.pageExecutionContext);
+    }
+
+    _handleFrameExecutionContextAdded(event)
+    {
+        this._updateActiveExecutionContextDisplay();
     }
 
     _handleFrameExecutionContextsCleared(event)

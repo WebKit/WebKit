@@ -1,3 +1,18 @@
+2021-08-12  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Adding execution contexts after page load doesn't show a hidden execution selector
+        https://bugs.webkit.org/show_bug.cgi?id=229053
+
+        Reviewed by Devin Rousso.
+
+        Add a handler for execution contexts being added to update the display of the execution context list, as when
+        there is only a single context at page load the dropdown will be hidden and thus needs to be shown when an
+        execution context is added after page load.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+        (WI.QuickConsole.prototype._handleFrameExecutionContextAdded):
+
 2021-08-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r271348): Web Inspector: Table headers have vertical scrollbar
