@@ -1,5 +1,142 @@
 2021-08-12  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r280981. rdar://problem/81870941
+
+    [GPU Process] REGRESSION: WebContent often crashes when using iCloud photos
+    https://bugs.webkit.org/show_bug.cgi?id=228969
+    <rdar://81761078>
+    
+    Reviewed by Simon Fraser.
+    
+    Terminating the GPUProcess is very stressful situation which has to be
+    handled carefully. The side effect of each function which is called through
+    gpuProcessConnectionDidClose() has to be understood to get the right
+    sequence of calls. There are problems in releasing all kinds of resources.
+    
+    - Releasing NativeImage: Calling clearNativeImageMap() after clearing the
+    backend of the ImageBuffers was causing a problem. When clearing the
+    backend of an ImageBuffer, it will clear its DisplayList which may have
+    the last reference to a NativeImage. The destructor of NativeImage calls
+    releaseRemoteResource() before it is removed from the the NativeImageMap.
+    This will send a message to the relaunched GPUP to release a NativeImage
+    which is not in its cache.
+    
+    - Releasing Font: clearFontMap() was always calling releaseRemoteResource()
+    even if it is called form  remoteResourceCacheWasDestroyed(). This should
+    not happen because the connection with GPUProcess has been closed.
+    
+    - Releasing ImageBuffer: This happen when a DisplayList of an ImageBuffer
+    'A' holds the last reference to another ImageBuffer 'B' and we call
+    clearBackend() for 'A'. clearBackend() will clear the DisplayList of 'A'
+    and causes the deletion of 'B'. In this case we should not call
+    releaseImageBuffer() for 'B' because the GPUPProcess is closed.
+    
+    * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+    (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+    If the ImageBuffer is being released because of the clean-up we do when
+    the GPUProcess is terminated, we should not release the corresponding
+    RemoteImageBuffer since it is already gone.
+    
+    * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+    (WebKit::RemoteRenderingBackendProxy::isGPUProcessConnectionClosed const):
+    This will return true if we are deleting a RemoteImageBufferProxy through
+    RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed().
+    
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+    (WebKit::RemoteResourceCacheProxy::releaseAllRemoteFonts):
+    This function will be used to release the remote fonts. It should be called
+    from RemoteResourceCacheProxy::releaseMemory() where we sure the GPUP is
+    alive and all the fonts are cached there.
+    
+    (WebKit::RemoteResourceCacheProxy::clearFontMap):
+    The part of releasing the remote fonts was moved from this function to
+    releaseAllRemoteFonts().
+    
+    (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+    1. Clearing the NativeImages and the Fonts has to come before clearing
+    the backends of the ImageBuffers. The reason is clearBackend() clears the
+    DisplayList which may release the last reference of a NativeImage or Font.
+    We want to detach the NativeImages and the Fonts from the cache before then.
+    2. We should have two different loops: one for clearing the backends of
+    the ImageBuffers and another one for recreating these backends. The reason
+    for this is clearBackend() clears the DisplayList which may release the
+    last reference of a another source RemoteImageBufferProxy used by a
+    DrawImageBuffer item for example.
+    
+    (WebKit::RemoteResourceCacheProxy::releaseMemory):
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280981 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-12  Said Abou-Hallawa  <said@apple.com>
+
+            [GPU Process] REGRESSION: WebContent often crashes when using iCloud photos
+            https://bugs.webkit.org/show_bug.cgi?id=228969
+            <rdar://81761078>
+
+            Reviewed by Simon Fraser.
+
+            Terminating the GPUProcess is very stressful situation which has to be
+            handled carefully. The side effect of each function which is called through
+            gpuProcessConnectionDidClose() has to be understood to get the right
+            sequence of calls. There are problems in releasing all kinds of resources.
+
+            - Releasing NativeImage: Calling clearNativeImageMap() after clearing the
+            backend of the ImageBuffers was causing a problem. When clearing the
+            backend of an ImageBuffer, it will clear its DisplayList which may have
+            the last reference to a NativeImage. The destructor of NativeImage calls
+            releaseRemoteResource() before it is removed from the the NativeImageMap.
+            This will send a message to the relaunched GPUP to release a NativeImage
+            which is not in its cache.
+
+            - Releasing Font: clearFontMap() was always calling releaseRemoteResource()
+            even if it is called form  remoteResourceCacheWasDestroyed(). This should
+            not happen because the connection with GPUProcess has been closed.
+
+            - Releasing ImageBuffer: This happen when a DisplayList of an ImageBuffer
+            'A' holds the last reference to another ImageBuffer 'B' and we call
+            clearBackend() for 'A'. clearBackend() will clear the DisplayList of 'A'
+            and causes the deletion of 'B'. In this case we should not call
+            releaseImageBuffer() for 'B' because the GPUPProcess is closed.
+
+            * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+            (WebKit::RemoteImageBufferProxy::~RemoteImageBufferProxy):
+            If the ImageBuffer is being released because of the clean-up we do when
+            the GPUProcess is terminated, we should not release the corresponding
+            RemoteImageBuffer since it is already gone.
+
+            * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+            (WebKit::RemoteRenderingBackendProxy::isGPUProcessConnectionClosed const):
+            This will return true if we are deleting a RemoteImageBufferProxy through
+            RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed().
+
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+            (WebKit::RemoteResourceCacheProxy::releaseAllRemoteFonts):
+            This function will be used to release the remote fonts. It should be called
+            from RemoteResourceCacheProxy::releaseMemory() where we sure the GPUP is
+            alive and all the fonts are cached there.
+
+            (WebKit::RemoteResourceCacheProxy::clearFontMap):
+            The part of releasing the remote fonts was moved from this function to
+            releaseAllRemoteFonts().
+
+            (WebKit::RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed):
+            1. Clearing the NativeImages and the Fonts has to come before clearing
+            the backends of the ImageBuffers. The reason is clearBackend() clears the
+            DisplayList which may release the last reference of a NativeImage or Font.
+            We want to detach the NativeImages and the Fonts from the cache before then.
+            2. We should have two different loops: one for clearing the backends of
+            the ImageBuffers and another one for recreating these backends. The reason
+            for this is clearBackend() clears the DisplayList which may release the
+            last reference of a another source RemoteImageBufferProxy used by a
+            DrawImageBuffer item for example.
+
+            (WebKit::RemoteResourceCacheProxy::releaseMemory):
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+
+2021-08-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r280776. rdar://problem/81861548
 
     [Cocoa|GPU] platformLayer() not always added to remotedly hosted context; black video while playing

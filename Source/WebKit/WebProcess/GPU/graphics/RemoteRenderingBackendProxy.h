@@ -122,6 +122,8 @@ public:
 
     RenderingBackendIdentifier ensureBackendCreated();
 
+    bool isGPUProcessConnectionClosed() const { return !m_gpuProcessConnection; }
+
 private:
     explicit RemoteRenderingBackendProxy(WebPage&);
 

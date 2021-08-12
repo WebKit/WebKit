@@ -57,6 +57,7 @@ public:
     void finalizeRenderingUpdate();
 
     void remoteResourceCacheWasDestroyed();
+    void releaseAllRemoteFonts();
     void releaseMemory();
 
 private:
