@@ -1,5 +1,18 @@
 2021-08-12  Alex Christensen  <achristensen@webkit.org>
 
+        Unreviewed, reverting r280977.
+
+        Seems to have broken a test in debug
+
+        Reverted changeset:
+
+        "Migrate Performance::resourceTimingBufferFullTimerFired to
+        HTML event loop"
+        https://bugs.webkit.org/show_bug.cgi?id=229044
+        https://commits.webkit.org/r280977
+
+2021-08-12  Alex Christensen  <achristensen@webkit.org>
+
         Migrate Performance::resourceTimingBufferFullTimerFired to HTML event loop
         https://bugs.webkit.org/show_bug.cgi?id=229044
 
