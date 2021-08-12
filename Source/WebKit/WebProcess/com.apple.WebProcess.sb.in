@@ -2044,6 +2044,7 @@
         (syscall-number SYS_setattrlist) ;; rdar://problem/74162777
 #endif
         (syscall-number SYS_open_dprotected_np) ;; <rdar://problem/74473824>
+        (syscall-number SYS_getpriority) ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
     )
 
     (if (equal? (param "CPU") "arm64")

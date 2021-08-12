@@ -1,3 +1,13 @@
+2021-08-11  Jean-Yves Avenard  <jya@apple.com>
+
+        [Monterey] WebContent process immediately crash when GPU Process is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=228944
+        rdar://81727094
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Allow SYS_getpriority syscall.
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for Cross-Origin-Embedder-Policy (COEP)
