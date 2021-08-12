@@ -30,6 +30,6 @@
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     SkipVTableValidation,
-] interface TypedOMCSSStyleValue {
+] interface CSSStyleValue {
     stringifier;
 };

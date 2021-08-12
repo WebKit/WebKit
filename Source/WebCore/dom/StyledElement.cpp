@@ -31,6 +31,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSStyleSheet.h"
+#include "CSSUnparsedValue.h"
 #include "CSSValuePool.h"
 #include "CachedResource.h"
 #include "ContentSecurityPolicy.h"
@@ -45,7 +46,6 @@
 #include "StyleProperties.h"
 #include "StylePropertyMap.h"
 #include "StyleResolver.h"
-#include "TypedOMCSSUnparsedValue.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -87,7 +87,7 @@ public:
     }
 
 private:
-    RefPtr<TypedOMCSSStyleValue> get(const String& property) const final
+    RefPtr<CSSStyleValue> get(const String& property) const final
     {
         ASSERT(m_element); // Hitting this assertion would imply a GC bug. Element is collected while this property map is alive.
         if (!m_element)
@@ -102,7 +102,7 @@ private:
 
     void clearElement() override { m_element = nullptr; }
 
-    static RefPtr<TypedOMCSSStyleValue> extractInlineProperty(const String& name, StyledElement& element)
+    static RefPtr<CSSStyleValue> extractInlineProperty(const String& name, StyledElement& element)
     {
         if (!element.inlineStyle())
             return nullptr;

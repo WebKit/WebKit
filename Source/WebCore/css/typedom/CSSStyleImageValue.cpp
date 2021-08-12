@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "TypedOMCSSImageValue.h"
+#include "CSSStyleImageValue.h"
 
 #include "Document.h"
 
@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TypedOMCSSImageValue);
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleImageValue);
 
-TypedOMCSSImageValue::TypedOMCSSImageValue(CSSImageValue& cssValue, Document& document)
+CSSStyleImageValue::CSSStyleImageValue(CSSImageValue& cssValue, Document& document)
     : m_cssValue(makeRef(cssValue))
     , m_document(makeWeakPtr(document))
 {
 }
 
-Document* TypedOMCSSImageValue::document() const { return m_document.get(); }
+Document* CSSStyleImageValue::document() const { return m_document.get(); }
 
 } // namespace WebCore
 

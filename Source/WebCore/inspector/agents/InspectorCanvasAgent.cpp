@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InspectorCanvasAgent.h"
 
+#include "CSSStyleImageValue.h"
 #include "CanvasBase.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -51,7 +52,6 @@
 #include "Path2D.h"
 #include "ScriptState.h"
 #include "StringAdaptors.h"
-#include "TypedOMCSSImageValue.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"

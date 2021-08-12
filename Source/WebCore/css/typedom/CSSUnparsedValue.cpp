@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "TypedOMCSSUnparsedValue.h"
+#include "CSSUnparsedValue.h"
 
 #if ENABLE(CSS_TYPED_OM)
 
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TypedOMCSSUnparsedValue);
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
 
 } // namespace WebCore
 

@@ -27,6 +27,7 @@
 #include "InspectorCanvas.h"
 
 #include "AffineTransform.h"
+#include "CSSStyleImageValue.h"
 #include "CachedImage.h"
 #include "CanvasBase.h"
 #include "CanvasGradient.h"
@@ -67,7 +68,6 @@
 #include "RecordingSwizzleType.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
-#include "TypedOMCSSImageValue.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
@@ -516,7 +516,7 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
 
 #if ENABLE(CSS_TYPED_OM)
 
-std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<TypedOMCSSImageValue>& argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(RefPtr<CSSStyleImageValue>& argument)
 {
     if (!argument)
         return std::nullopt;
@@ -1083,7 +1083,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             item = WTFMove(array);
         },
 #if ENABLE(CSS_TYPED_OM)
-        [&] (const RefPtr<TypedOMCSSImageValue>& cssImageValue) {
+        [&] (const RefPtr<CSSStyleImageValue>& cssImageValue) {
             String dataURL = "data:,"_s;
 
             if (auto* cachedImage = cssImageValue->image()) {

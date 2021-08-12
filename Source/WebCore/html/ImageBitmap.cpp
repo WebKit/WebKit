@@ -28,6 +28,7 @@
 
 #include "BitmapImage.h"
 #include "Blob.h"
+#include "CSSStyleImageValue.h"
 #include "CachedImage.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
@@ -51,7 +52,6 @@
 #include "RenderElement.h"
 #include "SharedBuffer.h"
 #include "SuspendableTimer.h"
-#include "TypedOMCSSImageValue.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
@@ -544,7 +544,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 #endif
 
 #if ENABLE(CSS_TYPED_OM)
-void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
+void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
 {
     promise.reject(InvalidStateError, "Not implemented");
 }

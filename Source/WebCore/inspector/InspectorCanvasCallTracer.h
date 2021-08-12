@@ -55,7 +55,7 @@ class ImageBitmap;
 class ImageData;
 class OffscreenCanvas;
 class Path2D;
-class TypedOMCSSImageValue;
+class CSSStyleImageValue;
 class WebGLBuffer;
 class WebGLFramebuffer;
 class WebGLProgram;
@@ -81,7 +81,7 @@ enum ImageSmoothingQuality;
 
 #if ENABLE(CSS_TYPED_OM)
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT(macro) \
-    macro(RefPtr<TypedOMCSSImageValue>&) \
+    macro(RefPtr<CSSStyleImageValue>&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT
 #else
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT(macro)

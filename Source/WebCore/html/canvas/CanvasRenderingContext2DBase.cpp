@@ -37,6 +37,7 @@
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleImageValue.h"
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -68,7 +69,6 @@
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
-#include "TypedOMCSSImageValue.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -1424,7 +1424,7 @@ static inline FloatSize size(HTMLVideoElement& video)
 #endif
 
 #if ENABLE(CSS_TYPED_OM)
-static inline FloatSize size(TypedOMCSSImageValue& image)
+static inline FloatSize size(CSSStyleImageValue& image)
 {
     auto* cachedImage = image.image();
     if (!cachedImage)
@@ -1495,7 +1495,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
 }
 
 #if ENABLE(CSS_TYPED_OM)
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(TypedOMCSSImageValue& image, const FloatRect& srcRect, const FloatRect& dstRect)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& image, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     auto* cachedImage = image.image();
     if (!cachedImage || !image.document())
@@ -2041,7 +2041,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
 }
 
 #if ENABLE(CSS_TYPED_OM)
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(TypedOMCSSImageValue&, bool, bool)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CSSStyleImageValue&, bool, bool)
 {
     // FIXME: Implement.
     return Exception { TypeError };

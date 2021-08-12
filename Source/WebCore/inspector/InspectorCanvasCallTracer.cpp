@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InspectorCanvasCallTracer.h"
 
+#include "CSSStyleImageValue.h"
 #include "CanvasBase.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -44,7 +45,6 @@
 #include "OffscreenCanvas.h"
 #include "Path2D.h"
 #include "RecordingSwizzleType.h"
-#include "TypedOMCSSImageValue.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"

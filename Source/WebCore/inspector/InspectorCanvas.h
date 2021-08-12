@@ -50,7 +50,7 @@ class ImageData;
 class OffscreenCanvas;
 #endif
 #if ENABLE(CSS_TYPED_OM)
-class TypedOMCSSImageValue;
+class CSSStyleImageValue;
 #endif
 
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
@@ -118,7 +118,7 @@ private:
         RefPtr<ImageBitmap>,
         RefPtr<Inspector::ScriptCallStack>,
 #if ENABLE(CSS_TYPED_OM)
-        RefPtr<TypedOMCSSImageValue>,
+        RefPtr<CSSStyleImageValue>,
 #endif
         Inspector::ScriptCallFrame,
 #if ENABLE(OFFSCREEN_CANVAS)

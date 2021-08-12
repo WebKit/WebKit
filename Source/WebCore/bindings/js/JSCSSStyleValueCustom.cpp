@@ -23,36 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSCSSStyleValue.h"
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "TypedOMCSSStyleValue.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "JSCSSStyleImageValue.h"
+#include "JSCSSUnitValue.h"
+#include "JSCSSUnparsedValue.h"
+#include "JSDOMWrapperCache.h"
 
 namespace WebCore {
+using namespace JSC;
 
-class TypedOMCSSUnparsedValue final : public TypedOMCSSStyleValue {
-    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSUnparsedValue);
-public:
-    static Ref<TypedOMCSSUnparsedValue> create(const String& serializedValue)
-    {
-        return adoptRef(*new TypedOMCSSUnparsedValue(serializedValue));
-    }
+JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSStyleValue>&& value)
+{
+    if (value->isUnitValue())
+        return createWrapper<CSSUnitValue>(globalObject, WTFMove(value));
+    if (value->isUnparsedValue())
+        return createWrapper<CSSUnparsedValue>(globalObject, WTFMove(value));
+    if (value->isImageValue())
+        return createWrapper<CSSStyleImageValue>(globalObject, WTFMove(value));
 
-    String toString() final { return m_serializedValue; }
+    ASSERT_NOT_REACHED();
+    return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
+}
 
-private:
-    explicit TypedOMCSSUnparsedValue(const String& serializedValue)
-        : m_serializedValue(serializedValue)
-    {
-    }
-
-    bool isUnparsedValue() final { return true; }
-
-    String m_serializedValue;
-};
+JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSStyleValue& object)
+{
+    return wrap(lexicalGlobalObject, globalObject, object);
+}
 
 } // namespace WebCore
 

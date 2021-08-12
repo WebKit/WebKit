@@ -52,7 +52,7 @@ class OffscreenCanvas;
 #endif
 class PendingImageBitmap;
 class ScriptExecutionContext;
-class TypedOMCSSImageValue;
+class CSSStyleImageValue;
 struct ImageBitmapOptions;
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -71,7 +71,7 @@ public:
         RefPtr<OffscreenCanvas>,
 #endif
 #if ENABLE(CSS_TYPED_OM)
-        RefPtr<TypedOMCSSImageValue>,
+        RefPtr<CSSStyleImageValue>,
 #endif
         RefPtr<Blob>,
         RefPtr<ImageData>
@@ -128,7 +128,7 @@ private:
     static void createPromise(ScriptExecutionContext&, CanvasBase&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
-    static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createFromBuffer(ScriptExecutionContext&, Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 
     std::optional<ImageBitmapBacking> m_backingStore;

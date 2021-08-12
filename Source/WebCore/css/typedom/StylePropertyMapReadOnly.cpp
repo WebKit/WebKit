@@ -35,31 +35,31 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSStyleImageValue.h"
+#include "CSSStyleValue.h"
+#include "CSSUnitValue.h"
+#include "CSSUnparsedValue.h"
 #include "Document.h"
-#include "TypedOMCSSImageValue.h"
-#include "TypedOMCSSStyleValue.h"
-#include "TypedOMCSSUnitValue.h"
-#include "TypedOMCSSUnparsedValue.h"
 
 namespace WebCore {
 
-RefPtr<TypedOMCSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Document& document, Element*)
+RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Document& document, Element*)
 {
     if (!value)
         return nullptr;
 
     // FIXME: Properly reify all length values.
     if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).primitiveType() == CSSUnitType::CSS_PX)
-        return TypedOMCSSUnitValue::create(downcast<CSSPrimitiveValue>(*value).doubleValue(), "px");
+        return CSSUnitValue::create(downcast<CSSPrimitiveValue>(*value).doubleValue(), "px");
 
     if (is<CSSImageValue>(*value))
-        return TypedOMCSSImageValue::create(downcast<CSSImageValue>(*value), document);
+        return CSSStyleImageValue::create(downcast<CSSImageValue>(*value), document);
 
-    // FIXME: should use raw TypedOMCSSStyleValue
-    return TypedOMCSSUnparsedValue::create(value->cssText());
+    // FIXME: should use raw CSSStyleValue
+    return CSSUnparsedValue::create(value->cssText());
 }
 
-RefPtr<TypedOMCSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(const String& name, Document& document, CSSValue* inputValue, Element* element)
+RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(const String& name, Document& document, CSSValue* inputValue, Element* element)
 {
     if (!inputValue) {
         auto* registered = document.getCSSRegisteredCustomPropertySet().get(name);
@@ -69,7 +69,7 @@ RefPtr<TypedOMCSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefa
             return StylePropertyMapReadOnly::reifyValue(value.get(), document, element);
         }
 
-        return TypedOMCSSUnparsedValue::create(emptyString());
+        return CSSUnparsedValue::create(emptyString());
     }
 
     return StylePropertyMapReadOnly::reifyValue(inputValue, document, element);

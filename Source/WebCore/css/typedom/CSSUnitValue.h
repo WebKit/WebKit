@@ -27,24 +27,40 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "ScriptWrappable.h"
+#include "CSSNumericValue.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class TypedOMCSSStyleValue : public RefCounted<TypedOMCSSStyleValue>, public ScriptWrappable {
-    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSStyleValue);
+class CSSUnitValue final : public CSSNumericValue {
+    WTF_MAKE_ISO_ALLOCATED(CSSUnitValue);
 public:
-    virtual ~TypedOMCSSStyleValue() = default;
-    virtual String toString() = 0;
+    static Ref<CSSUnitValue> create(double value, const String& unit)
+    {
+        return adoptRef(*new CSSUnitValue(value, unit));
+    }
 
-    virtual bool isUnitValue() { return false; }
-    virtual bool isUnparsedValue() { return false; }
-    virtual bool isImageValue() { return false; }
+    // FIXME: not correct.
+    String toString() final { return makeString((int) m_value, m_unit); }
 
-protected:
-    TypedOMCSSStyleValue() = default;
+    double value() const { return m_value; }
+    void setValue(double value) { m_value = value; }
+    const String& unit() const { return m_unit; }
+    void setUnit(const String& unit) { m_unit = unit; }
+
+private:
+    CSSUnitValue(double value, const String& unit)
+        : m_value(value)
+        , m_unit(unit)
+    {
+    }
+
+    bool isUnitValue() final { return true; }
+
+    double m_value;
+    String m_unit;
 };
 
 } // namespace WebCore

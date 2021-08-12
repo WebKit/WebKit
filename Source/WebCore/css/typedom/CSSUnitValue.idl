@@ -24,10 +24,13 @@
 */
 
 [
-    InterfaceName=CSSImageValue,
+    InterfaceName=CSSUnitValue,
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
-    JSGenerateToNativeObject,
-] interface TypedOMCSSImageValue : TypedOMCSSStyleValue {
+] interface CSSUnitValue : CSSNumericValue {
+    constructor(double value, USVString unit);
+
+    attribute double value;
+    readonly attribute USVString unit;
 };

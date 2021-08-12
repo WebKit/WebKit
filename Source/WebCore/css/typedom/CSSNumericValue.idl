@@ -28,5 +28,5 @@
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
-] interface TypedOMCSSNumericValue : TypedOMCSSStyleValue {
+] interface CSSNumericValue : CSSStyleValue {
 };

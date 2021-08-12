@@ -67,7 +67,7 @@ struct DOMMatrix2DInit;
 
 using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
 #if ENABLE(CSS_TYPED_OM)
-    , RefPtr<TypedOMCSSImageValue>
+    , RefPtr<CSSStyleImageValue>
 #endif
 #if ENABLE(OFFSCREEN_CANVAS)
     , RefPtr<OffscreenCanvas>
@@ -349,7 +349,7 @@ private:
 #endif
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(ImageBitmap&, bool repeatX, bool repeatY);
 #if ENABLE(CSS_TYPED_OM)
-    ExceptionOr<RefPtr<CanvasPattern>> createPattern(TypedOMCSSImageValue&, bool repeatX, bool repeatY);
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(CSSStyleImageValue&, bool repeatX, bool repeatY);
 #endif
 
     ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
@@ -360,7 +360,7 @@ private:
     ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
 #if ENABLE(CSS_TYPED_OM)
-    ExceptionOr<void> drawImage(TypedOMCSSImageValue&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<void> drawImage(CSSStyleImageValue&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
     ExceptionOr<void> drawImage(ImageBitmap&, const FloatRect& srcRect, const FloatRect& dstRect);
 

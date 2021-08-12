@@ -1,3 +1,67 @@
+2021-08-12  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Removal of "TypedOM" prefix for CSSOM Object names
+        https://bugs.webkit.org/show_bug.cgi?id=229028
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSStyleValueCustom.cpp: Renamed from Source/WebCore/bindings/js/JSTypedOMCSSStyleValueCustom.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * css/typedom/CSSNumericValue.cpp: Renamed from Source/WebCore/css/typedom/TypedOMCSSUnitValue.cpp.
+        * css/typedom/CSSNumericValue.h: Renamed from Source/WebCore/css/typedom/TypedOMCSSNumericValue.h.
+        * css/typedom/CSSNumericValue.idl: Renamed from Source/WebCore/css/typedom/TypedOMCSSNumericValue.idl.
+        * css/typedom/CSSStyleImageValue.cpp: Renamed from Source/WebCore/css/typedom/TypedOMCSSImageValue.cpp.
+        (WebCore::CSSStyleImageValue::CSSStyleImageValue):
+        (WebCore::CSSStyleImageValue::document const):
+        * css/typedom/CSSStyleImageValue.h: Renamed from Source/WebCore/css/typedom/TypedOMCSSImageValue.h.
+        * css/typedom/CSSStyleImageValue.idl: Renamed from Source/WebCore/css/typedom/TypedOMCSSImageValue.idl.
+        * css/typedom/CSSStyleValue.cpp: Renamed from Source/WebCore/css/typedom/TypedOMCSSStyleValue.cpp.
+        * css/typedom/CSSStyleValue.h: Renamed from Source/WebCore/css/typedom/TypedOMCSSStyleValue.h.
+        * css/typedom/CSSStyleValue.idl: Renamed from Source/WebCore/css/typedom/TypedOMCSSStyleValue.idl.
+        * css/typedom/CSSUnitValue.cpp: Renamed from Source/WebCore/css/typedom/TypedOMCSSNumericValue.cpp.
+        * css/typedom/CSSUnitValue.h: Renamed from Source/WebCore/css/typedom/TypedOMCSSUnitValue.h.
+        * css/typedom/CSSUnitValue.idl: Renamed from Source/WebCore/css/typedom/TypedOMCSSUnitValue.idl.
+        * css/typedom/CSSUnparsedValue.cpp: Renamed from Source/WebCore/css/typedom/TypedOMCSSUnparsedValue.cpp.
+        * css/typedom/CSSUnparsedValue.h: Renamed from Source/WebCore/css/typedom/TypedOMCSSUnparsedValue.h.
+        * css/typedom/CSSUnparsedValue.idl: Renamed from Source/WebCore/css/typedom/TypedOMCSSUnparsedValue.idl.
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        (WebCore::StylePropertyMapReadOnly::reifyValue):
+        (WebCore::StylePropertyMapReadOnly::customPropertyValueOrDefault):
+        * css/typedom/StylePropertyMapReadOnly.h:
+        * css/typedom/StylePropertyMapReadOnly.idl:
+        * dom/StyledElement.cpp:
+        * html/CustomPaintImage.cpp:
+        (WebCore::extractComputedProperty):
+        (WebCore::CustomPaintImage::doCustomPaint):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise):
+        * html/ImageBitmap.h:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::processArgument):
+        (WebCore::InspectorCanvas::indexForData):
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvasCallTracer.cpp:
+        * inspector/InspectorCanvasCallTracer.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        * page/WindowOrWorkerGlobalScope.idl:
+
 2021-08-12  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html fails on Cocoa

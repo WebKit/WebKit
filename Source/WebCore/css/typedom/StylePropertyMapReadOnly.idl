@@ -30,6 +30,6 @@
     SkipVTableValidation,
     JSGenerateToJSObject,
 ] interface StylePropertyMapReadOnly {
-    // FIXME: should be (undefined or TypedOMCSSStyleValue), not null
-    TypedOMCSSStyleValue? get(USVString property);
+    // FIXME: should be (undefined or CSSStyleValue), not null
+    CSSStyleValue? get(USVString property);
 };

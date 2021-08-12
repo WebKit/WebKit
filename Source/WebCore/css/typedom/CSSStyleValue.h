@@ -23,36 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSTypedOMCSSStyleValue.h"
+#pragma once
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "JSDOMWrapperCache.h"
-#include "JSTypedOMCSSImageValue.h"
-#include "JSTypedOMCSSUnitValue.h"
-#include "JSTypedOMCSSUnparsedValue.h"
+#include "ScriptWrappable.h"
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-using namespace JSC;
 
-JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TypedOMCSSStyleValue>&& value)
-{
-    if (value->isUnitValue())
-        return createWrapper<TypedOMCSSUnitValue>(globalObject, WTFMove(value));
-    if (value->isUnparsedValue())
-        return createWrapper<TypedOMCSSUnparsedValue>(globalObject, WTFMove(value));
-    if (value->isImageValue())
-        return createWrapper<TypedOMCSSImageValue>(globalObject, WTFMove(value));
+class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(CSSStyleValue);
+public:
+    virtual ~CSSStyleValue() = default;
+    virtual String toString() = 0;
 
-    ASSERT_NOT_REACHED();
-    return createWrapper<TypedOMCSSStyleValue>(globalObject, WTFMove(value));
-}
+    virtual bool isUnitValue() { return false; }
+    virtual bool isUnparsedValue() { return false; }
+    virtual bool isImageValue() { return false; }
 
-JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TypedOMCSSStyleValue& object)
-{
-    return wrap(lexicalGlobalObject, globalObject, object);
-}
+protected:
+    CSSStyleValue() = default;
+};
 
 } // namespace WebCore
 

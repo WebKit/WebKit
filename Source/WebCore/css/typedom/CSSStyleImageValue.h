@@ -27,40 +27,37 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "TypedOMCSSNumericValue.h"
+#include "CSSImageValue.h"
+#include "CSSStyleValue.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class TypedOMCSSUnitValue final : public TypedOMCSSNumericValue {
-    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSUnitValue);
+class Document;
+
+class CSSStyleImageValue final : public CSSStyleValue {
+    WTF_MAKE_ISO_ALLOCATED(CSSStyleImageValue);
 public:
-    static Ref<TypedOMCSSUnitValue> create(double value, const String& unit)
+    static Ref<CSSStyleImageValue> create(CSSImageValue& cssValue, Document& document)
     {
-        return adoptRef(*new TypedOMCSSUnitValue(value, unit));
+        return adoptRef(*new CSSStyleImageValue(cssValue, document));
     }
 
-    // FIXME: not correct.
-    String toString() final { return makeString((int) m_value, m_unit); }
+    String toString() final { return m_cssValue->cssText(); }
 
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
-    const String& unit() const { return m_unit; }
-    void setUnit(const String& unit) { m_unit = unit; }
+    CachedImage* image() { return m_cssValue->cachedImage(); }
+    Document* document() const;
 
 private:
-    TypedOMCSSUnitValue(double value, const String& unit)
-        : m_value(value)
-        , m_unit(unit)
-    {
-    }
+    CSSStyleImageValue(CSSImageValue&, Document&);
 
-    bool isUnitValue() final { return true; }
+    bool isImageValue() final { return true; }
 
-    double m_value;
-    String m_unit;
+    Ref<CSSImageValue> m_cssValue;
+    WeakPtr<Document> m_document;
 };
 
 } // namespace WebCore

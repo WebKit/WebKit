@@ -23,12 +23,11 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// FIXME: wrong constructor.
 [
-    InterfaceName=CSSUnparsedValue,
+    InterfaceName=CSSImageValue,
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
-] interface TypedOMCSSUnparsedValue : TypedOMCSSStyleValue {
-    constructor(USVString serializedValue);
+    JSGenerateToNativeObject,
+] interface CSSStyleImageValue : CSSStyleValue {
 };

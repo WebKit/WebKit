@@ -728,11 +728,11 @@ $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/svg.css
 $(PROJECT_DIR)/css/typedom/StylePropertyMap.idl
 $(PROJECT_DIR)/css/typedom/StylePropertyMapReadOnly.idl
-$(PROJECT_DIR)/css/typedom/TypedOMCSSImageValue.idl
-$(PROJECT_DIR)/css/typedom/TypedOMCSSNumericValue.idl
-$(PROJECT_DIR)/css/typedom/TypedOMCSSStyleValue.idl
-$(PROJECT_DIR)/css/typedom/TypedOMCSSUnitValue.idl
-$(PROJECT_DIR)/css/typedom/TypedOMCSSUnparsedValue.idl
+$(PROJECT_DIR)/css/typedom/CSSStyleImageValue.idl
+$(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
+$(PROJECT_DIR)/css/typedom/CSSStyleValue.idl
+$(PROJECT_DIR)/css/typedom/CSSUnitValue.idl
+$(PROJECT_DIR)/css/typedom/CSSUnparsedValue.idl
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl

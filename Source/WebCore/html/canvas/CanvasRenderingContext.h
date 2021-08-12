@@ -42,7 +42,7 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
-class TypedOMCSSImageValue;
+class CSSStyleImageValue;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
 
@@ -104,7 +104,7 @@ protected:
             m_canvas.setOriginTainted();
     }
     void checkOrigin(const URL&);
-    void checkOrigin(const TypedOMCSSImageValue&);
+    void checkOrigin(const CSSStyleImageValue&);
 
     bool m_hasActiveInspectorCanvasCallTracer { false };
 

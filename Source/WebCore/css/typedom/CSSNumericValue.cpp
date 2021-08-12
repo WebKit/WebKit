@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "TypedOMCSSNumericValue.h"
+#include "CSSNumericValue.h"
 
 #if ENABLE(CSS_TYPED_OM)
 
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TypedOMCSSNumericValue);
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
 
 } // namespace WebCore
 

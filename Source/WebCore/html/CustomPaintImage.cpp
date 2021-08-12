@@ -32,6 +32,9 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSStyleImageValue.h"
+#include "CSSUnitValue.h"
+#include "CSSUnparsedValue.h"
 #include "CustomPaintCanvas.h"
 #include "GraphicsContext.h"
 #include "ImageBitmap.h"
@@ -41,9 +44,7 @@
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
 #include "StylePropertyMap.h"
-#include "TypedOMCSSImageValue.h"
-#include "TypedOMCSSUnitValue.h"
-#include "TypedOMCSSUnparsedValue.h"
+
 #include <JavaScriptCore/ConstructData.h>
 
 namespace WebCore {
@@ -59,7 +60,7 @@ CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& def
 
 CustomPaintImage::~CustomPaintImage() = default;
 
-static RefPtr<TypedOMCSSStyleValue> extractComputedProperty(const String& name, Element& element)
+static RefPtr<CSSStyleValue> extractComputedProperty(const String& name, Element& element)
 {
     ComputedStyleExtractor extractor(&element);
 
@@ -78,12 +79,12 @@ static RefPtr<TypedOMCSSStyleValue> extractComputedProperty(const String& name, 
 
 class HashMapStylePropertyMap final : public StylePropertyMap {
 public:
-    static Ref<StylePropertyMap> create(HashMap<String, RefPtr<TypedOMCSSStyleValue>>&& map)
+    static Ref<StylePropertyMap> create(HashMap<String, RefPtr<CSSStyleValue>>&& map)
     {
         return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
     }
 
-    static RefPtr<TypedOMCSSStyleValue> extractComputedProperty(const String& name, Element& element)
+    static RefPtr<CSSStyleValue> extractComputedProperty(const String& name, Element& element)
     {
         ComputedStyleExtractor extractor(&element);
 
@@ -101,16 +102,16 @@ public:
     }
 
 private:
-    explicit HashMapStylePropertyMap(HashMap<String, RefPtr<TypedOMCSSStyleValue>>&& map)
+    explicit HashMapStylePropertyMap(HashMap<String, RefPtr<CSSStyleValue>>&& map)
         : m_map(WTFMove(map))
     {
     }
 
     void clearElement() override { }
 
-    RefPtr<TypedOMCSSStyleValue> get(const String& property) const final { return makeRefPtr(m_map.get(property)); }
+    RefPtr<CSSStyleValue> get(const String& property) const final { return makeRefPtr(m_map.get(property)); }
 
-    HashMap<String, RefPtr<TypedOMCSSStyleValue>> m_map;
+    HashMap<String, RefPtr<CSSStyleValue>> m_map;
 };
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
@@ -138,7 +139,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     auto context = contextOrException.releaseReturnValue();
 
-    HashMap<String, RefPtr<TypedOMCSSStyleValue>> propertyValues;
+    HashMap<String, RefPtr<CSSStyleValue>> propertyValues;
 
     if (auto* element = m_element->element()) {
         for (auto& name : m_inputProperties)

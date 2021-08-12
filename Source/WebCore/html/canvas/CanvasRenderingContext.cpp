@@ -183,7 +183,7 @@ void CanvasRenderingContext::checkOrigin(const URL& url)
         m_canvas.setOriginTainted();
 }
 
-void CanvasRenderingContext::checkOrigin(const TypedOMCSSImageValue&)
+void CanvasRenderingContext::checkOrigin(const CSSStyleImageValue&)
 {
     m_canvas.setOriginTainted();
 }

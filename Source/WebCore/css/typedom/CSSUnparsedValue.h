@@ -27,15 +27,33 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "TypedOMCSSStyleValue.h"
+#include "CSSStyleValue.h"
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class TypedOMCSSNumericValue : public TypedOMCSSStyleValue {
-    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSNumericValue);
-protected:
-    TypedOMCSSNumericValue() = default;
+class CSSUnparsedValue final : public CSSStyleValue {
+    WTF_MAKE_ISO_ALLOCATED(CSSUnparsedValue);
+public:
+    static Ref<CSSUnparsedValue> create(const String& serializedValue)
+    {
+        return adoptRef(*new CSSUnparsedValue(serializedValue));
+    }
+
+    String toString() final { return m_serializedValue; }
+
+private:
+    explicit CSSUnparsedValue(const String& serializedValue)
+        : m_serializedValue(serializedValue)
+    {
+    }
+
+    bool isUnparsedValue() final { return true; }
+
+    String m_serializedValue;
 };
+
 } // namespace WebCore
 
 #endif
