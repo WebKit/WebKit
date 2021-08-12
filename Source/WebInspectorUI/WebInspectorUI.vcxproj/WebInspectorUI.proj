@@ -65,9 +65,16 @@
     <CreateItem Include="$(ConfigurationBuildDir)\bin64\WebKit.resources\**\*.*">
       <Output TaskParameter="Include" ItemName="Bin64Resources" />
     </CreateItem>
+    <CreateItem Include="$(WebKit_Libraries)\include\private\JavaScriptCore\inspector\InspectedBackendCommands.js">
+      <Output TaskParameter="Include" ItemName="InspectedBackendCommandsFile" />
+    </CreateItem>
 
     <Copy SourceFiles="@(Bin32Resources)" DestinationFiles="@(Bin32Resources->'$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Bin64Resources)" DestinationFiles="@(Bin64Resources->'$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Message Text="Copying @(InspectedBackendCommandsFile) to $(DSTROOT)" />
+    <Copy SourceFiles="@(InspectedBackendCommandsFile)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources\WebInspectorUI\Protocol" />
+    <Copy SourceFiles="@(InspectedBackendCommandsFile)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources\WebInspectorUI\Protocol" />
   </Target>
 
 </Project>
