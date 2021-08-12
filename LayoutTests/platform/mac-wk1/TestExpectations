@@ -1372,5 +1372,7 @@ webkit.org/b/228561 http/tests/media/modern-media-controls/macos-fullscreen-medi
 
 webkit.org/b/228704 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
 
+webkit.org/b/229058 imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.window.html [ Pass Failure ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
