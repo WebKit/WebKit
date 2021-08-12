@@ -142,7 +142,26 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
 
     // If using a movie layer, inform the client so the compositing tree is updated.
     if (currentMode == MediaRenderingToLayer || preferredMode == MediaRenderingToLayer)
-        m_player->renderingModeChanged();
+        setNeedsRenderingModeChanged();
+}
+
+void MediaPlayerPrivateAVFoundation::setNeedsRenderingModeChanged()
+{
+    if (m_needsRenderingModeChanged)
+        return;
+    m_needsRenderingModeChanged = true;
+
+    queueTaskOnEventLoop([weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->renderingModeChanged();
+    });
+}
+
+void MediaPlayerPrivateAVFoundation::renderingModeChanged()
+{
+    ASSERT(m_needsRenderingModeChanged);
+    m_needsRenderingModeChanged = false;
+    m_player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
@@ -443,7 +462,7 @@ void MediaPlayerPrivateAVFoundation::prepareForRendering()
     setUpVideoRendering();
 
     if (currentRenderingMode() == MediaRenderingToLayer || preferredRenderingMode() == MediaRenderingToLayer)
-        m_player->renderingModeChanged();
+        setNeedsRenderingModeChanged();
 }
 
 bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const

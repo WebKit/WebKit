@@ -66,11 +66,15 @@ void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::Media
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     // Initially the size of the platformLayer may be 0x0 because we do not provide mediaPlayerContentBoxRect() in this class.
-    m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
     setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, m_videoInlineSize);
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
+void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
+{
+    m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
+}
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
