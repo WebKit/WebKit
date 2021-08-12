@@ -227,8 +227,8 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     if (!screen)
         screen = [NSScreen mainScreen];
-    NSRect screenFrame = [screen frame];
 
+    NSRect screenFrame = WebCore::screenRectAvoidingMenuBar(screen);
     NSRect webViewFrame = convertRectToScreen([_webView window], [_webView convertRect:[_webView frame] toView:nil]);
 
     // Flip coordinate system:

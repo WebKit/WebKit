@@ -44,6 +44,10 @@
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
+#import <WebKitAdditions/PlatformScreenMac.h>
+#endif
+
 namespace WebCore {
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations
@@ -414,6 +418,16 @@ NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
     flippedPoint.y = NSMaxY([screen frame]) - flippedPoint.y;
     return flippedPoint;
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
+#import <WebKitAdditions/PlatformScreenMac.mm>
+#else
+FloatRect screenRectAvoidingMenuBar(NSScreen* screen)
+{
+    return screen.frame;
+}
+#endif
+
 
 } // namespace WebCore
 
