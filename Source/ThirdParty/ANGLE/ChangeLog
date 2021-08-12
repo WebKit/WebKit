@@ -1,3 +1,23 @@
+2021-08-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Cocoa compiles parts of HLSL translator, vulkan translator, libgl api, capture redundantly
+        https://bugs.webkit.org/show_bug.cgi?id=228986
+
+        Reviewed by Kenneth Russell.
+
+        Remove following from ANGLE (dynamic) target:
+        - HLSL translator and tree ops used only by it
+        - Vulkan translator output
+        - libgl API validation implementation
+        - API trace capture implementation (was only partially compiled)
+
+        The features are not part of Cocoa use of ANGLE, and should
+        not be compiled as such.
+        Does not affect the binary size more than few kilobytes.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2021-08-11  Kyle Piddington  <kpiddington@apple.com>
 
         Avoid infinite recursion when command buffer creation fails

@@ -103,19 +103,15 @@
 		31CD004E249184F400486F27 /* StreamProducerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304D11DE4164800D2C405 /* StreamProducerImpl.h */; };
 		31CD004F249184F400486F27 /* BufferImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304AA1DE4164800D2C405 /* BufferImpl.h */; };
 		31CD0050249184F400486F27 /* SyncImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDC61FCE44E300AC7A89 /* SyncImpl.h */; };
-		31CD0051249184FC00486F27 /* validationGL11_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307502305F89E002DA972 /* validationGL11_autogen.h */; };
 		31CD0052249184FC00486F27 /* Observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59582284F7950018F2D8 /* Observer.h */; };
 		31CD0053249184FC00486F27 /* MemoryProgramCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDD61FCE452900AC7A89 /* MemoryProgramCache.h */; };
 		31CD0054249184FC00486F27 /* AttributeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC4B1B0438D200235552 /* AttributeMap.h */; };
 		31CD0055249184FC00486F27 /* trace.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307142305F7C3002DA972 /* trace.h */; };
-		31CD0056249184FC00486F27 /* validationGL1_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307572305F89F002DA972 /* validationGL1_autogen.h */; };
 		31CD0057249184FC00486F27 /* histogram_macros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC711B0438D200235552 /* histogram_macros.h */; };
 		31CD0058249184FC00486F27 /* ProgramExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED7BDF52432CD6200E01503 /* ProgramExecutable.h */; };
-		31CD0059249184FC00486F27 /* validationGL43_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303073F2305F89B002DA972 /* validationGL43_autogen.h */; };
 		31CD005A249184FC00486F27 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC5C1B0438D200235552 /* Device.h */; };
 		31CD005B249184FC00486F27 /* LoggingAnnotator.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDDA1FCE452B00AC7A89 /* LoggingAnnotator.h */; };
 		31CD005C249184FC00486F27 /* TransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDC41B0438D300235552 /* TransformFeedback.h */; };
-		31CD005D249184FC00486F27 /* validationGL46_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307322305F899002DA972 /* validationGL46_autogen.h */; };
 		31CD005E249184FC00486F27 /* SizedMRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDD91FCE452A00AC7A89 /* SizedMRUCache.h */; };
 		31CD005F249184FC00486F27 /* queryutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD81651DBFE999006066B8 /* queryutils.h */; };
 		31CD0060249184FC00486F27 /* validationEGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDC81B0438D300235552 /* validationEGL.h */; };
@@ -133,8 +129,6 @@
 		31CD006C249184FC00486F27 /* Compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC521B0438D200235552 /* Compiler.h */; };
 		31CD006E249184FC00486F27 /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC4E1B0438D200235552 /* Buffer.h */; };
 		31CD006F249184FC00486F27 /* Program.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC771B0438D200235552 /* Program.h */; };
-		31CD0070249184FD00486F27 /* validationGL12_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307532305F89E002DA972 /* validationGL12_autogen.h */; };
-		31CD0071249184FD00486F27 /* validationGL41_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303073D2305F89B002DA972 /* validationGL41_autogen.h */; };
 		31CD0072249184FD00486F27 /* Fence.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC651B0438D200235552 /* Fence.h */; };
 		31CD0073249184FD00486F27 /* validationES.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDCA1B0438D300235552 /* validationES.h */; };
 		31CD0074249184FD00486F27 /* entry_points_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307192305F7C4002DA972 /* entry_points_utils.h */; };
@@ -153,29 +147,18 @@
 		31CD0081249184FD00486F27 /* ProgramPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDD71FCE452A00AC7A89 /* ProgramPipeline.h */; };
 		31CD0082249184FD00486F27 /* State.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDBC1B0438D300235552 /* State.h */; };
 		31CD0083249184FD00486F27 /* features.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC621B0438D200235552 /* features.h */; };
-		31CD0084249184FD00486F27 /* validationGL32_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307552305F89F002DA972 /* validationGL32_autogen.h */; };
 		31CD0085249184FD00486F27 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD816C1DBFE999006066B8 /* Version.h */; };
-		31CD0086249184FD00486F27 /* validationGL3_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307432305F89C002DA972 /* validationGL3_autogen.h */; };
 		31CD0087249184FD00486F27 /* GLES1State.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59542284F7950018F2D8 /* GLES1State.h */; };
-		31CD0088249184FD00486F27 /* validationGL45_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303074B2305F89D002DA972 /* validationGL45_autogen.h */; };
-		31CD0089249184FD00486F27 /* validationGL15_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307492305F89D002DA972 /* validationGL15_autogen.h */; };
 		31CD008A249184FD00486F27 /* ResourceMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDE21FCE452D00AC7A89 /* ResourceMap.h */; };
 		31CD008B249184FD00486F27 /* ProgramLinkedResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDCF1FCE452700AC7A89 /* ProgramLinkedResources.h */; };
 		31CD008C249184FD00486F27 /* validationES32.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B57E5238CB09C0079FDDC /* validationES32.h */; };
-		31CD008D249184FD00486F27 /* validationGL21_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307452305F89C002DA972 /* validationGL21_autogen.h */; };
-		31CD008E249184FD00486F27 /* validationGL44_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307402305F89B002DA972 /* validationGL44_autogen.h */; };
-		31CD008F249184FD00486F27 /* validationGL33_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303074A2305F89D002DA972 /* validationGL33_autogen.h */; };
-		31CD0090249184FD00486F27 /* validationGL31_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307562305F89F002DA972 /* validationGL31_autogen.h */; };
 		31CD0091249184FD00486F27 /* FramebufferAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC6D1B0438D200235552 /* FramebufferAttachment.h */; };
-		31CD0092249184FD00486F27 /* validationGL4_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303074E2305F89D002DA972 /* validationGL4_autogen.h */; };
 		31CD0093249184FD00486F27 /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC601B0438D200235552 /* Error.h */; };
 		31CD0094249184FD00486F27 /* validationESEXT_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307352305F899002DA972 /* validationESEXT_autogen.h */; };
 		31CD0095249184FD00486F27 /* validationES3.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDCE1B0438D300235552 /* validationES3.h */; };
 		31CD0096249184FD00486F27 /* Debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD815B1DBFE999006066B8 /* Debug.h */; };
 		31CD0097249184FD00486F27 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDC11B0438D300235552 /* Texture.h */; };
 		31CD0098249184FD00486F27 /* EGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59592284F7950018F2D8 /* EGLSync.h */; };
-		31CD0099249184FD00486F27 /* validationGL2_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307332305F899002DA972 /* validationGL2_autogen.h */; };
-		31CD009A249184FD00486F27 /* validationGL14_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307372305F899002DA972 /* validationGL14_autogen.h */; };
 		31CD009B249184FD00486F27 /* BinaryStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC4C1B0438D200235552 /* BinaryStream.h */; };
 		31CD009C249184FD00486F27 /* Context.inl.h in Headers */ = {isa = PBXBuildFile; fileRef = A303071B2305F7C4002DA972 /* Context.inl.h */; };
 		31CD009D249184FD00486F27 /* validationES31.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD816B1DBFE999006066B8 /* validationES31.h */; };
@@ -184,7 +167,6 @@
 		31CD00A0249184FD00486F27 /* validationES3_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307442305F89C002DA972 /* validationES3_autogen.h */; };
 		31CD00A1249184FD00486F27 /* validationES2.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBDCC1B0438D300235552 /* validationES2.h */; };
 		31CD00A2249184FD00486F27 /* ErrorStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDD21FCE452800AC7A89 /* ErrorStrings.h */; };
-		31CD00A3249184FD00486F27 /* validationGL13_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303074D2305F89D002DA972 /* validationGL13_autogen.h */; };
 		31CD00A4249184FD00486F27 /* BlobCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD595A2284F7950018F2D8 /* BlobCache.h */; };
 		31CD00A5249184FD00486F27 /* Query.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC791B0438D200235552 /* Query.h */; };
 		31CD00A6249184FD00486F27 /* Context.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC581B0438D200235552 /* Context.h */; };
@@ -192,7 +174,6 @@
 		31CD00A8249184FD00486F27 /* validationES32_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30B57E6238CB09C0079FDDC /* validationES32_autogen.h */; };
 		31CD00A9249184FD00486F27 /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD815F1DBFE999006066B8 /* Image.h */; };
 		31CD00AA249184FD00486F27 /* Thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDDD1FCE452B00AC7A89 /* Thread.h */; };
-		31CD00AB249184FD00486F27 /* validationGL42_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307302305F898002DA972 /* validationGL42_autogen.h */; };
 		31CD00AC249184FD00486F27 /* VaryingPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBDDE1FCE452C00AC7A89 /* VaryingPacking.h */; };
 		31CD00AD249184FD00486F27 /* MemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD595E2284F7960018F2D8 /* MemoryObject.h */; };
 		31CD00AE249184FD00486F27 /* validationES31_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A303073E2305F89B002DA972 /* validationES31_autogen.h */; };
@@ -264,7 +245,6 @@
 		31CDFF622491848C00486F27 /* hash_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D71B2282747700B5BA2C /* hash_utils.h */; };
 		31CDFF632491848C00486F27 /* MemoryBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBBE91B0436EC00235552 /* MemoryBuffer.h */; };
 		31CDFF642491848C00486F27 /* utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC7D46919102620000B8C1F /* utilities.h */; };
-		31CDFF652491848C00486F27 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		31CDFF662491848C00486F27 /* PackedEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D7192282747700B5BA2C /* PackedEnums.h */; };
 		31CDFF672491848C00486F27 /* system_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A331C41EA5ED5F00FD2203 /* system_utils.h */; };
 		31CDFF682491848C00486F27 /* FixedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D7172282747600B5BA2C /* FixedVector.h */; };
@@ -283,7 +263,6 @@
 		31CDFF752491849200486F27 /* Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F89E16974DED006FAA5A /* Lexer.h */; };
 		31CDFF762491849200486F27 /* Macro.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8A016974DED006FAA5A /* Macro.h */; };
 		31CDFF772491849200486F27 /* Token.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8A916974DED006FAA5A /* Token.h */; };
-		31CDFF782491849700486F27 /* RewriteElseBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D63522826B9A00B5BA2C /* RewriteElseBlocks.h */; };
 		31CDFF792491849700486F27 /* ExpandIntegerPowExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60722826B9000B5BA2C /* ExpandIntegerPowExpressions.h */; };
 		31CDFF7A2491849700486F27 /* RewriteRepeatedAssignToSwizzled.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60C22826B9100B5BA2C /* RewriteRepeatedAssignToSwizzled.h */; };
 		31CDFF7B2491849700486F27 /* SplitSequenceOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D63F22826B9C00B5BA2C /* SplitSequenceOperator.h */; };
@@ -294,13 +273,11 @@
 		31CDFF802491849800486F27 /* RewriteUnaryMinusOperatorFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62822826B9700B5BA2C /* RewriteUnaryMinusOperatorFloat.h */; };
 		31CDFF812491849800486F27 /* EmulateMultiDrawShaderBuiltins.h in Headers */ = {isa = PBXBuildFile; fileRef = A30306EF2305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.h */; };
 		31CDFF822491849800486F27 /* ClampFragDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60A22826B9000B5BA2C /* ClampFragDepth.h */; };
-		31CDFF832491849800486F27 /* SeparateExpressionsReturningArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5F022826B8E00B5BA2C /* SeparateExpressionsReturningArrays.h */; };
 		31CDFF842491849800486F27 /* AddAndTrueToLoopCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62622826B9600B5BA2C /* AddAndTrueToLoopCondition.h */; };
 		31CDFF852491849800486F27 /* InitializeVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D61F22826B9400B5BA2C /* InitializeVariables.h */; };
 		31CDFF862491849800486F27 /* PruneNoOps.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D64922826B9E00B5BA2C /* PruneNoOps.h */; };
 		31CDFF872491849800486F27 /* RemoveInactiveInterfaceVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D3291323CFCB7600375657 /* RemoveInactiveInterfaceVariables.h */; };
 		31CDFF882491849800486F27 /* RewriteRowMajorMatrices.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D3290F23CFCB7600375657 /* RewriteRowMajorMatrices.h */; };
-		31CDFF892491849800486F27 /* RemoveSwitchFallThrough.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D61E22826B9300B5BA2C /* RemoveSwitchFallThrough.h */; };
 		31CDFF8A2491849800486F27 /* ClampPointSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5FF22826B8F00B5BA2C /* ClampPointSize.h */; };
 		31CDFF8B2491849800486F27 /* NameEmbeddedUniformStructs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60D22826B9100B5BA2C /* NameEmbeddedUniformStructs.h */; };
 		31CDFF8C2491849800486F27 /* RemovePow.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5FC22826B8F00B5BA2C /* RemovePow.h */; };
@@ -311,12 +288,9 @@
 		31CDFF912491849800486F27 /* RemoveDynamicIndexing.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62F22826B9800B5BA2C /* RemoveDynamicIndexing.h */; };
 		31CDFF922491849800486F27 /* RemoveInvariantDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5F122826B8E00B5BA2C /* RemoveInvariantDeclaration.h */; };
 		31CDFF932491849800486F27 /* RewriteTexelFetchOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62B22826B9700B5BA2C /* RewriteTexelFetchOffset.h */; };
-		31CDFF942491849800486F27 /* SeparateArrayConstructorStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62122826B9400B5BA2C /* SeparateArrayConstructorStatements.h */; };
 		31CDFF952491849800486F27 /* DeclareAndInitBuiltinsForInstancedMultiview.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60222826B9000B5BA2C /* DeclareAndInitBuiltinsForInstancedMultiview.h */; };
 		31CDFF962491849800486F27 /* VectorizeVectorScalarArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D64522826B9D00B5BA2C /* VectorizeVectorScalarArithmetic.h */; };
-		31CDFF972491849800486F27 /* AddDefaultReturnStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D63B22826B9B00B5BA2C /* AddDefaultReturnStatements.h */; };
 		31CDFF982491849800486F27 /* RewriteDfdy.h in Headers */ = {isa = PBXBuildFile; fileRef = A30306F02305F5EE002DA972 /* RewriteDfdy.h */; };
-		31CDFF992491849800486F27 /* SeparateArrayInitialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D63A22826B9B00B5BA2C /* SeparateArrayInitialization.h */; };
 		31CDFF9A2491849800486F27 /* EarlyFragmentTestsOptimization.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EB01C1B2477279900E50B35 /* EarlyFragmentTestsOptimization.h */; };
 		31CDFF9B2491849800486F27 /* PruneEmptyCases.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */; };
 		31CDFF9C2491849800486F27 /* RewriteDoWhile.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5F222826B8E00B5BA2C /* RewriteDoWhile.h */; };
@@ -324,16 +298,11 @@
 		31CDFF9E2491849800486F27 /* RegenerateStructNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60022826B8F00B5BA2C /* RegenerateStructNames.h */; };
 		31CDFF9F2491849800486F27 /* RecordConstantPrecision.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62022826B9400B5BA2C /* RecordConstantPrecision.h */; };
 		31CDFFA02491849800486F27 /* UnfoldShortCircuitAST.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62A22826B9700B5BA2C /* UnfoldShortCircuitAST.h */; };
-		31CDFFA12491849800486F27 /* WrapSwitchStatementsInBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D61922826B9200B5BA2C /* WrapSwitchStatementsInBlocks.h */; };
-		31CDFFA22491849800486F27 /* ArrayReturnValueToOutParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62E22826B9800B5BA2C /* ArrayReturnValueToOutParameter.h */; };
 		31CDFFA32491849800486F27 /* ScalarizeVecAndMatConstructorArgs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D63222826B9900B5BA2C /* ScalarizeVecAndMatConstructorArgs.h */; };
 		31CDFFA42491849800486F27 /* UseInterfaceBlockFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D61622826B9200B5BA2C /* UseInterfaceBlockFields.h */; };
 		31CDFFA52491849800486F27 /* DeferGlobalInitializers.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62D22826B9800B5BA2C /* DeferGlobalInitializers.h */; };
 		31CDFFA62491849800486F27 /* RewriteCubeMapSamplersAs2DArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A30306F12305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.h */; };
 		31CDFFA72491849800486F27 /* RewriteUnaryMinusOperatorInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D62922826B9700B5BA2C /* RewriteUnaryMinusOperatorInt.h */; };
-		31CDFFA82491849800486F27 /* UnfoldShortCircuitToIf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D63322826B9900B5BA2C /* UnfoldShortCircuitToIf.h */; };
-		31CDFFA92491849800486F27 /* RewriteAtomicFunctionExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5FB22826B8F00B5BA2C /* RewriteAtomicFunctionExpressions.h */; };
-		31CDFFAA2491849800486F27 /* BreakVariableAliasingInInnerLoops.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D5F822826B8F00B5BA2C /* BreakVariableAliasingInInnerLoops.h */; };
 		31CDFFAB2491849800486F27 /* RemoveUnreferencedVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D64B22826B9F00B5BA2C /* RemoveUnreferencedVariables.h */; };
 		31CDFFAC2491849800486F27 /* SimplifyLoopConditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D60522826B9000B5BA2C /* SimplifyLoopConditions.h */; };
 		31CDFFAD249184A100486F27 /* ReplaceShadowingVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = A30307022305F636002DA972 /* ReplaceShadowingVariables.h */; };
@@ -354,12 +323,10 @@
 		31CDFFBC249184A700486F27 /* blocklayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBBFE1B04375F00235552 /* blocklayout.h */; };
 		31CDFFBD249184A700486F27 /* OutputGLSLBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE018B97B9B0039062F /* OutputGLSLBase.h */; };
 		31CDFFBE249184A700486F27 /* glslang.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DBD18B97B9B0039062F /* glslang.h */; };
-		31CDFFBF249184A700486F27 /* UtilsHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD5C1FCE442E00AC7A89 /* UtilsHLSL.h */; };
 		31CDFFC0249184A700486F27 /* FlagStd140Structs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9FFF4D19102A000025B8FA /* FlagStd140Structs.h */; };
 		31CDFFC1249184A700486F27 /* ValidateLimitations.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0B18B97B9B0039062F /* ValidateLimitations.h */; };
 		31CDFFC2249184A700486F27 /* OutputESSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DDC18B97B9B0039062F /* OutputESSL.h */; };
 		31CDFFC3249184A700486F27 /* ValidateVaryingLocations.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD701FCE443400AC7A89 /* ValidateVaryingLocations.h */; };
-		31CDFFC4249184A700486F27 /* TextureFunctionHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD671FCE443100AC7A89 /* TextureFunctionHLSL.h */; };
 		31CDFFC5249184A700486F27 /* ValidateSwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC1F1B04375F00235552 /* ValidateSwitch.h */; };
 		31CDFFC6249184A700486F27 /* glslang_tab_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = A3D3290923CFCB4C00375657 /* glslang_tab_autogen.h */; };
 		31CDFFC7249184A700486F27 /* Operator.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC0D1B04375F00235552 /* Operator.h */; };
@@ -380,16 +347,11 @@
 		31CDFFD6249184A700486F27 /* QualifierTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD819F1DBFEA5C006066B8 /* QualifierTypes.h */; };
 		31CDFFD7249184A700486F27 /* VersionGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E1118B97B9B0039062F /* VersionGLSL.h */; };
 		31CDFFD8249184A700486F27 /* BuiltinsWorkaroundGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = A3694FC523202C5200A83D8F /* BuiltinsWorkaroundGLSL.h */; };
-		31CDFFD9249184A700486F27 /* TranslatorVulkan.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD661FCE443100AC7A89 /* TranslatorVulkan.h */; };
 		31CDFFDA249184A700486F27 /* CollectVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD631FCE443000AC7A89 /* CollectVariables.h */; };
-		31CDFFDB249184A700486F27 /* ImageFunctionHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD5F1FCE442F00AC7A89 /* ImageFunctionHLSL.h */; };
-		31CDFFDC249184A700486F27 /* BuiltInFunctionEmulatorHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD451FCE442800AC7A89 /* BuiltInFunctionEmulatorHLSL.h */; };
 		31CDFFDD249184A700486F27 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0918B97B9B0039062F /* util.h */; };
 		31CDFFDE249184A700486F27 /* Symbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D6DC22826C7900B5BA2C /* Symbol.h */; };
 		31CDFFDF249184A700486F27 /* ParseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE518B97B9B0039062F /* ParseContext.h */; };
 		31CDFFE0249184A700486F27 /* InitializeDll.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DC918B97B9B0039062F /* InitializeDll.h */; };
-		31CDFFE1249184A700486F27 /* ASTMetadataHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBBFC1B04375F00235552 /* ASTMetadataHLSL.h */; };
-		31CDFFE2249184A700486F27 /* blocklayoutHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC001B04375F00235552 /* blocklayoutHLSL.h */; };
 		31CDFFE3249184A700486F27 /* FunctionLookup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D6DF22826C7900B5BA2C /* FunctionLookup.h */; };
 		31CDFFE4249184A700486F27 /* Common.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DA418B97B9B0039062F /* Common.h */; };
 		31CDFFE5249184A700486F27 /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DB918B97B9B0039062F /* ExtensionBehavior.h */; };
@@ -404,13 +366,11 @@
 		31CDFFEE249184A700486F27 /* VariablePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0F18B97B9B0039062F /* VariablePacker.h */; };
 		31CDFFEF249184A700486F27 /* ValidateAST.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D6D722826C7800B5BA2C /* ValidateAST.h */; };
 		31CDFFF0249184A700486F27 /* SymbolUniqueId.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD4D1FCE442A00AC7A89 /* SymbolUniqueId.h */; };
-		31CDFFF1249184A700486F27 /* StructureHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD731FCE443400AC7A89 /* StructureHLSL.h */; };
 		31CDFFF2249184A700486F27 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012E0118B97B9B0039062F /* Types.h */; };
 		31CDFFF3249184A700486F27 /* ImmutableString.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C55D6D822826C7800B5BA2C /* ImmutableString.h */; };
 		31CDFFF4249184A700486F27 /* ConstantUnion.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DA818B97B9B0039062F /* ConstantUnion.h */; };
 		31CDFFF5249184A700486F27 /* DirectiveHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DB818B97B9B0039062F /* DirectiveHandler.h */; };
 		31CDFFF6249184A700486F27 /* HashNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DC318B97B9B0039062F /* HashNames.h */; };
-		31CDFFF7249184A700486F27 /* OutputVulkanGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 315EBD4A1FCE442900AC7A89 /* OutputVulkanGLSL.h */; };
 		31CDFFF8249184A700486F27 /* PoolAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DE718B97B9B0039062F /* PoolAlloc.h */; };
 		31CDFFF9249184A700486F27 /* CallDAG.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1DBC041B04375F00235552 /* CallDAG.h */; };
 		31CDFFFA249184AC00486F27 /* SystemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59992284FC750018F2D8 /* SystemInfo.h */; };
@@ -425,6 +385,9 @@
 		7B0A2A652603D4040040DCEB /* gl2ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A522603D3D10040DCEB /* gl2ext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B0A2A662603D4040040DCEB /* gl3ext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A552603D3E00040DCEB /* gl3ext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
 		7B0A2A672603D4040040DCEB /* glext_explicit_context_autogen.inc in Headers */ = {isa = PBXBuildFile; fileRef = 7B0A2A4F2603D3C60040DCEB /* glext_explicit_context_autogen.inc */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
+		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
+		7B19599526C3C64E00C09322 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD594E2284ECD10018F2D8 /* xxhash.c */; };
 		A3C49BF6255DF6C4005E8DF7 /* compression_utils_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C49BF1255DEDC5005E8DF7 /* compression_utils_portable.h */; };
 		A3C49BFB255DF6E6005E8DF7 /* EGLReusableSync.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE13255DDE0100B73018 /* EGLReusableSync.h */; };
 		A3C49BFC255DF6E6005E8DF7 /* EGLSyncImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE14255DDE0200B73018 /* EGLSyncImpl.h */; };
@@ -447,7 +410,6 @@
 		DF83E2162639FC74000825EF /* aligned_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D7102282747600B5BA2C /* aligned_memory.cpp */; };
 		DF83E2172639FC74000825EF /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D45D19102620000B8C1F /* debug.cpp */; };
 		DF83E2182639FC74000825EF /* string_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD818B1DBFEA10006066B8 /* string_utils.cpp */; };
-		DF83E2192639FC74000825EF /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
 		DF83E21A2639FC74000825EF /* utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D46819102620000B8C1F /* utilities.cpp */; };
 		DF83E21B2639FC74000825EF /* system_utils_posix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D71F2282747700B5BA2C /* system_utils_posix.cpp */; };
 		DF83E21C2639FC74000825EF /* uniform_type_info_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD3E1FCE43BD00AC7A89 /* uniform_type_info_autogen.cpp */; };
@@ -462,7 +424,6 @@
 		DF83E2252639FC80000825EF /* FunctionsCGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C3FE20255DDE7900B73018 /* FunctionsCGL.cpp */; };
 		DF83E2262639FC8A000825EF /* sha1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59832284FBE70018F2D8 /* sha1.cc */; };
 		DF83E2272639FC94000825EF /* PMurHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBE261FCF808C00AC7A89 /* PMurHash.cpp */; };
-		DF83E2282639FC9A000825EF /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD594E2284ECD10018F2D8 /* xxhash.c */; };
 		DF83E2292639FCB0000825EF /* DirectiveHandlerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89516974DED006FAA5A /* DirectiveHandlerBase.cpp */; };
 		DF83E22A2639FCB0000825EF /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89D16974DED006FAA5A /* Lexer.cpp */; };
 		DF83E22B2639FCB0000825EF /* MacroExpander.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F8A116974DED006FAA5A /* MacroExpander.cpp */; };
@@ -508,28 +469,21 @@
 		DF83E2532639FD33000825EF /* SimplifyLoopConditions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61722826B9200B5BA2C /* SimplifyLoopConditions.cpp */; };
 		DF83E2542639FD33000825EF /* InitializeVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64422826B9D00B5BA2C /* InitializeVariables.cpp */; };
 		DF83E2552639FD33000825EF /* RecordUniformBlocksTranslatedToStructuredBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C3FE0B255DDD8300B73018 /* RecordUniformBlocksTranslatedToStructuredBuffers.cpp */; };
-		DF83E2562639FD33000825EF /* RewriteElseBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60422826B9000B5BA2C /* RewriteElseBlocks.cpp */; };
 		DF83E2572639FD33000825EF /* RewriteUnaryMinusOperatorFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64122826B9C00B5BA2C /* RewriteUnaryMinusOperatorFloat.cpp */; };
 		DF83E2582639FD33000825EF /* EmulateGLFragColorBroadcast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63822826B9A00B5BA2C /* EmulateGLFragColorBroadcast.cpp */; };
 		DF83E2592639FD33000825EF /* RemovePow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63922826B9B00B5BA2C /* RemovePow.cpp */; };
 		DF83E25A2639FD33000825EF /* VectorizeVectorScalarArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5F422826B8E00B5BA2C /* VectorizeVectorScalarArithmetic.cpp */; };
-		DF83E25B2639FD33000825EF /* ArrayReturnValueToOutParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63622826B9A00B5BA2C /* ArrayReturnValueToOutParameter.cpp */; };
 		DF83E25C2639FD33000825EF /* RewriteExpressionsWithShaderStorageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63022826B9900B5BA2C /* RewriteExpressionsWithShaderStorageBlock.cpp */; };
-		DF83E25D2639FD33000825EF /* WrapSwitchStatementsInBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5F722826B8F00B5BA2C /* WrapSwitchStatementsInBlocks.cpp */; };
 		DF83E25E2639FD33000825EF /* RewriteStructSamplersOld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31CD00CB249196A500486F27 /* RewriteStructSamplersOld.cpp */; };
 		DF83E25F2639FD33000825EF /* RewriteAtomicCounters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30306F32305F5EE002DA972 /* RewriteAtomicCounters.cpp */; };
-		DF83E2602639FD33000825EF /* SeparateExpressionsReturningArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61A22826B9200B5BA2C /* SeparateExpressionsReturningArrays.cpp */; };
-		DF83E2612639FD33000825EF /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61122826B9100B5BA2C /* AddDefaultReturnStatements.cpp */; };
 		DF83E2622639FD33000825EF /* RemoveAtomicCounterBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BDEE2432CCC300E01503 /* RemoveAtomicCounterBuiltins.cpp */; };
 		DF83E2632639FD33000825EF /* RewriteDfdy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30306F22305F5EE002DA972 /* RewriteDfdy.cpp */; };
 		DF83E2642639FD33000825EF /* RewriteStructSamplers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61C22826B9300B5BA2C /* RewriteStructSamplers.cpp */; };
 		DF83E2652639FD33000825EF /* RemoveInactiveInterfaceVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3D3291223CFCB7600375657 /* RemoveInactiveInterfaceVariables.cpp */; };
 		DF83E2662639FD33000825EF /* EarlyFragmentTestsOptimization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EB01C1C2477279900E50B35 /* EarlyFragmentTestsOptimization.cpp */; };
 		DF83E2672639FD33000825EF /* ClampPointSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60122826B8F00B5BA2C /* ClampPointSize.cpp */; };
-		DF83E2682639FD33000825EF /* BreakVariableAliasingInInnerLoops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60F22826B9100B5BA2C /* BreakVariableAliasingInInnerLoops.cpp */; };
 		DF83E2692639FD33000825EF /* FlagSamplersWithTexelFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C3FE0D255DDD8400B73018 /* FlagSamplersWithTexelFetch.cpp */; };
 		DF83E26A2639FD33000825EF /* EmulateMultiDrawShaderBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30306F42305F5EE002DA972 /* EmulateMultiDrawShaderBuiltins.cpp */; };
-		DF83E26B2639FD33000825EF /* RewriteAtomicFunctionExpressions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5F922826B8F00B5BA2C /* RewriteAtomicFunctionExpressions.cpp */; };
 		DF83E26C2639FD33000825EF /* RemoveInvariantDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D62522826B9600B5BA2C /* RemoveInvariantDeclaration.cpp */; };
 		DF83E26D2639FD33000825EF /* FoldExpressions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64022826B9C00B5BA2C /* FoldExpressions.cpp */; };
 		DF83E26E2639FD33000825EF /* SplitSequenceOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63422826B9900B5BA2C /* SplitSequenceOperator.cpp */; };
@@ -541,14 +495,11 @@
 		DF83E2742639FD33000825EF /* RewriteDoWhile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D62222826B9500B5BA2C /* RewriteDoWhile.cpp */; };
 		DF83E2752639FD33000825EF /* ScalarizeVecAndMatConstructorArgs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63122826B9900B5BA2C /* ScalarizeVecAndMatConstructorArgs.cpp */; };
 		DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5F522826B8E00B5BA2C /* RemoveUnreferencedVariables.cpp */; };
-		DF83E2772639FD33000825EF /* UnfoldShortCircuitToIf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61822826B9200B5BA2C /* UnfoldShortCircuitToIf.cpp */; };
 		DF83E2782639FD33000825EF /* AddAndTrueToLoopCondition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63722826B9A00B5BA2C /* AddAndTrueToLoopCondition.cpp */; };
 		DF83E2792639FD33000825EF /* RewriteUnaryMinusOperatorInt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D62422826B9500B5BA2C /* RewriteUnaryMinusOperatorInt.cpp */; };
 		DF83E27A2639FD33000825EF /* RecordConstantPrecision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64622826B9D00B5BA2C /* RecordConstantPrecision.cpp */; };
 		DF83E27B2639FD33000825EF /* RemoveDynamicIndexing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60922826B9000B5BA2C /* RemoveDynamicIndexing.cpp */; };
 		DF83E27C2639FD33000825EF /* PruneNoOps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61222826B9100B5BA2C /* PruneNoOps.cpp */; };
-		DF83E27D2639FD33000825EF /* SeparateArrayConstructorStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D62722826B9600B5BA2C /* SeparateArrayConstructorStatements.cpp */; };
-		DF83E27E2639FD33000825EF /* SeparateArrayInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61322826B9100B5BA2C /* SeparateArrayInitialization.cpp */; };
 		DF83E27F2639FD33000825EF /* RewriteInterpolateAtOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C3FE0E255DDD8400B73018 /* RewriteInterpolateAtOffset.cpp */; };
 		DF83E2802639FD33000825EF /* RewriteTexelFetchOffset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61022826B9100B5BA2C /* RewriteTexelFetchOffset.cpp */; };
 		DF83E2812639FD33000825EF /* DeclareAndInitBuiltinsForInstancedMultiview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64322826B9D00B5BA2C /* DeclareAndInitBuiltinsForInstancedMultiview.cpp */; };
@@ -558,7 +509,6 @@
 		DF83E2852639FD33000825EF /* DeferGlobalInitializers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60822826B9000B5BA2C /* DeferGlobalInitializers.cpp */; };
 		DF83E2862639FD33000825EF /* ExpandIntegerPowExpressions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D61D22826B9300B5BA2C /* ExpandIntegerPowExpressions.cpp */; };
 		DF83E2872639FD33000825EF /* RewriteRowMajorMatrices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3D3290E23CFCB7600375657 /* RewriteRowMajorMatrices.cpp */; };
-		DF83E2882639FD33000825EF /* RemoveSwitchFallThrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5FE22826B8F00B5BA2C /* RemoveSwitchFallThrough.cpp */; };
 		DF83E2892639FD33000825EF /* ClampFragDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D62C22826B9800B5BA2C /* ClampFragDepth.cpp */; };
 		DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */; };
 		DF83E28B2639FD83000825EF /* Symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6D922826C7800B5BA2C /* Symbol.cpp */; };
@@ -566,13 +516,9 @@
 		DF83E28D2639FD83000825EF /* ShaderLang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DF218B97B9B0039062F /* ShaderLang.cpp */; };
 		DF83E28E2639FD83000825EF /* TranslatorMetalUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF19258190CA00894E24 /* TranslatorMetalUtils.cpp */; };
 		DF83E28F2639FD83000825EF /* ReplaceVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6F622826CB300B5BA2C /* ReplaceVariable.cpp */; };
-		DF83E2902639FD83000825EF /* blocklayoutHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBBFF1B04375F00235552 /* blocklayoutHLSL.cpp */; };
 		DF83E2912639FD83000825EF /* FindMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6ED22826CB200B5BA2C /* FindMain.cpp */; };
 		DF83E2922639FD83000825EF /* DirectiveHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DB718B97B9B0039062F /* DirectiveHandler.cpp */; };
-		DF83E2932639FD83000825EF /* ImageFunctionHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD4B1FCE442900AC7A89 /* ImageFunctionHLSL.cpp */; };
-		DF83E2942639FD83000825EF /* OutputVulkanGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD681FCE443100AC7A89 /* OutputVulkanGLSL.cpp */; };
 		DF83E2952639FD83000825EF /* ShaderVars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1A1B04375F00235552 /* ShaderVars.cpp */; };
-		DF83E2962639FD83000825EF /* StructureHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD471FCE442800AC7A89 /* StructureHLSL.cpp */; };
 		DF83E2972639FD83000825EF /* SymbolUniqueId.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD771FCE443500AC7A89 /* SymbolUniqueId.cpp */; };
 		DF83E2982639FD83000825EF /* ValidateMaxParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C315CFC1CC5B6DA00776697 /* ValidateMaxParameters.cpp */; };
 		DF83E2992639FD83000825EF /* ImmutableStringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6DE22826C7900B5BA2C /* ImmutableStringBuilder.cpp */; };
@@ -584,7 +530,6 @@
 		DF83E29F2639FD83000825EF /* FindFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30306FE2305F636002DA972 /* FindFunction.cpp */; };
 		DF83E2A02639FD83000825EF /* QualifierTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD819E1DBFEA5C006066B8 /* QualifierTypes.cpp */; };
 		DF83E2A12639FD83000825EF /* Operator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC0C1B04375F00235552 /* Operator.cpp */; };
-		DF83E2A22639FD83000825EF /* TextureFunctionHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD621FCE443000AC7A89 /* TextureFunctionHLSL.cpp */; };
 		DF83E2A32639FD83000825EF /* CallDAG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC031B04375F00235552 /* CallDAG.cpp */; };
 		DF83E2A42639FD83000825EF /* HashNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD4E1FCE442A00AC7A89 /* HashNames.cpp */; };
 		DF83E2A52639FD83000825EF /* OutputTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD751FCE443500AC7A89 /* OutputTree.cpp */; };
@@ -592,18 +537,15 @@
 		DF83E2A72639FD83000825EF /* ValidateAST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6DD22826C7900B5BA2C /* ValidateAST.cpp */; };
 		DF83E2A82639FD83000825EF /* ValidateOutputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CC7D450191024E4000B8C1F /* ValidateOutputs.cpp */; };
 		DF83E2A92639FD83000825EF /* TranslatorESSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DFB18B97B9B0039062F /* TranslatorESSL.cpp */; };
-		DF83E2AA2639FD83000825EF /* BuiltInFunctionEmulatorHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD4C1FCE442A00AC7A89 /* BuiltInFunctionEmulatorHLSL.cpp */; };
 		DF83E2AB2639FD83000825EF /* OutputESSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DDB18B97B9B0039062F /* OutputESSL.cpp */; };
 		DF83E2AC2639FD83000825EF /* ValidateLimitations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E0A18B97B9B0039062F /* ValidateLimitations.cpp */; };
 		DF83E2AD2639FD83000825EF /* RunAtTheEndOfShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6EC22826CB200B5BA2C /* RunAtTheEndOfShader.cpp */; };
 		DF83E2AE2639FD83000825EF /* ReplaceShadowingVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307002305F636002DA972 /* ReplaceShadowingVariables.cpp */; };
-		DF83E2AF2639FD83000825EF /* ASTMetadataHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBBFB1B04375F00235552 /* ASTMetadataHLSL.cpp */; };
 		DF83E2B02639FD83000825EF /* VariablePacker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E0E18B97B9B0039062F /* VariablePacker.cpp */; };
 		DF83E2B12639FD83000825EF /* BuiltinsWorkaroundGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3694FC423202C5100A83D8F /* BuiltinsWorkaroundGLSL.cpp */; };
 		DF83E2B22639FD83000825EF /* IntermNode_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6F922826CB300B5BA2C /* IntermNode_util.cpp */; };
 		DF83E2B32639FD83000825EF /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E0818B97B9B0039062F /* util.cpp */; };
 		DF83E2B42639FD83000825EF /* ReplaceArrayOfMatrixVarying.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C3FE12255DDD9200B73018 /* ReplaceArrayOfMatrixVarying.cpp */; };
-		DF83E2B52639FD83000825EF /* TranslatorVulkan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD401FCE442600AC7A89 /* TranslatorVulkan.cpp */; };
 		DF83E2B62639FD83000825EF /* glslang_lex_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3D3290A23CFCB4D00375657 /* glslang_lex_autogen.cpp */; };
 		DF83E2B72639FD83000825EF /* IntermRebuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF992581A3C100894E24 /* IntermRebuild.cpp */; };
 		DF83E2B82639FD83000825EF /* ReplaceClipDistanceVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EB01C1F247727A900E50B35 /* ReplaceClipDistanceVariable.cpp */; };
@@ -611,12 +553,10 @@
 		DF83E2BA2639FD83000825EF /* PoolAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE618B97B9B0039062F /* PoolAlloc.cpp */; };
 		DF83E2BB2639FD83000825EF /* Declarator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D731228274DE00B5BA2C /* Declarator.cpp */; };
 		DF83E2BC2639FD83000825EF /* blocklayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBBFD1B04375F00235552 /* blocklayout.cpp */; };
-		DF83E2BD2639FD83000825EF /* emulated_builtin_functions_hlsl_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD601FCE442F00AC7A89 /* emulated_builtin_functions_hlsl_autogen.cpp */; };
 		DF83E2BE2639FD83000825EF /* ExtensionBehavior.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD6B1FCE443200AC7A89 /* ExtensionBehavior.cpp */; };
 		DF83E2BF2639FD83000825EF /* ParseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DE418B97B9B0039062F /* ParseContext.cpp */; };
 		DF83E2C02639FD83000825EF /* glslang_tab_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3D3290823CFCB4C00375657 /* glslang_tab_autogen.cpp */; };
 		DF83E2C12639FD83000825EF /* OutputGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DDD18B97B9B0039062F /* OutputGLSL.cpp */; };
-		DF83E2C22639FD84000825EF /* UtilsHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBD431FCE442700AC7A89 /* UtilsHLSL.cpp */; };
 		DF83E2C32639FD84000825EF /* ValidateSwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1E1B04375F00235552 /* ValidateSwitch.cpp */; };
 		DF83E2C42639FD84000825EF /* VersionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012E1018B97B9B0039062F /* VersionGLSL.cpp */; };
 		DF83E2C52639FD84000825EF /* TranslatorMetalDirect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF16258190CA00894E24 /* TranslatorMetalDirect.cpp */; };
@@ -642,11 +582,9 @@
 		DF83E2D92639FD90000825EF /* SystemInfo_macos.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59972284FC750018F2D8 /* SystemInfo_macos.mm */; };
 		DF83E2DA2639FD90000825EF /* SystemInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59982284FC750018F2D8 /* SystemInfo.cpp */; };
 		DF83E2DB2639FD90000825EF /* SystemInfo_ios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31B1571F236B7FAE00CAA4FD /* SystemInfo_ios.cpp */; };
-		DF83E2DC2639FE17000825EF /* validationGL31.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303073A2305F89A002DA972 /* validationGL31.cpp */; };
 		DF83E2DD2639FE17000825EF /* copyimage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59872284FC400018F2D8 /* copyimage.cpp */; };
 		DF83E2DE2639FE17000825EF /* Observer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD595B2284F7960018F2D8 /* Observer.cpp */; };
 		DF83E2DF2639FE17000825EF /* imageformats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59892284FC400018F2D8 /* imageformats.cpp */; };
-		DF83E2E02639FE17000825EF /* frame_capture_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E33E8EA24D0D208002309AC /* frame_capture_utils.cpp */; };
 		DF83E2E12639FE17000825EF /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC751B0438D200235552 /* Platform.cpp */; };
 		DF83E2E22639FE17000825EF /* validationES3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDCD1B0438D300235552 /* validationES3.cpp */; };
 		DF83E2E32639FE17000825EF /* HandleAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC6F1B0438D200235552 /* HandleAllocator.cpp */; };
@@ -655,41 +593,26 @@
 		DF83E2E62639FE17000825EF /* validationES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDC91B0438D300235552 /* validationES.cpp */; };
 		DF83E2E72639FE17000825EF /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC5F1B0438D200235552 /* Error.cpp */; };
 		DF83E2E82639FE17000825EF /* GLES1Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD595D2284F7960018F2D8 /* GLES1Renderer.cpp */; };
-		DF83E2E92639FE17000825EF /* validationGL11.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303074C2305F89D002DA972 /* validationGL11.cpp */; };
 		DF83E2EA2639FE17000825EF /* BlobCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59532284F7950018F2D8 /* BlobCache.cpp */; };
 		DF83E2EB2639FE17000825EF /* Overlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A315988623299037000619B9 /* Overlay.cpp */; };
-		DF83E2EC2639FE17000825EF /* validationGL12.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307522305F89E002DA972 /* validationGL12.cpp */; };
 		DF83E2ED2639FE17000825EF /* GLES1State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59552284F7950018F2D8 /* GLES1State.cpp */; };
 		DF83E2EE2639FE17000825EF /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDB91B0438D200235552 /* Shader.cpp */; };
-		DF83E2EF2639FE17000825EF /* validationGL13.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303073C2305F89A002DA972 /* validationGL13.cpp */; };
 		DF83E2F02639FE17000825EF /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDBB1B0438D300235552 /* State.cpp */; };
 		DF83E2F12639FE17000825EF /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD815A1DBFE999006066B8 /* Debug.cpp */; };
-		DF83E2F22639FE17000825EF /* validationGL15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307392305F89A002DA972 /* validationGL15.cpp */; };
 		DF83E2F32639FE17000825EF /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC571B0438D200235552 /* Context.cpp */; };
-		DF83E2F42639FE17000825EF /* validationGL32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307382305F89A002DA972 /* validationGL32.cpp */; };
-		DF83E2F52639FE17000825EF /* validationGL33.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303072C2305F898002DA972 /* validationGL33.cpp */; };
-		DF83E2F62639FE17000825EF /* validationGL41.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303073B2305F89A002DA972 /* validationGL41.cpp */; };
 		DF83E2F72639FE17000825EF /* Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC4D1B0438D200235552 /* Buffer.cpp */; };
 		DF83E2F82639FE17000825EF /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */; };
-		DF83E2F92639FE17000825EF /* validationGL14.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303074F2305F89E002DA972 /* validationGL14.cpp */; };
-		DF83E2FA2639FE17000825EF /* validationGL46.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307512305F89E002DA972 /* validationGL46.cpp */; };
 		DF83E2FB2639FE17000825EF /* VaryingPacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDDF1FCE452C00AC7A89 /* VaryingPacking.cpp */; };
 		DF83E2FC2639FE17000825EF /* VertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDCF1B0438D300235552 /* VertexArray.cpp */; };
-		DF83E2FD2639FE17000825EF /* validationGL3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307362305F899002DA972 /* validationGL3.cpp */; };
 		DF83E2FE2639FE17000825EF /* Overlay_font_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A315988423299037000619B9 /* Overlay_font_autogen.cpp */; };
 		DF83E2FF2639FE17000825EF /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303071C2305F7C4002DA972 /* Semaphore.cpp */; };
 		DF83E3002639FE17000825EF /* Display.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC5D1B0438D200235552 /* Display.cpp */; };
 		DF83E3012639FE17000825EF /* validationEGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDC71B0438D300235552 /* validationEGL.cpp */; };
-		DF83E3022639FE17000825EF /* validationGL42.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303072D2305F898002DA972 /* validationGL42.cpp */; };
 		DF83E3032639FE17000825EF /* OverlayWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A315988523299037000619B9 /* OverlayWidgets.cpp */; };
-		DF83E3042639FE17000825EF /* validationGL2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307472305F89C002DA972 /* validationGL2.cpp */; };
 		DF83E3052639FE17000825EF /* Program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC761B0438D200235552 /* Program.cpp */; };
 		DF83E3062639FE17000825EF /* ProgramExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BDF42432CD6200E01503 /* ProgramExecutable.cpp */; };
-		DF83E3072639FE17000825EF /* validationGL1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303072F2305F898002DA972 /* validationGL1.cpp */; };
-		DF83E3082639FE17000825EF /* validationGL4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307542305F89F002DA972 /* validationGL4.cpp */; };
 		DF83E3092639FE17000825EF /* MemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59562284F7950018F2D8 /* MemoryObject.cpp */; };
 		DF83E30A2639FE17000825EF /* validationES2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDCB1B0438D300235552 /* validationES2.cpp */; };
-		DF83E30B2639FE17000825EF /* validationGL44.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307482305F89C002DA972 /* validationGL44.cpp */; };
 		DF83E30C2639FE17000825EF /* WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDD01FCE452800AC7A89 /* WorkerThread.cpp */; };
 		DF83E30D2639FE17000825EF /* validationESEXT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B57D9238CB09B0079FDDC /* validationESEXT.cpp */; };
 		DF83E30E2639FE17000825EF /* EGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD595C2284F7960018F2D8 /* EGLSync.cpp */; };
@@ -715,7 +638,6 @@
 		DF83E3222639FE18000825EF /* validationES1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59572284F7950018F2D8 /* validationES1.cpp */; };
 		DF83E3232639FE18000825EF /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC511B0438D200235552 /* Compiler.cpp */; };
 		DF83E3242639FE18000825EF /* validationES31.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD816A1DBFE999006066B8 /* validationES31.cpp */; };
-		DF83E3252639FE18000825EF /* validationGL43.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307342305F899002DA972 /* validationGL43.cpp */; };
 		DF83E3262639FE18000825EF /* Uniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBDC51B0438D300235552 /* Uniform.cpp */; };
 		DF83E3272639FE18000825EF /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDDB1FCE452B00AC7A89 /* Thread.cpp */; };
 		DF83E3282639FE18000825EF /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC541B0438D200235552 /* Config.cpp */; };
@@ -724,7 +646,6 @@
 		DF83E32B2639FE18000825EF /* validationES32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B57E8238CB09C0079FDDC /* validationES32.cpp */; };
 		DF83E32C2639FE18000825EF /* Caps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC4F1B0438D200235552 /* Caps.cpp */; };
 		DF83E32D2639FE18000825EF /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC5B1B0438D200235552 /* Device.cpp */; };
-		DF83E32E2639FE18000825EF /* validationGL45.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307412305F89B002DA972 /* validationGL45.cpp */; };
 		DF83E32F2639FE18000825EF /* format_map_desktop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307132305F7C3002DA972 /* format_map_desktop.cpp */; };
 		DF83E3302639FE18000825EF /* Query.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC781B0438D200235552 /* Query.cpp */; };
 		DF83E3312639FE18000825EF /* LoggingAnnotator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDD11FCE452800AC7A89 /* LoggingAnnotator.cpp */; };
@@ -734,7 +655,6 @@
 		DF83E3352639FE18000825EF /* ProgramLinkedResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDD51FCE452900AC7A89 /* ProgramLinkedResources.cpp */; };
 		DF83E3362639FE18000825EF /* ProgramPipeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDCE1FCE452700AC7A89 /* ProgramPipeline.cpp */; };
 		DF83E3372639FE18000825EF /* FramebufferAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC6C1B0438D200235552 /* FramebufferAttachment.cpp */; };
-		DF83E3382639FE18000825EF /* validationGL21.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30307312305F898002DA972 /* validationGL21.cpp */; };
 		DF83E3392639FE2A000825EF /* entry_points_egl_ext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300BB1DE39E7500D2C405 /* entry_points_egl_ext.cpp */; };
 		DF83E33A2639FE2A000825EF /* entry_points_gles_ext_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5820238DF74F0079FDDC /* entry_points_gles_ext_autogen.cpp */; };
 		DF83E33B2639FE2A000825EF /* entry_points_gles_3_1_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B5821238DF74F0079FDDC /* entry_points_gles_3_1_autogen.cpp */; };
@@ -3164,15 +3084,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				31CDFF842491849800486F27 /* AddAndTrueToLoopCondition.h in Headers */,
-				31CDFF972491849800486F27 /* AddDefaultReturnStatements.h in Headers */,
 				31CDFF5C2491848C00486F27 /* aligned_memory.h in Headers */,
-				31CDFF652491848C00486F27 /* android_util.h in Headers */,
+				7B19599326C3C22000C09322 /* android_util.h in Headers */,
 				31CDFE11249183F000486F27 /* angle_gl.h in Headers */,
 				31CD007F249184FD00486F27 /* angletypes.h in Headers */,
 				31CDFF542491848C00486F27 /* angleutils.h in Headers */,
 				31CD00C02491854A00486F27 /* ArrayBoundsClamper.h in Headers */,
-				31CDFFA22491849800486F27 /* ArrayReturnValueToOutParameter.h in Headers */,
-				31CDFFE1249184A700486F27 /* ASTMetadataHLSL.h in Headers */,
 				31CD0054249184FC00486F27 /* AttributeMap.h in Headers */,
 				31CDFFD5249184A700486F27 /* BaseTypes.h in Headers */,
 				31CD009B249184FD00486F27 /* BinaryStream.h in Headers */,
@@ -3180,14 +3097,11 @@
 				31CD0022249184E700486F27 /* BlitGL.h in Headers */,
 				31CD00A4249184FD00486F27 /* BlobCache.h in Headers */,
 				31CDFFBC249184A700486F27 /* blocklayout.h in Headers */,
-				31CDFFE2249184A700486F27 /* blocklayoutHLSL.h in Headers */,
-				31CDFFAA2491849800486F27 /* BreakVariableAliasingInInnerLoops.h in Headers */,
 				31CD006E249184FC00486F27 /* Buffer.h in Headers */,
 				31CD001F249184E700486F27 /* BufferGL.h in Headers */,
 				31CD004F249184F400486F27 /* BufferImpl.h in Headers */,
 				31CDFFE6249184A700486F27 /* BuiltInFunctionEmulator.h in Headers */,
 				31CDFFCE249184A700486F27 /* BuiltInFunctionEmulatorGLSL.h in Headers */,
-				31CDFFDC249184A700486F27 /* BuiltInFunctionEmulatorHLSL.h in Headers */,
 				31CDFFD8249184A700486F27 /* BuiltinsWorkaroundGLSL.h in Headers */,
 				31CDFFF9249184A700486F27 /* CallDAG.h in Headers */,
 				31CD0061249184FC00486F27 /* Caps.h in Headers */,
@@ -3322,7 +3236,6 @@
 				31CD0057249184FC00486F27 /* histogram_macros.h in Headers */,
 				31CD00A9249184FD00486F27 /* Image.h in Headers */,
 				31CDFFFD249184B000486F27 /* imageformats.h in Headers */,
-				31CDFFDB249184A700486F27 /* ImageFunctionHLSL.h in Headers */,
 				31CD0013249184E700486F27 /* ImageGL.h in Headers */,
 				31CD003B249184F400486F27 /* ImageImpl.h in Headers */,
 				31CD004A249184F400486F27 /* ImageImpl_mock.h in Headers */,
@@ -3371,7 +3284,6 @@
 				31CDFFD4249184A700486F27 /* OutputGLSL.h in Headers */,
 				31CDFFBD249184A700486F27 /* OutputGLSLBase.h in Headers */,
 				31CDFFEB249184A700486F27 /* OutputTree.h in Headers */,
-				31CDFFF7249184A700486F27 /* OutputVulkanGLSL.h in Headers */,
 				31CD00B2249184FD00486F27 /* Overlay.h in Headers */,
 				31CD0068249184FC00486F27 /* Overlay_font_autogen.h in Headers */,
 				31CD0079249184FD00486F27 /* OverlayWidgets.h in Headers */,
@@ -3416,7 +3328,6 @@
 				31CDFF872491849800486F27 /* RemoveInactiveInterfaceVariables.h in Headers */,
 				31CDFF922491849800486F27 /* RemoveInvariantDeclaration.h in Headers */,
 				31CDFF8C2491849800486F27 /* RemovePow.h in Headers */,
-				31CDFF892491849800486F27 /* RemoveSwitchFallThrough.h in Headers */,
 				31CDFFAB2491849800486F27 /* RemoveUnreferencedVariables.h in Headers */,
 				31CD0075249184FD00486F27 /* Renderbuffer.h in Headers */,
 				31CD0027249184E700486F27 /* RenderbufferGL.h in Headers */,
@@ -3436,11 +3347,9 @@
 				31CD00B4249184FD00486F27 /* ResourceManager.h in Headers */,
 				31CD008A249184FD00486F27 /* ResourceMap.h in Headers */,
 				31CDFF7C2491849700486F27 /* RewriteAtomicCounters.h in Headers */,
-				31CDFFA92491849800486F27 /* RewriteAtomicFunctionExpressions.h in Headers */,
 				31CDFFA62491849800486F27 /* RewriteCubeMapSamplersAs2DArray.h in Headers */,
 				31CDFF982491849800486F27 /* RewriteDfdy.h in Headers */,
 				31CDFF9C2491849800486F27 /* RewriteDoWhile.h in Headers */,
-				31CDFF782491849700486F27 /* RewriteElseBlocks.h in Headers */,
 				31CDFF9D2491849800486F27 /* RewriteExpressionsWithShaderStorageBlock.h in Headers */,
 				A3C49C18255DF866005E8DF7 /* RewriteInterpolateAtOffset.h in Headers */,
 				31CDFF7A2491849700486F27 /* RewriteRepeatedAssignToSwizzled.h in Headers */,
@@ -3461,10 +3370,7 @@
 				31CD0069249184FC00486F27 /* Semaphore.h in Headers */,
 				31CD0018249184E700486F27 /* SemaphoreGL.h in Headers */,
 				31CD0030249184F400486F27 /* SemaphoreImpl.h in Headers */,
-				31CDFF942491849800486F27 /* SeparateArrayConstructorStatements.h in Headers */,
-				31CDFF992491849800486F27 /* SeparateArrayInitialization.h in Headers */,
 				31CDFF8E2491849800486F27 /* SeparateDeclarations.h in Headers */,
-				31CDFF832491849800486F27 /* SeparateExpressionsReturningArrays.h in Headers */,
 				31CD0031249184F400486F27 /* serial_utils.h in Headers */,
 				31CDFFD0249184A700486F27 /* Severity.h in Headers */,
 				31CD00B3249184FD00486F27 /* Shader.h in Headers */,
@@ -3482,7 +3388,6 @@
 				31CD007E249184FD00486F27 /* Stream.h in Headers */,
 				31CD004E249184F400486F27 /* StreamProducerImpl.h in Headers */,
 				31CDFF522491848C00486F27 /* string_utils.h in Headers */,
-				31CDFFF1249184A700486F27 /* StructureHLSL.h in Headers */,
 				31CD009F249184FD00486F27 /* Surface.h in Headers */,
 				31CD0028249184E700486F27 /* SurfaceGL.h in Headers */,
 				31CD0044249184F400486F27 /* SurfaceImpl.h in Headers */,
@@ -3496,7 +3401,6 @@
 				31CDFFFA249184AC00486F27 /* SystemInfo.h in Headers */,
 				31CDFFFB249184AC00486F27 /* SystemInfo_internal.h in Headers */,
 				31CD0097249184FD00486F27 /* Texture.h in Headers */,
-				31CDFFC4249184A700486F27 /* TextureFunctionHLSL.h in Headers */,
 				31CD002A249184E700486F27 /* TextureGL.h in Headers */,
 				31CD0046249184F400486F27 /* TextureImpl.h in Headers */,
 				31CD0047249184F400486F27 /* TextureImpl_mock.h in Headers */,
@@ -3512,15 +3416,12 @@
 				31CD0049249184F400486F27 /* TransformFeedbackImpl_mock.h in Headers */,
 				31CDFFCA249184A700486F27 /* TranslatorESSL.h in Headers */,
 				31CDFFCB249184A700486F27 /* TranslatorGLSL.h in Headers */,
-				31CDFFD9249184A700486F27 /* TranslatorVulkan.h in Headers */,
 				31CDFFF2249184A700486F27 /* Types.h in Headers */,
 				31CDFFA02491849800486F27 /* UnfoldShortCircuitAST.h in Headers */,
-				31CDFFA82491849800486F27 /* UnfoldShortCircuitToIf.h in Headers */,
 				31CD00B0249184FD00486F27 /* Uniform.h in Headers */,
 				31CDFFA42491849800486F27 /* UseInterfaceBlockFields.h in Headers */,
 				31CDFFDD249184A700486F27 /* util.h in Headers */,
 				31CDFF642491848C00486F27 /* utilities.h in Headers */,
-				31CDFFBF249184A700486F27 /* UtilsHLSL.h in Headers */,
 				31CDFFEF249184A700486F27 /* ValidateAST.h in Headers */,
 				31CDFFD1249184A700486F27 /* ValidateGlobalInitializer.h in Headers */,
 				31CDFFC1249184A700486F27 /* ValidateLimitations.h in Headers */,
@@ -3542,25 +3443,6 @@
 				31CD00A0249184FD00486F27 /* validationES3_autogen.h in Headers */,
 				31CD0076249184FD00486F27 /* validationESEXT.h in Headers */,
 				31CD0094249184FD00486F27 /* validationESEXT_autogen.h in Headers */,
-				31CD0051249184FC00486F27 /* validationGL11_autogen.h in Headers */,
-				31CD0070249184FD00486F27 /* validationGL12_autogen.h in Headers */,
-				31CD00A3249184FD00486F27 /* validationGL13_autogen.h in Headers */,
-				31CD009A249184FD00486F27 /* validationGL14_autogen.h in Headers */,
-				31CD0089249184FD00486F27 /* validationGL15_autogen.h in Headers */,
-				31CD0056249184FC00486F27 /* validationGL1_autogen.h in Headers */,
-				31CD008D249184FD00486F27 /* validationGL21_autogen.h in Headers */,
-				31CD0099249184FD00486F27 /* validationGL2_autogen.h in Headers */,
-				31CD0090249184FD00486F27 /* validationGL31_autogen.h in Headers */,
-				31CD0084249184FD00486F27 /* validationGL32_autogen.h in Headers */,
-				31CD008F249184FD00486F27 /* validationGL33_autogen.h in Headers */,
-				31CD0086249184FD00486F27 /* validationGL3_autogen.h in Headers */,
-				31CD0071249184FD00486F27 /* validationGL41_autogen.h in Headers */,
-				31CD00AB249184FD00486F27 /* validationGL42_autogen.h in Headers */,
-				31CD0059249184FC00486F27 /* validationGL43_autogen.h in Headers */,
-				31CD008E249184FD00486F27 /* validationGL44_autogen.h in Headers */,
-				31CD0088249184FD00486F27 /* validationGL45_autogen.h in Headers */,
-				31CD005D249184FC00486F27 /* validationGL46_autogen.h in Headers */,
-				31CD0092249184FD00486F27 /* validationGL4_autogen.h in Headers */,
 				31CDFFEE249184A700486F27 /* VariablePacker.h in Headers */,
 				31CD00AC249184FD00486F27 /* VaryingPacking.h in Headers */,
 				31CDFF5A2491848C00486F27 /* vector_utils.h in Headers */,
@@ -3576,7 +3458,6 @@
 				31CD0000249184B500486F27 /* WindowSurfaceCGL.h in Headers */,
 				31CD000D249184BB00486F27 /* WindowSurfaceEAGL.h in Headers */,
 				31CD006B249184FC00486F27 /* WorkerThread.h in Headers */,
-				31CDFFA12491849800486F27 /* WrapSwitchStatementsInBlocks.h in Headers */,
 				31CDFF512491848700486F27 /* xxhash.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3711,29 +3592,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF83E2782639FD33000825EF /* AddAndTrueToLoopCondition.cpp in Sources */,
-				DF83E2612639FD33000825EF /* AddDefaultReturnStatements.cpp in Sources */,
 				DF83E2502639FCD5000825EF /* AddExplicitTypeCasts.cpp in Sources */,
 				DF83E2162639FC74000825EF /* aligned_memory.cpp in Sources */,
-				DF83E2192639FC74000825EF /* android_util.cpp in Sources */,
+				7B19599426C3C22000C09322 /* android_util.cpp in Sources */,
 				DF83E30F2639FE17000825EF /* angletypes.cpp in Sources */,
 				DF83E2242639FC74000825EF /* angleutils.cpp in Sources */,
 				DF83E3432639FE3C000825EF /* ArrayBoundsClamper.cpp in Sources */,
-				DF83E25B2639FD33000825EF /* ArrayReturnValueToOutParameter.cpp in Sources */,
 				DF83E2372639FCD5000825EF /* AstHelpers.cpp in Sources */,
-				DF83E2AF2639FD83000825EF /* ASTMetadataHLSL.cpp in Sources */,
 				DF83E3332639FE18000825EF /* AttributeMap.cpp in Sources */,
 				DF83E3592639FE92000825EF /* BlitGL.cpp in Sources */,
 				DF83E2EA2639FE17000825EF /* BlobCache.cpp in Sources */,
 				DF83E2BC2639FD83000825EF /* blocklayout.cpp in Sources */,
-				DF83E2902639FD83000825EF /* blocklayoutHLSL.cpp in Sources */,
-				DF83E2682639FD33000825EF /* BreakVariableAliasingInInnerLoops.cpp in Sources */,
 				DF83E2F72639FE17000825EF /* Buffer.cpp in Sources */,
 				DF83E3502639FE92000825EF /* BufferGL.cpp in Sources */,
 				DF83E3992639FED4000825EF /* BufferImpl.cpp in Sources */,
 				DF83E38A2639FEB8000825EF /* BufferMtl.mm in Sources */,
 				DF83E29D2639FD83000825EF /* BuiltInFunctionEmulator.cpp in Sources */,
 				DF83E2C82639FD84000825EF /* BuiltInFunctionEmulatorGLSL.cpp in Sources */,
-				DF83E2AA2639FD83000825EF /* BuiltInFunctionEmulatorHLSL.cpp in Sources */,
 				DF83E2B12639FD83000825EF /* BuiltinsWorkaroundGLSL.cpp in Sources */,
 				DF83E2A32639FD83000825EF /* CallDAG.cpp in Sources */,
 				DF83E32C2639FE18000825EF /* Caps.cpp in Sources */,
@@ -3789,7 +3664,6 @@
 				DF83E30E2639FE17000825EF /* EGLSync.cpp in Sources */,
 				DF83E3972639FED4000825EF /* EGLSyncImpl.cpp in Sources */,
 				DF83E2482639FCD5000825EF /* EmitMetal.cpp in Sources */,
-				DF83E2BD2639FD83000825EF /* emulated_builtin_functions_hlsl_autogen.cpp in Sources */,
 				DF83E2582639FD33000825EF /* EmulateGLFragColorBroadcast.cpp in Sources */,
 				DF83E26A2639FD33000825EF /* EmulateMultiDrawShaderBuiltins.cpp in Sources */,
 				DF83E2522639FD33000825EF /* EmulatePrecision.cpp in Sources */,
@@ -3823,7 +3697,6 @@
 				DF83E38D2639FED4000825EF /* Format_table_autogen.cpp in Sources */,
 				DF83E3102639FE17000825EF /* formatutils.cpp in Sources */,
 				DF83E3662639FE92000825EF /* formatutilsgl.cpp in Sources */,
-				DF83E2E02639FE17000825EF /* frame_capture_utils.cpp in Sources */,
 				DF83E3342639FE18000825EF /* Framebuffer.cpp in Sources */,
 				DF83E3372639FE18000825EF /* FramebufferAttachment.cpp in Sources */,
 				DF83E3442639FE92000825EF /* FramebufferGL.cpp in Sources */,
@@ -3844,7 +3717,6 @@
 				DF83E23E2639FCD5000825EF /* IdGen.cpp in Sources */,
 				DF83E3152639FE17000825EF /* Image.cpp in Sources */,
 				DF83E2DF2639FE17000825EF /* imageformats.cpp in Sources */,
-				DF83E2932639FD83000825EF /* ImageFunctionHLSL.cpp in Sources */,
 				DF83E34B2639FE92000825EF /* ImageGL.cpp in Sources */,
 				DF83E3212639FE18000825EF /* ImageIndex.cpp in Sources */,
 				3154A847266C4AFF00BF33B7 /* ImageMtl.mm in Sources */,
@@ -3905,7 +3777,6 @@
 				DF83E2C12639FD83000825EF /* OutputGLSL.cpp in Sources */,
 				DF83E2D12639FD84000825EF /* OutputGLSLBase.cpp in Sources */,
 				DF83E2A52639FD83000825EF /* OutputTree.cpp in Sources */,
-				DF83E2942639FD83000825EF /* OutputVulkanGLSL.cpp in Sources */,
 				DF83E2EB2639FE17000825EF /* Overlay.cpp in Sources */,
 				DF83E3132639FE17000825EF /* Overlay_autogen.cpp in Sources */,
 				DF83E2FE2639FE17000825EF /* Overlay_font_autogen.cpp in Sources */,
@@ -3954,7 +3825,6 @@
 				DF83E2652639FD33000825EF /* RemoveInactiveInterfaceVariables.cpp in Sources */,
 				DF83E26C2639FD33000825EF /* RemoveInvariantDeclaration.cpp in Sources */,
 				DF83E2592639FD33000825EF /* RemovePow.cpp in Sources */,
-				DF83E2882639FD33000825EF /* RemoveSwitchFallThrough.cpp in Sources */,
 				DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */,
 				DF83E31F2639FE17000825EF /* Renderbuffer.cpp in Sources */,
 				DF83E36E2639FE92000825EF /* RenderbufferGL.cpp in Sources */,
@@ -3971,12 +3841,10 @@
 				DF83E28F2639FD83000825EF /* ReplaceVariable.cpp in Sources */,
 				DF83E3112639FE17000825EF /* ResourceManager.cpp in Sources */,
 				DF83E25F2639FD33000825EF /* RewriteAtomicCounters.cpp in Sources */,
-				DF83E26B2639FD33000825EF /* RewriteAtomicFunctionExpressions.cpp in Sources */,
 				DF83E2472639FCD5000825EF /* RewriteCaseDeclarations.cpp in Sources */,
 				DF83E2732639FD33000825EF /* RewriteCubeMapSamplersAs2DArray.cpp in Sources */,
 				DF83E2632639FD33000825EF /* RewriteDfdy.cpp in Sources */,
 				DF83E2742639FD33000825EF /* RewriteDoWhile.cpp in Sources */,
-				DF83E2562639FD33000825EF /* RewriteElseBlocks.cpp in Sources */,
 				DF83E25C2639FD33000825EF /* RewriteExpressionsWithShaderStorageBlock.cpp in Sources */,
 				DF83E23F2639FCD5000825EF /* RewriteGlobalQualifierDecls.cpp in Sources */,
 				DF83E27F2639FD33000825EF /* RewriteInterpolateAtOffset.cpp in Sources */,
@@ -3998,12 +3866,9 @@
 				DF83E2752639FD33000825EF /* ScalarizeVecAndMatConstructorArgs.cpp in Sources */,
 				DF83E2FF2639FE17000825EF /* Semaphore.cpp in Sources */,
 				DF83E34D2639FE92000825EF /* SemaphoreGL.cpp in Sources */,
-				DF83E27D2639FD33000825EF /* SeparateArrayConstructorStatements.cpp in Sources */,
-				DF83E27E2639FD33000825EF /* SeparateArrayInitialization.cpp in Sources */,
 				DF83E24B2639FCD5000825EF /* SeparateCompoundExpressions.cpp in Sources */,
 				DF83E23B2639FCD5000825EF /* SeparateCompoundStructDeclarations.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
-				DF83E2602639FD33000825EF /* SeparateExpressionsReturningArrays.cpp in Sources */,
 				DF83E2262639FC8A000825EF /* sha1.cc in Sources */,
 				DF83E2EE2639FE17000825EF /* Shader.cpp in Sources */,
 				DF83E3682639FE92000825EF /* ShaderGL.cpp in Sources */,
@@ -4017,7 +3882,6 @@
 				DF83E3622639FE92000825EF /* StateManagerGL.cpp in Sources */,
 				DF83E3322639FE18000825EF /* Stream.cpp in Sources */,
 				DF83E2182639FC74000825EF /* string_utils.cpp in Sources */,
-				DF83E2962639FD83000825EF /* StructureHLSL.cpp in Sources */,
 				DF83E3162639FE17000825EF /* Surface.cpp in Sources */,
 				DF83E3472639FE92000825EF /* SurfaceGL.cpp in Sources */,
 				DF83E3962639FED4000825EF /* SurfaceImpl.cpp in Sources */,
@@ -4037,7 +3901,6 @@
 				DF83E2DB2639FD90000825EF /* SystemInfo_ios.cpp in Sources */,
 				DF83E2D92639FD90000825EF /* SystemInfo_macos.mm in Sources */,
 				DF83E3172639FE17000825EF /* Texture.cpp in Sources */,
-				DF83E2A22639FD83000825EF /* TextureFunctionHLSL.cpp in Sources */,
 				DF83E35E2639FE92000825EF /* TextureGL.cpp in Sources */,
 				DF83E3932639FED4000825EF /* TextureImpl.cpp in Sources */,
 				DF83E37D2639FEB8000825EF /* TextureMtl.mm in Sources */,
@@ -4052,16 +3915,13 @@
 				DF83E2D22639FD84000825EF /* TranslatorGLSL.cpp in Sources */,
 				DF83E2C52639FD84000825EF /* TranslatorMetalDirect.cpp in Sources */,
 				DF83E28E2639FD83000825EF /* TranslatorMetalUtils.cpp in Sources */,
-				DF83E2B52639FD83000825EF /* TranslatorVulkan.cpp in Sources */,
 				DF83E2D02639FD84000825EF /* Types.cpp in Sources */,
 				DF83E2822639FD33000825EF /* UnfoldShortCircuitAST.cpp in Sources */,
-				DF83E2772639FD33000825EF /* UnfoldShortCircuitToIf.cpp in Sources */,
 				DF83E3262639FE18000825EF /* Uniform.cpp in Sources */,
 				DF83E21C2639FC74000825EF /* uniform_type_info_autogen.cpp in Sources */,
 				DF83E2832639FD33000825EF /* UseInterfaceBlockFields.cpp in Sources */,
 				DF83E2B32639FD83000825EF /* util.cpp in Sources */,
 				DF83E21A2639FC74000825EF /* utilities.cpp in Sources */,
-				DF83E2C22639FD84000825EF /* UtilsHLSL.cpp in Sources */,
 				DF83E2A72639FD83000825EF /* ValidateAST.cpp in Sources */,
 				DF83E29E2639FD83000825EF /* ValidateGlobalInitializer.cpp in Sources */,
 				DF83E2AC2639FD83000825EF /* ValidateLimitations.cpp in Sources */,
@@ -4077,25 +3937,6 @@
 				DF83E3242639FE18000825EF /* validationES31.cpp in Sources */,
 				DF83E32B2639FE18000825EF /* validationES32.cpp in Sources */,
 				DF83E30D2639FE17000825EF /* validationESEXT.cpp in Sources */,
-				DF83E3072639FE17000825EF /* validationGL1.cpp in Sources */,
-				DF83E2E92639FE17000825EF /* validationGL11.cpp in Sources */,
-				DF83E2EC2639FE17000825EF /* validationGL12.cpp in Sources */,
-				DF83E2EF2639FE17000825EF /* validationGL13.cpp in Sources */,
-				DF83E2F92639FE17000825EF /* validationGL14.cpp in Sources */,
-				DF83E2F22639FE17000825EF /* validationGL15.cpp in Sources */,
-				DF83E3042639FE17000825EF /* validationGL2.cpp in Sources */,
-				DF83E3382639FE18000825EF /* validationGL21.cpp in Sources */,
-				DF83E2FD2639FE17000825EF /* validationGL3.cpp in Sources */,
-				DF83E2DC2639FE17000825EF /* validationGL31.cpp in Sources */,
-				DF83E2F42639FE17000825EF /* validationGL32.cpp in Sources */,
-				DF83E2F52639FE17000825EF /* validationGL33.cpp in Sources */,
-				DF83E3082639FE17000825EF /* validationGL4.cpp in Sources */,
-				DF83E2F62639FE17000825EF /* validationGL41.cpp in Sources */,
-				DF83E3022639FE17000825EF /* validationGL42.cpp in Sources */,
-				DF83E3252639FE18000825EF /* validationGL43.cpp in Sources */,
-				DF83E30B2639FE17000825EF /* validationGL44.cpp in Sources */,
-				DF83E32E2639FE18000825EF /* validationGL45.cpp in Sources */,
-				DF83E2FA2639FE17000825EF /* validationGL46.cpp in Sources */,
 				DF83E2B02639FD83000825EF /* VariablePacker.cpp in Sources */,
 				DF83E2FB2639FE17000825EF /* VaryingPacking.cpp in Sources */,
 				DF83E25A2639FD33000825EF /* VectorizeVectorScalarArithmetic.cpp in Sources */,
@@ -4108,8 +3949,7 @@
 				DF83E3512639FE92000825EF /* WindowSurfaceEAGL.mm in Sources */,
 				DF83E30C2639FE17000825EF /* WorkerThread.cpp in Sources */,
 				DF83E2362639FCD5000825EF /* WrapMain.cpp in Sources */,
-				DF83E25D2639FD33000825EF /* WrapSwitchStatementsInBlocks.cpp in Sources */,
-				DF83E2282639FC9A000825EF /* xxhash.c in Sources */,
+				7B19599526C3C64E00C09322 /* xxhash.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
