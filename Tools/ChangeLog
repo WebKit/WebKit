@@ -1,3 +1,17 @@
+2021-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] run-gtk-tests always fails to start accessibility daemons
+        https://bugs.webkit.org/show_bug.cgi?id=229031
+
+        Reviewed by Michael Catanzaro.
+
+        This is because it uses exec_prefix variable from atspi2 pkg-config file to try to find the executables, but
+        atspi2 pkg-config file doesn't have a exec_prefix variable anymore. It was always set to $prefix, so we can just
+        use prefix variable instead.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner._lookup_atspi2_binary):
+
 2021-08-12  Youenn Fablet  <youenn@apple.com>
 
         Implement SFrameTransform error handling
