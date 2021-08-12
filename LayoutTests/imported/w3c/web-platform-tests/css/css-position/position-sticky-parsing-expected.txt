@@ -1,3 +1,0 @@
-
-FAIL The value of sticky for the position property should be parsed correctly assert_not_equals: Expected sticky to be invalid for display: table-column-group got disallowed value "sticky"
-

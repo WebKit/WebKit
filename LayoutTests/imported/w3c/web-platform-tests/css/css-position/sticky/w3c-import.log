@@ -1,0 +1,94 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+backface-visibility
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-child-multicolumn-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-child-multicolumn.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-flexbox-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-flexbox.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-get-bounding-client-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-grid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-hyperlink-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-hyperlink.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-inflow-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-input-box-gets-focused-after-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-large-top-2.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-large-top-2.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-large-top.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-large-top.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-margins.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-table-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-table.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-offset-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-offset-top-left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-root-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrollIntoView.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-stacking-context-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-stacking-context.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-parts-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-parts.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-tfoot-bottom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-tfoot-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-left-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-right-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-thead-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-thead-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-tr-bottom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-tr-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-tr-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-tr-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-top.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-transforms-translate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-transforms.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/sticky/sticky-after-input.html

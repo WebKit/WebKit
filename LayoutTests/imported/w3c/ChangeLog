@@ -1,3 +1,268 @@
+2021-08-12  Martin Robinson  <mrobinson@webkit.org>
+
+        Update import of css/css-position from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=228988
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-position/crashtests/position-absolute-crash-014.html: Added.
+        * web-platform-tests/css/css-position/crashtests/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/resources/w3c-import.log.
+        * web-platform-tests/css/css-position/fixed-z-index-blend-expected.html:
+        * web-platform-tests/css/css-position/fixed-z-index-blend.html:
+        * web-platform-tests/css/css-position/invalidate-opacity-negative-z-index-expected.html: Added.
+        * web-platform-tests/css/css-position/invalidate-opacity-negative-z-index.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-ltr-ltr-in-multicol-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-ltr-ltr-in-multicol.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-ltr-rtl-in-multicol.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-ltr-rtl-in-multicol.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-rtl-ltr-in-multicol.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-rtl-ltr-in-multicol.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-rtl-rtl-in-multicol-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vlr-rtl-rtl-in-multicol.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-ltr-ltr-in-multicol-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-ltr-ltr-in-multicol.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-ltr-rtl-in-multicol.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-ltr-rtl-in-multicol.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-rtl-ltr-in-multicol.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-rtl-ltr-in-multicol.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-rtl-rtl-in-multicol-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/vrl-rtl-rtl-in-multicol.html: Added.
+        * web-platform-tests/css/css-position/multicol/static-position/w3c-import.log: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-ltr-ltr-in-multicols.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-ltr-rtl-in-multicols.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-ltr-rtl-in-multicols.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-rtl-ltr-in-multicols.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-rtl-ltr-in-multicols.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-rtl-rtl-in-multicols-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vlr-rtl-rtl-in-multicols.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-ltr-ltr-in-multicols.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-ltr-rtl-in-multicols.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-ltr-rtl-in-multicols.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-rtl-ltr-in-multicols.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-rtl-ltr-in-multicols.tentative.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-rtl-rtl-in-multicols-expected.html: Added.
+        * web-platform-tests/css/css-position/multicol/vrl-rtl-rtl-in-multicols.html: Added.
+        * web-platform-tests/css/css-position/multicol/w3c-import.log: Added.
+        * web-platform-tests/css/css-position/parsing/inset-after-computed-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-after-computed.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-after-invalid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-after-invalid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-after-valid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-after-valid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-before-computed-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-before-computed.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-before-invalid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-before-invalid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-before-valid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-before-valid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-computed-expected.txt: Added.
+        * web-platform-tests/css/css-position/parsing/inset-computed.html: Added.
+        * web-platform-tests/css/css-position/parsing/inset-end-computed-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-end-computed.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-end-invalid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-end-invalid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-end-valid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-end-valid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-position/parsing/inset-invalid.html: Added.
+        * web-platform-tests/css/css-position/parsing/inset-start-computed-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-start-computed.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-start-invalid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-start-invalid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-start-valid-expected.txt: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-start-valid.html: Removed.
+        * web-platform-tests/css/css-position/parsing/inset-valid-expected.txt: Added.
+        * web-platform-tests/css/css-position/parsing/inset-valid.html: Added.
+        * web-platform-tests/css/css-position/parsing/w3c-import.log:
+        * web-platform-tests/css/css-position/position-absolute-center-001-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-absolute-center-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative.html.
+        * web-platform-tests/css/css-position/position-absolute-center-002-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-002.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-absolute-center-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-002.tentative.html.
+        * web-platform-tests/css/css-position/position-absolute-dynamic-auto-overflow-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-absolute-dynamic-auto-overflow.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-dynamic-list-marker.html:
+        * web-platform-tests/css/css-position/position-absolute-fit-content-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-absolute-fit-content.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub-expected.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-iframe-print-002.sub-expected.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-iframe-print-002.sub.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-in-inline-003-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-absolute-in-inline-003.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-in-inline-004-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-absolute-in-inline-004.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-large-negative-inset-expected.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-large-negative-inset.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-replaced-intrinsic-size.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-replaced-intrinsic-size.tentative.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-replaced-no-intrinsic-size.tentative-expected.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-replaced-no-intrinsic-size.tentative.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-replaced-with-display-table-expected.html: Added.
+        * web-platform-tests/css/css-position/position-absolute-replaced-with-display-table.html: Added.
+        * web-platform-tests/css/css-position/position-fixed-overflow-print-expected.html: Added.
+        * web-platform-tests/css/css-position/position-fixed-overflow-print.html: Added.
+        * web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed-expected.html: Added.
+        * web-platform-tests/css/css-position/position-fixed-scroll-nested-fixed.html: Added.
+        * web-platform-tests/css/css-position/position-relative-001-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-001.html: Added.
+        * web-platform-tests/css/css-position/position-relative-002-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-002.html: Added.
+        * web-platform-tests/css/css-position/position-relative-003-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-003.html: Added.
+        * web-platform-tests/css/css-position/position-relative-004-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-004.html: Added.
+        * web-platform-tests/css/css-position/position-relative-005-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-005.html: Added.
+        * web-platform-tests/css/css-position/position-relative-006-expected.xht: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-006.html: Added.
+        * web-platform-tests/css/css-position/position-relative-007-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-absolute-center-001.tentative-expected.xht.
+        * web-platform-tests/css/css-position/position-relative-007.html: Added.
+        * web-platform-tests/css/css-position/position-relative-008-expected.html: Added.
+        * web-platform-tests/css/css-position/position-relative-008.html: Added.
+        * web-platform-tests/css/css-position/position-relative-009-expected.html: Added.
+        * web-platform-tests/css/css-position/position-relative-009.html: Added.
+        * web-platform-tests/css/css-position/position-relative-010-expected.html: Added.
+        * web-platform-tests/css/css-position/position-relative-010.html: Added.
+        * web-platform-tests/css/css-position/position-relative-011-expected.html: Added.
+        * web-platform-tests/css/css-position/position-relative-011.html: Added.
+        * web-platform-tests/css/css-position/position-relative-012-expected.html: Added.
+        * web-platform-tests/css/css-position/position-relative-012.html: Added.
+        * web-platform-tests/css/css-position/position-relative-013-expected.html: Added.
+        * web-platform-tests/css/css-position/position-relative-013.html: Added.
+        * web-platform-tests/css/css-position/position-relative-table-tfoot-top-absolute-child.html:
+        * web-platform-tests/css/css-position/position-sticky-input-box-gets-focused-after-scroll-expected.txt: Removed.
+        * web-platform-tests/css/css-position/position-sticky-offset-overflow-expected.txt: Removed.
+        * web-platform-tests/css/css-position/position-sticky-parsing-expected.txt: Removed.
+        * web-platform-tests/css/css-position/positon-absolute-scrollable-overflow-001-expected.txt: Added.
+        * web-platform-tests/css/css-position/positon-absolute-scrollable-overflow-001.html: Added.
+        * web-platform-tests/css/css-position/resources/position-absolute-iframe-child-002.sub.html: Added.
+        * web-platform-tests/css/css-position/resources/position-absolute-iframe-child.html: Added.
+        * web-platform-tests/css/css-position/resources/w3c-import.log:
+        * web-platform-tests/css/css-position/static-position/vlr-ltr-ltr-expected.html:
+        * web-platform-tests/css/css-position/static-position/vlr-ltr-ltr.html:
+        * web-platform-tests/css/css-position/static-position/vlr-ltr-rtl.tentative-expected.html:
+        * web-platform-tests/css/css-position/static-position/vlr-ltr-rtl.tentative.html:
+        * web-platform-tests/css/css-position/static-position/vlr-rtl-ltr.tentative-expected.html:
+        * web-platform-tests/css/css-position/static-position/vlr-rtl-ltr.tentative.html:
+        * web-platform-tests/css/css-position/static-position/vlr-rtl-rtl-expected.html:
+        * web-platform-tests/css/css-position/static-position/vlr-rtl-rtl.html:
+        * web-platform-tests/css/css-position/static-position/vrl-ltr-ltr-expected.html:
+        * web-platform-tests/css/css-position/static-position/vrl-ltr-ltr.html:
+        * web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative-expected.html:
+        * web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative.html:
+        * web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative-expected.html:
+        * web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html:
+        * web-platform-tests/css/css-position/static-position/vrl-rtl-rtl-expected.html:
+        * web-platform-tests/css/css-position/static-position/vrl-rtl-rtl.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-bottom-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-bottom-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-bottom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-bottom.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-change-top-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-change-top-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-change-top.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-change-top.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-child-multicolumn-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-child-multicolumn-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-child-multicolumn.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-child-multicolumn.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-iframe-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-iframe.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-flexbox-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-flexbox-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-flexbox.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-flexbox.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-get-bounding-client-rect-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-get-bounding-client-rect-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-get-bounding-client-rect.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-get-bounding-client-rect.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-grid-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-grid-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-grid.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-grid.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-hyperlink-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-hyperlink-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-hyperlink.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-hyperlink.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-inflow-position-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-inflow-position-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-inflow-position.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-inflow-position.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-inline-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-inline-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-inline.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-inline.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-input-box-gets-focused-after-scroll-expected.txt: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-input-box-gets-focused-after-scroll.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-input-box-gets-focused-after-scroll.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-large-top-2.tentative-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top-2.tentative-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-large-top-2.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top-2.tentative.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-large-top.tentative-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top.tentative-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-large-top.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-large-top.tentative.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-left-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-left-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-left.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-left.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-margins-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-margins-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-margins.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-margins.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-bottom-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-bottom-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-bottom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-bottom.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-inline-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-inline-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-inline.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-inline.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-left-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-left-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-left.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-left.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-right-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-right-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-right.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-right.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-table-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-table-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-table.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-table.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-table-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-table.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-top-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-top-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-top.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-nested-top.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-offset-overflow-expected.txt: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-offset-overflow.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-offset-overflow.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-offset-top-left-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-offset-top-left-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-offset-top-left.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-offset-top-left.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-hidden-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-overflow-hidden-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-hidden.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-overflow-hidden.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-padding-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-overflow-padding-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-padding.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-overflow-padding.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-parsing.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-parsing.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-rendering-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-rendering-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-rendering.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-rendering.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-right-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-right-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-right.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-right.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-root-scroller-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-root-scroller-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-root-scroller.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-root-scroller.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-reposition-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-reposition.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scrollIntoView-expected.txt: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scrollIntoView.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scrolled-remove-sibling-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-scrolled-remove-sibling.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-scrolled-remove-sibling.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-stacking-context-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-stacking-context-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-stacking-context.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-stacking-context.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-parts-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-parts-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-parts.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-parts.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tfoot-bottom-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-tfoot-bottom-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tfoot-bottom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-tfoot-bottom.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-bottom-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-bottom.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-left-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-left-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-left.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-left.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-right-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-right-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-right.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-right.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-top-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-top-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-top.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-th-top.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-thead-top-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-thead-top-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-thead-top.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-thead-top.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-bottom-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-tr-bottom-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-bottom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-tr-bottom.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-top-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-tr-top-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-top.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-table-tr-top.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom-expected.txt: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-top-and-bottom.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-top-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-top-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-top.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-top.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-transforms-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-transforms-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-transforms-translate-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-transforms-translate-expected.txt.
+        * web-platform-tests/css/css-position/sticky/position-sticky-transforms-translate.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-transforms-translate.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-transforms.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-transforms.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-writing-modes-expected.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-writing-modes-expected.html.
+        * web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-position/position-sticky-writing-modes.html.
+        * web-platform-tests/css/css-position/sticky/sticky-after-input-expected.txt: Added.
+        * web-platform-tests/css/css-position/sticky/sticky-after-input.html: Added.
+        * web-platform-tests/css/css-position/sticky/w3c-import.log: Added.
+        * web-platform-tests/css/css-position/w3c-import.log:
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for Cross-Origin-Embedder-Policy (COEP)

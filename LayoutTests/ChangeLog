@@ -1,3 +1,15 @@
+2021-08-12  Martin Robinson  <mrobinson@webkit.org>
+
+        Update import of css/css-position from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=228988
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Update test expectations.
+        * platform/mac-wk1/TestExpectations: Ditto.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scrollIntoView-expected.txt: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-position/sticky/sticky-after-input-expected.txt: Added.
+
 2021-08-12  Youenn Fablet  <youenn@apple.com>
 
         Implement SFrameTransform error handling

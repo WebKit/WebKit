@@ -864,8 +864,8 @@ http/tests/is-logged-in/ [ Skip ]
 webkit.org/b/203305 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 
 # wpt css-position failures
-webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/position-sticky-change-top.html [ ImageOnlyFailure ]
-webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure ]
+webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top.html [ ImageOnlyFailure ]
+webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
@@ -998,9 +998,9 @@ webkit.org/b/214308 http/tests/xmlhttprequest/access-control-basic-allow-preflig
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-overflow/overflow-ellipsis-dynamic-001.html [ ImageOnlyFailure ]
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor-iframe.html [ ImageOnlyFailure ]
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/position-sticky-fixed-ancestor.html [ ImageOnlyFailure ]
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-reposition.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html [ ImageOnlyFailure ]
+webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition.html [ ImageOnlyFailure ]
 webkit.org/b/214469 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-013.html [ Skip ]
 webkit.org/b/214469 [ Debug ] imported/w3c/web-platform-tests/css/css-scoping/slotted-matches.html [ Skip ]
 
