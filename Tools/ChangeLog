@@ -1,3 +1,12 @@
+2021-08-12  Patrick Angle  <pangle@apple.com>
+
+        Add myself (Patrick Angle) to watchlist for Inspector code changes
+        https://bugs.webkit.org/show_bug.cgi?id=229046
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2021-08-12  Sam Weinig  <weinig@apple.com>
 
         Allow testing of the final UIView tree on iOS platforms
