@@ -145,8 +145,6 @@ unsigned long long PerformanceTiming::fetchStart() const
             m_fetchStart = monotonicTimeToIntegerMilliseconds(timing->startTime());
     }
 
-    // Like PerformanceResourceTiming::fetchStart, fetchStart is a required property
-    ASSERT(m_fetchStart);
     return m_fetchStart;
 }
 
