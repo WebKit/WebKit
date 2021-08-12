@@ -1525,6 +1525,8 @@ webkit.org/b/228252 [ BigSur Release arm64 ] fast/css-grid-layout/floating-empty
 
 webkit.org/b/228256 [ Debug ] inspector/canvas/create-context-webgl.html [ Pass Failure ]
 
+webkit.org/b/229043 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
+
 webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html [ Pass Timeout ]
 
 webkit.org/b/228337 [ BigSur Release Debug arm64 ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]

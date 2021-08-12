@@ -1,3 +1,12 @@
+2021-08-12  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ MacOS EWS ] inspector/canvas/recording-webgl-snapshots.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=229043
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-12  Sam Weinig  <weinig@apple.com>
 
         Allow testing of the final UIView tree on iOS platforms
