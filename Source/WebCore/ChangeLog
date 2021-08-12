@@ -1,3 +1,52 @@
+2021-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Implement SFrameTransform error handling
+        https://bugs.webkit.org/show_bug.cgi?id=228947
+
+        Reviewed by Eric Carlson.
+
+        Add support for RTCRtpSFrameTransformErrorEvent.
+        When RTCRtpSFrameTransformer encounters an issue, dispatch a task to RTCRtpSFrameTransform context and fire a corresponding event.
+        This follows https://w3c.github.io/webrtc-encoded-transform/#sframe-transform-algorithm, except that:
+        - we are not yet exposing some fields in RTCRtpSFrameTransformErrorEvent.
+        - we are using errorType instead of type which should be fixed in the spec.
+
+        Test: imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-error.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::RTCRtpSFrameTransform::RTCRtpSFrameTransform):
+        (WebCore::errorTypeFromInformation):
+        (WebCore::processFrame):
+        (WebCore::RTCRtpSFrameTransform::hasKey const):
+        (WebCore::RTCRtpSFrameTransform::initializeTransformer):
+        (WebCore::transformFrame):
+        (WebCore::RTCRtpSFrameTransform::createStreams):
+        (WebCore::RTCRtpSFrameTransform::writable):
+        (WebCore::RTCRtpSFrameTransform::virtualHasPendingActivity const):
+        * Modules/mediastream/RTCRtpSFrameTransform.h:
+        * Modules/mediastream/RTCRtpSFrameTransform.idl:
+        * Modules/mediastream/RTCRtpSFrameTransformErrorEvent.cpp: Added.
+        (WebCore::RTCRtpSFrameTransformErrorEvent::create):
+        (WebCore::RTCRtpSFrameTransformErrorEvent::RTCRtpSFrameTransformErrorEvent):
+        (WebCore::RTCRtpSFrameTransformErrorEvent::eventInterface const):
+        * Modules/mediastream/RTCRtpSFrameTransformErrorEvent.h: Added.
+        * Modules/mediastream/RTCRtpSFrameTransformErrorEvent.idl: Added.
+        * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+        (WebCore::RTCRtpSFrameTransformer::hasKey const):
+        (WebCore::RTCRtpSFrameTransformer::decryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::encryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::transform):
+        * Modules/mediastream/RTCRtpSFrameTransformer.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+
 2021-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove optimistic assertion added in r280931

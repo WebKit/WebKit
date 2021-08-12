@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "SFrameUtils.h"
+#include <wtf/Algorithms.h>
 
 namespace WebCore {
 
@@ -160,6 +161,12 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
     return updateEncryptionKey(rawKey, keyId, ShouldUpdateKeys::Yes);
 }
 
+bool RTCRtpSFrameTransformer::hasKey(uint64_t keyId) const
+{
+    Locker locker { m_keyLock };
+    return WTF::anyOf(m_keys, [keyId](auto& key) { return keyId == key.keyId; });
+}
+
 ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t> keyId, ShouldUpdateKeys shouldUpdateKeys)
 {
     ASSERT(m_keyLock.isLocked());
@@ -199,7 +206,7 @@ ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint
     return { };
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t* frameData, size_t frameSize)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(const uint8_t* frameData, size_t frameSize)
 {
     Vector<uint8_t> buffer;
     switch (m_compatibilityMode) {
@@ -229,23 +236,23 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     auto header = parseSFrameHeader(frameData, frameSize);
 
     if (!header)
-        return Exception { NotSupportedError };
+        return makeUnexpected(ErrorInformation {Error::Syntax, "Invalid header"_s, 0 });
 
     if (header->counter <= m_counter && m_counter)
-        return Exception { InvalidStateError };
+        return makeUnexpected(ErrorInformation {Error::Syntax, "Invalid counter"_s, 0 });
     m_counter = header->counter;
 
     if (header->keyId != m_keyId) {
         auto position = m_keys.findMatching([keyId = header->keyId](auto& item) { return item.keyId == keyId; });
         if (position == notFound)
-            return Exception { DataError, "Key ID is unknown" };
+            return makeUnexpected(ErrorInformation { Error::KeyID,  "Key ID is unknown"_s, header->keyId });
         auto result = updateEncryptionKey(m_keys[position].keyData, header->keyId, ShouldUpdateKeys::No);
         if (result.hasException())
-            return result.releaseException();
+            return makeUnexpected(ErrorInformation {Error::Other, result.exception().message(), 0 });
     }
 
     if (frameSize < (header->size + m_authenticationSize))
-        return Exception { DataError, "Chunk is too small for authentication size" };
+        return makeUnexpected(ErrorInformation { Error::Syntax, "Chunk is too small for authentication size"_s, 0 });
 
     auto iv = computeIV(m_counter, m_saltKey);
 
@@ -255,7 +262,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     for (size_t cptr = 0; cptr < m_authenticationSize; ++cptr) {
         if (signature[cptr] != transmittedSignature[cptr]) {
             // FIXME: We should try ratcheting.
-            return Exception { NotSupportedError };
+            return makeUnexpected(ErrorInformation { Error::Authentication, "Authentication failed"_s, 0 });
         }
     }
 
@@ -264,12 +271,12 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     auto result = decryptData(frameData + header->size, dataSize, iv, m_encryptionKey);
 
     if (result.hasException())
-        return result.releaseException();
+        return makeUnexpected(ErrorInformation { Error::Other, result.exception().message(), 0 });
 
     return result.releaseReturnValue();
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t* frameData, size_t frameSize)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(const uint8_t* frameData, size_t frameSize)
 {
     static const unsigned MaxHeaderSize = 17;
 
@@ -314,7 +321,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
     auto encryptedData = encryptData(frameData, frameSize, iv, m_encryptionKey);
     ASSERT(!encryptedData.hasException());
     if (encryptedData.hasException())
-        return encryptedData.releaseException();
+        return makeUnexpected(ErrorInformation { Error::Other, encryptedData.exception().message(), 0 });
 
     std::memcpy(newDataPointer + headerSize, encryptedData.returnValue().data(), frameSize);
 
@@ -330,10 +337,10 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
     return transformedData;
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::transform(const uint8_t* data, size_t size)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::transform(const uint8_t* data, size_t size)
 {
     if (!m_hasKey)
-        return Exception { InvalidStateError, "Key is not initialized"_s };
+        return makeUnexpected(ErrorInformation { Error::KeyID,  "Key is not initialized", 0 });
 
     return m_isEncrypting ? encryptFrame(data, size) : decryptFrame(data, size);
 }

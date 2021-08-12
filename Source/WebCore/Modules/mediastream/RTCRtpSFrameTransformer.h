@@ -48,7 +48,15 @@ public:
     void setMediaType(RTCRtpTransformBackend::MediaType);
 
     WEBCORE_EXPORT ExceptionOr<void> setEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>);
-    WEBCORE_EXPORT ExceptionOr<Vector<uint8_t>> transform(const uint8_t*, size_t);
+
+    enum class Error { KeyID, Authentication, Syntax, Other };
+    struct ErrorInformation {
+        Error error;
+        String message;
+        uint64_t keyId { 0 };
+    };
+    using TransformResult = Expected<Vector<uint8_t>, ErrorInformation>;
+    WEBCORE_EXPORT TransformResult transform(const uint8_t*, size_t);
 
     const Vector<uint8_t>& authenticationKey() const { return m_authenticationKey; }
     const Vector<uint8_t>& encryptionKey() const { return m_encryptionKey; }
@@ -58,11 +66,13 @@ public:
     uint64_t counter() const { return m_counter; }
     void setCounter(uint64_t counter) { m_counter = counter; }
 
+    bool hasKey(uint64_t) const;
+
 private:
     WEBCORE_EXPORT explicit RTCRtpSFrameTransformer(CompatibilityMode);
 
-    ExceptionOr<Vector<uint8_t>> decryptFrame(const uint8_t*, size_t);
-    ExceptionOr<Vector<uint8_t>> encryptFrame(const uint8_t*, size_t);
+    TransformResult decryptFrame(const uint8_t*, size_t);
+    TransformResult encryptFrame(const uint8_t*, size_t);
 
     enum class ShouldUpdateKeys { No, Yes };
     ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes) WTF_REQUIRES_LOCK(m_keyLock);
@@ -76,7 +86,7 @@ private:
     Vector<uint8_t> computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key);
     void updateAuthenticationSize();
 
-    Lock m_keyLock;
+    mutable Lock m_keyLock;
     bool m_hasKey { false };
     Vector<uint8_t> m_authenticationKey;
     Vector<uint8_t> m_encryptionKey;

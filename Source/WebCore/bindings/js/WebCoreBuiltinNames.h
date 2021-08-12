@@ -219,6 +219,7 @@ namespace WebCore {
     macro(Request) \
     macro(Response) \
     macro(SFrameTransform) \
+    macro(SFrameTransformErrorEvent) \
     macro(ScreenLuminance) \
     macro(ServiceWorker) \
     macro(ServiceWorkerContainer) \

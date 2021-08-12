@@ -256,6 +256,7 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver+Transform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpReceiver.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpRtxParameters.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransform.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCRtpSFrameTransformErrorEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransform.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformProvider.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpScriptTransformer.idl

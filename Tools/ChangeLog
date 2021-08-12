@@ -1,3 +1,13 @@
+2021-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Implement SFrameTransform error handling
+        https://bugs.webkit.org/show_bug.cgi?id=228947
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/RTCRtpSFrameTransformerTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-08-11  Peng Liu  <peng.liu6@apple.com>
 
         [ BigSur Debug ] TestWebKitAPI.GPUProcess.CrashWhilePlayingAudioViaCreateMediaElementSource is flaky, hitting ASSERTION FAILED: !isInRoutingArbitrationForToken(token)

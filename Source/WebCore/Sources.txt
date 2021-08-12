@@ -171,6 +171,7 @@ Modules/mediastream/RTCPeerConnectionIceEvent.cpp
 Modules/mediastream/RTCPeerConnectionIceErrorEvent.cpp
 Modules/mediastream/RTCRtpReceiver.cpp
 Modules/mediastream/RTCRtpSFrameTransform.cpp
+Modules/mediastream/RTCRtpSFrameTransformErrorEvent.cpp
 Modules/mediastream/RTCRtpSFrameTransformer.cpp
 Modules/mediastream/RTCRtpScriptTransform.cpp
 Modules/mediastream/RTCRtpScriptTransformer.cpp
@@ -3326,6 +3327,7 @@ JSRTCRtpParameters.cpp
 JSRTCRtpReceiver.cpp
 JSRTCRtpRtxParameters.cpp
 JSRTCRtpSFrameTransform.cpp
+JSRTCRtpSFrameTransformErrorEvent.cpp
 JSRTCRtpScriptTransform.cpp
 JSRTCRtpScriptTransformer.cpp
 JSRTCRtpSendParameters.cpp

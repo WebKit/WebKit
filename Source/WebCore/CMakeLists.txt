@@ -412,6 +412,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCRtpReceiver.idl
     Modules/mediastream/RTCRtpRtxParameters.idl
     Modules/mediastream/RTCRtpSFrameTransform.idl
+    Modules/mediastream/RTCRtpSFrameTransformErrorEvent.idl
     Modules/mediastream/RTCRtpScriptTransform.idl
     Modules/mediastream/RTCRtpScriptTransformProvider.idl
     Modules/mediastream/RTCRtpScriptTransformer.idl

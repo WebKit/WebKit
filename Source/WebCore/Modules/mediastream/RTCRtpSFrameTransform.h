@@ -27,9 +27,11 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ContextDestructionObserver.h"
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "RTCRtpSFrameTransformer.h"
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -43,7 +45,8 @@ class ReadableStream;
 class SimpleReadableStreamSource;
 class WritableStream;
 
-class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform>, private ContextDestructionObserver {
+class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform>, public ActiveDOMObject, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(RTCRtpSFrameTransform);
 public:
     enum class Role { Encrypt, Decrypt };
     using CompatibilityMode = RTCRtpSFrameTransformer::CompatibilityMode;
@@ -70,14 +73,30 @@ public:
     ExceptionOr<RefPtr<ReadableStream>> readable();
     ExceptionOr<RefPtr<WritableStream>> writable();
 
+    bool hasKey(uint64_t) const;
+
+    using RefCounted<RTCRtpSFrameTransform>::ref;
+    using RefCounted<RTCRtpSFrameTransform>::deref;
+
 private:
     RTCRtpSFrameTransform(ScriptExecutionContext&, Options);
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final { return "RTCRtpSFrameTransform"; }
+    bool virtualHasPendingActivity() const final;
+
+    // EventTargetWithInlineData
+    EventTargetInterface eventTargetInterface() const final { return RTCRtpSFrameTransformEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
     enum class Side { Sender, Receiver };
     void initializeTransformer(RTCRtpTransformBackend&, Side);
     void createStreams(JSC::JSGlobalObject&);
 
     bool m_isAttached { false };
+    bool m_hasWritable { false };
     Ref<RTCRtpSFrameTransformer> m_transformer;
     RefPtr<ReadableStream> m_readable;
     RefPtr<WritableStream> m_writable;

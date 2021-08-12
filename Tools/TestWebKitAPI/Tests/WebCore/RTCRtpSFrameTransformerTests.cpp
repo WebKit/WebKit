@@ -200,13 +200,13 @@ TEST(RTCRtpSFrameTransformer, EncryptDecrypt)
     auto frame = Vector<uint8_t>::from(135, 89, 51, 166, 248, 129, 157, 111, 190, 134, 220);
 
     auto encryptedResult = encryptor->transform(frame.data(), frame.size());
-    EXPECT_FALSE(encryptedResult.hasException());
+    EXPECT_TRUE(encryptedResult.has_value());
 
-    auto encrypted = encryptedResult.releaseReturnValue();
+    auto encrypted = WTFMove(encryptedResult.value());
     auto decryptedResult = decryptor->transform(encrypted.data(), encrypted.size());
-    EXPECT_FALSE(decryptedResult.hasException());
+    EXPECT_TRUE(decryptedResult.has_value());
 
-    checkVectorsAreEqual(decryptedResult.returnValue(), frame);
+    checkVectorsAreEqual(decryptedResult.value(), frame);
 }
 
 TEST(RTCRtpSFrameTransformer, EncryptDecryptKeyID0)
@@ -220,13 +220,13 @@ TEST(RTCRtpSFrameTransformer, EncryptDecryptKeyID0)
     auto frame = Vector<uint8_t>::from(135, 89, 51, 166, 248, 129, 157, 111, 190, 134, 220);
 
     auto encryptedResult = encryptor->transform(frame.data(), frame.size());
-    EXPECT_FALSE(encryptedResult.hasException());
+    EXPECT_TRUE(encryptedResult.has_value());
 
-    auto encrypted = encryptedResult.releaseReturnValue();
+    auto encrypted = WTFMove(encryptedResult.value());
     auto decryptedResult = decryptor->transform(encrypted.data(), encrypted.size());
-    EXPECT_FALSE(decryptedResult.hasException());
+    EXPECT_TRUE(decryptedResult.has_value());
 
-    checkVectorsAreEqual(decryptedResult.returnValue(), frame);
+    checkVectorsAreEqual(decryptedResult.value(), frame);
 }
 
 TEST(RTCRtpSFrameTransformer, EncryptDecryptAudio)
@@ -242,13 +242,13 @@ TEST(RTCRtpSFrameTransformer, EncryptDecryptAudio)
     auto frame = Vector<uint8_t>::from(135, 89, 51, 166, 248, 129, 157, 111, 190, 134, 220, 56);
 
     auto encryptedResult = encryptor->transform(frame.data(), frame.size());
-    EXPECT_FALSE(encryptedResult.hasException());
+    EXPECT_TRUE(encryptedResult.has_value());
 
-    auto encrypted = encryptedResult.releaseReturnValue();
+    auto encrypted = WTFMove(encryptedResult.value());
     auto decryptedResult = decryptor->transform(encrypted.data(), encrypted.size());
-    EXPECT_FALSE(decryptedResult.hasException());
+    EXPECT_TRUE(decryptedResult.has_value());
 
-    checkVectorsAreEqual(decryptedResult.returnValue(), frame);
+    checkVectorsAreEqual(decryptedResult.value(), frame);
 }
 
 TEST(RTCRtpSFrameTransformer, TransformCounter0)
@@ -257,9 +257,9 @@ TEST(RTCRtpSFrameTransformer, TransformCounter0)
 
     uint8_t frame1[] = { 135, 89, 51, 166, 248, 129, 157, 111, 190, 134, 220 };
     auto result = transformer->transform(frame1, sizeof(frame1));
-    EXPECT_FALSE(result.hasException());
+    EXPECT_TRUE(result.has_value());
 
-    checkVectorsAreEqual(result.releaseReturnValue(), Vector<uint8_t>::from(
+    checkVectorsAreEqual(result.value(), Vector<uint8_t>::from(
         15,
         198,
         31,
@@ -299,14 +299,14 @@ TEST(RTCRtpSFrameTransformer, TransformCounter256)
     auto transformer = createVideoTransformer();
 
     uint8_t frame1[] = { 8, 164, 189, 18, 61, 117, 132, 43, 117, 169, 42 };
-    WebCore::ExceptionOr<Vector<uint8_t>> result = Vector<uint8_t>();
-    result = transformer->transform(frame1, sizeof(frame1));
+    auto result = transformer->transform(frame1, sizeof(frame1));
+    EXPECT_TRUE(result.has_value());
     for (size_t cptr = 0; cptr < 256; ++cptr) {
         result = transformer->transform(frame1, sizeof(frame1));
-        EXPECT_FALSE(result.hasException());
+        EXPECT_TRUE(result.has_value());
     }
 
-    checkVectorsAreEqual(result.releaseReturnValue(), Vector<uint8_t>::from(
+    checkVectorsAreEqual(result.value(), Vector<uint8_t>::from(
         31,
         198,
         31,
@@ -349,9 +349,9 @@ TEST(RTCRtpSFrameTransformer, TransformCounter65536)
 
     uint8_t frame1[] = { 0, 33, 244, 24, 236, 156, 127, 8, 48, 88, 220 };
     auto result = transformer->transform(frame1, sizeof(frame1));
-    EXPECT_FALSE(result.hasException());
+    EXPECT_TRUE(result.has_value());
 
-    checkVectorsAreEqual(result.releaseReturnValue(), Vector<uint8_t>::from(
+    checkVectorsAreEqual(result.value(), Vector<uint8_t>::from(
         47,
         198,
         31,
