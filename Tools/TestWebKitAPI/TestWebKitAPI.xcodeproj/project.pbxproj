@@ -888,6 +888,7 @@
 		95095F20262FFFA50000D920 /* SampledPageTopColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */; };
 		950E4CC1252E75240071659F /* iOSStylusSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 950E4CC0252E75230071659F /* iOSStylusSupport.mm */; };
 		953ABB3525C0D682004C8B73 /* WKWebViewUnderPageBackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */; };
+		958B70E126C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */; };
 		95A524952581A10D00461FE9 /* WKWebViewThemeColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */; };
 		95B6B3B7251EBF2F00FC4382 /* MediaDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */; };
 		9984FACC1CFFAF60008D198C /* WKWebViewTextInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */; };
@@ -2616,6 +2617,7 @@
 		95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SampledPageTopColor.mm; sourceTree = "<group>"; };
 		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
 		953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewUnderPageBackgroundColor.mm; sourceTree = "<group>"; };
+		958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedStringWebKitAdditions.mm; sourceTree = "<group>"; };
 		95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewThemeColor.mm; sourceTree = "<group>"; };
 		95B6B3B6251EBF2F00FC4382 /* MediaDocument.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaDocument.mm; sourceTree = "<group>"; };
 		9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTextInput.mm; sourceTree = "<group>"; };
@@ -3542,6 +3544,7 @@
 				46A80F25264C29D400EEF20D /* NotificationAPI.mm */,
 				CD2D0D19213465560018C784 /* NowPlaying.mm */,
 				2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */,
+				958B70E026C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm */,
 				A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */,
 				F4EB4E8F2328AC3000574DAB /* NSItemProviderAdditions.h */,
 				F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */,
@@ -5679,6 +5682,7 @@
 				CD2D0D1A213465560018C784 /* NowPlaying.mm in Sources */,
 				2ECFF5551D9B12F800B55394 /* NowPlayingControlsTests.mm in Sources */,
 				5159F267260D43E300B2DA3C /* NowPlayingInfoTests.cpp in Sources */,
+				958B70E126C46EDC00B2022B /* NSAttributedStringWebKitAdditions.mm in Sources */,
 				A10F047E1E3AD29C00C95E19 /* NSFileManagerExtras.mm in Sources */,
 				F442851D2140DF2900CCDA22 /* NSFontPanelTesting.mm in Sources */,
 				F4EB4E912328AC3000574DAB /* NSItemProviderAdditions.mm in Sources */,

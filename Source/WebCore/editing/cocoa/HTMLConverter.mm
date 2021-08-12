@@ -836,7 +836,7 @@ bool HTMLConverterCaches::elementHasOwnBackgroundColor(Element& element)
 
 Element* HTMLConverter::_blockLevelElementForNode(Node* node)
 {
-    Element* element = node->parentElement();
+    Element* element = is<Element>(node) ? downcast<Element>(node) : node->parentElement();
     if (element && !_caches->isBlockElement(*element))
         element = _blockLevelElementForNode(element->parentInComposedTree());
     return element;
@@ -1128,7 +1128,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyMarginRight, marginRight) && marginRight > 0.0)
                 [paragraphStyle setTailIndent:-marginRight];
             float marginBottom = 0.0;
-            if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyMarginRight, marginBottom) && marginBottom > 0.0)
+            if (_caches->floatPropertyValueForNode(coreBlockElement, CSSPropertyMarginBottom, marginBottom) && marginBottom > 0.0)
                 [paragraphStyle setParagraphSpacing:marginBottom];
         }
         if ([_textLists count] > 0)

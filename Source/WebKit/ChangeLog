@@ -1,3 +1,17 @@
+2021-08-12  Devin Rousso  <drousso@apple.com>
+
+        Fix some `NSAttributedString` inconsistencies between WK1 and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=229013
+        <rdar://problem/81215696>
+
+        Reviewed by Timothy Hatcher.
+
+        `NSAttributedString` now uses WK2, which has caused us to discover some inconsistencies (and bugs).
+
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        (+[_WKAttributedStringWebViewCache configuration]):
+        Change the default font size to 12 to match WK1.
+
 2021-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Critical warnings on children-changed::add signal emission
