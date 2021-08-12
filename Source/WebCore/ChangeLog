@@ -1,3 +1,20 @@
+2021-08-11  Jean-Yves Avenard  <jya@apple.com>
+
+        Audio buffer may contain more frames than decoded.
+        https://bugs.webkit.org/show_bug.cgi?id=228732
+        rdar://problem/81447014
+
+        Reviewed by Eric Carlson.
+
+        It is necessary to call repeatedly ExtAudioFileRead until it explicitly indicates that
+        it reached EOF.
+        Test: webaudio/decode-audio-data-wav.html.
+
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::AudioFileReader::createBus): Ensure that all frames have been decoded and
+        trim length to the actual number of frames returned.
+        This was already done for the webm case.
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         <a rel="opener noopener" target="_blank"> should create a window without opener

@@ -576,9 +576,6 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
         auto decodedFrames = decodeWebMData(*bufferList, numberOfFrames, *inFormat, outFormat);
         if (!decodedFrames)
             return nullptr;
-        // The actual decoded number of frames may not match the number of frames calculated
-        // while demuxing as frames can be trimmed. It will always be lower.
-        audioBus->setLength(*decodedFrames);
         numberOfFrames = *decodedFrames;
 #endif
     } else {
@@ -586,10 +583,27 @@ RefPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono)
             return nullptr;
 
         // Read from the file (or in-memory version)
-        UInt32 framesToRead = numberOfFrames;
-        if (PAL::ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr)
-            return nullptr;
+        size_t framesLeftToRead = numberOfFrames;
+        size_t framesRead = 0;
+        UInt32 framesToRead;
+        do {
+            framesToRead = std::min<size_t>(std::numeric_limits<UInt32>::max(), framesLeftToRead);
+            if (PAL::ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList) != noErr)
+                return nullptr;
+            framesRead += framesToRead;
+            RELEASE_ASSERT(framesRead <= numberOfFrames, "We read more than what we have room for");
+            framesLeftToRead -= framesToRead;
+            for (size_t i = 0; i < numberOfChannels; ++i) {
+                bufferList->mBuffers[i].mDataByteSize = (numberOfFrames - framesRead) * sizeof(float);
+                bufferList->mBuffers[i].mData = static_cast<float*>(bufferList->mBuffers[i].mData) + framesToRead;
+            }
+        } while (framesToRead);
+        numberOfFrames = framesRead;
     }
+
+    // The actual decoded number of frames may not match the number of frames calculated
+    // while demuxing as frames can be trimmed. It will always be lower.
+    audioBus->setLength(numberOfFrames);
 
     if (mixToMono && numberOfChannels == 2) {
         // Mix stereo down to mono

@@ -1,3 +1,17 @@
+2021-08-11  Jean-Yves Avenard  <jya@apple.com>
+
+        Audio buffer may contain more frames than decoded.
+        https://bugs.webkit.org/show_bug.cgi?id=228732
+        rdar://problem/81447014
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+        * webaudio/decode-audio-data-wav-expected.txt: Added.
+        * webaudio/decode-audio-data-wav.html: Added.
+        * webaudio/pinknoise.wav: Added. Generated with command
+        sox -b 16 -r 44100 -n pinknoise.wav synth 4 pinknoise
+
 2021-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ iOS ] fast/scrolling/ios/click-events-during-momentum-scroll-in-overflow-after-tap-on-body.html is a flaky timeout

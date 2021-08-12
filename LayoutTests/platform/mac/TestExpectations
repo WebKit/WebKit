@@ -2266,8 +2266,9 @@ webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timin
 [ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Timeout ]
 [ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable.html [ Timeout ]
 
-# rdar://80344665 ([ Monterey ] webaudio/codec-tests/mp3/128kbps-44khz.html is a constant audio failure)
-[ Monterey ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
+[ BigSur Monterey ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
+[ BigSur Monterey ] webaudio/Panner/hrtf-database.html [ Pass ]
+[ BigSur Monterey ] webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
 
 # rdar://80347712 ([ Monterey ] media/video-src-blob-replay.html is a flaky timeout)
 [ Monterey ] media/video-src-blob-replay.html [ Timeout ]
