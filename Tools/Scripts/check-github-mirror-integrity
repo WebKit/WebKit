@@ -27,7 +27,11 @@ import sys
 import time
 
 from webkitpy import webkitscmpy
+from webkitcorepy.string_utils import pluralize
 from webkitscmpy import local, remote
+
+
+SYNC_TIME_LIMIT = 5 * 60  # 5 minutes
 
 
 def main():
@@ -44,19 +48,26 @@ def main():
     mirror_tip = mirror.commit(branch='main')
     canonical_tip = repository.commit(branch='trunk')
 
-    if mirror_tip.identifier == canonical_tip.identifier:
+    timestamps_equal = mirror_tip.timestamp == canonical_tip.timestamp
+
+    if timestamps_equal and mirror_tip.identifier == canonical_tip.identifier:
         print('GitHub and svn.webkit.org are in sync')
         print(f'HEAD commit on GitHub {mirror_tip} matches HEAD commit on svn.webkit.org {canonical_tip}')
         return 0
 
-    if time.time() >= canonical_tip.timestamp - 5 * 60 and mirror_tip.identifier == canonical_tip.identifier - 1:
-        print('GitHub is 1 commit behind svn.webkit.org. This is ok.')
+    if timestamps_equal and mirror_tip.identifier != canonical_tip.identifier:
+        print('ERROR: GitHub and svn.webkit.org are out of sync')
+        print(f'HEAD commit on GitHub {mirror_tip} out of sync with HEAD commit on svn.webkit.org {canonical_tip}')
+        return 1
+
+    difference = canonical_tip.identifier - mirror_tip.identifier
+    if time.time() < canonical_tip.timestamp + SYNC_TIME_LIMIT:
+        print('GitHub is {} behind svn.webkit.org, but might be updating, This is ok.'.format(pluralize(difference, 'commit')))
         print(f'HEAD commit on GitHub {mirror_tip} slightly behind HEAD commit on svn.webkit.org {canonical_tip}')
         return 0
 
-    print('ERROR: GitHub and svn.webkit.org are out of sync')
+    print('ERROR: GitHub is not syncing from svn.webkit.org and is {} behind'.format(pluralize(difference, 'commit')))
     print(f'HEAD commit on GitHub {mirror_tip} out of sync with HEAD commit on svn.webkit.org {canonical_tip}')
-    print('This indicates a serious error with the repository, please inform admin@webkit.org urgently')
     return 1
 
 

@@ -1,3 +1,14 @@
+2021-08-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [check-github-mirror-integrity] Differentiate between slow sync and collapsed commits
+        https://bugs.webkit.org/show_bug.cgi?id=229004
+        <rdar://problem/81795644>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/check-github-mirror-integrity: Use commit timestamps to differentiate between a slow sync between svn.webkit.org
+        and GitHub and git-svn combining commits
+
 2021-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify TestWebKitAccessibility
