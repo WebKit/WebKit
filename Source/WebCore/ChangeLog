@@ -1,3 +1,51 @@
+2021-08-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r280931. rdar://problem/81852494
+
+    REGRESSION (r278392) performance.measure should never throw an InvalidAccessError for fetchStart
+    https://bugs.webkit.org/show_bug.cgi?id=229008
+    <rdar://79960877>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-08-11
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Test: http/tests/performance/performance-measure-fetch-start.html
+    
+    PerformanceTiming::fetchStart is returning 0 when we get a main resource from the cache sometimes.
+    This is causing PerformanceUserTiming::convertMarkToTimestamp to throw an error, which it should.
+    Like PerformanceResourceTiming::fetchStart we need to fall back to ResourceLoadTiming::startTime
+    if the NetworkLoadMetrics doesn't have any useful data for us.
+    
+    * page/PerformanceTiming.cpp:
+    (WebCore::PerformanceTiming::fetchStart const):
+    
+    LayoutTests:
+    
+    * http/tests/performance/performance-measure-fetch-start-expected.txt: Added.
+    * http/tests/performance/performance-measure-fetch-start.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280931 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-11  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION (r278392) performance.measure should never throw an InvalidAccessError for fetchStart
+            https://bugs.webkit.org/show_bug.cgi?id=229008
+            <rdar://79960877>
+
+            Reviewed by Chris Dumez.
+
+            Test: http/tests/performance/performance-measure-fetch-start.html
+
+            PerformanceTiming::fetchStart is returning 0 when we get a main resource from the cache sometimes.
+            This is causing PerformanceUserTiming::convertMarkToTimestamp to throw an error, which it should.
+            Like PerformanceResourceTiming::fetchStart we need to fall back to ResourceLoadTiming::startTime
+            if the NetworkLoadMetrics doesn't have any useful data for us.
+
+            * page/PerformanceTiming.cpp:
+            (WebCore::PerformanceTiming::fetchStart const):
+
 2021-08-10  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r280826. rdar://problem/81749833

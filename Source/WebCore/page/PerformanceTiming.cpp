@@ -137,10 +137,16 @@ unsigned long long PerformanceTiming::fetchStart() const
         return m_fetchStart;
 
     auto* metrics = networkLoadMetrics();
-    if (!metrics)
-        return 0;
+    if (metrics)
+        m_fetchStart = monotonicTimeToIntegerMilliseconds(metrics->fetchStart);
 
-    m_fetchStart = monotonicTimeToIntegerMilliseconds(metrics->fetchStart);
+    if (!m_fetchStart) {
+        if (auto* timing = documentLoadTiming())
+            m_fetchStart = monotonicTimeToIntegerMilliseconds(timing->startTime());
+    }
+
+    // Like PerformanceResourceTiming::fetchStart, fetchStart is a required property
+    ASSERT(m_fetchStart);
     return m_fetchStart;
 }
 
