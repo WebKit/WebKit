@@ -287,11 +287,7 @@ bool defaultIncrementalPDFEnabled()
 
 bool defaultWebXREnabled()
 {
-#if HAVE(WEBXR_INTERNALS)
-    return true;
-#else
     return false;
-#endif
 }
 
 #endif // ENABLE(WEBXR)
