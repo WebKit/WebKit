@@ -124,6 +124,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     auto contentSecurityPolicyCopy = makeUnique<ContentSecurityPolicy>(globalScope.url().isolatedCopy());
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
     contentSecurityPolicyCopy->copyUpgradeInsecureRequestStateFrom(*contentSecurityPolicy);
+    auto crossOriginEmbedderPolicyCopy = globalScope.crossOriginEmbedderPolicy().isolatedCopy();
 
     auto optionsCopy = makeUnique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), WTFMove(securityOriginCopy));
 
@@ -141,13 +142,13 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
         InspectorInstrumentation::willSendRequest(downcast<WorkerGlobalScope>(globalScope), m_workerRequestIdentifier, request);
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?
-    m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy)](ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy), crossOriginEmbedderPolicyCopy = WTFMove(crossOriginEmbedderPolicyCopy)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
         // FIXME: If the site requests a local resource, then this will return a non-zero value but the sync path will return a 0 value.
         // Either this should return 0 or the other code path should call a failure callback.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, WTFMove(request), options->options, WTFMove(options->origin), WTFMove(contentSecurityPolicyCopy), WTFMove(options->referrer), DocumentThreadableLoader::ShouldLogError::No);
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, WTFMove(request), options->options, WTFMove(options->origin), WTFMove(contentSecurityPolicyCopy), WTFMove(crossOriginEmbedderPolicyCopy), WTFMove(options->referrer), DocumentThreadableLoader::ShouldLogError::No);
         ASSERT(m_mainThreadLoader || m_loadingFinished);
     });
 }

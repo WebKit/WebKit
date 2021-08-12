@@ -102,6 +102,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
 
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
+    setCrossOriginEmbedderPolicy(params.crossOriginEmbedderPolicy);
 }
 
 WorkerGlobalScope::~WorkerGlobalScope()

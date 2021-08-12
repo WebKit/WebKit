@@ -145,6 +145,21 @@ void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, boo
     m_timeoutTimer.stop();
     softUpdateIfNeeded();
 
+    if (m_loader.parameters().options.mode == FetchOptions::Mode::Navigate) {
+        if (auto parentOrigin = m_loader.parameters().parentOrigin()) {
+            if (auto error = validateCrossOriginResourcePolicy(m_loader.parameters().parentCrossOriginEmbedderPolicy.value, *parentOrigin, m_currentRequest.url(), response, ForNavigation::Yes)) {
+                didFail(*error);
+                return;
+            }
+        }
+    }
+    if (m_loader.parameters().options.mode == FetchOptions::Mode::NoCors) {
+        if (auto error = validateCrossOriginResourcePolicy(m_loader.parameters().crossOriginEmbedderPolicy.value, *m_loader.parameters().sourceOrigin, m_currentRequest.url(), response, ForNavigation::No)) {
+            didFail(*error);
+            return;
+        }
+    }
+
     response.setSource(ResourceResponse::Source::ServiceWorker);
     sendToClient(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
 }

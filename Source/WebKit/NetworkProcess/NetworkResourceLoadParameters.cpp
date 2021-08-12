@@ -31,6 +31,13 @@
 namespace WebKit {
 using namespace WebCore;
 
+RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const
+{
+    if (frameAncestorOrigins.isEmpty())
+        return nullptr;
+    return frameAncestorOrigins.first();
+}
+
 void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 {
     encoder << identifier;
@@ -96,6 +103,8 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
         encoder << *topOrigin;
     encoder << options;
     encoder << cspResponseHeaders;
+    encoder << parentCrossOriginEmbedderPolicy;
+    encoder << crossOriginEmbedderPolicy;
     encoder << originalRequestHeaders;
 
     encoder << shouldRestrictHTTPResponseAccess;
@@ -231,6 +240,19 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
 
     if (!decoder.decode(result.cspResponseHeaders))
         return std::nullopt;
+
+    std::optional<WebCore::CrossOriginEmbedderPolicy> parentCrossOriginEmbedderPolicy;
+    decoder >> parentCrossOriginEmbedderPolicy;
+    if (!parentCrossOriginEmbedderPolicy)
+        return std::nullopt;
+    result.parentCrossOriginEmbedderPolicy = WTFMove(*parentCrossOriginEmbedderPolicy);
+
+    std::optional<WebCore::CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
+    decoder >> crossOriginEmbedderPolicy;
+    if (!crossOriginEmbedderPolicy)
+        return std::nullopt;
+    result.crossOriginEmbedderPolicy = WTFMove(*crossOriginEmbedderPolicy);
+
     if (!decoder.decode(result.originalRequestHeaders))
         return std::nullopt;
 

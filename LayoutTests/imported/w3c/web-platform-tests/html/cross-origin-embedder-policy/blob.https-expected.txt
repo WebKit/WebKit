@@ -1,10 +1,16 @@
+CONSOLE MESSAGE: Refused to display 'blob:https://localhost:9443/ce752f78-9f54-4192-885f-d338222dbf89' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Refused to display 'blob:https://127.0.0.1:9443/2d609484-fc8c-4162-b451-5e5a60ca6fb0' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Refused to display 'blob:https://127.0.0.1:9443/d6c69b1b-b9e2-468f-afd5-3ee0ca1f26cd' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Refused to display 'blob:https://localhost:9443/a2f48f74-c115-4535-8945-845540d08260' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Refused to display 'blob:https://127.0.0.1:9443/e46352d8-4f39-4348-addc-cf3be4c271d5' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Refused to display 'blob:https://127.0.0.1:9443/d4b68c8b-e74e-47a5-a08d-612bf0d709d7' in a frame because of Cross-Origin-Embedder-Policy.
 
-Harness Error (FAIL), message = 2 duplicate test names: "Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe", "Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate"
+Harness Error (TIMEOUT), message = null
 
-FAIL Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via subframe assert_true: Cross-origin without CORP did not fail expected true got false
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via navigate
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe
-PASS Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via subframe Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://localhost:9443 in subframe via navigate Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via subframe Test timed out
+TIMEOUT Cross-Origin-Embedder-Policy and blob: URL from https://127.0.0.1:9443 in subframe via navigate Test timed out
 

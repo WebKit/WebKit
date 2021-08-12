@@ -49,6 +49,8 @@ class SecurityOrigin;
 
 struct ResourceLoaderOptions;
 
+enum class CrossOriginEmbedderPolicyValue : bool;
+
 WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodAllowlist(const String&);
 
@@ -84,7 +86,8 @@ private:
 WEBCORE_EXPORT Expected<void, String> passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
 WEBCORE_EXPORT Expected<void, String> validatePreflightResponse(PAL::SessionID, const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, const SecurityOrigin&, const CrossOriginAccessControlCheckDisabler*);
 
-WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin&, const URL&, const ResourceResponse&);
+enum class ForNavigation : bool { No, Yes };
+WEBCORE_EXPORT std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue, const SecurityOrigin&, const URL&, const ResourceResponse&, ForNavigation);
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest&, const ResourceResponse&);
 String validateCrossOriginRedirectionURL(const URL&);
 

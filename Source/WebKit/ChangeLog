@@ -1,3 +1,50 @@
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for Cross-Origin-Embedder-Policy (COEP)
+        https://bugs.webkit.org/show_bug.cgi?id=228754
+
+        Reviewed by Alex Christensen.
+
+        As mentioned in the WebCore changelog, we do all the COEP checks in the network process
+        instead of WebCore for added security. As a result, we need to pass more information
+        to the network process when doing loads in order to do those checks. The checks are done
+        in NetworkResourceLoader for navigations & worker script loads (similarly to CSP,
+        X-FrameOptions) and in NetworkLoadChecker for CORP checks of subresource loads (similarly
+        to CORS checks).
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::validateResponse):
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::setParentCrossOriginEmbedderPolicy):
+        (WebKit::NetworkLoadChecker::setCrossOriginEmbedderPolicy):
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::parentOrigin const):
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions):
+        (WebKit::NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolicy):
+        (WebKit::NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::PingLoad::initialize):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::processResponse):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didFinishLoading):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::retrieveRecords):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::addParametersShared):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+
 2021-08-11  Darin Adler  <darin@apple.com>
 
         Add deduction guide to RetainPtr, use constexpr a bit more, and streamline the implementation

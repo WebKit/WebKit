@@ -175,6 +175,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->setCookieURL(ownerDocument->cookieURL());
         document->setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
         document->setStrictMixedContentMode(ownerDocument->isStrictMixedContentMode());
+        document->setCrossOriginEmbedderPolicy(ownerDocument->crossOriginEmbedderPolicy());
 
         document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
         document->contentSecurityPolicy()->copyStateFrom(ownerDocument->contentSecurityPolicy());
@@ -183,6 +184,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         if (url.protocolIsData() || url.protocolIsBlob()) {
             document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
             document->contentSecurityPolicy()->copyStateFrom(existingDocument->contentSecurityPolicy());
+            document->setCrossOriginEmbedderPolicy(existingDocument->crossOriginEmbedderPolicy());
 
             // Fix up 'self' for blob: and data:, which is inherited from its embedding document or opener.
             auto* parentFrame = m_frame->tree().parent();

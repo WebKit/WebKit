@@ -28,6 +28,7 @@
 #include "DOMCacheEngine.h"
 
 #include "CacheQueryOptions.h"
+#include "CrossOriginAccessControl.h"
 #include "Exception.h"
 #include "HTTPParsers.h"
 #include "ScriptExecutionContext.h"
@@ -51,6 +52,8 @@ Exception convertToException(Error error)
         return Exception { TypeError, "Internal error"_s };
     case Error::Stopped:
         return Exception { TypeError, "Context is stopped"_s };
+    case Error::CORP:
+        return Exception { TypeError, "Cross-Origin-Resource-Policy failure"_s };
     }
     ASSERT_NOT_REACHED();
     return Exception { TypeError, "Connection stopped"_s };

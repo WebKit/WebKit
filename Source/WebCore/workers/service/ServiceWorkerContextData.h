@@ -27,6 +27,7 @@
 
 #include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "ScriptBuffer.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
@@ -85,6 +86,7 @@ struct ServiceWorkerContextData {
     ScriptBuffer script;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
+    CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     String referrerPolicy;
     URL scriptURL;
     WorkerType workerType;
@@ -101,7 +103,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy
         << scriptURL << workerType << loadedFromDisk << lastNavigationWasAppInitiated << scriptResourceMap << certificateInfo;
 }
 
@@ -129,6 +131,11 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
 
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     if (!decoder.decode(contentSecurityPolicy))
+        return std::nullopt;
+
+    std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
+    decoder >> crossOriginEmbedderPolicy;
+    if (!crossOriginEmbedderPolicy)
         return std::nullopt;
 
     String referrerPolicy;
@@ -167,6 +174,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
         WTFMove(*script),
         WTFMove(*certificateInfo),
         WTFMove(contentSecurityPolicy),
+        WTFMove(*crossOriginEmbedderPolicy),
         WTFMove(referrerPolicy),
         WTFMove(scriptURL),
         workerType,

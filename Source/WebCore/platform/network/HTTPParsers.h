@@ -61,8 +61,9 @@ enum class XFrameOptionsDisposition : uint8_t {
     Conflict
 };
 
-enum class CrossOriginResourcePolicy {
+enum class CrossOriginResourcePolicy : uint8_t {
     None,
+    CrossOrigin,
     SameOrigin,
     SameSite,
     Invalid

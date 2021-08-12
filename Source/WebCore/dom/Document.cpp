@@ -6270,6 +6270,8 @@ void Document::initSecurityContext()
     contentSecurityPolicy()->copyStateFrom(ownerFrame->document()->contentSecurityPolicy());
     contentSecurityPolicy()->updateSourceSelf(ownerFrame->document()->securityOrigin());
 
+    setCrossOriginEmbedderPolicy(ownerFrame->document()->crossOriginEmbedderPolicy());
+
     // https://html.spec.whatwg.org/multipage/browsers.html#creating-a-new-browsing-context (Step 12)
     // If creator is non-null and creator's origin is same origin with creator's relevant settings object's top-level origin, then set coop
     // to creator's browsing context's top-level browsing context's active document's cross-origin opener policy.

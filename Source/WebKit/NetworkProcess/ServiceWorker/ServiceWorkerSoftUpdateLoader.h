@@ -30,6 +30,7 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkLoadClient.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/ServiceWorkerJobData.h>
 #include <wtf/CompletionHandler.h>
@@ -81,6 +82,7 @@ private:
     String m_responseEncoding;
     String m_referrerPolicy;
     WebCore::ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
+    WebCore::CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
 
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
     RefPtr<WebCore::TextResourceDecoder> m_decoder;

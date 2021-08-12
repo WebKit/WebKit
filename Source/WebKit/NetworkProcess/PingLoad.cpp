@@ -45,7 +45,7 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, Net
     , m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options}, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
+    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options}, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
 {
     initialize(networkProcess);
 }
@@ -55,7 +55,7 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoa
     , m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
-    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options}, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
+    , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(connection.networkProcess(), nullptr,  &connection.schemeRegistry(), FetchOptions { m_parameters.options}, m_sessionID, m_parameters.webPageProxyID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
     , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
     for (auto& file : m_blobFiles) {
@@ -71,6 +71,8 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
     m_networkLoadChecker->enableContentExtensionsCheck();
     if (m_parameters.cspResponseHeaders)
         m_networkLoadChecker->setCSPResponseHeaders(WTFMove(m_parameters.cspResponseHeaders.value()));
+    m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
+    m_networkLoadChecker->setCrossOriginEmbedderPolicy(m_parameters.crossOriginEmbedderPolicy);
 #if ENABLE(CONTENT_EXTENSIONS)
     m_networkLoadChecker->setContentExtensionController(WTFMove(m_parameters.mainDocumentURL), m_parameters.userContentControllerIdentifier);
 #endif

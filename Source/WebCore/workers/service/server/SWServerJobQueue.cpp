@@ -114,7 +114,7 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerFetchResult& resul
 
     // FIXME: Update all the imported scripts as per spec. For now, we just do as if there is none.
 
-    m_server.updateWorker(job.identifier(), *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.referrerPolicy, job.workerType, { });
+    m_server.updateWorker(job.identifier(), *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.crossOriginEmbedderPolicy, result.referrerPolicy, job.workerType, { });
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm

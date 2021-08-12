@@ -3,6 +3,9 @@ CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a cons
       reports.push(r.toJSON());
     }
   })')
+CONSOLE MESSAGE: Refused to load 'https://localhost:9443/html/cross-origin-embedder-policy/multi-globals/current/worker.js' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load https://localhost:9443/html/cross-origin-embedder-policy/multi-globals/current/worker.js due to access control checks.
  Hello
 
 Harness Error (FAIL), message = Unhandled rejection: undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
@@ -11,5 +14,13 @@ Harness Error (FAIL), message = Unhandled rejection: undefined is not a construc
     }
   })')
 
-FAIL Multiple globals for Worker constructor: COEP reports assert_unreached: worker should have been blocked by COEP Reached unreachable code
+TIMEOUT Multiple globals for Worker constructor: COEP reports Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not a constructor (evaluating 'new global.ReportingObserver((rs) => {
+    for (const r of rs) {
+      reports.push(r.toJSON());
+    }
+  })')
+
+TIMEOUT Multiple globals for Worker constructor: COEP reports Test timed out
 

@@ -1,3 +1,18 @@
+CONSOLE MESSAGE: Refused to load 'blob:https://localhost:9443/0626116e-3414-4f35-bd1e-007f1312b79e' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load blob:https://localhost:9443/0626116e-3414-4f35-bd1e-007f1312b79e due to access control checks.
+CONSOLE MESSAGE: Refused to load 'blob:https://localhost:9443/a99eb341-4640-403a-a8f4-c2fcf28ede20' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load blob:https://localhost:9443/a99eb341-4640-403a-a8f4-c2fcf28ede20 due to access control checks.
+CONSOLE MESSAGE: Refused to load 'blob:https://localhost:9443/929d633e-ce48-43ff-b89d-e4e20fca6753' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load blob:https://localhost:9443/929d633e-ce48-43ff-b89d-e4e20fca6753 due to access control checks.
+CONSOLE MESSAGE: Refused to load 'blob:https://localhost:9443/0c8b6914-58db-417c-9e0c-e7ecacc4a16a' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load blob:https://localhost:9443/0c8b6914-58db-417c-9e0c-e7ecacc4a16a due to access control checks.
+
+
+Harness Error (TIMEOUT), message = null
 
 FAIL frame: origin = https://localhost:9443, value = undefined assert_equals: expected true but got false
 FAIL frame: origin = https://localhost:9443, value = * assert_equals: expected true but got false
@@ -15,10 +30,10 @@ PASS dedicated worker: scheme = data, value = undefined
 PASS dedicated worker: scheme = data, value = *
 PASS dedicated worker: scheme = data, value = self
 PASS dedicated worker: scheme = data, value = (\)
-FAIL dedicated worker: scheme = blob, value = undefined assert_equals: expected true but got false
-FAIL dedicated worker: scheme = blob, value = * assert_equals: expected true but got false
-FAIL dedicated worker: scheme = blob, value = self assert_equals: expected true but got false
-PASS dedicated worker: scheme = blob, value = (\)
+TIMEOUT dedicated worker: scheme = blob, value = undefined Test timed out
+TIMEOUT dedicated worker: scheme = blob, value = * Test timed out
+TIMEOUT dedicated worker: scheme = blob, value = self Test timed out
+TIMEOUT dedicated worker: scheme = blob, value = (\) Test timed out
 FAIL shared worker: withCoopCoep = false Can't find variable: SharedWorker
 FAIL shared worker: withCoopCoep = true Can't find variable: SharedWorker
 FAIL service worker: withCoopCoep = false assert_equals: expected (boolean) false but got (undefined) undefined

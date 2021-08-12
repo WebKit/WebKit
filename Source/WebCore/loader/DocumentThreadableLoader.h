@@ -47,11 +47,11 @@ namespace WebCore {
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, public CanMakeWeakPtr<DocumentThreadableLoader>, private CachedRawResourceClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&);
+        static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&);
         static void loadResourceSynchronously(Document&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
 
         enum class ShouldLogError { No, Yes };
-        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, String&& referrer, ShouldLogError);
+        static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&, String&& referrer, ShouldLogError);
         static RefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, String&& referrer = String());
 
         virtual ~DocumentThreadableLoader();
@@ -78,7 +78,7 @@ namespace WebCore {
             LoadAsynchronously
         };
 
-        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, String&&, ShouldLogError);
+        DocumentThreadableLoader(Document&, ThreadableLoaderClient&, BlockingBehavior, ResourceRequest&&, const ThreadableLoaderOptions&, RefPtr<SecurityOrigin>&&, std::unique_ptr<ContentSecurityPolicy>&&, std::optional<CrossOriginEmbedderPolicy>&&, String&&, ShouldLogError);
 
         void clearResource();
 
@@ -107,6 +107,7 @@ namespace WebCore {
 
         SecurityOrigin& securityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
+        const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const;
 
         Document& document() { return m_document; }
         const ThreadableLoaderOptions& options() const { return m_options; }
@@ -134,6 +135,7 @@ namespace WebCore {
         bool m_async;
         bool m_delayCallbacksForIntegrityCheck;
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
+        std::optional<CrossOriginEmbedderPolicy> m_crossOriginEmbedderPolicy;
         std::optional<CrossOriginPreflightChecker> m_preflightChecker;
         std::optional<HTTPHeaderMap> m_originalHeaders;
 

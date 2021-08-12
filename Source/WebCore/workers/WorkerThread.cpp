@@ -55,6 +55,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         isOnline,
         contentSecurityPolicyResponseHeaders,
         shouldBypassMainWorldContentSecurityPolicy,
+        crossOriginEmbedderPolicy.isolatedCopy(),
         timeOrigin,
         referrerPolicy,
         workerType,

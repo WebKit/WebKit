@@ -74,7 +74,7 @@ private:
 // FIXME: Use valid runtime flags
 
 ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& data, String&& userAgent, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
-    : WorkerThread({ data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.contentSecurityPolicy, false, MonotonicTime::now(), { }, data.workerType, FetchRequestCredentials::Omit, settingsValues }, data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+    : WorkerThread({ data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.contentSecurityPolicy, false, data.crossOriginEmbedderPolicy, MonotonicTime::now(), { }, data.workerType, FetchRequestCredentials::Omit, settingsValues }, data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_serviceWorkerIdentifier(data.serviceWorkerIdentifier)
     , m_jobDataIdentifier(data.jobDataIdentifier)
     , m_data(crossThreadCopy(data))

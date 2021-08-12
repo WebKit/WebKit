@@ -1,5 +1,42 @@
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
+        Add initial support for Cross-Origin-Embedder-Policy (COEP)
+        https://bugs.webkit.org/show_bug.cgi?id=228754
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline COEP WPT tests now that we are passing more checks.
+
+        * web-platform-tests/html/cross-origin-embedder-policy/blob.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/coep-frame-javascript.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.tentative.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/data.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker-cache-storage.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/javascript.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/multi-globals/workers-coep-report.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/no-secure-context-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/none-sw-from-require-corp.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/none.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank-expected.txt: Removed.
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-blank.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-srcdoc-expected.txt: Removed.
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-about-srcdoc.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-load-from-cache-storage.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-none.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-require-corp.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/sandbox.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/service-worker-cache-storage.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/srcdoc.https-expected.txt:
+
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
         <a rel="opener noopener" target="_blank"> should create a window without opener
         https://bugs.webkit.org/show_bug.cgi?id=229011
 

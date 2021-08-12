@@ -31,6 +31,7 @@
 #include "UserContentControllerIdentifier.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/CrossOriginAccessControl.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <wtf/Seconds.h>
 
@@ -48,12 +49,16 @@ public:
     void encode(IPC::Encoder&) const;
     static std::optional<NetworkResourceLoadParameters> decode(IPC::Decoder&);
 
+    RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
+
     ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     Seconds maximumBufferingTime;
     WebCore::FetchOptions options;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy;
+    WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     WebCore::HTTPHeaderMap originalRequestHeaders;
     bool shouldRestrictHTTPResponseAccess { false };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };

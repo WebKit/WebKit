@@ -32,6 +32,7 @@
 
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginAccessControl.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "FetchOptions.h"
 #include "HTTPHeaderNames.h"
 #include "ServiceWorkerTypes.h"
@@ -200,6 +201,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits> serviceWorkerRegistrationIdentifier;
 #endif
     Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     uint8_t maxRedirectCount { 20 };
 

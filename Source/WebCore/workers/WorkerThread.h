@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "FetchRequestCredentials.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
@@ -65,6 +66,7 @@ public:
     bool isOnline;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     bool shouldBypassMainWorldContentSecurityPolicy;
+    CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     MonotonicTime timeOrigin;
     ReferrerPolicy referrerPolicy;
     WorkerType workerType;

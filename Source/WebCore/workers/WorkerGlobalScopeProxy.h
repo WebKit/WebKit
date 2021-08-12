@@ -51,7 +51,7 @@ class WorkerGlobalScopeProxy {
 public:
     static WorkerGlobalScopeProxy& create(Worker&);
 
-    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) = 0;
+    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) = 0;
     virtual void terminateWorkerGlobalScope() = 0;
     virtual void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) = 0;
     virtual void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) = 0;

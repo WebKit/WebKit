@@ -41,13 +41,14 @@ struct CacheQueryOptions;
 
 namespace DOMCacheEngine {
 
-enum class Error {
+enum class Error : uint8_t {
     NotImplemented,
     ReadDisk,
     WriteDisk,
     QuotaExceeded,
     Internal,
-    Stopped
+    Stopped,
+    CORP
 };
 
 Exception convertToException(Error);
@@ -170,7 +171,9 @@ template<> struct EnumTraits<WebCore::DOMCacheEngine::Error> {
         WebCore::DOMCacheEngine::Error::ReadDisk,
         WebCore::DOMCacheEngine::Error::WriteDisk,
         WebCore::DOMCacheEngine::Error::QuotaExceeded,
-        WebCore::DOMCacheEngine::Error::Internal
+        WebCore::DOMCacheEngine::Error::Internal,
+        WebCore::DOMCacheEngine::Error::Stopped,
+        WebCore::DOMCacheEngine::Error::CORP
     >;
 };
 }

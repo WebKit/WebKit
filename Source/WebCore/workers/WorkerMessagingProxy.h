@@ -50,7 +50,7 @@ public:
 private:
     // Implementations of WorkerGlobalScopeProxy.
     // (Only use these functions in the worker object thread.)
-    void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;
+    void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) final;
     void terminateWorkerGlobalScope() final;
     void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) final;
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) final;

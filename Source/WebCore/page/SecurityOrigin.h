@@ -89,7 +89,7 @@ public:
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
     // Protocols like blob: and filesystem: fall into this latter category.
-    static bool isSecure(const URL&);
+    WEBCORE_EXPORT static bool isSecure(const URL&);
 
     // This method implements the "same origin-domain" algorithm from the HTML Standard:
     // https://html.spec.whatwg.org/#same-origin-domain

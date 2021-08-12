@@ -152,7 +152,7 @@ public:
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
     void startScriptFetch(const ServiceWorkerJobData&, SWServerRegistration&);
 
-    void updateWorker(const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
+    void updateWorker(const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, const String& referrerPolicy, WorkerType, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
     void fireInstallEvent(SWServerWorker&);
     void fireActivateEvent(SWServerWorker&);
 

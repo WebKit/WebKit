@@ -169,6 +169,8 @@ ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceRespo
         return error;
 
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
+    // Service workers are always secure contexts.
+    m_crossOriginEmbedderPolicy = obtainCrossOriginEmbedderPolicy(response, IsSecureContext::Yes);
     m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
     m_responseEncoding = response.textEncodingName();
 
@@ -192,7 +194,7 @@ void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadM
 {
     if (m_decoder)
         m_script.append(m_decoder->flush());
-    m_completionHandler({ m_jobData.identifier(), m_jobData.registrationKey(), ScriptBuffer { m_script.toString() }, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, { } });
+    m_completionHandler({ m_jobData.identifier(), m_jobData.registrationKey(), ScriptBuffer { m_script.toString() }, m_certificateInfo, m_contentSecurityPolicy, m_crossOriginEmbedderPolicy, m_referrerPolicy, { } });
     didComplete();
 }
 

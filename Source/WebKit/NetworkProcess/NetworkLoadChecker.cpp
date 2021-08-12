@@ -50,7 +50,7 @@ static inline bool isSameOrigin(const URL& url, const SecurityOrigin* origin)
     return url.protocolIsData() || url.protocolIsBlob() || !origin || origin->canRequest(url);
 }
 
-NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
+NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTFMove(options))
     , m_sessionID(sessionID)
     , m_networkProcess(networkProcess)
@@ -60,6 +60,7 @@ NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkRe
     , m_documentURL(WTFMove(documentURL))
     , m_origin(WTFMove(sourceOrigin))
     , m_topOrigin(WTFMove(topOrigin))
+    , m_parentOrigin(WTFMove(parentOrigin))
     , m_preflightPolicy(preflightPolicy)
     , m_referrer(WTFMove(referrer))
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics)
@@ -168,6 +169,10 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     }
 
     if (m_options.mode == FetchOptions::Mode::Navigate || m_isSameOriginRequest) {
+        if (m_options.mode == FetchOptions::Mode::Navigate && m_parentOrigin) {
+            if (auto error = validateCrossOriginResourcePolicy(m_parentCrossOriginEmbedderPolicy.value, *m_parentOrigin, m_url, response, ForNavigation::Yes))
+                return WTFMove(*error);
+        }
         response.setTainting(ResourceResponse::Tainting::Basic);
         return { };
     }
@@ -176,7 +181,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
         response.setAsRangeRequested();
 
     if (m_options.mode == FetchOptions::Mode::NoCors) {
-        if (auto error = validateCrossOriginResourcePolicy(*m_origin, m_url, response))
+        if (auto error = validateCrossOriginResourcePolicy(m_crossOriginEmbedderPolicy.value, *m_origin, m_url, response, ForNavigation::No))
             return WTFMove(*error);
 
         response.setTainting(ResourceResponse::Tainting::Opaque);

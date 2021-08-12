@@ -1005,8 +1005,16 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         break;
     case Use:
         ASSERT(resource);
+        if (request.options().mode == FetchOptions::Mode::Navigate && !frame.isMainFrame()) {
+            if (auto* parentDocument = frame.tree().parent() ? frame.tree().parent()->document() : nullptr) {
+                auto coep = parentDocument->crossOriginEmbedderPolicy().value;
+                if (auto error = validateCrossOriginResourcePolicy(coep, parentDocument->securityOrigin(), request.resourceRequest().url(), resource->response(), ForNavigation::Yes))
+                    return makeUnexpected(WTFMove(*error));
+            }
+        }
         if (request.options().mode == FetchOptions::Mode::NoCors) {
-            if (auto error = validateCrossOriginResourcePolicy(*request.origin(), request.resourceRequest().url(), resource->response()))
+            auto coep = document() ? document()->crossOriginEmbedderPolicy().value : CrossOriginEmbedderPolicyValue::UnsafeNone;
+            if (auto error = validateCrossOriginResourcePolicy(coep, *request.origin(), request.resourceRequest().url(), resource->response(), ForNavigation::No))
                 return makeUnexpected(WTFMove(*error));
 
             if (auto error = validateRangeRequestedFlag(request.resourceRequest(), resource->response()))

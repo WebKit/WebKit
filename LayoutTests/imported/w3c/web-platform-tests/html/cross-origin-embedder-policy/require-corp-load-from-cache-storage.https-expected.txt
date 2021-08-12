@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Cache API operation failed: Cross-Origin-Resource-Policy failure
+CONSOLE MESSAGE: Cache API operation failed: Cross-Origin-Resource-Policy failure
 
 
 PASS setting up
@@ -25,8 +27,8 @@ PASS Fetch cross-origin cors cors-enabled corp-same-origin from network and Cach
 PASS Fetch cross-origin cors cors-enabled corp-undefined from network and CacheStorage.
 PASS Fetch cross-origin no-cors cors-disabled corp-cross-origin from network and CacheStorage.
 PASS Fetch cross-origin no-cors cors-disabled corp-same-origin from network and CacheStorage.
-FAIL Fetch cross-origin no-cors cors-disabled corp-undefined from network and CacheStorage. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Fetch cross-origin no-cors cors-disabled corp-undefined from network and CacheStorage.
 PASS Fetch cross-origin no-cors cors-enabled corp-cross-origin from network and CacheStorage.
 PASS Fetch cross-origin no-cors cors-enabled corp-same-origin from network and CacheStorage.
-FAIL Fetch cross-origin no-cors cors-enabled corp-undefined from network and CacheStorage. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Fetch cross-origin no-cors cors-enabled corp-undefined from network and CacheStorage.
 

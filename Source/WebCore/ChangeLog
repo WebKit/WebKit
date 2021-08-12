@@ -1,3 +1,131 @@
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for Cross-Origin-Embedder-Policy (COEP)
+        https://bugs.webkit.org/show_bug.cgi?id=228754
+
+        Reviewed by Alex Christensen.
+
+        Add initial support for Cross-Origin-Embedder-Policy (COEP) behind a runtime feature flag, off by default:
+        - https://html.spec.whatwg.org/multipage/origin.html#coep
+
+        The COEP header has the following impacts:
+        - When a document with `Cross-Origin-Embedder-Policy: require-corp` loads an iframe or a worker script, if the network
+          response for that iframe doesn't also contain `Cross-Origin-Embedder-Policy: require-corp`, then we fail the load.
+        - When a document with `Cross-Origin-Embedder-Policy: require-corp` loads cross-origin subresources, then either CORS
+          must be used or the resource response must be allowed by Cross-Origin-Resource-Policy (CORP) header.
+
+        Support is only for WK2 and checks are done in the network process for better security. Support for workers and service
+        workers (including cache storage) is included.
+
+        Most of the Web-Platform-Tests for COEP are passing with this patch. The exceptions are:
+        - Some tests relying on Blob are failing. Similarly to COOP, Blobs need to inherit COEP from their
+          creator. This is currently unimplemented as the change will likely be non-trivial. I will follow-up
+          to fix Blob support for both COOP and COEP.
+        - Tests in the credentialless/ folder are failing because we do not support `Cross-Origin-Embedder-Policy: credentialless`.
+          This seems to be a fairly recent extension proposed by Google and it is not part of the HTML specification yet.
+        - Some tests expect violation reporting and they are failing and we do not implement reporting yet.
+
+        Note that `self.crossOriginIsolated` still returns false, even if the pages opts into both COOP & COEP, and APIs such
+        as SharedArrayBuffer still are not permitted to use. In order to support this, we will have to actually implement process
+        swapping so that we know a process is not actually shared by several origins.
+
+        Test: http/wpt/html/cross-origin-embedder-policy/require-corp.https.html
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::queryCache):
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::convertToException):
+        * Modules/cache/DOMCacheEngine.h:
+        * Modules/cache/RetrieveRecordsOptions.h:
+        (WebCore::RetrieveRecordsOptions::isolatedCopy const):
+        (WebCore::RetrieveRecordsOptions::encode const):
+        (WebCore::RetrieveRecordsOptions::decode):
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::crossOriginEmbedderPolicy const):
+        (WebCore::SecurityContext::setCrossOriginEmbedderPolicy):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::shouldCrossOriginResourcePolicyCancelLoad):
+        (WebCore::validateCrossOriginResourcePolicy):
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginEmbedderPolicy.cpp:
+        (WebCore::obtainCrossOriginEmbedderPolicy):
+        (WebCore::CrossOriginEmbedderPolicy::isolatedCopy const):
+        * loader/CrossOriginEmbedderPolicy.h:
+        (WebCore::CrossOriginEmbedderPolicy::encode const):
+        (WebCore::CrossOriginEmbedderPolicy::decode):
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::obtainCrossOriginOpenerPolicy):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously):
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::crossOriginEmbedderPolicy const):
+        * loader/DocumentThreadableLoader.h:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * loader/ResourceLoaderOptions.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/SecurityOrigin.h:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseCrossOriginResourcePolicyHeader):
+        * platform/network/HTTPParsers.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::crossOriginEmbedderPolicy const):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerParameters::isolatedCopy const):
+        * workers/WorkerThread.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/ServiceWorkerFetchResult.h:
+        (WebCore::ServiceWorkerFetchResult::isolatedCopy const):
+        (WebCore::serviceWorkerFetchError):
+        (WebCore::ServiceWorkerFetchResult::encode const):
+        (WebCore::ServiceWorkerFetchResult::decode):
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::notifyFinished):
+        * workers/service/ServiceWorkerJobClient.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+        (WebCore::SWServer::updateWorker):
+        (WebCore::SWServer::installContextData):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::SWServerWorker::contextData const):
+        * workers/service/server/SWServerWorker.h:
+
 2021-08-11  Jean-Yves Avenard  <jya@apple.com>
 
         Audio buffer may contain more frames than decoded.

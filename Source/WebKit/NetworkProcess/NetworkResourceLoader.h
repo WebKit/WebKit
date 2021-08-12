@@ -163,6 +163,8 @@ private:
 
     bool shouldInterruptLoadForXFrameOptions(const String&, const URL&);
     bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&);
+    bool shouldInterruptNavigationForCrossOriginEmbedderPolicy(const WebCore::ResourceResponse&);
+    bool shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy(const WebCore::ResourceResponse&);
 
     enum class FirstLoad { No, Yes };
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);

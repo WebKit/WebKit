@@ -33,6 +33,7 @@
 #include "NetworkProcess.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/CacheQueryOptions.h>
+#include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/RetrieveRecordsOptions.h>
 #include <pal/SessionID.h>
@@ -286,12 +287,23 @@ void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallba
 {
     ASSERT(m_state == State::Open);
 
-    auto taskCounter = ReadRecordTaskCounter::create([caches = makeRef(m_caches), identifier = m_identifier, shouldProvideResponse = options.shouldProvideResponse, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
+    auto taskCounter = ReadRecordTaskCounter::create([caches = makeRef(m_caches), identifier = m_identifier, options, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
         auto* cache = caches->find(identifier);
         if (cache)
             cache->removeFromRecordList(failedRecordIdentifiers);
 
-        if (!shouldProvideResponse) {
+        // https://w3c.github.io/ServiceWorker/#dom-cache-matchall (Step 5.4)
+        for (auto& record : records) {
+            if (record.response.type() != ResourceResponse::Type::Opaque)
+                continue;
+
+            if (validateCrossOriginResourcePolicy(options.crossOriginEmbedderPolicy.value, options.sourceOrigin, record.request.url(), record.response, ForNavigation::No)) {
+                callback(makeUnexpected(DOMCacheEngine::Error::CORP));
+                return;
+            }
+        }
+
+        if (!options.shouldProvideResponse) {
             for (auto& record : records) {
                 record.response = { };
                 record.responseBody = nullptr;

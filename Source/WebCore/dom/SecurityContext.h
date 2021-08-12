@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include "CrossOriginEmbedderPolicy.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
@@ -87,6 +88,9 @@ public:
     //       context that already contains content.
     void setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&&);
 
+    const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
+    void setCrossOriginEmbedderPolicy(const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
+
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
     static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
@@ -130,6 +134,7 @@ private:
 
     RefPtr<SecurityOriginPolicy> m_securityOriginPolicy;
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
+    CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     SandboxFlags m_creationSandboxFlags { SandboxNone };
     SandboxFlags m_sandboxFlags { SandboxNone };
     OptionSet<MixedContentType> m_mixedContentTypes;

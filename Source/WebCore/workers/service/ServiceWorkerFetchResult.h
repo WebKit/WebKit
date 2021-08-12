@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "ResourceError.h"
 #include "ScriptBuffer.h"
 #include "ServiceWorkerRegistrationKey.h"
@@ -41,10 +42,11 @@ struct ServiceWorkerFetchResult {
     ScriptBuffer script;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
+    CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     String referrerPolicy;
     ResourceError scriptError;
 
-    ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
+    ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ServiceWorkerFetchResult&);
@@ -52,13 +54,13 @@ struct ServiceWorkerFetchResult {
 
 inline ServiceWorkerFetchResult serviceWorkerFetchError(ServiceWorkerJobDataIdentifier jobDataIdentifier, ServiceWorkerRegistrationKey&& registrationKey, ResourceError&& error)
 {
-    return { jobDataIdentifier, WTFMove(registrationKey), { }, { }, { }, { }, WTFMove(error) };
+    return { jobDataIdentifier, WTFMove(registrationKey), { }, { }, { }, { }, { }, WTFMove(error) };
 }
 
 template<class Encoder>
 void ServiceWorkerFetchResult::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registrationKey << script << contentSecurityPolicy << referrerPolicy << scriptError;
+    encoder << jobDataIdentifier << registrationKey << script << contentSecurityPolicy << crossOriginEmbedderPolicy << referrerPolicy << scriptError;
     encoder << certificateInfo;
 }
 
@@ -79,6 +81,8 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
     if (!decoder.decode(result.script))
         return false;
     if (!decoder.decode(result.contentSecurityPolicy))
+        return false;
+    if (!decoder.decode(result.crossOriginEmbedderPolicy))
         return false;
     if (!decoder.decode(result.referrerPolicy))
         return false;

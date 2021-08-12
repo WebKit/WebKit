@@ -394,6 +394,7 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html [ Skip 
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [ Skip ]
 
 # Console log lines may appear in a different order so we silence them.
+http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-utf-8.htm [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
@@ -529,11 +530,6 @@ imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-document-open.h
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-inherited-from-required-csp.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/window-open-blank-from-different-initiator.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/navigate-to-about-blank-while-initial-load-pending.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-service-worker.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.tentative.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/none.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1252.html [ Skip ]
 imported/w3c/web-platform-tests/html/interaction/focus/focus-01.html [ Skip ]
@@ -716,10 +712,27 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-co
 # Cross-Origin Opener Policy reporting is not supported and it is causing those tests to time out.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting [ Skip ]
 
-# This test is timing out locally but passing on wpt.live. The issue is that we run the WPT tests over localhost and they
-# are thus marked as secure contexts even when served over HTTP. The test assumes the context is non-secure because the
-# test is served over HTTP.
+# Cross-Origin-Embedder-Policy: credentialless is not supported.
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless
+
+# These tests are timing out locally but passing on wpt.live. The issue is that we run the WPT tests over localhost and they
+# are thus marked as secure contexts even when served over HTTP. These tests assume the context is non-secure because they
+# are served over HTTP.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/no-secure-context.html [ Skip ]
+
+# COEP test timing out due to lack of Blob URL support.
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Skip ]
+
+# This test makes the assumption that get_host_info().REMOTE_ORIGIN is same-site, which is not true for
+# our layout tests. We maintain our own version of this test in http/wpt.
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp.https.html [ Skip ]
+
+# We do not support COEP reporting.
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/multi-globals/workers-coep-report.https.html [ Skip ]
 
 # Newly imported WPT tests that are crashing.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html [ ImageOnlyFailure Crash ]
@@ -774,11 +787,6 @@ imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-navigation
 imported/w3c/web-platform-tests/cookies/schemeful-same-site/schemeful-subresource.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/microtasks/checkpoint-after-window-onerror-module.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-credentialless.tentative.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.tentative.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.tentative.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/webappapis/update-rendering/child-document-raf-order.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/autofocus/update-the-rendering.html [ Failure Pass ]

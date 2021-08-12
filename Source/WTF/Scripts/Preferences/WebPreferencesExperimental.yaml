@@ -321,6 +321,18 @@ CoreMathMLEnabled:
     WebCore:
       default: false
 
+CrossOriginEmbedderPolicyEnabled:
+  type: bool
+  humanReadableName: "Cross-Origin-Embedder-Policy (COEP) header"
+  humanReadableDescription: "Support for Cross-Origin-Embedder-Policy (COEP) header"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CrossOriginOpenerPolicyEnabled:
   type: bool
   humanReadableName: "Cross-Origin-Opener-Policy (COOP) header"

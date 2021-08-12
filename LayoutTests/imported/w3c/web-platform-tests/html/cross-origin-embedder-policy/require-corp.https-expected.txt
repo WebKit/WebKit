@@ -1,18 +1,36 @@
+CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "null" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?token=5dcc16cb-9469-4bec-9602-a97aea5d9615 because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?token=b26287fc-8f3f-4acc-8a8e-8a644072bf73 because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?to=https%3A%2F%2Flocalhost%3A9443%2Fhtml%2Fcross-origin-embedder-policy%2Fresources%2Fnavigate-require-corp.sub.html%3FchannelName%3D8b07c736-9199-41a7-904c-4efbb7dfa027 because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html?to=https%3A%2F%2F127.0.0.1%3A9443%2Fhtml%2Fcross-origin-embedder-policy%2Fresources%2Fnavigate-require-corp.sub.html%3FchannelName%3Ddda15abf-6fbe-457f-a03d-ee8d6c919d65 because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Fhtml%2Fcross-origin-embedder-policy%2Fresources%2Fnavigate-require-corp.sub.html%3FchannelName%3D8f6cafbd-6cff-4b57-b369-4045fca85b49' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Redirection was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "https://localhost:9443" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html' in a frame because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "https://localhost:9443" from accessing a frame at "https://localhost:9443".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 
-FAIL "require-corp" top-level: navigating a frame to "none" should fail step_wait_func: Timed out waiting on condition
-FAIL "require-corp" top-level: navigating a frame from "require-corp" to "none" should fail step_wait_func: Timed out waiting on condition
+Harness Error (TIMEOUT), message = null
+
+PASS "require-corp" top-level: navigating a frame to "none" should fail
+PASS "require-corp" top-level: navigating a frame from "require-corp" to "none" should fail
 PASS "require-corp" top-level: creating a noopener "none" popup should succeed
 PASS "require-corp" top-level: creating a "none" popup should succeed.
 PASS "require-corp" top-level (as popup): navigating to "none" should succeed
 PASS "require-corp" top-level (as noopener popup): navigating to "none" should succeed
 PASS "require-corp" top-level (as popup with opener set to null): navigating to "none" should succeed
 PASS "require-corp" top-level: fetch() to CORP: cross-origin response should succeed
-FAIL "require-corp" top-level: fetch() to response without CORP should fail assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL "require-corp" top-level: fetch() to response without CORP through a WindowProxy should fail assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL "require-corp" top-level: navigating an iframe to a page without CORP, through a WindowProxy, should fail step_wait_func: Timed out waiting on condition
-PASS CORP: same-site is checked and allowed.
-FAIL CORP: same-site is checked and blocked. assert_false: expected false got true
-PASS navigation CORP is checked with the parent frame, not the navigation source - to be allowed
+PASS "require-corp" top-level: fetch() to response without CORP should fail
+PASS "require-corp" top-level: fetch() to response without CORP through a WindowProxy should fail
+PASS "require-corp" top-level: navigating an iframe to a page without CORP, through a WindowProxy, should fail
+TIMEOUT CORP: same-site is checked and allowed. Test timed out
+PASS CORP: same-site is checked and blocked.
+TIMEOUT navigation CORP is checked with the parent frame, not the navigation source - to be allowed Test timed out
 PASS navigation CORP is checked with the parent frame, not the navigation source - to be blocked
-FAIL navigation CORP is checked for each redirect assert_false: expected false got true
+PASS navigation CORP is checked for each redirect
 

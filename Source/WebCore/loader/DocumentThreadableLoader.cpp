@@ -70,23 +70,23 @@
 
 namespace WebCore {
 
-void DocumentThreadableLoader::loadResourceSynchronously(Document& document, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
+void DocumentThreadableLoader::loadResourceSynchronously(Document& document, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, std::optional<CrossOriginEmbedderPolicy>&& crossOriginEmbedderPolicy)
 {
     // The loader will be deleted as soon as this function exits.
-    Ref<DocumentThreadableLoader> loader = adoptRef(*new DocumentThreadableLoader(document, client, LoadSynchronously, WTFMove(request), options, WTFMove(origin), WTFMove(contentSecurityPolicy), String(), ShouldLogError::Yes));
+    Ref<DocumentThreadableLoader> loader = adoptRef(*new DocumentThreadableLoader(document, client, LoadSynchronously, WTFMove(request), options, WTFMove(origin), WTFMove(contentSecurityPolicy), WTFMove(crossOriginEmbedderPolicy), String(), ShouldLogError::Yes));
     ASSERT(loader->hasOneRef());
 }
 
 void DocumentThreadableLoader::loadResourceSynchronously(Document& document, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
-    loadResourceSynchronously(document, WTFMove(request), client, options, nullptr, nullptr);
+    loadResourceSynchronously(document, WTFMove(request), client, options, nullptr, nullptr, std::nullopt);
 }
 
 RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client,
 ResourceRequest&& request, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin,
-std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, String&& referrer, ShouldLogError shouldLogError)
+std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, std::optional<CrossOriginEmbedderPolicy>&& crossOriginEmbedderPolicy, String&& referrer, ShouldLogError shouldLogError)
 {
-    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, WTFMove(request), options, WTFMove(origin), WTFMove(contentSecurityPolicy), WTFMove(referrer), shouldLogError));
+    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, WTFMove(request), options, WTFMove(origin), WTFMove(contentSecurityPolicy), WTFMove(crossOriginEmbedderPolicy), WTFMove(referrer), shouldLogError));
     if (!loader->isLoading())
         loader = nullptr;
     return loader;
@@ -94,7 +94,7 @@ std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, String&& referre
 
 RefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document& document, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, String&& referrer)
 {
-    return create(document, client, WTFMove(request), options, nullptr, nullptr, WTFMove(referrer), ShouldLogError::Yes);
+    return create(document, client, WTFMove(request), options, nullptr, nullptr, std::nullopt, WTFMove(referrer), ShouldLogError::Yes);
 }
 
 static inline bool shouldPerformSecurityChecks()
@@ -115,7 +115,7 @@ bool DocumentThreadableLoader::shouldSetHTTPHeadersToKeep() const
     return false;
 }
 
-DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, ResourceRequest&& request, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, String&& referrer, ShouldLogError shouldLogError)
+DocumentThreadableLoader::DocumentThreadableLoader(Document& document, ThreadableLoaderClient& client, BlockingBehavior blockingBehavior, ResourceRequest&& request, const ThreadableLoaderOptions& options, RefPtr<SecurityOrigin>&& origin, std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy, std::optional<CrossOriginEmbedderPolicy>&& crossOriginEmbedderPolicy, String&& referrer, ShouldLogError shouldLogError)
     : m_client(&client)
     , m_document(document)
     , m_options(options)
@@ -126,6 +126,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_async(blockingBehavior == LoadAsynchronously)
     , m_delayCallbacksForIntegrityCheck(!m_options.integrity.isEmpty())
     , m_contentSecurityPolicy(WTFMove(contentSecurityPolicy))
+    , m_crossOriginEmbedderPolicy(WTFMove(crossOriginEmbedderPolicy))
     , m_shouldLogError(shouldLogError)
 {
     relaxAdoptionRequirement();
@@ -166,6 +167,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     }
 
     m_options.cspResponseHeaders = m_options.contentSecurityPolicyEnforcement != ContentSecurityPolicyEnforcement::DoNotEnforce ? this->contentSecurityPolicy().responseHeaders() : ContentSecurityPolicyResponseHeaders { };
+    m_options.crossOriginEmbedderPolicy = this->crossOriginEmbedderPolicy();
 
     // As per step 11 of https://fetch.spec.whatwg.org/#main-fetch, data scheme (if same-origin data-URL flag is set) and about scheme are considered same-origin.
     if (request.url().protocolIsData())
@@ -708,6 +710,13 @@ const ContentSecurityPolicy& DocumentThreadableLoader::contentSecurityPolicy() c
         return *m_contentSecurityPolicy.get();
     ASSERT(m_document.contentSecurityPolicy());
     return *m_document.contentSecurityPolicy();
+}
+
+const CrossOriginEmbedderPolicy& DocumentThreadableLoader::crossOriginEmbedderPolicy() const
+{
+    if (m_crossOriginEmbedderPolicy)
+        return *m_crossOriginEmbedderPolicy;
+    return m_document.crossOriginEmbedderPolicy();
 }
 
 void DocumentThreadableLoader::reportRedirectionWithBadScheme(const URL& url)

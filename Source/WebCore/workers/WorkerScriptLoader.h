@@ -28,6 +28,7 @@
 
 #include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "FetchOptions.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -66,6 +67,7 @@ public:
     const ScriptBuffer& script() { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
+    const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     const URL& url() const { return m_url; }
     const URL& responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
@@ -107,10 +109,12 @@ private:
     FetchOptions::Destination m_destination;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     String m_referrerPolicy;
+    CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
     unsigned long m_identifier { 0 };
     bool m_failed { false };
     bool m_finishing { false };
     bool m_isRedirected { false };
+    bool m_isSecureContext { false };
     ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceError m_error;
 };

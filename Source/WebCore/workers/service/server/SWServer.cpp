@@ -169,7 +169,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
             auto registrationPtr = registration.get();
             addRegistration(WTFMove(registration));
 
-            auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, WTFMove(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTFMove(data.scriptResourceMap));
+            auto worker = SWServerWorker::create(*this, *registrationPtr, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, WTFMove(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTFMove(data.scriptResourceMap));
             registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
             worker->setState(ServiceWorkerState::Activated);
         }
@@ -652,9 +652,9 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
         registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
+void SWServer::updateWorker(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& coep, const String& referrerPolicy, WorkerType type, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
 {
-    tryInstallContextData(ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, referrerPolicy, url, type, false, clientIsAppInitiatedForRegistrableDomain(RegistrableDomain(url)), WTFMove(scriptResourceMap) });
+    tryInstallContextData(ServiceWorkerContextData { jobDataIdentifier, registration.data(), ServiceWorkerIdentifier::generate(), script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, url, type, false, clientIsAppInitiatedForRegistrableDomain(RegistrableDomain(url)), WTFMove(scriptResourceMap) });
 }
 
 LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain(const RegistrableDomain& domain)
@@ -719,7 +719,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     }
 
     auto* registration = m_scopeToRegistrationMap.get(data.registration.key).get();
-    auto worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, String { data.referrerPolicy }, data.workerType, data.serviceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
+    auto worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, String { data.referrerPolicy }, data.workerType, data.serviceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
 
     auto* connection = worker->contextConnection();
     ASSERT(connection);

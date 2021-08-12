@@ -457,13 +457,13 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     job.fetchScriptWithContext(*context, cachePolicy);
 }
 
-void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy)
+void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& coep, const String& referrerPolicy)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
 
     CONTAINER_RELEASE_LOG("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
-    ensureSWClientConnection().finishFetchingScriptInServer(ServiceWorkerFetchResult { job.data().identifier(), job.data().registrationKey(), script, certificateInfo, contentSecurityPolicy, referrerPolicy, { } });
+    ensureSWClientConnection().finishFetchingScriptInServer(ServiceWorkerFetchResult { job.data().identifier(), job.data().registrationKey(), script, certificateInfo, contentSecurityPolicy, coep, referrerPolicy, { } });
 }
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, Exception&& exception)

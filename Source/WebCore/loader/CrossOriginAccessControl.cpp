@@ -28,6 +28,7 @@
 #include "CrossOriginAccessControl.h"
 
 #include "CachedResourceRequest.h"
+#include "CrossOriginEmbedderPolicy.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
@@ -280,12 +281,20 @@ Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const
     return { };
 }
 
-static inline bool shouldCrossOriginResourcePolicyCancelLoad(const SecurityOrigin& origin, const ResourceResponse& response)
+// https://fetch.spec.whatwg.org/#cross-origin-resource-policy-internal-check
+static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedderPolicyValue coep, const SecurityOrigin& origin, const ResourceResponse& response, ForNavigation forNavigation)
 {
-    if (origin.canRequest(response.url()))
+    if (forNavigation == ForNavigation::Yes && coep != CrossOriginEmbedderPolicyValue::RequireCORP)
+        return false;
+
+    if (response.isNull() || origin.canRequest(response.url()))
         return false;
 
     auto policy = parseCrossOriginResourcePolicyHeader(response.httpHeaderField(HTTPHeaderName::CrossOriginResourcePolicy));
+
+    // https://fetch.spec.whatwg.org/#cross-origin-resource-policy-internal-check (step 4).
+    if ((policy == CrossOriginResourcePolicy::None || policy == CrossOriginResourcePolicy::Invalid) && coep == CrossOriginEmbedderPolicyValue::RequireCORP)
+        return true;
 
     if (policy == CrossOriginResourcePolicy::SameOrigin)
         return true;
@@ -304,9 +313,9 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(const SecurityOrigi
     return false;
 }
 
-std::optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response)
+std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedderPolicyValue coep, const SecurityOrigin& origin, const URL& requestURL, const ResourceResponse& response, ForNavigation forNavigation)
 {
-    if (shouldCrossOriginResourcePolicyCancelLoad(origin, response))
+    if (shouldCrossOriginResourcePolicyCancelLoad(coep, origin, response, forNavigation))
         return ResourceError { errorDomainWebKitInternal, 0, requestURL, makeString("Cancelled load to ", response.url().stringCenterEllipsizedToLength(), " because it violates the resource's Cross-Origin-Resource-Policy response header."), ResourceError::Type::AccessControl };
     return std::nullopt;
 }

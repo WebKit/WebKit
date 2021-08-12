@@ -1,3 +1,14 @@
+2021-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Add initial support for Cross-Origin-Embedder-Policy (COEP)
+        https://bugs.webkit.org/show_bug.cgi?id=228754
+
+        Reviewed by Alex Christensen.
+
+        Add experimental feature flag for Cross-Origin-Embedder-Policy (COEP), off by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-08-11  Darin Adler  <darin@apple.com>
 
         Add deduction guide to RetainPtr, use constexpr a bit more, and streamline the implementation
