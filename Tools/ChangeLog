@@ -1,3 +1,19 @@
+2021-08-12  Sam Weinig  <weinig@apple.com>
+
+        Allow testing of the final UIView tree on iOS platforms
+        https://bugs.webkit.org/show_bug.cgi?id=229016
+
+        Reviewed by Tim Horton.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::uiViewTreeAsText const):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::uiViewTreeAsText const):
+        Pipe new _uiViewTreeAsText SPI through to UIScriptController, matching the pattern
+        established by scrollingTreeAsText.
+
 2021-08-12  Devin Rousso  <drousso@apple.com>
 
         Fix some `NSAttributedString` inconsistencies between WK1 and WK2

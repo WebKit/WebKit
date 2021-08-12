@@ -1,3 +1,25 @@
+2021-08-12  Sam Weinig  <weinig@apple.com>
+
+        Allow testing of the final UIView tree on iOS platforms
+        https://bugs.webkit.org/show_bug.cgi?id=229016
+
+        Reviewed by Tim Horton.
+
+        * remote-layer-tree: Added.
+        * remote-layer-tree/ios: Added.
+        * remote-layer-tree/ios/uiview-tree-basic-expected.txt: Added.
+        * remote-layer-tree/ios/uiview-tree-basic.html: Added.
+        Add basic test case excercising UIView tree dumping to ensure
+        it is working properly.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.getUIViewTree):
+        Add helper to use get the UIView tree as text.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+        Ensure these tests are only run on iOS.
+
 2021-08-12  Martin Robinson  <mrobinson@webkit.org>
 
         Update import of css/css-position from WPT

@@ -332,6 +332,7 @@ interface UIScriptController {
     undefined replaceTextAtRange(DOMString text, long location, long length);
 
     readonly attribute DOMString scrollingTreeAsText;
+    readonly attribute DOMString uiViewTreeAsText;
 
     boolean mayContainEditableElementsInRect(unsigned long x, unsigned long y, unsigned long width, unsigned long height);
 

@@ -1409,6 +1409,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static getUIViewTree()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                return uiController.uiViewTreeAsText;
+            })()`, resolve);
+        });
+    }
+
     static dragFromPointToPoint(fromX, fromY, toX, toY, duration)
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {

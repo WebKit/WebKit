@@ -1,3 +1,23 @@
+2021-08-12  Sam Weinig  <weinig@apple.com>
+
+        Allow testing of the final UIView tree on iOS platforms
+        https://bugs.webkit.org/show_bug.cgi?id=229016
+
+        Reviewed by Tim Horton.
+
+        Test: remote-layer-tree/ios/uiview-tree-basic.html
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (allowListedClassToString):
+        (dumpUIView):
+        (-[WKWebView _uiViewTreeAsText]):
+        Add partner SPI called _uiViewTreeAsText that dumps the WKWebView's
+        UIView tree as constructed via remote layer creation. It currently
+        dumps some basic properties of each view and uses an allow list of
+        class names so changes to implementation details in frameworks below
+        us, like UIKit, don't cause tests to fail.
+
 2021-08-12  Jer Noble  <jer.noble@apple.com>
 
         [macOS] Enter fullscreen animation interferes with auto-hiding menu bar

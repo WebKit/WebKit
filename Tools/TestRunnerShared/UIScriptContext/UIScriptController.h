@@ -146,6 +146,7 @@ public:
     virtual double contentOffsetY() const { notImplemented(); return 0; }
 
     virtual JSRetainPtr<JSStringRef> scrollingTreeAsText() const { notImplemented(); return nullptr; }
+    virtual JSRetainPtr<JSStringRef> uiViewTreeAsText() const { notImplemented(); return nullptr; }
 
     // Touches
 

@@ -857,6 +857,11 @@ JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollingTreeAsText() const
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerIOS::uiViewTreeAsText() const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _uiViewTreeAsText]));
+}
+
 JSObjectRef UIScriptControllerIOS::propertiesOfLayerWithID(uint64_t layerID) const
 {
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:[webView() _propertiesOfLayerWithID:layerID] inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
