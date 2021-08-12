@@ -1,3 +1,21 @@
+2021-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Migrate Performance::resourceTimingBufferFullTimerFired to HTML event loop
+        https://bugs.webkit.org/show_bug.cgi?id=229044
+
+        Reviewed by Geoff Garen.
+
+        Covered by existing tests.
+        There should be no change in behavior.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::addResourceTiming):
+        (WebCore::Performance::dispatchResourceTimingBufferFullEvent):
+        (WebCore::Performance::contextDestroyed): Deleted.
+        (WebCore::Performance::resourceTimingBufferFullTimerFired): Deleted.
+        * page/Performance.h:
+
 2021-08-12  Jer Noble  <jer.noble@apple.com>
 
         [macOS] Enter fullscreen animation interferes with auto-hiding menu bar

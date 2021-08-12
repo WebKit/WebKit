@@ -119,15 +119,13 @@ public:
 private:
     Performance(ScriptExecutionContext*, MonotonicTime timeOrigin);
 
-    void contextDestroyed() override;
-
     EventTargetInterface eventTargetInterface() const final { return PerformanceEventTargetInterfaceType; }
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     bool isResourceTimingBufferFull() const;
-    void resourceTimingBufferFullTimerFired();
+    void dispatchResourceTimingBufferFullEvent();
 
     void queueEntry(PerformanceEntry&);
     void scheduleTaskIfNeeded();
@@ -139,7 +137,6 @@ private:
     Vector<RefPtr<PerformanceEntry>> m_resourceTimingBuffer;
     unsigned m_resourceTimingBufferSize { 150 };
 
-    Timer m_resourceTimingBufferFullTimer;
     Vector<RefPtr<PerformanceEntry>> m_backupResourceTimingBuffer;
 
     // https://w3c.github.io/resource-timing/#dfn-resource-timing-buffer-full-flag

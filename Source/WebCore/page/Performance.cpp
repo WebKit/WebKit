@@ -60,19 +60,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Performance);
 
 Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrigin)
     : ContextDestructionObserver(context)
-    , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired) // FIXME: Migrate this to the event loop as well.
     , m_timeOrigin(timeOrigin)
 {
     ASSERT(m_timeOrigin);
 }
 
 Performance::~Performance() = default;
-
-void Performance::contextDestroyed()
-{
-    m_resourceTimingBufferFullTimer.stop();
-    ContextDestructionObserver::contextDestroyed();
-}
 
 DOMHighResTimeStamp Performance::now() const
 {
@@ -263,10 +256,14 @@ void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
     }
 
     if (isResourceTimingBufferFull()) {
-        ASSERT(!m_resourceTimingBufferFullTimer.isActive());
         m_backupResourceTimingBuffer.append(WTFMove(entry));
         m_waitingForBackupBufferToBeProcessed = true;
-        m_resourceTimingBufferFullTimer.startOneShot(0_s);
+        auto* context = scriptExecutionContext();
+        if (!context)
+            return;
+        context->eventLoop().queueTask(TaskSource::PerformanceTimeline, [protectedThis = makeRef(*this)] {
+            protectedThis->dispatchResourceTimingBufferFullEvent();
+        });
         return;
     }
 
@@ -279,9 +276,10 @@ bool Performance::isResourceTimingBufferFull() const
     return m_resourceTimingBuffer.size() >= m_resourceTimingBufferSize;
 }
 
-void Performance::resourceTimingBufferFullTimerFired()
+void Performance::dispatchResourceTimingBufferFullEvent()
 {
-    ASSERT(scriptExecutionContext());
+    if (!scriptExecutionContext())
+        return;
 
     while (!m_backupResourceTimingBuffer.isEmpty()) {
         auto beforeCount = m_backupResourceTimingBuffer.size();
