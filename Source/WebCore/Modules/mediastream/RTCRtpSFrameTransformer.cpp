@@ -206,8 +206,11 @@ ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint
     return { };
 }
 
-RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(const uint8_t* frameData, size_t frameSize)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(Span<const uint8_t> data)
 {
+    auto* frameData = data.data();
+    auto frameSize = data.size();
+
     Vector<uint8_t> buffer;
     switch (m_compatibilityMode) {
     case CompatibilityMode::H264: {
@@ -276,8 +279,11 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(c
     return result.releaseReturnValue();
 }
 
-RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(const uint8_t* frameData, size_t frameSize)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(Span<const uint8_t> data)
 {
+    auto* frameData = data.data();
+    auto frameSize = data.size();
+
     static const unsigned MaxHeaderSize = 17;
 
     Vector<uint8_t> transformedData;
@@ -337,12 +343,12 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(c
     return transformedData;
 }
 
-RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::transform(const uint8_t* data, size_t size)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::transform(Span<const uint8_t> data)
 {
     if (!m_hasKey)
         return makeUnexpected(ErrorInformation { Error::KeyID,  "Key is not initialized", 0 });
 
-    return m_isEncrypting ? encryptFrame(data, size) : decryptFrame(data, size);
+    return m_isEncrypting ? encryptFrame(data) : decryptFrame(data);
 }
 
 #if !PLATFORM(COCOA)

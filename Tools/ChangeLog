@@ -1,3 +1,13 @@
+2021-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Adopt span in RTCRtpSFrameTransform
+        https://bugs.webkit.org/show_bug.cgi?id=229029
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/RTCRtpSFrameTransformerTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-08-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed API test build fix with recent MacOS SDK.

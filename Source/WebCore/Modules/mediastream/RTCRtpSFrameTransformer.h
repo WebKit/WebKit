@@ -56,7 +56,7 @@ public:
         uint64_t keyId { 0 };
     };
     using TransformResult = Expected<Vector<uint8_t>, ErrorInformation>;
-    WEBCORE_EXPORT TransformResult transform(const uint8_t*, size_t);
+    WEBCORE_EXPORT TransformResult transform(Span<const uint8_t>);
 
     const Vector<uint8_t>& authenticationKey() const { return m_authenticationKey; }
     const Vector<uint8_t>& encryptionKey() const { return m_encryptionKey; }
@@ -71,8 +71,8 @@ public:
 private:
     WEBCORE_EXPORT explicit RTCRtpSFrameTransformer(CompatibilityMode);
 
-    TransformResult decryptFrame(const uint8_t*, size_t);
-    TransformResult encryptFrame(const uint8_t*, size_t);
+    TransformResult decryptFrame(Span<const uint8_t>);
+    TransformResult encryptFrame(Span<const uint8_t>);
 
     enum class ShouldUpdateKeys { No, Yes };
     ExceptionOr<void> updateEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t>, ShouldUpdateKeys = ShouldUpdateKeys::Yes) WTF_REQUIRES_LOCK(m_keyLock);

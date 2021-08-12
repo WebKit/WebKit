@@ -106,7 +106,7 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
             });
 
             // If no data, skip the frame since there is nothing to packetize or decode.
-            if (rtcFrame->data().data)
+            if (rtcFrame->data().data())
                 transformer->m_backend->processTransformedFrame(rtcFrame.get());
             return { };
         }));

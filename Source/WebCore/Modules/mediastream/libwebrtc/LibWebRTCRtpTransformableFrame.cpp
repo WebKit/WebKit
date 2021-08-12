@@ -52,18 +52,18 @@ std::unique_ptr<webrtc::TransformableFrameInterface> LibWebRTCRtpTransformableFr
     return WTFMove(m_rtcFrame);
 }
 
-RTCRtpTransformableFrame::Data LibWebRTCRtpTransformableFrame::data() const
+Span<const uint8_t> LibWebRTCRtpTransformableFrame::data() const
 {
     if (!m_rtcFrame)
-        return { nullptr, 0 };
+        return { };
     auto data = m_rtcFrame->GetData();
     return { data.begin(), data.size() };
 }
 
-void LibWebRTCRtpTransformableFrame::setData(Data data)
+void LibWebRTCRtpTransformableFrame::setData(Span<const uint8_t> data)
 {
     if (m_rtcFrame)
-        m_rtcFrame->SetData({ data.data, data.size });
+        m_rtcFrame->SetData({ data.data(), data.size() });
 }
 
 bool LibWebRTCRtpTransformableFrame::isKeyFrame() const

@@ -1,3 +1,33 @@
+2021-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Adopt span in RTCRtpSFrameTransform
+        https://bugs.webkit.org/show_bug.cgi?id=229029
+
+        Reviewed by Eric Carlson.
+
+        Transition to Span for improved readability, no change of behavior.
+
+        * Modules/mediastream/RTCEncodedFrame.cpp:
+        (WebCore::RTCEncodedFrame::data const):
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::processFrame):
+        (WebCore::RTCRtpSFrameTransform::initializeTransformer):
+        (WebCore::transformFrame):
+        (WebCore::RTCRtpSFrameTransform::createStreams):
+        * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+        (WebCore::RTCRtpSFrameTransformer::decryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::encryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::transform):
+        * Modules/mediastream/RTCRtpSFrameTransformer.h:
+        * Modules/mediastream/RTCRtpScriptTransformer.cpp:
+        (WebCore::RTCRtpScriptTransformer::writable):
+        * Modules/mediastream/RTCRtpTransformableFrame.h:
+        (): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.cpp:
+        (WebCore::LibWebRTCRtpTransformableFrame::data const):
+        (WebCore::LibWebRTCRtpTransformableFrame::setData):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.h:
+
 2021-08-12  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Removal of "TypedOM" prefix for CSSOM Object names

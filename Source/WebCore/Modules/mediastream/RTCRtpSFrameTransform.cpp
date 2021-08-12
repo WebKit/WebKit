@@ -115,9 +115,9 @@ static RTCRtpSFrameTransformErrorEvent::Type errorTypeFromInformation(const RTCR
     }
 }
 
-static std::optional<Vector<uint8_t>> processFrame(const uint8_t* data, size_t size, RTCRtpSFrameTransformer& transformer, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
+static std::optional<Vector<uint8_t>> processFrame(Span<const uint8_t> data, RTCRtpSFrameTransformer& transformer, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
 {
-    auto result = transformer.transform(data, size);
+    auto result = transformer.transform(data);
     if (!result.has_value()) {
         auto errorInformation = WTFMove(result.error());
         errorInformation.message = { };
@@ -159,9 +159,9 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
 
     backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->contextIdentifier(), backend = makeRef(backend), weakThis = makeWeakPtr(this)](auto&& frame) {
         auto chunk = frame->data();
-        if (!chunk.data || !chunk.size)
+        if (!chunk.data() || !chunk.size())
             return;
-        auto result = processFrame(chunk.data, chunk.size, transformer.get(), identifier, weakThis);
+        auto result = processFrame(chunk, transformer.get(), identifier, weakThis);
 
         if (!result)
             return;
@@ -187,9 +187,9 @@ void RTCRtpSFrameTransform::willClearBackend(RTCRtpTransformBackend& backend)
     backend.clearTransformableFrameCallback();
 }
 
-static void transformFrame(const uint8_t* data, size_t size, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
+static void transformFrame(Span<const uint8_t> data, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
 {
-    auto result = processFrame(data, size, transformer, identifier, weakTransform);
+    auto result = processFrame(data, transformer, identifier, weakTransform);
     auto buffer = result ? SharedBuffer::create(WTFMove(*result)) : SharedBuffer::create();
     source.enqueue(toJS(&globalObject, &globalObject, buffer->tryCreateArrayBuffer().get()));
 }
@@ -198,8 +198,8 @@ template<typename Frame>
 void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
 {
     auto chunk = frame.rtcFrame().data();
-    auto result = processFrame(chunk.data, chunk.size, transformer, identifier, weakTransform);
-    RTCRtpTransformableFrame::Data transformedChunk;
+    auto result = processFrame(chunk, transformer, identifier, weakTransform);
+    Span<const uint8_t> transformedChunk;
     if (result)
         transformedChunk = { result->data(), result->size() };
     frame.rtcFrame().setData(transformedChunk);
@@ -229,9 +229,9 @@ void RTCRtpSFrameTransform::createStreams(JSC::JSGlobalObject& globalObject)
         }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
             transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
         }, [&](RefPtr<ArrayBuffer>& value) {
-            transformFrame(static_cast<const uint8_t*>(value->data()), value->byteLength(), globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
+            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
         }, [&](RefPtr<ArrayBufferView>& value) {
-            transformFrame(static_cast<const uint8_t*>(value->data()), value->byteLength(), globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
+            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.contextIdentifier(), weakThis);
         });
         return { };
     }));
