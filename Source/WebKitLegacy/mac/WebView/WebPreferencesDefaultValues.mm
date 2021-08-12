@@ -49,9 +49,14 @@ bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
 
-    // FIXME: On MacOS, we need to deal with the cases when system feature flags are not available.
-    // But we need to fix <http://webkit.org/b/228926> first.
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
+    static bool isSystemWebKit = [] {
+        auto *bundle = [NSBundle bundleForClass:NSClassFromString(@"WebResource")];
+        return [bundle.bundlePath hasPrefix:@"/System/"];
+    }();
+
+    return isSystemWebKit ? _os_feature_enabled_impl("WebKit", featureName) : defaultValue;
+#else
     UNUSED_PARAM(defaultValue);
     return _os_feature_enabled_impl("WebKit", featureName);
 #endif // PLATFORM(MAC)

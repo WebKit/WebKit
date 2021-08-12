@@ -1,3 +1,19 @@
+2021-08-12  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r280726): [ Big Sur wk1 ] 25 imported/w3c/web-platform-tests/fetch/ failing
+        https://bugs.webkit.org/show_bug.cgi?id=228926
+        <rdar://problem/81715332>
+
+        Reviewed by Eric Carlson.
+
+        isFeatureFlagEnabled is called when creating/initializing WebPreferences.
+        It used to check for WebView, which triggers the execution of WebView initialize method
+        while DumpRenderTree is in the middle of creating its testing setup, including its storage testing sessions.
+        Instead, check for WebResource to remove this side effect and get back to past DumpRenderTree initialization.
+
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-08-11  Peng Liu  <peng.liu6@apple.com>
 
         Function _os_feature_enabled_impl() expects compile-time static strings as arguments
