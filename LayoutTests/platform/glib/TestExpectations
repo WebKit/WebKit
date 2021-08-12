@@ -277,6 +277,9 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-per
 # GLIB PASS since 238990@main
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-east-asian.html [ Pass ]
 
+# GLIB PASS since 240265@main
+imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

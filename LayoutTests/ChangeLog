@@ -1,3 +1,12 @@
+2021-08-11  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening a few failures and passes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for Cross-Origin-Embedder-Policy (COEP)

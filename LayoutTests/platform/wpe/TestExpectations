@@ -252,6 +252,9 @@ webkit.org/b/223729 [ Debug ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pa
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
 
+#Simple Line Layout
+webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
+
 # Subpixel
 webkit.org/b/216037 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ Pass ImageOnlyFailure ]
 
@@ -1230,13 +1233,11 @@ Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
 
-# This 3 fullscreen tests are still not passing.
-webkit.org/b/185676 fullscreen/requestFullscreen-escape-key.html [ Failure ]
-
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
 
 webkit.org/b/186100 css3/color-filters/color-filter-ignore-semantic.html [ ImageOnlyFailure ]
 
+# This fullscreen tests is still not passing.
 webkit.org/b/187601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
