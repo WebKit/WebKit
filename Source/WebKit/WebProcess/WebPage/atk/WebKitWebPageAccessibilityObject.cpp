@@ -139,6 +139,14 @@ static AtkObject* webkitWebPageAccessibilityObjectRefChild(AtkObject* atkObject,
     return nullptr;
 }
 
+static AtkStateSet* webkitWebPageAccessibilityObjectRefStateSet(AtkObject* atkObject)
+{
+    if (auto* rootObjectWrapper = accessibilityRootObjectWrapper(atkObject))
+        return atk_object_ref_state_set(rootObjectWrapper);
+
+    return atk_state_set_new();
+}
+
 static void webkit_web_page_accessibility_object_class_init(WebKitWebPageAccessibilityObjectClass* klass)
 {
     AtkObjectClass* atkObjectClass = ATK_OBJECT_CLASS(klass);
@@ -149,6 +157,7 @@ static void webkit_web_page_accessibility_object_class_init(WebKitWebPageAccessi
     atkObjectClass->get_index_in_parent = webkitWebPageAccessibilityObjectGetIndexInParent;
     atkObjectClass->get_n_children = webkitWebPageAccessibilityObjectGetNChildren;
     atkObjectClass->ref_child = webkitWebPageAccessibilityObjectRefChild;
+    atkObjectClass->ref_state_set = webkitWebPageAccessibilityObjectRefStateSet;
 }
 
 AtkObject* webkitWebPageAccessibilityObjectNew(WebPage* page)
