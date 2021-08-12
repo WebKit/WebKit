@@ -41,7 +41,7 @@
     line-height: calc(var(--navigation-bar-height) - 1px);
     border-bottom: 1px solid var(--border-color);
     background: var(--background-color);
-    overflow-x: hidden;
+    overflow: hidden;
     vertical-align: middle;
     white-space: nowrap;
 }

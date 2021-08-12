@@ -1,3 +1,15 @@
+2021-08-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r271348): Web Inspector: Table headers have vertical scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=228671
+        <rdar://problem/81638278>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Table.css:
+        (.table > .header):
+        Set overflow hidden for the y axis, not just x axis.
+
 2021-08-03  Sonia Singla  <soniasingla.1812@gmail.com>
 
         Web Inspector: Add standard logical properties to CSS keyword completion
