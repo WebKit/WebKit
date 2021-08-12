@@ -48,6 +48,5 @@ ADD_WK2_TEST(TestWebKitVersion ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWe
 ADD_WK2_TEST(TestWebViewEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp)
 
 if (ATSPI_FOUND)
-    ADD_WK2_TEST(AccessibilityTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/AccessibilityTestServer.cpp)
     ADD_WK2_TEST(TestWebKitAccessibility ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp)
 endif ()

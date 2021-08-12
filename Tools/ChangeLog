@@ -1,5 +1,24 @@
 2021-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Simplify TestWebKitAccessibility
+        https://bugs.webkit.org/show_bug.cgi?id=229032
+
+        Reviewed by Michael Catanzaro.
+
+        We don't really need to have a different process to test a11y. We can remove AccessibilityTestServer and use the
+        same test executable. That way we don't need to spawn a process and use DBus for the communication.
+
+        * TestWebKitAPI/Tests/WebKitGtk/AccessibilityTestServer.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (AccessibilityTest::findTestApplication): Find the accessible application corresponding to the test executable.
+        (AccessibilityTest::waitUntilChildrenRemoved): Use the WebViewTest main loop.
+        (testAtspiBasicHierarchy): Use WebViewTest::loadHtml.
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp:
+        (main): Set the program name to the executable name. It helps to a11y test to find the accessible app.
+
+2021-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] run-gtk-tests always fails to start accessibility daemons
         https://bugs.webkit.org/show_bug.cgi?id=229031
 

@@ -19,55 +19,29 @@
 
 #include "config.h"
 
-#include "TestMain.h"
+#include "WebViewTest.h"
 
 // The libatspi headers don't use G_BEGIN_DECLS
 extern "C" {
 #include <atspi/atspi.h>
 }
 
-class AccessibilityTest : public Test {
+class AccessibilityTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(AccessibilityTest);
 
-    AccessibilityTest()
-    {
-        GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "AccessibilityTestServer", nullptr));
-        char* args[3];
-        args[0] = testServerPath.get();
-        args[1] = const_cast<char*>(g_dbus_server_get_client_address(s_dbusServer.get()));
-        args[2] = nullptr;
-
-        g_assert_true(g_spawn_async(nullptr, args, nullptr, G_SPAWN_DEFAULT, nullptr, nullptr, &m_childProcessID, nullptr));
-    }
-
-    ~AccessibilityTest()
-    {
-        if (m_childProcessID) {
-            g_spawn_close_pid(m_childProcessID);
-            kill(m_childProcessID, SIGTERM);
-        }
-    }
-
-    void loadHTMLAndWaitUntilFinished(const char* html, const char* baseURI)
-    {
-        ensureProxy();
-
-        GUniqueOutPtr<GError> error;
-        GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(m_proxy.get(), "LoadHTML",
-            g_variant_new("(ss)", html, baseURI ? baseURI : ""), G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &error.outPtr()));
-        g_assert_no_error(error.get());
-    }
-
-    GRefPtr<AtspiAccessible> findTestServerApplication()
+    GRefPtr<AtspiAccessible> findTestApplication()
     {
         // Only one desktop is supported by ATSPI at the moment.
         GRefPtr<AtspiAccessible> desktop = adoptGRef(atspi_get_desktop(0));
 
+        // We can get warnings from atspi when trying to connect to applications.
+        Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
         int childCount = atspi_accessible_get_child_count(desktop.get(), nullptr);
+        Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
         for (int i = 0; i < childCount; ++i) {
             GRefPtr<AtspiAccessible> current = adoptGRef(atspi_accessible_get_child_at_index(desktop.get(), i, nullptr));
-            if (!g_strcmp0(atspi_accessible_get_name(current.get(), nullptr), "AccessibilityTestServer"))
+            if (!g_strcmp0(atspi_accessible_get_name(current.get(), nullptr), "TestWebKitAccessibility"))
                 return current;
         }
 
@@ -107,46 +81,21 @@ public:
             [](AtspiEvent* event, gpointer userData) {
                 auto* test = static_cast<AccessibilityTest*>(userData);
                 if (event->source == test->m_eventSource)
-                    g_main_loop_quit(test->m_mainLoop.get());
+                    g_main_loop_quit(test->m_mainLoop);
         }, this, nullptr));
         atspi_event_listener_register(listener.get(), "object:children-changed:remove", nullptr);
-        g_main_loop_run(m_mainLoop.get());
+        g_main_loop_run(m_mainLoop);
         m_eventSource = nullptr;
     }
 
 private:
-    void ensureProxy()
-    {
-        if (m_proxy)
-            return;
-
-        m_mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
-
-        if (s_dbusConnections.isEmpty()) {
-            g_idle_add([](gpointer userData) -> gboolean {
-                if (s_dbusConnections.isEmpty())
-                    return TRUE;
-
-                g_main_loop_quit(static_cast<GMainLoop*>(userData));
-                return FALSE;
-            }, m_mainLoop.get());
-            g_main_loop_run(m_mainLoop.get());
-        }
-
-        m_proxy = adoptGRef(g_dbus_proxy_new_sync(s_dbusConnections[0].get(), static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
-            nullptr, nullptr, "/org/webkit/gtk/AccessibilityTest", "org.webkit.gtk.AccessibilityTest", nullptr, nullptr));
-        g_assert_true(G_IS_DBUS_PROXY(m_proxy.get()));
-    }
-
-    GPid m_childProcessID { 0 };
-    GRefPtr<GDBusProxy> m_proxy;
-    GRefPtr<GMainLoop> m_mainLoop;
     AtspiAccessible* m_eventSource { nullptr };
 };
 
 static void testAtspiBasicHierarchy(AccessibilityTest* test, gconstpointer)
 {
-    test->loadHTMLAndWaitUntilFinished(
+    test->showInWindow();
+    test->loadHtml(
         "<html>"
         "  <body>"
         "   <h1>This is a test</h1>"
@@ -155,14 +104,15 @@ static void testAtspiBasicHierarchy(AccessibilityTest* test, gconstpointer)
         "  </body>"
         "</html>",
         nullptr);
+    test->waitUntilLoadFinished();
 
-    auto testServerApp = test->findTestServerApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testServerApp.get()));
-    GUniquePtr<char> name(atspi_accessible_get_name(testServerApp.get(), nullptr));
-    g_assert_cmpstr(name.get(), ==, "AccessibilityTestServer");
-    g_assert_cmpint(atspi_accessible_get_role(testServerApp.get(), nullptr), ==, ATSPI_ROLE_APPLICATION);
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+    GUniquePtr<char> name(atspi_accessible_get_name(testApp.get(), nullptr));
+    g_assert_cmpstr(name.get(), ==, "TestWebKitAccessibility");
+    g_assert_cmpint(atspi_accessible_get_role(testApp.get(), nullptr), ==, ATSPI_ROLE_APPLICATION);
 
-    auto rootObject = test->findRootObject(testServerApp.get());
+    auto rootObject = test->findRootObject(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(rootObject.get()));
     g_assert_cmpint(atspi_accessible_get_role(rootObject.get(), nullptr), ==, ATSPI_ROLE_FILLER);
 
@@ -194,7 +144,7 @@ static void testAtspiBasicHierarchy(AccessibilityTest* test, gconstpointer)
     g_assert_cmpstr(name.get(), ==, "a link");
     g_assert_cmpint(atspi_accessible_get_role(link.get(), nullptr), ==, ATSPI_ROLE_LINK);
 
-    test->loadHTMLAndWaitUntilFinished(
+    test->loadHtml(
         "<html>"
         "  <body>"
         "   <h1>This is another test</h1>"
@@ -202,12 +152,11 @@ static void testAtspiBasicHierarchy(AccessibilityTest* test, gconstpointer)
         "  </body>"
         "</html>",
         nullptr);
-
     // Check that children-changed::remove is emitted on the root object on navigation,
     // and the a11y hierarchy is updated.
     test->waitUntilChildrenRemoved(rootObject.get());
 
-    documentWeb = test->findDocumentWeb(testServerApp.get());
+    documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_role(documentWeb.get(), nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
 
