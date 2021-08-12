@@ -1,5 +1,29 @@
 2021-08-11  Peng Liu  <peng.liu6@apple.com>
 
+        [ BigSur Debug ] TestWebKitAPI.GPUProcess.CrashWhilePlayingAudioViaCreateMediaElementSource is flaky, hitting ASSERTION FAILED: !isInRoutingArbitrationForToken(token)
+        https://bugs.webkit.org/show_bug.cgi?id=227728
+        <rdar://problem/80237464>
+
+        Reviewed by Jer Noble.
+
+        After the GPU process crashes, the UI process will clean up the
+        `SharedRoutingArbitrator`, while a WebContent process might be resuming
+        the media playback and setup `AudioSessionRoutingArbitrator`.
+        There is a race condition here. If the WebContent process runs faster,
+        `SharedRoutingArbitrator` in the UI process will try to begin a duplicated
+        routing arbitration and lead to an assertion failure.
+
+        No new tests. Fixed following two API test failures:
+        - TestWebKitAPI.WebKit2.CrashGPUProcessWhileCapturing
+        - TestWebKitAPI.GPUProcess.CrashWhilePlayingAudioViaCreateMediaElementSource
+
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::AudioSessionRoutingArbitratorProxy::processDidTerminate):
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didClose):
+
+2021-08-11  Peng Liu  <peng.liu6@apple.com>
+
         [BigSur] TestWebKitAPI.AudioRoutingArbitration.Updating fails after r280726
         https://bugs.webkit.org/show_bug.cgi?id=228966
 

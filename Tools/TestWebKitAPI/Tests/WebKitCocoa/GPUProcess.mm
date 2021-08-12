@@ -368,8 +368,7 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 }
 
-// FIXME: Re-enable this test once <rdar://80237464> is resolved
-TEST(GPUProcess, DISABLED_CrashWhilePlayingAudioViaCreateMediaElementSource)
+TEST(GPUProcess, CrashWhilePlayingAudioViaCreateMediaElementSource)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));

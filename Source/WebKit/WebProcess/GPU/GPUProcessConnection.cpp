@@ -127,6 +127,11 @@ void GPUProcessConnection::didClose(IPC::Connection&)
     auto protector = makeRef(*this);
     WebProcess::singleton().gpuProcessConnectionClosed(*this);
 
+#if ENABLE(ROUTING_ARBITRATION)
+    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>())
+        arbitrator->leaveRoutingAbritration();
+#endif
+
     auto clients = m_clients;
     for (auto& client : clients)
         client.gpuProcessConnectionDidClose(*this);
