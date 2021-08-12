@@ -426,7 +426,7 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
     EXPECT_EQ(1, SecTrustGetCertificateCount(trust));
 
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-    auto certificate = adoptCF(CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(trust)).get(), 0));
+    auto certificate = adoptCF((CFDataRef)CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(trust)).get(), 0));
 #else
     auto certificate = adoptCF(SecCertificateCopyData(SecTrustGetCertificateAtIndex(trust, 0)));
 #endif

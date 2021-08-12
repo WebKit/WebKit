@@ -1,3 +1,10 @@
+2021-08-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed API test build fix with recent MacOS SDK.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (verifyCertificateAndPublicKey):
+
 2021-08-12  Jonathan Bedard  <jbedard@apple.com>
 
         [check-github-mirror-integrity] Differentiate between slow sync and collapsed commits
