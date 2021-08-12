@@ -1,3 +1,26 @@
+2021-08-12  Saam Barati  <sbarati@apple.com>
+
+        Update ARM64EHash
+        https://bugs.webkit.org/show_bug.cgi?id=228962
+        <rdar://79883337>
+
+        Reviewed by Mark Lam.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::ARM64EHash::makeDiversifier):
+        (JSC::ARM64EHash::nextValue):
+        (JSC::ARM64EHash::bitsForDiversifier):
+        (JSC::ARM64EHash::currentHash):
+        (JSC::ARM64EHash::setUpdatedHash):
+        (JSC::ARM64EHash::ARM64EHash):
+        (JSC::ARM64EHash::update):
+        (JSC::ARM64EHash::finalize):
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::AssemblerBuffer::hash const):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2021-08-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         WTFCrash in JSC::Lexer<char16_t>::append8
