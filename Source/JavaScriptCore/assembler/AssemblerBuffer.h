@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,35 +205,47 @@ namespace JSC {
 #if CPU(ARM64E)
     class ARM64EHash {
     public:
+        ARM64EHash(void* diversifier)
+        {
+            setUpdatedHash(0, 0, diversifier);
+        }
+
+        ALWAYS_INLINE uint32_t update(uint32_t instruction, uint32_t index, void* diversifier)
+        {
+            uint32_t currentHash = this->currentHash(index, diversifier);
+            uint64_t nextIndex = index + 1;
+            uint32_t output = nextValue(instruction, nextIndex, currentHash);
+            setUpdatedHash(output, nextIndex, diversifier);
+            return output;
+        }
+
+    private:
         static constexpr uint8_t initializationNamespace = 0x11;
 
         static ALWAYS_INLINE PtrTag makeDiversifier(uint8_t namespaceTag, uint64_t index, uint32_t value)
         {
             // <namespaceTag:8><index:24><value:32>
-            return static_cast<PtrTag>((static_cast<uint64_t>(namespaceTag) << 56) + ((index & 0xFFFFFF) << 32) + static_cast<uint64_t>(value));
+            return static_cast<PtrTag>((static_cast<uint64_t>(namespaceTag) << 56) + ((index & 0xFFFFFF) << 32) + value);
         }
 
         static ALWAYS_INLINE uint32_t nextValue(uint64_t instruction, uint64_t index, uint32_t currentValue)
         {
             uint64_t a = tagInt(instruction, makeDiversifier(0x12, index, currentValue));
             uint64_t b = tagInt(instruction, makeDiversifier(0x13, index, currentValue));
-            return static_cast<uint32_t>((a >> 39) ^ (b >> 23));
+            return (a >> 39) ^ (b >> 23);
         }
 
         static ALWAYS_INLINE uint32_t bitsForDiversifier(void* diversifier)
         {
-            return static_cast<uint32_t>(bitwise_cast<uintptr_t>(diversifier));
+            return bitwise_cast<uintptr_t>(diversifier);
         }
 
         ALWAYS_INLINE uint32_t currentHash(uint32_t index, void* diversifier)
         {
-            uint64_t result;
             bool hashFieldIsTagged = index == 0;
             if (hashFieldIsTagged)
-                result = untagInt(m_hash, makeDiversifier(initializationNamespace, index, bitsForDiversifier(diversifier)));
-            else
-                result = m_hash;
-            return static_cast<uint32_t>(result);
+                return untagInt(m_hash, makeDiversifier(initializationNamespace, index, bitsForDiversifier(diversifier)));
+            return m_hash;
         }
 
         ALWAYS_INLINE void setUpdatedHash(uint32_t value, uint32_t index, void* diversifier)
@@ -245,21 +257,6 @@ namespace JSC {
                 m_hash = value;
         }
 
-        ARM64EHash(void* diversifier)
-        {
-            setUpdatedHash(0, 0, diversifier);
-        }
- 
-        ALWAYS_INLINE uint32_t update(uint32_t instruction, uint32_t index, void* diversifier)
-        {
-            uint32_t currentHash = this->currentHash(index, diversifier);
-            uint64_t nextIndex = index + 1;
-            uint32_t output = nextValue(instruction, nextIndex, currentHash);
-            setUpdatedHash(output, nextIndex, diversifier);
-            return output;
-        }
-
-    private:
         uint64_t m_hash;
     };
 #endif
