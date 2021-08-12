@@ -1,3 +1,14 @@
+2021-08-11  Darin Adler  <darin@apple.com>
+
+        Add deduction guide to RetainPtr, use constexpr a bit more, and streamline the implementation
+        https://bugs.webkit.org/show_bug.cgi?id=228852
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        Test the deduction guide by writing RetainPtr instead of RetainPtr<NSProgress>.
+
 2021-08-11  Peng Liu  <peng.liu6@apple.com>
 
         [ BigSur Debug ] TestWebKitAPI.GPUProcess.CrashWhilePlayingAudioViaCreateMediaElementSource is flaky, hitting ASSERTION FAILED: !isInRoutingArbitrationForToken(token)

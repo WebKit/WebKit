@@ -225,7 +225,7 @@ private:
         kitFindOptions.add(WebKit::FindOptions::DetermineMatchIndex);
     }
 
-    RetainPtr<NSProgress> progress = [NSProgress progressWithTotalUnitCount:1];
+    RetainPtr progress = [NSProgress progressWithTotalUnitCount:1];
     auto copiedResultCollector = Block_copy(resultCollector);
     _findReplyCallbacks.append([progress, copiedResultCollector] (NSArray *matches, bool didWrap) {
         [progress setCompletedUnitCount:1];

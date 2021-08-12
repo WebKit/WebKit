@@ -1,3 +1,20 @@
+2021-08-11  Darin Adler  <darin@apple.com>
+
+        Add deduction guide to RetainPtr, use constexpr a bit more, and streamline the implementation
+        https://bugs.webkit.org/show_bug.cgi?id=228852
+
+        Reviewed by Sam Weinig.
+
+        * wtf/RetainPtr.h: Sort includes. Made many functions constexpr including the move
+        constructors and adoptCF. Use using instead of typedef in most places. Use
+        remove_pointer_t, conditional_t, is_convertible_v, is_same_v, and other such templates
+        to simplify expressions. Initialize the m_ptr data member and use the default constructor.
+        Removed unneeded StorageType synonym for CFTypeRef. Move some inline function bodies out
+        of the class template definition. Use if constexpr to get rid of the need for the overloaded
+        autoreleaseHelper function. Added a deduction guide so we can use expressions with the
+        type RetainPtr on the left side, and an Objective-C pointer or CFTypeRef on the right side,
+        and have the appropriate RetainPtr type deduced.
+
 2021-08-11  Sihui Liu  <sihui_liu@apple.com>
 
         Suspend WorkQueue of ResourceLoadStatistics and LocalStorage sooner
