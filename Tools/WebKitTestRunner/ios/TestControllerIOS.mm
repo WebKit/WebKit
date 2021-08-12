@@ -32,6 +32,7 @@
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
+#import "TextInputSPI.h"
 #import "UIKitSPI.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -163,6 +164,13 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [keyboardPreferences setValue:@YES forPreferenceKey:automaticMinimizationEnabledPreferenceKey];
         CFPreferencesSetAppValue((__bridge CFStringRef)automaticMinimizationEnabledPreferenceKey, kCFBooleanTrue, globalPreferencesDomainName);
     }
+
+    // Ensures that changing selection does not cause the software keyboard to appear,
+    // even when the hardware keyboard is attached.
+    auto hardwareKeyboardLastSeenPreferenceKey = @"HardwareKeyboardLastSeen";
+    auto preferencesActions = keyboardPreferences.preferencesActions;
+    if (![preferencesActions oneTimeActionCompleted:hardwareKeyboardLastSeenPreferenceKey])
+        [preferencesActions didTriggerOneTimeAction:hardwareKeyboardLastSeenPreferenceKey];
 
     // Disables the dictation keyboard shortcut for testing.
     auto dictationKeyboardShortcutPreferenceKey = @"HWKeyboardDictationShortcut";

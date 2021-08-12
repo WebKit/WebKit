@@ -1109,11 +1109,14 @@ WTF_EXTERN_C_END
 
 #endif
 
+@protocol TIPreferencesControllerActions;
+
 @interface UIKeyboardPreferencesController : NSObject
 + (UIKeyboardPreferencesController *)sharedPreferencesController;
 - (void)setValue:(id)value forPreferenceKey:(NSString *)key;
 - (BOOL)boolForPreferenceKey:(NSString *)key;
 - (id)valueForPreferenceKey:(NSString *)key;
+@property (nonatomic, readonly) UIKeyboardPreferencesController<TIPreferencesControllerActions> *preferencesActions;
 @end
 
 @interface UIMenuItem (UIMenuController_SPI)

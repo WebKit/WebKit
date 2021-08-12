@@ -1,3 +1,15 @@
+2021-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ iOS Debug] 3 editing/pasteboard/smart-paste-paragraph tests are flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=228285
+        rdar://81118724
+
+        Reviewed by Tim Horton and Aditya Keerthi.
+
+        Remove the flaky test failure expectations.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS EWS ] inspector/canvas/recording-webgl-snapshots.html is flaky failing.

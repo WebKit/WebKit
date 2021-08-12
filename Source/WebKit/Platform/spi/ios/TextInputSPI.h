@@ -27,9 +27,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <TextInput/TIPreferencesController.h>
 #import <TextInput/TI_NSStringExtras.h>
 
 #else
+
+@protocol TIPreferencesControllerActions <NSObject>
+- (BOOL)oneTimeActionCompleted:(NSString *)actionKey;
+- (void)didTriggerOneTimeAction:(NSString *)actionKey;
+@end
 
 @interface NSString (TextInputDetails)
 - (BOOL)_containsCJScripts;

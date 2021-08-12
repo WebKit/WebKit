@@ -1,3 +1,26 @@
+2021-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ iOS Debug] 3 editing/pasteboard/smart-paste-paragraph tests are flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=228285
+        rdar://81118724
+
+        Reviewed by Tim Horton and Aditya Keerthi.
+
+        These three editing tests occasionally fail when synthesizing a double-tap gesture in order to select a word in
+        editable content. This happens because unless UIKit has observed at least one keypress event (e.g. from a
+        previous editing test), it presents the software keyboard underneath `-[UIKeyboardImpl showKeyboardIfNeeded]`
+        when setting the selection via UITextSelectionInteraction. This causes the input view frame to expand from the
+        collapsed (UCB) height of 44pt to the full software keyboard height, which in turn causes the second touch in
+        the synthesized double tap gesture to _sometimes_ hit-test to the wrong location, resulting in these test
+        failures.
+
+        To mitigate this, ensure that we have consistent behavior in layout tests when changing the text selection in
+        editable content by directly setting a TextInput default to make the keyboard behave as if it has previously
+        seen a keypress via the hardware keyboard.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2021-08-12  Patrick Angle  <pangle@apple.com>
 
         Add myself (Patrick Angle) to watchlist for Inspector code changes
