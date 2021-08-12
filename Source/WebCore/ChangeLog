@@ -1,3 +1,28 @@
+2021-08-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html fails on Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=228821
+        <rdar://problem/81562236>
+
+        Reviewed by Kenneth Russell.
+
+        When uploading the WebGL texture content from videos, use the video
+        visible data size instead of video element size. The video data can
+        be scaled with its filters, but we should upload only the original
+        pixels.
+
+        The GPU codepath already did this, but CPU codepath did not.
+        This change fixes the CPU codepath.
+
+        Fixes webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html
+        webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        (WebCore::WebGLRenderingContextBase::videoFrameToImage):
+        (WebCore::WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2021-08-12  Youenn Fablet  <youenn@apple.com>
 
         Implement SFrameTransform error handling
