@@ -1945,6 +1945,10 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
     NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"];
 
+    unsigned timeout = 0;
+    while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
+        TestWebKitAPI::Util::sleep(0.1);
+
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
 
     [webView.get().configuration.websiteDataStore _sendNetworkProcessWillSuspendImminently];

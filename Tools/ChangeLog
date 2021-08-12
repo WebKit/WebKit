@@ -1,3 +1,16 @@
+2021-08-12  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iPadOS 14): [ iPadOS wk2 ] TestWebKitAPI.ServiceWorkers.SuspendNetworkProcess is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=217714
+        <rdar://problem/70296664>
+
+        Reviewed by Geoffrey Garen.
+
+        Give the database some time to get written out to disk before we try and suspend the network process, to try
+        and address the flakiness.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ iOS Debug] 3 editing/pasteboard/smart-paste-paragraph tests are flaky failing
