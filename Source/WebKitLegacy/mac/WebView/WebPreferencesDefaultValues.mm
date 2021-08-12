@@ -45,7 +45,7 @@ namespace WebKit {
 #if PLATFORM(COCOA)
 
 // Because of <rdar://problem/60608008>, WebKit has to parse the feature flags plist file
-bool isFeatureFlagEnabled(const String& featureName, bool defaultValue)
+bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
 
@@ -53,7 +53,7 @@ bool isFeatureFlagEnabled(const String& featureName, bool defaultValue)
     // But we need to fix <http://webkit.org/b/228926> first.
 #if PLATFORM(COCOA)
     UNUSED_PARAM(defaultValue);
-    return _os_feature_enabled_impl("WebKit", (const char*)featureName.characters8());
+    return _os_feature_enabled_impl("WebKit", featureName);
 #endif // PLATFORM(MAC)
 
 #else

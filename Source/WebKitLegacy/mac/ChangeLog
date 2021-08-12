@@ -1,3 +1,20 @@
+2021-08-11  Peng Liu  <peng.liu6@apple.com>
+
+        Function _os_feature_enabled_impl() expects compile-time static strings as arguments
+        https://bugs.webkit.org/show_bug.cgi?id=229017
+        <rdar://81813732>
+
+        Reviewed by Tim Horton.
+
+        There are multiple issues in the current implementation of `isFeatureFlagEnabled()`.
+        1. `_os_feature_enabled_impl()` expects compile-time static strings as arguments.
+        So we should not use `String` here.
+        2. As Simon Fraser pointed out, `String::characters8()` is not null terminated.
+
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-08-10  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r280726): [ Big Sur wk1 ] 25 imported/w3c/web-platform-tests/fetch/ failing

@@ -36,7 +36,7 @@
 namespace WebKit {
 
 #if PLATFORM(COCOA)
-bool isFeatureFlagEnabled(const String&, bool defaultValue = false);
+bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
 #endif
 
 #if HAVE(INCREMENTAL_PDF_APIS)

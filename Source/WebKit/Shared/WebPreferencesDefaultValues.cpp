@@ -42,7 +42,7 @@
 namespace WebKit {
 
 #if !PLATFORM(COCOA)
-bool isFeatureFlagEnabled(const String&, bool defaultValue)
+bool isFeatureFlagEnabled(const char*, bool defaultValue)
 {
     return defaultValue;
 }
