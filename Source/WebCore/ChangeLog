@@ -1,3 +1,21 @@
+2021-08-13  Tim Nguyen  <ntim@apple.com>
+
+        Check for dialog existence in top layer in HTMLDialogElement::showModal & close
+        https://bugs.webkit.org/show_bug.cgi?id=227907
+
+        Reviewed by Antti Koivisto.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal.html
+
+        Test expectations are unchanged because the test uses elementFromPoint, meaning that behaviour difference isn't noticeable
+        until top layer rendering bits are implemented (which would change elementFromPoint's result by shuffling z-order based on top layer elements).
+
+        * dom/Element.h:
+        (WebCore::Element::isInTopLayer const):
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+
 2021-08-13  Jean-Yves Avenard  <jya@apple.com>
 
         nexttrack and previoustrack MediaSession handlers not working

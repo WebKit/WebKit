@@ -511,6 +511,8 @@ public:
     const RenderStyle* lastStyleChangeEventStyle(PseudoId) const;
     void setLastStyleChangeEventStyle(PseudoId, std::unique_ptr<const RenderStyle>&&);
 
+    bool isInTopLayer() const { return document().topLayerElements().contains(makeRef(*const_cast<Element*>(this))); }
+
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() const { return hasNodeFlag(NodeFlag::ContainsFullScreenElement); }
     void setContainsFullScreenElement(bool);
