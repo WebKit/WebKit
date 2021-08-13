@@ -1,3 +1,11 @@
+2021-08-12  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening web-process-crashed API test failure
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-08-12  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (iPadOS 14): [ iPadOS wk2 ] TestWebKitAPI.ServiceWorkers.SuspendNetworkProcess is a flaky failure
