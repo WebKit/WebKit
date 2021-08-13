@@ -1,3 +1,15 @@
+2021-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Use profile auto level for WebRTC H264 encoder on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=229071
+        <rdar://80345048>
+
+        Reviewed by Eric Carlson.
+
+        AS H264 encoder will fail if its profile is too low compared to the size of the video.
+        Use autolevel to prevent this.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+
 2021-07-01  Youenn Fablet  <youenn@apple.com>
 
         Disable ABSL_HAVE_THREAD_LOCAL in libwebrtc

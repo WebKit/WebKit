@@ -260,6 +260,7 @@ CFStringRef ExtractProfile(const webrtc::H264::ProfileLevelId &profile_level_id)
 
     case webrtc::H264::kProfileConstrainedHigh:
     case webrtc::H264::kProfileHigh:
+#if !defined(WEBRTC_ARCH_ARM64)
       switch (profile_level_id.level) {
         case webrtc::H264::kLevel3:
           return kVTProfileLevel_H264_High_3_0;
@@ -289,6 +290,9 @@ CFStringRef ExtractProfile(const webrtc::H264::ProfileLevelId &profile_level_id)
         case webrtc::H264::kLevel2_2:
           return kVTProfileLevel_H264_High_AutoLevel;
       }
+#else
+      return kVTProfileLevel_H264_High_AutoLevel;
+#endif
   }
 }
 

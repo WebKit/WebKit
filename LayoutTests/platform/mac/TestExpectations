@@ -2121,7 +2121,6 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ arm64 ] webrtc/video.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-with-data-channel.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-unmute.html [ Pass Timeout ]
-[ arm64 ] webrtc/h264-high.html [ Skip ]
 [ arm64 ] webrtc/vp9-profile2.html [ Skip ]
 [ arm64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure ]
 [ arm64 ] webrtc/h264-baseline.html  [ Failure Timeout ]

@@ -1,3 +1,13 @@
+2021-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Use profile auto level for WebRTC H264 encoder on Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=229071
+        <rdar://80345048>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/TestExpectations:
+
 2021-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r281009.
