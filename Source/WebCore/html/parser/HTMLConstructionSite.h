@@ -238,7 +238,9 @@ private:
     constexpr static size_t maximumCachedStringLength = 128;
 
     // Parallel arrays storing a 64 bit code and an index into m_atoms for the
-    // most recently atomized whitespace-only string of a given length.
+    // most recently atomized whitespace-only string of a given length. The
+    // indices into these two arrays are the string length minus 1, so the code
+    // for a whitespace-only string of length 2 is stored at m_codes[1], etc.
     uint64_t m_codes[maximumCachedStringLength] { 0 };
     uint8_t m_indexes[maximumCachedStringLength] { 0 };
 
