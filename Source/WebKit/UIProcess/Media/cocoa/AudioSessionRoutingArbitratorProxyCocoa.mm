@@ -52,6 +52,8 @@ AudioSessionRoutingArbitratorProxy::~AudioSessionRoutingArbitratorProxy()
 
 void AudioSessionRoutingArbitratorProxy::processDidTerminate()
 {
+    if (SharedRoutingArbitrator::sharedInstance().isInRoutingArbitrationForToken(m_token))
+        endRoutingArbitration();
 }
 
 void AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType category, ArbitrationCallback&& callback)

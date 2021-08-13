@@ -1,3 +1,22 @@
+2021-08-12  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r280951): [ Big Sur ] TestWebKitAPI.AudioRoutingArbitration.Close is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229040
+
+        Reviewed by Eric Carlson.
+
+        Function `AudioSessionRoutingArbitratorProxy::processDidTerminate()` should
+        be called only in the case that the corresponding WebContent process exits,
+        whereas `GPUProcessConnection::didClose()` (in WebContent process) deals with
+        the case that the GPU process crashes.
+
+        No new tests. Fix an API test failure.
+
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::AudioSessionRoutingArbitratorProxy::processDidTerminate):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::gpuProcessExited):
+
 2021-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [ iOS Debug] 3 editing/pasteboard/smart-paste-paragraph tests are flaky failing
