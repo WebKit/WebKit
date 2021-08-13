@@ -320,6 +320,9 @@ protected:
     void setResolvedURL(URL&&);
     const URL& resolvedURL() const { return m_resolvedURL; }
 
+    void setNeedsRenderingModeChanged();
+    void renderingModeChanged();
+
 private:
     MediaPlayer* m_player;
 
@@ -368,6 +371,7 @@ private:
     bool m_characteristicsChanged;
     bool m_shouldMaintainAspectRatio;
     bool m_seeking;
+    bool m_needsRenderingModeChanged { false };
 };
 
 } // namespace WebCore

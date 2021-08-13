@@ -442,15 +442,21 @@ void MediaPlayerPrivateAVFoundationCF::createContextVideoRenderer()
     if (imageGenerator(m_avfWrapper))
         return;
 
-    if (m_avfWrapper)
-        m_avfWrapper->createImageGenerator();
+    if (!m_avfWrapper)
+        return;
+
+    m_avfWrapper->createImageGenerator();
+    setNeedsRenderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationCF::destroyContextVideoRenderer()
 {
     ASSERT(isMainThread());
-    if (m_avfWrapper)
-        m_avfWrapper->destroyImageGenerator();
+    if (!m_avfWrapper)
+        return;
+
+    m_avfWrapper->destroyImageGenerator();
+    setNeedsRenderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationCF::createVideoLayer()
@@ -458,16 +464,22 @@ void MediaPlayerPrivateAVFoundationCF::createVideoLayer()
     ASSERT(isMainThread());
     ASSERT(supportsAcceleratedRendering());
 
-    if (m_avfWrapper)
-        m_avfWrapper->createAVCFVideoLayer();
+    if (!m_avfWrapper)
+        return;
+
+    m_avfWrapper->createAVCFVideoLayer();
+    setNeedsRenderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundationCF::destroyVideoLayer()
 {
     ASSERT(isMainThread());
     LOG(Media, "MediaPlayerPrivateAVFoundationCF::destroyVideoLayer(%p) - destroying %p", this, videoLayer(m_avfWrapper));
-    if (m_avfWrapper)
-        m_avfWrapper->destroyVideoLayer();
+    if (!m_avfWrapper)
+        return;
+
+    m_avfWrapper->destroyVideoLayer();
+    setNeedsRenderingModeChanged();
 }
 
 bool MediaPlayerPrivateAVFoundationCF::hasAvailableVideoFrame() const
