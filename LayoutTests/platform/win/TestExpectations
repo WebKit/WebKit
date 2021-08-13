@@ -3782,6 +3782,8 @@ webkit.org/b/177234 http/wpt/resource-timing/rt-cors.worker.html [ Skip ]
 webkit.org/b/177378 fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 webkit.org/b/177385 fast/forms/listbox-typeahead-greek.html [ Failure ]
 
+webkit.org/b/177385 fast/forms/caps-lock-indicator-width.html [ Crash ]
+
 webkit.org/b/177541 accessibility/image-load-on-delay.html [ Failure ]
 
 # preconnect tests are failing on Windows.

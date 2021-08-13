@@ -1,3 +1,12 @@
+2021-08-13  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Win EWS ] fast/forms/caps-lock-indicator-width.html is crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=229098
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-08-13  Youenn Fablet  <youenn@apple.com>
 
         Use profile auto level for WebRTC H264 encoder on Apple Silicon
