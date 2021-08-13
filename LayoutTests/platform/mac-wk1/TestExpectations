@@ -129,7 +129,6 @@ webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-dispos
 webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-octet-stream-no-extension.html [ Skip ]
 webkit.org/b/156069 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Skip ]
-http/tests/security/frame-src-and-blob-download.https.html [ Skip ]
 
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]
@@ -1181,9 +1180,6 @@ webkit.org/b/217761 [ Debug ] webgl/conformance/extensions/s3tc-and-rgtc.html [ 
 webkit.org/b/217761 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Skip ]
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
-
-webkit.org/b/208477 [ Catalina ] accessibility/mac/test.mp3/boot.xml [ Skip ]
-webkit.org/b/208479 [ Catalina ] accessibility/mac/test.mp3/root.xml [ Skip ]
 
 webkit.org/b/221095 [ BigSur+ ] media/mediacapabilities/vp9.html [ Skip ]
 

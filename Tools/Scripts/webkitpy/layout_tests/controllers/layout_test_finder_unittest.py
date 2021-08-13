@@ -105,6 +105,12 @@ class LayoutTestFinderTests(unittest.TestCase):
         self.assertFalse(finder._is_test_file(finder._filesystem, '', 'foo-ref.xhtml'))
         self.assertFalse(finder._is_test_file(finder._filesystem, '', 'ref-foo.html'))
         self.assertFalse(finder._is_test_file(finder._filesystem, '', 'notref-foo.xhr'))
+        self.assertFalse(finder._is_test_file(finder._filesystem, '', 'foo_wsh.py'))
+        self.assertFalse(finder._is_test_file(finder._filesystem, '', '_wsh.py'))
+        self.assertFalse(finder._is_test_file(finder._filesystem, '', 'boot.xml'))
+        self.assertFalse(finder._is_test_file(finder._filesystem, '', 'root.xml'))
+        self.assertTrue(finder._is_test_file(finder._filesystem, '', 'foo-boot.xml'))
+        self.assertTrue(finder._is_test_file(finder._filesystem, '', 'foo-root.xml'))
 
     def test_is_w3c_resource_file(self):
         finder = self.make_finder()

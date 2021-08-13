@@ -114,9 +114,6 @@ webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/222685 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
 webkit.org/b/222685 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
 
-# WebGPU is not enabled on iOS Simulator.
-webgpu [ Skip ]
-
 # webkit.org/b/223724 These two tests are flakey timeouts on iOS Debug:
 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Pass Timeout ]

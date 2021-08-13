@@ -2112,7 +2112,6 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 # webkit.org/b/223043 the following tests have issues only on Apple Silicon
 [ arm64 ] webrtc/concurrentVideoPlayback2.html [ Pass Timeout ]
 [ arm64 ] webrtc/concurrentVideoPlayback.html [ Pass Timeout ]
-[ arm64 ] webrtc/direction-change.html [ Pass Timeout ]
 [ arm64 ] webrtc/multi-video.html [ Pass Timeout ]
 [ arm64 ] webrtc/h265.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-setDirection.html [ Pass Timeout ]
@@ -2216,7 +2215,9 @@ webkit.org/b/225484 imported/w3c/web-platform-tests/css/css-animations/translati
 
 webkit.org/b/225425 [ Debug ] webgl/1.0.3/conformance/glsl/misc/expression-list-in-declarator-initializer.html [ Pass Timeout ]
 
-webkit.org/b/225523 webrtc/direction-change.html [ Pass Failure ]
+# This test is a flaky timeout on Apple Silicon and a flaky failure on other platforms.
+# See https://webkit.org/b/120081 for why this is one expectation.
+webkit.org/b/225523 webrtc/direction-change.html [ Pass Timeout Failure ]
 
 webkit.org/b/22525 webrtc/video-replace-muted-track.html [ Pass Failure ]
 

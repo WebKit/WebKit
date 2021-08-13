@@ -2646,8 +2646,6 @@ crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publi
 
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
-webkit.org/b/172052 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
-
 webkit.org/b/183441 mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
 
 # <rdar://problem/32632415> REGRESSION (ImageIO-1666): LayoutTests fast/images are failing together.

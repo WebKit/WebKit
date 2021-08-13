@@ -42,6 +42,16 @@ _log = logging.getLogger(__name__)
 # When collecting test cases, we include any file with these extensions.
 _supported_test_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.pl', '.py', '.htm', '.php', '.svg', '.mht', '.xht'])
 
+_skipped_filename_patterns = set([
+    # Special case for WebSocket tooling.
+    r'.*_wsh.py',
+
+    # The WebKit1 bot sometimes creates these files during the course of testing.
+    # https://webkit.org/b/208477
+    r'boot\.xml',
+    r'root\.xml'
+])
+
 
 # If any changes are made here be sure to update the isUsedInReftest method in old-run-webkit-tests as well.
 def _is_reference_html_file(filesystem, dirname, filename):
@@ -135,9 +145,10 @@ class LayoutTestFinder(object):
             return False
         if self._is_w3c_resource_file(filesystem, dirname, filename):
             return False
-        # Special case for websocket tooling
-        if filename.endswith('_wsh.py'):
-            return False
+
+        for pattern in _skipped_filename_patterns:
+            if re.match(pattern, filename):
+                return False
         return True
 
     def _is_w3c_resource_file(self, filesystem, dirname, filename):

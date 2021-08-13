@@ -1,3 +1,21 @@
+2021-08-13  Martin Robinson  <mrobinson@webkit.org>
+
+        Get lint-test-expectations passing
+        https://bugs.webkit.org/show_bug.cgi?id=228999
+
+        Reviewed by Ryan Haddad.
+
+        * TestExpectations: Remove expectation for non-existent test.
+        * platform/ios-simulator/TestExpectations: Ditto.
+        * platform/ios-wk2/TestExpectations: Ditto.
+        * platform/ios/TestExpectations: Dito.
+        * platform/mac-wk1/TestExpectations: Ditto. Also, the expectations for the non-test
+        'boot.xml' and 'root.xml' have been moved to workarounds in webkitpy.
+        * platform/mac/TestExpectations: Remove references to non-existent tests. Also combined
+        one expectation that was not linting due to a problem like the one described in bug
+        120081.
+        * platform/win/TestExpectations: Ditto.
+
 2021-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Unprefix -webkit-backface-visibility
