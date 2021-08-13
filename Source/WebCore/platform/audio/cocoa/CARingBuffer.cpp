@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -325,7 +325,7 @@ void CARingBuffer::getCurrentFrameBoundsWithoutUpdate(uint64_t& startFrame, uint
     m_buffers->getCurrentFrameBounds(startFrame, endFrame);
 }
 
-void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
+SUPPRESS_TSAN void CARingBufferStorageVector::getCurrentFrameBounds(uint64_t& startFrame, uint64_t& endFrame)
 {
     uint32_t curPtr = m_timeBoundsQueuePtr.load();
     uint32_t index = curPtr & kGeneralRingTimeBoundsQueueMask;
@@ -357,7 +357,7 @@ uint64_t CARingBuffer::currentStartFrame() const
     return m_buffers->currentStartFrame();
 }
 
-uint64_t CARingBufferStorageVector::currentStartFrame() const
+SUPPRESS_TSAN uint64_t CARingBufferStorageVector::currentStartFrame() const
 {
     uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
     return m_timeBoundsQueue[index].m_startFrame;
@@ -368,7 +368,7 @@ uint64_t CARingBuffer::currentEndFrame() const
     return m_buffers->currentEndFrame();
 }
 
-uint64_t CARingBufferStorageVector::currentEndFrame() const
+SUPPRESS_TSAN uint64_t CARingBufferStorageVector::currentEndFrame() const
 {
     uint32_t index = m_timeBoundsQueuePtr.load() & kGeneralRingTimeBoundsQueueMask;
     return m_timeBoundsQueue[index].m_endFrame;

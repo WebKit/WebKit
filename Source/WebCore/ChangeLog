@@ -1,3 +1,42 @@
+2021-08-12  David Kilzer  <ddkilzer@apple.com>
+
+        ThreadSanitizer: data race in WebCore::CARingBufferStorageVector::setCurrentFrameBounds() / getCurrentFrameBounds()
+        <https://webkit.org/b/229014>
+        <rdar://problem/81817224>
+
+        Reviewed by Chris Dumez.
+
+        This turned out to be a false-positive since reads and writes
+        are protected differently, and it's okay if a read returns data
+        from the ring buffer that is one slot older than the current
+        write.
+
+        Covered by layout tests running with TSan:
+            fast/mediastream/getUserMedia-webaudio.html
+            fast/mediastream/mediastreamtrack-audio-clone.html
+            imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-insertDTMF.https.html
+            imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html
+            imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-track-stats.https.html
+            imported/w3c/web-platform-tests/webrtc/protocol/missing-fields.html
+            webrtc/audio-peer-connection-g722.html
+            webrtc/audio-peer-connection-webaudio.html
+            webrtc/audio-replace-track.html
+            webrtc/peer-connection-audio-mute.html
+            webrtc/peer-connection-audio-mute2.html
+            webrtc/peer-connection-createMediaStreamDestination.html
+            webrtc/peer-connection-remote-audio-mute.html
+            webrtc/peer-connection-remote-audio-mute2.html
+
+        * platform/audio/cocoa/CARingBuffer.cpp:
+        (WebCore::CARingBufferStorageVector::getCurrentFrameBounds):
+        (WebCore::CARingBufferStorageVector::currentStartFrame const):
+        (WebCore::CARingBufferStorageVector::currentEndFrame const):
+        - Add SUPPRESS_TSAN attribute since reads are protected by
+          std::atomic<int32_t> m_timeBoundsQueuePtr only being
+          incremented after the next m_timeBoundsQueue slot is updated.
+          Writes are potected by
+          Locker locker { m_currentFrameBoundsLock }.
+
 2021-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r280977.
