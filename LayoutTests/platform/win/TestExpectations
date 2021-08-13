@@ -3774,6 +3774,8 @@ inspector/console/webcore-logging.html [ Skip ]
 
 webkit.org/b/177216 fast/images/animated-image-mp4.html [ Skip ]
 
+webkit.org/b/228325 fast/images/exif-orientation-composited.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/177234 http/wpt/resource-timing/rt-cors.html [ Skip ]
 webkit.org/b/177234 http/wpt/resource-timing/rt-cors.worker.html [ Skip ]
 
