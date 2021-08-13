@@ -53,6 +53,8 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_id(playerIdentifier)
 {
     INFO_LOG(LOGIDENTIFIER);
+
+    acceleratedRenderingStateChanged();
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

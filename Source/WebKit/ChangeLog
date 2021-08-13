@@ -1,3 +1,18 @@
+2021-08-13  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] RemoteMediaPlayerProxy does not receive acceleratedRenderingStateChanged() when video element switches sources
+        https://bugs.webkit.org/show_bug.cgi?id=229092
+        <rdar://81902163>
+
+        Reviewed by Eric Carlson.
+
+        Follow up to r280723; in that patch, a call to acceleratedRenderingStateChanged() was added to
+        the MediaPlayerPrivateRemote, but only for non-Cocoa ports. Add the same method to the constructor
+        for the Cocoa version as well.
+
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+
 2021-08-13  Alex Christensen  <achristensen@webkit.org>
 
         SandboxExtension::Handle creation should return std::optional instead of bool
