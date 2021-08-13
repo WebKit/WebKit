@@ -1,3 +1,23 @@
+2021-08-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Crash in MockMediaSourcePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=226795
+
+        Reviewed by Darin Adler.
+
+        The MockMediaPlayerMediaSource uses callOnMainThread() to execute advanceCurrentTime(). It might
+        happen that the object is destructed before the callback is executed as it isn't a ref counted
+        object. That leads to a crash on ASAN builds.
+
+        Made the object capable of creating weak ptrs so that we could check whether the _this_ object
+        has been freed in the meantime or not. For the former case we just bail out.
+
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::play): Create a WeakPtr.
+        (WebCore::MockMediaPlayerMediaSource::seekWithTolerance): Ditto.
+        (WebCore::MockMediaPlayerMediaSource::seekCompleted): Ditto.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h: inherit from CanMakeWeakPtr.
+
 2021-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Unprefix -webkit-backface-visibility

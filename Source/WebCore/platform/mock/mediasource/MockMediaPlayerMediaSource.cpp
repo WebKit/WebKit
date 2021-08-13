@@ -123,7 +123,9 @@ void MockMediaPlayerMediaSource::cancelLoad()
 void MockMediaPlayerMediaSource::play()
 {
     m_playing = 1;
-    callOnMainThread([this] {
+    callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+        if (!weakThis)
+            return;
         advanceCurrentTime();
     });
 }
@@ -220,7 +222,9 @@ void MockMediaPlayerMediaSource::seekWithTolerance(const MediaTime& time, const 
         m_player->timeChanged();
 
         if (m_playing)
-            callOnMainThread([this] {
+            callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+                if (!weakThis)
+                    return;
                 advanceCurrentTime();
             });
     }
@@ -282,7 +286,9 @@ void MockMediaPlayerMediaSource::seekCompleted()
     m_player->timeChanged();
 
     if (m_playing)
-        callOnMainThread([this] {
+        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+            if (!weakThis)
+                return;
             advanceCurrentTime();
         });
 }

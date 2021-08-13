@@ -31,13 +31,14 @@
 #include "MediaPlayerPrivate.h"
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class MediaSource;
 class MockMediaSourcePrivate;
 
-class MockMediaPlayerMediaSource : public MediaPlayerPrivateInterface {
+class MockMediaPlayerMediaSource : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
 public:
     explicit MockMediaPlayerMediaSource(MediaPlayer*);
 
