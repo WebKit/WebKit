@@ -177,13 +177,11 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
     
 #if PLATFORM(IOS)
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
-        SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt, handle);
-        loadParameters.contentFilterExtensionHandle = WTFMove(handle);
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt))
+            loadParameters.contentFilterExtensionHandle = WTFMove(*handle);
 
-        SandboxExtension::Handle frontboardServiceExtensionHandle;
-        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt, frontboardServiceExtensionHandle))
-            loadParameters.frontboardServiceExtensionHandle = WTFMove(frontboardServiceExtensionHandle);
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt))
+            loadParameters.frontboardServiceExtensionHandle = WTFMove(*handle);
 
         process.markHasManagedSessionSandboxAccess();
     }
@@ -199,10 +197,11 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
         BOOL isDirectory;
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
             ASSERT(process().connection() && process().connection()->getAuditToken());
-            if (process().connection() && process().connection()->getAuditToken())
-                SandboxExtension::createHandleForReadByAuditToken("/", *(process().connection()->getAuditToken()), fileReadHandle);
-            else
-                SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, fileReadHandle);
+            if (process().connection() && process().connection()->getAuditToken()) {
+                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/", *(process().connection()->getAuditToken())))
+                    fileReadHandle = WTFMove(*handle);
+            } else if (auto handle = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly))
+                fileReadHandle = WTFMove(*handle);
             willAcquireUniversalFileReadSandboxExtension(m_process);
         }
     }
@@ -212,7 +211,8 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
         NSString *file = files[i];
         if (![[NSFileManager defaultManager] fileExistsAtPath:file])
             continue;
-        SandboxExtension::createHandle(file, SandboxExtension::Type::ReadOnly, fileUploadHandles[i]);
+        if (auto handle = SandboxExtension::createHandle(file, SandboxExtension::Type::ReadOnly))
+            fileUploadHandles[i] = WTFMove(*handle);
     }
 }
 
@@ -685,7 +685,8 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 void WebPageProxy::grantAccessToAssetServices()
 {
     SandboxExtension::Handle mobileAssetHandleV2;
-    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, std::nullopt, mobileAssetHandleV2);
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, std::nullopt))
+        mobileAssetHandleV2 = WTFMove(*handle);
     process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
 }
 
@@ -702,7 +703,8 @@ void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
 {
     SandboxExtension::Handle fontMachExtensionHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, std::nullopt, fontMachExtensionHandle);
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, std::nullopt))
+        fontMachExtensionHandle = WTFMove(*handle);
     return fontMachExtensionHandle;
 }
 

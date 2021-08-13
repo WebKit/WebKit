@@ -1932,18 +1932,26 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     auto resourceLoadStatisticsDirectory = m_configuration->resourceLoadStatisticsDirectory();
     SandboxExtension::Handle resourceLoadStatisticsDirectoryHandle;
-    if (!resourceLoadStatisticsDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
+    if (!resourceLoadStatisticsDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory))
+            resourceLoadStatisticsDirectoryHandle = WTFMove(*handle);
+    }
 
     auto networkCacheDirectory = resolvedNetworkCacheDirectory();
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
-    if (!networkCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
+    if (!networkCacheDirectory.isEmpty()) {
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(networkCacheDirectory))
+            networkCacheDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
     auto hstsStorageDirectory = resolvedHSTSStorageDirectory();
     SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
-    if (!hstsStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(hstsStorageDirectory, hstsStorageDirectoryExtensionHandle);
+    if (!hstsStorageDirectory.isEmpty()) {
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(hstsStorageDirectory))
+            hstsStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = false;
     bool enableResourceLoadStatisticsDebugMode = false;
@@ -2004,26 +2012,35 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 
     parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
-    if (!parameters.indexedDatabaseDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
+    if (!parameters.indexedDatabaseDirectory.isEmpty()) {
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle =  SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory))
+            parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
 #if ENABLE(SERVICE_WORKER)
     parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
-    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
+    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty()) {
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory))
+            parameters.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*handle);
+    }
     parameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
 #endif
 
     auto localStorageDirectory = resolvedLocalStorageDirectory();
     if (!localStorageDirectory.isEmpty()) {
         parameters.localStorageDirectory = localStorageDirectory;
-        SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory, parameters.localStorageDirectoryExtensionHandle);
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory))
+            parameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
     }
 
     auto cacheStorageDirectory = this->cacheStorageDirectory();
     if (!cacheStorageDirectory.isEmpty()) {
         parameters.cacheStorageDirectory = cacheStorageDirectory;
-        SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory, parameters.cacheStorageDirectoryExtensionHandle);
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory))
+            parameters.cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
     }
 
     parameters.perOriginStorageQuota = perOriginStorageQuota();

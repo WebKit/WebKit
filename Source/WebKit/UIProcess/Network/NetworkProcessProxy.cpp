@@ -150,13 +150,20 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     for (auto& scheme : WebProcessPool::urlSchemesWithCustomProtocolHandlers())
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 #if PLATFORM(IOS_FAMILY)
-    if (String cookieStorageDirectory = WebProcessPool::cookieStorageDirectory(); !cookieStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
-    if (String containerCachesDirectory = WebProcessPool::networkingCachesDirectory(); !containerCachesDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory, parameters.containerCachesDirectoryExtensionHandle);
-    if (String parentBundleDirectory = WebProcessPool::parentBundleDirectory(); !parentBundleDirectory.isEmpty())
-        SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
-    SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite, parameters.tempDirectoryExtensionHandle);
+    if (String cookieStorageDirectory = WebProcessPool::cookieStorageDirectory(); !cookieStorageDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory))
+            parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
+    if (String containerCachesDirectory = WebProcessPool::networkingCachesDirectory(); !containerCachesDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory))
+            parameters.containerCachesDirectoryExtensionHandle = WTFMove(*handle);
+    }
+    if (String parentBundleDirectory = WebProcessPool::parentBundleDirectory(); !parentBundleDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly))
+            parameters.parentBundleDirectoryExtensionHandle = WTFMove(*handle);
+    }
+    if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite))
+        parameters.tempDirectoryExtensionHandle = WTFMove(handleAndFilePath->first);
 #endif
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE) // GTK and WPE don't use defaultNetworkProcess
@@ -1301,8 +1308,10 @@ void NetworkProcessProxy::retrieveCacheStorageParameters(PAL::SessionID sessionI
 
     auto& cacheStorageDirectory = store->configuration().cacheStorageDirectory();
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
-    if (!cacheStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory, cacheStorageDirectoryExtensionHandle);
+    if (!cacheStorageDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory))
+            cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
     send(Messages::NetworkProcess::SetCacheStorageParameters { sessionID, cacheStorageDirectory, cacheStorageDirectoryExtensionHandle }, 0);
 }

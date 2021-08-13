@@ -42,8 +42,10 @@ void BlobRegistryProxy::registerFileBlobURL(const URL& url, Ref<BlobDataFileRefe
     SandboxExtension::Handle extensionHandle;
 
     // File path can be empty when submitting a form file input without a file, see bug 111778.
-    if (!file->path().isEmpty())
-        SandboxExtension::createHandle(file->path(), SandboxExtension::Type::ReadOnly, extensionHandle);
+    if (!file->path().isEmpty()) {
+        if (auto handle = SandboxExtension::createHandle(file->path(), SandboxExtension::Type::ReadOnly))
+            extensionHandle = WTFMove(*handle);
+    }
 
     String replacementPath = path == file->path() ? nullString() : file->path();
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, path, replacementPath, extensionHandle, contentType), 0);

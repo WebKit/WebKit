@@ -143,7 +143,8 @@ GPUProcessProxy::GPUProcessProxy()
 #if PLATFORM(MAC)
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
     if (MacApplication::isSafari()) {
-        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.microphoneSandboxExtensionHandle);
+        if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
+            parameters.microphoneSandboxExtensionHandle = WTFMove(*handle);
         m_hasSentMicrophoneSandboxExtension = true;
     }
 #endif
@@ -155,11 +156,15 @@ GPUProcessProxy::GPUProcessProxy()
     auto containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(gpuProcessCachesDirectory());
     auto containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
 
-    if (!containerCachesDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(containerCachesDirectory, SandboxExtension::Type::ReadWrite, parameters.containerCachesDirectoryExtensionHandle);
+    if (!containerCachesDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(containerCachesDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.containerCachesDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
-    if (!containerTemporaryDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(containerTemporaryDirectory, SandboxExtension::Type::ReadWrite, parameters.containerTemporaryDirectoryExtensionHandle);
+    if (!containerTemporaryDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(containerTemporaryDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.containerTemporaryDirectoryExtensionHandle = WTFMove(*handle);
+    }
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (WebCore::deviceHasAGXCompilerService()) {
@@ -199,54 +204,54 @@ void GPUProcessProxy::setOrientationForMediaCapture(uint64_t orientation)
 
 static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& extensions)
 {
-    SandboxExtension::Handle sandboxExtensionHandle;
-    if (!SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s, sandboxExtensionHandle)) {
+    auto sandboxExtensionHandle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s);
+    if (!sandboxExtensionHandle) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.webkit.camera sandbox extension");
         return false;
     }
 #if HAVE(AUDIT_TOKEN)
         if (shouldCreateAppleCameraServiceSandboxExtension()) {
-            SandboxExtension::Handle appleCameraServicePathSandboxExtensionHandle;
-            if (!SandboxExtension::createHandleForMachLookup("com.apple.applecamerad"_s, std::nullopt, appleCameraServicePathSandboxExtensionHandle)) {
+            auto appleCameraServicePathSandboxExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.applecamerad"_s, std::nullopt);
+            if (!appleCameraServicePathSandboxExtensionHandle) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.applecamerad sandbox extension");
                 return false;
             }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-            SandboxExtension::Handle additionalAppleCameraServicePathSandboxExtensionHandle;
-            if (!SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, std::nullopt, additionalAppleCameraServicePathSandboxExtensionHandle)) {
+            auto additionalAppleCameraServicePathSandboxExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, std::nullopt);
+            if (!additionalAppleCameraServicePathSandboxExtensionHandle) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.appleh13camerad sandbox extension");
                 return false;
             }
-            extensions.append(WTFMove(additionalAppleCameraServicePathSandboxExtensionHandle));
+            extensions.append(WTFMove(*additionalAppleCameraServicePathSandboxExtensionHandle));
 #endif
-            extensions.append(WTFMove(appleCameraServicePathSandboxExtensionHandle));
+            extensions.append(WTFMove(*appleCameraServicePathSandboxExtensionHandle));
         }
 #endif // HAVE(AUDIT_TOKEN)
 
-    extensions.append(WTFMove(sandboxExtensionHandle));
+    extensions.append(WTFMove(*sandboxExtensionHandle));
     return true;
 }
 
 static inline bool addMicrophoneSandboxExtension(Vector<SandboxExtension::Handle>& extensions)
 {
-    SandboxExtension::Handle sandboxExtensionHandle;
-    if (!SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, sandboxExtensionHandle)) {
+    auto sandboxExtensionHandle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s);
+    if (!sandboxExtensionHandle) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.webkit.microphone sandbox extension");
         return false;
     }
-    extensions.append(WTFMove(sandboxExtensionHandle));
+    extensions.append(WTFMove(*sandboxExtensionHandle));
     return true;
 }
 
 #if PLATFORM(IOS)
 static inline bool addTCCDSandboxExtension(Vector<SandboxExtension::Handle>& extensions)
 {
-    SandboxExtension::Handle sandboxExtensionHandle;
-    if (!SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, std::nullopt, sandboxExtensionHandle)) {
+    auto handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, std::nullopt);
+    if (!handle) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.tccd sandbox extension");
         return false;
     }
-    extensions.append(WTFMove(sandboxExtensionHandle));
+    extensions.append(WTFMove(*handle));
     return true;
 }
 #endif
@@ -454,14 +459,18 @@ static inline GPUProcessSessionParameters gpuProcessSessionParameters(const Webs
 
     parameters.mediaCacheDirectory = store.resolvedMediaCacheDirectory();
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
-    if (!parameters.mediaCacheDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaCacheDirectorySandboxExtensionHandle);
+    if (!parameters.mediaCacheDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.mediaCacheDirectorySandboxExtensionHandle = WTFMove(*handle);
+    }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     parameters.mediaKeysStorageDirectory = store.resolvedMediaKeysDirectory();
     SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
-    if (!parameters.mediaKeysStorageDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeysStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaKeysStorageDirectorySandboxExtensionHandle);
+    if (!parameters.mediaKeysStorageDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeysStorageDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.mediaKeysStorageDirectorySandboxExtensionHandle = WTFMove(*handle);
+    }
 #endif
 
     return parameters;

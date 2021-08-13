@@ -100,18 +100,30 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
             handles.allocate(extensionCount);
             ids.reserveInitialCapacity(extensionCount);
 
-            if (needsAudioSandboxExtension && SandboxExtension::createHandleForGenericExtension(audioExtensionPath, handles[--extensionCount]))
-                ids.uncheckedAppend(audioExtensionPath);
+            if (needsAudioSandboxExtension) {
+                if (auto handle = SandboxExtension::createHandleForGenericExtension(audioExtensionPath)) {
+                    handles[--extensionCount] = WTFMove(*handle);
+                    ids.uncheckedAppend(audioExtensionPath);
+                }
+            }
 
-            if (needsVideoSandboxExtension && SandboxExtension::createHandleForGenericExtension(videoExtensionPath, handles[--extensionCount]))
-                ids.uncheckedAppend(videoExtensionPath);
+            if (needsVideoSandboxExtension) {
+                if (auto handle = SandboxExtension::createHandleForGenericExtension(videoExtensionPath)) {
+                    handles[--extensionCount] = WTFMove(*handle);
+                    ids.uncheckedAppend(videoExtensionPath);
+                }
+            }
 
             if (needsAppleCameraSandboxExtension) {
-                if (SandboxExtension::createHandleForMachLookup(appleCameraServicePath, std::nullopt, handles[--extensionCount]))
+                if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, std::nullopt)) {
+                    handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(appleCameraServicePath);
+                }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-                if (SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, std::nullopt, handles[--extensionCount]))
+                if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, std::nullopt)) {
+                    handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(additionalAppleCameraServicePath);
+                }
 #endif
             }
 

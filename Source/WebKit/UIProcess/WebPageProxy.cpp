@@ -1265,11 +1265,19 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         bool createdExtension = false;
 #if HAVE(AUDIT_TOKEN)
         ASSERT(process.connection() && process.connection()->getAuditToken());
-        if (process.connection() && process.connection()->getAuditToken())
-            createdExtension = SandboxExtension::createHandleForReadByAuditToken(resourceDirectoryURL.fileSystemPath(), *(process.connection()->getAuditToken()), sandboxExtensionHandle);
-        else
+        if (process.connection() && process.connection()->getAuditToken()) {
+            if (auto handle = SandboxExtension::createHandleForReadByAuditToken(resourceDirectoryURL.fileSystemPath(), *(process.connection()->getAuditToken()))) {
+                sandboxExtensionHandle = WTFMove(*handle);
+                createdExtension = true;
+            }
+        } else
 #endif
-            createdExtension = SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
+        {
+            if (auto handle = SandboxExtension::createHandle(resourceDirectoryURL.fileSystemPath(), SandboxExtension::Type::ReadOnly)) {
+                sandboxExtensionHandle = WTFMove(*handle);
+                createdExtension = true;
+            }
+        }
 
         if (createdExtension) {
             process.assumeReadAccessToBaseURL(*this, resourceDirectoryURL.string());
@@ -1286,11 +1294,19 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     bool createdExtension = false;
 #if HAVE(AUDIT_TOKEN)
     ASSERT(process.connection() && process.connection()->getAuditToken());
-    if (process.connection() && process.connection()->getAuditToken())
-        createdExtension = SandboxExtension::createHandleForReadByAuditToken("/", *(process.connection()->getAuditToken()), sandboxExtensionHandle);
-    else
+    if (process.connection() && process.connection()->getAuditToken()) {
+        if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/", *(process.connection()->getAuditToken()))) {
+            createdExtension = true;
+            sandboxExtensionHandle = WTFMove(*handle);
+        }
+    } else
 #endif
-        createdExtension = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
+    {
+        if (auto handle = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly)) {
+            createdExtension = true;
+            sandboxExtensionHandle = WTFMove(*handle);
+        }
+    }
 
     if (createdExtension) {
         willAcquireUniversalFileReadSandboxExtension(process);
@@ -1308,11 +1324,19 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     if (basePath.isNull())
         return;
 #if HAVE(AUDIT_TOKEN)
-    if (process.connection() && process.connection()->getAuditToken())
-        createdExtension = SandboxExtension::createHandleForReadByAuditToken(basePath, *(process.connection()->getAuditToken()), sandboxExtensionHandle);
-    else
+    if (process.connection() && process.connection()->getAuditToken()) {
+        if (auto handle = SandboxExtension::createHandleForReadByAuditToken(basePath, *(process.connection()->getAuditToken()))) {
+            sandboxExtensionHandle = WTFMove(*handle);
+            createdExtension = true;
+        }
+    } else
 #endif
-        createdExtension = SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly, sandboxExtensionHandle);
+    {
+        if (auto handle = SandboxExtension::createHandle(basePath, SandboxExtension::Type::ReadOnly)) {
+            sandboxExtensionHandle = WTFMove(*handle);
+            createdExtension = true;
+        }
+    }
 
     if (createdExtension)
         process.assumeReadAccessToBaseURL(*this, baseURL.string());
@@ -7001,9 +7025,11 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
 
     SandboxExtension::Handle frontboardServicesSandboxExtension, iconServicesSandboxExtension;
 #if HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)
-    SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt, frontboardServicesSandboxExtension);
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt))
+        frontboardServicesSandboxExtension = WTFMove(*handle);
 #endif
-    SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, std::nullopt, iconServicesSandboxExtension);
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, std::nullopt))
+        iconServicesSandboxExtension = WTFMove(*handle);
 
     send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference(), frontboardServicesSandboxExtension, iconServicesSandboxExtension));
 

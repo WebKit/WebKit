@@ -1,3 +1,174 @@
+2021-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        SandboxExtension::Handle creation should return std::optional instead of bool
+        https://bugs.webkit.org/show_bug.cgi?id=228875
+
+        Reviewed by Youenn Fablet.
+
+        This modernizes the code somewhat.
+        This makes it easier to write code that realizes that handle creation can fail.
+        This is a step towards removing the unnecessary abstraction HandleArray.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::encode const):
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::createHandlesForResources):
+        (WebKit::SandboxExtension::createReadOnlyHandlesForFiles):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        (WebKit::SandboxExtension::createHandleForGenericExtension):
+        (WebKit::SandboxExtension::createHandleForMachLookup):
+        (WebKit::SandboxExtension::createHandlesForMachLookup):
+        (WebKit::SandboxExtension::createHandleForReadByAuditToken):
+        (WebKit::SandboxExtension::createHandleForIOKitClassExtension):
+        (WebKit::SandboxExtension::createHandlesForIOKitClassExtensions):
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        (WebKit::SandboxExtension::createHandleForGenericExtension):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+        (WebKit::WebPageProxy::createSandboxExtensionsIfNeeded): Deleted.
+        (WebKit::WebPageProxy::scrollingUpdatesDisabledForTesting): Deleted.
+        (WebKit::WebPageProxy::startDrag): Deleted.
+        (WebKit::WebPageProxy::setPromisedDataForImage): Deleted.
+        (WebKit::WebPageProxy::setDragCaretRect): Deleted.
+        (WebKit::WebPageProxy::platformRegisterAttachment): Deleted.
+        (WebKit::WebPageProxy::platformCloneAttachment): Deleted.
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation): Deleted.
+        (WebKit::WebPageProxy::performDictionaryLookupOfCurrentSelection): Deleted.
+        (WebKit::WebPageProxy::insertDictatedTextAsync): Deleted.
+        (WebKit::WebPageProxy::platformDictationAlternatives): Deleted.
+        (WebKit::WebPageProxy::errorForUnpermittedAppBoundDomainNavigation): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorConnection): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorBoundInterfaceIdentifier): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorAddMessageReceiver): Deleted.
+        (WebKit::WebPageProxy::paymentCoordinatorRemoveMessageReceiver): Deleted.
+        (WebKit::WebPageProxy::didStartSpeaking): Deleted.
+        (WebKit::WebPageProxy::didFinishSpeaking): Deleted.
+        (WebKit::WebPageProxy::didPauseSpeaking): Deleted.
+        (WebKit::WebPageProxy::didResumeSpeaking): Deleted.
+        (WebKit::WebPageProxy::speakingErrorOccurred): Deleted.
+        (WebKit::WebPageProxy::boundaryEventOccurred): Deleted.
+        (WebKit::WebPageProxy::voicesDidChange): Deleted.
+        (WebKit::WebPageProxy::didCreateContextInWebProcessForVisibilityPropagation): Deleted.
+        (WebKit::WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation): Deleted.
+        (WebKit::WebPageProxy::grantAccessToPreferenceService): Deleted.
+        (WebKit::WebPageProxy::mediaUsageManager): Deleted.
+        (WebKit::WebPageProxy::addMediaUsageManagerSession): Deleted.
+        (WebKit::WebPageProxy::updateMediaUsageManagerSessionState): Deleted.
+        (WebKit::WebPageProxy::removeMediaUsageManagerSession): Deleted.
+        (WebKit::convertPlatformImageToBitmap): Deleted.
+        (WebKit::WebPageProxy::requestThumbnailWithOperation): Deleted.
+        (WebKit::WebPageProxy::requestThumbnailWithFileWrapper): Deleted.
+        (WebKit::WebPageProxy::requestThumbnailWithPath): Deleted.
+        (WebKit::WebPageProxy::scheduleActivityStateUpdate): Deleted.
+        (WebKit::WebPageProxy::addActivityStateUpdateCompletionHandler): Deleted.
+        (WebKit::WebPageProxy::createAppHighlightInSelectedRange): Deleted.
+        (WebKit::WebPageProxy::restoreAppHighlightsAndScrollToIndex): Deleted.
+        (WebKit::WebPageProxy::setAppHighlightsVisibility): Deleted.
+        (WebKit::WebPageProxy::appHighlightsVisibility): Deleted.
+        (WebKit::WebPageProxy::appHighlightsOverlayRect): Deleted.
+        (WebKit::WebPageProxy::setUpHighlightsObserver): Deleted.
+        (WebKit::WebPageProxy::createNetworkExtensionsSandboxExtensions): Deleted.
+        (WebKit::WebPageProxy::canHandleContextMenuTranslation const): Deleted.
+        (WebKit::WebPageProxy::handleContextMenuTranslation): Deleted.
+        (WebKit::WebPageProxy::requestActiveNowPlayingSessionInfo): Deleted.
+        (WebKit::WebPageProxy::setLastNavigationWasAppInitiated): Deleted.
+        (WebKit::WebPageProxy::lastNavigationWasAppInitiated): Deleted.
+        (WebKit::WebPageProxy::grantAccessToAssetServices): Deleted.
+        (WebKit::WebPageProxy::revokeAccessToAssetServices): Deleted.
+        (WebKit::WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry): Deleted.
+        (WebKit::WebPageProxy::fontdMachExtensionHandle): Deleted.
+        (WebKit::WebPageProxy::contentsOfUserInterfaceItem): Deleted.
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Deleted.
+        (WebKit::WebProcessPool::platformInvalidateContext): Deleted.
+        (WebKit::WebProcessPool::parentBundleDirectory): Deleted.
+        (WebKit::WebProcessPool::networkingCachesDirectory): Deleted.
+        (WebKit::WebProcessPool::webContentCachesDirectory): Deleted.
+        (WebKit::WebProcessPool::containerTemporaryDirectory): Deleted.
+        (WebKit::WebProcessPool::setJavaScriptConfigurationFileEnabledFromDefaults): Deleted.
+        (WebKit::WebProcessPool::omitPDFSupport): Deleted.
+        (WebKit::WebProcessPool::processSuppressionEnabled const): Deleted.
+        (WebKit::WebProcessPool::displayBrightness): Deleted.
+        (WebKit::WebProcessPool::backlightLevelDidChangeCallback): Deleted.
+        (WebKit::WebProcessPool::accessibilityPreferencesChangedCallback): Deleted.
+        (WebKit::WebProcessPool::mediaAccessibilityPreferencesChangedCallback): Deleted.
+        (WebKit::WebProcessPool::colorPreferencesDidChangeCallback): Deleted.
+        (WebKit::WebProcessPool::remoteWebInspectorEnabledCallback): Deleted.
+        (WebKit::WebProcessPool::startObservingPreferenceChanges): Deleted.
+        (WebKit::WebProcessPool::registerNotificationObservers): Deleted.
+        (WebKit::WebProcessPool::unregisterNotificationObservers): Deleted.
+        (WebKit::WebProcessPool::isURLKnownHSTSHost const): Deleted.
+        (WebKit::WebProcessPool::nominalFramesPerSecondForDisplay): Deleted.
+        (WebKit::WebProcessPool::startDisplayLink): Deleted.
+        (WebKit::WebProcessPool::stopDisplayLink): Deleted.
+        (WebKit::WebProcessPool::stopDisplayLinks): Deleted.
+        (WebKit::WebProcessPool::setDisplayLinkPreferredFramesPerSecond): Deleted.
+        (WebKit::WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates): Deleted.
+        (WebKit::WebProcessPool::setCookieStoragePartitioningEnabled): Deleted.
+        (WebKit::WebProcessPool::clearPermanentCredentialsForProtectionSpace): Deleted.
+        (WebKit::networkProcessLatencyQOS): Deleted.
+        (WebKit::networkProcessThroughputQOS): Deleted.
+        (WebKit::webProcessLatencyQOS): Deleted.
+        (WebKit::webProcessThroughputQOS): Deleted.
+        (WebKit::WebProcessPool::applicationIsAboutToSuspend): Deleted.
+        (WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend): Deleted.
+        (WebKit::WebProcessPool::initializeClassesForParameterCoding): Deleted.
+        (WebKit::WebProcessPool::allowedClassesForParameterCoding const): Deleted.
+        (WebKit::WebProcessPool::notifyPreferencesChanged): Deleted.
+        (WebKit::webProcessPoolHighDynamicRangeDidChangeCallback): Deleted.
+        (WebKit::WebProcessPool::registerHighDynamicRangeChangeCallback): Deleted.
+        (WebKit::WebProcessPool::systemWillSleep): Deleted.
+        (WebKit::WebProcessPool::systemDidWake): Deleted.
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::publishProgress):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::addCameraSandboxExtensions):
+        (WebKit::addMicrophoneSandboxExtension):
+        (WebKit::addTCCDSandboxExtension):
+        (WebKit::gpuProcessSessionParameters):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        (WebKit::WebProcessPool::resumeDownload):
+        (WebKit::WebProcessPool::startMemorySampler):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+
 2021-08-13  Youenn Fablet  <youenn@apple.com>
 
         Overly verbose catchable fetch error messages lead to cross-origin leaks

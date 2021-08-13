@@ -328,7 +328,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
     parameters.uiProcessBundleResourcePath = m_resolvedPaths.uiProcessBundleResourcePath;
-    SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::Type::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
+    if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::Type::ReadOnly))
+        parameters.uiProcessBundleResourcePathExtensionHandle = WTFMove(*handle);
 
     parameters.uiProcessBundleIdentifier = applicationBundleIdentifier();
 
@@ -336,20 +337,25 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.throughputQOS = webProcessThroughputQOS();
     
 #if PLATFORM(IOS_FAMILY)
-    if (!m_resolvedPaths.cookieStorageDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.cookieStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.cookieStorageDirectoryExtensionHandle);
+    if (!m_resolvedPaths.cookieStorageDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.cookieStorageDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
-    if (!m_resolvedPaths.containerCachesDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerCachesDirectory, SandboxExtension::Type::ReadWrite, parameters.containerCachesDirectoryExtensionHandle);
+    if (!m_resolvedPaths.containerCachesDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerCachesDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.containerCachesDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
-    if (!m_resolvedPaths.containerTemporaryDirectory.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerTemporaryDirectory, SandboxExtension::Type::ReadWrite, parameters.containerTemporaryDirectoryExtensionHandle);
+    if (!m_resolvedPaths.containerTemporaryDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerTemporaryDirectory, SandboxExtension::Type::ReadWrite))
+            parameters.containerTemporaryDirectoryExtensionHandle = WTFMove(*handle);
+    }
 #endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
-        SandboxExtension::Handle enableRemoteWebInspectorExtensionHandle;
-        if (SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, std::nullopt, enableRemoteWebInspectorExtensionHandle))
-            parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(enableRemoteWebInspectorExtensionHandle);
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, std::nullopt))
+            parameters.enableRemoteWebInspectorExtensionHandle = WTFMove(*handle);
     }
 #endif
 
@@ -395,8 +401,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInUIProcessEnabled() && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled())
-        SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s, parameters.audioCaptureExtensionHandle);
+    if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInUIProcessEnabled() && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()) {
+        if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
+            parameters.audioCaptureExtensionHandle = WTFMove(*handle);
+    }
 #else
     UNUSED_PARAM(mediaDevicesEnabled);
 #endif
@@ -432,9 +440,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.systemHasAC = cachedSystemHasAC().value_or(true);
 
     if (requiresContainerManagerAccess()) {
-        SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd"_s, std::nullopt, handle);
-        parameters.containerManagerExtensionHandle = WTFMove(handle);
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.containermanagerd"_s, std::nullopt))
+            parameters.containerManagerExtensionHandle = WTFMove(*handle);
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -453,16 +460,14 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     if (!_MGCacheValid()) {
-        SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.mobilegestalt.xpc"_s, std::nullopt, handle);
-        parameters.mobileGestaltExtensionHandle = WTFMove(handle);
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobilegestalt.xpc"_s, std::nullopt))
+            parameters.mobileGestaltExtensionHandle = WTFMove(*handle);
     }
 #endif
 
 #if PLATFORM(MAC)
-    SandboxExtension::Handle launchServicesExtensionHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt, launchServicesExtensionHandle);
-    parameters.launchServicesExtensionHandle = WTFMove(launchServicesExtensionHandle);
+    if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
+        parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
 #endif
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)

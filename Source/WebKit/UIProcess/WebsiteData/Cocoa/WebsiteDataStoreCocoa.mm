@@ -150,8 +150,11 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     bool http3Enabled = WebsiteDataStore::http3Enabled();
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
-    if (!alternativeServiceStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
+    if (!alternativeServiceStorageDirectory.isEmpty()) {
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory))
+            alternativeServiceStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
@@ -185,8 +188,10 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;
 
-    if (!cookieFile.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
+    if (!cookieFile.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(FileSystem::parentPath(cookieFile)))
+            parameters.cookieStoragePathExtensionHandle = WTFMove(*handle);
+    }
 }
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE) || HAVE(NETWORK_LOADER)

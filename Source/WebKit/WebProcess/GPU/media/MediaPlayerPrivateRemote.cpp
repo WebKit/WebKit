@@ -169,11 +169,19 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 
         auto createExtension = [&] {
 #if HAVE(AUDIT_TOKEN)
-            if (auto auditToken = m_manager.gpuProcessConnection().auditToken())
-                return SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value(), handle);
+            if (auto auditToken = m_manager.gpuProcessConnection().auditToken()) {
+                if (auto createdHandle = SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value())) {
+                    handle = WTFMove(*createdHandle);
+                    return true;
+                }
+                return false;
+            }
 #endif
-
-            return SandboxExtension::createHandle(fileSystemPath, SandboxExtension::Type::ReadOnly, handle);
+            if (auto createdHandle = SandboxExtension::createHandle(fileSystemPath, SandboxExtension::Type::ReadOnly)) {
+                handle = WTFMove(*createdHandle);
+                return true;
+            }
+            return false;
         };
 
         if (!createExtension()) {

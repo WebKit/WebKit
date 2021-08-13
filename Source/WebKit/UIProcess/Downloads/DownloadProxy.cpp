@@ -107,8 +107,11 @@ void DownloadProxy::publishProgress(const URL& URL)
         return;
 
     SandboxExtension::Handle handle;
-    bool createdSandboxExtension = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite, handle);
-    ASSERT_UNUSED(createdSandboxExtension, createdSandboxExtension);
+    if (auto createdHandle = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite))
+        handle = WTFMove(*createdHandle);
+    else
+        ASSERT_NOT_REACHED();
+
     m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);
 }
 #endif // PLATFORM(COCOA)
@@ -163,8 +166,10 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
 
     m_client->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
-        if (!destination.isNull())
-            SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
+        if (!destination.isNull()) {
+            if (auto handle = SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite))
+                sandboxExtensionHandle = WTFMove(*handle);
+        }
 
         setDestinationFilename(destination);
         completionHandler(destination, WTFMove(sandboxExtensionHandle), allowOverwrite);

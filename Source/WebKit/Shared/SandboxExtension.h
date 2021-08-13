@@ -112,17 +112,17 @@ public:
     };
     
     static RefPtr<SandboxExtension> create(Handle&&);
-    static bool createHandle(const String& path, Type, Handle&);
+    static std::optional<Handle> createHandle(const String& path, Type);
     static SandboxExtension::HandleArray createReadOnlyHandlesForFiles(ASCIILiteral logLabel, const Vector<String>& paths);
-    static bool createHandleWithoutResolvingPath(const String& path, Type, Handle&);
-    static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
-    static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
-    static bool createHandleForGenericExtension(ASCIILiteral extensionClass, Handle&);
+    static std::optional<Handle> createHandleWithoutResolvingPath(const String& path, Type);
+    static std::optional<Handle> createHandleForReadWriteDirectory(const String& path); // Will attempt to create the directory.
+    static std::optional<std::pair<Handle, String>> createHandleForTemporaryFile(const String& prefix, Type);
+    static std::optional<Handle> createHandleForGenericExtension(ASCIILiteral extensionClass);
 #if HAVE(AUDIT_TOKEN)
-    static bool createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
+    static std::optional<Handle> createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
     static HandleArray createHandlesForMachLookup(const Vector<ASCIILiteral>& services, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
-    static bool createHandleForReadByAuditToken(const String& path, audit_token_t, Handle&);
-    static bool createHandleForIOKitClassExtension(ASCIILiteral iokitClass, std::optional<audit_token_t>, Handle&, OptionSet<Flags> = Flags::Default);
+    static std::optional<Handle> createHandleForReadByAuditToken(const String& path, audit_token_t);
+    static std::optional<Handle> createHandleForIOKitClassExtension(ASCIILiteral iokitClass, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
     static HandleArray createHandlesForIOKitClassExtensions(const Vector<ASCIILiteral>& iokitClasses, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
 #endif
     ~SandboxExtension();
@@ -162,12 +162,12 @@ inline const SandboxExtension::Handle* SandboxExtension::HandleArray::end() cons
 inline void SandboxExtension::HandleArray::encode(IPC::Encoder&) const { }
 inline auto SandboxExtension::HandleArray::decode(IPC::Decoder&) -> std::optional<HandleArray> { return { HandleArray() }; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
-inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
+inline auto SandboxExtension::createHandle(const String&, Type) -> std::optional<Handle> { return {{ }}; }
 inline SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) { return { }; }
-inline bool SandboxExtension::createHandleWithoutResolvingPath(const String&, Type, Handle&) { return true; }
-inline bool SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { return true; }
-inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
-inline bool SandboxExtension::createHandleForGenericExtension(ASCIILiteral /*extensionClass*/, Handle&) { return true; }
+inline auto SandboxExtension::createHandleWithoutResolvingPath(const String&, Type) -> std::optional<Handle> { return {{ }}; }
+inline auto SandboxExtension::createHandleForReadWriteDirectory(const String&) -> std::optional<Handle> { return {{ }}; }
+inline auto SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type) -> std::optional<std::pair<Handle, String>> { return std::optional<std::pair<Handle, String>> { std::pair<Handle, String> { Handle { }, String { } } }; }
+inline auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral /*extensionClass*/) -> std::optional<Handle> { return {{ }}; }
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }
