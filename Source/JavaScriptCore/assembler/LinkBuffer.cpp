@@ -236,7 +236,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
 #if CPU(ARM64E)
-    ARM64EHash verifyUncompactedHash { static_cast<uint32_t>(bitwise_cast<uint64_t>(&macroAssembler.m_assembler.buffer())) };
+    void* bufferPtr = &macroAssembler.m_assembler.buffer();
+    ARM64EHash verifyUncompactedHash { bufferPtr };
     m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
     uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
 #endif
@@ -258,8 +259,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     auto read = [&](const InstructionType* ptr) -> InstructionType {
         InstructionType value = *ptr;
 #if CPU(ARM64E)
-        uint32_t hash = verifyUncompactedHash.update(value);
         unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
+        uint32_t hash = verifyUncompactedHash.update(value, index, bufferPtr);
         RELEASE_ASSERT(inHashes[index] == hash);
 #endif
         return value;
