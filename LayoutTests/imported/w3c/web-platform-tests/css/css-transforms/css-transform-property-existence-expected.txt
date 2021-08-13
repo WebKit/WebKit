@@ -1,8 +1,0 @@
-
-PASS Check the existence of transform.
-PASS Check the existence of transform-origin.
-PASS Check the existence of transform-style.
-PASS Check the existence of perspective.
-PASS Check the existence of perspective-origin.
-PASS Check the existence of backface-visibility.
-

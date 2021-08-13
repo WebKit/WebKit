@@ -1,3 +1,15 @@
+2021-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r281009.
+
+        Timing not quite right
+
+        Reverted changeset:
+
+        "Unprefix -webkit-backface-visibility"
+        https://bugs.webkit.org/show_bug.cgi?id=170983
+        https://commits.webkit.org/r281009
+
 2021-08-13  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur Debug wk2 EWS ] webrtc/video-interruption.html is flaky crashing.

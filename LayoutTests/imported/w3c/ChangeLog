@@ -1,3 +1,15 @@
+2021-08-13  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r281009.
+
+        Timing not quite right
+
+        Reverted changeset:
+
+        "Unprefix -webkit-backface-visibility"
+        https://bugs.webkit.org/show_bug.cgi?id=170983
+        https://commits.webkit.org/r281009
+
 2021-08-13  Youenn Fablet  <youenn@apple.com>
 
         Overly verbose catchable fetch error messages lead to cross-origin leaks

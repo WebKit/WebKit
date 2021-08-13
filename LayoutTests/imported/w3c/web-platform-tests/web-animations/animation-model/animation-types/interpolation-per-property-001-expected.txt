@@ -12,10 +12,6 @@ PASS align-self (type: discrete) has testInterpolation function
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with keyframe easing
-PASS backface-visibility (type: discrete) has testInterpolation function
-PASS backface-visibility uses discrete animation when animating between "visible" and "hidden" with linear easing
-PASS backface-visibility uses discrete animation when animating between "visible" and "hidden" with effect easing
-PASS backface-visibility uses discrete animation when animating between "visible" and "hidden" with keyframe easing
 PASS background-attachment (type: discrete) has testInterpolation function
 PASS background-attachment uses discrete animation when animating between "fixed" and "local" with linear easing
 PASS background-attachment uses discrete animation when animating between "fixed" and "local" with effect easing

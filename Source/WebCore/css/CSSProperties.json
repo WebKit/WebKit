@@ -4976,12 +4976,7 @@
                 "url": "https://drafts.csswg.org/css-contain-1/"
             }
         },
-        "backface-visibility": {
-            "codegen-properties": {
-                "aliases": [
-                    "-webkit-backface-visibility"
-                ]
-            },
+        "-webkit-backface-visibility": {
             "values": [
                 "visible",
                 "hidden"
