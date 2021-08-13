@@ -1,3 +1,20 @@
+2021-08-12  Cameron McCormack  <heycam@apple.com>
+
+        Fix bounds checks for WhitespaceCache string lengths
+        https://bugs.webkit.org/show_bug.cgi?id=229066
+        <rdar://81850871>
+
+        Reviewed by Simon Fraser.
+
+        When the whitespace string length is maximumWhitespaceStringLength,
+        we read from and write to one element past the end of m_codes and
+        m_indexes. Since we don't need to store codes and indexes for zero
+        length strings, subtract one from the index we use.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::WhitespaceCache::lookup):
+        * html/parser/HTMLConstructionSite.h:
+
 2021-08-12  David Kilzer  <ddkilzer@apple.com>
 
         ThreadSanitizer: data race in WebCore::CARingBufferStorageVector::setCurrentFrameBounds() / getCurrentFrameBounds()

@@ -891,24 +891,25 @@ AtomString WhitespaceCache::lookup(const String& string, WhitespaceMode whitespa
     if (!code)
         return AtomString();
 
-    if (m_codes[length] == code) {
-        ASSERT(m_atoms[m_indexes[length]] == string);
-        return m_atoms[m_indexes[length]];
+    size_t lengthIndex = length - 1;
+    if (m_codes[lengthIndex] == code) {
+        ASSERT(m_atoms[m_indexes[lengthIndex]] == string);
+        return m_atoms[m_indexes[lengthIndex]];
     }
 
     if (code == overflowWhitespaceCode)
         return AtomString(string);
 
-    if (m_codes[length]) {
+    if (m_codes[lengthIndex]) {
         AtomString whitespaceAtom(string);
-        m_codes[length] = code;
-        m_atoms[m_indexes[length]] = whitespaceAtom;
+        m_codes[lengthIndex] = code;
+        m_atoms[m_indexes[lengthIndex]] = whitespaceAtom;
         return whitespaceAtom;
     }
 
     AtomString whitespaceAtom(string);
-    m_codes[length] = code;
-    m_indexes[length] = m_atoms.size();
+    m_codes[lengthIndex] = code;
+    m_indexes[lengthIndex] = m_atoms.size();
     m_atoms.append(whitespaceAtom);
     return whitespaceAtom;
 }
