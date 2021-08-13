@@ -264,9 +264,10 @@ class Svn(Scm):
     @property
     def branch(self):
         local_path = self.path[len(self.root_path):]
-        if local_path:
-            return self.info()['Relative URL'][2:-len(local_path)]
-        return self.info()['Relative URL'][2:]
+        relative_url = self.info()['Relative URL']
+        if local_path and relative_url.endswith(local_path):
+            return relative_url[2:-len(local_path)]
+        return relative_url[2:]
 
     def list(self, category):
         list_result = run([self.executable(), 'list', '^/{}'.format(category)], cwd=self.root_path, capture_output=True, encoding='utf-8')

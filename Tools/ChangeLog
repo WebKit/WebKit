@@ -1,3 +1,16 @@
+2021-08-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Fix SVN relative URL parsing
+        https://bugs.webkit.org/show_bug.cgi?id=229075
+        <rdar://problem/81868773>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.branch): Check if relative URL path contains local path before stripping local path. 
+
 2021-08-13  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] WebExtension API test /webkit/WebKitWebView/web-process-crashed is flaky failing
