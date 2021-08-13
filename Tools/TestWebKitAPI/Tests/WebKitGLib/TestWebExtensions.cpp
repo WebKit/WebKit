@@ -161,7 +161,9 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
         G_DBUS_CALL_FLAGS_NONE,
         -1, 0, 0));
     g_assert_null(result);
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_main_loop_run(test->m_mainLoop);
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
     test->m_expectedWebProcessCrash = false;
 }
 

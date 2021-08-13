@@ -74,9 +74,6 @@
     },
     "TestWebExtensions": {
         "subtests": {
-            "/webkit/WebKitWebView/web-process-crashed": {
-                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": ["webkit.org/b/229067"]}}
-            },
             "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": ["webkit.org/b/147822", "webkit.org/b/210635"]}}
             },

@@ -1,3 +1,14 @@
+2021-08-13  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] WebExtension API test /webkit/WebKitWebView/web-process-crashed is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=229067
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebKitWebViewProcessCrashed): Make warnings non-fatal while waiting for the crash.
+        * TestWebKitAPI/glib/TestExpectations.json: Remove expectation
+
 2021-08-13  Martin Robinson  <mrobinson@webkit.org>
 
         Get lint-test-expectations passing
