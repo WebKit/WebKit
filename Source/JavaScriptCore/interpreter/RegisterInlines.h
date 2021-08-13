@@ -63,7 +63,7 @@ ALWAYS_INLINE Register& Register::operator=(CodeBlock* codeBlock)
     return *this;
 }
 
-ALWAYS_INLINE Register& Register::operator=(JSCell* object)
+ALWAYS_INLINE Register& Register::operator=(JSObject* object)
 {
     u.value = JSValue::encode(JSValue(object));
     return *this;

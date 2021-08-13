@@ -273,7 +273,6 @@ private:
                 case ReallocatePropertyStorage:
                 case NukeStructureAndSetButterfly:
                 case GetButterfly:
-                case EnumeratorGetByVal:
                 case GetByVal:
                 case PutByValDirect:
                 case PutByVal:
@@ -353,7 +352,6 @@ private:
                 case PutStructure:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
-                case EnumeratorGetByVal:
                 case GetByVal:
                 case PutByValDirect:
                 case PutByVal:

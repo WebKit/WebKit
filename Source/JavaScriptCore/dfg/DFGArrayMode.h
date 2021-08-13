@@ -289,11 +289,6 @@ public:
         return speculation() == Array::OutOfBoundsSaneChain;
     }
 
-    bool isSaneChain() const
-    {
-        return isInBoundsSaneChain() || isOutOfBoundsSaneChain();
-    }
-
     bool isOutOfBounds() const
     {
         return speculation() == Array::OutOfBounds || speculation() == Array::OutOfBoundsSaneChain;

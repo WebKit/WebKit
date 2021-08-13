@@ -26,9 +26,8 @@
 var funcArgAndBodyStr =
 "(arr) {" + "\n" +
 "    var sum = 0;" + "\n" +
-"    for (var i in arr) {" + "\n" +
+"    for (var i in arr)" + "\n" +
 "        sum += arr[i];" + "\n" +
-"    } " +
 "    return sum;" + "\n" +
 "}";
 
@@ -76,7 +75,6 @@ function test(name, data) {
 
         if ((actual != expected) && (actual != previousResult)) {
             print("FAIL: " + name + ": expected: " + expected + ", actual: " + actual + ", starting @ loop iteration " + i);
-            $vm.breakpoint();
             previousResult = actual;
             failed = true;
             numberOfFailures++;

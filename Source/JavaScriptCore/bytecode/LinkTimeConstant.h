@@ -111,7 +111,6 @@ class JSGlobalObject;
     v(callFunction, nullptr) \
     v(hasOwnPropertyFunction, nullptr) \
     v(createPrivateSymbol, nullptr) \
-    v(emptyPropertyNameEnumerator, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

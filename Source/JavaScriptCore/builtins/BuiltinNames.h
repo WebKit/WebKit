@@ -181,8 +181,7 @@ namespace JSC {
     macro(hasOwnPropertyFunction) \
     macro(createPrivateSymbol) \
     macro(entries) \
-    macro(outOfLineReactionCounts) \
-    macro(emptyPropertyNameEnumerator)
+    macro(outOfLineReactionCounts)
 
 
 namespace Symbols {

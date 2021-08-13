@@ -453,7 +453,6 @@ namespace JSC {
 
         void emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
-        void emitStore(VirtualRegister, const JSValue constant, RegisterID base = callFrameRegister);
 
         int32_t getOperandConstantInt(VirtualRegister src);
         double getOperandConstantDouble(VirtualRegister src);
@@ -470,6 +469,7 @@ namespace JSC {
         void emitLoad2(VirtualRegister, RegisterID tag1, RegisterID payload1, VirtualRegister, RegisterID tag2, RegisterID payload2);
 
         void emitStore(VirtualRegister, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
+        void emitStore(VirtualRegister, const JSValue constant, RegisterID base = callFrameRegister);
         void emitStoreInt32(VirtualRegister, RegisterID payload, bool indexIsInt32 = false);
         void emitStoreInt32(VirtualRegister, TrustedImm32 payload, bool indexIsInt32 = false);
         void emitStoreCell(VirtualRegister, RegisterID payload, bool indexIsCell = false);
@@ -670,23 +670,20 @@ namespace JSC {
         void emit_op_unexpected_load(const Instruction*);
         void emit_op_unsigned(const Instruction*);
         void emit_op_urshift(const Instruction*);
+        template <typename OpCodeType>
+        void emit_op_has_structure_propertyImpl(const Instruction*);
+        void emit_op_has_enumerable_indexed_property(const Instruction*);
+        void emit_op_has_enumerable_structure_property(const Instruction*);
+        void emit_op_has_own_structure_property(const Instruction*);
+        void emit_op_in_structure_property(const Instruction*);
+        void emit_op_get_direct_pname(const Instruction*);
+        void emit_op_enumerator_structure_pname(const Instruction*);
+        void emit_op_enumerator_generic_pname(const Instruction*);
         void emit_op_get_internal_field(const Instruction*);
         void emit_op_put_internal_field(const Instruction*);
         void emit_op_log_shadow_chicken_prologue(const Instruction*);
         void emit_op_log_shadow_chicken_tail(const Instruction*);
         void emit_op_to_property_key(const Instruction*);
-
-        template<typename OpcodeType>
-        void generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
-
-        void emit_op_enumerator_next(const Instruction*);
-        void emit_op_enumerator_get_by_val(const Instruction*);
-        void emitSlow_op_enumerator_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-
-        template<typename OpcodeType, typename SlowPathFunctionType>
-        void emit_enumerator_has_propertyImpl(const Instruction*, const OpcodeType&, SlowPathFunctionType);
-        void emit_op_enumerator_in_by_val(const Instruction*);
-        void emit_op_enumerator_has_own_property(const Instruction*);
 
         void emitSlow_op_add(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -738,6 +735,7 @@ namespace JSC {
         void emitSlow_op_put_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_enumerable_indexed_property(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_resolve_scope(const Instruction*);
         void emit_op_get_from_scope(const Instruction*);

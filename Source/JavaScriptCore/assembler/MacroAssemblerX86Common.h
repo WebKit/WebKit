@@ -625,12 +625,6 @@ public:
         m_assembler.orb_rm(src, dest.offset, dest.base, dest.index, dest.scale);
     }
 
-    void or8(RegisterID src, AbsoluteAddress address)
-    {
-        move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        or8(src, Address(scratchRegister()));
-    }
-
     void or32(Address src, RegisterID dest)
     {
         m_assembler.orl_mr(src.offset, src.base, dest);
@@ -669,12 +663,6 @@ public:
     void or8(TrustedImm32 imm, BaseIndex address)
     {
         m_assembler.orb_im(static_cast<int8_t>(imm.m_value), address.offset, address.base, address.index, address.scale);
-    }
-
-    void or8(TrustedImm32 imm, AbsoluteAddress address)
-    {
-        move(TrustedImmPtr(address.m_ptr), scratchRegister());
-        or8(imm, Address(scratchRegister()));
     }
 
     void or32(RegisterID op1, RegisterID op2, RegisterID dest)

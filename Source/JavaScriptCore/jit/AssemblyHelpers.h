@@ -188,7 +188,7 @@ public:
         store32(regs.tagGPR(), bitwise_cast<void*>(bitwise_cast<uintptr_t>(address) + TagOffset));
 #endif
     }
-
+    
     void loadValue(Address address, JSValueRegs regs)
     {
 #if USE(JSVALUE64)
@@ -889,7 +889,7 @@ public:
         return branch8(
             Below, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
     }
-
+    
     // Note that first and last are inclusive.
     Jump branchIfType(GPRReg cellGPR, JSTypeRange range)
     {

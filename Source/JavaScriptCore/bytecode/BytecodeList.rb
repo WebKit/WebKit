@@ -29,7 +29,6 @@ types [
     :DebugHookType,
     :ECMAMode,
     :ErrorTypeWithExtension,
-    :EnumeratorMetadata,
     :GetByIdMode,
     :GetByIdModeMetadata,
     :GetByValHistory,
@@ -1155,69 +1154,89 @@ op :profile_control_flow,
         basicBlockLocation: BasicBlockLocation.*,
     }
 
+op :get_enumerable_length,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+    }
+
+op :has_enumerable_indexed_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+    }
+
+op :has_enumerable_structure_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+        enumerator: VirtualRegister,
+    }
+
+op :has_own_structure_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+        enumerator: VirtualRegister,
+    }
+
+op :in_structure_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+        enumerator: VirtualRegister,
+    }
+
+op :has_enumerable_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+    }
+
+op :get_direct_pname,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+        index: VirtualRegister,
+        enumerator: VirtualRegister,
+    },
+    metadata: {
+        profile: ValueProfile,
+    }
+
 op :get_property_enumerator,
     args: {
         dst: VirtualRegister,
         base: VirtualRegister,
     }
 
-op :enumerator_next,
-    args: {
-        # out
-        propertyName: VirtualRegister,
-        # in/out
-        mode: VirtualRegister, # Will always be a JS UInt32 representing a JSForInMode.
-        index: VirtualRegister, # Gets reset to zero every time mode changes.
-        # in
-        base: VirtualRegister,
-        enumerator: VirtualRegister,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
-    }
-
-op :enumerator_get_by_val,
+op :enumerator_structure_pname,
     args: {
         dst: VirtualRegister,
-        base: VirtualRegister,
-        mode: VirtualRegister,
-        propertyName: VirtualRegister,
-        index: VirtualRegister,
         enumerator: VirtualRegister,
-    },
-    metadata: {
-        profile: ValueProfile,
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
+        index: VirtualRegister,
     }
 
-op :enumerator_in_by_val,
+op :enumerator_generic_pname,
     args: {
         dst: VirtualRegister,
-        base: VirtualRegister,
-        mode: VirtualRegister,
-        propertyName: VirtualRegister,
-        index: VirtualRegister,
         enumerator: VirtualRegister,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
+        index: VirtualRegister,
     }
 
-op :enumerator_has_own_property,
+op :to_index_string,
     args: {
         dst: VirtualRegister,
-        base: VirtualRegister,
-        mode: VirtualRegister,
-        propertyName: VirtualRegister,
         index: VirtualRegister,
-        enumerator: VirtualRegister,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
     }
 
 op :unreachable

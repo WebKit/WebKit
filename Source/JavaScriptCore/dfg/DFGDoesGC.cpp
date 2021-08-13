@@ -205,6 +205,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutStructure:
     case GetByOffset:
     case GetGetterSetterByOffset:
+    case GetEnumerableLength:
     case FiatInt52:
     case BooleanToNumber:
     case CheckBadValue:
@@ -296,10 +297,16 @@ bool doesGC(Graph& graph, Node* node)
     case GetByIdFlush:
     case GetByIdWithThis:
     case GetByValWithThis:
+    case GetDirectPname:
     case GetDynamicVar:
     case GetMapBucket:
     case HasIndexedProperty:
+    case HasEnumerableIndexedProperty:
+    case HasEnumerableStructureProperty:
+    case HasEnumerableProperty:
     case HasOwnProperty:
+    case HasOwnStructureProperty:
+    case InStructureProperty:
     case InById:
     case InByVal:
     case HasPrivateName:
@@ -385,10 +392,9 @@ bool doesGC(Graph& graph, Node* node)
     case NewTypedArray:
     case ThrowStaticError:
     case GetPropertyEnumerator:
-    case EnumeratorInByVal:
-    case EnumeratorHasOwnProperty:
-    case EnumeratorNextUpdatePropertyName:
-    case EnumeratorNextUpdateIndexAndMode:
+    case GetEnumeratorStructurePname:
+    case GetEnumeratorGenericPname:
+    case ToIndexString:
     case MaterializeNewObject:
     case MaterializeNewInternalFieldObject:
     case MaterializeCreateActivation:
@@ -498,13 +504,8 @@ bool doesGC(Graph& graph, Node* node)
 
     case GetIndexedPropertyStorage:
     case GetByVal:
-    case EnumeratorGetByVal:
         if (node->arrayMode().type() == Array::String)
             return true;
-        return false;
-
-    case EnumeratorNextExtractMode:
-    case EnumeratorNextExtractIndex:
         return false;
 
     case PutByValDirect:
