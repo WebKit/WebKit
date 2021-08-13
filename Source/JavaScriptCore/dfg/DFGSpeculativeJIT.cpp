@@ -13591,16 +13591,12 @@ void SpeculativeJIT::compileEnumeratorNextUpdatePropertyName(Node* node)
     MacroAssembler::JumpList doneCases;
     MacroAssembler::Jump operationCall;
 
-    bool needsOperation = seenModes.contains(JSPropertyNameEnumerator::IndexedMode);
-
-    // Make sure we flush on all code paths if we could call the operation.
-    if (needsOperation)
-        flushRegisters();
+    // Make sure we flush on all code paths if we will call the operation.
+    // Note: we can't omit the operation because we are not guaranteed EnumeratorUpdateIndexAndMode will speculate on the mode.
+    flushRegisters();
 
     if (seenModes.containsAny({ JSPropertyNameEnumerator::OwnStructureMode, JSPropertyNameEnumerator::GenericMode })) {
-
-        if (needsOperation)
-            operationCall = m_jit.branchTest32(MacroAssembler::NonZero, mode, TrustedImm32(JSPropertyNameEnumerator::IndexedMode));
+        operationCall = m_jit.branchTest32(MacroAssembler::NonZero, mode, TrustedImm32(JSPropertyNameEnumerator::IndexedMode));
 
         auto outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, index, MacroAssembler::Address(enumerator, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()));
 
@@ -13613,16 +13609,12 @@ void SpeculativeJIT::compileEnumeratorNextUpdatePropertyName(Node* node)
 
         outOfBounds.link(&m_jit);
         m_jit.moveTrustedValue(jsNull(), resultRegs);
+        doneCases.append(m_jit.jump());
+        operationCall.link(&m_jit);
     }
 
-    if (needsOperation) {
-        if (operationCall.isSet()) {
-            doneCases.append(m_jit.jump());
-            operationCall.link(&m_jit);
-        }
-        callOperation(operationEnumeratorNextUpdatePropertyName, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), index, mode, enumerator);
-        m_jit.exceptionCheck();
-    }
+    callOperation(operationEnumeratorNextUpdatePropertyName, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), index, mode, enumerator);
+    m_jit.exceptionCheck();
 
     doneCases.link(&m_jit);
     jsValueResult(resultRegs, node);

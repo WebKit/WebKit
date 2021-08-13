@@ -1,3 +1,20 @@
+2021-08-13  Keith Miller  <keith_miller@apple.com>
+
+        EnumeratorNextUpdatePropertyName always needs to be able to handle IndexedMode
+        https://bugs.webkit.org/show_bug.cgi?id=229087
+
+        Reviewed by Filip Pizlo.
+
+        Right now, this operation incorrectly assumes that EnumeratorNextUpdateIndexAndMode will guarantee
+        the mode matches the seen mode set. But no speculation is guaranteed and adding such a guarantee
+        would require adding checkpoints, which is likely not worth it. Instead, this patch just makes
+        sure we always handle the allocation for IndexedMode.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdatePropertyName):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2021-08-12  Mark Lam  <mark.lam@apple.com>
 
         Refactor some ARM64EHash code.
