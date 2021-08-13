@@ -1,3 +1,54 @@
+2021-08-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r280984. rdar://problem/81901248
+
+    Update ARM64EHash
+    https://bugs.webkit.org/show_bug.cgi?id=228962
+    <rdar://79883337>
+    
+    Reviewed by Mark Lam.
+    
+    * assembler/AssemblerBuffer.h:
+    (JSC::ARM64EHash::makeDiversifier):
+    (JSC::ARM64EHash::nextValue):
+    (JSC::ARM64EHash::bitsForDiversifier):
+    (JSC::ARM64EHash::currentHash):
+    (JSC::ARM64EHash::setUpdatedHash):
+    (JSC::ARM64EHash::ARM64EHash):
+    (JSC::ARM64EHash::update):
+    (JSC::ARM64EHash::finalize):
+    (JSC::AssemblerBuffer::AssemblerBuffer):
+    (JSC::AssemblerBuffer::putIntegralUnchecked):
+    (JSC::AssemblerBuffer::hash const):
+    * assembler/LinkBuffer.cpp:
+    (JSC::LinkBuffer::copyCompactAndLinkCode):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280984 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-12  Saam Barati  <sbarati@apple.com>
+
+            Update ARM64EHash
+            https://bugs.webkit.org/show_bug.cgi?id=228962
+            <rdar://79883337>
+
+            Reviewed by Mark Lam.
+
+            * assembler/AssemblerBuffer.h:
+            (JSC::ARM64EHash::makeDiversifier):
+            (JSC::ARM64EHash::nextValue):
+            (JSC::ARM64EHash::bitsForDiversifier):
+            (JSC::ARM64EHash::currentHash):
+            (JSC::ARM64EHash::setUpdatedHash):
+            (JSC::ARM64EHash::ARM64EHash):
+            (JSC::ARM64EHash::update):
+            (JSC::ARM64EHash::finalize):
+            (JSC::AssemblerBuffer::AssemblerBuffer):
+            (JSC::AssemblerBuffer::putIntegralUnchecked):
+            (JSC::AssemblerBuffer::hash const):
+            * assembler/LinkBuffer.cpp:
+            (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2021-08-05  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r280659. rdar://problem/81569033
