@@ -1297,6 +1297,7 @@ void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError&
     if (resourceError.type() == ResourceError::Type::Null)
         return;
     encodePlatformData(encoder, resourceError);
+    encoder << resourceError.isSanitized();
 }
 
 bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resourceError)
@@ -1313,7 +1314,14 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
     if (!decodePlatformData(decoder, resourceError))
         return false;
 
+    bool isSanitized;
+    if (!decoder.decode(isSanitized))
+        return false;
+
     resourceError.setType(type);
+    if (isSanitized)
+        resourceError.setAsSanitized();
+
     return true;
 }
 

@@ -100,7 +100,7 @@ function runTests()
         try {
             importScripts(source1, fakeSource, source2);
         } catch(e) {
-            postMessage("PASS: Threw " + e + " when load failed");
+            postMessage("PASS: Threw " + e + " when importing script");
         }
         if (!loadedSource1 && !loadedSource2)
             postMessage("FAIL: Nothing was executed when network error occurred.");

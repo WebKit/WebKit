@@ -7,7 +7,7 @@ promise_test((test) => {
     return fetch("resources/subresource-redirect.py", { mode : "no-cors" }).then(() => {
         assert_not_reached("fetch should fail");
     }, (e) => {
-        assert_equals(e.message, "Blocked by Content Security Policy.");
+        assert_equals(e.message, "Load failed");
     });
 }, "Ensure CSP happens before content blocker checks");
 </script>

@@ -10,5 +10,5 @@ PASS HTTP cache doesn't reuse fresh response when request contains Cache-Control
 PASS HTTP cache validates fresh response with Last-Modified when request contains Cache-Control: no-cache
 PASS HTTP cache validates fresh response with ETag when request contains Cache-Control: no-cache
 PASS HTTP cache doesn't reuse fresh response when request contains Cache-Control: no-store
-FAIL HTTP cache generates 504 status code when nothing is in cache and request contains Cache-Control: only-if-cached promise_test: Unhandled rejection with value: object "TypeError: can’t load from network"
+FAIL HTTP cache generates 504 status code when nothing is in cache and request contains Cache-Control: only-if-cached promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 

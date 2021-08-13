@@ -1,3 +1,31 @@
+2021-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Overly verbose catchable fetch error messages lead to cross-origin leaks
+        https://bugs.webkit.org/show_bug.cgi?id=228861
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/contentextensions/block-ping-resource-type-raw-expected.txt:
+        * http/tests/contentextensions/fetch-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * http/tests/subresource-integrity/sri-module-expected.txt:
+        * http/tests/workers/service/shift-reload-navigation-expected.txt:
+        * http/tests/workers/resources/worker-importScripts.js: changed error logging for better readability.
+        * http/tests/workers/worker-importScripts-expected.txt:
+        * http/wpt/service-workers/cors-preflight-star.any-serviceworker-expected.txt:
+        * js/dom/modules/module-fetch-failure-not-cached-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * platform/mac-wk1/http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.any-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.any.worker-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/fetch/http-cache/cc-request.any.worker-expected.txt:
+
 2021-08-13  Martin Robinson  <mrobinson@webkit.org>
 
         Get lint-test-expectations passing

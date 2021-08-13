@@ -1,12 +1,12 @@
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt.
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html.
 CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough because it violates the resource's Cross-Origin-Resource-Policy response header.
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt?passthrough due to access control checks.
 CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html?passthrough because it violates the resource's Cross-Origin-Resource-Policy response header.
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html?passthrough due to access control checks.
-CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Load failed
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html.
 
 PASS setting up

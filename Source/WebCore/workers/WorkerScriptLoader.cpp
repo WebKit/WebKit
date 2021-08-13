@@ -99,7 +99,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
 
     // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
     if (failed())
-        return Exception { NetworkError, error().localizedDescription() };
+        return Exception { NetworkError, m_error.sanitizedDescription() };
 
 #if ENABLE(SERVICE_WORKER)
     if (isServiceWorkerGlobalScope) {

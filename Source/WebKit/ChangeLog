@@ -1,3 +1,14 @@
+2021-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Overly verbose catchable fetch error messages lead to cross-origin leaks
+        https://bugs.webkit.org/show_bug.cgi?id=228861
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceError>::encode):
+        (IPC::ArgumentCoder<ResourceError>::decode):
+
 2021-08-12  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r280951): [ Big Sur ] TestWebKitAPI.AudioRoutingArbitration.Close is failing

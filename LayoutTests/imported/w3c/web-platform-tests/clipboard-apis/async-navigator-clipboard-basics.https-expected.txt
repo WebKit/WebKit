@@ -11,7 +11,7 @@ PASS navigator.clipboard.write(DOMString) fails (expect [ClipboardItem])
 PASS navigator.clipboard.write(Blob) fails (expect [ClipboardItem])
 PASS navigator.clipboard.writeText(DOMString) succeeds
 PASS navigator.clipboard.writeText() fails (expect DOMString)
-FAIL navigator.clipboard.write({string : image/png Blob}) succeeds promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+FAIL navigator.clipboard.write({string : image/png Blob}) succeeds promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 PASS navigator.clipboard.read() succeeds
 PASS navigator.clipboard.readText() succeeds
 

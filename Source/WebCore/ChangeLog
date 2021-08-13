@@ -1,3 +1,45 @@
+2021-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Overly verbose catchable fetch error messages lead to cross-origin leaks
+        https://bugs.webkit.org/show_bug.cgi?id=228861
+
+        Reviewed by Brent Fulgham.
+
+        Standardize error messages to get more uniform with other browsers.
+        To continue supporting service worker errors going to page errors,
+        we add a boolean to ResourceError to control whether sanitizing the error message or not.
+        This allows to keep error messages from service worker type exceptions to be exposed in window environments through fetch rejection.
+        Also handle ScriptModuleLoader since it is doing its own SRI checks.
+        Covered by rebased tests.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::loadingException const):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::sanitizedDescription const):
+        (WebCore::ResourceErrorBase::isSanitized const):
+        (WebCore::ResourceErrorBase::setAsSanitized):
+        (WebCore::ResourceErrorBase::ResourceErrorBase):
+        * platform/network/cf/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/soup/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::createResponseError):
+        (WebCore::FetchEvent::respondWith):
+        (WebCore::FetchEvent::promiseIsSettled):
+        * workers/service/FetchEvent.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::notifyFinished):
+
 2021-08-13  Sergio Villar Senin  <svillar@igalia.com>
 
         Crash in MockMediaSourcePrivate

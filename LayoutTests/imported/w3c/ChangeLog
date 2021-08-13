@@ -1,3 +1,39 @@
+2021-08-13  Youenn Fablet  <youenn@apple.com>
+
+        Overly verbose catchable fetch error messages lead to cross-origin leaks
+        https://bugs.webkit.org/show_bug.cgi?id=228861
+
+        Reviewed by Brent Fulgham.
+
+        Rebasing tests with new error message.
+
+        * web-platform-tests/FileAPI/url/url-with-fetch.any-expected.txt:
+        * web-platform-tests/FileAPI/url/url-with-fetch.any.worker-expected.txt:
+        * web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only-expected.txt:
+        * web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https-expected.txt:
+        * web-platform-tests/fetch/http-cache/cc-request.any-expected.txt:
+        * web-platform-tests/fetch/http-cache/cc-request.any.worker-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/coep-on-response-from-service-worker.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/none-sw-from-none.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/none-sw-from-require-corp.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-none.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-sw-from-require-corp.https-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/credentials.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/credentials.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/credentials.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-credentials-setTimeout.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-credentials.sub-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-cross-origin.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/constructor-reftypes.tentative.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/grow-reftypes.tentative.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/table/set-reftypes.tentative.any.worker-expected.txt:
+
 2021-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Unprefix -webkit-backface-visibility

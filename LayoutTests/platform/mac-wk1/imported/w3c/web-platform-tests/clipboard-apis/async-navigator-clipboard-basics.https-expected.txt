@@ -11,7 +11,7 @@ FAIL navigator.clipboard.write(DOMString) fails (expect [ClipboardItem]) promise
 FAIL navigator.clipboard.write(Blob) fails (expect [ClipboardItem]) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.clipboard.write')"
 FAIL navigator.clipboard.writeText(DOMString) succeeds promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.clipboard.writeText')"
 FAIL navigator.clipboard.writeText() fails (expect DOMString) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.clipboard.writeText')"
-FAIL navigator.clipboard.write({string : image/png Blob}) succeeds promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+FAIL navigator.clipboard.write({string : image/png Blob}) succeeds promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 FAIL navigator.clipboard.read() succeeds promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.clipboard.read')"
 FAIL navigator.clipboard.readText() succeeds promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.clipboard.readText')"
 

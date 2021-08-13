@@ -69,7 +69,7 @@ public:
 
     bool respondWithEntered() const { return m_respondWithEntered; }
 
-    static ResourceError createResponseError(const URL&, const String&);
+    static ResourceError createResponseError(const URL&, const String&, ResourceError::IsSanitized = ResourceError::IsSanitized::No);
 
 private:
     WEBCORE_EXPORT FetchEvent(const AtomString&, Init&&, IsTrusted);

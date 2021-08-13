@@ -61,9 +61,9 @@ FetchEvent::~FetchEvent()
     }
 }
 
-ResourceError FetchEvent::createResponseError(const URL& url, const String& errorMessage)
+ResourceError FetchEvent::createResponseError(const URL& url, const String& errorMessage, ResourceError::IsSanitized isSanitized)
 {
-    return ResourceError { errorDomainWebKitServiceWorker, 0, url, makeString("FetchEvent.respondWith received an error: ", errorMessage), ResourceError::Type::General };
+    return ResourceError { errorDomainWebKitServiceWorker, 0, url, makeString("FetchEvent.respondWith received an error: ", errorMessage), ResourceError::Type::General, isSanitized };
 
 }
 
@@ -89,7 +89,7 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
     m_waitToRespond = true;
 
     if (isRegistered == DOMPromise::IsCallbackRegistered::No)
-        respondWithError(createResponseError(m_request->url(), "FetchEvent unable to handle respondWith promise."_s));
+        respondWithError(createResponseError(m_request->url(), "FetchEvent unable to handle respondWith promise."_s, ResourceError::IsSanitized::Yes));
 
     return { };
 }
@@ -118,19 +118,19 @@ void FetchEvent::promiseIsSettled()
 {
     if (m_respondPromise->status() == DOMPromise::Status::Rejected) {
         auto reason = m_respondPromise->result().toWTFString(m_respondPromise->globalObject());
-        respondWithError(createResponseError(m_request->url(), reason));
+        respondWithError(createResponseError(m_request->url(), reason, ResourceError::IsSanitized::Yes));
         return;
     }
 
     ASSERT(m_respondPromise->status() == DOMPromise::Status::Fulfilled);
     auto response = JSFetchResponse::toWrapped(m_respondPromise->globalObject()->vm(), m_respondPromise->result());
     if (!response) {
-        respondWithError(createResponseError(m_request->url(), "Returned response is null."_s));
+        respondWithError(createResponseError(m_request->url(), "Returned response is null."_s, ResourceError::IsSanitized::Yes));
         return;
     }
 
     if (response->isDisturbedOrLocked()) {
-        respondWithError(createResponseError(m_request->url(), "Response is disturbed or locked."_s));
+        respondWithError(createResponseError(m_request->url(), "Response is disturbed or locked."_s, ResourceError::IsSanitized::Yes));
         return;
     }
 

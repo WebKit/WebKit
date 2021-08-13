@@ -1,3 +1,3 @@
 
-FAIL importScripts() supports cross-origin requests promise_test: Unhandled rejection with value: object "TypeError: NetworkError: A server with the specified hostname could not be found."
+FAIL importScripts() supports cross-origin requests promise_test: Unhandled rejection with value: object "TypeError: NetworkError: Load failed"
 

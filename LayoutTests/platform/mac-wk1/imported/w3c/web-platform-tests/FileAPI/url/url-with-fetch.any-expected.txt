@@ -12,6 +12,6 @@ PASS fetch with method "OPTIONS" should fail
 PASS fetch with method "PUT" should fail
 PASS fetch with method "CUSTOM" should fail
 PASS fetch should return Content-Type from Blob
-FAIL Revoke blob URL after creating Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Revoke blob URL after creating Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 PASS Revoke blob URL after calling fetch, fetch should succeed
 

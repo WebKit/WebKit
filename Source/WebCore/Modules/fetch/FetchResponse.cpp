@@ -298,10 +298,10 @@ void FetchResponse::BodyLoader::didFail(const ResourceError& error)
     m_response.setLoadingError(ResourceError { error });
 
     if (auto responseCallback = WTFMove(m_responseCallback))
-        responseCallback(Exception { TypeError, error.localizedDescription() });
+        responseCallback(Exception { TypeError, error.sanitizedDescription() });
 
     if (auto consumeDataCallback = WTFMove(m_consumeDataCallback))
-        consumeDataCallback(Exception { TypeError, error.localizedDescription() });
+        consumeDataCallback(Exception { TypeError, error.sanitizedDescription() });
 
     if (m_response.m_readableStreamSource) {
         if (!m_response.m_readableStreamSource->isCancelling())

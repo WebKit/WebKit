@@ -2,4 +2,4 @@ CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityP
 CONSOLE MESSAGE: Blocked by Content Security Policy.
 This tests a Web Worker with Content Security Policy "script-src 'self'" blocks the import of a script from a different origin through a redirect.
 
-PASS threw exception NetworkError: Blocked by Content Security Policy..
+PASS threw exception NetworkError: Load failed.

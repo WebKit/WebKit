@@ -19,7 +19,7 @@ PASS mode: "error", manually-generated redirect response
 PASS mode: "manual", manually-generated redirect response
 PASS mode: "follow", generated relative redirect response
 PASS mode: "error", generated relative redirect response
-FAIL mode: "manual", generated relative redirect response promise_test: Unhandled rejection with value: object "TypeError: The URL can’t be shown"
+FAIL mode: "manual", generated relative redirect response promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 PASS Fetch should follow the redirect response 20 times
 PASS Fetch should not follow the redirect response 21 times.
 PASS The URL for the service worker redirected request should be propagated to response.

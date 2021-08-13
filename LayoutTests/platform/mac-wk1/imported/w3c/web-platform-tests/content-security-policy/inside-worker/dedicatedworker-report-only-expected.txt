@@ -4,8 +4,8 @@ Blocked access to external URL https://www.localhost:9444/content-security-polic
 
 PASS Same-origin 'fetch()'.
 PASS Same-origin XHR.
-FAIL Cross-origin 'fetch()'. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin 'fetch()'. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 FAIL Cross-origin XHR. promise_test: Unhandled rejection with value: "xhr.open should not have thrown."
-FAIL Same-origin => cross-origin 'fetch()'. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-origin => cross-origin 'fetch()'. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 FAIL connect-src-self-report-only assert_array_equals: Reports do not match lengths differ, expected array ["http://localhost:8800/common/redirect-opt-in.py?status=307&location=https://www.localhost:9444/content-security-policy/support/resource.py?cross-origin-fetch", "https://www.localhost:9444/content-security-policy/support/resource.py?cross-origin-fetch", "https://www.localhost:9444/content-security-policy/support/resource.py?cross-origin-xhr"] length 3, got [] length 0
 
