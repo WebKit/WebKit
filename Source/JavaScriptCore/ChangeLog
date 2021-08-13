@@ -1,5 +1,53 @@
 2021-08-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r280996. rdar://problem/81901248
+
+    Refactor some ARM64EHash code.
+    https://bugs.webkit.org/show_bug.cgi?id=229054
+    
+    Reviewed by Keith Miller and Robin Morisset.
+    
+    This patch only refactors ARM64EHash code by moving some methods into the private
+    section, and removing some unneeded static_casts.
+    
+    Verified with a diff of `otool -tv` dumps of the built JavaScriptCore binaries,
+    that there are no diffs in the generated code from this change.
+    
+    * assembler/AssemblerBuffer.h:
+    (JSC::ARM64EHash::ARM64EHash):
+    (JSC::ARM64EHash::update):
+    (JSC::ARM64EHash::makeDiversifier):
+    (JSC::ARM64EHash::nextValue):
+    (JSC::ARM64EHash::bitsForDiversifier):
+    (JSC::ARM64EHash::currentHash):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280996 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-12  Mark Lam  <mark.lam@apple.com>
+
+            Refactor some ARM64EHash code.
+            https://bugs.webkit.org/show_bug.cgi?id=229054
+
+            Reviewed by Keith Miller and Robin Morisset.
+
+            This patch only refactors ARM64EHash code by moving some methods into the private
+            section, and removing some unneeded static_casts.
+
+            Verified with a diff of `otool -tv` dumps of the built JavaScriptCore binaries,
+            that there are no diffs in the generated code from this change.
+
+            * assembler/AssemblerBuffer.h:
+            (JSC::ARM64EHash::ARM64EHash):
+            (JSC::ARM64EHash::update):
+            (JSC::ARM64EHash::makeDiversifier):
+            (JSC::ARM64EHash::nextValue):
+            (JSC::ARM64EHash::bitsForDiversifier):
+            (JSC::ARM64EHash::currentHash):
+
+2021-08-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r280984. rdar://problem/81901248
 
     Update ARM64EHash
