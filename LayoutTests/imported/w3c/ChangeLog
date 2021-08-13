@@ -1,3 +1,20 @@
+2021-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Unprefix -webkit-backface-visibility
+        https://bugs.webkit.org/show_bug.cgi?id=170983
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-transforms/css-transform-property-existence-expected.txt: Added.
+        * web-platform-tests/css/css-transforms/css-transform-property-existence.html: Added.
+        * web-platform-tests/css/css-transforms/parsing/backface-visibility-computed-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/backface-visibility-valid-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
 2021-08-12  Martin Robinson  <mrobinson@webkit.org>
 
         Update import of css/css-position from WPT
