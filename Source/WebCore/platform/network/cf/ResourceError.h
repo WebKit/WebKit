@@ -66,7 +66,7 @@ public:
     WEBCORE_EXPORT operator CFErrorRef() const;
 
 #if USE(CFURLCONNECTION)
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate);
+    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate, IsSanitized = IsSanitized::No);
     PCCERT_CONTEXT certificate() const;
     void setCertificate(CFDataRef);
     ResourceError(CFStreamError error);

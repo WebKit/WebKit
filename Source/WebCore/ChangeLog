@@ -1,3 +1,14 @@
+2021-08-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r281012
+        https://bugs.webkit.org/show_bug.cgi?id=228861
+
+        Add missing constructor signature when USE(CFURLCONNECTION) is true.
+
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceErrorCF.cpp: Add missing constructor signature.
+        (WebCore::ResourceError::ResourceError):
+
 2021-08-13  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r281009.

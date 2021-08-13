@@ -45,8 +45,8 @@ ResourceError::ResourceError(CFErrorRef cfError)
         setType((CFErrorGetCode(m_platformError.get()) == kCFURLErrorTimedOut) ? Type::Timeout : Type::General);
 }
 
-ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate)
-    : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, Type::General)
+ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate, IsSanitized isSanitized)
+    : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, Type::General, isSanitized)
     , m_dataIsUpToDate(true)
     , m_certificate(certificate)
 {
