@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT serviceworker-report-only Test timed out
+PASS Same-origin 'fetch()'.
+TIMEOUT Cross-origin 'fetch()'. Test timed out
+NOTRUN Same-origin => cross-origin 'fetch()'.
+NOTRUN connect-src-self-report-only
+

@@ -197,7 +197,6 @@ imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.
 
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-vertical.html [ Pass ]
-imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html [ Pass ]
 
@@ -1096,6 +1095,15 @@ webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-draw
 
 webkit.org/b/219340 webgl/1.0.3/conformance/extensions/angle-instanced-arrays-out-of-bounds.html [ Failure ]
 
+# Tests related with the WebGL/Metal backend, maybe should be skipped
+webkit.org/b/229050 fast/canvas/webgl/shader-with-comma-op.html [ Failure ]
+webkit.org/b/229050 fast/canvas/webgl/shader-with-struct-array.html [ Failure ]
+
+webkit.org/b/229051 webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Failure ]
+webkit.org/b/229051 webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Failure ]
+
+webkit.org/b/229052 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1154,6 +1162,8 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 
 webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html [ Timeout Pass ]
+
+webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2338,6 +2348,12 @@ webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/__secure.head
 webkit.org/b/227823 imported/w3c/web-platform-tests/cookies/prefix/document-cookie.non-secure.html [ Failure ]
 
 webkit.org/b/228778 mhtml [ ImageOnlyFailure Pass ]
+
+webkit.org/b/229057 media/event-attributes.html [ Pass Failure ]
+webkit.org/b/229057 media/video-background-tab-playback.html [ Pass Failure ]
+
+webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
+webkit.org/b/229063 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 

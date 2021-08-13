@@ -798,6 +798,9 @@ webkit.org/b/152247 fast/forms/input-appearance-spinbutton-up.html [ Skip ]
 webkit.org/b/152247 fast/forms/input-appearance-spinbutton.html [ Skip ]
 webkit.org/b/152247 fast/forms/listbox-scrollbar-hit-test.html [ Skip ]
 
+# This is a Mac specific feature
+webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
+
 # The test directly sends Cocoa events
 swipe/pushState-programmatic-back-while-swiping-crash.html [ Skip ]
 

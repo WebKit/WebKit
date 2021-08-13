@@ -1,3 +1,17 @@
+2021-08-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of layout test failures
+
+        Unreviewed gardening
+
+        Rebaseline tests after r280953 and r279838 and report and mark new expected failures.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/header-parsing.https-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+
 2021-08-12  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Mac wk1 ] imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.window.html is flaky failing.
