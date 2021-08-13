@@ -312,7 +312,7 @@ ExceptionOr<void> AudioNode::disconnect(AudioNode& destinationNode, unsigned out
     if (outputIndex >= numberOfOutputs())
         return Exception { IndexSizeError, "output index is out of bounds"_s };
 
-    if (outputIndex >= destinationNode.numberOfInputs())
+    if (inputIndex >= destinationNode.numberOfInputs())
         return Exception { IndexSizeError, "input index is out of bounds"_s };
 
     auto* output = this->output(outputIndex);
