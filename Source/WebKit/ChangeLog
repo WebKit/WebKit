@@ -1,3 +1,21 @@
+2021-08-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Check quarantine bits before rendering local files
+        https://bugs.webkit.org/show_bug.cgi?id=229073
+        <rdar://problem/81430251>
+
+        Reviewed by Brent Fulgham.
+
+        We shouldn't load files unless they have no quarantine flags or
+        have been marked user approved.
+
+        * Platform/spi/mac/QuarantineSPI.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::isQuarantinedAndNotUserApproved):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadFile):
+        * UIProcess/WebPageProxy.h:
+
 2021-08-13  Chris Dumez  <cdumez@apple.com>
 
         Add Cross-Origin-Embedder-Policy support for Blob URLs

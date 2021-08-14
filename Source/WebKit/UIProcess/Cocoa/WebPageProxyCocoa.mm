@@ -35,6 +35,7 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "PageClient.h"
+#import "QuarantineSPI.h"
 #import "QuickLookThumbnailLoader.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
@@ -89,6 +90,8 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
+
+#define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, m_identifier.toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -717,6 +720,34 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 
     return nil;
 }
+
+#if PLATFORM(MAC)
+bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
+{
+    NSURL *fileURL = [NSURL URLWithString:fileURLString];
+    qtn_file_t qf = qtn_file_alloc();
+
+    int quarantineError = qtn_file_init_with_path(qf, fileURL.path.fileSystemRepresentation);
+
+    if (quarantineError == ENOENT || quarantineError == QTN_NOT_QUARANTINED)
+        return false;
+
+    if (quarantineError) {
+        // If we fail to check the quarantine status, assume the file is quarantined and not user approved to be safe.
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "isQuarantinedAndNotUserApproved: failed to initialize quarantine file with path.");
+        qtn_file_free(qf);
+        return true;
+    }
+
+    uint32_t fileflags = qtn_file_get_flags(qf);
+    qtn_file_free(qf);
+
+    if (fileflags & QTN_FLAG_USER_APPROVED)
+        return false;
+
+    return true;
+}
+#endif
 
 } // namespace WebKit
 

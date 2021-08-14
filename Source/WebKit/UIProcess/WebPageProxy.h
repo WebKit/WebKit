@@ -1967,6 +1967,10 @@ public:
     bool needsSiteSpecificViewportQuirks() const { return m_needsSiteSpecificViewportQuirks; }
     void setNeedsSiteSpecificViewportQuirks(bool value) { m_needsSiteSpecificViewportQuirks = value; }
 
+#if PLATFORM(MAC)
+    bool isQuarantinedAndNotUserApproved(const String&);
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();

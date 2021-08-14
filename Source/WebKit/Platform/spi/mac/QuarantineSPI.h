@@ -33,9 +33,14 @@
 
 #else
 
+enum qtn_error_code {
+    QTN_NOT_QUARANTINED = -1,
+};
+
 enum qtn_flags {
     QTN_FLAG_DOWNLOAD = 0x0001,
     QTN_FLAG_SANDBOX = 0x0002,
+    QTN_FLAG_USER_APPROVED = 0x0040,
 };
 
 #define qtn_proc_alloc _qtn_proc_alloc
@@ -49,6 +54,7 @@ enum qtn_flags {
 #define qtn_file_free _qtn_file_free
 #define qtn_file_apply_to_path _qtn_file_apply_to_path
 #define qtn_file_set_flags _qtn_file_set_flags
+#define qtn_file_get_flags _qtn_file_get_flags
 #endif
 
 typedef struct _qtn_proc *qtn_proc_t;
@@ -65,6 +71,7 @@ void qtn_proc_free(qtn_proc_t);
 qtn_file_t qtn_file_alloc(void);
 void qtn_file_free(qtn_file_t qf);
 int qtn_file_set_flags(qtn_file_t qf, uint32_t flags);
+uint32_t qtn_file_get_flags(qtn_file_t qf);
 int qtn_file_apply_to_path(qtn_file_t qf, const char *path);
 int qtn_file_init_with_path(qtn_file_t qf, const char *path);
 

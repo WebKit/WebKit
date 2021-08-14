@@ -1428,6 +1428,13 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
         return nullptr;
     }
 
+#if PLATFORM(MAC)
+    if (isQuarantinedAndNotUserApproved(fileURLString)) {
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "loadFile: file cannot be opened because it is from an unidentified developer.");
+        return nullptr;
+    }
+#endif
+
     if (!hasRunningProcess())
         launchProcess({ }, ProcessLaunchReason::InitialProcess);
 
