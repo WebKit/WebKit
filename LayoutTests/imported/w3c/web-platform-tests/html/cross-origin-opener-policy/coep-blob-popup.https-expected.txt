@@ -1,5 +1,11 @@
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/blank.html due to access control checks.
 
-FAIL COOP+COEP blob URL popup: window.open() assert_true: Cross-origin without CORP did not fail expected true got false
-FAIL COOP+COEP blob URL popup: <a> assert_true: Cross-origin without CORP did not fail expected true got false
-FAIL COOP+COEP blob URL popup: <a rel=noopener> assert_true: Cross-origin without CORP did not fail expected true got false
+PASS COOP+COEP blob URL popup: window.open()
+PASS COOP+COEP blob URL popup: <a>
+PASS COOP+COEP blob URL popup: <a rel=noopener>
 

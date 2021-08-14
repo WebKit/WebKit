@@ -401,6 +401,7 @@ imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/loc
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
@@ -721,11 +722,6 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless
 # are served over HTTP.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/no-secure-context.html [ Skip ]
-
-# COEP test timing out due to lack of Blob URL support.
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Skip ]
 
 # This test makes the assumption that get_host_info().REMOTE_ORIGIN is same-site, which is not true for
 # our layout tests. We maintain our own version of this test in http/wpt.

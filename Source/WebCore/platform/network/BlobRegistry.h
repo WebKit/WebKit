@@ -41,7 +41,7 @@ class BlobPart;
 class BlobRegistry;
 class BlobRegistryImpl;
 
-struct CrossOriginOpenerPolicy;
+struct PolicyContainer;
 
 WEBCORE_EXPORT BlobRegistry& blobRegistry();
 
@@ -56,7 +56,7 @@ public:
     virtual void registerBlobURL(const URL&, Vector<BlobPart>&&, const String& contentType) = 0;
     
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
-    virtual void registerBlobURL(const URL&, const URL& srcURL, const CrossOriginOpenerPolicy&) = 0;
+    virtual void registerBlobURL(const URL&, const URL& srcURL, const PolicyContainer&) = 0;
 
     // Registers a new blob URL referring to the blob data identified by the specified srcURL or, if none found, referring to the file found at the given path.
     virtual void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;

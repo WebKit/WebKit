@@ -1,3 +1,48 @@
+2021-08-13  Chris Dumez  <cdumez@apple.com>
+
+        Add Cross-Origin-Embedder-Policy support for Blob URLs
+        https://bugs.webkit.org/show_bug.cgi?id=229041
+
+        Reviewed by Alex Christensen.
+
+        Add Cross-Origin-Embedder-Policy (COEP) support for Blob URLs. We do the same thing as for COOP,
+        we pass the COEP policy when registering the Blob URL and store it in the BlobData. When we need
+        the construct a Blob resource response as a result of a load, we add the right COEP headers
+        based on the BlobData's COEP policy.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::startLoadingBlobURL):
+        * fileapi/Blob.cpp:
+        (WebCore::BlobURLRegistry::registerURL):
+        (WebCore::Blob::Blob):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        * loader/CrossOriginEmbedderPolicy.cpp:
+        (WebCore::addCrossOriginEmbedderPolicyHeaders):
+        * loader/CrossOriginEmbedderPolicy.h:
+        (WebCore::operator==):
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::addCrossOriginOpenerPolicyHeaders):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * platform/network/BlobData.h:
+        (WebCore::BlobData::crossOriginEmbedderPolicy const):
+        (WebCore::BlobData::setCrossOriginEmbedderPolicy):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        (WebCore::BlobRegistryImpl::registerBlobURLOptionallyFileBacked):
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+
 2021-08-13  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r281012

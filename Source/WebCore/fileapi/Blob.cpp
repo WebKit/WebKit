@@ -37,6 +37,7 @@
 #include "BlobURL.h"
 #include "File.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PolicyContainer.h"
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
 #include "ScriptExecutionContext.h"
@@ -62,7 +63,7 @@ public:
 void BlobURLRegistry::registerURL(ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
 {
     ASSERT(&blob.registry() == this);
-    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.crossOriginOpenerPolicy(), publicURL, static_cast<Blob&>(blob).url());
+    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.policyContainer(), publicURL, static_cast<Blob&>(blob).url());
 }
 
 void BlobURLRegistry::unregisterURL(const URL& url)

@@ -336,12 +336,6 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     });
 }
 
-const CrossOriginOpenerPolicy& ScriptExecutionContext::crossOriginOpenerPolicy() const
-{
-    static NeverDestroyed<CrossOriginOpenerPolicy> coop;
-    return coop;
-}
-
 void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& activeDOMObject)
 {
     ASSERT(m_activeDOMObjects.contains(&activeDOMObject));

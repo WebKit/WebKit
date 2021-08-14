@@ -34,7 +34,6 @@
 
 #include "AsyncFileStream.h"
 #include "BlobData.h"
-#include "CrossOriginOpenerPolicy.h"
 #include "FileStream.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
@@ -577,7 +576,8 @@ void BlobResourceHandle::notifyResponseOnSuccess()
 
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, m_blobData->contentType());
     response.setHTTPHeaderField(HTTPHeaderName::ContentLength, String::number(m_totalRemainingSize));
-    addCrossOriginOpenerPolicyHeaders(response, m_blobData->crossOriginOpenerPolicy());
+    addCrossOriginOpenerPolicyHeaders(response, m_blobData->policyContainer().crossOriginOpenerPolicy);
+    addCrossOriginEmbedderPolicyHeaders(response, m_blobData->policyContainer().crossOriginEmbedderPolicy);
 
     if (isRangeRequest)
         response.setHTTPHeaderField(HTTPHeaderName::ContentRange, ParsedContentRange(m_rangeOffset, m_rangeEnd, m_totalSize).headerValue());

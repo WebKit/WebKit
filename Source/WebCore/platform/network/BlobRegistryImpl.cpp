@@ -35,6 +35,7 @@
 #include "BlobData.h"
 #include "BlobPart.h"
 #include "BlobResourceHandle.h"
+#include "PolicyContainer.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -152,23 +153,23 @@ void BlobRegistryImpl::registerBlobURL(const URL& url, Vector<BlobPart>&& blobPa
     addBlobData(url.string(), WTFMove(blobData));
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const CrossOriginOpenerPolicy& coop)
+void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL, const PolicyContainer& policyContainer)
 {
-    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, coop);
+    registerBlobURLOptionallyFileBacked(url, srcURL, nullptr, { }, policyContainer);
 }
 
-void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const CrossOriginOpenerPolicy& coop)
+void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, RefPtr<BlobDataFileReference>&& file, const String& contentType, const PolicyContainer& policyContainer)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
 
     BlobData* src = getBlobDataFromURL(srcURL);
     if (src) {
-        if (src->crossOriginOpenerPolicy() == coop)
+        if (src->policyContainer() == policyContainer)
             addBlobData(url.string(), src);
         else {
             auto clone = src->clone();
-            clone->setCrossOriginOpenerPolicy(coop);
+            clone->setPolicyContainer(policyContainer);
             addBlobData(url.string(), WTFMove(clone));
         }
         return;
@@ -179,7 +180,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
 
     auto backingFile = BlobData::create(contentType);
     backingFile->appendFile(file.releaseNonNull());
-    backingFile->setCrossOriginOpenerPolicy(coop);
+    backingFile->setPolicyContainer(policyContainer);
 
     addBlobData(url.string(), WTFMove(backingFile));
 }

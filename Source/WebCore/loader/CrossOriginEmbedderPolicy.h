@@ -50,6 +50,11 @@ struct CrossOriginEmbedderPolicy {
     template<class Decoder> static std::optional<CrossOriginEmbedderPolicy> decode(Decoder&);
 };
 
+inline bool operator==(const CrossOriginEmbedderPolicy& a, const CrossOriginEmbedderPolicy& b)
+{
+    return a.value == b.value && a.reportingEndpoint == b.reportingEndpoint && a.reportOnlyValue == b.reportOnlyValue && a.reportOnlyReportingEndpoint == b.reportOnlyReportingEndpoint;
+}
+
 template<class Encoder>
 void CrossOriginEmbedderPolicy::encode(Encoder& encoder) const
 {
@@ -88,6 +93,7 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(Decod
 }
 
 CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, const ScriptExecutionContext&);
+WEBCORE_EXPORT void addCrossOriginEmbedderPolicyHeaders(ResourceResponse&, const CrossOriginEmbedderPolicy&);
 
 enum class IsSecureContext : bool { No, Yes };
 WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, IsSecureContext);

@@ -78,8 +78,6 @@ class SocketProvider;
 enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
 
-struct CrossOriginOpenerPolicy;
-
 #if ENABLE(SERVICE_WORKER)
 class ServiceWorker;
 class ServiceWorkerContainer;
@@ -147,8 +145,6 @@ public:
 
     bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
-
-    virtual const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const;
 
     JSC::ScriptExecutionStatus jscScriptExecutionStatus() const;
 

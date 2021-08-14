@@ -38,6 +38,8 @@ namespace WebCore {
 class SecurityOrigin;
 class SecurityOriginPolicy;
 class ContentSecurityPolicy;
+struct CrossOriginOpenerPolicy;
+struct PolicyContainer;
 
 enum SandboxFlag {
     // See http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-sandbox for a list of the sandbox flags.
@@ -90,6 +92,10 @@ public:
 
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     void setCrossOriginEmbedderPolicy(const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
+
+    virtual const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const;
+
+    PolicyContainer policyContainer() const;
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 

@@ -82,7 +82,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
         failed(SecurityError);
         return;
     }
-    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), scriptExecutionContext->crossOriginOpenerPolicy(), m_urlForReading, blob.url());
+    ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), scriptExecutionContext->policyContainer(), m_urlForReading, blob.url());
 
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);

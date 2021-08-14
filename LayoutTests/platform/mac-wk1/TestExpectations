@@ -373,6 +373,7 @@ http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Skip ]
 
 # No Cross-Origin-Embedder-Policy in WK1.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Skip ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ Skip ]
 
 # Quota check missing in WK1

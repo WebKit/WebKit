@@ -81,7 +81,7 @@ void BlobData::appendFile(Ref<BlobDataFileReference>&& file)
 Ref<BlobData> BlobData::clone() const
 {
     auto blobData = BlobData::create(m_contentType);
-    blobData->m_coop = m_coop;
+    blobData->m_policyContainer = m_policyContainer;
     blobData->m_items = m_items;
     return blobData;
 }

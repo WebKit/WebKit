@@ -32,7 +32,7 @@
 #define BlobData_h
 
 #include "BlobDataFileReference.h"
-#include "CrossOriginOpenerPolicy.h"
+#include "PolicyContainer.h"
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -106,8 +106,8 @@ public:
 
     const String& contentType() const { return m_contentType; }
 
-    const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const { return m_coop; }
-    void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy& coop) { m_coop = coop; }
+    const PolicyContainer& policyContainer() const { return m_policyContainer; }
+    void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
     const BlobDataItemList& items() const { return m_items; }
     void swapItems(BlobDataItemList&);
@@ -125,7 +125,7 @@ private:
     void appendFile(BlobDataFileReference*, long long offset, long long length);
 
     String m_contentType;
-    CrossOriginOpenerPolicy m_coop;
+    PolicyContainer m_policyContainer;
     BlobDataItemList m_items;
 };
 

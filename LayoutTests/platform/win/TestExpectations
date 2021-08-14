@@ -3727,6 +3727,7 @@ imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-intercepti
 
 # No Cross-Origin-Embedder-Policy in WK1.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Skip ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ Skip ]
 
 # No header filtering for WK1

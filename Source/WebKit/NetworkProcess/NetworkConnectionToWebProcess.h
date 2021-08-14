@@ -66,7 +66,7 @@ class ResourceError;
 class ResourceRequest;
 enum class StorageAccessScope : bool;
 enum class ShouldAskITP : bool;
-struct CrossOriginOpenerPolicy;
+struct PolicyContainer;
 struct RequestStorageAccessResult;
 struct SameSiteInfo;
 
@@ -230,7 +230,7 @@ private:
 
     void registerFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
     void registerBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURLFromURL(const URL&, const URL& srcURL, WebCore::CrossOriginOpenerPolicy&&);
+    void registerBlobURLFromURL(const URL&, const URL& srcURL, WebCore::PolicyContainer&&);
     void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
     void registerBlobURLForSlice(const URL&, const URL& srcURL, int64_t start, int64_t end, const String& contentType);
     void blobSize(const URL&, CompletionHandler<void(uint64_t)>&&);

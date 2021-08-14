@@ -29,6 +29,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "HTMLParserIdioms.h"
+#include "PolicyContainer.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include <wtf/text/StringBuilder.h>
@@ -157,6 +158,20 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
     }
 
     return flags;
+}
+
+const CrossOriginOpenerPolicy& SecurityContext::crossOriginOpenerPolicy() const
+{
+    static NeverDestroyed<CrossOriginOpenerPolicy> coop;
+    return coop;
+}
+
+PolicyContainer SecurityContext::policyContainer() const
+{
+    return {
+        crossOriginEmbedderPolicy(),
+        crossOriginOpenerPolicy()
+    };
 }
 
 }

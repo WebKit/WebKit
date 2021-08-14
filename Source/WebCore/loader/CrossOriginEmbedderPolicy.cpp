@@ -74,4 +74,22 @@ CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() const
     };
 }
 
+void addCrossOriginEmbedderPolicyHeaders(ResourceResponse& response, const CrossOriginEmbedderPolicy& coep)
+{
+    if (coep.value != CrossOriginEmbedderPolicyValue::UnsafeNone) {
+        ASSERT(coep.value == CrossOriginEmbedderPolicyValue::RequireCORP);
+        if (coep.reportingEndpoint.isEmpty())
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, "require-corp"_s);
+        else
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, makeString("require-corp; report-to=\"", coep.reportingEndpoint, '\"'));
+    }
+    if (coep.reportOnlyValue != CrossOriginEmbedderPolicyValue::UnsafeNone) {
+        ASSERT(coep.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP);
+        if (coep.reportOnlyReportingEndpoint.isEmpty())
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, "require-corp"_s);
+        else
+            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, makeString("require-corp; report-to=\"", coep.reportOnlyReportingEndpoint, '\"'));
+    }
+}
+
 } // namespace WebCore

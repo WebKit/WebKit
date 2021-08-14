@@ -103,16 +103,12 @@ void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOr
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, crossOriginOpenerPolicyToString(coop.value));
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicy, makeString(crossOriginOpenerPolicyToString(coop.value), "; report-to=\"", coop.reportingEndpoint, '\"'));
-        if (coop.value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicy, "require-corp"_s); // FIXME: Pass in coep and set header value correctly.
     }
     if (coop.reportOnlyValue != CrossOriginOpenerPolicyValue::UnsafeNone) {
         if (coop.reportOnlyReportingEndpoint.isEmpty())
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, crossOriginOpenerPolicyToString(coop.reportOnlyValue));
         else
             response.setHTTPHeaderField(HTTPHeaderName::CrossOriginOpenerPolicyReportOnly, makeString(crossOriginOpenerPolicyToString(coop.reportOnlyValue), "; report-to=\"", coop.reportOnlyReportingEndpoint, '\"'));
-        if (coop.reportOnlyValue == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
-            response.setHTTPHeaderField(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, "require-corp"_s); // FIXME: Pass in coep and set header value correctly.
     }
 }
 
