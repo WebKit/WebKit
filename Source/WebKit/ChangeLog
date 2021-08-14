@@ -1,3 +1,17 @@
+2021-08-14  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] REGRESSION: WebContent often crashes when opening a Google spreadsheet with charts
+        https://bugs.webkit.org/show_bug.cgi?id=229106
+        <rdar://81806877>
+
+        Reviewed by Wenson Hsieh.
+
+        Don't resume processing the DisplayList of an ImageBuffer until its 
+        backend is created.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::didAppendData):
+
 2021-08-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Check quarantine bits before rendering local files

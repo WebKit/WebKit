@@ -344,7 +344,8 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
     bool wasEmpty = sharedHandle->advance(numberOfBytes) == numberOfBytes;
     if (!wasEmpty || didChangeItemBuffer == DisplayList::DidChangeItemBuffer::Yes) {
         if (m_deferredWakeupMessageArguments) {
-            if (sharedHandle->tryToResume({ m_deferredWakeupMessageArguments->offset, m_deferredWakeupMessageArguments->destinationImageBufferIdentifier.toUInt64() })) {
+            auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(m_deferredWakeupMessageArguments->destinationImageBufferIdentifier);
+            if (imageBuffer && imageBuffer->backend() && sharedHandle->tryToResume({ m_deferredWakeupMessageArguments->offset, m_deferredWakeupMessageArguments->destinationImageBufferIdentifier.toUInt64() })) {
                 m_parameters.resumeDisplayListSemaphore.signal();
                 m_deferredWakeupMessageArguments = std::nullopt;
                 m_remainingItemsToAppendBeforeSendingWakeup = 0;
@@ -358,8 +359,9 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
 
     sendDeferredWakeupMessageIfNeeded();
 
+    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(destinationImageBuffer);
     auto offsetToRead = sharedHandle->writableOffset() - numberOfBytes;
-    if (sharedHandle->tryToResume({ offsetToRead, destinationImageBuffer.toUInt64() })) {
+    if (imageBuffer && imageBuffer->backend() && sharedHandle->tryToResume({ offsetToRead, destinationImageBuffer.toUInt64() })) {
         m_parameters.resumeDisplayListSemaphore.signal();
         return;
     }
