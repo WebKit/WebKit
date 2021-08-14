@@ -496,7 +496,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     if (_documentContextMenuInteraction) {
         [_view removeInteraction:_documentContextMenuInteraction.get()];
         _documentContextMenuInteraction = nil;
-        [_view _removeContextMenuViewIfPossible];
+        [_view _removeContextMenuHintContainerIfPossible];
     }
 }
 

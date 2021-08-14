@@ -1,3 +1,17 @@
+2021-08-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] fast/events/touch/ios/long-press-on-link.html is a constant crash
+        https://bugs.webkit.org/show_bug.cgi?id=229095
+        rdar://80386326
+
+        Reviewed by Tim Horton.
+
+        Remove the failing test expectation (and remove a passing expectation for iOS 14 which is no longer necessary
+        after this fix).
+
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-08-13  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] http/tests/misc/webtiming-slow-load.py is failing.

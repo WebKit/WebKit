@@ -516,7 +516,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self.view removeInteraction:_suggestionsContextMenuInteraction.get()];
     _suggestionsContextMenuInteraction = nil;
-    [self.view _removeContextMenuViewIfPossible];
+    [self.view _removeContextMenuHintContainerIfPossible];
     [self.view.webView _didDismissContextMenu];
 }
 

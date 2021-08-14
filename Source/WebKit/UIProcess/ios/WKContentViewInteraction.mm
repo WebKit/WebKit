@@ -768,6 +768,39 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @end
 
+@interface WKTargetedPreviewContainer : UIView
+- (instancetype)initWithContentView:(WKContentView *)contentView NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+@end
+
+@implementation WKTargetedPreviewContainer {
+    __weak WKContentView *_contentView;
+}
+
+- (instancetype)initWithContentView:(WKContentView *)contentView
+{
+    if (!(self = [super initWithFrame:CGRectZero]))
+        return nil;
+
+    _contentView = contentView;
+    return self;
+}
+
+- (void)_didRemoveSubview:(UIView *)subview
+{
+    [super _didRemoveSubview:subview];
+
+    if (self.subviews.count)
+        return;
+
+#if USE(UICONTEXTMENU)
+    [_contentView _targetedPreviewContainerDidRemoveLastSubview:self];
+#endif
+}
+
+@end
+
 @interface WKContentView (WKInteractionPrivate)
 - (void)accessibilitySpeakSelectionSetContent:(NSString *)string;
 - (NSArray *)webSelectionRectsForSelectionGeometries:(const Vector<WebCore::SelectionGeometry>&)selectionRects;
@@ -1140,7 +1173,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _layerTreeTransactionIdAtLastInteractionStart = { };
 
 #if USE(UICONTEXTMENU)
-    [self _removeContextMenuViewIfPossible];
+    [self _removeContextMenuHintContainerIfPossible];
 #endif // USE(UICONTEXTMENU)
 
 #if ENABLE(DRAG_SUPPORT)
@@ -7756,7 +7789,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)removeContextMenuViewIfPossibleForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
-    [self _removeContextMenuViewIfPossible];
+    [self _removeContextMenuHintContainerIfPossible];
 }
 
 - (void)actionSheetAssistantDidShowContextMenu:(WKActionSheetAssistant *)assistant
@@ -7767,6 +7800,12 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)actionSheetAssistantDidDismissContextMenu:(WKActionSheetAssistant *)assistant
 {
     [_webView _didDismissContextMenu];
+}
+
+- (void)_targetedPreviewContainerDidRemoveLastSubview:(WKTargetedPreviewContainer *)containerView
+{
+    if (_contextMenuHintContainerView == containerView)
+        [self _removeContextMenuHintContainerIfPossible];
 }
 
 #endif // USE(UICONTEXTMENU)
@@ -7857,9 +7896,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 #endif // HAVE(PASTEBOARD_DATA_OWNER)
 
-- (RetainPtr<UIView>)_createPreviewContainerWithLayerName:(NSString *)layerName
+- (RetainPtr<WKTargetedPreviewContainer>)_createPreviewContainerWithLayerName:(NSString *)layerName
 {
-    auto container = adoptNS([[UIView alloc] init]);
+    auto container = adoptNS([[WKTargetedPreviewContainer alloc] initWithContentView:self]);
     [container layer].anchorPoint = CGPointZero;
     [container layer].name = layerName;
     return container;
@@ -8696,7 +8735,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return _contextMenuInteractionTargetedPreview.get();
 }
 
-- (void)_removeContextMenuViewIfPossible
+- (void)_removeContextMenuHintContainerIfPossible
 {
 #if HAVE(LINK_PREVIEW)
     // If a new _contextMenuElementInfo is installed, we've started another interaction,
@@ -8712,14 +8751,17 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     // and for the file upload panel...
     if (_fileUploadPanel)
         return;
-    
+
     // and for the date/time picker.
     if ([self dateTimeInputControl])
         return;
 
     if ([self selectControl])
         return;
-    
+
+    if ([_contextMenuHintContainerView subviews].count)
+        return;
+
     [self _removeContainerForContextMenuHintPreviews];
 }
 
@@ -11382,7 +11424,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
-        [strongSelf _removeContextMenuViewIfPossible];
+        [strongSelf _removeContextMenuHintContainerIfPossible];
         [strongSelf->_webView _didDismissContextMenu];
     }];
 }

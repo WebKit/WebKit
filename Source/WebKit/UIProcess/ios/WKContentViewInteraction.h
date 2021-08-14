@@ -122,6 +122,7 @@ class WebPageProxy;
 @class WKImageAnalysisGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
+@class WKTargetedPreviewContainer;
 @class WKTextRange;
 @class _WKTextInputContext;
 
@@ -318,11 +319,11 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
-    RetainPtr<UIView> _contextMenuHintContainerView;
+    RetainPtr<WKTargetedPreviewContainer> _contextMenuHintContainerView;
     WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;
     CGPoint _scrollViewForTargetedPreviewInitialOffset;
-    RetainPtr<UIView> _dragPreviewContainerView;
-    RetainPtr<UIView> _dropPreviewContainerView;
+    RetainPtr<WKTargetedPreviewContainer> _dragPreviewContainerView;
+    RetainPtr<WKTargetedPreviewContainer> _dropPreviewContainerView;
     RetainPtr<NSString> _markedText;
     RetainPtr<WKActionSheetAssistant> _actionSheetAssistant;
 #if ENABLE(AIRPLAY_PICKER)
@@ -731,7 +732,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement;
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
-- (void)_removeContextMenuViewIfPossible;
+- (void)_removeContextMenuHintContainerIfPossible;
+- (void)_targetedPreviewContainerDidRemoveLastSubview:(WKTargetedPreviewContainer *)containerView;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

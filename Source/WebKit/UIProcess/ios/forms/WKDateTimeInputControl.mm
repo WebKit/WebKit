@@ -469,7 +469,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     if (_dateTimeContextMenuInteraction) {
         [_view removeInteraction:_dateTimeContextMenuInteraction.get()];
         _dateTimeContextMenuInteraction = nil;
-        [_view _removeContextMenuViewIfPossible];
+        [_view _removeContextMenuHintContainerIfPossible];
         [_view.webView _didDismissContextMenu];
     }
 }

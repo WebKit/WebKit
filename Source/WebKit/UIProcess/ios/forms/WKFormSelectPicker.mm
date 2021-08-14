@@ -701,7 +701,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
     [_view removeInteraction:_selectContextMenuInteraction.get()];
     _selectContextMenuInteraction = nil;
-    [_view _removeContextMenuViewIfPossible];
+    [_view _removeContextMenuHintContainerIfPossible];
     [_view.webView _didDismissContextMenu];
 }
 
