@@ -1,11 +1,11 @@
 
 PASS HTTP/1.1  (network error)
 PASS HTTP/1.1 BLAH (network error)
-FAIL HTTP/1.1 0 OK  promise_test: Unhandled rejection with value: object "TypeError: Could not parse HTTP response"
-FAIL HTTP/1.1 1 OK  promise_test: Unhandled rejection with value: object "TypeError: Could not parse HTTP response"
-FAIL HTTP/1.1 99 NOT OK  promise_test: Unhandled rejection with value: object "TypeError: Could not parse HTTP response"
-FAIL HTTP/1.1 077 77  promise_test: Unhandled rejection with value: object "TypeError: Could not parse HTTP response"
-FAIL HTTP/1.1 099 HELLO  promise_test: Unhandled rejection with value: object "TypeError: Could not parse HTTP response"
+FAIL HTTP/1.1 0 OK  promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL HTTP/1.1 1 OK  promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL HTTP/1.1 99 NOT OK  promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL HTTP/1.1 077 77  promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL HTTP/1.1 099 HELLO  promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 PASS HTTP/1.1 200
 PASS HTTP/1.1 999 DOES IT MATTER
 PASS HTTP/1.1 1000 BOO (network error)
