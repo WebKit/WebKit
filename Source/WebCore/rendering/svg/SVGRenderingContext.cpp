@@ -66,9 +66,6 @@ SVGRenderingContext::~SVGRenderingContext()
     if (m_renderingFlags & EndOpacityLayer)
         m_paintInfo->context().endTransparencyLayer();
 
-    if (m_renderingFlags & EndShadowLayer)
-        m_paintInfo->context().endTransparencyLayer();
-
     if (m_renderingFlags & RestoreGraphicsContext)
         m_paintInfo->context().restore();
 }
@@ -99,7 +96,6 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     bool isRenderingMask = isRenderingMaskImage(*m_renderer);
     // RenderLayer takes care of root opacity.
     float opacity = (renderer.isSVGRoot() || isRenderingMask) ? 1 : style.opacity();
-    const ShadowData* shadow = svgStyle.shadow();
     bool hasBlendMode = style.hasBlendMode();
     bool hasIsolation = style.hasIsolation();
     bool isolateMaskForBlending = false;
@@ -111,7 +107,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     }
 #endif
 
-    if (opacity < 1 || shadow || hasBlendMode || isolateMaskForBlending || hasIsolation) {
+    if (opacity < 1 || hasBlendMode || isolateMaskForBlending || hasIsolation) {
         FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();
         m_paintInfo->context().clip(repaintRect);
 
@@ -126,12 +122,6 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
                 m_paintInfo->context().setCompositeOperation(m_paintInfo->context().compositeOperation(), BlendMode::Normal);
 
             m_renderingFlags |= EndOpacityLayer;
-        }
-
-        if (shadow) {
-            m_paintInfo->context().setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->radius(), shadow->color());
-            m_paintInfo->context().beginTransparencyLayer(1);
-            m_renderingFlags |= EndShadowLayer;
         }
     }
 

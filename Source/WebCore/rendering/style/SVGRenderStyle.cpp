@@ -57,7 +57,6 @@ SVGRenderStyle::SVGRenderStyle()
     , m_inheritedResourceData(defaultSVGStyle().m_inheritedResourceData)
     , m_stopData(defaultSVGStyle().m_stopData)
     , m_miscData(defaultSVGStyle().m_miscData)
-    , m_shadowData(defaultSVGStyle().m_shadowData)
     , m_layoutData(defaultSVGStyle().m_layoutData)
     , m_nonInheritedResourceData(defaultSVGStyle().m_nonInheritedResourceData)
 {
@@ -71,7 +70,6 @@ SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
     , m_inheritedResourceData(StyleInheritedResourceData::create())
     , m_stopData(StyleStopData::create())
     , m_miscData(StyleMiscData::create())
-    , m_shadowData(StyleShadowSVGData::create())
     , m_layoutData(StyleLayoutData::create())
     , m_nonInheritedResourceData(StyleResourceData::create())
 {
@@ -88,7 +86,6 @@ inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     , m_inheritedResourceData(other.m_inheritedResourceData)
     , m_stopData(other.m_stopData)
     , m_miscData(other.m_miscData)
-    , m_shadowData(other.m_shadowData)
     , m_layoutData(other.m_layoutData)
     , m_nonInheritedResourceData(other.m_nonInheritedResourceData)
 {
@@ -108,7 +105,6 @@ bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
         && m_textData == other.m_textData
         && m_stopData == other.m_stopData
         && m_miscData == other.m_miscData
-        && m_shadowData == other.m_shadowData
         && m_layoutData == other.m_layoutData
         && m_inheritedResourceData == other.m_inheritedResourceData
         && m_nonInheritedResourceData == other.m_nonInheritedResourceData
@@ -140,7 +136,6 @@ void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle& other)
     m_nonInheritedFlags = other.m_nonInheritedFlags;
     m_stopData = other.m_stopData;
     m_miscData = other.m_miscData;
-    m_shadowData = other.m_shadowData;
     m_layoutData = other.m_layoutData;
     m_nonInheritedResourceData = other.m_nonInheritedResourceData;
 }
@@ -173,10 +168,6 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
     // Text related properties influence layout.
     bool miscNotEqual = m_miscData != other.m_miscData;
     if (miscNotEqual && m_miscData->baselineShiftValue != other.m_miscData->baselineShiftValue)
-        return StyleDifference::Layout;
-
-    // Shadow changes require relayouts, as they affect the repaint rects.
-    if (m_shadowData != other.m_shadowData)
         return StyleDifference::Layout;
 
     // The x or y properties require relayout.

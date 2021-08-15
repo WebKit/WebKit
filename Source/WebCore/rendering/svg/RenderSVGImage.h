@@ -86,7 +86,6 @@ private:
     AffineTransform m_localTransform;
     FloatRect m_objectBoundingBox;
     FloatRect m_repaintBoundingBox;
-    FloatRect m_repaintBoundingBoxExcludingShadow;
     std::unique_ptr<RenderImageResource> m_imageResource;
     RefPtr<ImageBuffer> m_bufferedForeground;
 };

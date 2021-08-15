@@ -77,7 +77,6 @@ public:
     static float initialFloodOpacity() { return 1; }
     static Color initialFloodColor() { return Color::black; }
     static Color initialLightingColor() { return Color::white; }
-    static ShadowData* initialShadow() { return nullptr; }
     static String initialMaskerResource() { return String(); }
     static String initialMarkerStartResource() { return String(); }
     static String initialMarkerMidResource() { return String(); }
@@ -124,8 +123,6 @@ public:
     void setLightingColor(const Color&);
     void setBaselineShiftValue(const SVGLengthValue&);
 
-    void setShadow(std::unique_ptr<ShadowData>&& data) { m_shadowData.access().shadow = WTFMove(data); }
-
     // Setters for non-inherited resources
     void setMaskerResource(const String&);
 
@@ -166,7 +163,6 @@ public:
     const Color& floodColor() const { return m_miscData->floodColor; }
     const Color& lightingColor() const { return m_miscData->lightingColor; }
     SVGLengthValue baselineShiftValue() const { return m_miscData->baselineShiftValue; }
-    ShadowData* shadow() const { return m_shadowData->shadow.get(); }
     const Length& cx() const { return m_layoutData->cx; }
     const Length& cy() const { return m_layoutData->cy; }
     const Length& r() const { return m_layoutData->r; }
@@ -192,7 +188,7 @@ public:
     bool hasMarkers() const { return !markerStartResource().isEmpty() || !markerMidResource().isEmpty() || !markerEndResource().isEmpty(); }
     bool hasStroke() const { return strokePaintType() != SVGPaintType::None; }
     bool hasFill() const { return fillPaintType() != SVGPaintType::None; }
-    bool isolatesBlending() const { return hasMasker() || shadow(); }
+    bool isolatesBlending() const { return hasMasker(); }
 
 private:
     SVGRenderStyle();
@@ -249,7 +245,6 @@ private:
     // non-inherited attributes
     DataRef<StyleStopData> m_stopData;
     DataRef<StyleMiscData> m_miscData;
-    DataRef<StyleShadowSVGData> m_shadowData;
     DataRef<StyleLayoutData> m_layoutData;
     DataRef<StyleResourceData> m_nonInheritedResourceData;
 };

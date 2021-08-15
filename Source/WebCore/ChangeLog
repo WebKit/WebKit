@@ -1,3 +1,40 @@
+2021-08-15  Rob Buis  <rbuis@igalia.com>
+
+        Remove shadow related SVG functionality
+        https://bugs.webkit.org/show_bug.cgi?id=228870
+
+        Reviewed by Simon Fraser.
+
+        Remove shadow related SVG functionality since it was added
+        for the removed property -webkit-svg-shadow (see r238071).
+
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::SVGRenderStyle):
+        (WebCore::SVGRenderStyle::operator== const):
+        (WebCore::SVGRenderStyle::copyNonInheritedFrom):
+        (WebCore::SVGRenderStyle::diff const):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialLightingColor):
+        (WebCore::SVGRenderStyle::baselineShiftValue const):
+        (WebCore::SVGRenderStyle::isolatesBlending const):
+        (WebCore::SVGRenderStyle::initialShadow): Deleted.
+        (WebCore::SVGRenderStyle::setShadow): Deleted.
+        (WebCore::SVGRenderStyle::shadow const): Deleted.
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeFloatVisibleRectInContainer const):
+        (WebCore::RenderSVGRoot::updateCachedBoundaries):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::computeFloatVisibleRectInContainer):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::~SVGRenderingContext):
+        (WebCore::SVGRenderingContext::prepareToRenderSVGContent):
+        * rendering/svg/SVGRenderingContext.h:
+
 2021-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         [LFC Display] Introduce type-safe rect types for the display tree

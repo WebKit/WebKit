@@ -111,7 +111,6 @@ private:
     bool m_inLayout { false };
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
-    FloatRect m_repaintBoundingBoxExcludingShadow;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
     HashSet<RenderSVGResourceContainer*> m_resourcesNeedingToInvalidateClients;

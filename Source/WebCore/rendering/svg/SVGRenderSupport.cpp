@@ -59,9 +59,6 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
     // Pass our local paint rect to computeFloatVisibleRectInContainer() which will
     // map to parent coords and recurse up the parent chain.
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
-    const SVGRenderStyle& svgStyle = renderer.style().svgStyle();
-    if (const ShadowData* shadow = svgStyle.shadow())
-        shadow->adjustRectForShadow(repaintRect);
     return enclosingLayoutRect(renderer.computeFloatRectForRepaint(repaintRect, repaintContainer));
 }
 
@@ -74,9 +71,6 @@ std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(co
         return FloatRect();
 
     FloatRect adjustedRect = rect;
-    const SVGRenderStyle& svgStyle = renderer.style().svgStyle();
-    if (const ShadowData* shadow = svgStyle.shadow())
-        shadow->adjustRectForShadow(adjustedRect);
     adjustedRect.inflate(renderer.style().outlineWidth());
 
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
