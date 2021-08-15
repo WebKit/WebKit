@@ -321,6 +321,113 @@ void testLoadPostIndex64()
     CHECK_EQ(invoke<int64_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
 }
 
+void testStorePreIndex32()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int32_t nums[] = { 1, 2, 3 };
+    int32_t* ptr = &nums[1];
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* value = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* offset = root->appendNew<Const64Value>(proc, Origin(), 4);
+    Value* preIncrement = root->appendNew<Value>(proc, Add, Origin(), address, offset);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), value, preIncrement);
+    root->appendNewControlValue(proc, Return, Origin(), preIncrement);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "#4]!");
+    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
+    ptr = bitwise_cast<int32_t*>(res);
+    CHECK_EQ(nums[2], *ptr);
+}
+
+void testStorePreIndex64()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int64_t nums[] = { 1, 2, 3 };
+    int64_t* ptr = &nums[1];
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* offset = root->appendNew<Const64Value>(proc, Origin(), 8);
+    Value* preIncrement = root->appendNew<Value>(proc, Add, Origin(), address, offset);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), value, preIncrement);
+    root->appendNewControlValue(proc, Return, Origin(), preIncrement);
+
+    auto code = compileProc(proc);
+    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
+    ptr = bitwise_cast<int64_t*>(res);
+    CHECK_EQ(nums[2], *ptr);
+}
+
+void testStorePostIndex32()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int32_t nums[] = { 1, 2, 3 };
+    int32_t* ptr = &nums[1];
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* value = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    root->appendNew<MemoryValue>(proc, Store, Origin(), value, address);
+    Value* offset = root->appendNew<Const64Value>(proc, Origin(), 4);
+    Value* preIncrement = root->appendNew<Value>(proc, Add, Origin(), address, offset);
+    root->appendNewControlValue(proc, Return, Origin(), preIncrement);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "], #4");
+    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
+    ptr = bitwise_cast<int32_t*>(res);
+    CHECK_EQ(nums[1], 4);
+    CHECK_EQ(nums[2], *ptr);
+}
+
+void testStorePostIndex64()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    int64_t nums[] = { 1, 2, 3 };
+    int64_t* ptr = &nums[1];
+
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), value, address);
+    Value* offset = root->appendNew<Const64Value>(proc, Origin(), 8);
+    Value* preIncrement = root->appendNew<Value>(proc, Add, Origin(), address, offset);
+    root->appendNewControlValue(proc, Return, Origin(), preIncrement);
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, "], #8");
+    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
+    ptr = bitwise_cast<int64_t*>(res);
+    CHECK_EQ(nums[1], 4);
+    CHECK_EQ(nums[2], *ptr);
+}
 
 void testInsertSignedBitfieldInZero32()
 {
@@ -3994,6 +4101,11 @@ void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testLoadPreIndex64());
     RUN(testLoadPostIndex32());
     RUN(testLoadPostIndex64());
+
+    RUN(testStorePreIndex32());
+    RUN(testStorePreIndex64());
+    RUN(testStorePostIndex32());
+    RUN(testStorePostIndex64());
 }
 
 #endif // ENABLE(B3_JIT)

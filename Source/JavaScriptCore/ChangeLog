@@ -1,3 +1,131 @@
+2021-08-15  Yijia Huang  <yijia_huang@apple.com>
+
+        [ARM64] Add Pre/Post-Indexed Address Mode to Air for ARM64 (Store Instruction)
+        https://bugs.webkit.org/show_bug.cgi?id=228538
+
+        Reviewed by Filip Pizlo.
+
+        The previous patch has introduced the pre/post-index address mode for Load instruction,
+        which benefits loop program. Here, this patch adds the corresponding mode for Store
+        instruction. Store Register (immediate) stores a word or a doubleword from a register
+        to memory. The address that is used for the store is calculated from a base register
+        and an immediate offset.
+
+        ######################################
+        ## Pre-Index Address Mode For Store ##
+        ######################################
+
+        STR Wt, [Xn, #imm]!
+
+        In B3 Reduction Strength, since we have this reduction rule:
+            Turns this: Store(value, Add(address, offset1), offset = offset2)
+            Into this: Store(value, address, offset = offset1 + offset2)
+
+        The equivalent pattern is:
+            address = Add(base, offset)
+            ...
+            memory = Store(value, base, offset)
+
+        Here, we only consider the pattern:
+            address = Add(base, offset)
+            memory = Store(value, base, offset)
+
+        And, this patch directly treats it as the canonical form. Ideally, we should move 
+        memory to just after the address like what we did for PreIndex Load in the previous 
+        patch. But, we cannot provide a better way to do that since the value may be 
+        used between address and memory. To move value upward, we must move all descendants 
+        of the value along with it to prevent B3 IR index violations, which is risky and expensive.
+
+        Next, lower to Air:
+            Move %base, %address
+            Move %value, (%address, prefix(offset))
+
+        ######################################
+        ## Post-Index Address Mode For Load ##
+        ######################################
+
+        STR Wt, [Xn], #imm
+
+        Then, the equivalent pattern is:
+            memory = Store(value, base, 0)
+            ...
+            address = Add(base, offset)
+
+        First, we convert it to the canonical form:
+            newOffset = Constant
+            newAddress = Add(base, offset)
+            memory = Store(value, base, 0) // move the offset and address to just before the memory
+            ...
+            offset = Identity(newOffset)
+            address = Identity(newAddress)
+
+        Next, lower to Air:
+            Move %base, %newAddress
+            Move %value, (%newAddress, postfix(offset))
+
+        ##############################################
+        ## Test for Pre/Post-Increment Address Mode ##
+        ##############################################
+
+        B3 IR:
+        ------------------------------------------------------
+        Int64 b@0 = ArgumentReg(%x0)
+        Int64 b@1 = ArgumentReg(%x1)
+        Int64 b@2 = Const64(8)
+        Int64 b@3 = Add(b@0, $8(b@2))
+        Void  b@4 = Store(b@1, b@3, ControlDependent|Writes:Top)
+        Void  b@5 = Return(b@3, Terminal)
+        ------------------------------------------------------
+
+        W/O Pre-Increment Address Mode:
+        ------------------------------------------------------
+        Move  %x0, %x2,      b@0
+        Add64  $8, %x2, %x0, b@3
+        Move  %x1, 8(%x2),   b@4
+        Ret64 %x0,           b@5
+        ------------------------------------------------------
+
+        W/ Pre-Increment Address Mode:
+        ------------------------------------------------------
+        MoveWithIncrement64 %x1, (%x0,Pre($8)), b@4
+        Ret64               %x0,                b@5
+        ------------------------------------------------------
+
+
+        B3 IR:
+        ------------------------------------------------------
+        Int64 b@0 = ArgumentReg(%x0)
+        Int64 b@1 = ArgumentReg(%x1)
+        Void  b@2 = Store(b@1, b@0, ControlDependent|Writes:Top)
+        Int64 b@3 = Const64(8)
+        Int64 b@4 = Add(b@0, $8(b@3))
+        Void  b@5 = Return(b@4, Terminal)
+        ------------------------------------------------------
+
+        W/O Post-Increment Address Mode:
+        ------------------------------------------------------
+        Move  %x1, (%x0),      b@2
+        Add64  $8,   %x0, %x0, b@4
+        Ret64 %x0,             b@5
+        ------------------------------------------------------
+
+        W/ Post-Increment Address Mode:
+        ------------------------------------------------------
+        MoveWithIncrement64 %x1, (%x0,Post($8)), b@2
+        Ret64               %x0,                 b@5
+        ------------------------------------------------------
+
+        * b3/B3CanonicalizePrePostIncrements.cpp:
+        (JSC::B3::canonicalizePrePostIncrements):
+        * b3/B3LowerToAir.cpp:
+        * b3/testb3.h:
+        * b3/testb3_3.cpp:
+        (testStorePreIndex32):
+        (testStorePreIndex64):
+        (testStorePostIndex32):
+        (testStorePostIndex64):
+        (addShrTests):
+
 2021-08-13  Keith Miller  <keith_miller@apple.com>
 
         EnumeratorNextUpdatePropertyName always needs to be able to handle IndexedMode

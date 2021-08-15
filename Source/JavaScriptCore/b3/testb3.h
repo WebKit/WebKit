@@ -1168,4 +1168,9 @@ void testLoadPreIndex64();
 void testLoadPostIndex32();
 void testLoadPostIndex64();
 
+void testStorePreIndex32();
+void testStorePreIndex64();
+void testStorePostIndex32();
+void testStorePostIndex64();
+
 #endif // ENABLE(B3_JIT)
