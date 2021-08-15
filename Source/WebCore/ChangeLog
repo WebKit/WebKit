@@ -1,3 +1,26 @@
+2021-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [LFC Display] Make Display::ImageBox a CachedImageClient to get image repaint working
+        https://bugs.webkit.org/show_bug.cgi?id=229125
+
+        Reviewed by Anders Carlsson.
+
+        Make Display::ImageBox hold a CachedResourceHandle<CachedImage> so it can register
+        as a client and get notified about image changes, for repainting.
+
+        * display/css/DisplayBoxFactory.cpp:
+        (WebCore::Display::BoxFactory::displayBoxForLayoutBox const):
+        * display/css/DisplayImageBox.cpp:
+        (WebCore::Display::ImageBox::ImageBox):
+        (WebCore::Display::m_cachedImage):
+        (WebCore::Display::ImageBox::~ImageBox):
+        (WebCore::Display::ImageBox::image const):
+        (WebCore::Display::ImageBox::imageChanged):
+        (WebCore::Display::ImageBox::debugDescription const):
+        (WebCore::Display::m_image): Deleted.
+        * display/css/DisplayImageBox.h:
+        (WebCore::Display::ImageBox::image const): Deleted.
+
 2021-08-15  David Kilzer  <ddkilzer@apple.com>
 
         Bug 229112: ThreadSanitizer: data races of WTF::String in WebResourceLoadStatisticsStore

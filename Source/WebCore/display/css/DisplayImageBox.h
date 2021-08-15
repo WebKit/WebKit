@@ -27,29 +27,35 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "CachedImageClient.h"
+#include "CachedResourceHandle.h"
 #include "DisplayReplacedBox.h"
 
 namespace WebCore {
-
-class Image;
 
 namespace Display {
 
 class Style;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBox);
-class ImageBox : public ReplacedBox {
+
+class ImageBox : public ReplacedBox, public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageBox);
 public:
-    ImageBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, RefPtr<Image>&&);
+    ImageBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, CachedResourceHandle<CachedImage>&&);
+    ~ImageBox();
 
-    Image* image() const { return m_image.get(); }
+    Image* image() const;
 
 private:
+
+    // CachedImageClient
+    void imageChanged(CachedImage*, const IntRect*) final;
+
     const char* boxName() const final;
     String debugDescription() const final;
 
-    RefPtr<Image> m_image;
+    CachedResourceHandle<CachedImage> m_cachedImage;
 };
 
 } // namespace Display

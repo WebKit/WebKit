@@ -28,7 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "Image.h"
+#include "CachedImage.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,10 +36,28 @@ namespace Display {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBox);
 
-ImageBox::ImageBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, RefPtr<Image>&& image)
+ImageBox::ImageBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, CachedResourceHandle<CachedImage>&& image)
     : ReplacedBox(tree, borderBox, WTFMove(displayStyle), { TypeFlags::ImageBox })
-    , m_image(WTFMove(image))
+    , m_cachedImage(WTFMove(image))
 {
+    if (m_cachedImage)
+        m_cachedImage->addClient(*this);
+}
+
+ImageBox::~ImageBox()
+{
+    if (m_cachedImage)
+        m_cachedImage->removeClient(*this);
+}
+
+Image* ImageBox::image() const
+{
+    return m_cachedImage ? m_cachedImage->image() : nullptr;
+}
+
+void ImageBox::imageChanged(CachedImage*, const IntRect*)
+{
+    setNeedsDisplay(); // FIXME: Compute correct rect.
 }
 
 const char* ImageBox::boxName() const
@@ -50,7 +68,7 @@ const char* ImageBox::boxName() const
 String ImageBox::debugDescription() const
 {
     TextStream stream;
-    stream << boxName() << " " << absoluteBorderBoxRect() << " (" << this << ") replaced content rect: " << replacedContentRect() << " image: " << m_image.get();
+    stream << boxName() << " " << absoluteBorderBoxRect() << " (" << this << ") replaced content rect: " << replacedContentRect() << " image: " << m_cachedImage.get();
     return stream.release();
 }
 

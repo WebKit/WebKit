@@ -122,11 +122,8 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
     
     if (is<Layout::ReplacedBox>(layoutBox)) {
         // FIXME: Don't assume it's an image.
-        RefPtr<Image> image;
-        if (auto* cachedImage = downcast<Layout::ReplacedBox>(layoutBox).cachedImage())
-            image = cachedImage->image();
-
-        auto imageBox = makeUnique<ImageBox>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(image));
+        CachedResourceHandle<CachedImage> cachedImageHandle = downcast<Layout::ReplacedBox>(layoutBox).cachedImage();
+        auto imageBox = makeUnique<ImageBox>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(cachedImageHandle));
         setupBoxModelBox(*imageBox, layoutBox, geometry, containingBlockContext, styleForBackground);
         return imageBox;
     }
