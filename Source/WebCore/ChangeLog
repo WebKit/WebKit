@@ -1,3 +1,27 @@
+2021-08-15  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 229112: ThreadSanitizer: data races of WTF::String in WebResourceLoadStatisticsStore
+        <https://webkit.org/b/229112>
+        <rdar://problem/81940951>
+
+        Reviewed by Kate Cheney.
+
+        Covered by running layout tests with TSan in:
+            http/tests/privateClickMeasurement/
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parsePrivateClickMeasurement const):
+        - Add WTFMove() for updated SourceSite constructor.  Verified
+          that this doesn't create a use-after-move issue.
+
+        * loader/PrivateClickMeasurement.h:
+        (WebCore::PrivateClickMeasurement::SourceSite::SourceSite):
+        - Change to take rvalue reference for efficiency and to match
+          AttributionDestinationSite constructor.
+        (WebCore::PrivateClickMeasurement::SourceSite::isolatedCopy const): Add.
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::isolatedCopy const): Add.
+        - Add isolatedCopy() methods to use in multi-threaded scenarios.
+
 2021-08-15  Rob Buis  <rbuis@igalia.com>
 
         Remove shadow related SVG functionality

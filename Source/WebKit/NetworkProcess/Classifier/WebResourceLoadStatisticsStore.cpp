@@ -1509,7 +1509,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
         return;
     }
 
-    postTask([this, sourceSite, destinationSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, sourceSite = sourceSite.isolatedCopy(), destinationSite = destinationSite.isolatedCopy(), attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(std::nullopt);
@@ -1611,7 +1611,7 @@ void WebResourceLoadStatisticsStore::privateClickMeasurementToString(CompletionH
         }
 
         auto result = m_statisticsStore->privateClickMeasurementToString();
-        postTaskReply([result, completionHandler = WTFMove(completionHandler)]() mutable {
+        postTaskReply([result = result.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(result);
         });
     });

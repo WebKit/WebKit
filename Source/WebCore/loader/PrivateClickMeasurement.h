@@ -78,10 +78,12 @@ public:
         {
         }
 
-        explicit SourceSite(const RegistrableDomain& domain)
-            : registrableDomain { domain }
+        explicit SourceSite(RegistrableDomain&& domain)
+            : registrableDomain { WTFMove(domain) }
         {
         }
+
+        SourceSite isolatedCopy() const { return SourceSite { registrableDomain.isolatedCopy() }; }
 
         bool operator==(const SourceSite& other) const
         {
@@ -121,7 +123,9 @@ public:
             : registrableDomain { WTFMove(domain) }
         {
         }
-        
+
+        AttributionDestinationSite isolatedCopy() const { return AttributionDestinationSite { registrableDomain.isolatedCopy() }; }
+
         bool operator==(const AttributionDestinationSite& other) const
         {
             return registrableDomain == other.registrableDomain;
