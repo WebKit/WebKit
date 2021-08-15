@@ -255,8 +255,10 @@ std::unique_ptr<BoxRareGeometry> BoxFactory::constructBoxRareGeometry(const BoxM
         boxRareGeometry->setBorderRadii(WTFMove(borderRadii));
     }
 
-    auto transformationMatrix = computeTransformationMatrix(box, layoutGeometry, layoutBox.style(), offsetFromRoot);
-    boxRareGeometry->setTransform(WTFMove(transformationMatrix));
+    if (box.style().hasTransform()) {
+        auto transformationMatrix = computeTransformationMatrix(box, layoutGeometry, layoutBox.style(), offsetFromRoot);
+        boxRareGeometry->setTransform(WTFMove(transformationMatrix));
+    }
 
     return boxRareGeometry;
 }
@@ -267,6 +269,8 @@ void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox
 
     auto boxRareGeometry = constructBoxRareGeometry(box, layoutBox, layoutGeometry, containingBlockContext.offsetFromRoot);
     box.setBoxRareGeometry(WTFMove(boxRareGeometry));
+
+    box.setHasTransform(box.style().hasTransform());
 
     auto& renderStyle = layoutBox.style();
     if (!(styleForBackground && styleForBackground->hasBackground()) && !renderStyle.hasBorder()) // FIXME: Misses border-radius.

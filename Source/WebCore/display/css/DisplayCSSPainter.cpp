@@ -137,7 +137,7 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
             return false;
         
         auto& boxModelBox = downcast<BoxModelBox>(box);
-        return boxModelBox.hasAncestorClip() || boxModelBox.style().hasTransform() || boxModelBox.style().opacity() < 1;
+        return boxModelBox.hasAncestorClip() || boxModelBox.hasTransform() || boxModelBox.style().opacity() < 1;
     };
 
     auto stateSaver = GraphicsContextStateSaver { paintingContext.context, needToSaveState(box) };
@@ -145,7 +145,7 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
     if (is<BoxModelBox>(box))
         applyAncestorClip(downcast<BoxModelBox>(box), paintingContext);
 
-    if (is<BoxModelBox>(box) && box.style().hasTransform()) {
+    if (is<BoxModelBox>(box) && box.hasTransform()) {
         auto transformationMatrix = downcast<BoxModelBox>(box).rareGeometry()->transform();
         auto absoluteBorderBox = box.absoluteBoxRect();
 

@@ -53,6 +53,10 @@ public:
         LineBreakBox    = 1 << 4, // FIXME: Workaround for webkit.org/b/219335
     };
 
+    enum class StyleFlags : uint8_t {
+        HasTransform     = 1 << 0,
+    };
+
     Box(Tree&, AbsoluteFloatRect, Style&&, OptionSet<TypeFlags> = { });
     virtual ~Box();
 
@@ -77,6 +81,9 @@ public:
     const Box* nextSibling() const { return m_nextSibling.get(); }
     void setNextSibling(std::unique_ptr<Box>&&);
 
+    void setHasTransform(bool value) { m_styleFlags.set(StyleFlags::HasTransform, value); }
+    bool hasTransform() const { return m_styleFlags.contains(StyleFlags::HasTransform); }
+
     void setNeedsDisplay(std::optional<AbsoluteFloatRect> subrect = std::nullopt);
 
     virtual String debugDescription() const;
@@ -89,7 +96,8 @@ private:
     Style m_style;
     ContainerBox* m_parent { nullptr };
     std::unique_ptr<Box> m_nextSibling;
-    OptionSet<TypeFlags> m_typeFlags;
+    const OptionSet<TypeFlags> m_typeFlags;
+    OptionSet<StyleFlags> m_styleFlags;
 };
 
 } // namespace Display
