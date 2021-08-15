@@ -50,7 +50,7 @@ Ref<BoxClip> BoxClip::copy() const
     return adoptRef(*new BoxClip(*this));
 }
 
-void BoxClip::pushClip(const AbsoluteFloatRect& rect)
+void BoxClip::pushClip(const UnadjustedAbsoluteFloatRect& rect)
 {
     if (m_clipRect) {
         m_clipRect->intersect(rect);
@@ -63,7 +63,7 @@ void BoxClip::pushClip(const AbsoluteFloatRect& rect)
 void BoxClip::pushRoundedClip(const FloatRoundedRect& roundedRect)
 {
     ASSERT(roundedRect.isRounded());
-    pushClip(roundedRect.rect());
+    pushClip(UnadjustedAbsoluteFloatRect { roundedRect.rect() });
 
     m_affectedByBorderRadius = true;
     m_clipStack.append(roundedRect);

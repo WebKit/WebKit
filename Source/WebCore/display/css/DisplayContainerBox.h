@@ -36,7 +36,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ContainerBox);
 class ContainerBox : public BoxModelBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ContainerBox);
 public:
-    ContainerBox(Tree&, AbsoluteFloatRect borderBox, Style&&);
+    ContainerBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&);
     
     const Box* firstChild() const { return m_firstChild.get(); }
     void setFirstChild(std::unique_ptr<Box>&&);

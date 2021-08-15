@@ -37,7 +37,7 @@ namespace Display {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ContainerBox);
 
-ContainerBox::ContainerBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle)
+ContainerBox::ContainerBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle)
     : BoxModelBox(tree, borderBox, WTFMove(displayStyle), { TypeFlags::ContainerBox })
 {
 }

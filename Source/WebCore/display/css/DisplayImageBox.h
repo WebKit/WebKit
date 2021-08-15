@@ -41,7 +41,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImageBox);
 class ImageBox : public ReplacedBox {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ImageBox);
 public:
-    ImageBox(Tree&, AbsoluteFloatRect borderBox, Style&&, RefPtr<Image>&&);
+    ImageBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, RefPtr<Image>&&);
 
     Image* image() const { return m_image.get(); }
 

@@ -38,7 +38,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
 class TextBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextBox);
 public:
-    TextBox(Tree&, AbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
+    TextBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
 
     Layout::LineRun::Expansion expansion() const { return m_expansion; }
     const Layout::LineRun::Text& text() const { return m_text; }

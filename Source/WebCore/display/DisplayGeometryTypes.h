@@ -27,32 +27,37 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "DisplayBoxModelBox.h"
+#include "FloatRect.h"
 
 namespace WebCore {
 namespace Display {
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ReplacedBox);
+// Absolute coordinates are anchored at the document origin.
+class AbsoluteFloatRect : public FloatRect { };
 
-class ReplacedBox : public BoxModelBox {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ReplacedBox);
-    friend class BoxFactory;
-public:
-    ReplacedBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, OptionSet<TypeFlags>);
-    
-    UnadjustedAbsoluteFloatRect replacedContentRect() const { return m_replacedContentRect; }
+// Absolute coordinates ignoring the effects of scrolling and transforms.
+class UnadjustedAbsoluteFloatRect : public FloatRect { };
 
-private:
-    const char* boxName() const override;
+// View coordinates.
+class ViewFloatRect : public FloatRect { };
 
-    void setReplacedContentRect(const UnadjustedAbsoluteFloatRect& box) { m_replacedContentRect = box; }
+template<typename T>
+inline auto intersection(T& a, const T& b) -> typename std::enable_if_t<std::is_base_of_v<FloatRect, T>, T>
+{
+    T c = a;
+    c.intersect(b);
+    return c;
+}
 
-    UnadjustedAbsoluteFloatRect m_replacedContentRect;
-};
+template<typename T>
+inline auto unionRect(T& a, const T& b) -> typename std::enable_if_t<std::is_base_of_v<FloatRect, T>, T>
+{
+    T c = a;
+    c.unite(b);
+    return c;
+}
 
 } // namespace Display
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(ReplacedBox, isReplacedBox())
 
 #endif // ENABLE(LAYOUT_FORMATTING_CONTEXT)

@@ -49,7 +49,7 @@ const ContainerBox& Tree::rootBox() const
     return downcast<ContainerBox>(m_rootStackingItem->box());
 }
 
-void Tree::setBoxNeedsDisplay(Box&, std::optional<AbsoluteFloatRect>) const
+void Tree::setBoxNeedsDisplay(Box&, std::optional<UnadjustedAbsoluteFloatRect>) const
 {
     // FIXME: For now, just repaint the world.
     if (m_view)

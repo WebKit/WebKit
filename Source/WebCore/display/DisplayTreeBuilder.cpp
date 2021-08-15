@@ -104,8 +104,8 @@ struct BuildingState {
     StackingItem& currentStackingItem;
     StackingItem& currentStackingContextItem;
 
-    AbsoluteFloatRect currentStackingItemPaintedContentExtent; // This stacking item's contents only.
-    AbsoluteFloatRect currentStackingItemPaintingExtent; // Including descendant items.
+    UnadjustedAbsoluteFloatRect currentStackingItemPaintedContentExtent; // This stacking item's contents only.
+    UnadjustedAbsoluteFloatRect currentStackingItemPaintingExtent; // Including descendant items.
 };
 
 TreeBuilder::TreeBuilder(float pixelSnappingFactor)

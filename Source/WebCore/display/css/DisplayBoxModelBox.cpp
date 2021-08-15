@@ -40,7 +40,7 @@ namespace Display {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BoxModelBox);
 
-BoxModelBox::BoxModelBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
+BoxModelBox::BoxModelBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
     : Box(tree, borderBox, WTFMove(displayStyle), flags | TypeFlags::BoxModelBox)
 {
 }
@@ -108,7 +108,7 @@ RefPtr<BoxClip> BoxModelBox::clipForDescendants() const
                 return;
             }
 
-            boxClip.pushClip(roundedInnerBorder.rect());
+            boxClip.pushClip(UnadjustedAbsoluteFloatRect { roundedInnerBorder.rect() });
             return;
         }
 
@@ -119,7 +119,7 @@ RefPtr<BoxClip> BoxModelBox::clipForDescendants() const
     return clip;
 }
 
-AbsoluteFloatRect BoxModelBox::absolutePaintingExtent() const
+UnadjustedAbsoluteFloatRect BoxModelBox::absolutePaintingExtent() const
 {
     auto paintingExtent = absoluteBorderBoxRect();
 

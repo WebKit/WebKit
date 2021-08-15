@@ -39,7 +39,7 @@ namespace Display {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Box);
 
-Box::Box(Tree& tree, AbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
+Box::Box(Tree& tree, UnadjustedAbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
     : m_tree(tree)
     , m_absoluteBoxRect(absoluteRect)
     , m_style(WTFMove(displayStyle))
@@ -59,7 +59,7 @@ bool Box::participatesInZOrderSorting() const
     return !isLineBreakBox() && style().participatesInZOrderSorting();
 }
 
-void Box::setNeedsDisplay(std::optional<AbsoluteFloatRect> subrect)
+void Box::setNeedsDisplay(std::optional<UnadjustedAbsoluteFloatRect> subrect)
 {
     m_tree.setBoxNeedsDisplay(*this, subrect);
 }

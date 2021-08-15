@@ -1204,7 +1204,7 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
 {
     GraphicsContextStateSaver stateSaver(paintingContext.context, false);
 
-    auto clipRectForLayer = [](const BoxModelBox& box, const FillLayer& layer) {
+    auto clipRectForLayer = [](const BoxModelBox& box, const FillLayer& layer) -> UnadjustedAbsoluteFloatRect {
         switch (layer.clip()) {
         case FillBox::Border:
             return box.absoluteBorderBoxRect();
@@ -1215,7 +1215,7 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
         case FillBox::Text:
             break;
         }
-        return AbsoluteFloatRect();
+        return { };
     };
 
     switch (layer.clip()) {

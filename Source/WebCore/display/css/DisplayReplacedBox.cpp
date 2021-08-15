@@ -35,7 +35,7 @@ namespace Display {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ReplacedBox);
 
-ReplacedBox::ReplacedBox(Tree& tree, AbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
+ReplacedBox::ReplacedBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, OptionSet<TypeFlags> flags)
     : BoxModelBox(tree, borderBox, WTFMove(displayStyle), flags)
 {
 }

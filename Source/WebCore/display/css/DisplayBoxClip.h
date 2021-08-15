@@ -54,19 +54,19 @@ public:
     static Ref<BoxClip> create() { return adoptRef(*new BoxClip); }
     Ref<BoxClip> copy() const;
 
-    std::optional<AbsoluteFloatRect> clipRect() const { return m_clipRect; }
+    std::optional<UnadjustedAbsoluteFloatRect> clipRect() const { return m_clipRect; }
     
     bool affectedByBorderRadius() const { return m_affectedByBorderRadius; }
     const Vector<FloatRoundedRect>& clipStack() const { return m_clipStack; }
 
-    void pushClip(const AbsoluteFloatRect&);
+    void pushClip(const UnadjustedAbsoluteFloatRect&);
     void pushRoundedClip(const FloatRoundedRect&);
 
 private:
     BoxClip();
     BoxClip(const BoxClip&);
 
-    std::optional<AbsoluteFloatRect> m_clipRect;
+    std::optional<UnadjustedAbsoluteFloatRect> m_clipRect;
     Vector<FloatRoundedRect> m_clipStack;
     bool m_affectedByBorderRadius { false };
 };

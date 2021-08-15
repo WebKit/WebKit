@@ -1,5 +1,78 @@
 2021-08-15  Simon Fraser  <simon.fraser@apple.com>
 
+        [LFC Display] Introduce type-safe rect types for the display tree
+        https://bugs.webkit.org/show_bug.cgi?id=220214
+
+        Reviewed by Alan Bujtas.
+
+        Introduce AbsoluteFloatRect, UnadjustedAbsoluteFloatRect and ViewFloatRect which are
+        type-safe float rect types for the display tree.
+
+        AbsoluteFloatRect is relative to document origin. UnadjustedAbsoluteFloatRect is similar,
+        but is computed before scrolling and transforms are taken into account.
+
+        ViewFloatRect is relative to the view.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/DisplayGeometryTypes.h: Copied from Source/WebCore/display/css/DisplayReplacedBox.h.
+        (WebCore::Display::intersection):
+        (WebCore::Display::unionRect):
+        * display/DisplayTree.cpp:
+        (WebCore::Display::Tree::setBoxNeedsDisplay const):
+        * display/DisplayTree.h:
+        * display/DisplayTreeBuilder.cpp:
+        * display/css/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::setNeedsDisplay):
+        * display/css/DisplayBox.h:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::absoluteBoxRect const):
+        (WebCore::Display::Box::absolutePaintingExtent const):
+        * display/css/DisplayBoxClip.cpp:
+        (WebCore::Display::BoxClip::pushClip):
+        (WebCore::Display::BoxClip::pushRoundedClip):
+        * display/css/DisplayBoxClip.h:
+        (WebCore::Display::BoxClip::clipRect const):
+        * display/css/DisplayBoxDecorationPainter.cpp:
+        (WebCore::Display::BoxDecorationPainter::paintFillLayer const):
+        * display/css/DisplayBoxFactory.cpp:
+        (WebCore::Display::BoxFactory::displayBoxForRootBox const):
+        (WebCore::Display::BoxFactory::displayBoxForLayoutBox const):
+        (WebCore::Display::BoxFactory::displayBoxForTextRun const):
+        (WebCore::Display::BoxFactory::setupBoxGeometry const):
+        * display/css/DisplayBoxModelBox.cpp:
+        (WebCore::Display::BoxModelBox::BoxModelBox):
+        (WebCore::Display::BoxModelBox::clipForDescendants const):
+        (WebCore::Display::BoxModelBox::absolutePaintingExtent const):
+        * display/css/DisplayBoxModelBox.h:
+        (WebCore::Display::BoxModelBox::BoxModelBox):
+        (WebCore::Display::BoxModelBox::absoluteBorderBoxRect const):
+        (WebCore::Display::BoxModelBox::absolutePaddingBoxRect const):
+        (WebCore::Display::BoxModelBox::absoluteContentBoxRect const):
+        (WebCore::Display::BoxModelBox::setAbsolutePaddingBoxRect):
+        (WebCore::Display::BoxModelBox::setAbsoluteContentBoxRect):
+        * display/css/DisplayContainerBox.cpp:
+        (WebCore::Display::ContainerBox::ContainerBox):
+        * display/css/DisplayContainerBox.h:
+        * display/css/DisplayImageBox.cpp:
+        (WebCore::Display::ImageBox::ImageBox):
+        * display/css/DisplayImageBox.h:
+        * display/css/DisplayReplacedBox.cpp:
+        (WebCore::Display::ReplacedBox::ReplacedBox):
+        * display/css/DisplayReplacedBox.h:
+        (WebCore::Display::ReplacedBox::replacedContentRect const):
+        (WebCore::Display::ReplacedBox::setReplacedContentRect):
+        * display/css/DisplayStackingItem.h:
+        (WebCore::Display::StackingItem::paintedContentBounds const):
+        (WebCore::Display::StackingItem::paintedBoundsIncludingDescendantItems const):
+        (WebCore::Display::StackingItem::setPaintedContentBounds):
+        (WebCore::Display::StackingItem::setPaintedBoundsIncludingDescendantItems):
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::TextBox):
+        * display/css/DisplayTextBox.h:
+
+2021-08-15  Simon Fraser  <simon.fraser@apple.com>
+
         [LFC Display] Add a Display::Box flag for HasTransfrom
         https://bugs.webkit.org/show_bug.cgi?id=229115
 

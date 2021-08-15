@@ -44,14 +44,14 @@ class BoxModelBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BoxModelBox);
     friend class BoxFactory;
 public:
-    BoxModelBox(Tree&, AbsoluteFloatRect borderBox, Style&&, OptionSet<TypeFlags> = { });
+    BoxModelBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, OptionSet<TypeFlags> = { });
     virtual ~BoxModelBox();
 
-    AbsoluteFloatRect absoluteBorderBoxRect() const { return absoluteBoxRect(); }
-    AbsoluteFloatRect absolutePaddingBoxRect() const { return m_paddingBoxRect; }
-    AbsoluteFloatRect absoluteContentBoxRect() const { return m_contentBoxRect; }
+    UnadjustedAbsoluteFloatRect absoluteBorderBoxRect() const { return absoluteBoxRect(); }
+    UnadjustedAbsoluteFloatRect absolutePaddingBoxRect() const { return m_paddingBoxRect; }
+    UnadjustedAbsoluteFloatRect absoluteContentBoxRect() const { return m_contentBoxRect; }
 
-    AbsoluteFloatRect absolutePaintingExtent() const override;
+    UnadjustedAbsoluteFloatRect absolutePaintingExtent() const override;
 
     const BoxDecorationData* boxDecorationData() const { return m_boxDecorationData.get(); }
     const BoxRareGeometry* rareGeometry() const { return m_boxRareGeometry.get(); }
@@ -68,8 +68,8 @@ public:
 private:
     const char* boxName() const override;
 
-    void setAbsolutePaddingBoxRect(const AbsoluteFloatRect& box) { m_paddingBoxRect = box; }
-    void setAbsoluteContentBoxRect(const AbsoluteFloatRect& box) { m_contentBoxRect = box; }
+    void setAbsolutePaddingBoxRect(const UnadjustedAbsoluteFloatRect& box) { m_paddingBoxRect = box; }
+    void setAbsoluteContentBoxRect(const UnadjustedAbsoluteFloatRect& box) { m_contentBoxRect = box; }
 
     void setBoxDecorationData(std::unique_ptr<BoxDecorationData>&&);
     void setBoxRareGeometry(std::unique_ptr<BoxRareGeometry>&&);
@@ -77,8 +77,8 @@ private:
     void setAncestorClip(RefPtr<BoxClip>&&);
     RefPtr<BoxClip> clipForDescendants() const;
 
-    AbsoluteFloatRect m_paddingBoxRect;
-    AbsoluteFloatRect m_contentBoxRect;
+    UnadjustedAbsoluteFloatRect m_paddingBoxRect;
+    UnadjustedAbsoluteFloatRect m_contentBoxRect;
 
     std::unique_ptr<BoxDecorationData> m_boxDecorationData;
     std::unique_ptr<BoxRareGeometry> m_boxRareGeometry;
