@@ -461,8 +461,6 @@ webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and
 
 webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 
-webkit.org/b/216767 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
-
 webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 
 # Skipped in root TestExpectations for Debug config.
