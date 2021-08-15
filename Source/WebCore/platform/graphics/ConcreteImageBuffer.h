@@ -71,6 +71,7 @@ protected:
     }
 
     void clearBackend() override { m_backend = nullptr; }
+    ImageBufferBackend* backend() const override { return m_backend.get(); }
     ImageBufferBackend* ensureBackendCreated() const override { return m_backend.get(); }
 
     RenderingResourceIdentifier renderingResourceIdentifier() const override { return m_renderingResourceIdentifier; }

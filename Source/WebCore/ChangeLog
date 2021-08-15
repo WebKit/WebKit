@@ -1,3 +1,44 @@
+2021-08-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281058. rdar://problem/81947517
+
+    [GPU Process] REGRESSION: WebContent often crashes when opening a Google spreadsheet with charts
+    https://bugs.webkit.org/show_bug.cgi?id=229106
+    <rdar://81806877>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Add a method to return the backend of the ImageBuffer.
+    
+    * platform/graphics/ConcreteImageBuffer.h:
+    * platform/graphics/ImageBuffer.h:
+    
+    Source/WebKit:
+    
+    Don't resume processing the DisplayList of an ImageBuffer until its
+    backend is created.
+    
+    * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+    (WebKit::RemoteRenderingBackendProxy::didAppendData):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281058 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-14  Said Abou-Hallawa  <said@apple.com>
+
+            [GPU Process] REGRESSION: WebContent often crashes when opening a Google spreadsheet with charts
+            https://bugs.webkit.org/show_bug.cgi?id=229106
+            <rdar://81806877>
+
+            Reviewed by Wenson Hsieh.
+
+            Add a method to return the backend of the ImageBuffer.
+
+            * platform/graphics/ConcreteImageBuffer.h:
+            * platform/graphics/ImageBuffer.h:
+
 2021-08-12  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r280776. rdar://problem/81861548
