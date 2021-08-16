@@ -1,5 +1,15 @@
 2021-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        REGRESSION (r281054): [ iOS14 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=229157
+        <rdar://problem/81993820>
+
+        Unreviewed, mark this test as passing on iOS 14 again.
+
+        * platform/ios-14/TestExpectations:
+
+2021-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS 15] editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=229147
         rdar://80384447

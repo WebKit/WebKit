@@ -66,6 +66,8 @@ fast/text/simple-line-wordspacing.html [ Pass ]
 # rdar://80395949 ([ iOS15 ] http/tests/websocket/tests/hybi/too-long-payload.html is a constant timeout)
 http/tests/websocket/tests/hybi/too-long-payload.html [ Pass ]
 
+fast/events/touch/ios/long-press-on-link.html [ Pass ]
+
 # rdar://80392337 ([ iOS15 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html is a constant failure)
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Pass ]
 
