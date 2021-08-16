@@ -66,6 +66,10 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 
+#if OS(DARWIN)
+#include <wtf/spi/darwin/OSVariantSPI.h>
+#endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginProcessManager.h"
 #endif
@@ -1722,21 +1726,46 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
     }
 }
 
-void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, CompletionHandler<void(const NetworkProcessConnectionInfo&)>&& reply)
+void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, CompletionHandler<void(const NetworkProcessConnectionInfo&)>&& reply, ShouldRetryOnFailure shouldRetryOnFailure)
 {
-    networkProcess().getNetworkProcessConnection(webProcessProxy, [weakThis = makeWeakPtr(*this), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+    auto& networkProcessProxy = networkProcess();
+    networkProcessProxy.getNetworkProcessConnection(webProcessProxy, [weakThis = makeWeakPtr(*this), networkProcessProxy = makeWeakPtr(networkProcessProxy), webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply), shouldRetryOnFailure] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
+            auto logError = [networkProcessProxy = WTFMove(networkProcessProxy), webProcessProxy]() {
+#if OS(DARWIN)
+                if (!os_variant_allows_internal_security_policies("com.apple.WebKit"))
+                    return;
+
+                int networkProcessIdentifier = 0;
+                String networkProcessState = "Unknown"_s;
+                if (networkProcessProxy) {
+                    networkProcessIdentifier = networkProcessProxy->processIdentifier();
+                    networkProcessState = networkProcessProxy->stateString();
+                }
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("WebsiteDataStore::getNetworkProcessConnection: Failed to get connection - networkProcessProxy=%p, networkProcessIdentifier=%d, processState=%s, webProcessProxy=%p, webProcessIdentifier=%d", networkProcessProxy.get(), networkProcessIdentifier, networkProcessState.utf8().data(), webProcessProxy.get(), webProcessProxy ? webProcessProxy->processIdentifier() : 0);
+#endif
+            };
+
+            if (shouldRetryOnFailure == ShouldRetryOnFailure::No) {
+                logError();
+                reply({ });
+                return;
+            }
+
             // Retry on the next RunLoop iteration because we may be inside the WebsiteDataStore destructor.
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
+            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), webProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply), logError = WTFMove(logError)] () mutable {
                 if (RefPtr<WebsiteDataStore> strongThis = weakThis.get(); strongThis && webProcessProxy) {
                     strongThis->terminateNetworkProcess();
-                    RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed first attempt, retrying");
-                    strongThis->networkProcess().getNetworkProcessConnection(*webProcessProxy, WTFMove(reply));
-                } else
+                    RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will retry ...");
+                    strongThis->getNetworkProcessConnection(*webProcessProxy, WTFMove(reply), ShouldRetryOnFailure::No);
+                } else {
+                    logError();
                     reply({ });
+                }
             });
             return;
         }
+
         reply(connectionInfo);
     });
 }

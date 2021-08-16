@@ -1,3 +1,24 @@
+2021-08-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Add logging for failure in getting network process connection
+        https://bugs.webkit.org/show_bug.cgi?id=229102
+
+        Reviewed by Geoffrey Garen.
+
+        UI process knows more about why network connection cannot be created compared to web process, so let's add 
+        logging in UI process to help debug rdar://80760179.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::stateString const):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+
 2021-08-16  David Kilzer  <ddkilzer@apple.com>
 
         "make analyze" should run clang static analyzer in deep mode

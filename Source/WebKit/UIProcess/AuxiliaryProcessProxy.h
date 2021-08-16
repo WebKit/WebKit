@@ -111,6 +111,7 @@ public:
         Terminated,
     };
     State state() const;
+    String stateString() const;
     bool isLaunching() const { return state() == State::Launching; }
     bool wasTerminated() const;
 

@@ -1081,8 +1081,10 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
             // Connection to UIProcess has been severed, exit cleanly.
             exit(0);
         }
-        if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0))
+        if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0)) {
+            RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send or receive message");
             return false;
+        }
         return IPC::Connection::identifierIsValid(connectionInfo.identifier());
     };
 
