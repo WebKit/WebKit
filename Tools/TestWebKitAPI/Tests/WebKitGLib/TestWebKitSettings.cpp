@@ -286,10 +286,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_write_console_messages_to_stdout(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_write_console_messages_to_stdout(settings));
 
-    // MediaStream is disabled by default.
-    g_assert_false(webkit_settings_get_enable_media_stream(settings));
-    webkit_settings_set_enable_media_stream(settings, TRUE);
+    // MediaStream is enabled by default as experimental feature.
     g_assert_true(webkit_settings_get_enable_media_stream(settings));
+    webkit_settings_set_enable_media_stream(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_media_stream(settings));
 
     // By default, SpatialNavigation is disabled
     g_assert_false(webkit_settings_get_enable_spatial_navigation(settings));

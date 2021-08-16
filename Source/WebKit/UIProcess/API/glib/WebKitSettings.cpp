@@ -189,9 +189,13 @@ static void webKitSettingsConstructed(GObject* object)
     WebPreferences* prefs = settings->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
 
-    bool mediaStreamEnabled = prefs->mediaStreamEnabled();
-    prefs->setMediaDevicesEnabled(mediaStreamEnabled);
-    prefs->setPeerConnectionEnabled(mediaStreamEnabled);
+#if ENABLE(MEDIA_STREAM)
+    prefs->setMediaDevicesEnabled(true);
+    prefs->setMediaStreamEnabled(true);
+#if ENABLE(WEB_RTC)
+    prefs->setPeerConnectionEnabled(true);
+#endif
+#endif
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)

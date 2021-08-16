@@ -1,5 +1,15 @@
 2021-08-16  Philippe Normand  <pnormand@igalia.com>
 
+        [GLib] Enable mediastream setting if it's enabled at build-time
+        https://bugs.webkit.org/show_bug.cgi?id=229134
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+
+2021-08-16  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] MiniBrowser crashes when closed while capturing desktop
         https://bugs.webkit.org/show_bug.cgi?id=228232
         <rdar://problem/81093648>

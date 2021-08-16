@@ -1,3 +1,13 @@
+2021-08-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GLib] Enable mediastream setting if it's enabled at build-time
+        https://bugs.webkit.org/show_bug.cgi?id=229134
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2021-08-16  David Kilzer  <ddkilzer@apple.com>
 
         Fix ASan+UBSan builds with Xcode 13
