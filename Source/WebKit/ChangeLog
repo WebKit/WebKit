@@ -1,3 +1,16 @@
+2021-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        "make analyze" should run clang static analyzer in deep mode
+        <https://webkit.org/b/229127>
+        <rdar://problem/81960587>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/generate-derived-sources.sh:
+        * WebKit.xcodeproj/project.pbxproj:
+        - Treat "analyze" the same as "build" for "ACTION" environment
+          variable.
+
 2021-08-16  Philippe Normand  <pnormand@igalia.com>
 
         [GLib] Enable mediastream setting if it's enabled at build-time

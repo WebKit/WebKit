@@ -110,7 +110,7 @@ define invoke_xcode
 		echo; \
 		echo "===== BUILDING $$(basename "$$(pwd)") ====="; \
 		echo; \
-		$1 xcodebuild $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $2 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
@@ -118,44 +118,40 @@ all:
 ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)))
 	@$(call set_webkit_configuration,)
 endif
-	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 debug d: force
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 release r: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 release+assert ra: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) ASSERT_ENABLED=1 $$(inherited)')
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) ASSERT_ENABLED=1 $$(inherited)')
 
 testing t: force
 	@$(call set_webkit_configuration,--debug --force-optimization-level=O3)
-	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-ifndef PATH_TO_SCAN_BUILD
-	@$(call invoke_xcode,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)' RUN_CLANG_STATIC_ANALYZER=YES)
-else
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
-endif
+	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 clean:
 ifndef XCODE_TARGET
-	@$(call invoke_xcode,,-alltargets clean)
+	@$(call invoke_xcode,,,-alltargets clean)
 else
-	@$(call invoke_xcode,,clean)
+	@$(call invoke_xcode,,,clean)
 endif
 
 installsrc:
 ifndef XCODE_TARGET
-	@$(call invoke_xcode,,-alltargets installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+	@$(call invoke_xcode,,,-alltargets installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
 else
-	@$(call invoke_xcode,,installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+	@$(call invoke_xcode,,,installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
 endif
 
 force: ;

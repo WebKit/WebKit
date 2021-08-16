@@ -3582,7 +3582,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"build\" ] || [ \"${ACTION}\" = \"install\" ]; then\necho python \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\npython \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"analyze\" ] || [ \"${ACTION}\" = \"build\" ] || [ \"${ACTION}\" = \"install\" ]; then\n  echo python \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n  python \"${SRCROOT}/src/libANGLE/renderer/metal/shaders/create_mtl_internal_shaders.py\" \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

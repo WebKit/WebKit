@@ -32,7 +32,7 @@ if [ ! -d "${WEBCORE_PRIVATE_HEADERS_DIR}" ]; then
     export WEBCORE_PRIVATE_HEADERS_DIR="${WEBCORE_PRIVATE_HEADERS_DIR_Production}"
 fi
 
-if [ "${ACTION}" = "build" -o "${ACTION}" = "install" -o "${ACTION}" = "installhdrs" -o "${ACTION}" = "installapi" ]; then
+if [ "${ACTION}" = "analyze" -o "${ACTION}" = "build" -o "${ACTION}" = "install" -o "${ACTION}" = "installhdrs" -o "${ACTION}" = "installapi" ]; then
     ln -sfh "${WEBCORE_PRIVATE_HEADERS_DIR}" "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/WebCorePrivateHeaders"
 
     make -C mac -f "MigrateHeaders.make" -j `/usr/sbin/sysctl -n hw.activecpu` SDKROOT="${SDKROOT}" migrate_headers

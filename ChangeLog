@@ -1,3 +1,17 @@
+2021-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        "make analyze" should run clang static analyzer in deep mode
+        <https://webkit.org/b/229127>
+        <rdar://problem/81960587>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile.shared:
+        - Add "analyze" argument to xcodebuild command when invoking
+          "make analyze" to run clang static analyzer in deep mode.
+          Simplify "make analyze" since $(PATH_TO_SCAN_BUILD) does not
+          need to be set.
+
 2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.3 release
