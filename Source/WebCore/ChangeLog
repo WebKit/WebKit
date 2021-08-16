@@ -1,3 +1,38 @@
+2021-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Resource Timing: Duration is 0 in many cases
+        https://bugs.webkit.org/show_bug.cgi?id=225737
+
+        Reviewed by Chris Dumez.
+
+        This fixes two problems with our PerformanceResourceTiming implementation:
+        1. ResourceTimingInformation::shouldAddResourceTiming wasn't adding timing data if CachedResource::errorOccurred returned true,
+        which includes when the server responds with an HTTP 404.  We want loadFailedOrCanceled instead, which only returns true if
+        there's a network error or if the load is cancelled.  This matches the behavior of other browsers.
+        2. ResourceTiming::fromMemoryCache was assuming that it never had network information to report because we pulled from the cache,
+        not the network.  However, a common case is that HTMLPreloadScanner::scan calls HTMLResourcePreloader::preload which loads the resource
+        while the HTML parser is blocked on loading scripts or other things, then CachedResourceLoader::requestResource pulls it out of the
+        memory cache.  In this case, use the network metrics that we are already storing if it's the first time we are pulling this resource
+        out of the memory cache.  After that, 0 load time is quite accurate.
+
+        Covered by newly passing Web Platform Tests, which Chrome and Firefox already passed.
+
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::fromMemoryCache):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::initServerTiming): Deleted.
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::ResourceTiming):
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::shouldAddResourceTiming):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::takeNetworkLoadMetrics):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::deprecatedNetworkLoadMetricsOrNull const):
+        (WebCore::ResourceResponseBase::takeNetworkLoadMetrics):
+
 2021-08-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose [WebAccessibilityObjectWrapper lineRectsAndText] on MacOS.

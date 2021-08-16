@@ -40,19 +40,9 @@ namespace WebCore {
 
 bool ResourceTimingInformation::shouldAddResourceTiming(CachedResource& resource)
 {
-    // FIXME: We can be less restrictive here.
-    // <https://github.com/w3c/resource-timing/issues/100>
-    if (!resource.resourceRequest().url().protocolIsInHTTPFamily())
-        return false;
-    if (resource.errorOccurred())
-        return false;
-    if (resource.wasCanceled())
-        return false;
-
-    if (resource.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes)
-        return false;
-
-    return true;
+    return resource.resourceRequest().url().protocolIsInHTTPFamily()
+        && !resource.loadFailedOrCanceled()
+        && resource.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No;
 }
 
 void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Document& document, ResourceTiming&& resourceTiming)

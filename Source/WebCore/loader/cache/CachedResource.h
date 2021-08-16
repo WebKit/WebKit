@@ -219,6 +219,7 @@ public:
     virtual bool shouldCacheResponse(const ResourceResponse&) { return true; }
     void setResponse(const ResourceResponse&);
     const ResourceResponse& response() const { return m_response; }
+    Box<NetworkLoadMetrics> takeNetworkLoadMetrics() { return m_response.takeNetworkLoadMetrics(); }
 
     void setCrossOrigin();
     bool isCrossOrigin() const;

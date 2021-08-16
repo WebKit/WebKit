@@ -27,6 +27,7 @@
 #include "ResourceTiming.h"
 
 #include "CachedResource.h"
+#include "DocumentLoadTiming.h"
 #include "PerformanceServerTiming.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
@@ -35,9 +36,9 @@
 
 namespace WebCore {
 
-ResourceTiming ResourceTiming::fromMemoryCache(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
+ResourceTiming ResourceTiming::fromMemoryCache(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
 {
-    return ResourceTiming(url, initiator, loadTiming, response, securityOrigin);
+    return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
 ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
@@ -50,24 +51,11 @@ ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String&
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& loadTiming, const ResourceResponse& response, const SecurityOrigin&)
-    : m_url(url)
-    , m_initiator(initiator)
-    , m_resourceLoadTiming(loadTiming)
-{
-    initServerTiming(response);
-}
-
 ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin&)
     : m_url(url)
     , m_initiator(initiator)
     , m_resourceLoadTiming(timing)
     , m_networkLoadMetrics(networkLoadMetrics)
-{
-    initServerTiming(response);
-}
-
-void ResourceTiming::initServerTiming(const ResourceResponse& response)
 {
     if (RuntimeEnabledFeatures::sharedFeatures().serverTimingEnabled() && !m_networkLoadMetrics.failsTAOCheck)
         m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));

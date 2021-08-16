@@ -1034,7 +1034,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             memoryCache.resourceAccessed(*resource);
 
             if (document() && !resource->isLoading()) {
-                auto resourceTiming = ResourceTiming::fromMemoryCache(url, request.initiatorName(), loadTiming, resource->response(), *request.origin());
+                Box<NetworkLoadMetrics> metrics;
+                auto* documentLoader = document()->loader();
+                // Use the actual network load metrics if this is the first time loading this resource and it was loaded
+                // for this document because it may have been speculatively preloaded.
+                if (auto metricsFromResource = resource->takeNetworkLoadMetrics(); metricsFromResource && documentLoader && metricsFromResource->redirectStart >= documentLoader->timing().timeOrigin())
+                    metrics = WTFMove(metricsFromResource);
+                auto resourceTiming = ResourceTiming::fromMemoryCache(url, request.initiatorName(), loadTiming, resource->response(), metrics ? *metrics : NetworkLoadMetrics { }, *request.origin());
                 if (initiatorContext == InitiatorContext::Worker) {
                     ASSERT(is<CachedRawResource>(resource.get()));
                     downcast<CachedRawResource>(resource.get())->finishedTimingForWorkerLoad(WTFMove(resourceTiming));

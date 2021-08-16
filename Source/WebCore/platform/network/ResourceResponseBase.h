@@ -183,6 +183,10 @@ public:
     {
         m_networkLoadMetrics = WTFMove(metrics);
     }
+    Box<NetworkLoadMetrics> takeNetworkLoadMetrics()
+    {
+        return std::exchange(m_networkLoadMetrics, nullptr);
+    }
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
