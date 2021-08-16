@@ -27,9 +27,6 @@ css3/filters/filter-repaint-shadow-layer-child.html [ Pass ]
 # rdar://80384447 ([ iOS15 ] editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html is a Flaky timeout)
 editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html [ Pass ]
 
-# rdar://80384801 ([ iOS15 ] editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html is a flaky timeout)
-editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html  [ Pass ]
-
 # rdar://80392795 ([ iOS15 ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm is a flaky failure)
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass ]
 

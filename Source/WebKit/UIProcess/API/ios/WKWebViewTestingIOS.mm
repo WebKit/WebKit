@@ -390,11 +390,6 @@ static void dumpUIView(TextStream& ts, UIView *view)
     };
 }
 
-- (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action
-{
-    [_contentView _doAfterResettingSingleTapGesture:action];
-}
-
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
 {
     [_contentView _doAfterReceivingEditDragSnapshotForTesting:action];

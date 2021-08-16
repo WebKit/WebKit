@@ -3140,9 +3140,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         if (m_commitPotentialTapPointerId != pointerId)
             _page->touchWithIdentifierWasRemoved(pointerId);
     }
-    auto actionsToPerform = std::exchange(_actionsToPerformAfterResettingSingleTapGestureRecognizer, { });
-    for (const auto& action : actionsToPerform)
-        action();
 
     if (!_isTapHighlightIDValid)
         [self _fadeTapHighlightViewIfNeeded];
@@ -10475,15 +10472,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 @end
 
 @implementation WKContentView (WKTesting)
-
-- (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action
-{
-    if ([_singleTapGestureRecognizer state] != UIGestureRecognizerStateEnded) {
-        action();
-        return;
-    }
-    _actionsToPerformAfterResettingSingleTapGestureRecognizer.append(makeBlockPtr(action));
-}
 
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action
 {

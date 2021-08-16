@@ -495,8 +495,6 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     std::unique_ptr<WebKit::TextCheckingController> _textCheckingController;
 #endif
 
-    Vector<BlockPtr<void()>> _actionsToPerformAfterResettingSingleTapGestureRecognizer;
-
 #if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<WKImageAnalysisGestureRecognizer> _imageAnalysisGestureRecognizer;
     RetainPtr<UILongPressGestureRecognizer> _imageAnalysisTimeoutGestureRecognizer;
@@ -779,7 +777,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (double)timePickerValueHour;
 - (double)timePickerValueMinute;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
-- (void)_doAfterResettingSingleTapGesture:(dispatch_block_t)action;
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action;
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;
 

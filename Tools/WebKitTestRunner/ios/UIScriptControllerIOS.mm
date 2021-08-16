@@ -46,6 +46,7 @@
 #import <WebKit/WebKit.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 
@@ -252,11 +253,26 @@ void UIScriptControllerIOS::waitForModalTransitionToFinish() const
 
 void UIScriptControllerIOS::waitForSingleTapToReset() const
 {
-    bool doneWaitingForSingleTapToReset = false;
-    [webView() _doAfterResettingSingleTapGesture:[&doneWaitingForSingleTapToReset] {
-        doneWaitingForSingleTapToReset = true;
-    }];
-    TestController::singleton().runUntil(doneWaitingForSingleTapToReset, 0.5_s);
+    auto allPendingSingleTapGesturesHaveBeenReset = [&]() -> bool {
+        for (UIGestureRecognizer *gesture in [platformContentView() gestureRecognizers]) {
+            if (!gesture.enabled || ![gesture isKindOfClass:UITapGestureRecognizer.class])
+                continue;
+
+            UITapGestureRecognizer *tapGesture = (UITapGestureRecognizer *)gesture;
+            if (tapGesture.numberOfTapsRequired != 1 || tapGesture.numberOfTouches != 1 || tapGesture.state == UIGestureRecognizerStatePossible)
+                continue;
+
+            return false;
+        }
+        return true;
+    };
+
+    auto startTime = MonotonicTime::now();
+    while (!allPendingSingleTapGesturesHaveBeenReset()) {
+        [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:NSDate.distantFuture];
+        if (MonotonicTime::now() - startTime > 1_s)
+            break;
+    }
 }
 
 void UIScriptControllerIOS::twoFingerSingleTapAtPoint(long x, long y, JSValueRef callback)

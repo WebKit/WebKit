@@ -1,3 +1,36 @@
+2021-08-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=229126
+        rdar://80384801
+
+        Reviewed by Tim Horton.
+
+        This test exercises the ability to cause platform selection views to show up after tapping the web view while a
+        DOM selection is set. In this codepath, selection views are installed when the web view becomes first responder,
+        when we call into `-[UIWKTextInteractionAssistant activateSelection]`; the call to `-becomeFirstResponder`, in
+        turn, comes from UIKit's internal `UITextTapRecognizer` gesture, which recognizes the single tap and makes the
+        content view first responder.
+
+        In the case where this test fails, the synthesized tap gesture fails to activate the text tap recognizer; this
+        happens because the timing of when the `UITextTapRecognizer` gets reset (i.e. `-_resetGestureRecognizer`) races
+        against the timing of when the synthesized touch event is sent to the gesture recognizer. When the touch is
+        delivered to the gesture *before* the text tap gesture is reset, we end up timing out because the text tap
+        gesture's action never fires and makes the content view first responder.
+
+        To ensure that we don't lose this race and time out, we augment the existing mechanism in
+        `UIScriptControllerIOS::waitForSingleTapToReset()` to wait for *all* enabled single tap (and single touch)
+        gestures to reset, instead of only waiting for the web view's synthetic click gesture. Importantly, this
+        includes `UITextTapRecognizer`, which ensures that the touches are delivered to the gesture only after the text
+        tap gesture has been reset (and transitions to Possible state).
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::waitForSingleTapToReset const):
+
+        Instead of using testing SPI (`-_doAfterResettingSingleTapGesture:`) to wait for the single tap to reset, we can
+        just directly iterate through all the gestures on the content view and wait for all enabled single tap gestures
+        to transition back to Possible state.
+
 2021-08-13  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Fix SVN relative URL parsing
