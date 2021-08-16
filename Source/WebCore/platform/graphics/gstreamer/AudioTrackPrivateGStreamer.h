@@ -38,33 +38,34 @@ class MediaPlayerPrivateGStreamer;
 
 class AudioTrackPrivateGStreamer final : public AudioTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
-    static Ref<AudioTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad)
+    static Ref<AudioTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstPad> pad)
     {
-        return adoptRef(*new AudioTrackPrivateGStreamer(player, index, WTFMove(pad)));
+        return adoptRef(*new AudioTrackPrivateGStreamer(player, index, pad));
     }
 
-    static Ref<AudioTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstStream>&& stream)
+    static Ref<AudioTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
     {
-        return adoptRef(*new AudioTrackPrivateGStreamer(player, index, WTFMove(stream)));
+        return adoptRef(*new AudioTrackPrivateGStreamer(player, index, stream));
     }
 
     Kind kind() const final;
 
-    void disconnect() final;
+    void disconnect() override;
 
-    void setEnabled(bool) final;
-    void setActive(bool enabled) final { setEnabled(enabled); }
+    void setEnabled(bool) override;
+    void setActive(bool enabled) override { setEnabled(enabled); }
 
-    int trackIndex() const final { return m_index; }
+    int trackIndex() const override { return m_index; }
 
-    AtomString id() const final { return m_id; }
-    AtomString label() const final { return m_label; }
-    AtomString language() const final { return m_language; }
+    AtomString id() const override { return m_id; }
+    AtomString label() const override { return m_label; }
+    AtomString language() const override { return m_language; }
 
 private:
-    AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&);
-    AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstStream>&&);
+    AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstPad>);
+    AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstStream>);
 
+    AtomString m_id;
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
 };
 
