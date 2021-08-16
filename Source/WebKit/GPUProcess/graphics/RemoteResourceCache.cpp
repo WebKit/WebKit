@@ -65,7 +65,8 @@ void RemoteResourceCache::ensureResourceUseCounter(RenderingResourceIdentifier r
     auto result = m_resourceUseCounters.add(renderingResourceIdentifier, ResourceUseCounter { });
     if (!result.isNewEntry) {
         auto& state = result.iterator->value.state;
-        RELEASE_ASSERT(state == ResourceState::ToBeDeleted);
+        // FIXME: We should consider making this assertion MESSAGE_CHECK the web process.
+        ASSERT(state == ResourceState::ToBeDeleted);
         state = ResourceState::Alive;
     }
 }
