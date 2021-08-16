@@ -34,6 +34,7 @@
 
 #if USE(SOUP)
 #include <WebCore/HTTPCookieAcceptPolicy.h>
+#include <wtf/MemoryPressureHandler.h>
 #endif
 
 namespace IPC {
@@ -77,6 +78,7 @@ struct NetworkProcessCreationParameters {
 #if USE(SOUP)
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy { WebCore::HTTPCookieAcceptPolicy::AlwaysAccept };
     Vector<String> languages;
+    std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
 #endif
 
     Vector<String> urlSchemesRegisteredAsSecure;

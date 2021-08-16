@@ -26,7 +26,7 @@
  * SECTION: WebKitMemoryPressureSettings
  * @Short_description: A boxed type representing the settings for the MemoryPressureHandler
  * @Title: WebKitMemoryPressureSettings
- * @See_also: #WebKitWebContext.
+ * @See_also: #WebKitWebContext, #WebKitWebsiteDataManager
  *
  * #WebKitMemoryPressureSettings is a boxed type that can be used to provide some custom settings
  * to control how the memory pressure situations are handled by the different processes.
@@ -42,6 +42,10 @@
  *
  * A #WebKitMemoryPressureSettings can be passed to a #WebKitWebContext constructor, and the settings will
  * be applied to all the web processes created by that context.
+ * 
+ * A #WebKitMemoryPressureSettings can be passed to webkit_website_data_manager_set_memory_pressure_settings(),
+ * and the settings will be applied to all the network processes created after that call by any instance of
+ * #WebKitWebsiteDataManager.
  *
  * Since: 2.34
  */

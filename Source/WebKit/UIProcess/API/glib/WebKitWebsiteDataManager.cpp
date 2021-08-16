@@ -22,10 +22,13 @@
 
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitInitialize.h"
+#include "WebKitMemoryPressureSettings.h"
+#include "WebKitMemoryPressureSettingsPrivate.h"
 #include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
+#include "WebProcessPool.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataStore.h"
 #include <glib/gi18n-lib.h>
@@ -1189,6 +1192,30 @@ struct _WebKitITPFirstParty {
     GRefPtr<GDateTime> lastUpdated;
     int referenceCount { 1 };
 };
+
+/**
+ * webkit_website_data_manager_set_memory_pressure_settings:
+ * @settings: a WebKitMemoryPressureSettings.
+ *
+ * Sets @settings as the #WebKitMemoryPressureSettings to be used by all the network
+ * processes created by any instance of #WebKitWebsiteDataManager after this function
+ * is called.
+ *
+ * Be sure to call this function before creating any #WebKitWebsiteDataManager, as network
+ * processes of existing instances are not guaranteed to receive the passed settings.
+ *
+ * The periodic check for used memory is disabled by default on network processes. This will
+ * be enabled only if custom settings have been set using this function. After that, in order
+ * to remove the custom settings and disable the periodic check, this function must be called
+ * passing %NULL as the value of @settings.
+ *
+ * Since: 2.34
+ */
+void webkit_website_data_manager_set_memory_pressure_settings(WebKitMemoryPressureSettings* settings)
+{
+    std::optional<MemoryPressureHandler::Configuration> config = settings ? std::make_optional(webkitMemoryPressureSettingsGetMemoryPressureHandlerConfiguration(settings)) : std::nullopt;
+    WebProcessPool::setNetworkProcessMemoryPressureHandlerConfiguration(config);
+}
 
 G_DEFINE_BOXED_TYPE(WebKitITPFirstParty, webkit_itp_first_party, webkit_itp_first_party_ref, webkit_itp_first_party_unref)
 

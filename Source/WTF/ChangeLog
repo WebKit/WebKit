@@ -1,3 +1,16 @@
+2021-08-15  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Add API to pass WebKitMemoryPressureHandler parameters to the network processes
+        https://bugs.webkit.org/show_bug.cgi?id=228227
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a new method to MemoryPressureHandler to set the configuration by copying the parameter
+        instead of moving it.
+
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::setConfiguration):
+
 2021-08-11  Chris Dumez  <cdumez@apple.com>
 
         Add initial support for Cross-Origin-Embedder-Policy (COEP)

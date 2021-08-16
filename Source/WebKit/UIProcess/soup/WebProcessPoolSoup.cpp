@@ -35,9 +35,21 @@
 
 namespace WebKit {
 
+std::optional<MemoryPressureHandler::Configuration> WebProcessPool::s_networkProcessMemoryPressureHandlerConfiguration;
+
+static bool memoryPressureMonitorDisabled()
+{
+    static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+    return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
+}
+
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     parameters.languages = userPreferredLanguages();
+    parameters.memoryPressureHandlerConfiguration = s_networkProcessMemoryPressureHandlerConfiguration;
+
+    if (memoryPressureMonitorDisabled())
+        parameters.shouldSuppressMemoryPressureHandler = true;
 }
 
 } // namespace WebKit

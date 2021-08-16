@@ -1590,6 +1590,16 @@ void NetworkProcessProxy::clearBundleIdentifier(CompletionHandler<void()>&& comp
     sendWithAsyncReply(Messages::NetworkProcess::ClearBundleIdentifier(), WTFMove(completionHandler));
 }
 
+#if USE(SOUP)
+void NetworkProcessProxy::didExceedMemoryLimit()
+{
+    AuxiliaryProcessProxy::terminate();
+    if (auto* connection = this->connection())
+        connection->invalidate();
+    networkProcessDidTerminate(TerminationReason::ExceededMemoryLimit);
+}
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

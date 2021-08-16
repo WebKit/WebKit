@@ -1516,6 +1516,7 @@ webkit_website_data_manager_remove
 webkit_website_data_manager_remove_finish
 webkit_website_data_manager_clear
 webkit_website_data_manager_clear_finish
+webkit_website_data_manager_set_memory_pressure_settings
 
 <SUBSECTION ITP Summary>
 WebKitITPFirstParty

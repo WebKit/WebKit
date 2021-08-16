@@ -27,6 +27,7 @@
 #include <gio/gio.h>
 #include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitMemoryPressureSettings.h>
 #include <webkit2/WebKitNetworkProxySettings.h>
 #include <webkit2/WebKitWebsiteData.h>
 
@@ -182,6 +183,9 @@ WEBKIT_API gboolean
 webkit_website_data_manager_clear_finish                               (WebKitWebsiteDataManager *manager,
                                                                         GAsyncResult             *result,
                                                                         GError                  **error);
+
+WEBKIT_API void
+webkit_website_data_manager_set_memory_pressure_settings               (WebKitMemoryPressureSettings *settings);
 
 
 #define WEBKIT_TYPE_ITP_FIRST_PARTY   (webkit_itp_first_party_get_type())

@@ -29,6 +29,7 @@
 
 #include "NetworkCache.h"
 #include "NetworkProcessCreationParameters.h"
+#include "NetworkProcessProxyMessages.h"
 #include "NetworkSessionSoup.h"
 #include "WebCookieManager.h"
 #include "WebKitCachedResolver.h"
@@ -132,6 +133,20 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     if (!parameters.languages.isEmpty())
         userPreferredLanguagesChanged(parameters.languages);
+
+#if ENABLE(PERIODIC_MEMORY_MONITOR)
+    // The periodic memory monitor is disabled by default in the network process. Enable
+    // it only if MemoryPressureHandler is not suppressed and there is a custom configuration
+    // for it.
+    if (!parameters.shouldSuppressMemoryPressureHandler && parameters.memoryPressureHandlerConfiguration) {
+        auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+        memoryPressureHandler.setConfiguration(*parameters.memoryPressureHandlerConfiguration);
+        memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
+        memoryPressureHandler.setMemoryKillCallback([this] () {
+            parentProcessConnection()->send(Messages::NetworkProcessProxy::DidExceedMemoryLimit(), 0);
+        });
+    }
+#endif
 }
 
 void NetworkProcess::setIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)

@@ -236,7 +236,7 @@ public:
     void registerSchemeForLegacyCustomProtocol(const String&);
     void unregisterSchemeForLegacyCustomProtocol(const String&);
 
-    enum class TerminationReason { RequestedByClient, Crash };
+    enum class TerminationReason { RequestedByClient, Crash, ExceededMemoryLimit };
     void networkProcessDidTerminate(TerminationReason);
     
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
@@ -329,6 +329,10 @@ private:
 #endif
 
     void processAuthenticationChallenge(PAL::SessionID, Ref<AuthenticationChallengeProxy>&&);
+
+#if USE(SOUP)
+    void didExceedMemoryLimit();
+#endif
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 
