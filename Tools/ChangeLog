@@ -1,3 +1,16 @@
+2021-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add thread safe version of CanMakeCheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=229018
+
+        Reviewed by Geoffrey Garen.
+
+        Added a unit test for CanMakeThreadSafeCheckedPtr
+
+        * TestWebKitAPI/Tests/WTF/CheckedPtr.cpp:
+        (TestWebKitAPI.ThreadSafeCheckedPtrObject)
+        (WTF_CheckedPtr.CanMakeThreadSafeCheckedPtr): Added.
+
 2021-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix Catalyst TestWebKitAPI build

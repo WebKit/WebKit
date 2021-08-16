@@ -28,7 +28,10 @@
 #include "Utilities.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 
 namespace TestWebKitAPI {
 
@@ -328,6 +331,42 @@ TEST(WTF_CheckedPtr, HashSet)
         for (auto& object : objects)
             EXPECT_EQ(object->ptrCount(), 2);
     }
+}
+
+class ThreadSafeCheckedPtrObject : public CanMakeThreadSafeCheckedPtr {
+public:
+    std::atomic<unsigned> value { 0 };
+};
+
+TEST(WTF_CheckedPtr, CanMakeThreadSafeCheckedPtr)
+{
+    constexpr unsigned threadCount = 20;
+    Vector<Ref<Thread>> threads;
+    ThreadSafeCheckedPtrObject object;
+
+    std::atomic<bool> allThreadsHaveStarted = false;
+    Seconds startingTime;
+
+    threads.reserveInitialCapacity(threadCount);
+    for (unsigned i = 0; i < threadCount; ++i) {
+        threads.append(Thread::create("CheckedPtr testing thread", [&]() mutable {
+            CheckedPtr ptr = &object;
+            do {
+                for (unsigned i = 0; i < 1000; ++i) {
+                    CheckedRef ref { *ptr };
+                    ptr = nullptr;
+                    ++ref->value;
+                    ptr = ref;
+                }
+            } while (!allThreadsHaveStarted || WallTime::now().secondsSinceEpoch() - startingTime < Seconds::fromMilliseconds(5));
+        }));
+    }
+
+    startingTime = WallTime::now().secondsSinceEpoch();
+    allThreadsHaveStarted = true;
+
+    for (auto& thread : threads)
+        thread->waitForCompletion();
 }
 
 } // namespace TestWebKitAPI

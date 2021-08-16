@@ -1,3 +1,26 @@
+2021-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add thread safe version of CanMakeCheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=229018
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce CanMakeThreadSafeCheckedPtr which is a thread safe version of CanMakeCheckedPtr.
+
+        * wtf/CheckedRef.h:
+        (WTF::CanMakeCheckedPtrBase): Extracted from CanMakeCheckedPtr.
+        (WTF::CanMakeCheckedPtrBase::~CanMakeCheckedPtrBase):
+        (WTF::CanMakeCheckedPtrBase::ptrCount const):
+        (WTF::SingleThreadIntegralWrapper): Added.
+        (WTF::SingleThreadIntegralWrapper::SingleThreadIntegralWrapper):
+        (WTF::SingleThreadIntegralWrapper::operator IntegralType const):
+        (WTF::SingleThreadIntegralWrapper::operator! const):
+        (WTF::SingleThreadIntegralWrapper::operator++):
+        (WTF::SingleThreadIntegralWrapper::operator--):
+        (WTF::SingleThreadIntegralWrapper::assertThread const):
+        (WTF::CanMakeCheckedPtr): Redefined using CanMakeCheckedPtrBase and SimpleNonAtomicType.
+        (WTF::CanMakeThreadSafeCheckedPtr): Added.
+
 2021-08-16  David Kilzer  <ddkilzer@apple.com>
 
         ThreadSanitizer: ignore uninteresting data races for reference counting of static WTF::StringImpl objects
