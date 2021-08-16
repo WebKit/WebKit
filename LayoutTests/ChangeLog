@@ -1,3 +1,12 @@
+2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Monterey wk2 Guard-Malloc arm64 ] fast/text/canvas-color-fonts/* tests are image failing.
+        rdar://81988829
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] fast/inline/incorrect-middle-baseline-alignment-with-line-height.html is passing since r277325
