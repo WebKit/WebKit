@@ -457,7 +457,7 @@ end
 
 macro op(l, fn)
     commonOp(l, macro () end, macro (size)
-        size(fn, macro() end, macro() end, macro(gen) gen() end)
+        size(fn, macro() break end, macro() break end, macro(gen) gen() end)
     end)
 end
 

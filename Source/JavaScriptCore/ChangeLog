@@ -1,3 +1,39 @@
+2021-08-16  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that unused LLInt opcodes are not inadvertently used.
+        https://bugs.webkit.org/show_bug.cgi?id=229161
+
+        Reviewed by Robin Morisset.
+
+        The op macro is used for generating LLInt asm code for some entry points to the
+        LLInt, where we don't need 16 bits and 32 bit wide versions of the entry point.
+        For example, we use it for llint_program_prologue.
+
+        Note that llint_program_prologue is generated using:
+
+            op(llint_program_prologue, macro () ...
+
+        where op is:
+
+            macro op(l, fn)
+                commonOp(l, macro () end, macro (size)
+                    size(fn, macro() end, macro() end, macro(gen) gen() end)
+                    #        ^            ^----- wide32 generator
+                    #        `------------------ wide16 generator
+                end)
+            end
+
+        Note that the generators for the wide16 and wide32 versions of the entry point
+        currently emit nothing.  As a result, if we ever have a bug that ends up
+        dispatching to llint_program_prologue_wide16 or llint_program_prologue_wide32,
+        we'll end up falling thru to llint_module_program_prologue, which just happens
+        to be the entry point positioned after those labels.
+
+        This patch adds breakpoints in those 2 unused generators so that we won't
+        inadvertently execute code for something else.
+
+        * llint/LowLevelInterpreter.asm:
+
 2021-08-15  Yijia Huang  <yijia_huang@apple.com>
 
         [ARM64] Add Pre/Post-Indexed Address Mode to Air for ARM64 (Store Instruction)
