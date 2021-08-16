@@ -1,3 +1,15 @@
+2021-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        -[WebView initWithCoder:] should use -[NSCoder decodeValueOfObjCType:at:size:]
+        <https://webkit.org/b/229121>
+        <rdar://problem/81956163>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        (-[WebView initWithCoder:]):
+        - Switch to -[NSCoder decodeValueOfObjCType:at:size:].
+
 2021-08-13  Chris Dumez  <cdumez@apple.com>
 
         Add Cross-Origin-Embedder-Policy support for Blob URLs

@@ -5425,7 +5425,7 @@ static bool needsWebViewInitThreadWorkaround()
                 allowsUndo = [decoder decodeBoolForKey:@"AllowsUndo"];
         } else {
             int version;
-            [decoder decodeValueOfObjCType:@encode(int) at:&version];
+            [decoder decodeValueOfObjCType:@encode(int) at:&version size:sizeof(int)];
             frameName = [decoder decodeObject];
             groupName = [decoder decodeObject];
             preferences = [decoder decodeObject];
