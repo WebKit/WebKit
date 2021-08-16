@@ -361,7 +361,7 @@ void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
         scheduleDisplay();
 }
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
 void DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers()
 {
     ASSERT(m_layerTreeHost);

@@ -71,7 +71,7 @@ private:
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void triggerRenderingUpdate() override;
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
     void layerHostDidFlushLayers() override;
 #endif
     

@@ -1,3 +1,33 @@
+2021-08-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][GraphicsLayerTextureMapper] DrawingAreaProxyCoordinatedGraphics doesn't enter accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=228100
+
+        Reviewed by Don Olmstead.
+
+        Even if DrawingAreaCoordinatedGraphics entered AC mode in web
+        process side, DrawingAreaProxyCoordinatedGraphics didn't enter AC
+        mode in UI process side. They should sync.
+
+        There were two problems.
+
+        LayerTreeHost::layerTreeContext() always returned an empty
+        LayerTreeContext that means non-AC mode.
+        LayerTreeHost::m_layerTreeContext.contextID should be initialized.
+
+        DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers should be
+        called after setShouldNotifyAfterNextScheduledLayerFlush(true) to
+        submit the current AC mode state.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        (WebKit::LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.h:
+        * WebProcess/WebPage/DrawingArea.h:
+
 2021-08-16  Sihui Liu  <sihui_liu@apple.com>
 
         Add logging for failure in getting network process connection
