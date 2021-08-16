@@ -3462,6 +3462,8 @@ webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.htm
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
+webkit.org/b/229154 webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
+
 # Skip WebXR tests on iOS
 imported/w3c/web-platform-tests/webxr [ Skip ]
 http/wpt/webxr [ Skip ]

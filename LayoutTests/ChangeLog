@@ -7,6 +7,15 @@
 
         * platform/win/TestExpectations:
 
+2021-08-16  Eric Hutchison  <ehutchison@apple.com>
+
+        [iOS wk2 Release] webrtc/peer-connection-audio-mute2.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229154.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] fast/forms/input-appearance-spinbutton-size.html is flaky crashing.
