@@ -1,3 +1,9 @@
+2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK distcheck build
+
+        * webkitglib-symbols.map: Remove symbols that are not in the library anymore.
+
 2021-08-15  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Add API to pass WebKitMemoryPressureHandler parameters to the network processes
