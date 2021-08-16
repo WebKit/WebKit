@@ -1,5 +1,18 @@
 2021-08-16  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK][WPE] Test fast/mediastream/mediastreamtrack-video-clone.html is flaky timeout since r280775
+        https://bugs.webkit.org/show_bug.cgi?id=229063
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Ignore redundant stream collections also in the mediastream case. Both the mediastream and
+        MSE source elements behave similarly regarding stream collections.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleStreamCollectionMessage):
+
+2021-08-16  Philippe Normand  <pnormand@igalia.com>
+
         REGRESSION(r278981): [GStreamer][Debug] Assert crashes when running media/track tests
         https://bugs.webkit.org/show_bug.cgi?id=229123
 

@@ -1515,10 +1515,11 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
         return;
 
     // GStreamer workaround:
-    // Unfortunately, when we have a stream-collection aware source (like WebKitMediaSrc) parsebin and decodebin3 emit
-    // their own stream-collection messages, but late, and sometimes with duplicated streams. Let's only listen for
-    // stream-collection messages from the source in the MSE case to avoid these issues.
-    if (isMediaSource() && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
+    // Unfortunately, when we have a stream-collection aware source (like WebKitMediaSrc or
+    // MediaStreamSource) parsebin and decodebin3 emit their own stream-collection messages, but
+    // late, and sometimes with duplicated streams. Let's only listen for stream-collection messages
+    // from the source to avoid these issues.
+    if (GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
         GST_DEBUG_OBJECT(pipeline(), "Ignoring redundant STREAM_COLLECTION from %" GST_PTR_FORMAT, message->src);
         return;
     }

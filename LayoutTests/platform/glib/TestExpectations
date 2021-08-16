@@ -2351,7 +2351,6 @@ webkit.org/b/229057 media/event-attributes.html [ Pass Failure ]
 webkit.org/b/229057 media/video-background-tab-playback.html [ Pass Failure ]
 
 webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
-webkit.org/b/229063 fast/mediastream/mediastreamtrack-video-clone.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 
