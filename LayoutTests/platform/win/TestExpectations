@@ -4659,6 +4659,9 @@ fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Crash ]
 webkit.org/b/228968 fast/forms/search/search-zoom-computed-style-height.html [ Pass Crash ]
 
 webkit.org/b/229009 fast/forms/input-baseline.html [ Pass Crash ]
+webkit.org/b/229009 fast/forms/form-element-geometry.html [ Pass Crash ]
+webkit.org/b/229009 fast/forms/focus-selection-input.html [ Pass Crash ]
+webkit.org/b/229009 fast/forms/select/listbox-in-multi-column.html [ Pass Crash ]
 
 webkit.org/b/229143 fast/forms/input-appearance-spinbutton-size.html [ Pass Crash ]
 
