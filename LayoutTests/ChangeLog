@@ -76,6 +76,15 @@
         * http/tests/subresource-integrity/sri-module-expected.txt:
         * js/dom/modules/module-fetch-failure-not-cached-expected.txt:
 
+2021-08-16  Eric Hutchison  <ehutchison@apple.com>
+
+        [ BigSur+ ] webrtc/video-addTrack.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229156.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] fast/forms/* tests are flaky crashing FAULTING_IP:  WebKit!WebCore::FontCache::lastResortFallbackFont+ec [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Source\WebCore\platform\graphics\win\FontCacheWin.cpp @ 424].
