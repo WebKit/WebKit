@@ -1,3 +1,12 @@
+2021-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        French translation of webkit.HEAD
+        https://bugs.webkit.org/show_bug.cgi?id=229119
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * fr.po:
+
 2021-07-23  Anders Jonsson  <anders.jonsson@norsjovallen.se>
 
         Updated Swedish translation
