@@ -3361,9 +3361,6 @@ imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-h
 # rdar://80384054 ([ iOS15 ] css3/filters/filter-repaint-shadow-layer-child.html is flaky failure)
 css3/filters/filter-repaint-shadow-layer-child.html [ Pass ImageOnlyFailure ]
 
-# rdar://80384447 ([ iOS15 ] editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html is a Flaky timeout)
-editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html [ Pass Timeout ]
-
 # rdar://80392795 ([ iOS15 ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm is a flaky failure)
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure ]
 

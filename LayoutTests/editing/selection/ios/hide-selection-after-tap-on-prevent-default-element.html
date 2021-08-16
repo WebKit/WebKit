@@ -52,7 +52,6 @@ async function runTest() {
 
     await UIHelper.longPressElement(text);
     await UIHelper.waitForSelectionToAppear();
-    await UIHelper.tapElement(text);
     await UIHelper.activateElement(button);
     await UIHelper.waitForSelectionToDisappear();
     selectionRects = await UIHelper.getUISelectionViewRects();

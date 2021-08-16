@@ -1,3 +1,51 @@
+2021-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=229147
+        rdar://80384447
+
+        Reviewed by Tim Horton.
+
+        This test verifies that we clear the text selection when tapping on an element that prevents the `click` event
+        on iOS (which matches behavior on macOS as well). To do this, the test:
+
+        1. Long presses a piece of text to select it
+        2. Taps the text we just selected (for reasons that are unclear to me)
+        3. Taps the button with the click event listener, and then
+        4. Waits for the platform text selection to disappear.
+
+        Currently, this test occasionally times out after step (3), and the selection is never cleared. In the success
+        case, the selection is cleared when UIKit's internal UITextTapRecognizer fires. Similar to the flaky timeout of
+        editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html that was fixed in bug #229126, we
+        fail in the case where the text tap gesture is not reset before the synthetic touches in (3) are dispatched.
+
+        While the mitigations in #229126 sometimes kick in and keep this test from timing out, this test may still time
+        out after that change because the touches in steps (2) and (3) are synthesized so quickly that the text tap
+        gesture is still in Possible state when sending touches in (3), because the HID events created in step (2)
+        haven't been delivered to the UIWindow yet in the form of UITouchEvents.
+
+        As such, one potential way to fix this is to teach HIDEventGenerator to wait until the HID events synthesized
+        underneath `-sendTaps:location:withNumberOfTouches:withNumberOfTouches:delay:completionBlock:` have been
+        delivered to the window. However, in the context of this test failure, there's a much less intrusive way to
+        avoid this race.
+
+        In the failure case, we avoid resetting UITextTapRecognizer immediately after the touches in step (2) are
+        processed because the tap-and-a-half gesture for selecting a range of text has not failed or ended yet; this
+        happens because the long press in step (1) followed by the tap in the same location in step (2) causes
+        UITapAndAHalfRecognizer to *sometimes* remain in Possible state with gesture failure requirements that connect
+        it to the other text interactions (including UITextTapRecognizer) in the same gesture dependency subgraph; this
+        in turn causes UITapAndAHalfRecognizer to defer reset of UITextTapRecognizer *just* long enough for the tap in
+        step (3) not be delivered to UITextTapRecognizer.
+
+        Interestingly, it's not clear that the tap in step (2) is necessary for the purposes of this test, and
+        importantly, removing it prevents the UITapAndAHalfRecognizer from remaining in Possible state when tapping on
+        the button after the long press, which ensures that the gesture subgraph containing UITextTapRecognizer is reset
+        in time for the touches to be delivered to the window. Thus, we can fix this bug simply by removing step (2).
+
+        * editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html:
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Monterey wk2 Guard-Malloc arm64 ] fast/text/canvas-color-fonts/* tests are image failing.
