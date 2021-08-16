@@ -1,3 +1,12 @@
+2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Monterey wk2 Release ] 2 css3/background/* tests are flaky image failing.
+        rdar://82000141
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-16  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac wk2] webrtc/video-addTransceiver.html is a flaky failure.

@@ -1565,3 +1565,7 @@ webkit.org/b/229163 webrtc/video-addTransceiver.html [ Pass Failure ]
 [ Monterey ] model-element/model-element-source.html [ Pass Crash ]
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
 [ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
+
+# rdar://82000141 ([ Monterey wk2 Release ] 2 css3/background/* tests are flaky image failing)
+[ Monterey Release ] css3/background/background-repeat-round-border.html [ Pass ImageOnlyFailure ]
+[ Monterey Release ] css3/background/background-repeat-round-padding.html [ Pass ImageOnlyFailure ]
