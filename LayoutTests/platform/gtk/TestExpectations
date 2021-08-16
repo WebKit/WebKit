@@ -159,7 +159,6 @@ webkit.org/b/132262 [ Debug ] http/tests/media/video-redirect.html [ Pass ]
 webkit.org/b/218510 fast/dom/Range/getBoundingClientRect.html [ Failure ]
 webkit.org/b/218930 fast/inline/simple-line-layout-16bit-content.html [ ImageOnlyFailure ]
 webkit.org/b/218930 fast/text/simple-lines-hover.html [ ImageOnlyFailure ]
-webkit.org/b/225293 fast/inline/incorrect-middle-baseline-alignment-with-line-height.html [ ImageOnlyFailure ]
 webkit.org/b/226474 [ Debug ] fast/text/letter-spacing-produces-nan-width.html [ Crash ]
 
 # Media - GTK-X11 flaky crash
