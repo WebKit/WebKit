@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright (C) 2021 Igalia S.L.
 #
@@ -18,18 +17,45 @@
 
 import os
 import sys
+import subprocess
+try:
+    from urllib.parse import urlparse  # pylint: disable=E0611
+except ImportError:
+    from urlparse import urlparse
 
-top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.insert(0, os.path.join(top_level_directory, "Tools", "Scripts"))
 
-from webkitpy.common.checkout.scm.detection import SCMDetector  # nopep8
-from webkitpy.common.system.executive import Executive  # nopep8
-from webkitpy.common.system.filesystem import FileSystem  # nopep8
+def get_build_revision():
+    revision = "unknown"
+    with open(os.devnull, 'w') as devnull:
+        if os.path.isdir(os.path.join('.git', 'svn')):
+            for line in subprocess.check_output(("git", "svn", "info"), stderr=devnull).splitlines():
+                parsed = line.split(b':')
+                key = parsed[0]
+                contents = b':'.join(parsed[1:])
+                if key == b'Revision':
+                    revision = "r%s" % contents.decode('utf-8').strip()
+                    break
+        elif os.path.isdir('.git'):
+            commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "origin/HEAD"), stderr=devnull)
+            # Commit messages tend to be huge and the metadata we're looking
+            # for is at the very end. Also a spoofed 'Canonical link' mention
+            # could appear early on. So make sure we get the right metadata by
+            # reversing the contents. And this is a micro-optimization as well.
+            for line in reversed(commit_message.splitlines()):
+                parsed = line.split(b':')
+                key = parsed[0]
+                contents = b':'.join(parsed[1:])
+                if key == b'Canonical link':
+                    url = contents.decode('utf-8').strip()
+                    revision = urlparse(url).path[1:]  # strip leading /
+                    break
+        else:
+            revision = "r%s" % subprocess.check_output(("svnversion"), stderr=devnull).decode('utf-8').strip()
+
+    return revision
 
 def main(args):
-    scm = SCMDetector(FileSystem(), Executive()).default_scm()
-    svn_revision = scm.head_svn_revision()
-    build_revision = "r{}".format(svn_revision)
+    build_revision = get_build_revision()
 
     for in_file in args:
         filename = os.path.basename(in_file)
