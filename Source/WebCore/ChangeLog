@@ -1,3 +1,43 @@
+2021-08-16  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r278981): [GStreamer][Debug] Assert crashes when running media/track tests
+        https://bugs.webkit.org/show_bug.cgi?id=229123
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The TrackPrivateBaseGStreamer class now includes all the common code that is used by its
+        subclasses. InbandTextTrackPrivateGStreamer now returns valid track IDs (fixing the issue of
+        this regression: ASSERTs). The patch also includes coding style fixes, removal of un-needed
+        includes and a few other clean-ups related with the Track support in the GStreamer platform
+        layer.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        (WebCore::InbandTextTrackPrivateGStreamer::disconnect): Deleted.
+        (WebCore::InbandTextTrackPrivateGStreamer::streamChanged): Deleted.
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged): Deleted.
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create):
+        (WebCore::InbandTextTrackPrivateGStreamer::streamId const): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::handleTextSample):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID):
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer):
+        (WebCore::TrackPrivateBaseGStreamer::setPad):
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged):
+        (WebCore::TrackPrivateBaseGStreamer::streamChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        (WebCore::TrackPrivateBaseGStreamer::setIndex):
+        (WebCore::TrackPrivateBaseGStreamer::stream):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+
 2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move WebMAudioUtilitiesCocoa.h from Headers.cmake to PlatformMac.cmake
