@@ -1,3 +1,16 @@
+2021-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Catalyst TestWebKitAPI build
+        https://bugs.webkit.org/show_bug.cgi?id=229091
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        Search the correct SDK paths.
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::TEST):
+        Use soft linking for VisionKitCore like we do elsewyere.
+
 2021-08-16  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] Clean build broken with python3 after r280382

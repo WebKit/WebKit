@@ -33,6 +33,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/spi/cocoa/VisionKitCoreSPI.h>
 
 namespace TestWebKitAPI {
@@ -54,7 +55,7 @@ static void swizzledProcessRequest(id, SEL, VKImageAnalyzerRequest *, void (^)(d
 TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 {
     InstanceMethodSwizzler gestureLocationSwizzler { UIGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { VKImageAnalyzer.class, @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequest) };
+    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequest) };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView _setEditable:YES];
@@ -68,7 +69,7 @@ TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 TEST(ImageAnalysisTests, HandleImageAnalyzerError)
 {
     InstanceMethodSwizzler gestureLocationSwizzler { UIGestureRecognizer.class, @selector(locationInView:), reinterpret_cast<IMP>(swizzledLocationInView) };
-    InstanceMethodSwizzler imageAnalysisRequestSwizzler { VKImageAnalyzer.class, @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequest) };
+    InstanceMethodSwizzler imageAnalysisRequestSwizzler { PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(swizzledProcessRequest) };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:@"image"];
