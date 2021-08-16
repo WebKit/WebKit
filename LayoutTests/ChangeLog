@@ -1,3 +1,12 @@
+2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing.
+        rdar://82002352
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-16  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac wk2] webrtc/utf8-sdp.html is a flaky failure.
