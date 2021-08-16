@@ -1,4 +1,27 @@
 ================
+WebKitGTK 2.33.3
+================
+
+What's new in WebKitGTK 2.33.3?
+
+  - Add support for display capture.
+  - Add new API to access/modify capture devices states.
+  - Add new API to configure the memory pressure handler.
+  - Add support for client side certifiates authentication.
+  - Add support color-schemes CSS property.
+  - Add support for dark scrollbars.
+  - Keep GtkSettings used by web processes in sync with the settings set in the UI process.
+  - Add support for drawing the scrollbars corner.
+  - Allow to opt-out of GL rendering at runtime for media player.
+  - Add support for A420 compositing in media player.
+  - Improve pinch to zoom gesture in accerlerated compositing mode.
+  - Fix cookies configuration after a network process crash.
+  - Fix touchscreen navigation swipe when the page scrolls horizontally.
+  - Fix rendering of elliptic radial gradients.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese, French, Swedish, Ukrainian
+
+================
 WebKitGTK 2.33.2
 ================
 

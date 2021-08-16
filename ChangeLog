@@ -1,3 +1,9 @@
+2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.3 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2021-08-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update logging docs after r280758

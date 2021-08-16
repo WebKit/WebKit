@@ -1,5 +1,11 @@
 2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.3 release
+
+        * gtk/NEWS: Add release notes for 2.33.3.
+
+2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK distcheck build
 
         * webkitglib-symbols.map: Remove symbols that are not in the library anymore.
