@@ -1,3 +1,12 @@
+2021-08-16  Eric Hutchison  <ehutchison@apple.com>
+
+        [Star] webaudio/codec-tests/mp3/128kbps-44khz.html is a constant failure.
+        rdar://82003714.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing.
