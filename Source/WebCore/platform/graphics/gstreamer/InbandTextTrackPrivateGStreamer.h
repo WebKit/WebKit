@@ -30,8 +30,7 @@
 #include "GStreamerCommon.h"
 #include "InbandTextTrackPrivate.h"
 #include "TrackPrivateBaseGStreamer.h"
-#include <gst/gst.h>
-#include <wtf/Lock.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -39,45 +38,36 @@ class MediaPlayerPrivateGStreamer;
 
 class InbandTextTrackPrivateGStreamer : public InbandTextTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
-    static Ref<InbandTextTrackPrivateGStreamer> create(gint index, GRefPtr<GstPad> pad)
+    static Ref<InbandTextTrackPrivateGStreamer> create(unsigned index, GRefPtr<GstPad>&& pad)
     {
-        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, pad));
+        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, WTFMove(pad)));
     }
 
-    static Ref<InbandTextTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstPad> pad)
+    static Ref<InbandTextTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad> pad)
     {
-        return create(index, pad);
+        return create(index, WTFMove(pad));
     }
 
-    static Ref<InbandTextTrackPrivateGStreamer> create(gint index, GRefPtr<GstStream> stream)
+    static Ref<InbandTextTrackPrivateGStreamer> create(unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, stream));
+        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, WTFMove(stream)));
     }
 
-    void disconnect() override;
-
-    Kind kind() const override { return m_kind; }
-
-    AtomString label() const override { return m_label; }
-    AtomString language() const override { return m_language; }
-
-    int trackIndex() const override { return m_index; }
-    String streamId() const { return m_streamId; }
+    Kind kind() const final { return m_kind; }
+    AtomString id() const final { return m_id; }
+    AtomString label() const final { return m_label; }
+    AtomString language() const final { return m_language; }
+    int trackIndex() const final { return m_index; }
 
     void handleSample(GRefPtr<GstSample>);
 
 private:
-    InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstPad>);
-    InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstStream>);
-
-    void streamChanged();
+    InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&&);
+    InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstStream>&&);
 
     void notifyTrackOfSample();
-    void notifyTrackOfStreamChanged();
 
-    gulong m_eventProbe;
     Vector<GRefPtr<GstSample>> m_pendingSamples WTF_GUARDED_BY_LOCK(m_sampleMutex);
-    String m_streamId;
     Kind m_kind;
     Lock m_sampleMutex;
 };

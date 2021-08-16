@@ -30,18 +30,33 @@
 #include "TrackPrivateBaseGStreamer.h"
 
 #include "GStreamerCommon.h"
-#include "Logging.h"
 #include "TrackPrivateBase.h"
-#include <glib-object.h>
-#include <gst/gst.h>
 #include <gst/tag/tag.h>
-#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
 namespace WebCore {
+
+AtomString TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(TrackType trackType, unsigned index)
+{
+    auto prefix = [trackType]() -> char {
+        switch (trackType) {
+        case TrackPrivateBaseGStreamer::TrackType::Audio:
+            return 'A';
+        case TrackPrivateBaseGStreamer::TrackType::Video:
+            return 'V';
+        case TrackPrivateBaseGStreamer::TrackType::Text:
+            return 'T';
+        default:
+            ASSERT_NOT_REACHED();
+            return 'U';
+        }
+    }();
+
+    return makeString(prefix, index);
+}
 
 static GRefPtr<GstPad> findBestUpstreamPad(GRefPtr<GstPad> pad)
 {
@@ -56,10 +71,10 @@ static GRefPtr<GstPad> findBestUpstreamPad(GRefPtr<GstPad> pad)
     return sinkPad;
 }
 
-TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad> pad)
+TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GRefPtr<GstPad>&& pad)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_eventProbe(0)
+    , m_type(type)
     , m_owner(owner)
 {
     setPad(WTFMove(pad));
@@ -69,14 +84,15 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
     tagsChanged();
 }
 
-TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream> stream)
+TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GRefPtr<GstStream>&& stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_stream(stream)
-    , m_eventProbe(0)
+    , m_stream(WTFMove(stream))
+    , m_type(type)
     , m_owner(owner)
 {
     ASSERT(m_stream);
+    m_id = gst_stream_get_stream_id(m_stream.get());
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
@@ -89,11 +105,16 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
 
     m_pad = WTFMove(pad);
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
+    m_id = generateUniquePlaybin2StreamID(m_type, m_index);
+
     m_eventProbe = gst_pad_add_probe(m_bestUpstreamPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [] (GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto* track = static_cast<TrackPrivateBaseGStreamer*>(userData);
         switch (GST_EVENT_TYPE(gst_pad_probe_info_get_event(info))) {
         case GST_EVENT_TAG:
             tagsChangedCallback(track);
+            break;
+        case GST_EVENT_STREAM_START:
+            track->streamChanged();
             break;
         default:
             break;
@@ -163,7 +184,9 @@ void TrackPrivateBaseGStreamer::tagsChanged()
         m_tags.swap(tags);
     }
 
-    m_notifier->notify(MainThreadNotification::TagsChanged, [this] { notifyTrackOfTagsChanged(); });
+    m_notifier->notify(MainThreadNotification::TagsChanged, [this] {
+        notifyTrackOfTagsChanged();
+    });
 }
 
 bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomString& value)
@@ -218,6 +241,23 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
     m_language = language;
     if (client)
         client->languageChanged(m_language);
+}
+
+void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
+{
+    GUniquePtr<char> streamId(gst_pad_get_stream_id(m_pad.get()));
+    if (!streamId)
+        return;
+
+    GST_INFO("Track %d got stream start for stream %s.", m_index, streamId.get());
+    m_id = streamId.get();
+}
+
+void TrackPrivateBaseGStreamer::streamChanged()
+{
+    m_notifier->notify(MainThreadNotification::StreamChanged, [this] {
+        notifyTrackOfStreamChanged();
+    });
 }
 
 } // namespace WebCore

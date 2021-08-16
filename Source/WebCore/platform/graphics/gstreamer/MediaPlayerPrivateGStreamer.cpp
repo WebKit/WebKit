@@ -992,23 +992,23 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
 
     ASSERT(m_isLegacyPlaybin || isMediaSource());
 
-    enum TrackType { Audio = 0, Video = 1, Text = 2 };
+    using TrackType = TrackPrivateBaseGStreamer::TrackType;
     Variant<HashMap<AtomString, RefPtr<AudioTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<VideoTrackPrivateGStreamer>>*, HashMap<AtomString, RefPtr<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(0);
     auto type(static_cast<TrackType>(variantTracks.index()));
     const char* typeName;
     bool* hasType;
     switch (type) {
-    case Audio:
+    case TrackType::Audio:
         typeName = "audio";
         hasType = &m_hasAudio;
         variantTracks = &m_audioTracks;
         break;
-    case Video:
+    case TrackType::Video:
         typeName = "video";
         hasType = &m_hasVideo;
         variantTracks = &m_videoTracks;
         break;
-    case Text:
+    case TrackType::Text:
         typeName = "text";
         hasType = nullptr;
         variantTracks = &m_textTracks;
@@ -1019,7 +1019,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     HashMap<AtomString, RefPtr<TrackPrivateType>>& tracks = *get<HashMap<AtomString, RefPtr<TrackPrivateType>>*>(variantTracks);
 
     // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
-    if (m_isEndReached && (type == Audio || type == Video))
+    if (m_isEndReached && (type == TrackType::Audio || type == TrackType::Video))
         return;
 
     unsigned numberOfTracks = 0;
@@ -1039,7 +1039,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         if (oldHasType != *hasType)
             m_player->characteristicChanged();
 
-        if (*hasType && type == Video)
+        if (*hasType && type == TrackType::Video)
             m_player->sizeChanged();
     }
 
@@ -1049,7 +1049,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         return;
     }
 
-    Vector<String> validStreams;
+    Vector<AtomString> validStreams;
     StringPrintStream getPadProperty;
     getPadProperty.printf("get-%s-pad", typeName);
 
@@ -1058,7 +1058,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         g_signal_emit_by_name(m_pipeline.get(), getPadProperty.toCString().data(), i, &pad.outPtr(), nullptr);
         ASSERT(pad);
 
-        String streamId = String(typeName).substring(0, 1).convertToASCIIUppercase() + String::number(i);
+        // The pad might not have a sticky stream-start event yet, so we can't use
+        // gst_pad_get_stream_id() here.
+        auto streamId = TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(type, i);
         validStreams.append(streamId);
 
         if (i < tracks.size()) {
@@ -1073,17 +1075,23 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             }
         }
 
-        auto track = TrackPrivateType::create(makeWeakPtr(*this), i, pad);
-        if (!track->trackIndex() && (type == Audio || type == Video))
+        auto track = TrackPrivateType::create(makeWeakPtr(*this), i, WTFMove(pad));
+        if (!track->trackIndex() && (type == TrackType::Audio || type == TrackType::Video))
             track->setActive(true);
         ASSERT(streamId == track->id());
         tracks.add(streamId, track.copyRef());
 
         Variant<AudioTrackPrivate&, VideoTrackPrivate&, InbandTextTrackPrivate&> variantTrack(track.get());
         switch (variantTrack.index()) {
-        case Audio: m_player->addAudioTrack(get<AudioTrackPrivate&>(variantTrack)); break;
-        case Video: m_player->addVideoTrack(get<VideoTrackPrivate&>(variantTrack)); break;
-        case Text: m_player->addTextTrack(get<InbandTextTrackPrivate&>(variantTrack)); break;
+        case TrackType::Audio:
+            m_player->addAudioTrack(get<AudioTrackPrivate&>(variantTrack));
+            break;
+        case TrackType::Video:
+            m_player->addVideoTrack(get<VideoTrackPrivate&>(variantTrack));
+            break;
+        case TrackType::Text:
+            m_player->addTextTrack(get<InbandTextTrackPrivate&>(variantTrack));
+            break;
         }
     }
 
@@ -1143,7 +1151,7 @@ void MediaPlayerPrivateGStreamer::textChangedCallback(MediaPlayerPrivateGStreame
 void MediaPlayerPrivateGStreamer::handleTextSample(GstSample* sample, const char* streamId)
 {
     for (auto& track : m_textTracks.values()) {
-        if (!strcmp(track->streamId().utf8().data(), streamId)) {
+        if (!strcmp(track->id().string().utf8().data(), streamId)) {
             track->handleSample(sample);
             return;
         }
@@ -1449,8 +1457,8 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
     unsigned videoTrackIndex = 0;
     unsigned textTrackIndex = 0;
 
-#define CREATE_TRACK(type, Type) G_STMT_START {                         \
-        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, stream); \
+#define CREATE_TRACK(type, Type) G_STMT_START {                     \
+        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, WTFMove(stream)); \
         auto trackId = track->id();                                 \
         if (!type##TrackIndex) {                                    \
             m_wanted##Type##StreamId = trackId;                     \
@@ -1463,11 +1471,11 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
     } G_STMT_END
 
     for (unsigned i = 0; i < length; i++) {
-        auto* stream = gst_stream_collection_get_stream(streamCollection.get(), i);
-        String streamId(gst_stream_get_stream_id(stream));
-        auto type = gst_stream_get_stream_type(stream);
+        GRefPtr<GstStream> stream = gst_stream_collection_get_stream(streamCollection.get(), i);
+        const char* streamId = gst_stream_get_stream_id(stream.get());
+        auto type = gst_stream_get_stream_type(stream.get());
 
-        GST_DEBUG_OBJECT(pipeline(), "Inspecting %s track with ID %s", gst_stream_type_get_name(type), streamId.utf8().data());
+        GST_DEBUG_OBJECT(pipeline(), "Inspecting %s track with ID %s", gst_stream_type_get_name(type), streamId);
 
         if (type & GST_STREAM_TYPE_AUDIO) {
             CREATE_TRACK(audio, Audio);
@@ -1475,11 +1483,11 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
         } else if (type & GST_STREAM_TYPE_VIDEO && m_player->isVideoPlayer())
             CREATE_TRACK(video, Video);
         else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
-            auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
+            auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, WTFMove(stream));
             m_textTracks.add(streamId, track.copyRef());
             m_player->addTextTrack(track.get());
         } else
-            GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
+            GST_WARNING("Unknown track type found for stream %s", streamId);
     }
 
     m_hasAudio = !m_audioTracks.isEmpty();
