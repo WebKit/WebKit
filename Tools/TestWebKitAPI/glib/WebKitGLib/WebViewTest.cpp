@@ -212,6 +212,9 @@ static void titleChanged(WebKitWebView* webView, GParamSpec*, WebViewTest* test)
 
 void WebViewTest::waitUntilTitleChangedTo(const char* expectedTitle)
 {
+    if (expectedTitle && !g_strcmp0(expectedTitle, webkit_web_view_get_title(m_webView)))
+        return;
+
     m_expectedTitle = expectedTitle;
     g_signal_connect(m_webView, "notify::title", G_CALLBACK(titleChanged), this);
     g_main_loop_run(m_mainLoop);
@@ -220,7 +223,7 @@ void WebViewTest::waitUntilTitleChangedTo(const char* expectedTitle)
 
 void WebViewTest::waitUntilTitleChanged()
 {
-    waitUntilTitleChangedTo(0);
+    waitUntilTitleChangedTo(nullptr);
 }
 
 static void isWebProcessResponsiveChanged(WebKitWebView* webView, GParamSpec*, WebViewTest* test)

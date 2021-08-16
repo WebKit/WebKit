@@ -769,7 +769,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
 
     // Show the page. The visibility should be updated to 'visible'.
     test->showInWindow();
-    test->waitUntilTitleChanged();
+    test->waitUntilTitleChangedTo("visible");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert_nonnull(javascriptResult);
@@ -784,7 +784,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
 
     // Hide the page. The visibility should be updated to 'hidden'.
     test->hideView();
-    test->waitUntilTitleChanged();
+    test->waitUntilTitleChangedTo("hidden");
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert_nonnull(javascriptResult);
