@@ -1,3 +1,18 @@
+2021-08-16  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] Clean build broken with python3 after r280382
+        https://bugs.webkit.org/show_bug.cgi?id=228628
+
+        Reviewed by Adrian Perez de Castro.
+
+        The webkitpy autoinstall doesn't reliably work when it's triggered from concurrent
+        processes. Replace webkitpy usage in apply-build-revision-to-files.py script with explicit
+        calls to svnversion, git svn info or git log -1, depending on the kind of SCM checkout.
+
+        * glib/apply-build-revision-to-files.py:
+        (get_build_revision):
+        (main):
+
 2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK distcheck build
