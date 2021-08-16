@@ -1,3 +1,23 @@
+2021-08-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] MiniBrowser crashes when closed while capturing desktop
+        https://bugs.webkit.org/show_bug.cgi?id=228232
+        <rdar://problem/81093648>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove explicit detach call from the UIClient. Resetting the page state in the proxy *after*
+        the clients have been cleared is a better fix for this crash.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (attachUIClientToView):
+        (detachUIClientFromView): Deleted.
+        * UIProcess/API/glib/WebKitUIClient.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewDispose):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+
 2021-08-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.3 release

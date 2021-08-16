@@ -22,4 +22,4 @@
 #include "WebKitWebView.h"
 
 void attachUIClientToView(WebKitWebView*);
-void detachUIClientFromView(WebKitWebView*);
+

@@ -1169,8 +1169,6 @@ void WebPageProxy::close()
 
     m_process->disconnectFramesFromPage(this);
 
-    resetState(ResetStateReason::PageInvalidated);
-
     m_loaderClient = nullptr;
     m_navigationClient = makeUniqueRef<API::NavigationClient>();
     m_policyClient = nullptr;
@@ -1186,6 +1184,8 @@ void WebPageProxy::close()
 #if ENABLE(FULLSCREEN_API)
     m_fullscreenClient = makeUnique<API::FullscreenClient>();
 #endif
+
+    resetState(ResetStateReason::PageInvalidated);
 
     m_process->processPool().backForwardCache().removeEntriesForPage(*this);
 

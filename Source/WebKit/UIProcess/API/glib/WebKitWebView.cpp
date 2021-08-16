@@ -1017,7 +1017,6 @@ static void webkitWebViewDispose(GObject* object)
 #endif
 
     WebCore::setScreenDPIObserverHandler(nullptr, webView);
-    detachUIClientFromView(webView);
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
