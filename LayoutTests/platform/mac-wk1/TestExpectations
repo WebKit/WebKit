@@ -1329,6 +1329,9 @@ webkit.org/b/228089 imported/w3c/web-platform-tests/html/semantics/links/links-c
 
 webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
 
+# <rdar://problem/81996454> ([ Monterey wk1 GuardMalloc ] fast/borders/hidpi-3x-input-hairline-border.html is timing out)
+[ Monterey ] fast/borders/hidpi-3x-input-hairline-border.html [ Timeout ]
+
 webkit.org/b/227973 [ BigSur Debug arm64 ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Timeout ]
 webkit.org/b/227973 [ BigSur Release arm64 ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Timeout ]
 

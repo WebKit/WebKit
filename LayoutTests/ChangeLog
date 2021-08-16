@@ -1,3 +1,12 @@
+2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Monterey wk1 GuardMalloc ] fast/borders/hidpi-3x-input-hairline-border.html is timing out.
+        rdar://81996454
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r281054): [ iOS14 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html is a constant text failure
