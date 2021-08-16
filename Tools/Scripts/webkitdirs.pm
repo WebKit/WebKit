@@ -1015,13 +1015,15 @@ sub XcodeOptions
     push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
     if ($asanIsEnabled) {
-        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "asan.xcconfig"));
+        my $xcconfig = $ubsanIsEnabled ? "asan+ubsan.xcconfig" : "asan.xcconfig";
+        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", $xcconfig));
         my $asanIgnorePath = File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "webkit-asan-ignore.txt");
         push @options, "ASAN_IGNORE=$asanIgnorePath" if -e $asanIgnorePath;
     } elsif ($tsanIsEnabled) {
         push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "tsan.xcconfig"));
+    } elsif (ubsanIsEnabled) {
+        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig"));
     }
-    push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig")) if $ubsanIsEnabled;
     push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
     push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;

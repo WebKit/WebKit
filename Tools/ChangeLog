@@ -1,3 +1,15 @@
+2021-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        Fix ASan+UBSan builds with Xcode 13
+        <https://webkit.org/b/229122>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        - Use asan+ubsan.xcconfig when both are enabled.
+        * sanitizer/asan+ubsan.xcconfig: Add.
+
 2021-08-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281077.
