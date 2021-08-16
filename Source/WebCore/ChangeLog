@@ -1,3 +1,17 @@
+2021-08-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r281093.
+        https://bugs.webkit.org/show_bug.cgi?id=229159
+
+        broke many GTK media tests
+
+        Reverted changeset:
+
+        "REGRESSION(r278981): [GStreamer][Debug] Assert crashes when
+        running media/track tests"
+        https://bugs.webkit.org/show_bug.cgi?id=229123
+        https://commits.webkit.org/r281093
+
 2021-08-16  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r281012): WebInspector console no longer shows script integrity information
