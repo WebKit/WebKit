@@ -75,6 +75,7 @@ file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/Web
 # Include only the resources we actually build
 file Source/WebCore/Resources/missingImage.png
 file Source/WebCore/Resources/missingImage@2x.png
+file Source/WebCore/Resources/missingImage@3x.png
 file Source/WebCore/Resources/panIcon.png
 file Source/WebCore/Resources/plugIns.js
 file Source/WebCore/Resources/textAreaResizeCorner.png
