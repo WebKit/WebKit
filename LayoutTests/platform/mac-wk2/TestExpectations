@@ -1558,6 +1558,8 @@ webkit.org/b/229015 [ BigSur ] webgl/2.0.0/conformance2/textures/image_bitmap_fr
 
 webkit.org/b/229158 [ BigSur+ ] webrtc/video-setDirection.html [ Pass Failure ]
 
+webkit.org/b/229163 webrtc/video-addTransceiver.html [ Pass Failure ]
+
 # webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
 [ Monterey ] imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-cross-origin.https.html [ Failure ]
 [ Monterey ] model-element/model-element-source.html [ Pass Crash ]
