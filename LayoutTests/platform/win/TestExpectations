@@ -4670,3 +4670,4 @@ webkit.org/b/229005 fast/events/dropzone-005.html [ Pass Crash ]
 webkit.org/b/229146 http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html [ Pass Failure ]
 
 accessibility/selected-state-changed-notifications.html [ Skip ]
+accessibility/element-line-rects-and-text.html [ Skip ]

@@ -1,3 +1,49 @@
+2021-08-16  Andres Gonzalez  <andresg_22@apple.com>
+
+        Expose [WebAccessibilityObjectWrapper lineRectsAndText] on MacOS.
+        https://bugs.webkit.org/show_bug.cgi?id=229045
+        <rdar://81819301>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/element-line-rects-and-text.html
+
+        Moved the [WebAccessibilityObjectWrapper lineRectsAndText] method, and
+        supporting methods and functions, from the iOS subclass to the base
+        (Cocoa) class so that it can be used in both iOS and MacOS.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        Moved the following methods and functions to WebAccessibilityObjectWrapperBase.mm.
+        (-[WebAccessibilityObjectWrapper _prepareAccessibilityCall]): Deleted.
+        (-[WebAccessibilityObjectWrapper _addAccessibilityObject:toTextMarkerArray:]): Deleted.
+        (blockquoteLevel): Deleted.
+        (AXAttributeStringSetLanguage): Deleted.
+        (AXAttributeStringSetBlockquoteLevel): Deleted.
+        (AXAttributeStringSetHeadingLevel): Deleted.
+        (AXAttributeStringSetFont): Deleted.
+        (AXAttributeStringSetNumber): Deleted.
+        (AXAttributeStringSetStyle): Deleted.
+        (AXAttributedStringAppendText): Deleted.
+        (-[WebAccessibilityObjectWrapper contentForSimpleRange:attributed:]): Deleted.
+        (-[WebAccessibilityObjectWrapper lineRectsAndText]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase _prepareAccessibilityCall]):
+        (addObjectWrapperToArray):
+        (blockquoteLevel):
+        (AXAttributeStringSetLanguage):
+        (AXAttributeStringSetBlockquoteLevel):
+        (AXAttributeStringSetHeadingLevel):
+        (AXAttributeStringSetFont):
+        (AXAttributeStringSetNumber):
+        (AXAttributeStringSetStyle):
+        (AXAttributedStringAppendText):
+        (-[WebAccessibilityObjectWrapperBase contentForSimpleRange:attributed:]):
+        (-[WebAccessibilityObjectWrapperBase lineRectsAndText]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        Added handling of the attribute "AXLineRectsAndText".
+
 2021-08-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281093.

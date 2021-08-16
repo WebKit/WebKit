@@ -2372,6 +2372,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
         return [self path];
 
+    if ([attributeName isEqualToString:@"AXLineRectsAndText"]) {
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<NSArray *>([protectedSelf = retainPtr(self)] () -> RetainPtr<NSArray> {
+            return protectedSelf.get().lineRectsAndText;
+        });
+    }
+
     if ([attributeName isEqualToString:NSAccessibilityImageOverlayElementsAttribute]) {
         auto imageOverlayElements = backingObject->imageOverlayElements();
         return imageOverlayElements ? convertToNSArray(*imageOverlayElements) : nil;

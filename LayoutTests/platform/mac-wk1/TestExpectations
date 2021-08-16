@@ -967,6 +967,7 @@ accessibility/mac/aria-errormessage.html [ Skip ]
 accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/selected-state-changed-notifications.html [ Skip ]
+accessibility/element-line-rects-and-text.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]

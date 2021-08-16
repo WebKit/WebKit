@@ -844,6 +844,18 @@ double AccessibilityUIElement::clickPointY()
     return 0.0f;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id lineRectsAndText = [m_element accessibilityAttributeValue:@"AXLineRectsAndText"];
+    if (![lineRectsAndText isKindOfClass:NSArray.class])
+        return { };
+    return [[lineRectsAndText componentsJoinedByString:@"|"] createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+
+    return { };
+}
+
 double AccessibilityUIElement::intValue() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
 
@@ -44,12 +44,12 @@ Another line of text.<br/>
 
             // Cannot log rect coordinates because it would vary from device to device.
             // Thus, get the rects width and height and make sure they are > 0.
-            let size = line.match(/NSRect: {{[\d]+, [\d]+}, {([\d]+), ([\d]+)}}/);
+            let size = line.match(/NSRect: {{-*[\d]+, -*[\d]+}, {([\d]+), ([\d]+)}}/);
             debug(`width > 0: ${size[1] > 0}`);
             debug(`height > 0: ${size[2] > 0}`);
         });
     }
 </script>
-<script src="../../resources/js-test-post.js"></script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

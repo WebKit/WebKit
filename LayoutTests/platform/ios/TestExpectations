@@ -2105,6 +2105,7 @@ accessibility/aria-sort-changed-notification.html [ Pass ]
 webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
 
 accessibility/selected-state-changed-notifications.html [ Pass ]
+accessibility/element-line-rects-and-text.html [ Pass ]
 
 # Enable "attachment element" test for iOS
 accessibility/attachment-element.html [ Pass ]
