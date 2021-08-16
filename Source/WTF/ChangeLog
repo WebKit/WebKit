@@ -1,3 +1,19 @@
+2021-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Enable PerformanceNavigationAPI by default
+        https://bugs.webkit.org/show_bug.cgi?id=227336
+
+        Reviewed by Chris Dumez.
+
+        It passes WPT tests except the following:
+
+        navigation-timing/nav2_test_redirect_chain_xserver_partial_opt_in.html and navigation-timing/nav2_test_redirect_xserver.html pass when run from wpt.live,
+        and other browsers also don't pass when run from our local hosting infrastructure, which doesn't have a good cross-domain redirect.
+
+        nav2_test_attributes_values.html fails in Chrome and Firefox.  There's something wrong with the port detection in the test.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add thread safe version of CanMakeCheckedPtr

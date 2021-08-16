@@ -837,11 +837,11 @@ PerformanceNavigationTimingAPIEnabled:
   humanReadableDescription: "Enable PerformanceNavigationTiming API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # Note: This is off by default because of privacy concerns
 # such as https://github.com/w3c/resource-timing/issues/238
