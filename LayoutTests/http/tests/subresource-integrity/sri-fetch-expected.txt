@@ -1,8 +1,13 @@
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/subresource-integrity/resources/resource.txt.
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/subresource-integrity/resources/resource.txt.
-CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/subresource-integrity/resources/resource.txt.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/subresource-integrity/resources/crossorigin-anon-resource.txt.
-CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/subresource-integrity/resources/crossorigin-creds-resource.txt.
+CONSOLE MESSAGE: Failed integrity metadata check. http://127.0.0.1:8000/subresource-integrity/resources/resource.txt. Failed integrity metadata check. Content length: 3, Expected content length: 3, Expected metadata: sha256-dKUcPOn/AlUjWIwcHeHNqYXPlvyGiq+2dWOdFcE+24I=
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/subresource-integrity/resources/resource.txt due to access control checks.
+CONSOLE MESSAGE: Failed integrity metadata check. http://127.0.0.1:8000/subresource-integrity/resources/resource.txt. Failed integrity metadata check. Content length: 3, Expected content length: 3, Expected metadata: sha512-oUceBRNxPxnY60g/VtPCj2syT4wo4EZh2CgYdWy9veW8+OsReTXoh7dizMGZafvx9+QhMS39L/gIkxnPIn41Zg== sha384-MgZYnnAzPM/MjhqfOIMfQK5qcFvGZsGLzx4Phd7/A8fHTqqLqXqKo8cNzY3xEPTL
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/subresource-integrity/resources/resource.txt due to access control checks.
+CONSOLE MESSAGE: Failed integrity metadata check. http://127.0.0.1:8000/subresource-integrity/resources/resource.txt. Failed integrity metadata check. Content length: 3, Expected content length: 3, Expected metadata: sha256-dKUcPOn/AlUjWIwcHeHNqYXPlvyGiq+2dWOdFcE+24I= sha512-oUceBRNxPxnY60g/VtPCj2syT4wo4EZh2CgYdWy9veW8+OsReTXoh7dizMGZafvx9+QhMS39L/gIkxnPIn41Zg==
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/subresource-integrity/resources/resource.txt due to access control checks.
+CONSOLE MESSAGE: Failed integrity metadata check. http://localhost:8000/subresource-integrity/resources/crossorigin-anon-resource.txt. Failed integrity metadata check. Content length: 3, Expected content length: 3, Expected metadata: sha512-oUceBRNxPxnY60g/VtPCj2syT4wo4EZh2CgYdWy9veW8+OsReTXoh7dizMGZafvx9+QhMS39L/gIkxnPIn41Zg==
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/subresource-integrity/resources/crossorigin-anon-resource.txt due to access control checks.
+CONSOLE MESSAGE: Failed integrity metadata check. http://localhost:8000/subresource-integrity/resources/crossorigin-creds-resource.txt. Failed integrity metadata check. Content length: 3, Expected content length: 3, Expected metadata: sha512-oUceBRNxPxnY60g/VtPCj2syT4wo4EZh2CgYdWy9veW8+OsReTXoh7dizMGZafvx9+QhMS39L/gIkxnPIn41Zg==
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/subresource-integrity/resources/crossorigin-creds-resource.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8000/subresource-integrity/resources/crossorigin-ineligible-resource.txt due to access control checks.
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.

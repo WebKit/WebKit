@@ -401,6 +401,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         if (auto* parameters = loader.parameters()) {
             if (!matchIntegrityMetadata(cachedScript, parameters->integrity())) {
+                m_context.addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(cachedScript, parameters->integrity())));
                 promise->reject(TypeError, "Cannot load script due to integrity mismatch"_s);
                 return;
             }

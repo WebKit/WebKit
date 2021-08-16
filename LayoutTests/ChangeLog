@@ -1,3 +1,15 @@
+2021-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r281012): WebInspector console no longer shows script integrity information
+        https://bugs.webkit.org/show_bug.cgi?id=229097
+        <rdar://problem/81915909>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/subresource-integrity/sri-fetch-expected.txt:
+        * http/tests/subresource-integrity/sri-module-expected.txt:
+        * js/dom/modules/module-fetch-failure-not-cached-expected.txt:
+
 2021-08-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] fast/forms/* tests are flaky crashing FAULTING_IP:  WebKit!WebCore::FontCache::lastResortFallbackFont+ec [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Source\WebCore\platform\graphics\win\FontCacheWin.cpp @ 424].

@@ -1,3 +1,17 @@
+2021-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r281012): WebInspector console no longer shows script integrity information
+        https://bugs.webkit.org/show_bug.cgi?id=229097
+        <rdar://problem/81915909>
+
+        Reviewed by Youenn Fablet.
+
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::notifyFinished): Add full console message during promise rejection.
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::reportIntegrityMetadataError): Treat integrity mismatch as
+        a ResourceError::Type::AccessControl so that it gets detailed console logging.
+
 2021-08-16  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r278981): [GStreamer][Debug] Assert crashes when running media/track tests
