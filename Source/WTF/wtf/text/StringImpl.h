@@ -331,7 +331,7 @@ public:
     unsigned symbolAwareHash() const;
     unsigned existingSymbolAwareHash() const;
 
-    bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
+    SUPPRESS_TSAN bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
 
     size_t refCount() const { return m_refCount / s_refCountIncrement; }
     bool hasOneRef() const { return m_refCount == s_refCountIncrement; }
@@ -1095,12 +1095,22 @@ inline void StringImpl::ref()
 {
     STRING_STATS_REF_STRING(*this);
 
+#if TSAN_ENABLED
+    if (isStatic())
+        return;
+#endif
+
     m_refCount += s_refCountIncrement;
 }
 
 inline void StringImpl::deref()
 {
     STRING_STATS_DEREF_STRING(*this);
+
+#if TSAN_ENABLED
+    if (isStatic())
+        return;
+#endif
 
     unsigned tempRefCount = m_refCount - s_refCountIncrement;
     if (!tempRefCount) {

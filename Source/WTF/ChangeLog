@@ -1,3 +1,20 @@
+2021-08-16  David Kilzer  <ddkilzer@apple.com>
+
+        ThreadSanitizer: ignore uninteresting data races for reference counting of static WTF::StringImpl objects
+        <https://webkit.org/b/229113>
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isStatic const):
+        - Add SUPPRESS_TSAN attribute since the 0x1 bit is set at
+          construction and refcounting occurs in increments of 0x2, so
+          the static bit never changes.
+        (WTF::StringImpl::ref):
+        (WTF::StringImpl::deref):
+        - Return early for static WTF::StringImpl objects to prevent
+          TSan from reporting data races for m_refCount.
+
 2021-08-15  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Add API to pass WebKitMemoryPressureHandler parameters to the network processes
