@@ -1,5 +1,16 @@
 2021-08-16  Alex Christensen  <achristensen@webkit.org>
 
+        Fix null crash after r281110
+        https://bugs.webkit.org/show_bug.cgi?id=225737
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::reportResourceTiming):
+        I saw a nullptr crash here in EWS from bug 229167.
+        Looks like there's a case where we can call reportResourceTiming without a resource.
+        Early return if m_resource is null.
+
+2021-08-16  Alex Christensen  <achristensen@webkit.org>
+
         Resource Timing: Duration is 0 in many cases
         https://bugs.webkit.org/show_bug.cgi?id=225737
 

@@ -885,7 +885,7 @@ void SubresourceLoader::releaseResources()
 
 void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLoadMetrics)
 {
-    if (!ResourceTimingInformation::shouldAddResourceTiming(*m_resource))
+    if (!m_resource || !ResourceTimingInformation::shouldAddResourceTiming(*m_resource))
         return;
 
     Document* document = m_documentLoader->cachedResourceLoader().document();
