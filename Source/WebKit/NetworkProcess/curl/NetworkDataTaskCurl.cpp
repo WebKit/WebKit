@@ -234,6 +234,8 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
                 m_curlRequest->completeDidReceiveResponse();
             break;
         case PolicyAction::Ignore:
+            if (m_client)
+                m_client->didCompleteWithError(ResourceErrorBase::Type::Cancellation);
             invalidateAndCancel();
             break;
         default:

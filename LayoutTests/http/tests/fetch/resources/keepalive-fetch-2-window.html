@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+    var id = location.hash.substring(1);
+    let suffixes = Array.from(Array(5).keys());
+    suffixes.map((i) => {
+        let filename = `keepalive-fetch-2.${id}.${i}.txt`;
+        fetch(`get-set-temp-file.py?cmd=set&delay=1000&filename=${filename}&data=${id}`, { keepalive: true });
+    });
+</script>

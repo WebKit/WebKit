@@ -1,3 +1,16 @@
+2021-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Kept alive NetworkResourceLoaders should be cancelled by NetworkLoad::didCompleteWithError on PolicyAction::Ignore of didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=228095
+        <rdar://problem/81393898>
+
+        Reviewed by Don Olmstead.
+
+        * http/tests/fetch/keepalive-fetch-2-expected.txt: Added.
+        * http/tests/fetch/keepalive-fetch-2.html: Added.
+        * http/tests/fetch/resources/get-set-temp-file.py: Added.
+        * http/tests/fetch/resources/keepalive-fetch-2-window.html: Added.
+
 2021-08-17  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Unreviewed. Skip failing MIPS tests
