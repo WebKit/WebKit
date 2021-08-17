@@ -1,3 +1,12 @@
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
+        [Monterey wk1 Debug] inspector/timeline/timeline-event-TimerInstall.html is a flaky crash.
+        rdar://82039288.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Document load events should update timing in PerformanceNavigationTiming even after its instantiation
