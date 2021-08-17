@@ -28,6 +28,7 @@
 
 #include "MediaUniqueIdentifier.h"
 #include "PlatformMediaSession.h"
+#include "RemoteCommandListener.h"
 #include "Timer.h"
 #include <wtf/AggregateLogger.h>
 #include <wtf/Vector.h>
@@ -37,7 +38,6 @@
 namespace WebCore {
 
 class PlatformMediaSession;
-class RemoteCommandListener;
 
 class PlatformMediaSessionManager
 #if !RELEASE_LOG_DISABLED
@@ -162,6 +162,7 @@ public:
 
     virtual void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
     virtual void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
+    virtual RemoteCommandListener::RemoteCommandsSet supportedCommands() const { return { }; };
 
     WEBCORE_EXPORT void processSystemWillSleep();
     WEBCORE_EXPORT void processSystemDidWake();

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>default-actionHandlers</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+
+    const mediaSessionActions = [ "play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto" ];
+    async function runTest() {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'loadeddata');
+
+        consoleWrite('Test that action handlers properly register with correct PlatformMediaSession RemoteControlCommandType');
+
+        mediaSessionActions.forEach(value => {
+            consoleWrite(`ACTION: ${value}`);
+            navigator.mediaSession.setActionHandler(value, actionDetails => { });
+            internals.platformSupportedCommands().forEach(value => consoleWrite(`Command: ${value}`));
+            navigator.mediaSession.setActionHandler(value, null);
+        });
+
+        consoleWrite('Iterate over all possible actions');
+        mediaSessionActions.forEach(value => {
+            navigator.mediaSession.setActionHandler(value, actionDetails => { });
+        });
+        internals.platformSupportedCommands().forEach(value => consoleWrite(`Command: ${value}`));
+
+        consoleWrite('Iterate over possible actions after video element src is cleared');
+        run('video.src = ""');
+        await waitFor(video, "loadstart");
+
+        testExpected('internals.platformSupportedCommands().length', 0);
+        internals.platformSupportedCommands().forEach(value => consoleWrite(`Command: ${value}`));
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls preload='auto'></video>
+</body>
+</html>

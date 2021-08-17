@@ -126,6 +126,13 @@ void NowPlayingManager::removeSupportedCommand(PlatformMediaSession::RemoteContr
         m_remoteCommandListener->removeSupportedCommand(command);
 }
 
+RemoteCommandListener::RemoteCommandsSet NowPlayingManager::supportedCommands() const
+{
+    if (!m_remoteCommandListener)
+        return { };
+    return m_remoteCommandListener->supportedCommands();
+}
+
 void NowPlayingManager::setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet& commands)
 {
     if (m_remoteCommandListener)

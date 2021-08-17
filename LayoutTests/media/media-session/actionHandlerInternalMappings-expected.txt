@@ -1,0 +1,37 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(loadeddata)
+Test that action handlers properly register with correct PlatformMediaSession RemoteControlCommandType
+ACTION: play
+Command: PlayCommand
+ACTION: pause
+Command: PauseCommand
+ACTION: seekbackward
+Command: SkipBackwardCommand
+ACTION: seekforward
+Command: SkipForwardCommand
+ACTION: previoustrack
+Command: PreviousTrackCommand
+ACTION: nexttrack
+Command: NextTrackCommand
+ACTION: skipad
+Command: NextTrackCommand
+ACTION: stop
+Command: StopCommand
+ACTION: seekto
+Command: SeekToPlaybackPositionCommand
+Iterate over all possible actions
+Command: PauseCommand
+Command: SkipBackwardCommand
+Command: SkipForwardCommand
+Command: NextTrackCommand
+Command: PreviousTrackCommand
+Command: SeekToPlaybackPositionCommand
+Command: PlayCommand
+Command: StopCommand
+Iterate over possible actions after video element src is cleared
+RUN(video.src = "")
+EVENT(loadstart)
+EXPECTED (internals.platformSupportedCommands().length == '0') OK
+END OF TEST
+

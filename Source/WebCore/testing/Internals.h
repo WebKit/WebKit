@@ -1160,6 +1160,7 @@ public:
 
         using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
     void loadArtworkImage(String&&, ArtworkImagePromise&&);
+    ExceptionOr<Vector<String>> platformSupportedCommands() const;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);

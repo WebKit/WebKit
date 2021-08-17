@@ -1042,7 +1042,8 @@ enum AutoplayPolicy {
     [Conditional=MEDIA_SESSION] double currentMediaSessionPosition(MediaSession session);
     [Conditional=MEDIA_SESSION] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
     [Conditional=MEDIA_SESSION] Promise<ImageData> loadArtworkImage(DOMString url);
-    
+    [Conditional=MEDIA_SESSION] sequence<DOMString> platformSupportedCommands();
+
     [Conditional=MEDIA_SESSION_COORDINATOR, CallWith=ScriptExecutionContext] undefined registerMockMediaSessionCoordinator(StringCallback callback);
     [Conditional=MEDIA_SESSION_COORDINATOR] undefined setMockMediaSessionCoordinatorCommandsShouldFail(boolean shouldFail);
 

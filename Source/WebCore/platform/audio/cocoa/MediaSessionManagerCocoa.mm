@@ -264,6 +264,11 @@ void MediaSessionManagerCocoa::removeSupportedCommand(PlatformMediaSession::Remo
     m_nowPlayingManager->removeSupportedCommand(command);
 }
 
+RemoteCommandListener::RemoteCommandsSet MediaSessionManagerCocoa::supportedCommands() const
+{
+    return m_nowPlayingManager->supportedCommands();
+}
+
 void MediaSessionManagerCocoa::clearNowPlayingInfo()
 {
     if (!isMediaRemoteFrameworkAvailable())

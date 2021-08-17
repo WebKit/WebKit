@@ -50,6 +50,7 @@ public:
 
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType);
+    RemoteCommandListener::RemoteCommandsSet supportedCommands() const;
 
     void addClient(Client&);
     void removeClient(Client&);
