@@ -1,3 +1,14 @@
+2021-08-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Reassign bugs filed under webkit.org/b/186638.
+
+        webkit.org/b/186638 was used to track tests failing in EWS-GTK, but
+        all the current tests filed under this bug are actually failing in the
+        post-commit bot. The failing tests should be filed under their own bug.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-08-16  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r275756): Accelerated animations freeze when invalidating layout with shadow dom

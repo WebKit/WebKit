@@ -1209,11 +1209,10 @@ imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.h
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.html [ Failure Pass ]
 
-webkit.org/b/186638 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
-
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002.html [ Failure Pass ]
+webkit.org/b/150806 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Pass Timeout ]
@@ -2228,7 +2227,6 @@ webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ Image
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
 webkit.org/b/116277 media/video-buffered.html [ Pass Failure  ]
 
-webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Timeout Pass ]
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
 webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout ]
@@ -2351,6 +2349,9 @@ webkit.org/b/229057 media/event-attributes.html [ Pass Failure ]
 webkit.org/b/229057 media/video-background-tab-playback.html [ Pass Failure ]
 
 webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
+
+# Test is a flaky timeout. The test is also skipped in iOS and Windows.
+media/video-remote-control-playpause.html [ Skip ]
 
 # End: Common failures between GTK and WPE.
 
