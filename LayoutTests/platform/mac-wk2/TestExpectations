@@ -1576,11 +1576,14 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 [ Monterey Release ] css3/background/background-repeat-round-border.html [ Pass ImageOnlyFailure ]
 [ Monterey Release ] css3/background/background-repeat-round-padding.html [ Pass ImageOnlyFailure ]
 
-#rdar://82034073 ([Star wk2 Release] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html is flaky image-only fail)
+#rdar://82034073 ([Monterey wk2 Release] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html is flaky image-only fail)
 [ Monterey Release ] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html  [ Pass Failure ]
 
-#rdar://82035182 ([Star wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash)
+#rdar://82035182 ([Monterey wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash)
 performance-api/performance-observer-no-document-leak.html [ Pass Crash ]
+
+#rdar://82036119 ([Monterey wk2 Release] performance-api/paint-timing/paint-timing-with-worker.html is a flaky crash)
+performance-api/paint-timing/paint-timing-with-worker.html [ Pass Crash ]
 
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]

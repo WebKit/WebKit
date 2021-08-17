@@ -11,7 +11,16 @@
 
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
-        [Star wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash.
+        [Monterey wk2 Release] performance-api/paint-timing/paint-timing-with-worker.html is a flaky crash.
+        rdar://82036119.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
+        [Monterey wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash.
         rdar://82035182.
 
         Unreviewed test gardening.
@@ -153,7 +162,7 @@
 
 2021-08-16  Eric Hutchison  <ehutchison@apple.com>
 
-        [Star] webaudio/codec-tests/mp3/128kbps-44khz.html is a constant failure.
+        [Monterey] webaudio/codec-tests/mp3/128kbps-44khz.html is a constant failure.
         rdar://82003714.
 
         Unreviewed test gardening.
