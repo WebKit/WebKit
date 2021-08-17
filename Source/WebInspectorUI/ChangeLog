@@ -1,3 +1,18 @@
+2021-08-17  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Do not show contextual documentation popup in the Changes panel
+        https://bugs.webkit.org/show_bug.cgi?id=229001
+        <rdar://problem/81792379>
+
+        Reviewed by Devin Rousso.
+
+        Add config option to WI.SpreadsheetStyleProperty to prevent showing a contextual documentation button.
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype._createRuleElement.onEach):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._addContextualDocumentationButton):
+
 2021-08-12  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Adding execution contexts after page load doesn't show a hidden execution selector

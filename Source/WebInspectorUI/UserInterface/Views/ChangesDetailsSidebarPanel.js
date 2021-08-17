@@ -143,7 +143,7 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
             propertyLineElement.classList.add("css-property-line", className);
 
             const delegate = null;
-            let stylePropertyView = new WI.SpreadsheetStyleProperty(delegate, cssProperty, {readOnly: true});
+            let stylePropertyView = new WI.SpreadsheetStyleProperty(delegate, cssProperty, {readOnly: true, hideDocumentation: true});
             propertyLineElement.append(WI.indentString(), stylePropertyView.element, "\n");
         }
 

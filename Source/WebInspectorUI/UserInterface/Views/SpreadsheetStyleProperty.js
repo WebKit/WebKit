@@ -34,6 +34,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._delegate = delegate || null;
         this._property = property;
         this._readOnly = options.readOnly || false;
+        this._hideDocumentation = !!options.hideDocumentation;
         this._element = document.createElement("div");
 
         if (options.selectable)
@@ -527,6 +528,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _addContextualDocumentationButton()
     {
+        if (this._hideDocumentation)
+            return;
+
         if (this._contextualDocumentationButton) {
             this._contextualDocumentationButton.remove();
             this._contextualDocumentationButton = null;
