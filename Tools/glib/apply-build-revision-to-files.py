@@ -27,7 +27,8 @@ except ImportError:
 def get_build_revision():
     revision = "unknown"
     with open(os.devnull, 'w') as devnull:
-        if os.path.isdir(os.path.join('.git', 'svn')):
+        gitsvn = os.path.join('.git', 'svn')
+        if os.path.isdir(gitsvn) and os.listdir(gitsvn):
             for line in subprocess.check_output(("git", "svn", "info"), stderr=devnull).splitlines():
                 parsed = line.split(b':')
                 key = parsed[0]

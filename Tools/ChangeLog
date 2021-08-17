@@ -1,3 +1,15 @@
+2021-08-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Avoid getting stuck searching for revision in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=229199
+
+        Reviewed by Philippe Normand.
+
+        With an empty .git/svn, the `git svn info` command might get stuck.
+
+        * glib/apply-build-revision-to-files.py:
+        (get_build_revision):
+
 2021-08-16  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r281079) [GLIB] API test WebKitWebsiteData/deviceidhashsalt is not waiting for title change
