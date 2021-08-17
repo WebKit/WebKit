@@ -58,6 +58,7 @@ public:
 
     Kind kind() const override { return m_kind; }
 
+    AtomString id() const override { return m_id; }
     AtomString label() const override { return m_label; }
     AtomString language() const override { return m_language; }
 
@@ -80,6 +81,7 @@ private:
     String m_streamId;
     Kind m_kind;
     Lock m_sampleMutex;
+    AtomString m_id;
 };
 
 } // namespace WebCore

@@ -44,6 +44,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRe
     , TrackPrivateBaseGStreamer(this, index, pad)
     , m_kind(Kind::Subtitles)
 {
+    m_id = "T" + String::number(index);
     m_eventProbe = gst_pad_add_probe(m_pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [] (GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto* track = static_cast<InbandTextTrackPrivateGStreamer*>(userData);
         switch (GST_EVENT_TYPE(gst_pad_probe_info_get_event(info))) {

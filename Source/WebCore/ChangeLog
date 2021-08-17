@@ -1,3 +1,17 @@
+2021-08-17  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r278981): [GStreamer][Debug] Assert crashes when running media/track tests
+        https://bugs.webkit.org/show_bug.cgi?id=229123
+        <rdar://problem/81978494>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement a dummy id() method for InbandTextTrackPrivateGStreamer.
+        
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+
 2021-08-17  Jer Noble  <jer.noble@apple.com>
 
         LayoutTests imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-* are flakey
