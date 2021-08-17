@@ -307,8 +307,8 @@ void SlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& 
     if (!slot)
         return;
 
-    RenderTreeUpdater::tearDownRenderers(*shadowRoot.host());
-    shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
+    RenderTreeUpdater::tearDownRenderersAfterSlotChange(*shadowRoot.host());
+    shadowRoot.host()->invalidateStyleForSubtree();
 
     slot->assignedNodes.clear();
     m_slotAssignmentsIsValid = false;

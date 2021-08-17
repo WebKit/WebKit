@@ -536,6 +536,16 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
     tearDownRenderers(root, TeardownType::Full, builder);
 }
 
+void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
+{
+    ASSERT(host.shadowRoot());
+    auto* view = host.document().renderView();
+    if (!view)
+        return;
+    RenderTreeBuilder builder(*view);
+    tearDownRenderers(host, TeardownType::FullAfterSlotChange, builder);
+}
+
 void RenderTreeUpdater::tearDownRenderer(Text& text)
 {
     auto* view = text.document().renderView();
@@ -560,24 +570,32 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
+            auto styleable = Styleable::fromElement(element);
 
             // Make sure we don't leave any renderers behind in nodes outside the composed tree.
             if (element.shadowRoot())
                 tearDownLeftoverShadowHostChildren(element, builder);
 
             switch (teardownType) {
+            case TeardownType::FullAfterSlotChange:
+                if (&element == &root) {
+                    // Keep animations going on the host.
+                    styleable.willChangeRenderer();
+                    break;
+                }
+                FALLTHROUGH;
             case TeardownType::Full:
+                if (document.renderTreeBeingDestroyed())
+                    styleable.cancelDeclarativeAnimations();
+                element.clearHoverAndActiveStatusBeforeDetachingRenderer();
+                break;
             case TeardownType::RendererUpdateCancelingAnimations:
-                if (document.renderTreeBeingDestroyed() || teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                    Styleable::fromElement(element).cancelDeclarativeAnimations();
+                styleable.cancelDeclarativeAnimations();
                 break;
             case TeardownType::RendererUpdate:
-                Styleable::fromElement(element).willChangeRenderer();
+                styleable.willChangeRenderer();
                 break;
             }
-
-            if (teardownType == TeardownType::Full)
-                element.clearHoverAndActiveStatusBeforeDetachingRenderer();
 
             GeneratedContent::removeBeforePseudoElement(element, builder);
             GeneratedContent::removeAfterPseudoElement(element, builder);

@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            app-content {
+                display: block;
+                width: 100px;
+                height: 100px;
+                background: green;
+                animation: animation 10s linear forwards;
+            }
+            @keyframes animation {
+                from {
+                    transform: translateX(0px);
+                }
+                2% {
+                    transform: translateX(100px);
+                }
+                to {
+                    transform: translateX(100px);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <app-content id=target>old text</app-content>
+
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            customElements.define('app-content', class extends HTMLElement {
+                constructor() {
+                    super();
+
+                    const root = this.attachShadow({ mode: 'open' });
+                    root.innerHTML = `<slot></slot>`;
+                }
+            });
+
+            setTimeout(() => {
+                target.innerHTML = "new text"
+            }, 100);
+
+            if (window.testRunner)
+                setTimeout(() => testRunner.notifyDone(), 500);
+        </script>
+    </body>
+</html>
