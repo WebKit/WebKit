@@ -38,6 +38,7 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 namespace WebCore {
 
 class CachedResourceMediaLoader;
+class DataURLResourceMediaLoader;
 class MediaPlayerPrivateAVFoundationObjC;
 class PlatformResourceMediaLoader;
 class ResourceError;
@@ -58,6 +59,7 @@ private:
     WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
 
     friend class CachedResourceMediaLoader;
+    friend class DataURLResourceMediaLoader;
     friend class PlatformResourceMediaLoader;
 
     void responseReceived(const ResourceResponse&);
@@ -67,6 +69,7 @@ private:
 
     MediaPlayerPrivateAVFoundationObjC* m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;
+    std::unique_ptr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
     std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
     WeakPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
     size_t m_responseOffset { 0 };

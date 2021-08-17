@@ -1,3 +1,27 @@
+2021-08-17  Jer Noble  <jer.noble@apple.com>
+
+        LayoutTests imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-* are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=229169
+
+        Reviewed by Eric Carlson.
+
+        When a data:// URL is passed to AVFoundation, the loading of that URL is handled by WebCoreAVFResourceLoader,
+        which in turn relies on a PlatformMediaResourceLoader to turn the data URL into a data buffer. However, in the
+        case of the GPU process, this means dispatching the request from GPU, to WebContent, to Network process and to
+        send the data back from the Network, to WebContent, to GPU process. If a synchronous operation (like painting)
+        is underway, the data response can block until that synchronous operation completes. If that operation is a
+        paint, and the data requested is required to complete that paint, the paint will fail.
+
+        For the narrow case of a data:// URL, it's not necessary to dispatch to another process to turn that URL into
+        data; it can happen locally, avoiding the hop to another process and the subsequent deadlock.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h:
+        (WebCore::WebCoreAVFResourceLoader::logger const):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::DataURLResourceMediaLoader::DataURLResourceMediaLoader):
+        (WebCore::WebCoreAVFResourceLoader::~WebCoreAVFResourceLoader):
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+
 2021-08-16  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r275756): Accelerated animations freeze when invalidating layout with shadow dom
