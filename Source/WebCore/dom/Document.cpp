@@ -161,6 +161,7 @@
 #include "PageTransitionEvent.h"
 #include "PaintWorkletGlobalScope.h"
 #include "Performance.h"
+#include "PerformanceNavigationTiming.h"
 #include "PlatformLocale.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
@@ -1374,6 +1375,17 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
     return createElement(parsedName, false);
 }
 
+DocumentEventTiming* Document::documentEventTimingFromNavigationTiming()
+{
+    auto* window = domWindow();
+    if (!window)
+        return nullptr;
+    auto* navigationTiming = window->performance().navigationTiming();
+    if (!navigationTiming)
+        return nullptr;
+    return &navigationTiming->documentEventTiming();
+}
+
 void Document::setReadyState(ReadyState readyState)
 {
     if (readyState == m_readyState)
@@ -1381,16 +1393,28 @@ void Document::setReadyState(ReadyState readyState)
 
     switch (readyState) {
     case Loading:
-        if (!m_eventTiming.domLoading)
-            m_eventTiming.domLoading = MonotonicTime::now();
+        if (!m_eventTiming.domLoading) {
+            auto now = MonotonicTime::now();
+            m_eventTiming.domLoading = now;
+            if (auto* eventTiming = documentEventTimingFromNavigationTiming())
+                eventTiming->domLoading = now;
+        }
         break;
     case Complete:
-        if (!m_eventTiming.domComplete)
-            m_eventTiming.domComplete = MonotonicTime::now();
+        if (!m_eventTiming.domComplete) {
+            auto now = MonotonicTime::now();
+            m_eventTiming.domComplete = now;
+            if (auto* eventTiming = documentEventTimingFromNavigationTiming())
+                eventTiming->domComplete = now;
+        }
         FALLTHROUGH;
     case Interactive:
-        if (!m_eventTiming.domInteractive)
-            m_eventTiming.domInteractive = MonotonicTime::now();
+        if (!m_eventTiming.domInteractive) {
+            auto now = MonotonicTime::now();
+            m_eventTiming.domInteractive = now;
+            if (auto* eventTiming = documentEventTimingFromNavigationTiming())
+                eventTiming->domInteractive = now;
+        }
         break;
     }
 
@@ -6070,15 +6094,23 @@ void Document::finishedParsing()
 
     scriptRunner().documentFinishedParsing();
 
-    if (!m_eventTiming.domContentLoadedEventStart)
-        m_eventTiming.domContentLoadedEventStart = MonotonicTime::now();
+    if (!m_eventTiming.domContentLoadedEventStart) {
+        auto now = MonotonicTime::now();
+        m_eventTiming.domContentLoadedEventStart = now;
+        if (auto* eventTiming = documentEventTimingFromNavigationTiming())
+            eventTiming->domContentLoadedEventStart = now;
+    }
 
     // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
     eventLoop().performMicrotaskCheckpoint();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
-    if (!m_eventTiming.domContentLoadedEventEnd)
-        m_eventTiming.domContentLoadedEventEnd = MonotonicTime::now();
+    if (!m_eventTiming.domContentLoadedEventEnd) {
+        auto now = MonotonicTime::now();
+        m_eventTiming.domContentLoadedEventEnd = now;
+        if (auto* eventTiming = documentEventTimingFromNavigationTiming())
+            eventTiming->domContentLoadedEventEnd = now;
+    }
 
     if (RefPtr<Frame> frame = this->frame()) {
 #if ENABLE(XSLT)

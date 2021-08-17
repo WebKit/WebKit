@@ -116,6 +116,8 @@ public:
 
     void scheduleNavigationObservationTaskIfNeeded();
 
+    PerformanceNavigationTiming* navigationTiming() { return m_navigationTiming.get(); }
+
 private:
     Performance(ScriptExecutionContext*, MonotonicTime timeOrigin);
 

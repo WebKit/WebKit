@@ -37,8 +37,8 @@ public:
 
     void markUnloadEventStart() { m_unloadEventStart = MonotonicTime::now(); }
     void markUnloadEventEnd() { m_unloadEventEnd = MonotonicTime::now(); }
-    void markLoadEventStart() { m_loadEventStart = MonotonicTime::now(); }
-    void markLoadEventEnd() { m_loadEventEnd = MonotonicTime::now(); }
+    void setLoadEventStart(MonotonicTime time) { m_loadEventStart = time; }
+    void setLoadEventEnd(MonotonicTime time) { m_loadEventEnd = time; }
 
     void setHasSameOriginAsPreviousDocument(bool value) { m_hasSameOriginAsPreviousDocument = value; }
 

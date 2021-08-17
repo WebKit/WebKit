@@ -1659,6 +1659,8 @@ private:
     void createRenderTree();
     void detachParser();
 
+    DocumentEventTiming* documentEventTimingFromNavigationTiming();
+
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final { return m_fontSelector.ptr(); }
     std::unique_ptr<FontLoadRequest> fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource) final;

@@ -581,6 +581,7 @@ webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readysta
 
 # NSURLConnection doesn't have an API to give us good timing for redirects. We do what we can with MonotonicTime::now() but this still fails sometimes.
 imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_server.html [ Pass Failure ]
+imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.html [ Pass Failure ]
 
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 

@@ -1,3 +1,30 @@
+2021-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Document load events should update timing in PerformanceNavigationTiming even after its instantiation
+        https://bugs.webkit.org/show_bug.cgi?id=229181
+
+        Reviewed by Chris Dumez.
+
+        When we make a PerformanceNavigationTiming object, we copy the DocumentLoadTiming and DocumentEventTiming values.
+        If PerformanceNavigationTiming is accessed before the document has finished loading, we still need to update the timing values.
+
+        Covered by a newly passing WPT test, which Chrome and Firefox already pass.
+
+        * dom/Document.cpp:
+        (WebCore::Document::documentEventTimingFromNavigationTiming):
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        * dom/Document.h:
+        * loader/DocumentLoadTiming.h:
+        (WebCore::DocumentLoadTiming::setLoadEventStart):
+        (WebCore::DocumentLoadTiming::setLoadEventEnd):
+        (WebCore::DocumentLoadTiming::markLoadEventStart): Deleted.
+        (WebCore::DocumentLoadTiming::markLoadEventEnd): Deleted.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/Performance.h:
+        * page/PerformanceNavigationTiming.h:
+
 2021-08-17  Antti Koivisto  <antti@apple.com>
 
         Incorrect repaint when inline level box style change triggers line height change

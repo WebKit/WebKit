@@ -3,5 +3,5 @@ Description
 This test validates that the values of nav timing 2 instance's timing-related attributes are in certain order and the others are of expected values.
 
 
-FAIL Performance navigation timing instance's value is reasonable. assert_greater_than: Expected domInteractive to be greater than 0 expected a number greater than 0 but got 0
+PASS Performance navigation timing instance's value is reasonable.
 
