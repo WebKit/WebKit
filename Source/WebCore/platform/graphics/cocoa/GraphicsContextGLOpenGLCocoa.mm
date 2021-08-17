@@ -127,17 +127,21 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
         displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE);
         displayAttributes.append(EGL_TRUE);
     }
+
+    LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal ? "Metal" : "OpenGL");
     if (attrs.useMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
-    LOG(WebGL, "Attempting to use ANGLE's %s backend.\n", attrs.useMetal ? "Metal" : "OpenGL");
-    if (attrs.powerPreference != GraphicsContextGLAttributes::PowerPreference::Default) {
+
+    if (attrs.powerPreference != GraphicsContextGLAttributes::PowerPreference::Default || attrs.forceRequestForHighPerformanceGPU) {
         displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
-        if (attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower)
+        if (attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower && !attrs.forceRequestForHighPerformanceGPU) {
+            LOG(WebGL, "Requesting low power GPU.");
             displayAttributes.append(EGL_LOW_POWER_ANGLE);
-        else {
-            ASSERT(attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance);
+        } else {
+            ASSERT(attrs.powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance || attrs.forceRequestForHighPerformanceGPU);
+            LOG(WebGL, "Requesting high power GPU if available.");
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
         }
     }
@@ -222,6 +226,19 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         attrs.useMetal = false;
         setContextAttributes(attrs);
     }
+
+#if ENABLE(WEBXR)
+    if (attrs.xrCompatible) {
+        // FIXME: It's almost certain that any connected headset will require the high-power GPU,
+        // which is the same GPU we need this context to use. However, this is not guaranteed, and
+        // there is also the chance that there are multiple GPUs. Given that you can request the
+        // GraphicsContextGL before initializing the WebXR session, we'll need some way to
+        // migrate the context to the appropriate GPU when the code here does not work.
+        LOG(WebGL, "WebXR compatible context requested. This will also trigger a request for the high-power GPU.");
+        attrs.forceRequestForHighPerformanceGPU = true;
+        setContextAttributes(attrs);
+    }
+#endif
 
     m_displayObj = InitializeEGLDisplay(attrs);
     if (!m_displayObj)

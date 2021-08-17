@@ -211,7 +211,7 @@ public:
     std::optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram&);
     GCGLint getAttribLocation(WebGLProgram&, const String& name);
     WebGLAny getBufferParameter(GCGLenum target, GCGLenum pname);
-    std::optional<WebGLContextAttributes> getContextAttributes();
+    WEBCORE_EXPORT std::optional<WebGLContextAttributes> getContextAttributes();
     GCGLenum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
     virtual WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;

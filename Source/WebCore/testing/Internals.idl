@@ -112,6 +112,12 @@ enum AutoplayPolicy {
     "Deny"
 };
 
+[Conditional=WEBGL] enum RequestedGPU {
+    "default",
+    "low-power",
+    "high-performance"
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
@@ -848,6 +854,7 @@ enum AutoplayPolicy {
 
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
     [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
+    [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocusedAndActive(boolean isFocused);

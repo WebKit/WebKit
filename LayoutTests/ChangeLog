@@ -1,3 +1,14 @@
+2021-08-16  Dean Jackson  <dino@apple.com>
+
+        WebXR contexts have to use high-power GPUs
+        https://bugs.webkit.org/show_bug.cgi?id=229111
+        <rdar://81658893>
+
+        Reviewed by Sam Weinig.
+
+        * webxr/high-performance-expected.txt: Added.
+        * webxr/high-performance.html: Added.
+
 2021-08-16  Eric Hutchison  <ehutchison@apple.com>
 
         [Star] webaudio/codec-tests/mp3/128kbps-44khz.html is a constant failure.

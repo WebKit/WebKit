@@ -818,6 +818,13 @@ public:
     };
     void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContext&);
     bool hasLowAndHighPowerGPUs();
+
+    enum class RequestedGPU {
+        Default,
+        LowPower,
+        HighPerformance
+    };
+    RequestedGPU requestedGPU(WebGLRenderingContext&);
 #endif
 
     void setPageVisibility(bool isVisible);

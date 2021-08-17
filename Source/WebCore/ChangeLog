@@ -1,3 +1,34 @@
+2021-08-16  Dean Jackson  <dino@apple.com>
+
+        WebXR contexts have to use high-power GPUs
+        https://bugs.webkit.org/show_bug.cgi?id=229111
+        <rdar://81658893>
+
+        Reviewed by Sam Weinig.
+
+        The WebGL context used by WebXR needs to be using the same GPU
+        as the headset it is talking to. However, the API allows for the
+        creation of the WebGL context before initializing the WebXR
+        session.
+
+        For now, assume this will trigger the high-performance GPU
+        on any dual-GPU system. i.e. when the WebGL is created, look
+        for the "webXRCompatible" creation attribute and force
+        the high-power GPU if available.
+
+        Test: webxr/high-performance.html
+
+        * html/canvas/WebGLRenderingContextBase.h: Export the method to retrieve attributes.
+        * platform/graphics/GraphicsContextGLAttributes.h: Add a flag for forcing the
+        high performance gpu.
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::InitializeEGLDisplay):
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        * testing/Internals.cpp: New internals method to check what GPU was requested.
+        (WebCore::Internals::requestedGPU):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix null crash after r281110
