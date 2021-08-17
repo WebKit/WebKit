@@ -1,0 +1,510 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Element: original interface defined
+PASS Partial interface Element: member names are unique
+PASS Partial interface CSSStyleRule: original interface defined
+PASS Partial interface CSSStyleRule: member names are unique
+PASS Partial interface mixin ElementCSSInlineStyle: original interface mixin defined
+PASS Partial interface mixin ElementCSSInlineStyle: member names are unique
+PASS Partial namespace CSS: original namespace defined
+PASS Partial namespace CSS: member names are unique
+PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
+PASS SVGElement includes ElementCSSInlineStyle: member names are unique
+PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
+PASS SVGElement includes GlobalEventHandlers: member names are unique
+PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
+PASS SVGElement includes SVGElementInstance: member names are unique
+PASS SVGElement includes HTMLOrSVGElement: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS MathMLElement includes GlobalEventHandlers: member names are unique
+PASS MathMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS MathMLElement includes HTMLOrSVGElement: member names are unique
+PASS CSSStyleValue interface: existence and properties of interface object
+PASS CSSStyleValue interface object length
+PASS CSSStyleValue interface object name
+PASS CSSStyleValue interface: existence and properties of interface prototype object
+PASS CSSStyleValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSStyleValue interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSStyleValue interface: stringifier
+FAIL CSSStyleValue interface: operation parse(USVString, USVString) assert_own_property: interface object missing static operation expected property "parse" missing
+FAIL CSSStyleValue interface: operation parseAll(USVString, USVString) assert_own_property: interface object missing static operation expected property "parseAll" missing
+PASS StylePropertyMapReadOnly interface: existence and properties of interface object
+PASS StylePropertyMapReadOnly interface object length
+PASS StylePropertyMapReadOnly interface object name
+PASS StylePropertyMapReadOnly interface: existence and properties of interface prototype object
+PASS StylePropertyMapReadOnly interface: existence and properties of interface prototype object's "constructor" property
+PASS StylePropertyMapReadOnly interface: existence and properties of interface prototype object's @@unscopables property
+FAIL StylePropertyMapReadOnly interface: iterable<USVString, [object Object]> undefined is not an object (evaluating 'iteratorDesc.writable')
+PASS StylePropertyMapReadOnly interface: operation get(USVString)
+FAIL StylePropertyMapReadOnly interface: operation getAll(USVString) assert_own_property: interface prototype object missing non-static operation expected property "getAll" missing
+FAIL StylePropertyMapReadOnly interface: operation has(USVString) assert_own_property: interface prototype object missing non-static operation expected property "has" missing
+FAIL StylePropertyMapReadOnly interface: attribute size assert_true: The prototype object must have a property "size" expected true got false
+PASS StylePropertyMap interface: existence and properties of interface object
+PASS StylePropertyMap interface object length
+PASS StylePropertyMap interface object name
+PASS StylePropertyMap interface: existence and properties of interface prototype object
+PASS StylePropertyMap interface: existence and properties of interface prototype object's "constructor" property
+PASS StylePropertyMap interface: existence and properties of interface prototype object's @@unscopables property
+FAIL StylePropertyMap interface: operation set(USVString, (CSSStyleValue or USVString)...) assert_own_property: interface prototype object missing non-static operation expected property "set" missing
+FAIL StylePropertyMap interface: operation append(USVString, (CSSStyleValue or USVString)...) assert_own_property: interface prototype object missing non-static operation expected property "append" missing
+FAIL StylePropertyMap interface: operation delete(USVString) assert_own_property: interface prototype object missing non-static operation expected property "delete" missing
+FAIL StylePropertyMap interface: operation clear() assert_own_property: interface prototype object missing non-static operation expected property "clear" missing
+FAIL StylePropertyMap must be primary interface of styleMap assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of styleMap assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: styleMap must inherit property "set(USVString, (CSSStyleValue or USVString)...)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: calling set(USVString, (CSSStyleValue or USVString)...) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: styleMap must inherit property "append(USVString, (CSSStyleValue or USVString)...)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: calling append(USVString, (CSSStyleValue or USVString)...) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: styleMap must inherit property "delete(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: calling delete(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMap interface: styleMap must inherit property "clear()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "get(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: calling get(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "getAll(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: calling getAll(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "has(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: calling has(USVString) on styleMap with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StylePropertyMapReadOnly interface: styleMap must inherit property "size" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSUnparsedValue interface: existence and properties of interface object
+PASS CSSUnparsedValue interface object length
+PASS CSSUnparsedValue interface object name
+PASS CSSUnparsedValue interface: existence and properties of interface prototype object
+PASS CSSUnparsedValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSUnparsedValue interface: existence and properties of interface prototype object's @@unscopables property
+FAIL CSSUnparsedValue interface: iterable<CSSUnparsedSegment> undefined is not an object (evaluating 'iteratorDesc.writable')
+FAIL CSSUnparsedValue interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+FAIL CSSVariableReferenceValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface object length assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface object name assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface: attribute variable assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSVariableReferenceValue interface: attribute fallback assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+FAIL CSSKeywordValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+FAIL CSSKeywordValue interface object length assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+FAIL CSSKeywordValue interface object name assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+FAIL CSSKeywordValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+FAIL CSSKeywordValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+FAIL CSSKeywordValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+FAIL CSSKeywordValue interface: attribute value assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
+PASS CSSNumericValue interface: existence and properties of interface object
+PASS CSSNumericValue interface object length
+PASS CSSNumericValue interface object name
+PASS CSSNumericValue interface: existence and properties of interface prototype object
+PASS CSSNumericValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSNumericValue interface: existence and properties of interface prototype object's @@unscopables property
+FAIL CSSNumericValue interface: operation add(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "add" missing
+FAIL CSSNumericValue interface: operation sub(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "sub" missing
+FAIL CSSNumericValue interface: operation mul(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "mul" missing
+FAIL CSSNumericValue interface: operation div(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "div" missing
+FAIL CSSNumericValue interface: operation min(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "min" missing
+FAIL CSSNumericValue interface: operation max(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "max" missing
+FAIL CSSNumericValue interface: operation equals(CSSNumberish...) assert_own_property: interface prototype object missing non-static operation expected property "equals" missing
+FAIL CSSNumericValue interface: operation to(USVString) assert_own_property: interface prototype object missing non-static operation expected property "to" missing
+FAIL CSSNumericValue interface: operation toSum(USVString...) assert_own_property: interface prototype object missing non-static operation expected property "toSum" missing
+FAIL CSSNumericValue interface: operation type() assert_own_property: interface prototype object missing non-static operation expected property "type" missing
+FAIL CSSNumericValue interface: operation parse(USVString) assert_own_property: interface object missing static operation expected property "parse" missing
+PASS CSSUnitValue interface: existence and properties of interface object
+PASS CSSUnitValue interface object length
+PASS CSSUnitValue interface object name
+PASS CSSUnitValue interface: existence and properties of interface prototype object
+PASS CSSUnitValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSUnitValue interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSUnitValue interface: attribute value
+PASS CSSUnitValue interface: attribute unit
+FAIL CSSUnitValue must be primary interface of unitValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL Stringification of unitValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSUnitValue interface: unitValue must inherit property "value" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSUnitValue interface: unitValue must inherit property "unit" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "add(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling add(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "sub(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling sub(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "mul(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling mul(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "div(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling div(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "min(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling min(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "max(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling max(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "equals(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling equals(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "to(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling to(USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "toSum(USVString...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling toSum(USVString...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "type()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: unitValue must inherit property "parse(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSNumericValue interface: calling parse(USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSStyleValue interface: unitValue must inherit property "parse(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSStyleValue interface: calling parse(USVString, USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSStyleValue interface: unitValue must inherit property "parseAll(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+FAIL CSSMathValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathValue interface object length assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathValue interface object name assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathValue interface: attribute operator assert_own_property: self does not have own property "CSSMathValue" expected property "CSSMathValue" missing
+FAIL CSSMathSum interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum interface object length assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum interface object name assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum interface: attribute values assert_own_property: self does not have own property "CSSMathSum" expected property "CSSMathSum" missing
+FAIL CSSMathSum must be primary interface of mathSum assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL Stringification of mathSum assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSMathSum interface: mathSum must inherit property "values" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSMathValue interface: mathSum must inherit property "operator" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "add(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling add(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "sub(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling sub(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "mul(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling mul(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "div(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling div(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "min(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling min(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "max(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling max(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "equals(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling equals(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "to(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling to(USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "toSum(USVString...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling toSum(USVString...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "type()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: mathSum must inherit property "parse(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSNumericValue interface: calling parse(USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSStyleValue interface: mathSum must inherit property "parse(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSStyleValue interface: calling parse(USVString, USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSStyleValue interface: mathSum must inherit property "parseAll(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSMathProduct interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathProduct interface object length assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathProduct interface object name assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathProduct interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathProduct interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathProduct interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathProduct interface: attribute values assert_own_property: self does not have own property "CSSMathProduct" expected property "CSSMathProduct" missing
+FAIL CSSMathNegate interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathNegate interface object length assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathNegate interface object name assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathNegate interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathNegate interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathNegate interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathNegate interface: attribute value assert_own_property: self does not have own property "CSSMathNegate" expected property "CSSMathNegate" missing
+FAIL CSSMathInvert interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathInvert interface object length assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathInvert interface object name assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathInvert interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathInvert interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathInvert interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathInvert interface: attribute value assert_own_property: self does not have own property "CSSMathInvert" expected property "CSSMathInvert" missing
+FAIL CSSMathMin interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMin interface object length assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMin interface object name assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMin interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMin interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMin interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMin interface: attribute values assert_own_property: self does not have own property "CSSMathMin" expected property "CSSMathMin" missing
+FAIL CSSMathMax interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathMax interface object length assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathMax interface object name assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathMax interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathMax interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathMax interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathMax interface: attribute values assert_own_property: self does not have own property "CSSMathMax" expected property "CSSMathMax" missing
+FAIL CSSMathClamp interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface object length assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface object name assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface: attribute min assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface: attribute val assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSMathClamp interface: attribute max assert_own_property: self does not have own property "CSSMathClamp" expected property "CSSMathClamp" missing
+FAIL CSSNumericArray interface: existence and properties of interface object assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSNumericArray interface object length assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSNumericArray interface object name assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSNumericArray interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSNumericArray interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSNumericArray interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSNumericArray interface: iterable<CSSNumericValue> undefined is not an object (evaluating 'this.get_interface_object().prototype')
+FAIL CSSNumericArray interface: attribute length assert_own_property: self does not have own property "CSSNumericArray" expected property "CSSNumericArray" missing
+FAIL CSSTransformValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface object length assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface object name assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface: iterable<CSSTransformComponent> undefined is not an object (evaluating 'this.get_interface_object().prototype')
+FAIL CSSTransformValue interface: attribute length assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface: attribute is2D assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue interface: operation toMatrix() assert_own_property: self does not have own property "CSSTransformValue" expected property "CSSTransformValue" missing
+FAIL CSSTransformValue must be primary interface of transformValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL Stringification of transformValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformValue interface: transformValue must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformValue interface: transformValue must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformValue interface: transformValue must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSStyleValue interface: transformValue must inherit property "parse(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSStyleValue interface: calling parse(USVString, USVString) on transformValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSStyleValue interface: transformValue must inherit property "parseAll(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on transformValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformComponent interface: existence and properties of interface object assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface object length assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface object name assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface: stringifier assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface: attribute is2D assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTransformComponent interface: operation toMatrix() assert_own_property: self does not have own property "CSSTransformComponent" expected property "CSSTransformComponent" missing
+FAIL CSSTranslate interface: existence and properties of interface object assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface object length assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface object name assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface: attribute x assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface: attribute y assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate interface: attribute z assert_own_property: self does not have own property "CSSTranslate" expected property "CSSTranslate" missing
+FAIL CSSTranslate must be primary interface of transformValue[0] assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL Stringification of transformValue[0] assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTranslate interface: transformValue[0] must inherit property "x" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTranslate interface: transformValue[0] must inherit property "y" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTranslate interface: transformValue[0] must inherit property "z" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformComponent interface: transformValue[0] must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformComponent interface: transformValue[0] must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSRotate interface: existence and properties of interface object assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface object length assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface object name assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: attribute x assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: attribute y assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: attribute z assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate interface: attribute angle assert_own_property: self does not have own property "CSSRotate" expected property "CSSRotate" missing
+FAIL CSSRotate must be primary interface of rotate assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL Stringification of rotate assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSRotate interface: rotate must inherit property "x" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSRotate interface: rotate must inherit property "y" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSRotate interface: rotate must inherit property "z" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSRotate interface: rotate must inherit property "angle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSTransformComponent interface: rotate must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSTransformComponent interface: rotate must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSScale interface: existence and properties of interface object assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface object length assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface object name assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface: attribute x assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface: attribute y assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale interface: attribute z assert_own_property: self does not have own property "CSSScale" expected property "CSSScale" missing
+FAIL CSSScale must be primary interface of scale assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL Stringification of scale assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSScale interface: scale must inherit property "x" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSScale interface: scale must inherit property "y" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSScale interface: scale must inherit property "z" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSTransformComponent interface: scale must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSTransformComponent interface: scale must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSSkew interface: existence and properties of interface object assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface object length assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface object name assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface: attribute ax assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew interface: attribute ay assert_own_property: self does not have own property "CSSSkew" expected property "CSSSkew" missing
+FAIL CSSSkew must be primary interface of skew assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL Stringification of skew assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL CSSSkew interface: skew must inherit property "ax" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL CSSSkew interface: skew must inherit property "ay" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL CSSTransformComponent interface: skew must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL CSSTransformComponent interface: skew must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL CSSSkewX interface: existence and properties of interface object assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX interface object length assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX interface object name assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX interface: attribute ax assert_own_property: self does not have own property "CSSSkewX" expected property "CSSSkewX" missing
+FAIL CSSSkewX must be primary interface of skewX assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
+FAIL Stringification of skewX assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
+FAIL CSSSkewX interface: skewX must inherit property "ax" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
+FAIL CSSTransformComponent interface: skewX must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
+FAIL CSSTransformComponent interface: skewX must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
+FAIL CSSSkewY interface: existence and properties of interface object assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY interface object length assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY interface object name assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY interface: attribute ay assert_own_property: self does not have own property "CSSSkewY" expected property "CSSSkewY" missing
+FAIL CSSSkewY must be primary interface of skewY assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
+FAIL Stringification of skewY assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
+FAIL CSSSkewY interface: skewY must inherit property "ay" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
+FAIL CSSTransformComponent interface: skewY must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
+FAIL CSSTransformComponent interface: skewY must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
+FAIL CSSPerspective interface: existence and properties of interface object assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective interface object length assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective interface object name assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective interface: attribute length assert_own_property: self does not have own property "CSSPerspective" expected property "CSSPerspective" missing
+FAIL CSSPerspective must be primary interface of perspective assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
+FAIL Stringification of perspective assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
+FAIL CSSPerspective interface: perspective must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
+FAIL CSSTransformComponent interface: perspective must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
+FAIL CSSTransformComponent interface: perspective must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
+FAIL CSSMatrixComponent interface: existence and properties of interface object assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent interface object length assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent interface object name assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent interface: attribute matrix assert_own_property: self does not have own property "CSSMatrixComponent" expected property "CSSMatrixComponent" missing
+FAIL CSSMatrixComponent must be primary interface of matrix assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
+FAIL Stringification of matrix assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
+FAIL CSSMatrixComponent interface: matrix must inherit property "matrix" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
+FAIL CSSTransformComponent interface: matrix must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
+FAIL CSSTransformComponent interface: matrix must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
+PASS CSSImageValue interface: existence and properties of interface object
+PASS CSSImageValue interface object length
+PASS CSSImageValue interface object name
+PASS CSSImageValue interface: existence and properties of interface prototype object
+PASS CSSImageValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSImageValue interface: existence and properties of interface prototype object's @@unscopables property
+FAIL CSSColorValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface object length assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface object name assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface: attribute colorSpace assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface: operation to(CSSKeywordish) assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSColorValue interface: operation parse(USVString) assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
+FAIL CSSRGB interface: existence and properties of interface object assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface object length assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface object name assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: attribute r assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: attribute g assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: attribute b assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSRGB interface: attribute alpha assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
+FAIL CSSHSL interface: existence and properties of interface object assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface object length assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface object name assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: attribute h assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: attribute s assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: attribute l assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHSL interface: attribute alpha assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
+FAIL CSSHWB interface: existence and properties of interface object assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface object length assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface object name assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: attribute h assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: attribute w assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: attribute b assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSHWB interface: attribute alpha assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
+FAIL CSSLCH interface: existence and properties of interface object assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface object length assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface object name assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: attribute l assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: attribute c assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: attribute h assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLCH interface: attribute alpha assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
+FAIL CSSLab interface: existence and properties of interface object assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface object length assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface object name assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: attribute l assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: attribute a assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: attribute b assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSLab interface: attribute alpha assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
+FAIL CSSColor interface: existence and properties of interface object assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+FAIL CSSColor interface object length assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+FAIL CSSColor interface object name assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+FAIL CSSColor interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+FAIL CSSColor interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+FAIL CSSColor interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+FAIL CSSDeviceCMYK interface: existence and properties of interface object assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface object length assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface object name assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: attribute c assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: attribute m assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: attribute y assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: attribute k assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSDeviceCMYK interface: attribute alpha assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
+FAIL CSSStyleRule interface: attribute styleMap assert_true: The prototype object must have a property "styleMap" expected true got false
+PASS CSS namespace: operation escape(CSSOMString)
+FAIL CSS namespace: operation number(double) assert_own_property: namespace object missing operation "number" expected property "number" missing
+FAIL CSS namespace: operation percent(double) assert_own_property: namespace object missing operation "percent" expected property "percent" missing
+FAIL CSS namespace: operation em(double) assert_own_property: namespace object missing operation "em" expected property "em" missing
+FAIL CSS namespace: operation ex(double) assert_own_property: namespace object missing operation "ex" expected property "ex" missing
+FAIL CSS namespace: operation ch(double) assert_own_property: namespace object missing operation "ch" expected property "ch" missing
+FAIL CSS namespace: operation ic(double) assert_own_property: namespace object missing operation "ic" expected property "ic" missing
+FAIL CSS namespace: operation rem(double) assert_own_property: namespace object missing operation "rem" expected property "rem" missing
+FAIL CSS namespace: operation lh(double) assert_own_property: namespace object missing operation "lh" expected property "lh" missing
+FAIL CSS namespace: operation rlh(double) assert_own_property: namespace object missing operation "rlh" expected property "rlh" missing
+FAIL CSS namespace: operation vw(double) assert_own_property: namespace object missing operation "vw" expected property "vw" missing
+FAIL CSS namespace: operation vh(double) assert_own_property: namespace object missing operation "vh" expected property "vh" missing
+FAIL CSS namespace: operation vi(double) assert_own_property: namespace object missing operation "vi" expected property "vi" missing
+FAIL CSS namespace: operation vb(double) assert_own_property: namespace object missing operation "vb" expected property "vb" missing
+FAIL CSS namespace: operation vmin(double) assert_own_property: namespace object missing operation "vmin" expected property "vmin" missing
+FAIL CSS namespace: operation vmax(double) assert_own_property: namespace object missing operation "vmax" expected property "vmax" missing
+FAIL CSS namespace: operation cm(double) assert_own_property: namespace object missing operation "cm" expected property "cm" missing
+FAIL CSS namespace: operation mm(double) assert_own_property: namespace object missing operation "mm" expected property "mm" missing
+FAIL CSS namespace: operation Q(double) assert_own_property: namespace object missing operation "Q" expected property "Q" missing
+FAIL CSS namespace: operation in(double) assert_own_property: namespace object missing operation "in" expected property "in" missing
+FAIL CSS namespace: operation pt(double) assert_own_property: namespace object missing operation "pt" expected property "pt" missing
+FAIL CSS namespace: operation pc(double) assert_own_property: namespace object missing operation "pc" expected property "pc" missing
+FAIL CSS namespace: operation px(double) assert_own_property: namespace object missing operation "px" expected property "px" missing
+FAIL CSS namespace: operation deg(double) assert_own_property: namespace object missing operation "deg" expected property "deg" missing
+FAIL CSS namespace: operation grad(double) assert_own_property: namespace object missing operation "grad" expected property "grad" missing
+FAIL CSS namespace: operation rad(double) assert_own_property: namespace object missing operation "rad" expected property "rad" missing
+FAIL CSS namespace: operation turn(double) assert_own_property: namespace object missing operation "turn" expected property "turn" missing
+FAIL CSS namespace: operation s(double) assert_own_property: namespace object missing operation "s" expected property "s" missing
+FAIL CSS namespace: operation ms(double) assert_own_property: namespace object missing operation "ms" expected property "ms" missing
+FAIL CSS namespace: operation Hz(double) assert_own_property: namespace object missing operation "Hz" expected property "Hz" missing
+FAIL CSS namespace: operation kHz(double) assert_own_property: namespace object missing operation "kHz" expected property "kHz" missing
+FAIL CSS namespace: operation dpi(double) assert_own_property: namespace object missing operation "dpi" expected property "dpi" missing
+FAIL CSS namespace: operation dpcm(double) assert_own_property: namespace object missing operation "dpcm" expected property "dpcm" missing
+FAIL CSS namespace: operation dppx(double) assert_own_property: namespace object missing operation "dppx" expected property "dppx" missing
+FAIL CSS namespace: operation fr(double) assert_own_property: namespace object missing operation "fr" expected property "fr" missing
+PASS SVGElement interface: attribute attributeStyleMap
+PASS HTMLElement interface: attribute attributeStyleMap
+FAIL Element interface: operation computedStyleMap() assert_own_property: interface prototype object missing non-static operation expected property "computedStyleMap" missing
+PASS MathMLElement interface: attribute attributeStyleMap
+

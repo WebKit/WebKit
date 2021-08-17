@@ -1,0 +1,4 @@
+
+FAIL Negating a type with empty map returns the empty map Can't find variable: CSSMathNegate
+FAIL Negating a type returns the same type Can't find variable: CSSMathNegate
+

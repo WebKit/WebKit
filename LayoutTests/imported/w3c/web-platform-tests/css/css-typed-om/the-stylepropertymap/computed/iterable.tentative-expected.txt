@@ -1,0 +1,7 @@
+
+FAIL StylePropertyMap iterates properties in correct order elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Computed StylePropertyMap sorts custom properties in increasing code-point order elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+

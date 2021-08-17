@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: TypeError: CSS.deg is not a function. (In 'CSS.deg(0)', 'CSS.deg' is undefined)
+
+Harness Error (FAIL), message = TypeError: CSS.deg is not a function. (In 'CSS.deg(0)', 'CSS.deg' is undefined)
+
+

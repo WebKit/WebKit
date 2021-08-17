@@ -1,0 +1,10 @@
+
+FAIL CSSTranslate.toMatrix() returns correct matrix Can't find variable: CSSTranslate
+FAIL CSSRotate.toMatrix() returns correct matrix Can't find variable: CSSRotate
+FAIL CSSScale.toMatrix() returns correct matrix Can't find variable: CSSScale
+FAIL CSSSkew.toMatrix() returns correct matrix Can't find variable: CSSSkew
+FAIL CSSSkewX.toMatrix() returns correct matrix Can't find variable: CSSSkewX
+FAIL CSSSkewY.toMatrix() returns correct matrix Can't find variable: CSSSkewY
+FAIL CSSPerspective.toMatrix() returns correct matrix Can't find variable: CSSPerspective
+FAIL CSSMatrixComponent.toMatrix() returns correct matrix Can't find variable: CSSMatrixComponent
+

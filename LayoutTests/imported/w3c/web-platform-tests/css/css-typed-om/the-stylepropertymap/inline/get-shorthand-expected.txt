@@ -1,0 +1,4 @@
+
+FAIL Getting an shorthand property set explicitly in inline style returns a base CSSStyleValue assert_not_equals: Shorthand value must not be null got disallowed value null
+PASS Getting a shorthand property that is partially set in inline style returns null
+

@@ -1,0 +1,8 @@
+
+FAIL Getting a custom property not in the computed style returns null elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Getting a valid property from computed style returns the correct entry elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Getting a valid custom property from computed style returns the correct entry elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Getting a list-valued property from computed style returns only the first value elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Computed StylePropertyMap.get is not case-sensitive elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Computed StylePropertyMap.get reflects updates in inline style elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+

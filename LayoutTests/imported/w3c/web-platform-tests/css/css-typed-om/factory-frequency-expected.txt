@@ -1,0 +1,4 @@
+
+FAIL CSS.Hz() produces hz frequency CSS.Hz is not a function. (In 'CSS.Hz(10)', 'CSS.Hz' is undefined)
+FAIL CSS.kHz() produces khz frequency CSS.kHz is not a function. (In 'CSS.kHz(20)', 'CSS.kHz' is undefined)
+

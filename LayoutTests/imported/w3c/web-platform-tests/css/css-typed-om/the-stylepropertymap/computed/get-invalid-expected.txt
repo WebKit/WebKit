@@ -1,0 +1,3 @@
+
+FAIL Calling StylePropertyMap.get with an unsupported property throws a TypeError elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+

@@ -1,0 +1,4 @@
+
+FAIL StylePropertyMap.getAll() with a shorthand property set explicitly in computed style returns a list containing a base CSSStyleValue elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL StylePropertyMap.getAll() with a shorthand property from initial computed style returns a list containing a base CSSStyleValue elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+

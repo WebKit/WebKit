@@ -1,0 +1,15 @@
+
+FAIL CSSTranslate.toMatrix() containing relative units throws TypeError assert_throws_js: function "() => {
+    return new CSSTranslate(
+      new CSSUnitValue(1, 'px'),
+      new CSSUnitValue(1, 'em')
+    ).toMatrix();
+  }" threw object "ReferenceError: Can't find variable: CSSTranslate" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL CSSPerspective.toMatrix() containing relative units throws TypeError assert_throws_js: function "() => {
+    return new CSSPerspective(new CSSUnitValue(1, 'em')).toMatrix();
+  }" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

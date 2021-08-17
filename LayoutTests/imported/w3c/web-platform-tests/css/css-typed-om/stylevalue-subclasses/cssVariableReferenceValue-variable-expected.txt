@@ -1,0 +1,5 @@
+
+FAIL CSSVariableReferenceValue.variable can updated to a valid custom property name Can't find variable: CSSVariableReferenceValue
+FAIL Updating CSSVariableReferenceValue.variable to the empty string throws TypeError Can't find variable: CSSVariableReferenceValue
+FAIL Updating CSSVariableReferenceValue.variable to an invalid custom property name throws TypeError Can't find variable: CSSVariableReferenceValue
+

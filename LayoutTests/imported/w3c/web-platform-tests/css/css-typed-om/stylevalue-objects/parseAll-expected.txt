@@ -1,0 +1,7 @@
+
+FAIL CSSStyleValue.parseAll() with a valid property returns a list with a single CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('width', '10px')', 'CSSStyleValue.parseAll' is undefined)
+FAIL CSSStyleValue.parseAll() is not case sensitive CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('WiDtH', '10px')', 'CSSStyleValue.parseAll' is undefined)
+FAIL CSSStyleValue.parseAll() with a valid list-valued property returns a list with a single CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('transition-duration', '1s, 2s, 3s')', 'CSSStyleValue.parseAll' is undefined)
+FAIL CSSStyleValue.parseAll() with a valid shorthand property returns a CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('margin', '1px 2px 3px 4px')', 'CSSStyleValue.parseAll' is undefined)
+FAIL CSSStyleValue.parseAll() with a valid custom property returns a list with a single CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('--foo', 'auto')', 'CSSStyleValue.parseAll' is undefined)
+

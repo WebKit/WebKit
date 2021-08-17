@@ -1,0 +1,3 @@
+
+FAIL Declared styleMap objects accept 'inherit' as a value Can't find variable: CSSKeywordValue
+

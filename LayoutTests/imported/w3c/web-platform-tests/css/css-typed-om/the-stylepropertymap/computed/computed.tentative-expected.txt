@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: TypeError: target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
+
+Harness Error (FAIL), message = TypeError: target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
+
+

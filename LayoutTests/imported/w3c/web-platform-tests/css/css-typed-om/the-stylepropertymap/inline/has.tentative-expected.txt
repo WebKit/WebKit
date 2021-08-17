@@ -1,0 +1,10 @@
+
+PASS Calling StylePropertyMap.has with an unsupported property throws a TypeError
+FAIL Calling StylePropertyMap.has with a property not in the property model returns false styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+FAIL Calling StylePropertyMap.has with a custom property not in the property model returns false styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+FAIL Calling StylePropertyMap.has with a valid property in mixed case returns false styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+FAIL Calling StylePropertyMap.has with a valid property returns true styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+FAIL Calling StylePropertyMap.has with a valid property in mixed case returns true styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+FAIL Calling StylePropertyMap.has with a valid custom property returns true styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+FAIL Calling StylePropertyMap.has with a valid list-valued property returns true styleMap.has is not a function. (In 'styleMap.has(property)', 'styleMap.has' is undefined)
+

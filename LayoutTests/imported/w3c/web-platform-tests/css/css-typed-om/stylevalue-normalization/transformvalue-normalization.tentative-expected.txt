@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSTranslate
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSTranslate
+
+FAIL Normalizing a matrix() returns a CSSMatrixComponent Can't find variable: CSSTransformValue
+FAIL Normalizing a matrix3d() returns a CSSMatrixComponent Can't find variable: CSSTransformValue
+

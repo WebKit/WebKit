@@ -1,0 +1,6 @@
+
+FAIL CSSKeywordValue constructed from IDL serializes correctly Can't find variable: CSSKeywordValue
+FAIL CSSKeywordValue constructed from IDL serializes to escaped strings Can't find variable: CSSKeywordValue
+FAIL CSSKeywordValue from DOMString modified through "value" setter serializes correctly CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('width', 'auto')', 'CSSStyleValue.parse' is undefined)
+FAIL CSSKeywordValue from CSSOM modified through "value" setter serializes correctly assert_equals: expected "lemon" but got "auto"
+

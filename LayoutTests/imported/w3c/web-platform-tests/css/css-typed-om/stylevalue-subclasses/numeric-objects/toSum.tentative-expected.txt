@@ -1,0 +1,19 @@
+
+FAIL Converting a CSSNumericValue to a sum with invalid units throws SyntaxError assert_throws_dom: function "() => CSS.px(1).toSum('px', 'lemon')" threw object "TypeError: CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+FAIL Converting a CSSNumericValue with an invalid sum value to a sum throws TypeError assert_throws_js: function "() => new CSSMathMax(1, CSS.px(1)).toSum('number')" threw object "ReferenceError: Can't find variable: CSSMathMax" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Converting a CSSNumericValue with compound units to a sum throws TypeError assert_throws_js: function "() => new CSSMathProduct(CSS.px(1), CSS.px(1)).to('px')" threw object "ReferenceError: Can't find variable: CSSMathProduct" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS Converting a CSSNumericValue to a sum with an incompatible unit throws TypeError
+PASS Converting a CSSNumericValue to a sum with units that are not addable throws TypeError
+FAIL Converting a CSSNumericValue with leftover units to a sum throws TypeError assert_throws_js: function "() => new CSSMathSum(CSS.px(1), CSS.em(1)).toSum('px')" threw object "ReferenceError: Can't find variable: CSSMathSum" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Converting CSSNumericValue to a sum with its own unit returns itself CSS.number is not a function. (In 'CSS.number(1)', 'CSS.number' is undefined)
+FAIL Converting CSSNumericValue to a sum with no arguments returns all the units in sorted order Can't find variable: CSSMathSum
+FAIL Converting CSSNumericValue to a sum with a relative unit converts correctly CSS.cm is not a function. (In 'CSS.cm(2)', 'CSS.cm' is undefined)
+FAIL Converting CSSNumericValue to a sum containing extra units returns zero for those units CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)
+FAIL CSSNumericValue.toSum converts greedily Can't find variable: CSSMathSum
+

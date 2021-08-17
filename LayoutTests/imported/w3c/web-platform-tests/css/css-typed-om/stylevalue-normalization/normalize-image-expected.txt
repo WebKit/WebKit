@@ -1,0 +1,5 @@
+
+FAIL Normalizing a valid <url> returns a CSSImageValue CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('background-image', 'url("' + gTestUrl + '")')', 'CSSStyleValue.parse' is undefined)
+FAIL Normalizing a bad <url> returns a CSSImageValue CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('background-image', 'url("' + gBadTestUrl + '")')', 'CSSStyleValue.parse' is undefined)
+FAIL Normalizing a <gradient> returns a CSSImageValue CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('background-image', 'linear-gradient(red, orange)')', 'CSSStyleValue.parse' is undefined)
+

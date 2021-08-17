@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: TypeError: CSS.number is not a function. (In 'CSS.number(10)', 'CSS.number' is undefined)
+
+Harness Error (FAIL), message = TypeError: CSS.number is not a function. (In 'CSS.number(10)', 'CSS.number' is undefined)
+
+

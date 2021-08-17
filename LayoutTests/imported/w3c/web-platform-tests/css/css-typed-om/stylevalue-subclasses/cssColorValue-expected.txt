@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSHSL
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSHSL
+
+

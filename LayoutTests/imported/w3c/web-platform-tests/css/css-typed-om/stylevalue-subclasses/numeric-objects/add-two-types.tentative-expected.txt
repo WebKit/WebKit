@@ -1,0 +1,11 @@
+
+FAIL Adding two types with different non-null percent hints throws TypeError assert_throws_js: function "() => new CSSMathSum(a, b)" threw object "ReferenceError: Can't find variable: CSSMathSum" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Adding two types with the same nonzero values returns same type Can't find variable: CSSMathSum
+FAIL Adding two types with empty maps with returns empty map Can't find variable: CSSMathSum
+FAIL Adding a type with percent returns type with percent hint Can't find variable: CSSMathSum
+FAIL Adding a type with percent 2 returns type with percent hint throws TypeError Can't find variable: CSSMathProduct
+FAIL Adding a type with a percent hint returns a type with the percent hint Can't find variable: CSSMathSum
+FAIL Adding two types with the same percent hint returns a type with the percent hint Can't find variable: CSSMathSum
+

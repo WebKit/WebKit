@@ -1,0 +1,7 @@
+
+FAIL Iterating over an empty StylePropertyMap gives a zero-length array styleMap.entries is not a function. (In 'styleMap.entries()', 'styleMap.entries' is undefined)
+FAIL StylePropertyMap iterates properties in inline style order styleMap.keys is not a function. (In 'styleMap.keys()', 'styleMap.keys' is undefined)
+FAIL StylePropertyMap iterator returns CSS properties with the correct CSSStyleValue styleMap.keys is not a function. (In 'styleMap.keys()', 'styleMap.keys' is undefined)
+FAIL StylePropertyMap iterator returns list-valued properties with the correct CSSStyleValue styleMap.keys is not a function. (In 'styleMap.keys()', 'styleMap.keys' is undefined)
+FAIL StylePropertyMap iterator returns custom properties with the correct CSSStyleValue styleMap.keys is not a function. (In 'styleMap.keys()', 'styleMap.keys' is undefined)
+

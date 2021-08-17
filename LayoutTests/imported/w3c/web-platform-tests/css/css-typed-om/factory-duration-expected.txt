@@ -1,0 +1,4 @@
+
+FAIL CSS.s() produces s duration CSS.s is not a function. (In 'CSS.s(10)', 'CSS.s' is undefined)
+FAIL CSS.ms() produces ms duration CSS.ms is not a function. (In 'CSS.ms(20)', 'CSS.ms' is undefined)
+

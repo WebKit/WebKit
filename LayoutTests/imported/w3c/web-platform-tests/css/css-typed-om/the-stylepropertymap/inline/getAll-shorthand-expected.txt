@@ -1,0 +1,4 @@
+
+FAIL StylePropertyMap.getAll() with a shorthand property set explicitly in inline style returns a base CSSStyleValue styleMap.getAll is not a function. (In 'styleMap.getAll('margin')', 'styleMap.getAll' is undefined)
+FAIL StylePropertyMap.getAll() with a shorthand property that is partially in inline style returns empty list styleMap.getAll is not a function. (In 'styleMap.getAll('margin')', 'styleMap.getAll' is undefined)
+

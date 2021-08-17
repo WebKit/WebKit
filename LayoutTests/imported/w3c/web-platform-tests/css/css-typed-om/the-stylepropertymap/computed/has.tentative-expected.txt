@@ -1,0 +1,9 @@
+
+FAIL Calling StylePropertyMap.has with an unsupported property throws a TypeError elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Calling StylePropertyMap.has with a custom property not in the property model returns false elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Calling StylePropertyMap.has with a valid property returns true elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Calling StylePropertyMap.has with a valid property in mixed case returns true elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Calling StylePropertyMap.has with a valid shorthand property returns true elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Calling StylePropertyMap.has with a valid custom property returns true elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+FAIL Calling StylePropertyMap.has with a valid list-valued property returns true elem.computedStyleMap is not a function. (In 'elem.computedStyleMap()', 'elem.computedStyleMap' is undefined)
+

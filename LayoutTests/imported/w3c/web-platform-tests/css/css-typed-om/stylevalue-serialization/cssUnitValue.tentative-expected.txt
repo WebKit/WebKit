@@ -1,0 +1,8 @@
+
+FAIL CSSUnitValue with length unit constructed from IDL serializes correctly assert_equals: expected "3.14px" but got "3px"
+FAIL CSSUnitValue with unit "percent" constructed from IDL serializes correctly assert_equals: expected "3.14%" but got "3percent"
+FAIL CSSUnitValue with unit "number" constructed from IDL serializes correctly assert_equals: expected "3.14" but got "3number"
+FAIL CSSUnitValue with integer values constructed from IDL serializes correctly assert_equals: expected "3" but got "3number"
+FAIL CSSKeywordValue from DOMString modified by "value" setter serializes correctly CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('width', '1px')', 'CSSStyleValue.parse' is undefined)
+FAIL CSSKeywordValue from CSSOM modified by "value" setter serializes correctly assert_equals: expected "3.14px" but got "3px"
+

@@ -1,0 +1,12 @@
+
+FAIL Constructing a CSSTransformValue with no components throws TypeError assert_throws_js: function "() => new CSSTransformValue()" threw object "ReferenceError: Can't find variable: CSSTransformValue" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL CSSTransformValue can be constructed with multiple transforms Can't find variable: CSSScale
+FAIL CSSTransformValue.set correctly sets the CSSTransformComponent at the given index Can't find variable: CSSScale
+FAIL Setting a component in CSSTransformValue correctly appends the CSSTransformComponent if index specified is greater than length Can't find variable: CSSScale
+FAIL CSSTransformValue.is2D is false when given mix of 2D and 3D transforms Can't find variable: CSSTransformValue
+FAIL CSSTransformValue.is2D is true when given only 2D transforms Can't find variable: CSSTransformValue
+FAIL CSSTransformValue.is2D is readonly Can't find variable: CSSTransformValue
+FAIL Can iterate through CSSTransformValue components Can't find variable: CSSScale
+

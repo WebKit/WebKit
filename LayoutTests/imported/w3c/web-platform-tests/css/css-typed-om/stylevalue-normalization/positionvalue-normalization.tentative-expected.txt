@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: TypeError: CSS.percent is not a function. (In 'CSS.percent(0)', 'CSS.percent' is undefined)
+
+Harness Error (FAIL), message = TypeError: CSS.percent is not a function. (In 'CSS.percent(0)', 'CSS.percent' is undefined)
+
+
