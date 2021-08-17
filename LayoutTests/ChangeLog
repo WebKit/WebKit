@@ -1,3 +1,14 @@
+2021-08-17  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK] Mark webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=229192
+
+        This test now consistently either passes or fails and no longer times out.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail.

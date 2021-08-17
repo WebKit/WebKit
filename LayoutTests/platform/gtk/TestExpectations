@@ -471,7 +471,7 @@ webkit.org/b/169917 webkit.org/b/211768 compositing/video/video-border-radius.ht
 webkit.org/b/169917 webkit.org/b/211338 webgl/1.0.3/conformance/textures/texture-size.html [ Failure Timeout Pass ]
 # WebGL timeouts or slow tests.
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Timeout ]
-webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
+webkit.org/b/169917 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Timeout ]
 webkit.org/b/169917 webgl/1.0.3/conformance/ogles/GL/atan/atan_001_to_008.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Slow ]
