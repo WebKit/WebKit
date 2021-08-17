@@ -4667,6 +4667,8 @@ webkit.org/b/229143 fast/forms/input-appearance-spinbutton-size.html [ Pass Cras
 
 webkit.org/b/229005 fast/events/dropzone-005.html [ Pass Crash ]
 
+webkit.org/b/229191 animations/shadow-host-child-change.html [ Pass Failure ]
+
 webkit.org/b/229146 http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html [ Pass Failure ]
 
 accessibility/selected-state-changed-notifications.html [ Skip ]
