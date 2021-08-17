@@ -1,5 +1,14 @@
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
+        [Monterey] imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-double-write.https.html is a constant failure.
+        rdar://82044002.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
         [Monterey wk2 Debug arm64,iOS 15 wk2] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure.
         rdar://82043074.
 
