@@ -78,6 +78,10 @@
 #include "RemoteMediaSourceIdentifier.h"
 #endif
 
+#if PLATFORM(COCOA)
+#import <WebCore/VideoLayerManagerObjC.h>
+#endif
+
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED
 extern WTFLogChannel LogMedia;
@@ -98,7 +102,6 @@ using namespace WebCore;
 } while (0)
 #endif
 
-#if !PLATFORM(COCOA)
 MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
     :
 #if !RELEASE_LOG_DISABLED
@@ -108,6 +111,9 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
 #endif
       m_player(makeWeakPtr(*player))
     , m_mediaResourceLoader(*player->createResourceLoader())
+#if PLATFORM(COCOA)
+    , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
+#endif
     , m_manager(manager)
     , m_remoteEngineIdentifier(engineIdentifier)
     , m_id(playerIdentifier)
@@ -117,7 +123,6 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
 
     acceleratedRenderingStateChanged();
 }
-#endif
 
 MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 {

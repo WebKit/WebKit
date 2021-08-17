@@ -30,11 +30,12 @@
 #include "NativeImage.h"
 #include "PlatformLayer.h"
 #include "VideoLayerManager.h"
-#include "WebVideoContainerLayer.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
+
+OBJC_CLASS WebVideoContainerLayer;
 
 namespace WebCore {
 

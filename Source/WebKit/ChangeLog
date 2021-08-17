@@ -1,3 +1,18 @@
+2021-08-17  Jer Noble  <jer.noble@apple.com>
+
+        De-duplicate the Cocoa-specific MediaPlayerPrivateRemote constructor
+        https://bugs.webkit.org/show_bug.cgi?id=229193
+
+        Reviewed by Eric Carlson.
+
+        Rather than have two, separate implementations of the MediaPlayerPrivateRemote constructor (one for Cocoa),
+        just wrap the initializer for the Cocoa-specific ivar in PLATFORM(COCOA) guards.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote): Deleted.
+
 2021-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Demote the release assertion in `RemoteResourceCache::ensureResourceUseCounter`

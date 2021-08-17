@@ -33,29 +33,11 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/ColorSpaceCG.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/VideoLayerManagerObjC.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 
 namespace WebKit {
 using namespace WebCore;
-
-MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
-#if !RELEASE_LOG_DISABLED
-    : m_logger(player->mediaPlayerLogger())
-    , m_logIdentifier(player->mediaPlayerLogIdentifier())
-#endif
-    , m_player(makeWeakPtr(*player))
-    , m_mediaResourceLoader(*player->createResourceLoader())
-    , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
-    , m_manager(manager)
-    , m_remoteEngineIdentifier(engineIdentifier)
-    , m_id(playerIdentifier)
-{
-    INFO_LOG(LOGIDENTIFIER);
-
-    acceleratedRenderingStateChanged();
-}
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()

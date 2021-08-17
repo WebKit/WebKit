@@ -30,6 +30,7 @@
 #import "Logging.h"
 #import "TextTrackRepresentation.h"
 #import "WebCoreCALayerExtras.h"
+#import "WebVideoContainerLayer.h"
 #import <mach/mach_init.h>
 #import <mach/mach_port.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
