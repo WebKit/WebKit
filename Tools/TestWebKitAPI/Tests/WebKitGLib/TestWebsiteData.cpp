@@ -661,6 +661,9 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
     g_assert_null(dataList);
 
+    test->loadURI("about:blank");
+    test->waitUntilTitleChanged();
+
     // Test removing the cookies.
     test->loadURI(kServer->getURIForPath("/enumeratedevices").data());
     test->waitUntilTitleChangedTo("Finished");

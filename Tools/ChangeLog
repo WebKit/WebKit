@@ -1,3 +1,24 @@
+2021-08-16  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r281079) [GLIB] API test WebKitWebsiteData/deviceidhashsalt is not waiting for title change
+        https://bugs.webkit.org/show_bug.cgi?id=229174
+
+        Reviewed by Carlos Garcia Campos.
+
+        r281079 changed the helper method waitUntilTitleChangedTo to
+        immediately return if the current title is already the expected one.
+
+        While this is working fine in other tests, the deviceidhashsalt tries
+        to load the same page twice. As the title does not change, the call
+        returns right away, before the expected side effects of the load
+        happen.
+
+        This commit adds a dummy "about:blank" call between both original
+        calls to make sure we track the title change correctly.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataDeviceIdHashSalt):
+
 2021-08-16  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose [WebAccessibilityObjectWrapper lineRectsAndText] on MacOS.
