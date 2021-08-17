@@ -1458,7 +1458,8 @@ webkit.org/b/225664 editing/selection/move-by-character-brute-force.html [ Slow 
 
 webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
 
-webkit.org/b/225667 http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Slow ]
+# rdar://82047046 ([ Mac wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html is a flaky timeout)
+http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Pass Timeout ]
 
 webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
 
