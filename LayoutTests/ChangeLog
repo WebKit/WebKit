@@ -1,3 +1,10 @@
+2021-08-17  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unreviewed. Skip failing MIPS tests
+        https://bugs.webkit.org/show_bug.cgi?id=229198
+
+        * platform/wpe/TestExpectations:
+
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
         [Monterey wk1 Debug Intel] inspector/css/getMatchedStylesForNodeMarkerPseudoId.html is a flaky failure).
