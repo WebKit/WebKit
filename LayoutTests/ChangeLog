@@ -1,5 +1,14 @@
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
+        [Star wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash.
+        rdar://82035182.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
         [Monterey wk2 Release] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html is flaky image-only fail.
         rdar://82034073.
 

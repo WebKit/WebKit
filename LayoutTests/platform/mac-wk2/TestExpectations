@@ -1579,5 +1579,8 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 #rdar://82034073 ([Star wk2 Release] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html is flaky image-only fail)
 [ Monterey Release ] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html  [ Pass Failure ]
 
+#rdar://82035182 ([Star wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash)
+performance-api/performance-observer-no-document-leak.html [ Pass Crash ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
