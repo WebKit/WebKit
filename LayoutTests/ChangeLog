@@ -1,3 +1,12 @@
+2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Win EWS ] http/tests/security/no-javascript-refresh-percent-escaped.py is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=229215
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-08-17  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION (r271146): [ iOS ] editing/selection/ios/scrolling-to-focused-element-inside-iframe.html is failing

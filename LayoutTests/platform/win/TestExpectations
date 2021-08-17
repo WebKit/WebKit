@@ -4673,5 +4673,7 @@ webkit.org/b/229191 animations/shadow-host-child-change.html [ Pass Failure ]
 
 webkit.org/b/229146 http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked.html [ Pass Failure ]
 
+webkit.org/b/229215 http/tests/security/no-javascript-refresh-percent-escaped.py [ Pass Crash ]
+
 accessibility/selected-state-changed-notifications.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
