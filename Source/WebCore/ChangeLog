@@ -1,3 +1,17 @@
+2021-08-17  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r218083): [GStreamer] webrtc unexpected failures
+        https://bugs.webkit.org/show_bug.cgi?id=229187
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The stream-collection messages actually don't need to be handled synchronously in the
+        mediastream cases. The limitations of the MSE backend do not apply there.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleStreamCollectionMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2021-08-17  Jean-Yves Avenard  <jya@apple.com>
 
         Implement API to ensure MediaRemote key mapping is correct

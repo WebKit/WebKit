@@ -1506,12 +1506,11 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     if (m_isLegacyPlaybin)
         return;
 
-    // GStreamer workaround:
-    // Unfortunately, when we have a stream-collection aware source (like WebKitMediaSrc or
-    // MediaStreamSource) parsebin and decodebin3 emit their own stream-collection messages, but
-    // late, and sometimes with duplicated streams. Let's only listen for stream-collection messages
-    // from the source to avoid these issues.
-    if (GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
+    // GStreamer workaround: Unfortunately, when we have a stream-collection aware source (like
+    // WebKitMediaSrc) parsebin and decodebin3 emit their own stream-collection messages, but late,
+    // and sometimes with duplicated streams. Let's only listen for stream-collection messages from
+    // the source to avoid these issues.
+    if (isMediaSource() && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
         GST_DEBUG_OBJECT(pipeline(), "Ignoring redundant STREAM_COLLECTION from %" GST_PTR_FORMAT, message->src);
         return;
     }
@@ -1519,8 +1518,11 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION);
     GRefPtr<GstStreamCollection> collection;
     gst_message_parse_stream_collection(message, &collection.outPtr());
+    if (!collection)
+        return;
+
 #ifndef GST_DISABLE_DEBUG
-    GST_DEBUG_OBJECT(pipeline(), "Received STREAM_COLLECTION message with upstream id \"%s\" defining the following streams:", gst_stream_collection_get_upstream_id(collection.get()));
+    GST_DEBUG_OBJECT(pipeline(), "Received STREAM_COLLECTION message with upstream id \"%s\" from %" GST_PTR_FORMAT " defining the following streams:", gst_stream_collection_get_upstream_id(collection.get()), GST_MESSAGE_SRC(message));
     unsigned numStreams = gst_stream_collection_get_size(collection.get());
     for (unsigned i = 0; i < numStreams; i++) {
         GstStream* stream = gst_stream_collection_get_stream(collection.get(), i);
@@ -1528,13 +1530,15 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     }
 #endif
 
-    if (!collection)
-        return;
-
-    callOnMainThreadAndWait([player = makeWeakPtr(*this), collection = WTFMove(collection)] {
+    auto callback = [player = makeWeakPtr(*this), collection = WTFMove(collection)] {
         if (player)
             player->updateTracks(collection);
-    });
+    };
+
+    if (isMediaSource())
+        callOnMainThreadAndWait(WTFMove(callback));
+    else
+        callOnMainThread(WTFMove(callback));
 }
 
 bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
@@ -2682,10 +2686,14 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     g_signal_connect_swapped(bus.get(), "sync-message::need-context", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
         player->handleNeedContextMessage(message);
     }), this);
-    // In the MSE case stream collection messages are emitted from the main thread right before the initilization segment
-    // is parsed and "updateend" is fired. We need therefore to handle these synchronously in the same main thread tick
-    // to make the tracks information available to JS no later than "updateend".
-    g_signal_connect_swapped(bus.get(), "sync-message::stream-collection", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
+
+    // In the MSE case stream collection messages are emitted from the main thread right before the
+    // initilization segment is parsed and "updateend" is fired. We need therefore to handle these
+    // synchronously in the same main thread tick to make the tracks information available to JS no
+    // later than "updateend". There is no such limitation otherwise (if playbin3 is enabled or in
+    // MediaStream cases).
+    auto streamCollectionSignalName = makeString(isMediaSource() ? "sync-" : "", "message::stream-collection");
+    g_signal_connect_swapped(bus.get(), streamCollectionSignalName.ascii().data(), G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
         player->handleStreamCollectionMessage(message);
     }), this);
 
