@@ -1,3 +1,22 @@
+2021-08-17  Antti Koivisto  <antti@apple.com>
+
+        Incorrect repaint when inline level box style change triggers line height change
+        https://bugs.webkit.org/show_bug.cgi?id=229140
+        <rdar://problem/81980863>
+
+        Reviewed by Alan Bujtas.
+
+        If an existing block shrinks vertically as a result of layout we fail to invalidate the
+        old content area for repaint, thus potentially leaving painting artefacts behind.
+        This is often hidden by the content shift triggering other repaints.
+
+        Test: fast/repaint/line-layout-block-shrink.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutModernLines):
+
+        Adjust the repaint area to include the content size before the layout.
+
 2021-08-17  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r218083): [GStreamer] webrtc unexpected failures

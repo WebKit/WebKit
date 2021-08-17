@@ -3731,24 +3731,33 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         renderer.clearNeedsLayout();
     }
 
+    auto contentBoxTop = borderAndPaddingBefore();
+
+    auto computeContentHeight = [&] {
+        if (!hasLines() && hasLineIfEmpty())
+            return lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+
+        return layoutFormattingContextLineLayout.contentLogicalHeight();
+    };
+
+    auto computeBorderBoxBottom = [&] {
+        auto contentBoxBottom = contentBoxTop + computeContentHeight();
+        return contentBoxBottom + borderAndPaddingAfter();
+    };
+
+    auto oldBorderBoxBottom = computeBorderBoxBottom();
+
     layoutFormattingContextLineLayout.layout();
 
     if (view().frameView().layoutContext().layoutState()->isPaginated())
         layoutFormattingContextLineLayout.adjustForPagination();
 
-    auto contentHeight = [&] {
-        if (!hasLines() && hasLineIfEmpty())
-            return lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-        
-        return layoutFormattingContextLineLayout.contentLogicalHeight();
-    }();
-    auto contentBoxTop = borderAndPaddingBefore();
-    auto contentBoxBottom = contentBoxTop + contentHeight;
-    auto borderBoxBottom = contentBoxBottom + borderAndPaddingAfter();
+    auto newBorderBoxBottom = computeBorderBoxBottom();
 
     repaintLogicalTop = contentBoxTop;
-    repaintLogicalBottom = borderBoxBottom;
-    setLogicalHeight(borderBoxBottom);
+    repaintLogicalBottom = std::max(oldBorderBoxBottom, newBorderBoxBottom);
+
+    setLogicalHeight(newBorderBoxBottom);
 }
 #endif
 

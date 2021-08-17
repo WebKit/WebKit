@@ -1,0 +1,13 @@
+<script src="resources/text-based-repaint.js"></script>
+<style>
+  img {
+    height: 400px;
+  }
+</style>
+<img id=changeThis>PASS if you see this text only once.
+<script>
+function repaintTest() {
+    changeThis.style.height = "0px";
+}
+onload = runRepaintTest;
+</script>
