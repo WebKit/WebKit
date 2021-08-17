@@ -1,3 +1,12 @@
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail.
+        rdar://82032946.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] fast/forms/number/number-spinbutton-state.html is flaky crashing.

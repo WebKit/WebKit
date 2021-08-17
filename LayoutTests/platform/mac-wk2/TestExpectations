@@ -1330,7 +1330,6 @@ webkit.org/b/219516 http/wpt/service-workers/service-worker-spinning-install.htt
 webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
-webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
 
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Pass Timeout ]
 
@@ -1563,6 +1562,9 @@ webkit.org/b/229158 [ BigSur+ ] webrtc/video-setDirection.html [ Pass Failure ]
 webkit.org/b/229163 webrtc/video-addTransceiver.html [ Pass Failure ]
 
 webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
+
+#rdar://82032946 ([Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail)
+[ BigSur+ ] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
 [ Monterey ] imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-cross-origin.https.html [ Failure ]
