@@ -1,3 +1,9 @@
+2021-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused test expectation file
+
+        * web-platform-tests/resource-timing/idlharness-expected.txt: Removed.
+
 2021-08-16  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Imported CSS Typed OM from w3c
