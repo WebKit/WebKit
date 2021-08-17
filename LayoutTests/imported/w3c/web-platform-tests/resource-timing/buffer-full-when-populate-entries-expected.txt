@@ -1,3 +1,3 @@
 
-FAIL Test that a buffer full event does not bubble and that resourcetimingbufferfull is called only once per overflow assert_equals: Number of entries does not match the expected value. expected 2 but got 0
+PASS Test that a buffer full event does not bubble and that resourcetimingbufferfull is called only once per overflow
 

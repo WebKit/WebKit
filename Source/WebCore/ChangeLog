@@ -1,3 +1,21 @@
+2021-08-16  Alex Christensen  <achristensen@webkit.org>
+
+        Report resource timing when SubresourceLoader::checkForHTTPStatusCodeError returns true
+        https://bugs.webkit.org/show_bug.cgi?id=229167
+
+        Reviewed by Chris Dumez.
+
+        Since r281110 we report timing data for loads which "fail" because of HTTP status codes in the 400-599 range.
+        This matches the behavior of Chrome, Firefox, and the spec, but there was a code path where we still weren't reporting
+        those resources' timing data.  This wasn't a problem before r281110 because we would've discarded it anyways, but
+        this code path needs to report the timing data before calling SubresourceLoader::cancel.
+
+        Covered by several newly passing WPT tests, which Chrome and Firefox already pass.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::checkForHTTPStatusCodeError):
+
 2021-08-16  Dean Jackson  <dino@apple.com>
 
         WebXR contexts have to use high-power GPUs

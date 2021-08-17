@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test that entries overflowing the buffer trigger the buffer full event, can be stored, and make their way to the primary buffer after it's cleared in the buffer full event. Test timed out
+PASS Test that entries overflowing the buffer trigger the buffer full event, can be stored, and make their way to the primary buffer after it's cleared in the buffer full event.
 

@@ -3,8 +3,8 @@
 PASS window.performance is defined
 PASS window.performance.getEntriesByName is defined
 PASS There should be one entry.
-FAIL redirectStart > 0 in timing allowed cross-origin redirect. assert_true: redirectStart > 0 in timing allowed cross-origin redirect. expected true got false
-FAIL redirectStart == startTime in timing allowed cross-origin redirect. assert_equals: redirectStart == startTime in timing allowed cross-origin redirect. expected <nondeterministic test output> but got 0
-FAIL redirectEnd > redirectStart in timing allowed cross-origin redirect. assert_true: redirectEnd > redirectStart in timing allowed cross-origin redirect. expected true got false
+PASS redirectStart > 0 in timing allowed cross-origin redirect.
+PASS redirectStart == startTime in timing allowed cross-origin redirect.
+PASS redirectEnd > redirectStart in timing allowed cross-origin redirect.
 PASS fetchStart >= redirectEnd in timing allowed cross-origin redirect.
 

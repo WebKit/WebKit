@@ -495,7 +495,15 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             didFinishLoadingOnePart(emptyMetrics);
         }
 
-        checkForHTTPStatusCodeError();
+        if (responseHasHTTPStatusCodeError()) {
+            m_loadTiming.markEndTime();
+            auto* metrics = this->response().deprecatedNetworkLoadMetricsOrNull();
+            reportResourceTiming(metrics ? *metrics : NetworkLoadMetrics { });
+
+            m_state = Finishing;
+            m_resource->error(CachedResource::LoadError);
+            cancel();
+        }
 
         if (m_inAsyncResponsePolicyCheck)
             m_policyForResponseCompletionHandler = completionHandlerCaller.release();
@@ -557,14 +565,10 @@ void SubresourceLoader::didReceiveDataOrBuffer(const uint8_t* data, int length, 
     }
 }
 
-bool SubresourceLoader::checkForHTTPStatusCodeError()
+bool SubresourceLoader::responseHasHTTPStatusCodeError() const
 {
     if (m_resource->response().httpStatusCode() < 400 || m_resource->shouldIgnoreHTTPStatusCodeErrors())
         return false;
-
-    m_state = Finishing;
-    m_resource->error(CachedResource::LoadError);
-    cancel();
     return true;
 }
 
@@ -885,6 +889,7 @@ void SubresourceLoader::releaseResources()
 
 void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLoadMetrics)
 {
+    ASSERT(m_resource);
     if (!m_resource || !ResourceTimingInformation::shouldAddResourceTiming(*m_resource))
         return;
 

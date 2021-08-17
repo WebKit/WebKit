@@ -88,7 +88,7 @@ private:
 
     void releaseResources() override;
 
-    bool checkForHTTPStatusCodeError();
+    bool responseHasHTTPStatusCodeError() const;
     Expected<void, String> checkResponseCrossOriginAccessControl(const ResourceResponse&);
     Expected<void, String> checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest);
 
