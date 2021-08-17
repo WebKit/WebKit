@@ -1875,6 +1875,8 @@ svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Crash Failure ]
 webkit.org/b/140770 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Failure ]
 
+webkit.org/b/229195 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
+
 # Tiny image diff. Why!?!?
 [ Release ] svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
 [ Debug ] svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Skip ] # Debug Assertion
