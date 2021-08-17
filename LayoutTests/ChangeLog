@@ -1,5 +1,14 @@
 2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ Win EWS ] fast/forms/number/number-spinbutton-state.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=229194
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ Win EWS ] svg/custom/animate-initial-pause-unpause.html is flaky timing out.
         https://bugs.webkit.org/show_bug.cgi?id=229195
 

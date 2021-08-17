@@ -4658,6 +4658,8 @@ fast/events/input-events-drag-and-drop.html [ Pass Crash ]
 fast/forms/number/number-l10n-input.html [ Pass Crash ]
 fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Crash ]
 
+webkit.org/b/229194 [ Release ] fast/forms/number/number-spinbutton-state.html [ Pass Crash ]
+
 webkit.org/b/228968 fast/forms/search/search-zoom-computed-style-height.html [ Pass Crash ]
 
 webkit.org/b/229009 fast/forms/input-baseline.html [ Pass Crash ]
