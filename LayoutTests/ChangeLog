@@ -1,3 +1,12 @@
+2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Win EWS ] performance-api/performance-timeline-api.html needs to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=229214
+
+        Unreviewed test gardening.
+
+        * platform/win/performance-api/performance-timeline-api-expected.txt:
+
 2021-08-17  Robert Jenner  <Jenner@apple.com>
 
         REBASELINE : [ iOS ] 3X imported/w3c/web-platform-t ests/css/css-typed-om layout-tests are constant text failures

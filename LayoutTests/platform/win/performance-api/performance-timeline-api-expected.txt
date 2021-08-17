@@ -16,14 +16,14 @@ PASS Performance.prototype.getEntries is defined.
 PASS Performance.prototype.getEntriesByType is defined.
 PASS Performance.prototype.getEntriesByName is defined.
 PASS performance.getEntries() instanceof Array is true
-FAIL performance.getEntries().length === 1 should be true. Was false.
+PASS performance.getEntries().length === 1 is true
 PASS performance.mark("test"); did not throw exception.
-FAIL performance.getEntries().length === 2 should be true. Was false.
-FAIL performance.getEntries()[markIndex] instanceof PerformanceEntry should be true. Was false.
-FAIL performance.getEntries()[markIndex].name should be test. Threw exception TypeError: undefined is not an object (evaluating 'performance.getEntries()[markIndex].name')
-FAIL performance.getEntries()[markIndex].entryType should be mark. Threw exception TypeError: undefined is not an object (evaluating 'performance.getEntries()[markIndex].entryType')
-FAIL typeof performance.getEntries()[markIndex].startTime === "number" should be true. Threw exception TypeError: undefined is not an object (evaluating 'performance.getEntries()[markIndex].startTime')
-FAIL typeof performance.getEntries()[markIndex].duration === "number" should be true. Threw exception TypeError: undefined is not an object (evaluating 'performance.getEntries()[markIndex].duration')
+PASS performance.getEntries().length === 2 is true
+PASS performance.getEntries()[markIndex] instanceof PerformanceEntry is true
+PASS performance.getEntries()[markIndex].name is "test"
+PASS performance.getEntries()[markIndex].entryType is "mark"
+PASS typeof performance.getEntries()[markIndex].startTime === "number" is true
+PASS typeof performance.getEntries()[markIndex].duration === "number" is true
 PASS performance.getEntriesByType() threw exception TypeError: Not enough arguments.
 PASS performance.getEntriesByType("not-real").length === 0 is true
 PASS performance.getEntriesByType("mark").length === 1 is true
