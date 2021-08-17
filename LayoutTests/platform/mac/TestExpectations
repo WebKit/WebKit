@@ -2317,5 +2317,8 @@ webkit.org/b/228640 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-
 #rdar://82003714 ([Star] webaudio/codec-tests/mp3/128kbps-44khz.html)
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass Timeout Failure ]
 
+#rdar://82053210 ([Guard-Malloc] imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2.html is a flaky failure)
+imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
