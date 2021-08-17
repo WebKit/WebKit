@@ -40,9 +40,10 @@ from webkitcorepy import log
 from webkitcorepy.version import Version
 
 if sys.version_info > (3, 0):
+    from html.parser import HTMLParser
+    from importlib import machinery as importmachinery
     from urllib.request import urlopen
     from urllib.error import URLError
-    from html.parser import HTMLParser
 else:
     from urllib2 import urlopen, URLError
     from HTMLParser import HTMLParser
@@ -591,11 +592,31 @@ class AutoInstall(object):
     @classmethod
     def find_module(cls, fullname, path=None):
         if not cls.enabled() or path is not None:
-            return
+            return None
 
         name = fullname.split('.')[0]
-        if cls.packages.get(name):
-            cls.install(name)
+        if not cls.packages.get(name) or not cls.directory:
+            return None
+
+        cls.install(name)
+        if sys.version_info < (3, 0):
+            # Python 2 works fine with the default module finder, once we've installed the module in question
+            return None
+
+        path = cls.directory
+        for part in fullname.split('.'):
+            path = os.path.join(path, part)
+            for ext in ('', '.py', '.pyc', '.py3', '.pyo'):
+                candidate = '{}{}'.format(path, ext)
+                if os.path.exists(candidate):
+                    path = candidate
+                    break
+            if not os.path.isdir(path):
+                break
+        if os.path.isdir(path):
+            path = os.path.join(path, '__init__.py')
+
+        return importmachinery.SourceFileLoader(name, path)
 
     @classmethod
     def tags(cls):
