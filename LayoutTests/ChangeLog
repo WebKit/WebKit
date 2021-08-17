@@ -1,3 +1,13 @@
+2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Rebaselining [ Win EWS ] http/tests/misc/webtiming-slow-load.py.
+        https://bugs.webkit.org/show_bug.cgi?id=229099
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/http/tests/misc/webtiming-slow-load-expected.txt:
+
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
         [Monterey] imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-double-write.https.html is a constant failure.

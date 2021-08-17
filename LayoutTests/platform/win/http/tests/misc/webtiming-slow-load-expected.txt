@@ -3,9 +3,9 @@ Verifies that requestStart and responseStart are available before the main docum
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL timing.requestStart should be non-zero. Was 0
-FAIL timing.responseStart should be non-zero. Was 0
-FAIL timing.responseEnd should be non-zero. Was 0
+PASS timing.requestStart is non-zero.
+PASS timing.responseStart is non-zero.
+PASS timing.responseEnd is non-zero.
 PASS successfullyParsed is true
 
 TEST COMPLETE
