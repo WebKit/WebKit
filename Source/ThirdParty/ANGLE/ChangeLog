@@ -1,3 +1,57 @@
+2021-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        [Metal ANGLE] Fix over-autorelease of rx::DisplayMtl::getMetalDeviceMatchingAttribute() and various Objective-C leaks
+        <https://webkit.org/b/229128>
+        <rdar://problem/81964007>
+
+        Reviewed by Alex Christensen.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        (rx::DisplayMtl::getMetalDeviceMatchingAttribute):
+        - Change to return mtl::AutoObjCPtr<> to make ownership clear.
+        (rx::DisplayMtl::mMetalDevice):
+        - No need to initialize to nil.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeImpl):
+        - Update for changes to getMetalDeviceMatchingAttribute().
+        (rx::DisplayMtl::getMetalDeviceMatchingAttribute):
+        - Change to return mtl::AutoObjCPtr<> to make ownership clear.
+        - Fix leak of `deviceList`, `externalGPUs`, `integratedGPUs`, and
+          `discreteGPUs`.
+        - Use mtl::adoptObjCObj<>() to prevent leak of
+          MTLCreateSystemDefaultDevice().
+
+        * src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm:
+        - Fix leak of `captureDescriptor` in two different if blocks.
+
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        - Fix leak of `funcConstants` in early return on error path.
+
+        * src/libANGLE/renderer/metal/ProvokingVertexHelper.mm:
+        (rx::ProvokingVertexHelper::getSpecializedShader):
+        - Fix leak of `fcValues`.
+
+        * src/libANGLE/renderer/metal/SurfaceMtl.mm:
+        - Fix leak of `captureDescriptor` in two different if blocks.
+
+        * src/libANGLE/renderer/metal/mtl_common.h:
+        (rx::mtl::WrappedObject::retainAssign):
+        - Move statement inside #if/#endif that isn't needed for ARC.
+        (rx::mtl::WrappedObject::unretainAssign): Add.
+        (rx::mtl::AutoObjCPtr::AutoObjCPtr): Add.
+        (rx::mtl::adoptObjCObj): Add.
+        - Add a helper method to adopt an Objective-C object to
+          eliminate the need to autorelease a +1 retained object before
+          an mtl::AutoObjCPtr<> object wraps it.  Modeled after
+          WTF::RetainPtr<> in WebKit.
+
+        * src/libANGLE/renderer/metal/mtl_state_cache.mm:
+        (rx::mtl::RenderPipelineCache::createRenderPipelineState):
+        (rx::mtl::ProvokingVertexComputePipelineCache::createComputePipelineState):
+        - Use adoptObjCObj<>() to fix potential leak on the early return
+          path since these methods return an mtl::AutoObjCPtr<>.
+
 2021-08-16  David Kilzer  <ddkilzer@apple.com>
 
         "make analyze" should run clang static analyzer in deep mode

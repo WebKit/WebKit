@@ -1041,15 +1041,15 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         }
         // Create pipeline state
         NSError *err = nil;
-        id<MTLRenderPipelineState> newState =
-            [metalDevice newRenderPipelineStateWithDescriptor:objCDesc error:&err];
+        auto newState =
+            adoptObjCObj([metalDevice newRenderPipelineStateWithDescriptor:objCDesc error:&err]);
         if (err)
         {
             context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
             return nil;
         }
 
-        return [newState ANGLE_MTL_AUTORELEASE];
+        return newState;
     }
 }
 
@@ -1233,15 +1233,15 @@ AutoObjCPtr<id<MTLComputePipelineState>> ProvokingVertexComputePipelineCache::cr
 
         // Convert to Objective-C desc:
         NSError *err = nil;
-        id<MTLComputePipelineState> newState =
-            [metalDevice newComputePipelineStateWithFunction:computeFunction error:&err];
+        auto newState =
+            adoptObjCObj([metalDevice newComputePipelineStateWithFunction:computeFunction error:&err]);
         if (err)
         {
             context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
             return nil;
         }
 
-        return [newState ANGLE_MTL_AUTORELEASE];
+        return newState;
     }
 }
 

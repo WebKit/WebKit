@@ -139,7 +139,7 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
-        mMetalDevice = [getMetalDeviceMatchingAttribute(display->getAttributeMap()) ANGLE_MTL_AUTORELEASE];
+        mMetalDevice = getMetalDeviceMatchingAttribute(display->getAttributeMap());
         //If we can't create a device, fail initialization.
         if(!mMetalDevice.get())
         {
@@ -244,30 +244,30 @@ egl::Error DisplayMtl::validateClientBuffer(const egl::Config *configuration,
 }
 
 
-id<MTLDevice> DisplayMtl::getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs)
+mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs)
 {
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     const std::string anglePreferredDevice = angle::GetEnvironmentVar(kANGLEPreferredDeviceEnv);
-    NSArray<id<MTLDevice>> *deviceList = MTLCopyAllDevices();
+    auto deviceList = mtl::adoptObjCObj(MTLCopyAllDevices());
     if (anglePreferredDevice != "")
     {
-        for (id<MTLDevice> device in deviceList)
+        for (id<MTLDevice> device in deviceList.get())
         {
             if ([device.name.lowercaseString
                     containsString:[NSString stringWithUTF8String:anglePreferredDevice.c_str()]
                                        .lowercaseString])
             {
                 NSLog(@"Using Metal Device: %@", [device name]);
-                return  device;
+                return device;
                 break;
             }
         }
     }
 
-    NSMutableArray<id<MTLDevice>> *externalGPUs = [[NSMutableArray alloc] init];
-    NSMutableArray<id<MTLDevice>> *integratedGPUs = [[NSMutableArray alloc] init];
-    NSMutableArray<id<MTLDevice>> *discreteGPUs = [[NSMutableArray alloc] init];
-    for (id <MTLDevice> device in deviceList) {
+    auto externalGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto integratedGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto discreteGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    for (id <MTLDevice> device in deviceList.get()) {
         if (device.removable)
         {
             [externalGPUs addObject:device];
@@ -286,22 +286,22 @@ id<MTLDevice> DisplayMtl::getMetalDeviceMatchingAttribute(const egl::AttributeMa
     if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE) == EGL_HIGH_POWER_ANGLE)
     {
         //Search for a discrete GPU first.
-        for (id<MTLDevice> device in discreteGPUs) {
+        for (id<MTLDevice> device in discreteGPUs.get()) {
             if(![device isHeadless])
                 return device;
         }
     }
     //If we've selected a low power device, look through integrated devices.
-    for (id<MTLDevice> device in integratedGPUs) {
+    for (id<MTLDevice> device in integratedGPUs.get()) {
         if(![device isHeadless])
             return device;
     }
     //If we selected a low power device and there's no low-power devices avaialble, return the first (default) device.
-    if(deviceList.count > 0)
+    if (deviceList.get().count > 0)
         return deviceList[0];
 #endif
     //If we can't find anything, or are on a platform that doesn't support power options, create a default device.
-    return MTLCreateSystemDefaultDevice();
+    return mtl::adoptObjCObj(MTLCreateSystemDefaultDevice());
 }
 
 

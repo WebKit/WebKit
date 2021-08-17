@@ -598,7 +598,7 @@ angle::Result ProgramMtl::getSpecializedShader(mtl::Context *context,
 
     mtl::TranslatedShaderInfo *translatedMslInfo = &mMslShaderTranslateInfo[shaderType];
     ProgramShaderObjVariantMtl *shaderVariant;
-    MTLFunctionConstantValues *funcConstants = nil;
+    mtl::AutoObjCObj<MTLFunctionConstantValues> funcConstants;
 
     if (shaderType == gl::ShaderType::Vertex)
     {
@@ -634,7 +634,7 @@ angle::Result ProgramMtl::getSpecializedShader(mtl::Context *context,
                                                        GetRasterizationDiscardEnabledConstName()];
             }
 
-            funcConstants = [[MTLFunctionConstantValues alloc] init];
+            funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
             [funcConstants setConstantValue:&emulateDiscard
                                        type:MTLDataTypeBool
                                    withName:discardEnabledStr];
@@ -672,7 +672,7 @@ angle::Result ProgramMtl::getSpecializedShader(mtl::Context *context,
                                                        GetCoverageMaskEnabledConstName()];
             }
 
-            funcConstants = [[MTLFunctionConstantValues alloc] init];
+            funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
             [funcConstants setConstantValue:&emulateCoverageMask
                                        type:MTLDataTypeBool
                                    withName:coverageMaskEnabledStr];
@@ -694,9 +694,8 @@ angle::Result ProgramMtl::getSpecializedShader(mtl::Context *context,
     // Create Metal shader object
     ANGLE_MTL_OBJC_SCOPE
     {
-        ANGLE_TRY(CreateMslShader(context, translatedMslInfo->metalLibrary, SHADER_ENTRY_NAME, funcConstants,
+        ANGLE_TRY(CreateMslShader(context, translatedMslInfo->metalLibrary, SHADER_ENTRY_NAME, funcConstants.get(),
                                   &shaderVariant->metalShader));
-        [funcConstants ANGLE_MTL_AUTORELEASE];
     }
 
     // Store reference to the translated source for easily querying mapped bindings later.

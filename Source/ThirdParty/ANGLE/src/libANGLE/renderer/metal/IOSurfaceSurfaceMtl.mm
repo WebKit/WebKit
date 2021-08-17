@@ -168,26 +168,26 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
 #    ifdef __MAC_10_15
     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
     {
-        MTLCaptureDescriptor *captureDescriptor = [[MTLCaptureDescriptor alloc] init];
-        captureDescriptor.captureObject         = metalDevice;
-        const std::string filePath              = GetMetalCaptureFile();
+        auto captureDescriptor                = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+        captureDescriptor.get().captureObject = metalDevice;
+        const std::string filePath            = GetMetalCaptureFile();
         if (filePath != "")
         {
             const std::string numberedPath =
                 filePath + std::to_string(gFrameCaptured - 1) + ".gputrace";
-            captureDescriptor.destination = MTLCaptureDestinationGPUTraceDocument;
-            captureDescriptor.outputURL =
+            captureDescriptor.get().destination = MTLCaptureDestinationGPUTraceDocument;
+            captureDescriptor.get().outputURL =
                 [NSURL fileURLWithPath:[NSString stringWithUTF8String:numberedPath.c_str()]
                            isDirectory:false];
         }
         else
         {
             // This will pause execution only if application is being debugged inside Xcode
-            captureDescriptor.destination = MTLCaptureDestinationDeveloperTools;
+            captureDescriptor.get().destination = MTLCaptureDestinationDeveloperTools;
         }
 
         NSError *error;
-        if (![captureManager startCaptureWithDescriptor:captureDescriptor error:&error])
+        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
         {
             NSLog(@"Failed to start capture, error %@", error);
         }
@@ -196,11 +196,11 @@ void StartFrameCapture(id<MTLDevice> metalDevice, id<MTLCommandQueue> metalCmdQu
 #    endif  // __MAC_10_15
         if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13))
     {
-        MTLCaptureDescriptor *captureDescriptor = [[MTLCaptureDescriptor alloc] init];
-        captureDescriptor.captureObject         = metalDevice;
+        auto captureDescriptor                = mtl::adoptObjCObj([[MTLCaptureDescriptor alloc] init]);
+        captureDescriptor.get().captureObject = metalDevice;
 
         NSError *error;
-        if (![captureManager startCaptureWithDescriptor:captureDescriptor error:&error])
+        if (![captureManager startCaptureWithDescriptor:captureDescriptor.get() error:&error])
         {
             NSLog(@"Failed to start capture, error %@", error);
         }

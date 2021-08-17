@@ -175,10 +175,10 @@ class DisplayMtl : public DisplayImpl
     void initializeFeatures();
     void initializeLimitations();
     EGLenum EGLDrawingBufferTextureTarget();
-    id<MTLDevice> getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs);
+    mtl::AutoObjCPtr<id<MTLDevice>> getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs);
     angle::Result initializeShaderLibrary();
 
-    mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice = nil;
+    mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice;
     uint32_t mMetalDeviceVendorId                = 0;
 
     mtl::CommandQueue mCmdQueue;
