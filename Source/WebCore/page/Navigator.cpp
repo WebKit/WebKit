@@ -143,15 +143,19 @@ bool Navigator::canShare(Document& document, const ShareData& data)
 
 void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPromise>&& promise)
 {
-    if (!canShare(document, data)) {
-        promise->reject(TypeError);
+    if (m_hasPendingShare) {
+        promise->reject(NotAllowedError);
         return;
     }
 
     auto* window = this->window();
-    // Note that the specification does not indicate we should consume user activation. We are intentionally stricter here.
-    if (!window || !window->consumeTransientActivation() || m_hasPendingShare) {
+    if (!window || !window->consumeTransientActivation()) {
         promise->reject(NotAllowedError);
+        return;
+    }
+
+    if (!canShare(document, data)) {
+        promise->reject(TypeError);
         return;
     }
 
