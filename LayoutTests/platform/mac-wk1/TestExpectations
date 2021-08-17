@@ -1377,7 +1377,10 @@ webkit.org/b/228704 imported/w3c/web-platform-tests/mathml/relations/html5-tree/
 webkit.org/b/229058 imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.window.html [ Pass Failure ]
 
 #rdar://82039288 ([Monterey wk1 Debug] inspector/timeline/timeline-event-TimerInstall.html is a flaky crash)
-inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ]
+inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ] 
+
+#rdar://82039967 [ Monterey Debug ] inspector/css/getMatchedStylesForNodeMarkerPseudoId.html is a flaky failure)
+inspector/css/getMatchedStylesForNodeMarkerPseudoId.html [ Pass Failure ]
 
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]

@@ -1,5 +1,14 @@
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
+        [Monterey wk1 Debug Intel] inspector/css/getMatchedStylesForNodeMarkerPseudoId.html is a flaky failure).
+        rdar://82039967.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
         [Monterey wk1 Debug] inspector/timeline/timeline-event-TimerInstall.html is a flaky crash.
         rdar://82039288.
 
