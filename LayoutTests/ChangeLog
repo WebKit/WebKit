@@ -1,5 +1,16 @@
 2021-08-16  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Update baselines after r277970.
+
+        This change removes the remaining test failures filed under webkit.org/b/186638.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-combining-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt:
+
+2021-08-16  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB][GTK] Unreviewed test gardening. Reassign bugs filed under webkit.org/b/186638.
 
         webkit.org/b/186638 was used to track tests failing in EWS-GTK, but
