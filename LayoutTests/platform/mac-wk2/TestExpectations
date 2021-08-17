@@ -1585,5 +1585,8 @@ performance-api/performance-observer-no-document-leak.html [ Pass Crash ]
 #rdar://82036119 ([Monterey wk2 Release] performance-api/paint-timing/paint-timing-with-worker.html is a flaky crash)
 performance-api/paint-timing/paint-timing-with-worker.html [ Pass Crash ]
 
+#rdar://82043074 ([Star wk2 Debug arm64,Sky/AzulE wk2 Guard-Malloc] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure)
+imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
