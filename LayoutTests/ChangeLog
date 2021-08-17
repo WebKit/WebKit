@@ -1,3 +1,12 @@
+2021-08-17  Eric Hutchison  <ehutchison@apple.com>
+
+        [Monterey wk2 Release] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html is flaky image-only fail.
+        rdar://82034073.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-17  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GTK] Mark webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html as flaky
