@@ -1,3 +1,21 @@
+2021-08-17  Saam Barati  <sbarati@apple.com>
+
+        Add an option for canonicalizePrePostIncrements
+        https://bugs.webkit.org/show_bug.cgi?id=229211
+        <rdar://problem/82050126>
+
+        Reviewed by Mark Lam.
+
+        The current phase has bugs. Let's disable it for now until the bugs
+        are fixed. See discussion about the bugs I spotted in:
+        https://bugs.webkit.org/show_bug.cgi?id=228538
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/testb3_3.cpp:
+        (addShrTests):
+        * runtime/OptionsList.h:
+
 2021-08-16  Mark Lam  <mark.lam@apple.com>
 
         Ensure that unused LLInt opcodes are not inadvertently used.

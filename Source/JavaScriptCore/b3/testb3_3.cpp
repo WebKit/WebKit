@@ -4097,15 +4097,17 @@ void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
 
-    RUN(testLoadPreIndex32());
-    RUN(testLoadPreIndex64());
-    RUN(testLoadPostIndex32());
-    RUN(testLoadPostIndex64());
+    if (Options::useB3CanonicalizePrePostIncrements()) {
+        RUN(testLoadPreIndex32());
+        RUN(testLoadPreIndex64());
+        RUN(testLoadPostIndex32());
+        RUN(testLoadPostIndex64());
 
-    RUN(testStorePreIndex32());
-    RUN(testStorePreIndex64());
-    RUN(testStorePostIndex32());
-    RUN(testStorePostIndex64());
+        RUN(testStorePreIndex32());
+        RUN(testStorePreIndex64());
+        RUN(testStorePostIndex32());
+        RUN(testStorePostIndex64());
+    }
 }
 
 #endif // ENABLE(B3_JIT)
