@@ -47,7 +47,8 @@ using GUniquePtr = std::unique_ptr<T, GPtrDeleter<T>>;
     macro(GKeyFile, g_key_file_free) \
     macro(char*, g_strfreev) \
     macro(GVariantIter, g_variant_iter_free) \
-    macro(GVariantType, g_variant_type_free)
+    macro(GVariantType, g_variant_type_free) \
+    macro(GMarkupParseContext, g_markup_parse_context_free)
 
 #define WTF_DEFINE_GPTR_DELETER(typeName, deleterFunc) \
     template<> struct GPtrDeleter<typeName> \

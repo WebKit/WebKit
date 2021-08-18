@@ -50,12 +50,12 @@ public:
             GST_CAT_LEVEL_LOG(webkit_media_common_encryption_decrypt_debug_category, GST_LEVEL_ERROR, nullptr, "cannot map %s protection data", systemId.utf8().data());
             ASSERT_NOT_REACHED();
         }
-        m_payload = mappedInitData->createSharedBuffer();
+        m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
     }
 
     InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
         : m_systemId(systemId)
-        , m_payload(WTFMove(payload))
+        , m_payload(extractCencIfNeeded(WTFMove(payload)))
     {
     }
 
@@ -85,6 +85,8 @@ public:
 #endif
         return "cenc"_s;
     }
+
+    static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
 
 private:
     String m_systemId;

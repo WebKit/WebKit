@@ -1,3 +1,12 @@
+2021-08-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Try to parse XML init datas that could possibly come from MPD manifests
+        https://bugs.webkit.org/show_bug.cgi?id=229145
+
+        Reviewed by Alicia Boya Garcia.
+
+        * wtf/glib/GUniquePtr.h: Added deleter for GMarkupParseContext.
+
 2021-08-16  Alex Christensen  <achristensen@webkit.org>
 
         Enable PerformanceNavigationAPI by default
