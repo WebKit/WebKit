@@ -1,3 +1,52 @@
+2021-08-18  Martin Robinson  <mrobinson@webkit.org>
+
+        [Flatpak SDK] Increase the startup performance of webkit-flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=229185
+
+        Reviewed by Philippe Normand.
+
+        Improve flatpakutils.py by ensuring that we don't make redundant
+        calls to flatpak during initialization of the data structures. This
+        saves 5 seconds on every call to build-webkit and run-webkit-tests.
+
+        Before:
+            $ time ./Tools/Scripts/webkit-flatpak -c true
+            real    0m6,297s
+            user    0m0,786s
+            sys     0m0,513s
+
+        After:
+            $ time ./Tools/Scripts/webkit-flatpak -c true
+            real    0m1,243s
+            user    0m0,375s
+            sys     0m0,162s
+
+        * flatpak/flatpakutils.py:
+        (FlatpakPackages.__init__): Separate the update into another
+        method so that it can be called directly when a package is installed.
+        Add new packages directly to self.packages.
+        (FlatpakRepos.__init__): Ensure that we only update our repositories
+        and package list once we've initialized our list of repositories.
+        (FlatpakRepos.add): Return True if this method actually changed anything
+        and accept a parameter determining whether an update is done to
+        the repository and package list.
+        (FlatpakRepos.is_package_installed): Added this method which replaces
+        FlatpakRepo.is_app_installed.
+        (FlatpakRepo.__init__): Remove the app registry because it is duplicated
+        by FlatpakPackages.
+        (FlatpakPackage.is_installed): Now call FlatpakRepos.is_package_installed.
+        (WebkitFlatpak._reset_repository): Set up both repositories here and
+        pass then as part of the FlatpakRepos constructor.
+        (WebkitFlatpak.main): Separate out the check which deletes the Flatpak
+        repository from the one that checks if the packages are installed. This
+        makes sure we don't install packages and then immediately delete them.
+        (WebkitFlatpak.check_installed_packages): rename _get_packages to _get_dependency_packages
+        in order to make it clear that it doesn't return installed packages.
+        (WebkitFlatpak._get_dependency_packages): Ditto.
+        (WebkitFlatpak.install_all): Ditto.
+        (FlatpakRepo.is_app_installed): Deleted.
+        (WebkitFlatpak._get_packages): Deleted.
+
 2021-08-17  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Return SourceFileLoader in find_module

@@ -228,10 +228,11 @@ class FlatpakPackages(FlatpakObject):
 
     def __init__(self, repos, user=True):
         FlatpakObject.__init__(self, user=user)
-
         self.repos = repos
+        self.update()
 
-        packs = []
+    def update(self):
+        self.packages = []
         out = self.flatpak("list", "--columns=application,arch,branch,origin", "-a", gather_output=True)
         package_defs = [line for line in out.split("\n") if line]
         for package_def in package_defs:
@@ -239,10 +240,7 @@ class FlatpakPackages(FlatpakObject):
 
             # If installed from a file, the package is in no repo
             repo = self.repos.repos.get(origin)
-
-            packs.append(FlatpakPackage(name, branch, repo, arch))
-
-        self.packages = packs
+            self.packages.append(FlatpakPackage(name, branch, repo, arch))
 
     def __iter__(self):
         for package in self.packages:
@@ -251,10 +249,17 @@ class FlatpakPackages(FlatpakObject):
 
 class FlatpakRepos(FlatpakObject):
 
-    def __init__(self, user=True):
+    def __init__(self, repos, user=True):
         FlatpakObject.__init__(self, user=user)
-        self.repos = {}
         self.update()
+
+        updated = False
+        for repo in repos:
+            updated = self.add(repo, update=False) or updated
+
+        # Only fetch the remote and package list again if we updated anything.
+        if updated:
+            self.update()
 
     def update(self):
         self.repos = {}
@@ -271,35 +276,46 @@ class FlatpakRepos(FlatpakObject):
 
         self.packages = FlatpakPackages(self)
 
-    def add(self, repo, override=True):
+    def add(self, repo, update=True, override=True):
         try:
+            repo.repos = self
+
             same_name = None
             for name, tmprepo in self.repos.items():
                 if repo.url == tmprepo.url:
-                    return tmprepo
+                    return False
                 elif repo.name == name:
                     same_name = tmprepo
 
             if same_name:
-                if override:
+                if override and same_name.url != repo.url:
                     self.flatpak("remote-modify", repo.name, "--url=" + repo.url)
                     same_name.url = repo.url
-
-                    return same_name
+                    return True
                 else:
-                    return None
+                    return False
+
+            args = ["remote-add", repo.name, "--if-not-exists"]
+            if repo.repo_file:
+                args.extend(["--from", repo.repo_file.name])
             else:
-                args = ["remote-add", repo.name, "--if-not-exists"]
-                if repo.repo_file:
-                    args.extend(["--from", repo.repo_file.name])
-                else:
-                    args.extend(["--no-gpg-verify", repo.url])
-                self.flatpak(*args, comment="Adding repo %s" % repo.name)
-
-            repo.repos = self
-            return repo
+                args.extend(["--no-gpg-verify", repo.url])
+            self.flatpak(*args, comment="Adding repo %s" % repo.name)
+            return True
         finally:
-            self.update()
+            if update:
+                self.packages = FlatpakPackages(self)
+
+    def is_package_installed(self, name, branch=None, arch=None):
+        for package in self.packages:
+            if name != package.name:
+                continue
+            if branch and branch != package.branch:
+                continue
+            if arch and arch != package.arch:
+                continue
+            return True
+        return False
 
 
 class FlatpakRepo(FlatpakObject):
@@ -324,21 +340,6 @@ class FlatpakRepo(FlatpakObject):
                 self.url = repo.get("Flatpak Repo", "Url")
         else:
             assert url
-
-        self._app_registry = {}
-        output = self.flatpak("list", "--columns=application,branch", "-a", gather_output=True)
-        for line in output.splitlines():
-            name, branch = line.split("\t")
-            self._app_registry[name] = branch
-
-    def is_app_installed(self, name, branch=None):
-        if branch:
-            try:
-                return self._app_registry[name] == branch
-            except KeyError:
-                return False
-        else:
-            return name in self._app_registry.keys()
 
     @property
     def repo_file(self):
@@ -373,15 +374,10 @@ class FlatpakPackage(FlatpakObject):
         return "%s/%s/%s" % (self.name, self.arch, self.branch)
 
     def is_installed(self, branch):
+        # Bundles installed from files do not have repositories.
         if not self.repo:
-            # Bundle installed from file
             return True
-
-        for package in self.repo.repos.packages:
-            if package.name == self.name and package.branch == branch and package.arch == self.arch:
-                return True
-
-        return False
+        return self.repo.repos.is_package_installed(self.name, branch, self.arch)
 
     def install(self):
         if not self.repo:
@@ -391,6 +387,7 @@ class FlatpakPackage(FlatpakObject):
         args = ("install", self.repo.name, self.name, "--reinstall", branch)
         comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + branch
         self.flatpak(*args, comment=comment)
+        self.repo.repos.packages.update()
 
     def update(self):
         if not self.is_installed(self.branch):
@@ -603,13 +600,16 @@ class WebkitFlatpak:
         return True
 
     def _reset_repository(self):
-        self.repos = FlatpakRepos()
         url = "https://software.igalia.com/webkit-sdk-repo/"
         repo_file = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
         if self.user_repo:
             url = "file://%s" % self.user_repo
             repo_file = None
-        self.sdk_repo = self.repos.add(FlatpakRepo("webkit-sdk", url=url, repo_file=repo_file))
+
+        self.sdk_repo = FlatpakRepo("webkit-sdk", url=url, repo_file=repo_file)
+        self.flathub_repo = FlatpakRepo("flathub", url="https://dl.flathub.org/repo/",
+                                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo")
+        self.repos = FlatpakRepos([self.sdk_repo, self. flathub_repo])
 
     def setup_builddir(self):
         if os.path.exists(os.path.join(self.flatpak_build_path, "metadata")):
@@ -986,17 +986,21 @@ class WebkitFlatpak:
             repo.flatpak("update", comment="Updating Flatpak %s environment" % self.build_type)
             regenerate_toolchains = (repo.version("org.webkit.Sdk") != version_before_update) or not self.check_toolchains_generated()
 
-            for package in self._get_packages():
-                if package.name.startswith("org.webkit") and repo.is_app_installed(package.name) \
-                   and not repo.is_app_installed(package.name, branch=self.sdk_branch):
+            # If we have an out-of-date package, simply remove the entire flatpak directory and start over.
+            for package in self._get_dependency_packages():
+                if package.name.startswith("org.webkit") \
+                   and self.repos.is_package_installed(package.name) \
+                   and not self.repos.is_package_installed(package.name, branch=self.sdk_branch):
                     Console.message("New SDK version available, removing local UserFlatpak directory before switching to new version")
                     shutil.rmtree(self.flatpak_build_path)
                     self._reset_repository()
-                    regenerate_toolchains = True
                     break
-                elif not repo.is_app_installed(package.name):
+
+            for package in self._get_dependency_packages():
+                if not self.repos.is_package_installed(package.name):
                     package.install()
                     regenerate_toolchains = True
+
         else:
             regenerate_toolchains = self.regenerate_toolchains
 
@@ -1100,7 +1104,7 @@ class WebkitFlatpak:
             return (relative_filename, sccache_toolchains)
 
     def check_installed_packages(self):
-        for package in self._get_packages():
+        for package in self._get_dependency_packages():
             if package.name.startswith("org.webkit") and not package.is_installed(self.sdk_branch):
                 Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
                 return False
@@ -1128,7 +1132,7 @@ class WebkitFlatpak:
 
         return 0
 
-    def _get_packages(self):
+    def _get_dependency_packages(self):
         arch = platform.machine()
         self.runtime = FlatpakPackage("org.webkit.Platform", self.sdk_branch,
                                       self.sdk_repo, arch)
@@ -1137,9 +1141,6 @@ class WebkitFlatpak:
         packages = [self.runtime, self.sdk]
         packages.append(FlatpakPackage('org.webkit.Sdk.Debug', self.sdk_branch,
                                        self.sdk_repo, arch))
-
-        self.flathub_repo = self.repos.add(FlatpakRepo("flathub", url="https://dl.flathub.org/repo/",
-                                                       repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
 
         fdo_branch = "20.08"
         extensions = ("rust-stable", "llvm11")
@@ -1153,7 +1154,7 @@ class WebkitFlatpak:
         if os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")):
             return
         Console.message("Installing %s dependencies in %s", self.build_type, self.flatpak_build_path)
-        for package in self._get_packages():
+        for package in self._get_dependency_packages():
             if not package.is_installed(self.sdk_branch):
                 package.install()
 
