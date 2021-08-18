@@ -33,5 +33,4 @@
 ] interface Crypto {
     [Conditional=WEB_CRYPTO, SecureContext] readonly attribute SubtleCrypto subtle;
     ArrayBufferView getRandomValues([ReturnValue] ArrayBufferView array);
-    [SecureContext] DOMString randomUUID();
 };

@@ -1,5 +1,17 @@
 2021-08-18  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r281206.
+
+        Reverting because of branching, will re-land soon
+
+        Reverted changeset:
+
+        "Implement Crypto.randomUUID()"
+        https://bugs.webkit.org/show_bug.cgi?id=229240
+        https://commits.webkit.org/r281206
+
+2021-08-18  Chris Dumez  <cdumez@apple.com>
+
         Implement Crypto.randomUUID()
         https://bugs.webkit.org/show_bug.cgi?id=229240
 
