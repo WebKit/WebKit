@@ -1,3 +1,12 @@
+2021-08-17  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html is a flaky timeout since r278004
+        https://bugs.webkit.org/show_bug.cgi?id=229219
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Kept alive NetworkResourceLoaders should be cancelled by NetworkLoad::didCompleteWithError on PolicyAction::Ignore of didReceiveResponse
