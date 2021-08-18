@@ -1,3 +1,13 @@
+2021-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] Kept alive NetworkResourceLoaders should be cancelled by NetworkLoad::didCompleteWithError on PolicyAction::Ignore of didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=228095
+        <rdar://problem/81393898>
+
+        Unreviewed test failure fix.
+
+        * http/tests/fetch/resources/get-set-temp-file.py: chmod +x.
+
 2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk2 Debug ] http/wpt/webrtc/sframe-transform-error.html is a flaky failure.
