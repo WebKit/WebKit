@@ -1,3 +1,12 @@
+2021-08-18  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ MacOS EWS ] inspector/canvas/recording-2d-memoryLimit.html is flaky crashing..
+        https://bugs.webkit.org/show_bug.cgi?id=229237
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-18  Martin Robinson  <mrobinson@webkit.org>
 
         position: sticky with display: inline-block

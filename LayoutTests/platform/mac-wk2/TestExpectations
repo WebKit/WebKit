@@ -1534,6 +1534,7 @@ webkit.org/b/228256 [ Debug ] inspector/canvas/create-context-webgl.html [ Pass 
 webkit.org/b/229043 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-2d-full.html [ Pass Crash ]
+webkit.org/b/229237 inspector/canvas/recording-2d-memoryLimit.html [ Pass Crash ]
 
 webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html [ Pass Timeout ]
 
