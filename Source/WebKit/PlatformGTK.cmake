@@ -10,12 +10,12 @@ file(MAKE_DIRECTORY ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR})
 file(MAKE_DIRECTORY ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION})
 file(MAKE_DIRECTORY ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/webkit2gtk-webextension)
 
+configure_file(Shared/glib/BuildRevision.h.in ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/BuildRevision.h)
 configure_file(UIProcess/API/gtk/WebKitVersion.h.in ${WebKit2Gtk_DERIVED_SOURCES_DIR}/webkit2/WebKitVersion.h)
+configure_file(gtk/webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE} @ONLY)
+configure_file(gtk/webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FILE} @ONLY)
 
 if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
-    configure_file(gtk/webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE} @ONLY)
-    configure_file(gtk/webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FILE} @ONLY)
-    configure_file(Shared/glib/BuildRevision.h.in ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/BuildRevision.h @ONLY)
     add_custom_target(WebKit-build-revision
         ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/BuildRevision.h ${WebKit2_PKGCONFIG_FILE} ${WebKit2WebExtension_PKGCONFIG_FILE}
         DEPENDS ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/BuildRevision.h ${WebKit2_PKGCONFIG_FILE} ${WebKit2WebExtension_PKGCONFIG_FILE}
@@ -23,10 +23,6 @@ if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     list(APPEND WebKit_DEPENDENCIES
         WebKit-build-revision
     )
-else ()
-    configure_file(gtk/webkit2gtk.pc.in ${WebKit2_PKGCONFIG_FILE})
-    configure_file(gtk/webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FILE})
-    configure_file(Shared/glib/BuildRevision.h.in ${WebKit2Gtk_FRAMEWORK_HEADERS_DIR}/BuildRevision.h)
 endif ()
 
 add_definitions(-DBUILDING_WEBKIT)

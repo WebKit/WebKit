@@ -70,15 +70,15 @@ def main(args):
             with open(in_file) as fd:
                 for line in fd.readlines():
                     if line.startswith("revision"):
-                        line = "revision=${BUILD_REVISION}\n"
+                        line = "revision=@BUILD_REVISION@\n"
                     lines.append(line)
             data = "".join(lines)
         else:
-            print("Support for expanding $BUILD_REVISION in {} is missing.".format(in_file))
+            print("Support for expanding @BUILD_REVISION@ in {} is missing.".format(in_file))
             return 1
 
         with open(in_file, 'w') as fd:
-            fd.write(data.replace('${BUILD_REVISION}', build_revision))
+            fd.write(data.replace('@BUILD_REVISION@', build_revision))
 
     return 0
 

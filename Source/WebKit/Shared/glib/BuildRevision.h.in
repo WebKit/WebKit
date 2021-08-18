@@ -25,4 +25,4 @@
 
 #pragma once
 
-#define BUILD_REVISION "${BUILD_REVISION}"
+#define BUILD_REVISION "@BUILD_REVISION@"

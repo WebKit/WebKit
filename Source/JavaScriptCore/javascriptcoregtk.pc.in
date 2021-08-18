@@ -2,7 +2,7 @@ prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=${prefix}/include
-revision=${BUILD_REVISION}
+revision=@BUILD_REVISION@
 
 Name: JavaScriptCoreGTK+
 Description: GTK+ version of the JavaScriptCore engine

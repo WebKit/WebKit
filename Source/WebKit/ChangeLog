@@ -1,3 +1,21 @@
+2021-08-18  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r280382): [GTK] 2.33.3 does not build with gtk-doc enabled, installs broken pkg-config files
+        https://bugs.webkit.org/show_bug.cgi?id=229152
+
+        Reviewed by Philippe Normand.
+
+        CMake is expanding templates in the pkg-config files that are not supposed to be expanded.
+        Oops! Let's switch back to using @SVN_REVISION@ instead of ${SVN_REVISION} as the template
+        for inserting the SVN revision into the pkg-config file, so we can tell CMake to leave the
+        ${} variables alone.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * Shared/glib/BuildRevision.h.in:
+        * gtk/webkit2gtk-web-extension.pc.in:
+        * gtk/webkit2gtk.pc.in:
+
 2021-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (iOS 15): DoubleDown Casino app won't load past launch page

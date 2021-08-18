@@ -12,6 +12,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_JSC_DIR})
 
+configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h)
 configure_file(UIProcess/API/wpe/WebKitVersion.h.in ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h)
 configure_file(wpe/wpe-webkit.pc.in ${WPE_PKGCONFIG_FILE} @ONLY)
 configure_file(wpe/wpe-web-extension.pc.in ${WPEWebExtension_PKGCONFIG_FILE} @ONLY)
@@ -19,7 +20,6 @@ configure_file(wpe/wpe-webkit-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit-$
 configure_file(wpe/wpe-web-extension-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}-uninstalled.pc @ONLY)
 
 if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
-    configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h @ONLY)
     add_custom_target(WebKit-build-revision
         ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
         DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h
@@ -27,8 +27,6 @@ if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     list(APPEND WebKit_DEPENDENCIES
         WebKit-build-revision
     )
-else ()
-    configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h)
 endif ()
 
 add_definitions(-DWEBKIT2_COMPILATION)

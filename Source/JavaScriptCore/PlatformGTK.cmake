@@ -3,8 +3,9 @@ include(inspector/remote/GLib.cmake)
 
 set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
 
+configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE} @ONLY)
+
 if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
-    configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE} @ONLY)
     add_custom_target(JavaScriptCore-build-revision
         ${PYTHON_EXECUTABLE} "${TOOLS_DIR}/glib/apply-build-revision-to-files.py" ${JavaScriptCore_PKGCONFIG_FILE}
         DEPENDS ${JavaScriptCore_PKGCONFIG_FILE}
@@ -12,8 +13,6 @@ if (EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     list(APPEND JavaScriptCore_DEPENDENCIES
         JavaScriptCore-build-revision
     )
-else ()
-    configure_file(javascriptcoregtk.pc.in ${JavaScriptCore_PKGCONFIG_FILE})
 endif ()
 
 install(FILES "${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc"
