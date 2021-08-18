@@ -456,12 +456,6 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 - (CGSize)_legacy_sizeWithFont:(UIFont *)font minFontSize:(CGFloat)minFontSize actualFontSize:(CGFloat *)actualFontSize forWidth:(CGFloat)width lineBreakMode:(NSLineBreakMode)lineBreakMode;
 @end
 
-@interface UIGestureRecognizer ()
-#if PLATFORM(IOS) && !defined(__IPHONE_13_4)
-@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
-#endif
-@end
-
 #if HAVE(UI_HOVER_EVENT_RESPONDABLE)
 
 @protocol _UIHoverEventRespondable <NSObject>

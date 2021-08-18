@@ -1,3 +1,14 @@
+2021-08-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unneeded UIKitSPI declarations
+        https://bugs.webkit.org/show_bug.cgi?id=210075
+
+        Reviewed by Wenson Hsieh.
+
+        Remove unneeded feature define.
+
+        * wtf/PlatformHave.h:
+
 2021-08-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Try to parse XML init datas that could possibly come from MPD manifests

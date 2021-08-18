@@ -1,3 +1,21 @@
+2021-08-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unneeded UIKitSPI declarations
+        https://bugs.webkit.org/show_bug.cgi?id=210075
+
+        Reviewed by Wenson Hsieh.
+
+        No code changes, just using the now fully public API.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _doubleTapRecognizedForDoubleClick:]):
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (gestureRecognizerModifierFlags): Deleted.
+
 2021-08-18  Youenn Fablet  <youenn@apple.com>
 
         [MacOS] Use com.apple.webkit.microphone extension to gate microphone access in GPUProcess sandbox
