@@ -1,3 +1,24 @@
+2021-08-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash under JSIntersectionObserverCallback::handleEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=229196
+        <rdar://82016054>
+
+        Reviewed by Geoffrey Garen.
+
+        Early return in IntersectionObserver::notify() if the callback has already been destroyed.
+        This is not supposed to happen as we're supposed to be keeping the JSIntersectionObserver
+        wrapper alive as long as the IntersectionObserver may fire events, which should keep the
+        callback alive too. However, despite Ryosuke's fix in r280549, the crash is still happening
+        in the wild. To address the crash, I am simply doing an early return for now, similarly to
+        what we already do in MutationObserver::deliver(), while keeping a debug assertion around
+        in hope of finding the root cause at some point.
+
+        No new tests, we do not not how this is happening yet.
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::notify):
+
 2021-08-18  Martin Robinson  <mrobinson@webkit.org>
 
         position: sticky with display: inline-block

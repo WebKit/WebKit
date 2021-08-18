@@ -124,6 +124,11 @@ void ResizeObserver::deliverObservations()
     m_activeObservations.clear();
     auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
 
+    // FIXME: The JSResizeObserver wrapper should be kept alive as long as the resize observer can fire events.
+    ASSERT(m_callback->hasCallback());
+    if (!m_callback->hasCallback())
+        return;
+
     auto* context = m_callback->scriptExecutionContext();
     if (!context)
         return;

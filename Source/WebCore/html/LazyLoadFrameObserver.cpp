@@ -43,6 +43,8 @@ public:
     }
 
 private:
+    bool hasCallback() const final { return true; }
+
     CallbackResult<void> handleEvent(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
     {
         ASSERT(!entries.isEmpty());

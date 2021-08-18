@@ -273,11 +273,16 @@ void IntersectionObserver::notify()
         return;
     }
 
+    auto takenRecords = takeRecords();
+
+    // FIXME: The JSIntersectionObserver wrapper should be kept alive as long as the intersection observer can fire events.
+    ASSERT(m_callback->hasCallback());
+    if (!m_callback->hasCallback())
+        return;
+
     auto* context = m_callback->scriptExecutionContext();
     if (!context)
         return;
-
-    auto takenRecords = takeRecords();
 
     InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_s);
     m_callback->handleEvent(*this, WTFMove(takenRecords.records), *this);
