@@ -39,8 +39,9 @@ from webkitcorepy.terminal import Terminal
 from webkitcorepy.credentials import credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
+from webkitcorepy.call_by_need import CallByNeed
 
-version = Version(0, 8, 3)
+version = Version(0, 9, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
