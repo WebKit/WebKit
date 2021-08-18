@@ -1,3 +1,13 @@
+2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Win EWS ] Rebaselining 2 http/tests/security/contentSecurityPolicy/worker-* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=229216
+
+        Unreviewed test gardening.
+
+        * platform/win/http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+        * platform/win/http/tests/security/contentSecurityPolicy/worker-csp-importScripts-redirect-cross-origin-blocked-expected.txt:
+
 2021-08-17  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac Guard-Malloc] imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2.html is a flaky failure.
