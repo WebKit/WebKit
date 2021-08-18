@@ -118,11 +118,10 @@ void generateToAir(Procedure& procedure)
     lowerMacrosAfterOptimizations(procedure);
     legalizeMemoryOffsets(procedure);
     moveConstants(procedure);
-    eliminateDeadCode(procedure);
 
-    if (procedure.optLevel() >= 2)
+    if (Options::useB3CanonicalizePrePostIncrements() && procedure.optLevel() >= 2)
         canonicalizePrePostIncrements(procedure);
-
+    eliminateDeadCode(procedure);
     // FIXME: We should run pureCSE here to clean up some platform specific changes from the previous phases.
     // https://bugs.webkit.org/show_bug.cgi?id=164873
 
