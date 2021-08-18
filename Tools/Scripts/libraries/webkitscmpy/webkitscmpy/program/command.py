@@ -122,7 +122,7 @@ class FilteredCommand(object):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            more = subprocess.Popen([which('more')] + ['-F', '-R'] if platform.system() == 'Darwin' else [], stdin=child.stdout)
+            more = subprocess.Popen([which('more')] + (['-F', '-R'] if platform.system() == 'Darwin' else []), stdin=child.stdout)
 
             try:
                 while more.poll() is None and not child.poll():
