@@ -451,3 +451,5 @@ fast/events/contextmenu-lookup-action-for-image.html [ Failure ]
 http/wpt/fetch/disable-speculative-load-for-xhr-and-fetch-loads.html [ Failure ]
 http/wpt/fetch/dnt-header-after-redirection.html [ Failure ]
 http/wpt/fetch/inspect-preflight.html [ Failure ]
+
+webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]

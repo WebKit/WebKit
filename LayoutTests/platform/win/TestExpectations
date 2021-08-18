@@ -4677,3 +4677,5 @@ webkit.org/b/229215 http/tests/security/no-javascript-refresh-percent-escaped.py
 
 accessibility/selected-state-changed-notifications.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
+
+webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
