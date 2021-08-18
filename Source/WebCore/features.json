@@ -93,6 +93,17 @@
         "description": "Allows content to specify that an element’s subtree is independent of the rest of the page to allow for optimizations by the browser."
     },
     {
+        "name": "CSS Custom Highlight API Module Level 1",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://drafts.csswg.org/css-highlight-api-1/",
+        "keywords": ["css pseudo-element", "highlight"],
+        "category": "css",
+        "description": "A mechanism for styling arbitrary ranges of a document identified by script."
+    },
+    {
         "name": "CSS Font Display",
         "status": {
             "status": "Supported",
