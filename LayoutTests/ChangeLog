@@ -1,3 +1,12 @@
+2021-08-18  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac wk1] css/css-position/position-relative-table* tests fail.
+        https://bugs.webkit.org/show_bug.cgi?id=203449.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-18  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS EWS ] inspector/canvas/recording-2d-memoryLimit.html is flaky crashing..
