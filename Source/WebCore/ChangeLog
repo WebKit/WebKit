@@ -1,3 +1,16 @@
+2021-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Update feature statuses in features.json
+        https://bugs.webkit.org/show_bug.cgi?id=229212
+
+        Reviewed by Wenson Hsieh.
+        
+        Update the status of various features in features.json to reflect their current state.
+
+        Remove `"enabled-by-default": true` from features that are marked as Supported.
+
+        * features.json:
+
 2021-08-18  Megan Gardner  <megan_gardner@apple.com>
 
         Add Highlight API to features.json
