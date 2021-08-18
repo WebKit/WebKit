@@ -1,5 +1,14 @@
 2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ MacOS wk2 Debug ] http/wpt/webrtc/sframe-transform-error.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229206
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-17  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ Win EWS ] Rebaselining 2 http/tests/security/contentSecurityPolicy/worker-* tests.
         https://bugs.webkit.org/show_bug.cgi?id=229216
 
