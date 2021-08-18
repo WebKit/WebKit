@@ -933,8 +933,8 @@
             domains))
 
 ;; Media capture, microphone access
-;; FIXME: make device-microphone access gated by the "com.apple.webkit.microphone" extension.
-(allow device-microphone)
+(with-filter (extension "com.apple.webkit.microphone")
+    (allow device-microphone))
 
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")

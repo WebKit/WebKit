@@ -1,3 +1,18 @@
+2021-08-18  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Use com.apple.webkit.microphone extension to gate microphone access in GPUProcess sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=229238
+
+        Reviewed by Eric Carlson.
+
+        Manually tested.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        Align to iOS and only allow microphone access in sandbox if com.apple.webkit.microphone is sent to GPUProcess.
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+        Do audio capture in UIProcess for non Safari applications until rdar://problem/29448368 is fixed.
+
 2021-08-18  Sihui Liu  <sihui_liu@apple.com>
 
         Do not terminate relaunched network process when getting network process connection

@@ -190,6 +190,12 @@ bool defaultUseGPUProcessForWebGLEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
+#if PLATFORM(MAC)
+    // FIXME: Enable GPU process audio capture when <rdar://problem/29448368> is fixed.
+    if (!WebCore::MacApplication::isSafari())
+        return false;
+#endif
+
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
     bool defaultValue = true;
 #else
