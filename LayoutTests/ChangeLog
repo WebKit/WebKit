@@ -1,3 +1,17 @@
+2021-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a layout test for webkit.org/b/229200
+        https://bugs.webkit.org/show_bug.cgi?id=229222
+        rdar://81636256
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to exercise the hang fixed in bug #229200. This test can be manually run by opening it in
+        browser and verifying that the page does not hang (and outputs the expected PASS messages).
+
+        * fast/canvas/draw-text-repeatedly-into-disconnected-canvas-expected.txt: Added.
+        * fast/canvas/draw-text-repeatedly-into-disconnected-canvas.html: Added.
+
 2021-08-18  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac wk1] css/css-position/position-relative-table* tests fail.
