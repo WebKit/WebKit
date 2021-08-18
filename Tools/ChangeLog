@@ -1,3 +1,20 @@
+2021-08-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add layout test for WebAccessibilityObjectWrapper handler for attribute AXLineForTextMarker on MacOS.
+        https://bugs.webkit.org/show_bug.cgi?id=229220
+        <rdar://problem/82057459>
+
+        Reviewed by Chris Fleizach.
+
+        Added AccessibilityUIElement::lineIndexForTextMarker.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::lineIndexForTextMarker const):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::lineIndexForTextMarker const):
+
 2021-08-18  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] "IndexError: list index out of range" using log

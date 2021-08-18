@@ -1,3 +1,27 @@
+2021-08-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add layout test for WebAccessibilityObjectWrapper handler for attribute AXLineForTextMarker on MacOS.
+        https://bugs.webkit.org/show_bug.cgi?id=229220
+        <rdar://problem/82057459>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/mac/line-index-for-textmarker.html
+
+        There was not a layout test that exercised directly the handler for the
+        AXLineForTextMarker attribute in [WebAccessibilityObjectWrapper
+        accessibilityAttributeValue:withParameter:].
+        This patch adds the above test to exercise this method for textarea and
+        contenteditable elements. The text in these elements includes soft and
+        hard linebreaks, which are important test cases for this API.
+        The handler for AXLineForTextMarker in turn calls
+        AccessibilityObject::lineForPosition, and analyzing this method, made a
+        minor optimization by getting rid off of an unnecessary local variable
+        and object copy.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::lineForPosition const):
+
 2021-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         Update feature statuses in features.json

@@ -1776,6 +1776,18 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
     return nullptr;
 }
 
+int AccessibilityUIElement::lineIndexForTextMarker(AccessibilityTextMarker* marker) const
+{
+    if (!marker)
+        return -1;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return [[m_element accessibilityAttributeValue:@"AXLineForTextMarker" forParameter:marker->platformTextMarker()] intValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return -1;
+}
+
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
