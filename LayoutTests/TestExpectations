@@ -1132,6 +1132,7 @@ imported/w3c/web-platform-tests/resource-timing/cors-preflight.any.html [ Failur
 imported/w3c/web-platform-tests/resource-timing/crossorigin-sandwich-TAO.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/crossorigin-sandwich-partial-TAO.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/navigation-timing/secure_connection_start_non_zero.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/TAO-match.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/iframe-failed-commit.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/fetch-cross-origin-redirect.https.html [ Pass Failure ]

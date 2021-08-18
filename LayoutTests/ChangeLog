@@ -1,3 +1,16 @@
+2021-08-17  Alex Christensen  <achristensen@webkit.org>
+
+        Mark test as flaky: imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.html
+        https://bugs.webkit.org/show_bug.cgi?id=229181
+
+        * TestExpectations:
+        r281147 changed this test from flaky to differently flaky.
+        It used to pass sometimes because the whole document would load before any script was executed, so there was no PerformanceNavigationTiming
+        object to update as the document loaded.  r281147 fixed that, making it basically always pass when loaded over the real internet.
+        Now, sometimes it loads locally so fast that Performance::reduceTimeResolution makes some of the values 0, which is allowed by the spec but not
+        by the tests.  In practice, pages don't load over the internet in less than 1ms, so this isn't much of an issue, just in our test bots.
+        I'll propose a fix for the web platform test, but for now I mark it as flaky.
+
 2021-08-17  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] test http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html is a flaky timeout since r278004
