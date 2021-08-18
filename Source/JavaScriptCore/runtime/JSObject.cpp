@@ -942,7 +942,8 @@ bool JSObject::putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject* glob
                     RELEASE_AND_RETURN(scope, customSetter(structure->globalObject(), JSValue::encode(this), JSValue::encode(value), propertyName));
             }
             // Avoid PutModePut because it fails for non-extensible structures.
-            putDirect(vm, propertyName, value, attributesForStructure(entry->value->attributes()) & ~PropertyAttribute::CustomValue, slot);
+            ASSERT(!(entry->value->attributes() & PropertyAttribute::CustomValue));
+            putDirect(vm, propertyName, value, attributesForStructure(entry->value->attributes()), slot);
             return true;
         }
     }

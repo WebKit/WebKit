@@ -1,48 +1,5 @@
 2021-08-18  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r280505. rdar://problem/82088775
-
-    putInlineFastReplacingStaticPropertyIfNeeded should handle custom values
-    https://bugs.webkit.org/show_bug.cgi?id=227963
-    
-    Reviewed by Alexey Shvayka.
-    
-    JSTests:
-    
-    * stress/reflect-set-custom-value.js:
-    
-    Source/JavaScriptCore:
-    
-    Follow up after r280463: as it turns out, putInlineFastReplacingStaticPropertyIfNeeded also needs to handle
-    custom values, similar to how definePropertyOnReceiverSlow was updated. This function will be called when the
-    target property of the receiver is a custom value and isn't reified. The previous test case was expanded to
-    test both the reified and non-reified cases.
-    
-    * runtime/JSObject.cpp:
-    (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
-    * tools/JSDollarVM.cpp:
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280505 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2021-07-30  Tadeu Zagallo  <tzagallo@apple.com>
-
-            putInlineFastReplacingStaticPropertyIfNeeded should handle custom values
-            https://bugs.webkit.org/show_bug.cgi?id=227963
-
-            Reviewed by Alexey Shvayka.
-
-            Follow up after r280463: as it turns out, putInlineFastReplacingStaticPropertyIfNeeded also needs to handle
-            custom values, similar to how definePropertyOnReceiverSlow was updated. This function will be called when the
-            target property of the receiver is a custom value and isn't reified. The previous test case was expanded to
-            test both the reified and non-reified cases.
-
-            * runtime/JSObject.cpp:
-            (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
-            * tools/JSDollarVM.cpp:
-
-2021-08-18  Russell Epstein  <repstein@apple.com>
-
         Cherry-pick r280463. rdar://problem/82088775
 
     definePropertyOnReceiver should check if receiver canPerformFastPutInline
