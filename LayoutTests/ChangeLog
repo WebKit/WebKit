@@ -1,3 +1,12 @@
+2021-08-18  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac Debug] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.worker.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=229244.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-08-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Add layout test for WebAccessibilityObjectWrapper handler for attribute AXLineForTextMarker on MacOS.
