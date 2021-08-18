@@ -1,3 +1,17 @@
+2021-08-18  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r279169) [WebDriver] WPT Tools now requires python3 to launch the server
+        https://bugs.webkit.org/show_bug.cgi?id=229248
+
+        Reviewed by Chris Dumez.
+
+        239066@main updated the layout test WPT tools to
+        94d018bb5d7c0d46df7ba1 and this version requires Python3 to run the
+        WPT server.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py:
+        (WebDriverW3CWebServer.start):
+
 2021-08-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Add layout test for WebAccessibilityObjectWrapper handler for attribute AXLineForTextMarker on MacOS.

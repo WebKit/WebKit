@@ -104,7 +104,7 @@ class WebDriverW3CWebServer(object):
 
         self._wsout = self._port.host.filesystem.open_text_file_for_writing(self._output_log_path)
         wpt_file = os.path.join(self._layout_doc_root, "wpt.py")
-        cmd = ["python", wpt_file, "serve", "--config", os.path.join(self._layout_doc_root, 'config.json')]
+        cmd = ["python3", wpt_file, "serve", "--config", os.path.join(self._layout_doc_root, 'config.json')]
         self._process = self._port._executive.popen(cmd, cwd=self._layout_doc_root, shell=False, stdin=self._port._executive.PIPE, stdout=self._wsout, stderr=self._wsout)
         self._pid = self._process.pid
         self._port.host.filesystem.write_text_file(self._pid_file, str(self._pid))
