@@ -2909,13 +2909,14 @@ WI.undockedTitleAreaHeight = function()
 
     if (WI.Platform.name === "mac") {
         switch (WI.Platform.version.name) {
+        case "monterey":
         case "big-sur":
-            /* keep in sync with `body.mac-platform.big-sur:not(.docked)` */
+            /* Keep in sync with `--undocked-title-area-height` CSS variable. */
             return 27 / WI.getZoomFactor();
 
         case "catalina":
         case "mojave":
-            /* keep in sync with `body.mac-platform:not(.big-sur):not(.docked)` */
+            /* Keep in sync with `--undocked-title-area-height` CSS variable. */
             return 22 / WI.getZoomFactor();
         }
     }

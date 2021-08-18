@@ -1,3 +1,149 @@
+2021-08-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: match the undocked tab bar style when docked bottom/side
+        https://bugs.webkit.org/show_bug.cgi?id=212398
+
+        Reviewed by Timothy Hatcher.
+
+        This will avoid confusion when switching from docked to undocked (and vice versa) as the tab
+        bar UI will no longer be significantly different.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype.layout):
+        (WI.TabBar.prototype.layout.measureWidth):
+        (WI.TabBar.prototype._recordTabBarItemSizesAndPositions):
+        (WI.TabBar.prototype._applyTabBarItemSizesAndPositions):
+        (WI.TabBar.prototype._clearTabBarItemSizesAndPositions):
+        (WI.TabBar.prototype._handleMouseDown):
+        (WI.TabBar.prototype._handleMouseMoved):
+        (WI.TabBar.get horizontalPadding): Deleted.
+        (WI.TabBar.prototype._recordTabBarItemSizesAndPositions.add): Deleted.
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar):
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar): Added.
+        (body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar): Added.
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar, body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar): Added.
+        (.tab-bar > .tabs > .item):
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item): Added.
+        (body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item): Added.
+        (.tab-bar > .tabs:not(.calculate-width) > .item:not(.pinned)):
+        (.tab-bar > .tabs > .item:nth-child(n + 2 of :not(.hidden)), .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(1 of :not(.hidden)), .tab-bar > .tabs.dragging-tab > .item.selected):
+        (.tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden))):
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Added.
+        (body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Added.
+        (.tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover, .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover + .item):
+        (.tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover):
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item, body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item): Added.
+        (body.window-inactive .tab-bar > .tabs > .item):
+        (body.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected):
+        (.tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected):
+        (body.window-inactive .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, body.window-inactive .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected):
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar, body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Added.
+        (@media (prefers-color-scheme: dark) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover > .icon):
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar, body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Added.
+        (body.big-sur .tab-bar): Deleted.
+        (body:not(.docked) .tab-bar): Deleted.
+        (body.big-sur:not(.docked) .tab-bar): Deleted.
+        (body:not(.big-sur):not(.docked) .tab-bar): Deleted.
+        (body.big-sur:not(.docked).window-inactive .tab-bar, body:not(.big-sur):not(.docked).window-inactive .tab-bar): Deleted.
+        (body.docked.window-inactive .tab-bar): Deleted.
+        (body.docked.bottom .tab-bar > .border.top): Deleted.
+        (body.big-sur.docked .tab-bar > .border.bottom): Deleted.
+        (body.docked .tab-bar .tabs): Deleted.
+        (body.docked .tab-bar > .tabs > .flexible-space): Deleted.
+        (body.docked.bottom .tab-bar > .tabs > .flexible-space): Deleted.
+        (body:not(.docked) .tab-bar > .tabs > .item): Deleted.
+        (body.big-sur:not(.docked) .tab-bar > .tabs > .item): Deleted.
+        (body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item): Deleted.
+        (body:not(.docked) .tab-bar > .tabs:not(.calculate-width) > .item:not(.pinned)): Deleted.
+        (body.docked .tab-bar > .tabs > .item): Deleted.
+        (body:not(.docked) .tab-bar > .tabs > .item:nth-child(n + 3 of :not(.hidden)), body:not(.docked) .tab-bar > .tabs:not(.hide-border-start) > .item:nth-child(2 of :not(.hidden)), .tab-bar > .tabs.dragging-tab > .item.selected): Deleted.
+        (body:not(.docked) .tab-bar > .tabs:not(.hide-border-end) > .item:nth-last-child(1 of :not(.hidden))): Deleted.
+        (body.docked .tab-bar > .tabs > .item.pinned): Deleted.
+        (body.big-sur:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body.docked .tab-bar > .tabs > .item:not(.disabled):matches(.selected, :hover)): Deleted.
+        (body.docked .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body.big-sur:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Deleted.
+        (body:not(.big-sur):not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Deleted.
+        (body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Deleted.
+        (body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover, body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover + .item): Deleted.
+        (body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:last-child:not(.selected, .disabled):hover): Deleted.
+        (body:not(.docked).window-inactive .tab-bar > .tabs > .item): Deleted.
+        (body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item, body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item): Deleted.
+        (body:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body.docked.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (body:not(.docked) .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, body:not(.docked) .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), body:not(.docked) .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected): Deleted.
+        (body:not(.docked).window-inactive .tab-bar > .tabs.dragging-tab > .item:not(.disabled).selected, body:not(.docked).window-inactive .tab-bar > .tabs.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)), body:not(.docked).window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur .tab-bar, body:not(.big-sur) .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked) .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body.docked .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body.docked.bottom .tab-bar > .border.top): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Deleted.
+        (@media (prefers-color-scheme: dark) body.docked .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover): Deleted.
+        (@media (prefers-color-scheme: dark) body.docked .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body.docked.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.docked) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover > .icon): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.docked).window-inactive .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked).window-inactive .tab-bar, body:not(.big-sur):not(.docked).window-inactive .tab-bar): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur:not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur):not(.docked).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected): Deleted.
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem.get horizontalMargin): Deleted.
+         - remove the flexible space filler elements (and associated CSS) before and after the tabs
+         - remove any `.docked` CSS
+         - remove the (now unnecessary) `:not(.docked)` from all CSS related to the `WI.TabBar`
+         - replace `.big-sur` with `.mac-platform.big-sur` for clarity
+         - add `.mac-platform.monterey` alongside any `.mac-platform.big-sur`
+
+        * UserInterface/Base/Main.js:
+        (WI.undockedTitleAreaHeight):
+        * UserInterface/Views/Main.css:
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area): Added.
+        (body:not(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive #undocked-title-area): Added.
+        (@media (prefers-color-scheme: dark) body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive #undocked-title-area): Added.
+        (body.big-sur #undocked-title-area): Deleted.
+        (body:not(.big-sur) #undocked-title-area): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur #undocked-title-area): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur) #undocked-title-area): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur.window-inactive #undocked-title-area): Deleted.
+        (@media (prefers-color-scheme: dark) body:not(.big-sur).window-inactive #undocked-title-area): Deleted.
+        * UserInterface/Views/Variables.css:
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur)): Added.
+        (body:not(.mac-platform.monterey, .mac-platform.big-sur):not(.docked)): Added.
+        (body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked)): Added.
+        (@media (prefers-color-scheme: dark) body:is(.mac-platform.monterey, .mac-platform.big-sur)): Added.
+        (body.big-sur): Deleted.
+        (body.mac-platform:not(.big-sur):not(.docked)): Deleted.
+        (body.mac-platform.big-sur:not(.docked)): Deleted.
+        (@media (prefers-color-scheme: dark) body.big-sur): Deleted.
+        Add support for macOS Monterey.
+
 2021-08-17  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Do not show contextual documentation popup in the Changes panel

@@ -50,13 +50,6 @@ WI.TabBarItem = class TabBarItem
         this.image = image;
     }
 
-    // Static
-
-    static get horizontalMargin()
-    {
-        return (WI.dockConfiguration === WI.DockConfiguration.Undocked) ? 0 : 4; // Keep in sync with `body.docked .tab-bar > .tabs > .item`
-    }
-
     // Public
 
     get element() { return this._element; }

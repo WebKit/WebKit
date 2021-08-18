@@ -46,12 +46,6 @@ WI.TabBar = class TabBar extends WI.View
         this._tabContainer.addEventListener("mouseleave", this._handleTabContainerMouseLeave.bind(this));
         this._tabContainer.addEventListener("contextmenu", this._handleTabContainerContextMenu.bind(this));
 
-        this._flexibleSpaceBeforeElement = this._tabContainer.appendChild(document.createElement("div"));
-        this._flexibleSpaceBeforeElement.className = "flexible-space";
-
-        this._flexibleSpaceAfterElement = this._tabContainer.appendChild(document.createElement("div"));
-        this._flexibleSpaceAfterElement.className = "flexible-space";
-
         const navigationBarAfterElement = null;
         this._navigationBarAfter = new WI.NavigationBar(navigationBarAfterElement, {sizesToFit: true});
         this.addSubview(this._navigationBarAfter);
@@ -70,13 +64,6 @@ WI.TabBar = class TabBar extends WI.View
 
         this._mouseDownPageX = NaN;
         this._isDragging = false;
-    }
-
-    // Static
-
-    static get horizontalPadding()
-    {
-        return (WI.dockConfiguration === WI.DockConfiguration.Undocked) ? 0 : 8; // Keep in sync with `body.docked .tab-bar .tabs`
     }
 
     // Public
@@ -141,15 +128,15 @@ WI.TabBar = class TabBar extends WI.View
         let nextSibling = this._tabBarItems[index + 1] || this._tabBarItems.lastValue;
 
         if (this._tabContainer.contains(nextSibling.element)) {
-            if (!(tabBarItem instanceof WI.PinnedTabBarItem) && nextSibling instanceof WI.PinnedTabBarItem && nextSibling !== this._tabPickerTabBarItem)
-                this._tabContainer.insertBefore(tabBarItem.element, this._flexibleSpaceAfterElement);
+            if (!(tabBarItem instanceof WI.PinnedTabBarItem) && nextSibling instanceof WI.PinnedTabBarItem)
+                this._tabContainer.insertBefore(tabBarItem.element, this._tabPickerTabBarItem.element);
             else
                 this._tabContainer.insertBefore(tabBarItem.element, nextSibling.element);
         } else {
-            if (tabBarItem instanceof WI.PinnedTabBarItem && tabBarItem !== this._tabPickerTabBarItem)
+            if (tabBarItem instanceof WI.PinnedTabBarItem)
                 this._tabContainer.appendChild(tabBarItem.element);
             else
-                this._tabContainer.insertBefore(tabBarItem.element, this._flexibleSpaceAfterElement);
+                this._tabContainer.insertBefore(tabBarItem.element, this._tabPickerTabBarItem.element);
         }
 
         this._tabContainer.classList.toggle("single-tab", !this._hasMoreThanOneNormalTab());
@@ -442,18 +429,15 @@ WI.TabBar = class TabBar extends WI.View
         if (this._tabContainer.classList.contains("static-layout"))
             return;
 
-        const tabBarHorizontalPadding = WI.TabBar.horizontalPadding;
-        const tabBarItemHorizontalMargin = WI.TabBarItem.horizontalMargin;
-
         let undocked = WI.dockConfiguration === WI.DockConfiguration.Undocked;
 
         function measureWidth(tabBarItem) {
             if (!tabBarItem[WI.TabBar.CachedWidthSymbol])
-                tabBarItem[WI.TabBar.CachedWidthSymbol] = tabBarItem.element.realOffsetWidth + tabBarItemHorizontalMargin;
+                tabBarItem[WI.TabBar.CachedWidthSymbol] = tabBarItem.element.realOffsetWidth;
             return tabBarItem[WI.TabBar.CachedWidthSymbol];
         }
 
-        let availableSpace = this._tabContainer.realOffsetWidth - tabBarHorizontalPadding;
+        let availableSpace = this._tabContainer.realOffsetWidth;
 
         this._tabContainer.classList.add("calculate-width");
 
@@ -552,27 +536,19 @@ WI.TabBar = class TabBar extends WI.View
 
     _recordTabBarItemSizesAndPositions()
     {
-        const tabBarItemLeftMargin = WI.TabBarItem.horizontalMargin / 2;
-
         var tabBarItemSizesAndPositions = new Map;
 
         let barRect = this._tabContainer.getBoundingClientRect();
 
-        function add(key, element, leftMargin) {
-            let boundingRect = element.getBoundingClientRect();
-            tabBarItemSizesAndPositions.set(key, {
-                left: boundingRect.left - barRect.left - leftMargin,
-                width: boundingRect.width,
-            });
-        }
-
-        add(this._flexibleSpaceBeforeElement, this._flexibleSpaceBeforeElement, 0);
-        add(this._flexibleSpaceAfterElement, this._flexibleSpaceAfterElement, 0);
         for (let tabBarItem of this._tabBarItems) {
             if (tabBarItem.hidden)
                 continue;
 
-            add(tabBarItem, tabBarItem.element, tabBarItemLeftMargin);
+            let boundingRect = tabBarItem.element.getBoundingClientRect();
+            tabBarItemSizesAndPositions.set(tabBarItem, {
+                left: boundingRect.left - barRect.left,
+                width: boundingRect.width,
+            });
         }
 
         return tabBarItemSizesAndPositions;
@@ -584,22 +560,13 @@ WI.TabBar = class TabBar extends WI.View
             if (skipTabBarItem && tabBarItem === skipTabBarItem)
                 continue;
 
-            let isFlexibleSpace = tabBarItem === this._flexibleSpaceBeforeElement || tabBarItem === this._flexibleSpaceAfterElement;
-
-            let element = isFlexibleSpace ? tabBarItem : tabBarItem.element;
-            element.style.left = sizeAndPosition.left + "px";
-            element.style.width = sizeAndPosition.width + "px";
+            tabBarItem.element.style.left = sizeAndPosition.left + "px";
+            tabBarItem.element.style.width = sizeAndPosition.width + "px";
         }
     }
 
     _clearTabBarItemSizesAndPositions(skipTabBarItem)
     {
-        this._flexibleSpaceBeforeElement.style.left = null;
-        this._flexibleSpaceBeforeElement.style.width = null;
-
-        this._flexibleSpaceAfterElement.style.left = null;
-        this._flexibleSpaceAfterElement.style.width = null;
-
         for (var tabBarItem of this._tabBarItems) {
             if (skipTabBarItem && tabBarItem === skipTabBarItem)
                 continue;
@@ -663,7 +630,7 @@ WI.TabBar = class TabBar extends WI.View
         if (event.button !== 0 || event.ctrlKey)
             return;
 
-        if (event.target !== this.element && event.target !== this._flexibleSpaceBeforeElement && event.target !== this._flexibleSpaceAfterElement)
+        if (event.target !== this.element)
             return;
 
         switch (WI.dockConfiguration) {
@@ -807,9 +774,6 @@ WI.TabBar = class TabBar extends WI.View
             this._isDragging = true;
         }
 
-        const tabBarLeftPadding = WI.TabBar.horizontalPadding / 2;
-        const tabBarItemHorizontalMargin = WI.TabBarItem.horizontalMargin;
-
         event.preventDefault();
         event.stopPropagation();
 
@@ -826,7 +790,7 @@ WI.TabBar = class TabBar extends WI.View
 
         this._selectedTabBarItem.element.style.left = newLeft + "px";
 
-        let selectedTabMidX = containerOffset + newLeft + ((this._selectedTabBarItem.element.realOffsetWidth + tabBarItemHorizontalMargin) / 2);
+        let selectedTabMidX = containerOffset + newLeft + (this._selectedTabBarItem.element.realOffsetWidth / 2);
 
         var currentIndex = this._tabBarItems.indexOf(this._selectedTabBarItem);
         var newIndex = currentIndex;
@@ -862,32 +826,19 @@ WI.TabBar = class TabBar extends WI.View
 
         // FIXME: Animate the tabs that move to make room for the selected tab. This was causing me trouble when I tried.
 
-        let isLTR = WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR;
-
         function inlineStyleValue(element, property) {
             return element.style.getPropertyCSSValue(property).getFloatValue(CSSPrimitiveValue.CSS_PX) || 0;
         }
 
-        let offsetAfter = inlineStyleValue(this._flexibleSpaceAfterElement, "width");
-
-        let accumulatedLeft = isLTR ? (inlineStyleValue(this._flexibleSpaceBeforeElement, "width") + inlineStyleValue(this._flexibleSpaceBeforeElement, "left")) : tabBarLeftPadding;
+        let accumulatedLeft = 0;
         for (let tabBarItem of this._tabBarItemsFromLeftToRight()) {
             if (tabBarItem.hidden)
                 continue;
 
-            if (tabBarItem !== this._selectedTabBarItem && inlineStyleValue(tabBarItem.element, "left") !== accumulatedLeft) {
-                let left = accumulatedLeft;
-                if (isLTR) {
-                    if (tabBarItem instanceof WI.PinnedTabBarItem && tabBarItem !== this._tabPickerTabBarItem)
-                        left += offsetAfter;
-                } else {
-                    if (!(tabBarItem instanceof WI.PinnedTabBarItem) || tabBarItem === this._tabPickerTabBarItem)
-                        left += offsetAfter;
-                }
-                tabBarItem.element.style.left = left + "px";
-            }
+            if (tabBarItem !== this._selectedTabBarItem && inlineStyleValue(tabBarItem.element, "left") !== accumulatedLeft)
+                tabBarItem.element.style.left = accumulatedLeft + "px";
 
-            accumulatedLeft += inlineStyleValue(tabBarItem.element, "width") + tabBarItemHorizontalMargin;
+            accumulatedLeft += inlineStyleValue(tabBarItem.element, "width");
         }
     }
 

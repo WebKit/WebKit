@@ -230,7 +230,7 @@ body.window-inactive {
     --border-color: hsl(0, 0%, 85%);
 }
 
-body.big-sur {
+body:is(.mac-platform.monterey, .mac-platform.big-sur) {
     --text-color: hsl(0, 0%, 15%);
 
     --background-color-intermediate: hsl(0, 0%, 98.5%);
@@ -246,12 +246,12 @@ body.big-sur {
     --sorted-header-font-weight: 700;
 }
 
-body.mac-platform:not(.big-sur):not(.docked) {
+body:not(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
     /* keep in sync with `WI.undockedTitleAreaHeight` */
     --undocked-title-area-height: calc(22px / var(--zoom-factor));
 }
 
-body.mac-platform.big-sur:not(.docked) {
+body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
     /* keep in sync with `WI.undockedTitleAreaHeight` */
     --undocked-title-area-height: calc(27px / var(--zoom-factor));
 }
@@ -384,10 +384,6 @@ body.mac-platform.big-sur:not(.docked) {
         --diff-deletion-background-color: hsl(5, 40%, 28%);
     }
 
-    body.big-sur {
-        --glyph-color: hsl(0, 0%, 69%);
-        --glyph-color-pressed: hsl(0, 0%, 100%);
-    }
 
     body.window-inactive {
         --border-color: hsl(0, 0%, 33%);
@@ -398,7 +394,7 @@ body.mac-platform.big-sur:not(.docked) {
         --glyph-color-disabled: hsla(0, 0%, 52%, 0.4);
     }
 
-    body.big-sur {
+    body:is(.mac-platform.monterey, .mac-platform.big-sur) {
         --text-color: hsl(0, 0%, 85%);
 
         --background-color: hsl(0, 0%, 20%);
@@ -407,6 +403,9 @@ body.mac-platform.big-sur:not(.docked) {
 
         --background-color-content: hsl(0, 0%, 17%);
         --background-color-intermediate: hsl(0, 0%, 19%);
+
+        --glyph-color: hsl(0, 0%, 69%);
+        --glyph-color-pressed: hsl(0, 0%, 100%);
 
         --panel-background-color: hsl(0, 0%, 20%);
         --panel-background-color-light: hsl(0, 0%, 25%);
