@@ -1736,17 +1736,20 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
                 if (!os_variant_allows_internal_security_policies("com.apple.WebKit"))
                     return;
 
+                if (!webProcessProxy)
+                    return;
+
                 int networkProcessIdentifier = 0;
                 String networkProcessState = "Unknown"_s;
                 if (networkProcessProxy) {
                     networkProcessIdentifier = networkProcessProxy->processIdentifier();
                     networkProcessState = networkProcessProxy->stateString();
                 }
-                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("WebsiteDataStore::getNetworkProcessConnection: Failed to get connection - networkProcessProxy=%p, networkProcessIdentifier=%d, processState=%s, webProcessProxy=%p, webProcessIdentifier=%d", networkProcessProxy.get(), networkProcessIdentifier, networkProcessState.utf8().data(), webProcessProxy.get(), webProcessProxy ? webProcessProxy->processIdentifier() : 0);
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("WebsiteDataStore::getNetworkProcessConnection: Failed to get connection - networkProcessProxy=%p, networkProcessIdentifier=%d, processState=%s, webProcessProxy=%p, webProcessIdentifier=%d", networkProcessProxy.get(), networkProcessIdentifier, networkProcessState.utf8().data(), webProcessProxy.get(), webProcessProxy->processIdentifier());
 #endif
             };
 
-            if (shouldRetryOnFailure == ShouldRetryOnFailure::No) {
+            if (shouldRetryOnFailure == ShouldRetryOnFailure::No || !webProcessProxy) {
                 logError();
                 reply({ });
                 return;

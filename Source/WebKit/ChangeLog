@@ -1,3 +1,17 @@
+2021-08-17  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix crash in TestWebKitAPI.NetworkProcess.CrashWhenNotAssociatedWithDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=229209
+        rdar://82040197
+
+        Reviewed by Geoffrey Garen.
+
+        When getting network process connection fails, we don't need to retry or crash UI process if web process is
+        already gone.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+
 2021-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Kept alive NetworkResourceLoaders should be cancelled by NetworkLoad::didCompleteWithError on PolicyAction::Ignore of didReceiveResponse
