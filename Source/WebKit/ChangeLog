@@ -1,3 +1,18 @@
+2021-08-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Do not terminate relaunched network process when getting network process connection
+        https://bugs.webkit.org/show_bug.cgi?id=229236
+
+        Reviewed by Chris Dumez.
+
+        When UI process fails to get network process connection for the first time, it will retry on next runloop 
+        iteration. On the retry, it terminates existing network process and relaunch a network process, because the 
+        failure may indicate something is wrong in the network process. If existing network process is different from 
+        the one on first try, the existing process can be functional and we should not terminate it.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+
 2021-08-18  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r280382): [GTK] 2.33.3 does not build with gtk-doc enabled, installs broken pkg-config files
