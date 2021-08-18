@@ -1387,5 +1387,7 @@ inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ]
 #rdar://82039967 [ Monterey Debug ] inspector/css/getMatchedStylesForNodeMarkerPseudoId.html is a flaky failure)
 inspector/css/getMatchedStylesForNodeMarkerPseudoId.html [ Pass Failure ]
 
+webkit.org/b/229252 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm [ Pass Timeout ]
+
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]

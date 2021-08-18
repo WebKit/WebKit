@@ -1,3 +1,12 @@
+2021-08-18  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac wk1 Debug] imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=229252.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] http/tests/fetch/keepalive-fetch-2.html is randomly failing
