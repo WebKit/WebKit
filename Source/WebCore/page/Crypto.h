@@ -46,6 +46,7 @@ public:
     virtual ~Crypto();
 
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
+    String randomUUID() const;
 
 #if ENABLE(WEB_CRYPTO)
     SubtleCrypto& subtle();
