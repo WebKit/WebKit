@@ -1,0 +1,5 @@
+PASS Done painting
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
