@@ -1,3 +1,53 @@
+2021-08-18  Martin Robinson  <mrobinson@webkit.org>
+
+        position: sticky with display: inline-block
+        https://bugs.webkit.org/show_bug.cgi?id=224415
+        <rdar://problem/76811968>
+
+        Reviewed by Simon Fraser.
+
+        Improve sticky positioning applied to inline items. The first improvement is to
+        skip anonymous RenderBlock parents of inline display items when looking for the
+        containing block used to calculate sticky constraints. These anonymous parents
+        are not the containing block that constrains the movement of these kind of stickily
+        positioned items. Instead look for containing block for the anonymous parent,
+        which does limit the scroll boundaries of inline stickily position items.
+
+        Previously, when converting the frame rect from the coordinate space of the stickily
+        positioned item to that of the scrolling container, the code used to apply the offset
+        from the containing block to the scrolling ancestor directly to the frame rect. That
+        doesn't work when the containing block that determines sticky constraints is not the
+        direct containing block of the stickily positioned items (as it is for inlines).
+
+        Instead, the code now just maps the frame rect directly from the item parent to
+        the scrolling ancestor. This simplifies things a bit and allows it to work with
+        inline stickily positioned items.
+
+        Finally, this change adds comments to make it clearer what this method is doing.
+
+        No new tests. This is covered by existing WPT tests. Specifically the following
+        tests are now passing:
+         imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-hyperlink.html
+         imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-table.html
+         imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-parts.html
+         imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom.html
+         imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::positionOffsetValue): enclosingClippingBoxForStickyPosition now returns a pair
+        to avoid passing in a pointer. Only look at the first part of the pair here.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints const): Modified this method
+        to return a pair in order to avoid dealing with input parameters. This allows simplifying this
+        method, making the code a bit simpler.
+        (WebCore::RenderBoxModelObject::enclosingClippingBoxForStickyPosition const): Deleted.
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints const): Make two changes
+        to this method to improve sticky positioning for inline elements. The first change is
+        to be a bit better about finding the appropriate containing block for calculating sticky
+        constraints. The second is to more resiliently move from coordinate systems. In addition,
+        improve the comments for this method to make it clearer what is happening at each step.
+        * rendering/RenderBoxModelObject.h: Updated method declaration.
+
 2021-08-18  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Try to parse XML init datas that could possibly come from MPD manifests
