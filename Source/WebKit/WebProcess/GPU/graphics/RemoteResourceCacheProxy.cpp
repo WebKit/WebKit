@@ -132,9 +132,9 @@ void RemoteResourceCacheProxy::recordFontUse(Font& font)
     }
 
     auto& currentState = result.iterator->value;
+    ++currentState.useCount;
     if (currentState.lastRenderingUpdateVersionUsedWithin != m_remoteRenderingBackendProxy.renderingUpdateID()) {
         currentState.lastRenderingUpdateVersionUsedWithin = m_remoteRenderingBackendProxy.renderingUpdateID();
-        ++currentState.useCount;
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
     }
 }
