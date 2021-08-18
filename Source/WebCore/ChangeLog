@@ -1,3 +1,22 @@
+2021-08-18  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r280723): Protected HLS + EME playback fails with "temporary error"
+        https://bugs.webkit.org/show_bug.cgi?id=229201
+        <rdar://81807216>
+
+        Reviewed by Eric Carlson.
+
+        In r280723, we stopped unconditionally creating an AVPlayerLayer when we create an AVPlayer. However,
+        we will still create an AVPlayerItemVideoOutput when we create an AVPlayerItem. This leaves our
+        AVPlayer in a state where AVFoundation will throw a "temporary error; try again later" when given
+        an otherwise valid protected HLS stream and key data through EME.
+
+        To work around this behavior, delay creating the AVPlayerItemVideoOutput until explicitly told to
+        create video renderers, typically simultaneous to creating an AVPlayerLayer.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+
 2021-08-18  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Don't snap to offscreen snap areas in unidirectional scrolls

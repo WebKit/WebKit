@@ -1160,8 +1160,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 #endif
 
-    createVideoOutput();
-
     m_metadataCollector = adoptNS([PAL::allocAVPlayerItemMetadataCollectorInstance() initWithIdentifiers:nil classifyingLabels:nil]);
     [m_metadataCollector.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
     [m_avPlayerItem.get() addMediaDataCollector:m_metadataCollector.get()];
