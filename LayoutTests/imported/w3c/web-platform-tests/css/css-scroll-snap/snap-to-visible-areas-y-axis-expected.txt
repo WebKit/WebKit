@@ -1,3 +1,3 @@
 
-FAIL Only snap to visible area on Y axis, even when the non-visible ones are closer assert_equals: expected 800 but got 700
+PASS Only snap to visible area on Y axis, even when the non-visible ones are closer
 

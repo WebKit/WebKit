@@ -1,3 +1,17 @@
+2021-08-18  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Don't snap to offscreen snap areas in unidirectional scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=227949
+        <rdar://problem/80895783>
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-both-expected.txt: This bidirectional
+        scrolling test no longer snaps because we don't have support for choosing between two candidates
+        properly yet.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-x-axis-expected.txt: Updated to show newly passing test.
+        * web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-y-axis-expected.txt: Ditto.
+
 2021-08-17  Alex Christensen  <achristensen@webkit.org>
 
         Document load events should update timing in PerformanceNavigationTiming even after its instantiation

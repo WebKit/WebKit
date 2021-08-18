@@ -1,3 +1,21 @@
+2021-08-18  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Don't snap to offscreen snap areas in unidirectional scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=227949
+        <rdar://problem/80895783>
+
+        Reviewed by Frédéric Wang.
+
+        No new tests. This is covered by two existing WPT tests.
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::componentForAxis): Added this helper.
+        (WebCore::hasCompatibleSnapArea): Added this helper that checks to see if any of the snap areas
+        at a given scroll snap position are compatible with the viewport.
+        (WebCore::adjustPreviousAndNextForOnscreenSnapAreas): Adjusts the selected previous and next snap
+        positions by looking backward and forward for the first compatible snap position.
+        (WebCore::closestSnapOffsetWithInfoAndAxis): Use the new helper.
+
 2021-08-18  Chris Dumez  <cdumez@apple.com>
 
         Crash under JSIntersectionObserverCallback::handleEvent()
