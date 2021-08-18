@@ -1,3 +1,102 @@
+2021-08-18  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281186. rdar://problem/82083653
+
+    REGRESSION (iOS 15): DoubleDown Casino app won't load past launch page
+    https://bugs.webkit.org/show_bug.cgi?id=229200
+    rdar://81636256
+    
+    Reviewed by Myles C. Maxfield.
+    
+    The changes in https://webkit.org/b/228216 to fix rdar://80473805 introduced a mechanism to keep track of uses
+    of cached fonts and images in display list items in the web and GPU processes, via a `useCount` counter variable
+    that's incremented in the web process whenever the font or image is used in a display list item and decremented
+    in the GPU process whenever the item is processed.
+    
+    However, the code to increment `useCount` in the web process currently only triggers at most once per rendering
+    update — this means that if there are multiple canvas drawing commands that use fonts in the same rendering
+    update, the web process' notion of `useCount` will fall out of sync with the GPU process' notion of `useCount`.
+    
+    In most cases, this causes the cached font to remain for longer in the GPU process than necessary; however, in
+    this specific scenario, it's possible for the web process to tell the GPU process to release the cached font too
+    early, which causes the GPU process to prematurely purge the font from the cache, and subsequently wait for the
+    cached font to arrive (which will never arrive, since the web process has already released the font).
+    
+    In other words, the timeline of events between the web and GPU processes looks like this (where `f` is a cached
+    web font, `A_f` is a drawing command that uses `f`, and `B_f` is another drawing command that uses `f`).
+    
+    WEB                                             GPU
+    ==============================================================
+    1. Cache `f`
+    2. Append `A_f`
+                                                    3. Cache `f`
+                                                    4. Play back `A_f`
+    5. Append `B_f`
+    6. Release `f` (use count was 1 here)
+                                                    7. Release `f` (use count dropped from 1 to 0)
+                                                    8. Play back `B_f`
+                                                    ...and then display list playback stops due to `f` not being in
+                                                    the cache.
+    
+    To address this, we simply move the `useCount` increment in the web process out of the rendering update check.
+    The original intent of the fix for bug #228216 was to allow for `useCount` to increment as many times as needed
+    per rendering update, so this limitation was unintentional.
+    
+    Unfortunately, I have not been able to come up with a layout test that reliably reproduces this scenario (yet).
+    
+    * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+    (WebKit::RemoteResourceCacheProxy::recordFontUse):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281186 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            REGRESSION (iOS 15): DoubleDown Casino app won't load past launch page
+            https://bugs.webkit.org/show_bug.cgi?id=229200
+            rdar://81636256
+
+            Reviewed by Myles C. Maxfield.
+
+            The changes in https://webkit.org/b/228216 to fix rdar://80473805 introduced a mechanism to keep track of uses
+            of cached fonts and images in display list items in the web and GPU processes, via a `useCount` counter variable
+            that's incremented in the web process whenever the font or image is used in a display list item and decremented
+            in the GPU process whenever the item is processed.
+
+            However, the code to increment `useCount` in the web process currently only triggers at most once per rendering
+            update — this means that if there are multiple canvas drawing commands that use fonts in the same rendering
+            update, the web process' notion of `useCount` will fall out of sync with the GPU process' notion of `useCount`.
+
+            In most cases, this causes the cached font to remain for longer in the GPU process than necessary; however, in
+            this specific scenario, it's possible for the web process to tell the GPU process to release the cached font too
+            early, which causes the GPU process to prematurely purge the font from the cache, and subsequently wait for the
+            cached font to arrive (which will never arrive, since the web process has already released the font).
+
+            In other words, the timeline of events between the web and GPU processes looks like this (where `f` is a cached
+            web font, `A_f` is a drawing command that uses `f`, and `B_f` is another drawing command that uses `f`).
+
+            WEB                                             GPU
+            ==============================================================
+            1. Cache `f`
+            2. Append `A_f`
+                                                            3. Cache `f`
+                                                            4. Play back `A_f`
+            5. Append `B_f`
+            6. Release `f` (use count was 1 here)
+                                                            7. Release `f` (use count dropped from 1 to 0)
+                                                            8. Play back `B_f`
+                                                            ...and then display list playback stops due to `f` not being in
+                                                            the cache.
+
+            To address this, we simply move the `useCount` increment in the web process out of the rendering update check.
+            The original intent of the fix for bug #228216 was to allow for `useCount` to increment as many times as needed
+            per rendering update, so this limitation was unintentional.
+
+            Unfortunately, I have not been able to come up with a layout test that reliably reproduces this scenario (yet).
+
+            * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+            (WebKit::RemoteResourceCacheProxy::recordFontUse):
+
 2021-08-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r281058. rdar://problem/81947517
