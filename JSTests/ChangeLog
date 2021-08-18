@@ -1,3 +1,47 @@
+2021-08-18  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r280463. rdar://problem/82088775
+
+    definePropertyOnReceiver should check if receiver canPerformFastPutInline
+    https://bugs.webkit.org/show_bug.cgi?id=227963
+    <rdar://80259710>
+    
+    Reviewed by Alexey Shvayka.
+    
+    JSTests:
+    
+    * stress/reflect-set-custom-value.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    definePropertyOnReceiver has a fast path if the slot is not opaque and the receiver doesn't
+    have a custom defineOwnProperty implementation, in which case it calls putInlineFast (and
+    transitively putDirectInternal<PutModePut>). The issue is that putDirectInternal does not
+    handle customValues correctly: it just overwrites the property without changing the attributes.
+    To fix that, we should first check if the property might be a custom value, and if that's the case
+    we now call `definePropertyOnReceiverSlow`, which has been updated to handle custom values correctly.
+    I also added assertions to putInlineFastReplacingStaticPropertyIfNeeded and putDirectInternal
+    to make sure we don't accidentally overwrite custom values in the future.
+    
+    * runtime/JSObject.cpp:
+    (JSC::definePropertyOnReceiverSlow):
+    (JSC::JSObject::definePropertyOnReceiver):
+    (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
+    * runtime/JSObjectInlines.h:
+    (JSC::JSObject::putDirectInternal):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@280463 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-07-29  Tadeu Zagallo  <tzagallo@apple.com>
+
+            definePropertyOnReceiver should check if receiver canPerformFastPutInline
+            https://bugs.webkit.org/show_bug.cgi?id=227963
+            <rdar://80259710>
+
+            Reviewed by Alexey Shvayka.
+
+            * stress/reflect-set-custom-value.js: Added.
+
 2021-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Yarr BoyerMoore search should support character-class
