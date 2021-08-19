@@ -150,7 +150,7 @@ bool MockMediaPlayerMediaSource::hasAudio() const
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->hasAudio() : false;
 }
 
-void MockMediaPlayerMediaSource::setVisible(bool)
+void MockMediaPlayerMediaSource::setPageIsVisible(bool)
 {
 }
 

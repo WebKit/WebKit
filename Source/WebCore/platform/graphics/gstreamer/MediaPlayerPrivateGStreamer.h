@@ -156,7 +156,7 @@ public:
     void setMuted(bool) final;
     MediaPlayer::NetworkState networkState() const final;
     MediaPlayer::ReadyState readyState() const final;
-    void setVisible(bool visible) final { m_visible = visible; }
+    void setPageIsVisible(bool visible) final { m_visible = visible; }
     void setSize(const IntSize&) final;
     // Prefer MediaTime based methods over float based.
     float duration() const final { return durationMediaTime().toFloat(); }

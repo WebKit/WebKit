@@ -236,9 +236,9 @@ void RemoteMediaPlayerProxy::prepareForRendering()
     m_player->prepareForRendering();
 }
 
-void RemoteMediaPlayerProxy::setVisible(bool visible)
+void RemoteMediaPlayerProxy::setPageIsVisible(bool visible)
 {
-    m_player->setVisible(visible);
+    m_player->setPageIsVisible(visible);
 }
 
 void RemoteMediaPlayerProxy::setShouldMaintainAspectRatio(bool maintainRatio)

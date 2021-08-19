@@ -243,7 +243,7 @@ private:
     bool hasVideo() const final;
     bool hasAudio() const final;
 
-    void setVisible(bool) final;
+    void setPageIsVisible(bool) final;
 
     MediaTime durationMediaTime() const final;
     MediaTime currentMediaTime() const final;

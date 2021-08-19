@@ -77,7 +77,7 @@ private:
     FloatSize naturalSize() const override;
     bool hasVideo() const override;
     bool hasAudio() const override;
-    void setVisible(bool) override;
+    void setPageIsVisible(bool) final;
     bool seeking() const override;
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;

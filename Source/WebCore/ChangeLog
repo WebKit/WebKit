@@ -1,5 +1,50 @@
 2021-08-19  Youenn Fablet  <youenn@apple.com>
 
+        Rename MediaPlayer::setVisible to MediaPlayer::setPageIsVisible
+        https://bugs.webkit.org/show_bug.cgi?id=228837
+        <rdar://problem/81857023>
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior, just renaming a method to make its name more accurate.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::setPageIsVisible):
+        (WebCore::MediaPlayer::setVisible): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setVisibleForCanvas):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setPageIsVisible):
+        (WebCore::MediaPlayerPrivateAVFoundation::setVisible): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVisible): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVisible): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::setPageIsVisible):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setVisible): Deleted.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::setPageIsVisible):
+        (WebCore::MockMediaPlayerMediaSource::setVisible): Deleted.
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::willBeDestroyed):
+        (WebCore::RenderVideo::updatePlayer):
+
+2021-08-19  Youenn Fablet  <youenn@apple.com>
+
         RTCRtpTransceiver does not need an ice transport
         https://bugs.webkit.org/show_bug.cgi?id=229186
 

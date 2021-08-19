@@ -70,7 +70,7 @@ public:
     bool hasVideo() const final;
     bool hasAudio() const final;
 
-    void setVisible(bool) final;
+    void setPageIsVisible(bool) final;
 
     bool seeking() const final;
     void seek(float) final;

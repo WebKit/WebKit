@@ -326,8 +326,8 @@ void FullscreenVideoController::exitFullscreen()
     // As a side effect of setting the player to invisible/visible,
     // the player's layer will be recreated, and will be picked up 
     // the next time the layer tree is synched.
-    m_videoElement->player()->setVisible(0);
-    m_videoElement->player()->setVisible(1);
+    m_videoElement->player()->setPageIsVisible(0);
+    m_videoElement->player()->setPageIsVisible(1);
 }
 
 bool FullscreenVideoController::canPlay() const

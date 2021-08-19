@@ -69,10 +69,10 @@ void RenderVideo::willBeDestroyed()
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     auto player = videoElement().player();
     if (player && videoElement().webkitPresentationMode() != HTMLVideoElement::VideoPresentationMode::PictureInPicture)
-        player->setVisible(false);
+        player->setPageIsVisible(false);
 #else
     if (auto player = videoElement().player())
-        player->setVisible(false);
+        player->setPageIsVisible(false);
 #endif
 
     RenderMedia::willBeDestroyed();
@@ -273,7 +273,7 @@ void RenderVideo::updatePlayer()
         return;
 
     if (!videoElement().inActiveDocument()) {
-        mediaPlayer->setVisible(false);
+        mediaPlayer->setPageIsVisible(false);
         return;
     }
 
@@ -281,7 +281,7 @@ void RenderVideo::updatePlayer()
     
     IntRect videoBounds = videoBox(); 
     mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
-    mediaPlayer->setVisible(!videoElement().elementIsHidden());
+    mediaPlayer->setPageIsVisible(!videoElement().elementIsHidden());
     mediaPlayer->setVisibleInViewport(videoElement().isVisibleInViewport());
     mediaPlayer->setShouldMaintainAspectRatio(style().objectFit() != ObjectFit::Fill);
 }

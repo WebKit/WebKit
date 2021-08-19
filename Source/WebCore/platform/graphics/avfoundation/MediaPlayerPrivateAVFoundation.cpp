@@ -580,7 +580,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     setReadyState(newReadyState);
 }
 
-void MediaPlayerPrivateAVFoundation::setVisible(bool visible)
+void MediaPlayerPrivateAVFoundation::setPageIsVisible(bool visible)
 {
     if (m_visible == visible)
         return;

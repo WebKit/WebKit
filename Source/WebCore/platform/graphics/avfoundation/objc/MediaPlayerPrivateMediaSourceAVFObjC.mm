@@ -425,7 +425,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
     return m_mediaSourcePrivate->hasAudio();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::setVisible(bool visible)
+void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
 {
     if (m_visible == visible)
         return;

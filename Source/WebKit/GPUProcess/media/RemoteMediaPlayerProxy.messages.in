@@ -49,7 +49,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm algorithm)
 
     PrepareForRendering()
-    SetVisible(bool visible)
+    SetPageIsVisible(bool visible)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)

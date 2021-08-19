@@ -195,7 +195,7 @@ private:
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setVisible(bool) override;
+    void setPageIsVisible(bool) final;
 
     MediaTime durationMediaTime() const override;
     MediaTime startTime() const override;

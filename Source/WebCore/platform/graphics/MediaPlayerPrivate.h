@@ -96,8 +96,8 @@ public:
     virtual bool hasVideo() const = 0;
     virtual bool hasAudio() const = 0;
 
-    virtual void setVisible(bool) = 0;
-    virtual void setVisibleForCanvas(bool visible) { setVisible(visible); }
+    virtual void setPageIsVisible(bool) = 0;
+    virtual void setVisibleForCanvas(bool visible) { setPageIsVisible(visible); }
     virtual void setVisibleInViewport(bool) { }
 
     virtual float duration() const { return 0; }

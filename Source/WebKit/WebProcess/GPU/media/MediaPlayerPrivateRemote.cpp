@@ -532,9 +532,9 @@ void MediaPlayerPrivateRemote::prepareForRendering()
     connection().send(Messages::RemoteMediaPlayerProxy::PrepareForRendering(), m_id);
 }
 
-void MediaPlayerPrivateRemote::setVisible(bool visible)
+void MediaPlayerPrivateRemote::setPageIsVisible(bool visible)
 {
-    connection().send(Messages::RemoteMediaPlayerProxy::SetVisible(visible), m_id);
+    connection().send(Messages::RemoteMediaPlayerProxy::SetPageIsVisible(visible), m_id);
 }
 
 void MediaPlayerPrivateRemote::setShouldMaintainAspectRatio(bool maintainRatio)
