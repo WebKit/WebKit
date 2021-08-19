@@ -1,5 +1,22 @@
 2021-08-19  Tim Nguyen  <ntim@apple.com>
 
+        Port HTMLDetailsElement to use modern event handling code
+        https://bugs.webkit.org/show_bug.cgi?id=228863
+
+        Reviewed by Antti Koivisto.
+
+        No behaviour change, follows: https://html.spec.whatwg.org/#details-notification-task-steps
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::parseAttribute):
+        (WebCore::HTMLDetailsElement::toggleOpen):
+        (WebCore::detailToggleEventSender): Deleted.
+        (WebCore::HTMLDetailsElement::~HTMLDetailsElement): Deleted.
+        (WebCore::HTMLDetailsElement::dispatchPendingEvent): Deleted.
+        * html/HTMLDetailsElement.h:
+
+2021-08-19  Tim Nguyen  <ntim@apple.com>
+
         Implement ::backdrop pseudo element
         https://bugs.webkit.org/show_bug.cgi?id=227801
 

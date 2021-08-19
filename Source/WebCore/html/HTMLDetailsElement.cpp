@@ -24,8 +24,8 @@
 
 #include "AXObjectCache.h"
 #include "ElementIterator.h"
+#include "EventLoop.h"
 #include "EventNames.h"
-#include "EventSender.h"
 #include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
@@ -42,12 +42,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLDetailsElement);
 
 using namespace HTMLNames;
-
-static DetailEventSender& detailToggleEventSender()
-{
-    static NeverDestroyed<DetailEventSender> sharedToggleEventSender(eventNames().toggleEvent);
-    return sharedToggleEventSender;
-}
 
 static const AtomString& summarySlotName()
 {
@@ -98,11 +92,6 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
     ASSERT(hasTagName(detailsTag));
 }
 
-HTMLDetailsElement::~HTMLDetailsElement()
-{
-    detailToggleEventSender().cancelEvent(*this);
-}
-
 RenderPtr<RenderElement> HTMLDetailsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderBlockFlow>(*this, WTFMove(style));
@@ -139,12 +128,6 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     return slot == m_summarySlot;
 }
 
-void HTMLDetailsElement::dispatchPendingEvent(DetailEventSender* eventSender)
-{
-    ASSERT_UNUSED(eventSender, eventSender == &detailToggleEventSender());
-    dispatchEvent(Event::create(eventNames().toggleEvent, Event::CanBubble::No, Event::IsCancelable::No));
-}
-
 void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == openAttr) {
@@ -158,9 +141,15 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomStr
             else
                 root->removeChild(*m_defaultSlot);
 
-            // https://html.spec.whatwg.org/#details-notification-task-steps.
-            detailToggleEventSender().cancelEvent(*this);
-            detailToggleEventSender().dispatchEventSoon(*this);
+            // https://html.spec.whatwg.org/#details-notification-task-steps
+            if (m_isToggleEventTaskQueued)
+                return;
+
+            document().eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = GCReachableRef { *this }] {
+                protectedThis->dispatchEvent(Event::create(eventNames().toggleEvent, Event::CanBubble::No, Event::IsCancelable::No));
+                protectedThis->m_isToggleEventTaskQueued = false;
+            });
+            m_isToggleEventTaskQueued = true;
         }
     } else
         HTMLElement::parseAttribute(name, value);
@@ -169,7 +158,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomStr
 
 void HTMLDetailsElement::toggleOpen()
 {
-    setAttributeWithoutSynchronization(openAttr, m_isOpen ? nullAtom() : emptyAtom());
+    setBooleanAttribute(openAttr, !m_isOpen);
 
     // We need to post to the document because toggling this element will delete it.
     if (AXObjectCache* cache = document().existingAXObjectCache())
