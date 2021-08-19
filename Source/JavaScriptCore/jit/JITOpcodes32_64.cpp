@@ -1142,33 +1142,6 @@ void JIT::emit_op_check_tdz(const Instruction* currentInstruction)
     addSlowCase(branchIfEmpty(regT0));
 }
 
-void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
-{
-    const Instruction* currentInstruction = m_codeBlock->instructions().at(byValInfo->bytecodeIndex).ptr();
-
-    PatchableJump badType;
-
-    // FIXME: Add support for other types like TypedArrays and Arguments.
-    // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
-    JumpList slowCases = emitLoadForArrayMode(currentInstruction, arrayMode, badType, nullptr);
-    move(TrustedImm32(1), regT0);
-    Jump done = jump();
-
-    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
-
-    patchBuffer.link(badType, byValInfo->slowPathTarget);
-    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
-
-    patchBuffer.link(done, byValInfo->doneTarget);
-
-    byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-        m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-        "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
-
-    MacroAssembler::repatchJump(byValInfo->m_badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
-}
-
 void JIT::emit_op_profile_type(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpProfileType>();

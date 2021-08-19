@@ -1,3 +1,28 @@
+2021-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove op_has_indexed_property related code
+        https://bugs.webkit.org/show_bug.cgi?id=229271
+
+        Reviewed by Saam Barati.
+
+        After our new for-in protocol, op_has_indexed_property is removed.
+        As a result, we can remove many ByValInfo code that is used only
+        for op_has_indexed_property.
+
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadForArrayMode): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileHasIndexedProperty): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad): Deleted.
+        (JSC::JIT::emitContiguousLoad): Deleted.
+        (JSC::JIT::emitArrayStorageLoad): Deleted.
+
 2021-08-18  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r280382): [GTK] 2.33.3 does not build with gtk-doc enabled, installs broken pkg-config files

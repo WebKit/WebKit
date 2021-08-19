@@ -254,13 +254,6 @@ namespace JSC {
             jit.privateCompilePutPrivateNameWithCachedId(byValInfo, returnAddress, propertyName);
         }
 
-        static void compileHasIndexedProperty(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompileHasIndexedProperty(byValInfo, returnAddress, arrayMode);
-        }
-
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
@@ -281,8 +274,6 @@ namespace JSC {
         void privateCompilePutByValWithCachedId(ByValInfo*, ReturnAddressPtr, PutKind, CacheableIdentifier);
 
         void privateCompilePutPrivateNameWithCachedId(ByValInfo*, ReturnAddressPtr, CacheableIdentifier);
-
-        void privateCompileHasIndexedProperty(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
@@ -396,16 +387,6 @@ namespace JSC {
         
         JITArrayMode chooseArrayMode(ArrayProfile*);
         
-        // Property is in regT1, base is in regT0. regT2 contains indexing type.
-        // Property is int-checked and zero extended. Base is cell checked.
-        // Structure is already profiled. Returns the slow cases. Fall-through
-        // case contains result in regT0, and it is not yet profiled.
-        JumpList emitInt32Load(const Instruction* instruction, PatchableJump& badType, ByValInfo* byValInfo) { return emitContiguousLoad(instruction, badType, byValInfo, Int32Shape); }
-        JumpList emitDoubleLoad(const Instruction*, PatchableJump& badType, ByValInfo*);
-        JumpList emitContiguousLoad(const Instruction*, PatchableJump& badType, ByValInfo*, IndexingType expectedShape = ContiguousShape);
-        JumpList emitArrayStorageLoad(const Instruction*, PatchableJump& badType, ByValInfo*);
-        JumpList emitLoadForArrayMode(const Instruction*, JITArrayMode, PatchableJump& badType, ByValInfo*);
-
         // Property is in regT1, base is in regT0. regT2 contains indecing type.
         // The value to store is not yet loaded. Property is int-checked and
         // zero-extended. Base is cell checked. Structure is already profiled.
