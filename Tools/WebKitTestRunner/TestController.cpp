@@ -1126,10 +1126,17 @@ void TestController::dumpResponse(const String& result)
 void TestController::findAndDumpWebKitProcessIdentifiers()
 {
 #if PLATFORM(COCOA)
-    dumpResponse(makeString(TestController::webProcessName(), ": ",
-        WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page()), '\n',
-        TestController::networkProcessName(), ": ",
-        WKWebsiteDataStoreGetNetworkProcessIdentifier(websiteDataStore()), '\n'));
+    auto page = TestController::singleton().mainWebView()->page();
+    dumpResponse(makeString(
+        TestController::webProcessName(), ": "
+        , WKPageGetProcessIdentifier(page), '\n'
+        , TestController::networkProcessName(), ": "
+        , WKWebsiteDataStoreGetNetworkProcessIdentifier(websiteDataStore()), '\n'
+#if ENABLE(GPU_PROCESS)
+        , TestController::gpuProcessName(), ": "
+        , WKPageGetGPUProcessIdentifier(page), '\n'
+#endif
+    ));
 #else
     dumpResponse("\n"_s);
 #endif
@@ -1211,6 +1218,18 @@ const char* TestController::networkProcessName()
     return "WPENetworkProcess";
 #else
     return "NetworkProcess";
+#endif
+}
+
+const char* TestController::gpuProcessName()
+{
+    // FIXME: Find a way to not hardcode the process name.
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    return "com.apple.WebKit.GPU";
+#elif PLATFORM(COCOA)
+    return "com.apple.WebKit.GPU.Development";
+#else
+    return "GPUProcess";
 #endif
 }
 

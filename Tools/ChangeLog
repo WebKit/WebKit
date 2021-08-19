@@ -1,3 +1,21 @@
+2021-08-18  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 229265: run-webkit-tests --leaks should check for leaks in the GPU process
+        <https://webkit.org/b/229265>
+        <rdar://problem/82101453>
+
+        Reviewed by Alex Christensen.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::findAndDumpWebKitProcessIdentifiers):
+        - Include the GPU process PID if it's enabled when sending a
+          list of PIDs back to run-webkit-tests.
+        (WTR::TestController::gpuProcessName): Add.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::databaseProcessName): Delete.
+        - The implementation was removed a while ago.
+        (WTR::TestController::gpuProcessName): Add.
+
 2021-08-18  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Remember failures when repeating test

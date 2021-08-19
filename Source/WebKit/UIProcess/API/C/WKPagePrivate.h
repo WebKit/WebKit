@@ -163,6 +163,7 @@ WK_EXPORT void WKPageRestoreFromSessionStateWithoutNavigation(WKPageRef page, WK
 WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits);
 
 WK_EXPORT WKProcessID WKPageGetProcessIdentifier(WKPageRef page);
+WK_EXPORT WKProcessID WKPageGetGPUProcessIdentifier(WKPageRef page);
 
 #ifdef __BLOCKS__
 typedef void (^WKPageGetApplicationManifestBlock)(void);

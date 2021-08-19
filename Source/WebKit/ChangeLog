@@ -1,3 +1,17 @@
+2021-08-18  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 229265: run-webkit-tests --leaks should check for leaks in the GPU process
+        <https://webkit.org/b/229265>
+        <rdar://problem/82101453>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetGPUProcessIdentifier): Add.
+        * UIProcess/API/C/WKPagePrivate.h:
+        (WKPageGetGPUProcessIdentifier): Add.
+        - Add function to return the PID for the GPU process.
+
 2021-08-18  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded UIKitSPI declarations
