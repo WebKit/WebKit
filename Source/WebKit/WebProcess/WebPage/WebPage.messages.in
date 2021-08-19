@@ -46,7 +46,7 @@ messages -> WebPage LegacyReceiver {
 
     ExecuteEditCommandWithCallback(String name, String argument) -> () Async
     KeyEvent(WebKit::WebKeyboardEvent event)
-    MouseEvent(WebKit::WebMouseEvent event, std::optional<WebKit::SandboxExtension::HandleArray> sandboxExtensions)
+    MouseEvent(WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions)
 #if PLATFORM(IOS_FAMILY)
     SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor, double minimumEffectiveDeviceWidth)
     SetMaximumUnobscuredSize(WebCore::FloatSize size)
@@ -194,7 +194,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
     NotifyUserScripts()
-    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, WebKit::SandboxExtension::HandleArray networkExtensionsSandboxExtensions)
+    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, struct WebKit::PolicyDecision policyDecision, Vector<WebKit::SandboxExtension::Handle> networkExtensionsSandboxExtensions)
 
     ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, uint64_t listenerID)
 
@@ -316,7 +316,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData selection, OptionSet<WebCore::DragApplicationFlags> flags)
 #endif
 #if !PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::DragData dragData, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::SandboxExtension::HandleArray sandboxExtensionsForUpload)
+    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::DragData dragData, WebKit::SandboxExtension::Handle sandboxExtensionHandle, Vector<WebKit::SandboxExtension::Handle> sandboxExtensionsForUpload)
 #endif
 #if ENABLE(DRAG_SUPPORT)
     DidStartDrag()
@@ -353,7 +353,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidChooseFilesForOpenPanel(Vector<String> fileURLs, Vector<String> replacementURLs)
     DidCancelForOpenPanel()
 #if ENABLE(SANDBOX_EXTENSIONS)
-    ExtendSandboxForFilesFromOpenPanel(WebKit::SandboxExtension::HandleArray sandboxExtensions)
+    ExtendSandboxForFilesFromOpenPanel(Vector<WebKit::SandboxExtension::Handle> sandboxExtensions)
 #endif
 
     # Spelling and grammar.

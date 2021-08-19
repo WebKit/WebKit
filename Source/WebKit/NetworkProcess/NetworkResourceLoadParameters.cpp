@@ -51,22 +51,12 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     if (request.httpBody()) {
         request.httpBody()->encode(encoder);
 
-        const Vector<FormDataElement>& elements = request.httpBody()->elements();
-        size_t fileCount = 0;
-        for (size_t i = 0, count = elements.size(); i < count; ++i) {
-            if (WTF::holds_alternative<FormDataElement::EncodedFileData>(elements[i].data))
-                ++fileCount;
-        }
-
-        SandboxExtension::HandleArray requestBodySandboxExtensions;
-        requestBodySandboxExtensions.allocate(fileCount);
-        size_t extensionIndex = 0;
-        for (size_t i = 0, count = elements.size(); i < count; ++i) {
-            const FormDataElement& element = elements[i];
+        Vector<SandboxExtension::Handle> requestBodySandboxExtensions;
+        for (const FormDataElement& element : request.httpBody()->elements()) {
             if (auto* fileData = WTF::get_if<FormDataElement::EncodedFileData>(element.data)) {
                 const String& path = fileData->filename;
                 if (auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly))
-                    requestBodySandboxExtensions[extensionIndex++] = WTFMove(*handle);
+                    requestBodySandboxExtensions.append(WTFMove(*handle));
             }
         }
         encoder << requestBodySandboxExtensions;
@@ -178,12 +168,12 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
             return std::nullopt;
         result.request.setHTTPBody(WTFMove(formData));
 
-        std::optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
+        std::optional<Vector<SandboxExtension::Handle>> requestBodySandboxExtensionHandles;
         decoder >> requestBodySandboxExtensionHandles;
         if (!requestBodySandboxExtensionHandles)
             return std::nullopt;
-        for (size_t i = 0; i < requestBodySandboxExtensionHandles->size(); ++i) {
-            if (auto extension = SandboxExtension::create(WTFMove(requestBodySandboxExtensionHandles->at(i))))
+        for (auto& handle : WTFMove(*requestBodySandboxExtensionHandles)) {
+            if (auto extension = SandboxExtension::create(WTFMove(handle)))
                 result.requestBodySandboxExtensions.append(WTFMove(extension));
         }
     }

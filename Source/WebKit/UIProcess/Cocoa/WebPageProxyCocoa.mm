@@ -191,7 +191,7 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 #endif
 }
 
-void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles)
+void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
 {
     if (!files.size())
         return;
@@ -209,13 +209,11 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
         }
     }
 
-    fileUploadHandles.allocate(files.size());
-    for (size_t i = 0; i< files.size(); i++) {
-        NSString *file = files[i];
+    for (auto& file : files) {
         if (![[NSFileManager defaultManager] fileExistsAtPath:file])
             continue;
         if (auto handle = SandboxExtension::createHandle(file, SandboxExtension::Type::ReadOnly))
-            fileUploadHandles[i] = WTFMove(*handle);
+            fileUploadHandles.append(WTFMove(*handle));
     }
 }
 
@@ -630,7 +628,7 @@ void WebPageProxy::setUpHighlightsObserver()
 
 #endif
 
-SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
+Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
 #if ENABLE(CONTENT_FILTERING)
     if (!process.hasNetworkExtensionSandboxAccess() && NetworkExtensionContentFilter::isRequired()) {
@@ -644,7 +642,7 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
         return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, std::nullopt);
     }
 #endif
-    return SandboxExtension::HandleArray();
+    return { };
 }
 
 #if ENABLE(CONTEXT_MENUS)

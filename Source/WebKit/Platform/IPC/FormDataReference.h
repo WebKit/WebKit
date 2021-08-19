@@ -50,19 +50,12 @@ public:
 
         encoder << *m_data;
 
-        auto& elements = m_data->elements();
-        size_t fileCount = std::count_if(elements.begin(), elements.end(), [](auto& element) {
-            return WTF::holds_alternative<WebCore::FormDataElement::EncodedFileData>(element.data);
-        });
-
-        WebKit::SandboxExtension::HandleArray sandboxExtensionHandles;
-        sandboxExtensionHandles.allocate(fileCount);
-        size_t extensionIndex = 0;
-        for (auto& element : elements) {
+        Vector<WebKit::SandboxExtension::Handle> sandboxExtensionHandles;
+        for (auto& element : m_data->elements()) {
             if (auto* fileData = WTF::get_if<WebCore::FormDataElement::EncodedFileData>(element.data)) {
                 const String& path = fileData->filename;
                 if (auto handle = WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly))
-                    sandboxExtensionHandles[extensionIndex++] = WTFMove(*handle);
+                    sandboxExtensionHandles.append(WTFMove(*handle));
             }
         }
         encoder << sandboxExtensionHandles;
@@ -81,7 +74,7 @@ public:
         if (!formData)
             return std::nullopt;
 
-        std::optional<WebKit::SandboxExtension::HandleArray> sandboxExtensionHandles;
+        std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensionHandles;
         decoder >> sandboxExtensionHandles;
         if (!sandboxExtensionHandles)
             return std::nullopt;

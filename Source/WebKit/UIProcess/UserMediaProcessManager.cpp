@@ -93,7 +93,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
     }
 
     if (extensionCount) {
-        SandboxExtension::HandleArray handles;
+        Vector<SandboxExtension::Handle> handles;
         Vector<String> ids;
 
         if (!proxy.page().preferences().mockCaptureDevicesEnabled()) {

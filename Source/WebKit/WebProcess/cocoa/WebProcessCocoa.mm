@@ -1195,7 +1195,7 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
     dispatchSimulatedNotificationsForPreferenceChange(key);
 }
 
-void WebProcess::unblockPreferenceService(SandboxExtension::HandleArray&& handleArray)
+void WebProcess::unblockPreferenceService(Vector<SandboxExtension::Handle>&& handleArray)
 {
     SandboxExtension::consumePermanently(handleArray);
     _CFPrefsSetDirectModeEnabled(false);
@@ -1255,7 +1255,7 @@ void WebProcess::updatePageScreenProperties()
 }
 #endif
 
-void WebProcess::unblockServicesRequiredByAccessibility(const SandboxExtension::HandleArray& handleArray)
+void WebProcess::unblockServicesRequiredByAccessibility(const Vector<SandboxExtension::Handle>& handleArray)
 {
 #if PLATFORM(IOS_FAMILY)
     bool consumed = SandboxExtension::consumePermanently(handleArray);

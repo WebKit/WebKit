@@ -412,7 +412,7 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
     postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
 }
 
-void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::HandleArray& networkExtensionsHandles)
+void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>& networkExtensionsHandles)
 {
 #if ENABLE(CONTENT_FILTERING)
     SandboxExtension::consumePermanently(networkExtensionsHandles);

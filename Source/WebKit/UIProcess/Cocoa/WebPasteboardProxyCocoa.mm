@@ -155,7 +155,7 @@ void WebPasteboardProxy::getPasteboardTypes(IPC::Connection& connection, const S
 }
 
 void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, std::optional<PageIdentifier> pageID,
-    CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&& sandboxExtensions)>&& completionHandler)
+    CompletionHandler<void(Vector<String>&& pathnames, Vector<SandboxExtension::Handle>&& sandboxExtensions)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }, { }));
 
@@ -168,18 +168,17 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 
     PlatformPasteboard::performAsDataOwner(*dataOwner, [&] {
         Vector<String> pathnames;
-        SandboxExtension::HandleArray sandboxExtensions;
+        Vector<SandboxExtension::Handle> sandboxExtensions;
         if (webProcessProxyForConnection(connection)) {
             PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 #if PLATFORM(MAC)
             // On iOS, files are copied into app's container upon paste.
-            sandboxExtensions.allocate(pathnames.size());
             for (size_t i = 0; i < pathnames.size(); i++) {
                 auto& filename = pathnames[i];
                 if (![[NSFileManager defaultManager] fileExistsAtPath:filename])
                     continue;
                 if (auto handle = SandboxExtension::createHandle(filename, SandboxExtension::Type::ReadOnly))
-                    sandboxExtensions[i] = WTFMove(*handle);
+                    sandboxExtensions.append(WTFMove(*handle));
             }
 #endif
         }

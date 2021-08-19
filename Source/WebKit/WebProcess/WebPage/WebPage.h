@@ -973,7 +973,7 @@ public:
 #endif
 
 #if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK)
-    void performDragControllerAction(DragControllerAction, const WebCore::DragData&, SandboxExtension::Handle&&, SandboxExtension::HandleArray&&);
+    void performDragControllerAction(DragControllerAction, const WebCore::DragData&, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&);
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1606,7 +1606,7 @@ private:
 
     void setNeedsFontAttributes(bool);
 
-    void mouseEvent(const WebMouseEvent&, std::optional<SandboxExtension::HandleArray>&& sandboxExtensions);
+    void mouseEvent(const WebMouseEvent&, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions);
     void keyEvent(const WebKeyboardEvent&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -1690,7 +1690,7 @@ private:
     void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
-    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&, const SandboxExtension::HandleArray&);
+    void didReceivePolicyDecision(WebCore::FrameIdentifier, uint64_t listenerID, PolicyDecision&&, const Vector<SandboxExtension::Handle>&);
     void continueWillSubmitForm(WebCore::FrameIdentifier, uint64_t listenerID);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
@@ -1758,7 +1758,7 @@ private:
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    void extendSandboxForFilesFromOpenPanel(SandboxExtension::HandleArray&&);
+    void extendSandboxForFilesFromOpenPanel(Vector<SandboxExtension::Handle>&&);
 #endif
 
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
@@ -1910,12 +1910,12 @@ private:
 
     void platformDidScalePage();
 
-    Vector<RefPtr<SandboxExtension>> consumeSandboxExtensions(SandboxExtension::HandleArray&&);
+    Vector<RefPtr<SandboxExtension>> consumeSandboxExtensions(Vector<SandboxExtension::Handle>&&);
     void revokeSandboxExtensions(Vector<RefPtr<SandboxExtension>>& sandboxExtensions);
 
     void setSelectionRange(const WebCore::IntPoint&, WebCore::TextGranularity, bool);
     
-    void consumeNetworkExtensionSandboxExtensions(const SandboxExtension::HandleArray&);
+    void consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>&);
 
     void platformIsPlayingMediaDidChange();
 

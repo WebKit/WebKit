@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions(Vector<String> ids, SandboxExtension::HandleArray&& handles)
+MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions(Vector<String> ids, Vector<SandboxExtension::Handle>&& handles)
     : m_ids(ids)
     , m_handles(WTFMove(handles))
 {
@@ -42,7 +42,7 @@ MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions(Vector<String> ids, S
 void MediaDeviceSandboxExtensions::encode(IPC::Encoder& encoder) const
 {
     encoder << m_ids;
-    m_handles.encode(encoder);
+    encoder << m_handles;
 }
 
 bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSandboxExtensions& result)
@@ -50,7 +50,7 @@ bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSand
     if (!decoder.decode(result.m_ids))
         return false;
 
-    std::optional<SandboxExtension::HandleArray> handles;
+    std::optional<Vector<SandboxExtension::Handle>> handles;
     decoder >> handles;
     if (!handles)
         return false;

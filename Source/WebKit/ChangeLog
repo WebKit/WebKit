@@ -1,3 +1,116 @@
+2021-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Use Vector<SandboxExtension::Handle> instead of SandboxExtension::HandleArray
+        https://bugs.webkit.org/show_bug.cgi?id=229100
+
+        Reviewed by Chris Dumez.
+
+        No change in behavior.  Just more modern code.
+
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Platform/IPC/FormDataReference.h:
+        (IPC::FormDataReference::encode const):
+        (IPC::FormDataReference::decode):
+        * Shared/Cocoa/LoadParametersCocoa.mm:
+        (WebKit::LoadParameters::platformDecode):
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::createHandlesForResources):
+        (WebKit::SandboxExtension::createReadOnlyHandlesForFiles):
+        (WebKit::SandboxExtension::createHandlesForMachLookup):
+        (WebKit::SandboxExtension::createHandlesForIOKitClassExtensions):
+        (WebKit::SandboxExtension::consumePermanently):
+        (WebKit::SandboxExtension::HandleArray::HandleArray): Deleted.
+        (WebKit::SandboxExtension::HandleArray::~HandleArray): Deleted.
+        (WebKit::SandboxExtension::HandleArray::allocate): Deleted.
+        (WebKit::SandboxExtension::HandleArray::append): Deleted.
+        (WebKit::SandboxExtension::HandleArray::operator[]): Deleted.
+        (WebKit::SandboxExtension::HandleArray::operator[] const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::size const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::encode const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::decode): Deleted.
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp:
+        (WebKit::WebIDBResult::encode const):
+        (WebKit::WebIDBResult::decode):
+        * Shared/Databases/IndexedDB/WebIDBResult.h:
+        (WebKit::WebIDBResult::WebIDBResult):
+        (WebKit::WebIDBResult::handles const):
+        * Shared/LoadParameters.h:
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::Handle::decode):
+        (WebKit::SandboxExtension::createReadOnlyHandlesForFiles):
+        (WebKit::SandboxExtension::consumePermanently):
+        (WebKit::SandboxExtension::HandleArray::at): Deleted.
+        (WebKit::SandboxExtension::HandleArray::HandleArray): Deleted.
+        (WebKit::SandboxExtension::HandleArray::~HandleArray): Deleted.
+        (WebKit::SandboxExtension::HandleArray::allocate): Deleted.
+        (WebKit::SandboxExtension::HandleArray::append): Deleted.
+        (WebKit::SandboxExtension::HandleArray::size const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::operator[] const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::operator[]): Deleted.
+        (WebKit::SandboxExtension::HandleArray::begin): Deleted.
+        (WebKit::SandboxExtension::HandleArray::end): Deleted.
+        (WebKit::SandboxExtension::HandleArray::begin const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::end const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::encode const): Deleted.
+        (WebKit::SandboxExtension::HandleArray::decode): Deleted.
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createSandboxExtensionsIfNeeded):
+        (WebKit::WebPageProxy::createNetworkExtensionsSandboxExtensions):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performDragOperation):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragOperation):
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+        (WebKit::WebPageProxy::createNetworkExtensionsSandboxExtensions):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:performDrop:]):
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp:
+        (WebKit::MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions):
+        (WebKit::MediaDeviceSandboxExtensions::encode const):
+        (WebKit::MediaDeviceSandboxExtensions::decode):
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::consumeNetworkExtensionSandboxExtensions):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::extendSandboxForFilesFromOpenPanel):
+        (WebKit::WebPage::consumeSandboxExtensions):
+        (WebKit::WebPage::consumeNetworkExtensionSandboxExtensions):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::unblockPreferenceService):
+        (WebKit::WebProcess::unblockServicesRequiredByAccessibility):
+
 2021-08-19  Simon Fraser  <simon.fraser@apple.com>
 
         Replace the uint64_t used to identify taps with an ObjectIdentifier<> type

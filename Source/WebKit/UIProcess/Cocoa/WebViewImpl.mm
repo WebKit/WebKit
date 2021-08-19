@@ -4278,7 +4278,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 
     NSArray *types = draggingInfo.draggingPasteboard.types;
     SandboxExtension::Handle sandboxExtensionHandle;
-    SandboxExtension::HandleArray sandboxExtensionForUpload;
+    Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
 
     if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {
 
@@ -4314,7 +4314,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         SandboxExtension::Handle sandboxExtensionHandle;
-                        SandboxExtension::HandleArray sandboxExtensionForUpload;
+                        Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
 
                         m_page->createSandboxExtensionsIfNeeded(*fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
                         dragData->setFileNames(*fileNames);

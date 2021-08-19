@@ -92,7 +92,7 @@ private:
 #if PLATFORM(COCOA)
     void getNumberOfFiles(IPC::Connection&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(uint64_t)>&&);
     void getPasteboardTypes(IPC::Connection&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&&);
-    void getPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&&)>&&);
+    void getPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&& pathnames, Vector<SandboxExtension::Handle>&&)>&&);
     void getPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(String&&)>&&);
     void getPasteboardStringsForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&&);
     void getPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(SharedMemory::IPCHandle&&)>&&);

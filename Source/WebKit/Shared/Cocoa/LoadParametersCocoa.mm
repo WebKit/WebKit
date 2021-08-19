@@ -49,7 +49,7 @@ bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& param
     if (!IPC::decode(decoder, parameters.dataDetectionContext))
         return false;
 
-    std::optional<SandboxExtension::HandleArray> networkExtensionSandboxExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> networkExtensionSandboxExtensionHandles;
     decoder >> networkExtensionSandboxExtensionHandles;
     if (!networkExtensionSandboxExtensionHandles)
         return false;

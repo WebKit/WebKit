@@ -78,7 +78,7 @@ struct WebProcessCreationParameters {
 
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;
-    SandboxExtension::HandleArray additionalSandboxExtensionHandles;
+    Vector<SandboxExtension::Handle> additionalSandboxExtensionHandles;
 
     UserData initializationUserData;
 
@@ -205,20 +205,20 @@ struct WebProcessCreationParameters {
     std::optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
     
 #if PLATFORM(IOS)
-    SandboxExtension::HandleArray compilerServiceExtensionHandles;
+    Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 
     std::optional<SandboxExtension::Handle> containerManagerExtensionHandle;
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 #if HAVE(VIDEO_RESTRICTED_DECODING)
-    SandboxExtension::HandleArray videoDecoderExtensionHandles;
+    Vector<SandboxExtension::Handle> videoDecoderExtensionHandles;
 #endif
 
-    SandboxExtension::HandleArray diagnosticsExtensionHandles;
+    Vector<SandboxExtension::Handle> diagnosticsExtensionHandles;
 #if PLATFORM(IOS_FAMILY)
-    SandboxExtension::HandleArray dynamicMachExtensionHandles;
-    SandboxExtension::HandleArray dynamicIOKitExtensionHandles;
+    Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
+    Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 
 #if PLATFORM(COCOA)
@@ -237,7 +237,7 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(COCOA)
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    std::optional<SandboxExtension::HandleArray> preferencesExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> preferencesExtensionHandles;
 #endif
 #endif
 

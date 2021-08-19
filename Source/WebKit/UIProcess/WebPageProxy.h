@@ -1220,7 +1220,7 @@ public:
     void dragEntered(WebCore::DragData&, const String& dragStorageName = String());
     void dragUpdated(WebCore::DragData&, const String& dragStorageName = String());
     void dragExited(WebCore::DragData&, const String& dragStorageName = String());
-    void performDragOperation(WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, SandboxExtension::HandleArray&&);
+    void performDragOperation(WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&);
     void didPerformDragOperation(bool handled);
 
     void didPerformDragControllerAction(std::optional<WebCore::DragOperation>, WebCore::DragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, const WebCore::IntRect& insertionRect, const WebCore::IntRect& editableElementRect);
@@ -1652,7 +1652,7 @@ public:
     WebURLSchemeHandler* urlSchemeHandlerForScheme(const String& scheme);
 
 #if PLATFORM(COCOA)
-    void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, SandboxExtension::HandleArray& fileUploadHandles);
+    void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles);
 #endif
     void editorStateChanged(const EditorState&);
     bool updateEditorState(const EditorState& newEditorState);
@@ -2365,7 +2365,7 @@ private:
     RetainPtr<NSArray> m_dataDetectionResults;
 #endif
 
-    void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, SandboxExtension::HandleArray&&);
+    void performDragControllerAction(DragControllerAction, WebCore::DragData&, const String& dragStorageName, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&);
 
     void updateBackingStoreDiscardableState();
 
@@ -2517,7 +2517,7 @@ private:
     bool setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL&, std::optional<NavigatingToAppBoundDomain>);
 #endif
 
-    static SandboxExtension::HandleArray createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
+    static Vector<SandboxExtension::Handle> createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
 
     static SandboxExtension::Handle fontdMachExtensionHandle();
 

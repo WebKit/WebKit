@@ -151,7 +151,7 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String&
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
-    SandboxExtension::HandleArray sandboxExtensionsHandleArray;
+    Vector<SandboxExtension::Handle> sandboxExtensionsHandleArray;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardPathnamesForType(pasteboardName, pasteboardType, pageIdentifier(context)),
         Messages::WebPasteboardProxy::GetPasteboardPathnamesForType::Reply(pathnames, sandboxExtensionsHandleArray), 0);
     ASSERT(pathnames.size() == sandboxExtensionsHandleArray.size());

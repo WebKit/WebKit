@@ -246,7 +246,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     if (!canSendMessage())
         return;
 
-    SandboxExtension::HandleArray handleArray;
+    Vector<SandboxExtension::Handle> handleArray;
 #if PLATFORM(IOS_FAMILY)
     handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, connection() ? connection()->getAuditToken() : std::nullopt);
     ASSERT(handleArray.size() == 2);

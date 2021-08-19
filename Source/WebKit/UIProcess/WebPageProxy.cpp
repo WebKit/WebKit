@@ -2648,12 +2648,12 @@ void WebPageProxy::dragExited(DragData& dragData, const String& dragStorageName)
     performDragControllerAction(DragControllerAction::Exited, dragData, dragStorageName, { }, { });
 }
 
-void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, SandboxExtension::HandleArray&& sandboxExtensionsForUpload)
+void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
 {
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData, dragStorageName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload));
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, SandboxExtension::HandleArray&& sandboxExtensionsForUpload)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
 {
     if (!hasRunningProcess())
         return;
@@ -2820,7 +2820,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
         m_process->startResponsivenessTimer();
     }
 
-    std::optional<SandboxExtension::HandleArray> sandboxExtensions;
+    std::optional<Vector<SandboxExtension::Handle>> sandboxExtensions;
 
 #if PLATFORM(MAC)
     bool eventMayStartDrag = !m_currentDragOperation && eventType == WebEvent::MouseMove && event.button() != WebMouseEvent::Button::NoButton;
@@ -10791,9 +10791,9 @@ void WebPageProxy::modelElementPreviewDidObtainContextId(const WebCore::ElementC
 #endif
 
 #if !PLATFORM(COCOA)
-SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
+Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
-    return SandboxExtension::HandleArray();
+    return { };
 }
 #endif
 

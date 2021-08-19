@@ -2963,7 +2963,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
     }
 }
 
-void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<SandboxExtension::HandleArray>&& sandboxExtensions)
+void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensions)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
@@ -3506,7 +3506,7 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
         pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
-void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision, const SandboxExtension::HandleArray& networkExtensionsHandles)
+void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision, const Vector<SandboxExtension::Handle>& networkExtensionsHandles)
 {
     consumeNetworkExtensionSandboxExtensions(networkExtensionsHandles);
 
@@ -4357,7 +4357,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Int
     ASSERT_NOT_REACHED();
 }
 #else
-void WebPage::performDragControllerAction(DragControllerAction action, const WebCore::DragData& dragData, SandboxExtension::Handle&& sandboxExtensionHandle, SandboxExtension::HandleArray&& sandboxExtensionsHandleArray)
+void WebPage::performDragControllerAction(DragControllerAction action, const WebCore::DragData& dragData, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsHandleArray)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
@@ -4696,7 +4696,7 @@ void WebPage::didCancelForOpenPanel()
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-void WebPage::extendSandboxForFilesFromOpenPanel(SandboxExtension::HandleArray&& handles)
+void WebPage::extendSandboxForFilesFromOpenPanel(Vector<SandboxExtension::Handle>&& handles)
 {
     bool result = SandboxExtension::consumePermanently(handles);
     if (!result) {
@@ -7600,7 +7600,7 @@ RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
 }
 #endif
 
-Vector<RefPtr<SandboxExtension>> WebPage::consumeSandboxExtensions(SandboxExtension::HandleArray&& sandboxExtensions)
+Vector<RefPtr<SandboxExtension>> WebPage::consumeSandboxExtensions(Vector<SandboxExtension::Handle>&& sandboxExtensions)
 {
     Vector<RefPtr<SandboxExtension>> dragSandboxExtensions;
     for (auto& sandboxExtension : sandboxExtensions) {
@@ -7689,7 +7689,7 @@ void WebPage::invalidateMediaSessionCoordinator()
 #endif
 
 #if !PLATFORM(COCOA)
-void WebPage::consumeNetworkExtensionSandboxExtensions(const SandboxExtension::HandleArray&)
+void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>&)
 {
 }
 #endif

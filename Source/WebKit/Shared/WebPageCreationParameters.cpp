@@ -357,7 +357,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    std::optional<std::optional<SandboxExtension::HandleArray>> attachmentElementExtensionHandles;
+    std::optional<std::optional<Vector<SandboxExtension::Handle>>> attachmentElementExtensionHandles;
     decoder >> attachmentElementExtensionHandles;
     if (!attachmentElementExtensionHandles)
         return std::nullopt;
@@ -392,26 +392,26 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 
     // FIXME(207716): The following should be removed when the GPU process is complete.
-    std::optional<SandboxExtension::HandleArray> mediaExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> mediaExtensionHandles;
     decoder >> mediaExtensionHandles;
     if (!mediaExtensionHandles)
         return std::nullopt;
     parameters.mediaExtensionHandles = WTFMove(*mediaExtensionHandles);
 
-    std::optional<SandboxExtension::HandleArray> mediaIOKitExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> mediaIOKitExtensionHandles;
     decoder >> mediaIOKitExtensionHandles;
     if (!mediaIOKitExtensionHandles)
         return std::nullopt;
     parameters.mediaIOKitExtensionHandles = WTFMove(*mediaIOKitExtensionHandles);
     // FIXME(207716): End region to remove.
 
-    std::optional<SandboxExtension::HandleArray> gpuIOKitExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> gpuIOKitExtensionHandles;
     decoder >> gpuIOKitExtensionHandles;
     if (!gpuIOKitExtensionHandles)
         return std::nullopt;
     parameters.gpuIOKitExtensionHandles = WTFMove(*gpuIOKitExtensionHandles);
 
-    std::optional<SandboxExtension::HandleArray> gpuMachExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> gpuMachExtensionHandles;
     decoder >> gpuMachExtensionHandles;
     if (!gpuMachExtensionHandles)
         return std::nullopt;

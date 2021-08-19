@@ -757,10 +757,9 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
             parameters.injectedBundlePathExtensionHandle = WTFMove(*handle);
     }
 
-    parameters.additionalSandboxExtensionHandles.allocate(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.size());
-    for (size_t i = 0, size = m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.size(); i < size; ++i) {
-        if (auto handle =  SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths[i], SandboxExtension::Type::ReadOnly))
-            parameters.additionalSandboxExtensionHandles[i] = WTFMove(*handle);
+    for (auto& path : m_resolvedPaths.additionalWebProcessSandboxExtensionPaths) {
+        if (auto handle =  SandboxExtension::createHandleWithoutResolvingPath(path, SandboxExtension::Type::ReadOnly))
+            parameters.additionalSandboxExtensionHandles.append(WTFMove(*handle));
     }
 
 #if PLATFORM(IOS_FAMILY)

@@ -160,7 +160,7 @@ struct WebPageCreationParameters {
     std::optional<WebCore::ViewportArguments> overrideViewportArguments;
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
-    std::optional<SandboxExtension::HandleArray> attachmentElementExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> attachmentElementExtensionHandles;
 #endif
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize;
@@ -176,10 +176,10 @@ struct WebPageCreationParameters {
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;
     Vector<String> additionalSupportedImageTypes;
-    SandboxExtension::HandleArray mediaExtensionHandles; // FIXME(207716): Remove when GPU process is complete.
-    SandboxExtension::HandleArray mediaIOKitExtensionHandles;
-    SandboxExtension::HandleArray gpuIOKitExtensionHandles;
-    SandboxExtension::HandleArray gpuMachExtensionHandles;
+    Vector<SandboxExtension::Handle> mediaExtensionHandles; // FIXME(207716): Remove when GPU process is complete.
+    Vector<SandboxExtension::Handle> mediaIOKitExtensionHandles;
+    Vector<SandboxExtension::Handle> gpuIOKitExtensionHandles;
+    Vector<SandboxExtension::Handle> gpuMachExtensionHandles;
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
     std::optional<SandboxExtension::Handle> fontMachExtensionHandle;

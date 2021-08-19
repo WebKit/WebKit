@@ -91,19 +91,19 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
     result.containerTemporaryDirectoryExtensionHandle = WTFMove(*containerTemporaryDirectoryExtensionHandle);
 #endif
 #if PLATFORM(IOS_FAMILY)
-    std::optional<SandboxExtension::HandleArray> compilerServiceExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> compilerServiceExtensionHandles;
     decoder >> compilerServiceExtensionHandles;
     if (!compilerServiceExtensionHandles)
         return false;
     result.compilerServiceExtensionHandles = WTFMove(*compilerServiceExtensionHandles);
 
-    std::optional<SandboxExtension::HandleArray> dynamicIOKitExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> dynamicIOKitExtensionHandles;
     decoder >> dynamicIOKitExtensionHandles;
     if (!dynamicIOKitExtensionHandles)
         return false;
     result.dynamicIOKitExtensionHandles = WTFMove(*dynamicIOKitExtensionHandles);
 
-    std::optional<SandboxExtension::HandleArray> dynamicMachExtensionHandles;
+    std::optional<Vector<SandboxExtension::Handle>> dynamicMachExtensionHandles;
     decoder >> dynamicMachExtensionHandles;
     if (!dynamicMachExtensionHandles)
         return false;
