@@ -653,7 +653,7 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 
 webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Crash Pass ]
 
-webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Crash Pass ]
+webkit.org/b/214798 http/tests/images/image-supports-video.html [ Timeout Pass ]
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
