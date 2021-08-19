@@ -1,3 +1,16 @@
+2021-08-19  Tim Nguyen  <ntim@apple.com>
+
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT - August 19th 2021
+        https://bugs.webkit.org/show_bug.cgi?id=229297
+
+        Unreviewed.
+
+        Also removed LayoutTests/imported/blink/dialog since the tests are now in the WPT repo.
+
+        https://github.com/web-platform-tests/wpt/commit/02c0e1b2b1b316a20d5377a202d83799794ce510
+
+        * TestExpectations:
+
 2021-08-19  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac, iOS] imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html is an image-only failure.

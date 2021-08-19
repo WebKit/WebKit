@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="match" href="inert-node-is-not-highlighted-ref.html">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#inert-subtrees">
 <style>
-body p, span {
-    -webkit-user-select: none;
-}
-
 ::backdrop {
     display: none;
 }
@@ -16,10 +14,11 @@ body p, span {
 none of the text outside the dialog is highlighted when selected.</p>
 
 <p>Although not shown as selected, the inert nodes are in window.getSelection()
-and copied to the clipboard, which is the same behavior as -webkit-user-select:
+and copied to the clipboard, which is the same behavior as user-select:
 none (crbug.com/147490).</p>
 
-<br><span>This text shouldn't be highlighted as selected.</span>
+<br>  <!-- Needed to the trigger the bug. -->
+This text shouldn't be highlighted as selected.
 
 <dialog>
     <div id="selectable">I'm selectable.</div>
@@ -28,8 +27,7 @@ none (crbug.com/147490).</p>
 <script>
 dialog = document.querySelector('dialog');
 dialog.showModal();
-selectable = document.querySelector('#selectable');
-window.getSelection().selectAllChildren(selectable);
+document.execCommand('SelectAll');
 </script>
 </body>
 </html>

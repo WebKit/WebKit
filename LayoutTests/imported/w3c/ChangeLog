@@ -1,5 +1,67 @@
 2021-08-19  Tim Nguyen  <ntim@apple.com>
 
+        Re-import html/semantics/interactive-elements/the-dialog-element WPT - August 19th 2021
+        https://bugs.webkit.org/show_bug.cgi?id=229297
+
+        Unreviewed.
+
+        Also removed LayoutTests/imported/blink/dialog since the tests are now in the WPT repo.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-descendant-selector-expected.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-descendant-selector-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-descendant-selector.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-descendant-selector.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-does-not-inherit-expected.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-does-not-inherit-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-does-not-inherit.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-does-not-inherit.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none-expected.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-display-none.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-style-change-expected.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-dynamic-style-change-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-dynamic-style-change.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-dynamic-style-change.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-in-flow-expected.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-in-flow-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-in-flow.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-in-flow.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-stacking-order-expected.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-stacking-order-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-stacking-order.html: Renamed from LayoutTests/imported/blink/dialog/backdrop-stacking-order.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-cancel-with-input.html:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialogs-with-no-backdrop-expected.html: Renamed from LayoutTests/imported/blink/dialog/dialogs-with-no-backdrop-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialogs-with-no-backdrop.html: Renamed from LayoutTests/imported/blink/dialog/dialogs-with-no-backdrop.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dont-share-style-to-top-layer-expected.html: Renamed from LayoutTests/imported/blink/dialog/dont-share-style-to-top-layer-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dont-share-style-to-top-layer.html: Renamed from LayoutTests/imported/blink/dialog/dont-share-style-to-top-layer.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/element-removed-from-top-layer-has-original-position-expected.html: Renamed from LayoutTests/imported/blink/dialog/element-removed-from-top-layer-has-original-position-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/element-removed-from-top-layer-has-original-position.html: Renamed from LayoutTests/imported/blink/dialog/element-removed-from-top-layer-has-original-position.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-not-highlighted-expected.html: Renamed from LayoutTests/imported/blink/dialog/inert-node-is-not-highlighted-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-not-highlighted.html: Renamed from LayoutTests/imported/blink/dialog/inert-node-is-not-highlighted.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-backdrop-expected.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-backdrop-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-backdrop.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-backdrop.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-display-contents-expected.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-display-contents.html: Added.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-generated-content-expected.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-generated-content-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-generated-content.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-generated-content.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-replaced-renderer-expected.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-in-replaced-renderer-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-replaced-renderer.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-in-replaced-renderer.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-table-column-expected.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-in-table-column-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-in-table-column.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-in-table-column.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-sibling-expected.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-sibling-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-sibling.html: Renamed from LayoutTests/imported/blink/dialog/modal-dialog-sibling.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/removed-element-is-removed-from-top-layer-expected.html: Renamed from LayoutTests/imported/blink/dialog/removed-element-is-removed-from-top-layer-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/removed-element-is-removed-from-top-layer.html: Renamed from LayoutTests/imported/blink/dialog/removed-element-is-removed-from-top-layer.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/resources/dialog.css: Renamed from LayoutTests/imported/blink/dialog/resources/dialog.css.
+        (.pseudodialog):
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-containing-block-expected.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-containing-block-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-containing-block.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-containing-block.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-display-none-expected.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-display-none-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-display-none.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-display-none.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-nesting-expected.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-nesting-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-nesting.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-nesting.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd-expected.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-stacking-correct-order-remove-readd-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-correct-order-remove-readd.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-stacking-correct-order-remove-readd.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic-expected.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-stacking-dynamic-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-dynamic.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-stacking-dynamic.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking-expected.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-stacking-expected.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking.html: Renamed from LayoutTests/imported/blink/dialog/top-layer-stacking.html.
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+
+2021-08-19  Tim Nguyen  <ntim@apple.com>
+
         Implement ::backdrop pseudo element
         https://bugs.webkit.org/show_bug.cgi?id=227801
 

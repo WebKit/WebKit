@@ -4598,7 +4598,7 @@ imported/blink/fast/dom/Window/open-window-features-fuzz.html [ Timeout ]
 
 webkit.org/b/227896 fast/text/pua-charactersTreatedAsSpace.html [ ImageOnlyFailure ]
 
-webkit.org/b/227802 imported/blink/dialog/top-layer-display-none.html [ ImageOnlyFailure ]
+webkit.org/b/227802 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-display-none.html [ ImageOnlyFailure ]
 
 webkit.org/b/228110 fast/forms/basic-selects.html [ Skip ]
 webkit.org/b/228110 fast/forms/indeterminate.html [ Skip ]
