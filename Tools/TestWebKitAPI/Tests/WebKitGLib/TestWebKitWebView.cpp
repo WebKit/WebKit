@@ -798,6 +798,42 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
 }
 
+static void testWebViewDocumentFocus(WebViewTest* test, gconstpointer)
+{
+    if (!g_strcmp0(g_getenv("UNDER_XVFB"), "yes")) {
+        g_test_skip("This tests doesn't work under Xvfb");
+        return;
+    }
+
+    test->showInWindow();
+    test->loadHtml("<html><title></title>"
+        "<body onload='document.getElementById(\"editable\").focus()'>"
+        "<input id='editable'></input>"
+        "<script>"
+        "document.addEventListener(\"visibilitychange\", onVisibilityChange, false);"
+        "function onVisibilityChange() {"
+        "    document.title = document.visibilityState;"
+        "}"
+        "</script>"
+        "</body></html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hasFocus();", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
+
+    // Hide the view to make it lose the focus, the window is still the active one though.
+    test->hideView();
+    test->waitUntilTitleChangedTo("hidden");
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hasFocus();", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    g_assert_false(WebViewTest::javascriptResultToBoolean(javascriptResult));
+}
+
 #if PLATFORM(GTK)
 class SnapshotWebViewTest: public WebViewTest {
 public:
@@ -1709,6 +1745,7 @@ void beforeAll()
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
 #endif
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
+    WebViewTest::add("WebKitWebView", "document-focus", testWebViewDocumentFocus);
 #if ENABLE(NOTIFICATIONS)
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-allowed", testWebViewNotificationInitialPermissionAllowed);

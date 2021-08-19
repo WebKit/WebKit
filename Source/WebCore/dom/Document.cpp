@@ -7619,7 +7619,7 @@ Element* Document::activeElement()
 bool Document::hasFocus() const
 {
     Page* page = this->page();
-    if (!page || !page->focusController().isActive())
+    if (!page || !page->focusController().isActive() || !page->focusController().isFocused())
         return false;
     if (Frame* focusedFrame = page->focusController().focusedFrame()) {
         if (focusedFrame->tree().isDescendantOf(frame()))

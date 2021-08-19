@@ -101,6 +101,7 @@
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
 - (void)clickOnElementID:(NSString *)elementID;
 - (void)waitForPendingMouseEvents;
+- (void)focus;
 @end
 
 #if PLATFORM(IOS_FAMILY)

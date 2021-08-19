@@ -654,6 +654,15 @@ static UICalloutBar *suppressUICalloutBar()
     TestWebKitAPI::Util::run(&doneProcessingMouseEvents);
 }
 
+- (void)focus
+{
+#if PLATFORM(MAC)
+    [_hostWindow makeFirstResponder:self];
+#else
+    [super becomeFirstResponder];
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)didStartFormControlInteraction

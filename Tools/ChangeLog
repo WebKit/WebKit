@@ -1,3 +1,21 @@
+2021-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        document.hasFocus() returns true for unfocused pages
+        https://bugs.webkit.org/show_bug.cgi?id=229139
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a unit tests to check document.hasFocus() returns false when a web view is in the active window, but not focused.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST): Ensure web view is focused as required by credentials container.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewDocumentFocus):
+        (beforeAll):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView focus]):
+
 2021-08-18  David Kilzer  <ddkilzer@apple.com>
 
         Bug 229265: run-webkit-tests --leaks should check for leaks in the GPU process
