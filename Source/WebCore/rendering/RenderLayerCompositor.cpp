@@ -865,8 +865,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     ++m_compositingUpdateCount;
 
-    SetForScope<bool> postLayoutChange(m_inPostLayoutUpdate, true);
-
 #if !LOG_DISABLED
     MonotonicTime startTime;
     if (compositingLogEnabled()) {
