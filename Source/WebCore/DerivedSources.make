@@ -245,8 +245,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCDataChannel.idl \
     $(WebCore)/Modules/mediastream/RTCDataChannelEvent.idl \
     $(WebCore)/Modules/mediastream/RTCDegradationPreference.idl \
-    $(WebCore)/Modules/mediastream/RTCDtlsTransport.idl \
-    $(WebCore)/Modules/mediastream/RTCDtlsTransportState.idl \
     $(WebCore)/Modules/mediastream/RTCDtxStatus.idl \
     $(WebCore)/Modules/mediastream/RTCEncodedAudioFrame.idl \
     $(WebCore)/Modules/mediastream/RTCEncodedVideoFrame.idl \

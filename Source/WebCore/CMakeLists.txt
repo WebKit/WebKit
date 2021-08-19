@@ -377,8 +377,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCDataChannel.idl
     Modules/mediastream/RTCDataChannelEvent.idl
     Modules/mediastream/RTCDegradationPreference.idl
-    Modules/mediastream/RTCDtlsTransport.idl
-    Modules/mediastream/RTCDtlsTransportState.idl
     Modules/mediastream/RTCDtxStatus.idl
     Modules/mediastream/RTCEncodedAudioFrame.idl
     Modules/mediastream/RTCEncodedVideoFrame.idl

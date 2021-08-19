@@ -13,6 +13,6 @@ PASS addTrack should cause negotiationneeded to fire
 PASS removeTrack should cause negotiationneeded to fire on the caller
 PASS removeTrack should cause negotiationneeded to fire on the callee
 PASS Updating the direction of the transceiver should cause negotiationneeded to fire
-PASS Calling setStreams should cause negotiationneeded to fire
+FAIL Calling setStreams should cause negotiationneeded to fire promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.setStreams is not a function. (In 'transceiver.sender.setStreams(stream)', 'transceiver.sender.setStreams' is undefined)"
 PASS Adding two transceivers, one at a time, results in the expected number of negotiationneeded events
 

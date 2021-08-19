@@ -33,7 +33,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaStreamTrack.h"
-#include "RTCDtlsTransport.h"
 #include "RTCRtpReceiverBackend.h"
 #include "RTCRtpSynchronizationSource.h"
 #include "RTCRtpTransform.h"
@@ -70,9 +69,6 @@ public:
 
     MediaStreamTrack& track() { return m_track.get(); }
 
-    RTCDtlsTransport* transport() { return m_transport.get(); }
-    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTFMove(transport); }
-
     RTCRtpReceiverBackend* backend() { return m_backend.get(); }
     void getStats(Ref<DeferredPromise>&&);
 
@@ -90,7 +86,6 @@ private:
 #endif
 
     Ref<MediaStreamTrack> m_track;
-    RefPtr<RTCDtlsTransport> m_transport;
     std::unique_ptr<RTCRtpReceiverBackend> m_backend;
     WeakPtr<PeerConnectionBackend> m_connection;
     std::unique_ptr<RTCRtpTransform> m_transform;

@@ -40,7 +40,6 @@
 #include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
 #include "Page.h"
-#include "RTCDtlsTransport.h"
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"
@@ -201,7 +200,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
     m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise)]() mutable {
         if (m_peerConnection.isClosed())
             return;
-        m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
+
         promise->resolve();
     });
 }
@@ -277,7 +276,6 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
         if (m_peerConnection.isClosed())
             return;
 
-        m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
         promise->resolve();
     });
 }
