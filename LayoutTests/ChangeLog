@@ -1,3 +1,24 @@
+2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Remove support for the meaningful tap heuristic
+        https://bugs.webkit.org/show_bug.cgi?id=229298
+        rdar://82130066
+
+        Reviewed by Tim Horton.
+
+        Remove all layout tests that exercised the meaningful tap heuristic.
+
+        * fast/events/ios/did-not-handle-meaningful-click-expected.txt: Removed.
+        * fast/events/ios/did-not-handle-meaningful-click.html: Removed.
+        * fast/events/ios/meaningful-click-when-focusing-body-expected.txt: Removed.
+        * fast/events/ios/meaningful-click-when-focusing-body.html: Removed.
+        * fast/events/ios/meaningful-click-when-playing-media-expected.txt: Removed.
+        * fast/events/ios/meaningful-click-when-playing-media.html: Removed.
+        * fast/events/ios/meaningful-click-when-tapping-draggable-content-expected.txt: Removed.
+        * fast/events/ios/meaningful-click-when-tapping-draggable-content.html: Removed.
+        * fast/events/ios/non-meaningful-click-when-tapping-document-expected.txt: Removed.
+        * fast/events/ios/non-meaningful-click-when-tapping-document.html: Removed.
+
 2021-08-19  Andres Gonzalez  <andresg_22@apple.com>
 
         Rename AccessibilityUIElement::setSelectedVisibleTextRange to setSelectedTextMarkerRange for naming consistency and maintainability.

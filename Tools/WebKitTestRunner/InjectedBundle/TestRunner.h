@@ -354,9 +354,6 @@ public:
     void installCustomMenuAction(JSStringRef name, bool dismissesAutomatically, JSValueRef callback);
     void performCustomMenuAction();
 
-    void installDidHandleTapCallback(JSValueRef);
-    void callDidHandleTapCallback(bool wasMeaningful);
-
     void installDidBeginSwipeCallback(JSValueRef);
     void installWillEndSwipeCallback(JSValueRef);
     void installDidEndSwipeCallback(JSValueRef);

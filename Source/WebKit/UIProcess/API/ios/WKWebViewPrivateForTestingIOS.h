@@ -68,8 +68,6 @@
 - (void)_didFinishTextInteractionInTextInputContext:(_WKTextInputContext *)context;
 - (void)_requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
 - (void)_adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
-- (void)_didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result;
-
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute;
 - (double)timePickerValueHour;
 - (double)timePickerValueMinute;

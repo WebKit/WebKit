@@ -159,7 +159,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
-    m_delegateMethods.webViewDidTapAtPointWithResult = [delegate respondsToSelector:@selector(_webView:didTapAtPoint:withResult:)];
     m_delegateMethods.presentingViewControllerForWebView = [delegate respondsToSelector:@selector(_presentingViewControllerForWebView:)];
 #endif
     m_delegateMethods.webViewIsMediaCaptureAuthorizedForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:)] || [delegate respondsToSelector:@selector(_webView:includeSensitiveMediaDeviceDetails:)];
@@ -1412,19 +1411,6 @@ void UIDelegate::UIClient::didNotHandleTapAsClick(const WebCore::IntPoint& point
         return;
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didNotHandleTapAsClickAtPoint:point];
-}
-
-void UIDelegate::UIClient::didTapAtPoint(const WebCore::IntPoint& point, WebKit::TapHandlingResult result)
-{
-    if (!m_uiDelegate)
-        return;
-
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return;
-
-    if (m_uiDelegate->m_delegateMethods.webViewDidTapAtPointWithResult)
-        [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() didTapAtPoint:point withResult:wkTapHandlingResult(result)];
 }
 
 UIViewController *UIDelegate::UIClient::presentingViewController()

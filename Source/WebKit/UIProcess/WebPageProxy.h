@@ -850,7 +850,6 @@ public:
     void applicationWillEnterForegroundForMedia();
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
-    void didTapAtPoint(const WebCore::IntPoint&, TapHandlingResult);
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier);
     void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel);

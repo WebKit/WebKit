@@ -7406,7 +7406,6 @@ void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
 
 void WebPage::isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags state)
 {
-    platformIsPlayingMediaDidChange();
     send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
 }
 

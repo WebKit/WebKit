@@ -826,28 +826,6 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
     m_pendingSyntheticClickPointerId = 0;
 }
 
-static bool isProbablyMeaningfulClick(Node& clickNode)
-{
-    auto frame = makeRefPtr(clickNode.document().frame());
-    if (!frame || !clickNode.isConnected())
-        return true;
-
-    if (is<HTMLBodyElement>(clickNode) || is<Document>(clickNode) || clickNode.document().documentElement() == &clickNode)
-        return false;
-
-    if (is<Element>(clickNode) && equalLettersIgnoringASCIICase(downcast<Element>(clickNode).attributeWithoutSynchronization(HTMLNames::draggableAttr), "true"))
-        return true;
-
-    if (auto view = makeRefPtr(frame->mainFrame().view())) {
-        auto elementBounds = WebPage::rootViewInteractionBounds(clickNode);
-        auto unobscuredRect = view->unobscuredContentRect();
-        if (elementBounds.width() >= unobscuredRect.width() / 2 && elementBounds.height() >= unobscuredRect.height() / 2)
-            return false;
-    }
-
-    return true;
-}
-
 void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, SyntheticClickType syntheticClickType, WebCore::PointerID pointerId)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
@@ -866,8 +844,6 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
     bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
     bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
-
-    m_currentSyntheticClickMayNotBeMeaningful = true;
 
     tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
     if (m_isClosed)
@@ -895,24 +871,6 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
-    auto tapHandlingResult = ([&] {
-        if (!m_currentSyntheticClickMayNotBeMeaningful)
-            return TapHandlingResult::MeaningfulClick;
-
-        if (oldFocusedElement != newFocusedElement)
-            return TapHandlingResult::MeaningfulClick;
-
-        if (is<HTMLTextFormControlElement>(nodeRespondingToClick) || nodeRespondingToClick.hasEditableStyle())
-            return TapHandlingResult::MeaningfulClick;
-
-        if (isProbablyMeaningfulClick(nodeRespondingToClick))
-            return TapHandlingResult::MeaningfulClick;
-
-        return TapHandlingResult::NonMeaningfulClick;
-    })();
-
-    send(Messages::WebPageProxy::DidTapAtPoint(roundedIntPoint(location), tapHandlingResult));
-
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
 
@@ -926,18 +884,12 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEvent::M
     Frame* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
-    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
-        send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
+    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-    } else if (m_interactionNode == nodeRespondingToClick)
+    else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::OneFingerTap);
     else
         handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers);
-}
-
-void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent()
-{
-    m_currentSyntheticClickMayNotBeMeaningful = false;
 }
 
 void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId)
@@ -1134,9 +1086,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
-        auto adjustedIntPoint = roundedIntPoint(adjustedPoint);
-        send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
         return;
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
@@ -1207,14 +1157,18 @@ void WebPage::commitPotentialTapFailed()
         selectionChangedHandler();
 
     ContentChangeObserver::didCancelPotentialTap(m_page->mainFrame());
-    if (!m_page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
-        clearSelection();
+    clearSelectionAfterTapIfNeeded();
 
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
+    send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
+}
 
-    auto adjustedIntPoint = roundedIntPoint(m_potentialTapLocation);
-    send(Messages::WebPageProxy::DidTapAtPoint(adjustedIntPoint, TapHandlingResult::DidNotHandleTapAsClick));
-    send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+void WebPage::clearSelectionAfterTapIfNeeded()
+{
+    if (m_page->focusController().focusedOrMainFrame().selection().selection().isContentEditable())
+        return;
+
+    clearSelection();
 }
 
 void WebPage::cancelPotentialTap()
@@ -4689,11 +4643,6 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
     auto endContainer = makeRefPtr(selection.end().containerNode());
     if (startContainer != endContainer)
         scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
-}
-
-void WebPage::platformIsPlayingMediaDidChange()
-{
-    m_currentSyntheticClickMayNotBeMeaningful = false;
 }
 
 } // namespace WebKit

@@ -283,13 +283,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidHandleTapCallback")) {
-        ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-        m_testRunner->callDidHandleTapCallback(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidBeginSwipeCallback")) {
         m_testRunner->callDidBeginSwipeCallback();
         return;

@@ -234,11 +234,6 @@ void PageClientImpl::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     [m_contentView _didNotHandleTapAsClick:point];
 }
 
-void PageClientImpl::didTapAtPoint(const WebCore::IntPoint& point, TapHandlingResult result)
-{
-    [m_webView _didTapAtPoint:point withResult:wkTapHandlingResult(result)];
-}
-
 void PageClientImpl::didCompleteSyntheticClick()
 {
     [m_contentView _didCompleteSyntheticClick];

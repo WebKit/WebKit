@@ -1520,11 +1520,6 @@ void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const P
 }
 #endif
 
-void WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent()
-{
-    m_page.didHandleOrPreventMouseDownOrMouseUpEvent();
-}
-
 #if HAVE(ARKIT_INLINE_PREVIEW_IOS)
 void WebChromeClient::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId) const
 {

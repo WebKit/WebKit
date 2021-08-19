@@ -72,6 +72,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTMLMenuElement.h>
 #include <WebCore/HTMLMenuItemElement.h>
+#include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
@@ -223,7 +224,6 @@ enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class HighlightRequestOriginatedInApp : bool;
-enum class HighlightVisibility : bool;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
@@ -1479,7 +1479,6 @@ public:
     void modelElementPreviewDidObtainContextId(const WebCore::ElementContext&, const String&, uint32_t);
 #endif
 
-    void didHandleOrPreventMouseDownOrMouseUpEvent();
     void prepareToRunModalJavaScriptDialog();
 
 private:
@@ -1527,6 +1526,7 @@ private:
     RefPtr<ShareableBitmap> shareableBitmapSnapshotForNode(WebCore::Element&);
     WebAutocorrectionContext autocorrectionContext();
     bool applyAutocorrectionInternal(const String& correction, const String& originalText);
+    void clearSelectionAfterTapIfNeeded();
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -1917,8 +1917,6 @@ private:
     
     void consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>&);
 
-    void platformIsPlayingMediaDidChange();
-
     bool hasPendingEditorStateUpdate() const;
 
     WebCore::PageIdentifier m_identifier;
@@ -2216,7 +2214,6 @@ private:
     WebCore::FloatPoint m_potentialTapLocation;
     RefPtr<WebCore::SecurityOrigin> m_potentialTapSecurityOrigin;
 
-    bool m_currentSyntheticClickMayNotBeMeaningful { true };
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
     bool m_hasRestoredExposedContentRectAfterDidCommitLoad { false };
     bool m_scaleWasSetByUIProcess { false };
@@ -2379,7 +2376,7 @@ private:
 #endif
     
 #if ENABLE(APP_HIGHLIGHTS)
-    WebCore::HighlightVisibility m_appHighlightsVisible { false };
+    WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
 #endif
 
     bool m_needsSiteSpecificViewportQuirks { true };
@@ -2388,9 +2385,7 @@ private:
 #if !PLATFORM(IOS_FAMILY)
 inline void WebPage::platformWillPerformEditingCommand() { }
 inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
-inline void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent() { }
 inline void WebPage::prepareToRunModalJavaScriptDialog() { }
-inline void WebPage::platformIsPlayingMediaDidChange() { }
 #endif
 
 } // namespace WebKit

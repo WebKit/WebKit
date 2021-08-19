@@ -100,11 +100,6 @@
 #endif
 }
 
-- (void)_didTapAtPoint:(CGPoint)point withResult:(_WKTapHandlingResult)result
-{
-    // For subclasses to override.
-}
-
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect
 {
 #if ENABLE(EDITABLE_REGION)

@@ -339,7 +339,6 @@ public:
 #endif
 #if PLATFORM(IOS_FAMILY)
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;
-    virtual void didTapAtPoint(const WebCore::IntPoint&, TapHandlingResult) = 0;
     virtual void didCompleteSyntheticClick() = 0;
 #endif
 

@@ -1,3 +1,20 @@
+2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Remove support for the meaningful tap heuristic
+        https://bugs.webkit.org/show_bug.cgi?id=229298
+        rdar://82130066
+
+        Reviewed by Tim Horton.
+
+        See WebKit ChangeLog for more details.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent): Deleted.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2021-08-19  Alan Bujtas  <zalan@apple.com>
 
         [Line layout] "zero width space" (U+200B) is a breaking space
