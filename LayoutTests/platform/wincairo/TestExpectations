@@ -265,16 +265,6 @@ webaudio [ Skip ]
 # WEB_RTC is disabled
 webrtc [ Skip ]
 
-# WEBGPU is disabled
-webgpu [ Skip ]
-inspector/canvas/create-context-webgpu.html [ Skip ]
-inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
-inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
-inspector/canvas/resolveContext-webgpu.html [ Skip ]
-inspector/canvas/shaderProgram-add-remove-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu.html [ Skip ]
-inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
-
 # WIRELESS_PLAYBACK_TARGET is disabled
 media/airplay-target-availability.html [ Skip ]
 media/airplay-autoplay.html [ Skip ]
@@ -413,12 +403,14 @@ webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.ht
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Skip ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Skip ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Skip ]
+webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
 webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
 webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 webgl/2.0.0/conformance/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance/textures/video [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance2/textures/video [ Skip ]
+webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
@@ -1704,6 +1696,7 @@ webxr [ Skip ]
 [ Release ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
 [ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Crash Failure ]
 accessibility/canvas-fallback-content.html [ Timeout ]
+animations/shadow-host-child-change.html [ Skip ]
 animations/steps-transform-rendering-updates.html [ Pass Failure ]
 crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html [ Timeout ]
 css1/font_properties/font_family.html [ Failure Pass ]
@@ -2026,6 +2019,7 @@ http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure ]
 http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure ]
 http/tests/xmlhttprequest/upload-progress-events-gc.html [ Skip ] # Timeout
+http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure ]
 http/wpt/fetch/response-opaque-clone.html [ Skip ]
 http/wpt/fetch/response-status-text.html [ Failure ]
 inspector/cpu-profiler/threads.html [ Failure ]
@@ -2085,4 +2079,5 @@ webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html
 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
+webgl/webgl-oom-paint-document-no-crash.html [ Skip ]
 workers/bomb.html [ Skip ] # Timeout
