@@ -373,28 +373,20 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
         return;
     }
 
-    m_webPage.ref();
     m_webPage.corePage()->scrollingCoordinator()->commitTreeStateIfNeeded();
 
     if (!m_layerTreeStateIsFrozen)
         invalidateRenderingUpdateRunLoopObserver();
 
-    // It is possible for the drawing area to be destroyed before the bound block
-    // is invoked, so grab a reference to the web page here so we can access the drawing area through it.
-    // (The web page is already kept alive by dispatchAfterEnsuringUpdatedScrollPosition).
-    WebPage* webPage = &m_webPage;
-
-    ScrollingThread::dispatchBarrier([this, webPage, function = WTFMove(function)] {
-        DrawingArea* drawingArea = webPage->drawingArea();
-        if (!drawingArea)
+    ScrollingThread::dispatchBarrier([this, retainedPage = makeRef(m_webPage), function = WTFMove(function)] {
+        // It is possible for the drawing area to be destroyed before the bound block is invoked.
+        if (!retainedPage->drawingArea())
             return;
 
         function();
 
         if (!m_layerTreeStateIsFrozen)
             scheduleRenderingUpdateRunLoopObserver();
-
-        webPage->deref();
     });
 #else
     function();

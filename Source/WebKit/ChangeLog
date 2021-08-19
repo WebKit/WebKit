@@ -1,3 +1,15 @@
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use a Ref<> argument to keep WebPage alive in TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition()
+        https://bugs.webkit.org/show_bug.cgi?id=229239
+
+        Reviewed by Tim Horton.
+
+        Replace a manual ref()/deref() with a makeRef() argument to the function.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+
 2021-08-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Unable to load downloaded HTML files in Safari
