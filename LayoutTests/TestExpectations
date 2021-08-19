@@ -2373,17 +2373,10 @@ loader/stateobjects/replacestate-size.html [ Slow ]
 imported/blink/fast/multicol/outlines-at-column-boundaries.html [ ImageOnlyFailure ]
 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
 
-# ::backdrop
-webkit.org/b/227801 imported/blink/dialog/backdrop-descendant-selector.html [ ImageOnlyFailure ]
-webkit.org/b/227801 imported/blink/dialog/backdrop-does-not-inherit.html [ ImageOnlyFailure ]
-webkit.org/b/227801 imported/blink/dialog/backdrop-dynamic-style-change.html [ ImageOnlyFailure ]
-webkit.org/b/227801 imported/blink/dialog/backdrop-in-flow.html [ ImageOnlyFailure ]
-webkit.org/b/227801 imported/blink/dialog/backdrop-stacking-order.html [ ImageOnlyFailure ]
-
 # Top layer tests
+webkit.org/b/84796 imported/blink/dialog/backdrop-in-flow.html [ ImageOnlyFailure ]
+webkit.org/b/84796 imported/blink/dialog/backdrop-stacking-order.html [ ImageOnlyFailure ]
 webkit.org/b/84796 imported/blink/dialog/dont-share-style-to-top-layer.html [ ImageOnlyFailure ]
-webkit.org/b/84796 imported/blink/dialog/modal-dialog-backdrop.html [ ImageOnlyFailure ]
-webkit.org/b/84796 imported/blink/dialog/modal-dialog-generated-content.html [ ImageOnlyFailure ]
 webkit.org/b/84796 imported/blink/dialog/modal-dialog-in-replaced-renderer.html [ ImageOnlyFailure ]
 webkit.org/b/84796 imported/blink/dialog/modal-dialog-in-table-column.html [ ImageOnlyFailure ]
 webkit.org/b/84796 imported/blink/dialog/removed-element-is-removed-from-top-layer.html [ ImageOnlyFailure ]

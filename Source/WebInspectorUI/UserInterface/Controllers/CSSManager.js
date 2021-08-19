@@ -155,6 +155,8 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::after");
         case CSSManager.PseudoSelectorNames.Selection:
             return WI.unlocalizedString("::selection");
+        case CSSManager.PseudoSelectorNames.Backdrop:
+            return WI.unlocalizedString("::backdrop");
         case CSSManager.PseudoSelectorNames.Scrollbar:
             return WI.unlocalizedString("::scrollbar");
         case CSSManager.PseudoSelectorNames.ScrollbarThumb:
@@ -684,6 +686,7 @@ WI.CSSManager.Appearance = {
 WI.CSSManager.PseudoSelectorNames = {
     After: "after",
     Before: "before",
+    Backdrop: "backdrop",
     FirstLetter: "first-letter",
     FirstLine: "first-line",
     Highlight: "highlight",

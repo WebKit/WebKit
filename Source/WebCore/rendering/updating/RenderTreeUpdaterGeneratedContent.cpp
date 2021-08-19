@@ -172,6 +172,45 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     m_updater.m_builder.updateAfterDescendants(*pseudoElementRenderer);
 }
 
+void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer)
+{
+    // ::backdrop does not inherit style, hence using the view style as parent style
+    auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.view().style());
+
+    // Destroy ::backdrop if new element no longer is in top layer, or if it is hidden
+    if ((renderer.element() && !renderer.element()->isInTopLayer()) || !style || style->display() == DisplayType::None) {
+        if (WeakPtr backdropRenderer = renderer.backdropRenderer())
+            m_updater.m_builder.destroy(*backdropRenderer);
+        return;
+    }
+
+    auto newStyle = RenderStyle::clone(*style);
+    RenderPtr<RenderBlockFlow> newBackdropRenderer;
+    auto backdropRenderer = renderer.backdropRenderer();
+    if (backdropRenderer)
+        backdropRenderer->setStyle(WTFMove(newStyle));
+    else {
+        newBackdropRenderer = WebCore::createRenderer<RenderBlockFlow>(renderer.document(), WTFMove(newStyle));
+        newBackdropRenderer->initializeStyle();
+        backdropRenderer = makeWeakPtr(newBackdropRenderer.get());
+        renderer.setBackdropRenderer(*backdropRenderer);
+    }
+
+    // Update or attach to renderer parent
+    auto currentParent = makeWeakPtr(backdropRenderer->parent());
+    auto newParent = makeWeakPtr(renderer.parent());
+
+    ASSERT(newParent, "Should have new parent");
+
+    if (newParent == currentParent)
+        return;
+
+    if (currentParent)
+        m_updater.m_builder.attach(*newParent, m_updater.m_builder.detach(*currentParent, *backdropRenderer, RenderTreeBuilder::CanCollapseAnonymousBlock::No), &renderer);
+    else
+        m_updater.m_builder.attach(*newParent, WTFMove(newBackdropRenderer), &renderer);
+}
+
 bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::ElementUpdate* update)
 {
     if (!update)

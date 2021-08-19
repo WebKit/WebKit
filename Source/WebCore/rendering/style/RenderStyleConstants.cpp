@@ -887,6 +887,7 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::FirstLetter: ts << "first-letter"; break;
     case PseudoId::Highlight: ts << "highlight"; break;
     case PseudoId::Marker: ts << "marker"; break;
+    case PseudoId::Backdrop: ts << "backdrop"; break;
     case PseudoId::Before: ts << "before"; break;
     case PseudoId::After: ts << "after"; break;
     case PseudoId::Selection: ts << "selection"; break;

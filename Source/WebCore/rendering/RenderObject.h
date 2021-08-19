@@ -59,6 +59,7 @@ class Position;
 class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
+class RenderBlockFlow;
 class RenderElement;
 class RenderFragmentedFlow;
 class RenderGeometryMap;
@@ -938,6 +939,7 @@ private:
 
         // From RenderElement
         std::unique_ptr<RenderStyle> cachedFirstLineStyle;
+        WeakPtr<RenderBlockFlow> backdropRenderer;
     };
     
     const RenderObject::RenderObjectRareData& rareData() const;

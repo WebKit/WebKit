@@ -807,6 +807,12 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         return;
     }
 
+    // Also destroy ::backdrop along with element if there is one
+    if (is<RenderElement>(rendererToDestroy)) {
+        if (auto backdropRenderer = downcast<RenderElement>(rendererToDestroy).backdropRenderer())
+            destroy(*backdropRenderer);
+    }
+
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
         return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow();
     };

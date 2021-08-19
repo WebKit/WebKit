@@ -43,6 +43,7 @@
                 "before",
                 "after",
                 "selection",
+                "backdrop",
                 "scrollbar",
                 "scrollbar-thumb",
                 "scrollbar-button",

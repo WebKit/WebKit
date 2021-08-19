@@ -232,6 +232,8 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
         return PseudoId::Highlight;
     case PseudoElementMarker:
         return PseudoId::Marker;
+    case PseudoElementBackdrop:
+        return PseudoId::Backdrop;
     case PseudoElementBefore:
         return PseudoId::Before;
     case PseudoElementAfter:

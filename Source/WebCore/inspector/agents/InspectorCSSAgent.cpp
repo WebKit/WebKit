@@ -449,6 +449,8 @@ static std::optional<Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId 
         return Protocol::CSS::PseudoId::FirstLetter;
     case PseudoId::Marker:
         return Protocol::CSS::PseudoId::Marker;
+    case PseudoId::Backdrop:
+        return Protocol::CSS::PseudoId::Backdrop;
     case PseudoId::Before:
         return Protocol::CSS::PseudoId::Before;
     case PseudoId::After:

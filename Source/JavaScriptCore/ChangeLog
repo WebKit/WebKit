@@ -1,3 +1,15 @@
+2021-08-19  Tim Nguyen  <ntim@apple.com>
+
+        Implement ::backdrop pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=227801
+
+        Reviewed by Antti Koivisto.
+
+        This adds UA styles, RenderTreeBuilder support and WebInspector support for ::backdrop.
+        Some imported blink tests now start passing, some still need proper top layer support.
+
+        * inspector/protocol/CSS.json:
+
 2021-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove op_has_indexed_property related code
