@@ -1,5 +1,18 @@
 2021-08-19  Kate Cheney  <katherine_cheney@apple.com>
 
+        Unable to load downloaded HTML files in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=229254
+        <rdar://problem/82051114>
+
+        Reviewed by Brent Fulgham.
+
+        Check quarantine bits for webarchive files only.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::isQuarantinedAndNotUserApproved):
+
+2021-08-19  Kate Cheney  <katherine_cheney@apple.com>
+
         [App Privacy Report] Some HTTP Redirects from non app initiated requests are marked app initiated
         https://bugs.webkit.org/show_bug.cgi?id=229202
         <rdar://problem/79467871>

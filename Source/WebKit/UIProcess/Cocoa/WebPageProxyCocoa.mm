@@ -724,6 +724,9 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 #if PLATFORM(MAC)
 bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 {
+    if (!fileURLString.endsWithIgnoringASCIICase(".webarchive"))
+        return false;
+
     NSURL *fileURL = [NSURL URLWithString:fileURLString];
     qtn_file_t qf = qtn_file_alloc();
 
