@@ -1487,8 +1487,6 @@ TEST(WKAttachmentTests, CustomFileWrapperSubclass)
     EXPECT_EQ([FileWrapper class], [insertedAttachments.firstObject.info.fileWrapper class]);
 }
 
-// FIXME: Remove this version guard once rdar://51752593 is resolved.
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 130000
 TEST(WKAttachmentTests, CopyAndPasteBetweenWebViews)
 {
     auto file = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testHTMLData()]);
@@ -1534,7 +1532,6 @@ TEST(WKAttachmentTests, CopyAndPasteBetweenWebViews)
     EXPECT_WK_STREQ("public.directory", pastedFolderInfo.contentType);
     EXPECT_WK_STREQ("application/zip", pastedArchiveInfo.contentType);
 }
-#endif // PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED < 130000
 
 TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
 {
