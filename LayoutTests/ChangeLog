@@ -1,5 +1,14 @@
 2021-08-19  Eric Hutchison  <ehutchison@apple.com>
 
+        [iOS] 3 imported/w3c/web-platform-tests/css/css-typed-om/ tests are flaky failure.
+        <rdar://82147623>.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2021-08-19  Eric Hutchison  <ehutchison@apple.com>
+
         [Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure.
         <rdar://82146367>.
 
