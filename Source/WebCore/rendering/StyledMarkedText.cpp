@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MarkedTextStyle.h"
+#include "StyledMarkedText.h"
 
 #include "ElementRuleCollector.h"
 #include "RenderElement.h"
@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const MarkedTextStyle& baseStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
+static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
-    MarkedTextStyle style = baseStyle;
+    auto style = baseStyle;
     switch (markedText.type) {
     case MarkedText::Correction:
     case MarkedText::DictationAlternatives:
@@ -105,9 +105,9 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     return styledMarkedText;
 }
 
-static MarkedTextStyle computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
+static StyledMarkedText::Style computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
 {
-    MarkedTextStyle style;
+    StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine);
     style.textStyles = computeTextPaintStyle(renderer.frame(), lineStyle, paintInfo);
     style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
@@ -115,7 +115,7 @@ static MarkedTextStyle computeStyleForUnmarkedMarkedText(const RenderText& rende
     return style;
 }
 
-Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>& textsToSubdivide, const RenderText& renderer, bool isFirstLine, const PaintInfo& paintInfo)
+Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<MarkedText>& textsToSubdivide, const RenderText& renderer, bool isFirstLine, const PaintInfo& paintInfo)
 {
     if (textsToSubdivide.isEmpty())
         return { };
@@ -152,13 +152,14 @@ Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>& text
     return frontmostMarkedTexts;
 }
 
-Vector<StyledMarkedText> coalesceAdjacentMarkedTexts(const Vector<StyledMarkedText>& textsToCoalesce, MarkedTextStylesEqualityFunction areMarkedTextStylesEqual)
+template<typename EqualityFunction>
+static Vector<StyledMarkedText> coalesceAdjacent(const Vector<StyledMarkedText>& textsToCoalesce, EqualityFunction&& equalityFunction)
 {
     if (textsToCoalesce.size() <= 1)
         return textsToCoalesce;
 
     auto areAdjacentMarkedTextsWithSameStyle = [&] (const StyledMarkedText& a, const StyledMarkedText& b) {
-        return a.endOffset == b.startOffset && areMarkedTextStylesEqual(a.style, b.style);
+        return a.endOffset == b.startOffset && equalityFunction(a.style, b.style);
     };
 
     Vector<StyledMarkedText> styledMarkedTexts;
@@ -174,6 +175,27 @@ Vector<StyledMarkedText> coalesceAdjacentMarkedTexts(const Vector<StyledMarkedTe
     }
 
     return styledMarkedTexts;
+}
+
+Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualBackground(const Vector<StyledMarkedText>& markedTexts)
+{
+    return coalesceAdjacent(markedTexts, [&](auto& a, auto& b) {
+        return a.backgroundColor == b.backgroundColor;
+    });
+}
+
+Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualForeground(const Vector<StyledMarkedText>& markedTexts)
+{
+    return coalesceAdjacent(markedTexts, [&](auto& a, auto& b) {
+        return a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
+    });
+}
+
+Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualDecorations(const Vector<StyledMarkedText>& markedTexts)
+{
+    return coalesceAdjacent(markedTexts, [&](auto& a, auto& b) {
+        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
+    });
 }
 
 }

@@ -2176,7 +2176,6 @@ rendering/LegacyLineLayout.cpp
 rendering/LegacyRootInlineBox.cpp
 rendering/LegacyInlineTextBox.cpp
 rendering/MarkedText.cpp
-rendering/MarkedTextStyle.cpp
 rendering/OrderIterator.cpp
 rendering/PointerEventsHitRules.cpp
 rendering/RenderAttachment.cpp
@@ -2264,6 +2263,7 @@ rendering/RenderView.cpp
 rendering/RenderWidget.cpp
 rendering/ScrollAlignment.cpp
 rendering/SelectionRangeData.cpp
+rendering/StyledMarkedText.cpp
 rendering/TableLayout.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp

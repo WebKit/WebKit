@@ -35,39 +35,26 @@ namespace WebCore {
 class RenderText;
 class RenderedDocumentMarker;
 
-struct MarkedTextStyle {
-    static bool areBackgroundMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
-    {
-        return a.backgroundColor == b.backgroundColor;
-    }
-    static bool areForegroundMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
-    {
-        return a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
-    }
-    static bool areDecorationMarkedTextStylesEqual(const MarkedTextStyle& a, const MarkedTextStyle& b)
-    {
-        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
-    }
-
-    Color backgroundColor;
-    TextPaintStyle textStyles;
-    TextDecorationPainter::Styles textDecorationStyles;
-    std::optional<ShadowData> textShadow;
-    float alpha;
-};
-
 struct StyledMarkedText : MarkedText {
     StyledMarkedText(const MarkedText& marker)
         : MarkedText { marker }
     {
     }
 
-    MarkedTextStyle style;
+    struct Style {
+        Color backgroundColor;
+        TextPaintStyle textStyles;
+        TextDecorationPainter::Styles textDecorationStyles;
+        std::optional<ShadowData> textShadow;
+        float alpha;
+    };
+
+    Style style;
+
+    static Vector<StyledMarkedText> subdivideAndResolve(const Vector<MarkedText>&, const RenderText&, bool isFirstLine, const PaintInfo&);
+    static Vector<StyledMarkedText> coalesceAdjacentWithEqualBackground(const Vector<StyledMarkedText>&);
+    static Vector<StyledMarkedText> coalesceAdjacentWithEqualForeground(const Vector<StyledMarkedText>&);
+    static Vector<StyledMarkedText> coalesceAdjacentWithEqualDecorations(const Vector<StyledMarkedText>&);
 };
-
-Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>&, const RenderText&, bool isFirstLine, const PaintInfo&);
-
-using MarkedTextStylesEqualityFunction = bool (*)(const MarkedTextStyle&, const MarkedTextStyle&);
-Vector<StyledMarkedText> coalesceAdjacentMarkedTexts(const Vector<StyledMarkedText>&, MarkedTextStylesEqualityFunction);
 
 }

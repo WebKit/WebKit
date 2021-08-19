@@ -40,7 +40,6 @@
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
 #include "LegacyEllipsisBox.h"
-#include "MarkedTextStyle.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
@@ -53,6 +52,7 @@
 #include "RenderedDocumentMarker.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "StyledMarkedText.h"
 #include "Text.h"
 #include "TextBoxSelectableRange.h"
 #include "TextDecorationPainter.h"
@@ -504,10 +504,10 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 markedTexts.append(WTFMove(selectionMarkedText));
         }
 #endif
-        auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, renderer(), isFirstLine(), paintInfo);
+        auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, renderer(), isFirstLine(), paintInfo);
 
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-        auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areBackgroundMarkedTextStylesEqual);
+        auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualBackground(styledMarkedTexts);
 
         paintMarkedTexts(paintInfo, MarkedText::PaintPhase::Background, boxRect, coalescedStyledMarkedTexts);
     }
@@ -553,7 +553,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
             markedTexts.append(WTFMove(selectionMarkedText));
     }
 
-    auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, renderer(), isFirstLine(), paintInfo);
+    auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, renderer(), isFirstLine(), paintInfo);
 
     // ... now remove the selection marked text if we are excluding selection.
     if (!isPrinting && paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) {
@@ -563,7 +563,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     }
 
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-    auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areForegroundMarkedTextStylesEqual);
+    auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
 
     paintMarkedTexts(paintInfo, MarkedText::PaintPhase::Foreground, boxRect, coalescedStyledMarkedTexts);
 
@@ -602,7 +602,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         }
 
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-        auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areDecorationMarkedTextStylesEqual);
+        auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualDecorations(styledMarkedTexts);
 
         paintMarkedTexts(paintInfo, MarkedText::PaintPhase::Decoration, boxRect, coalescedStyledMarkedTexts, textDecorationSelectionClipOutRect);
     }
