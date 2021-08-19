@@ -227,13 +227,18 @@ class LayoutTestRunner(object):
         if result.type == test_expectations.SKIP:
             exp_str = got_str = 'SKIP'
             expected = True
+            expectations = None
         else:
             expectations = self._expectations.filtered_expectations_for_test(result.test_name, self._options.pixel_tests or bool(result.reftest_type), self._options.world_leaks)
             expected = self._expectations.matches_an_expected_result(result.test_name, result.type, expectations)
             exp_str = self._expectations.model().expectations_to_string(expectations)
             got_str = self._expectations.model().expectation_to_string(result.type)
 
+        existing = self._current_run_results.results_by_name.get(result.test_name)
         self._current_run_results.add(result, expected)
+        if existing and not expected:
+            existing_expectation = self._expectations.matches_an_expected_result(result.test_name, existing.type, expectations)
+            self._current_run_results.change_result_to_failure(existing, result, existing_expectation, expected)
 
         self.printer.print_finished_test(result, expected, exp_str, got_str)
 

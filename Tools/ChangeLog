@@ -1,3 +1,17 @@
+2021-08-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Remember failures when repeating test
+        https://bugs.webkit.org/show_bug.cgi?id=229217
+        <rdar://problem/81919223>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.update_summary_with_result): Replace existing result with unexpected result so
+        that unexpected results always take precedence over expected ones.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.add): Do not replace existing result.
+
 2021-08-18  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r279169) [WebDriver] WPT Tools now requires python3 to launch the server

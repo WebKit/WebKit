@@ -69,7 +69,7 @@ class TestRunResults(object):
 
     def add(self, test_result, expected):
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
-        self.results_by_name[test_result.test_name] = test_result
+        self.results_by_name[test_result.test_name] = self.results_by_name.get(test_result.test_name, test_result)
         if test_result.is_other_crash:
             return
         if test_result.type != test_expectations.SKIP:
