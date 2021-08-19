@@ -429,9 +429,9 @@ void PageOverlayController::didChangeOverlayBackgroundColor(PageOverlay& overlay
         layer->setBackgroundColor(overlay.backgroundColor());
 }
 
-bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior behavior) const
+bool PageOverlayController::shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions> options) const
 {
-    return !(behavior & LayerTreeAsTextIncludePageOverlayLayers);
+    return !options.contains(LayerTreeAsTextOptions::IncludePageOverlayLayers);
 }
 
 void PageOverlayController::tiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)

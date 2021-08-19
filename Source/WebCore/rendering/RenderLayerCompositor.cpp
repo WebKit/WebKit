@@ -2328,7 +2328,7 @@ void RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump()
     page().triggerRenderingUpdateForTesting();
 }
 
-String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
+String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " layerTreeAsText");
 
@@ -2337,44 +2337,18 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
     if (!m_rootContentsLayer)
         return String();
 
-    LayerTreeAsTextBehavior layerTreeBehavior = LayerTreeAsTextBehaviorNormal;
-    if (flags & LayerTreeFlagsIncludeDebugInfo)
-        layerTreeBehavior |= LayerTreeAsTextDebug;
-    if (flags & LayerTreeFlagsIncludeVisibleRects)
-        layerTreeBehavior |= LayerTreeAsTextIncludeVisibleRects;
-    if (flags & LayerTreeFlagsIncludeTileCaches)
-        layerTreeBehavior |= LayerTreeAsTextIncludeTileCaches;
-    if (flags & LayerTreeFlagsIncludeRepaintRects)
-        layerTreeBehavior |= LayerTreeAsTextIncludeRepaintRects;
-    if (flags & LayerTreeFlagsIncludePaintingPhases)
-        layerTreeBehavior |= LayerTreeAsTextIncludePaintingPhases;
-    if (flags & LayerTreeFlagsIncludeContentLayers)
-        layerTreeBehavior |= LayerTreeAsTextIncludeContentLayers;
-    if (flags & LayerTreeFlagsIncludeAcceleratesDrawing)
-        layerTreeBehavior |= LayerTreeAsTextIncludeAcceleratesDrawing;
-    if (flags & LayerTreeFlagsIncludeClipping)
-        layerTreeBehavior |= LayerTreeAsTextIncludeClipping;
-    if (flags & LayerTreeFlagsIncludeBackingStoreAttached)
-        layerTreeBehavior |= LayerTreeAsTextIncludeBackingStoreAttached;
-    if (flags & LayerTreeFlagsIncludeRootLayerProperties)
-        layerTreeBehavior |= LayerTreeAsTextIncludeRootLayerProperties;
-    if (flags & LayerTreeFlagsIncludeEventRegion)
-        layerTreeBehavior |= LayerTreeAsTextIncludeEventRegion;
-    if (flags & LayerTreeFlagsIncludeDeepColor)
-        layerTreeBehavior |= LayerTreeAsTextIncludeDeepColor;
-
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    String layerTreeText = m_rootContentsLayer->layerTreeAsText(layerTreeBehavior);
+    String layerTreeText = m_rootContentsLayer->layerTreeAsText(options);
 
     // Dump an empty layer tree only if the only composited layer is the main frame's tiled backing,
     // so that tests expecting us to drop out of accelerated compositing when there are no layers succeed.
-    if (!hasContentCompositingLayers() && documentUsesTiledBacking() && !(layerTreeBehavior & LayerTreeAsTextIncludeTileCaches) && !(layerTreeBehavior & LayerTreeAsTextIncludeRootLayerProperties))
+    if (!hasContentCompositingLayers() && documentUsesTiledBacking() && !(options & LayerTreeAsTextOptions::IncludeTileCaches) && !(options & LayerTreeAsTextOptions::IncludeRootLayerProperties))
         layerTreeText = emptyString();
 
     // The true root layer is not included in the dump, so if we want to report
     // its repaint rects, they must be included here.
-    if (flags & LayerTreeFlagsIncludeRepaintRects)
+    if (options & LayerTreeAsTextOptions::IncludeRepaintRects)
         return m_renderView.frameView().trackedRepaintRectsAsText() + layerTreeText;
 
     return layerTreeText;

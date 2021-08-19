@@ -826,36 +826,36 @@ void GraphicsLayer::traverse(GraphicsLayer& layer, const WTF::Function<void (Gra
         traverse(*maskLayer, traversalFunc);
 }
 
-void GraphicsLayer::dumpLayer(TextStream& ts, LayerTreeAsTextBehavior behavior) const
+void GraphicsLayer::dumpLayer(TextStream& ts, OptionSet<LayerTreeAsTextOptions> options) const
 {
     ts << indent << "(" << "GraphicsLayer";
 
-    if (behavior & LayerTreeAsTextDebug) {
+    if (options & LayerTreeAsTextOptions::Debug) {
         ts << " " << static_cast<void*>(const_cast<GraphicsLayer*>(this));
         ts << " \"" << m_name << "\"";
     }
 
     ts << "\n";
-    dumpProperties(ts, behavior);
+    dumpProperties(ts, options);
     ts << indent << ")\n";
 }
 
-static void dumpChildren(TextStream& ts, const Vector<Ref<GraphicsLayer>>& children, unsigned& totalChildCount, LayerTreeAsTextBehavior behavior)
+static void dumpChildren(TextStream& ts, const Vector<Ref<GraphicsLayer>>& children, unsigned& totalChildCount, OptionSet<LayerTreeAsTextOptions> options)
 {
     totalChildCount += children.size();
     for (auto& child : children) {
-        if ((behavior & LayerTreeAsTextDebug) || !child->client().shouldSkipLayerInDump(child.ptr(), behavior)) {
+        if ((options & LayerTreeAsTextOptions::Debug) || !child->client().shouldSkipLayerInDump(child.ptr(), options)) {
             TextStream::IndentScope indentScope(ts);
-            child->dumpLayer(ts, behavior);
+            child->dumpLayer(ts, options);
             continue;
         }
 
         totalChildCount--;
-        dumpChildren(ts, child->children(), totalChildCount, behavior);
+        dumpChildren(ts, child->children(), totalChildCount, options);
     }
 }
 
-void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behavior) const
+void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOptions> options) const
 {
     TextStream::IndentScope indentScope(ts);
     if (!m_offsetFromRenderer.isZero())
@@ -901,13 +901,13 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (m_supportsSubpixelAntialiasedText)
         ts << indent << "(supports subpixel antialiased text " << m_supportsSubpixelAntialiasedText << ")\n";
 
-    if (m_masksToBounds && behavior & LayerTreeAsTextIncludeClipping)
+    if (m_masksToBounds && options & LayerTreeAsTextOptions::IncludeClipping)
         ts << indent << "(clips " << m_masksToBounds << ")\n";
 
     if (m_preserves3D)
         ts << indent << "(preserves3D " << m_preserves3D << ")\n";
 
-    if (m_drawsContent && client().shouldDumpPropertyForLayer(this, "drawsContent", behavior))
+    if (m_drawsContent && client().shouldDumpPropertyForLayer(this, "drawsContent", options))
         ts << indent << "(drawsContent " << m_drawsContent << ")\n";
 
     if (!m_contentsVisible)
@@ -916,16 +916,16 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     if (!m_backfaceVisibility)
         ts << indent << "(backfaceVisibility " << (m_backfaceVisibility ? "visible" : "hidden") << ")\n";
 
-    if (behavior & LayerTreeAsTextDebug)
+    if (options & LayerTreeAsTextOptions::Debug)
         ts << indent << "(primary-layer-id " << primaryLayerID() << ")\n";
 
-    if (m_backgroundColor.isValid() && client().shouldDumpPropertyForLayer(this, "backgroundColor", behavior))
+    if (m_backgroundColor.isValid() && client().shouldDumpPropertyForLayer(this, "backgroundColor", options))
         ts << indent << "(backgroundColor " << serializationForRenderTreeAsText(m_backgroundColor) << ")\n";
 
-    if (behavior & LayerTreeAsTextIncludeAcceleratesDrawing && m_acceleratesDrawing)
+    if (options & LayerTreeAsTextOptions::IncludeAcceleratesDrawing && m_acceleratesDrawing)
         ts << indent << "(acceleratesDrawing " << m_acceleratesDrawing << ")\n";
 
-    if (behavior & LayerTreeAsTextIncludeBackingStoreAttached)
+    if (options & LayerTreeAsTextOptions::IncludeBackingStoreAttached)
         ts << indent << "(backingStoreAttached " << backingStoreAttachedForTesting() << ")\n";
 
     if (m_transform && !m_transform->isIdentity()) {
@@ -948,32 +948,32 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
 
     if (m_maskLayer) {
         ts << indent << "(mask layer";
-        if (behavior & LayerTreeAsTextDebug)
+        if (options & LayerTreeAsTextOptions::Debug)
             ts << " " << m_maskLayer.get();
         ts << ")\n";
 
         TextStream::IndentScope indentScope(ts);
-        m_maskLayer->dumpLayer(ts, behavior);
+        m_maskLayer->dumpLayer(ts, options);
     }
 
     if (m_replicaLayer) {
         ts << indent << "(replica layer";
-        if (behavior & LayerTreeAsTextDebug)
+        if (options & LayerTreeAsTextOptions::Debug)
             ts << " " << m_replicaLayer.get();
         ts << ")\n";
 
         TextStream::IndentScope indentScope(ts);
-        m_replicaLayer->dumpLayer(ts, behavior);
+        m_replicaLayer->dumpLayer(ts, options);
     }
 
     if (m_replicatedLayer) {
         ts << indent << "(replicated layer";
-        if (behavior & LayerTreeAsTextDebug)
+        if (options & LayerTreeAsTextOptions::Debug)
             ts << " " << m_replicatedLayer;
         ts << ")\n";
     }
 
-    if (behavior & LayerTreeAsTextIncludeRepaintRects && repaintRectMap().contains(this) && !repaintRectMap().get(this).isEmpty() && client().shouldDumpPropertyForLayer(this, "repaintRects", behavior)) {
+    if (options & LayerTreeAsTextOptions::IncludeRepaintRects && repaintRectMap().contains(this) && !repaintRectMap().get(this).isEmpty() && client().shouldDumpPropertyForLayer(this, "repaintRects", options)) {
         ts << indent << "(repaint rects\n";
         for (size_t i = 0; i < repaintRectMap().get(this).size(); ++i) {
             if (repaintRectMap().get(this)[i].isEmpty())
@@ -990,27 +990,27 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
         ts << indent << ")\n";
     }
 
-    if (behavior & LayerTreeAsTextIncludeEventRegion && !m_eventRegion.isEmpty()) {
+    if (options & LayerTreeAsTextOptions::IncludeEventRegion && !m_eventRegion.isEmpty()) {
         ts << indent << "(event region" << m_eventRegion;
         ts << indent << ")\n";
     }
     
 #if ENABLE(SCROLLING_THREAD)
-    if ((behavior & LayerTreeAsTextDebug) && m_scrollingNodeID)
+    if ((options & LayerTreeAsTextOptions::Debug) && m_scrollingNodeID)
         ts << indent << "(scrolling node " << m_scrollingNodeID << ")\n";
 #endif
 
-    if (behavior & LayerTreeAsTextIncludePaintingPhases && paintingPhase())
+    if (options & LayerTreeAsTextOptions::IncludePaintingPhases && paintingPhase())
         ts << indent << "(paintingPhases " << paintingPhase() << ")\n";
 
-    dumpAdditionalProperties(ts, behavior);
+    dumpAdditionalProperties(ts, options);
     
     if (m_children.size()) {
         TextStream childrenStream;
         
         childrenStream.increaseIndent(ts.indent());
         unsigned totalChildCount = 0;
-        dumpChildren(childrenStream, m_children, totalChildCount, behavior);
+        dumpChildren(childrenStream, m_children, totalChildCount, options);
 
         if (totalChildCount) {
             ts << indent << "(children " << totalChildCount << "\n";
@@ -1058,11 +1058,11 @@ TextStream& operator<<(TextStream& ts, const GraphicsLayer::CustomAppearance& cu
     return ts;
 }
 
-String GraphicsLayer::layerTreeAsText(LayerTreeAsTextBehavior behavior) const
+String GraphicsLayer::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options) const
 {
     TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
-    dumpLayer(ts, behavior);
+    dumpLayer(ts, options);
     return ts.release();
 }
 
@@ -1074,7 +1074,7 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     if (!layer)
         return;
 
-    String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextShowAll);
+    String output = layer->layerTreeAsText(WebCore::AllLayerTreeAsTextOptions);
     WTFLogAlways("%s\n", output.utf8().data());
 }
 #endif

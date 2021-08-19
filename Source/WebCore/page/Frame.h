@@ -113,22 +113,6 @@ enum OverflowScrollAction { DoNotPerformOverflowScroll, PerformOverflowScroll };
 using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNode, IntRect* nodeBounds)>;
 #endif
 
-enum {
-    LayerTreeFlagsIncludeDebugInfo              = 1 << 0,
-    LayerTreeFlagsIncludeVisibleRects           = 1 << 1,
-    LayerTreeFlagsIncludeTileCaches             = 1 << 2,
-    LayerTreeFlagsIncludeRepaintRects           = 1 << 3,
-    LayerTreeFlagsIncludePaintingPhases         = 1 << 4,
-    LayerTreeFlagsIncludeContentLayers          = 1 << 5,
-    LayerTreeFlagsIncludeAcceleratesDrawing     = 1 << 6,
-    LayerTreeFlagsIncludeClipping               = 1 << 7,
-    LayerTreeFlagsIncludeBackingStoreAttached   = 1 << 8,
-    LayerTreeFlagsIncludeRootLayerProperties    = 1 << 9,
-    LayerTreeFlagsIncludeEventRegion            = 1 << 10,
-    LayerTreeFlagsIncludeDeepColor              = 1 << 11,
-};
-typedef unsigned LayerTreeFlags;
-
 // FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
 class Frame final : public AbstractFrame {
 public:

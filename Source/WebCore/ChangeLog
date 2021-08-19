@@ -1,5 +1,59 @@
 2021-08-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove duplicate LayerTreeAsText enums and use an OptionSet<>
+        https://bugs.webkit.org/show_bug.cgi?id=229226
+
+        Reviewed by Antti Koivisto.
+
+        GraphicsLayerClient had enum LayerTreeAsTextBehaviorFlags and Frame had an anonymous
+        enum and typedef unsigned LayerTreeFlags. Clean up by adding LayerTreeAsTextOptions.h
+        and using OptionSet<LayerTreeAsTextOptions> everywhere.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Frame.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::shouldSkipLayerInDump const):
+        * page/PageOverlayController.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpLayer const):
+        (WebCore::dumpChildren):
+        (WebCore::GraphicsLayer::dumpProperties const):
+        (WebCore::GraphicsLayer::layerTreeAsText const):
+        (showGraphicsLayerTree):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::dumpLayer):
+        (WebCore::GraphicsLayer::layerTreeAsText):
+        (WebCore::GraphicsLayer::dumpAdditionalProperties const):
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::shouldSkipLayerInDump const):
+        (WebCore::GraphicsLayerClient::shouldDumpPropertyForLayer const):
+        * platform/graphics/LayerTreeAsTextOptions.h: Added.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties const):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::dumpInnerLayer):
+        (WebCore::CoordinatedGraphicsLayer::dumpAdditionalProperties const):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldSkipLayerInDump const):
+        (WebCore::RenderLayerBacking::shouldDumpPropertyForLayer const):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * rendering/RenderLayerCompositor.h:
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeAsTextOptions):
+        (WebCore::Internals::layerTreeAsText const):
+        (WebCore::Internals::pageOverlayLayerTreeAsText const):
+        (WebCore::toLayerTreeFlags): Deleted.
+        * testing/MockPageOverlayClient.cpp:
+        (WebCore::MockPageOverlayClient::layerTreeAsText):
+        * testing/MockPageOverlayClient.h:
+
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
         Use an enum for the forVisitedLink argument to BuilderState::colorFromPrimitiveValue()
         https://bugs.webkit.org/show_bug.cgi?id=229224
 

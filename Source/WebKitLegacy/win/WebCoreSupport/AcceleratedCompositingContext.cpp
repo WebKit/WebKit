@@ -337,7 +337,7 @@ String AcceleratedCompositingContext::layerTreeAsString() const
     if (!m_rootLayer)
         return { };
 
-    return m_rootLayer->layerTreeAsText(LayerTreeAsTextShowAll);
+    return m_rootLayer->layerTreeAsText(AllLayerTreeAsTextOptions);
 }
 
 #endif // USE(TEXTURE_MAPPER_GL)

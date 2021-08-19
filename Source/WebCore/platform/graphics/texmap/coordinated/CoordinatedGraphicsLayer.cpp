@@ -1470,13 +1470,13 @@ PlatformLayer* CoordinatedGraphicsLayer::platformLayer() const
 }
 #endif
 
-static void dumpInnerLayer(TextStream& textStream, const String& label, CoordinatedGraphicsLayer* layer, LayerTreeAsTextBehavior behavior)
+static void dumpInnerLayer(TextStream& textStream, const String& label, CoordinatedGraphicsLayer* layer, OptionSet<LayerTreeAsTextOptions> options)
 {
     if (!layer)
         return;
 
     textStream << indent << "(" << label << " ";
-    if (behavior & LayerTreeAsTextDebug)
+    if (options & LayerTreeAsTextOptions::Debug)
         textStream << " " << static_cast<void*>(layer);
     textStream << layer->boundsOrigin().x() << ", " << layer->boundsOrigin().y() << " " << layer->size().width() << " x " << layer->size().height();
     if (!layer->contentsAreVisible())
@@ -1484,10 +1484,10 @@ static void dumpInnerLayer(TextStream& textStream, const String& label, Coordina
     textStream << ")\n";
 }
 
-void CoordinatedGraphicsLayer::dumpAdditionalProperties(TextStream& textStream, LayerTreeAsTextBehavior behavior) const
+void CoordinatedGraphicsLayer::dumpAdditionalProperties(TextStream& textStream, OptionSet<LayerTreeAsTextOptions> options) const
 {
-    if (behavior & LayerTreeAsTextIncludeContentLayers)
-        dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), behavior);
+    if (options & LayerTreeAsTextOptions::IncludeContentLayers)
+        dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), options);
 }
 
 } // namespace WebCore
