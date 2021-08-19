@@ -266,7 +266,6 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     if (!renderer)
         return;
 
-    generatedContent().updateBackdropRenderer(*renderer);
     m_builder.updateAfterDescendants(*renderer);
 
     if (element.hasCustomStyleResolveCallbacks() && updates && updates->update.change == Style::Change::Renderer)

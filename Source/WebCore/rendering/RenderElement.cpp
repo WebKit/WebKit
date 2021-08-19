@@ -2375,14 +2375,4 @@ std::unique_ptr<RenderStyle> RenderElement::animatedStyle()
     return result;
 }
 
-WeakPtr<RenderBlockFlow> RenderElement::backdropRenderer() const
-{
-    return hasRareData() ? rareData().backdropRenderer : nullptr;
-}
-
-void RenderElement::setBackdropRenderer(RenderBlockFlow& renderer)
-{
-    ensureRareData().backdropRenderer = makeWeakPtr(renderer);
-}
-
 }

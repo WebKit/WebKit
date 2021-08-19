@@ -275,18 +275,16 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
 std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
-    ASSERT(pseudoId != PseudoId::Backdrop, "This method does not handle ::backdrop currently");
-
     if (pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
         return { };
     if (elementUpdate.style->display() == DisplayType::None)
         return { };
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
-
+    
     auto& parentStyle = *elementUpdate.style;
     auto* parentBoxStyle = parentBoxStyleForPseudo(elementUpdate);
-
+    
     auto pseudoStyle = scope().resolver->pseudoStyleForElement(element, { pseudoId }, parentStyle, parentBoxStyle, &scope().selectorFilter);
     if (!pseudoStyle)
         return { };

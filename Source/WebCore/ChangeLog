@@ -18,43 +18,6 @@
         (WebCore::RTCPeerConnection::getTransceivers const):
         * Modules/mediastream/RTCPeerConnection.h:
 
-2021-08-19  Tim Nguyen  <ntim@apple.com>
-
-        Implement ::backdrop pseudo element
-        https://bugs.webkit.org/show_bug.cgi?id=227801
-
-        Reviewed by Antti Koivisto.
-
-        This adds UA styles, RenderTreeBuilder support and WebInspector support for ::backdrop.
-        Some imported blink tests now start passing, some still need proper top layer support.
-
-        * css/CSSSelector.cpp:
-        (WebCore::CSSSelector::pseudoId):
-        * css/CSSSelector.h:
-        * css/SelectorPseudoElementTypeMap.in:
-        * css/dialog.css:
-        (dialog::backdrop):
-        (::backdrop):
-        * inspector/agents/InspectorCSSAgent.cpp:
-        (WebCore::protocolValueForPseudoId):
-        * rendering/RenderElement.cpp:
-        (WebCore::RenderElement::backdropRenderer const):
-        (WebCore::RenderElement::setBackdropRenderer):
-        * rendering/RenderElement.h:
-        * rendering/RenderObject.h:
-        * rendering/style/RenderStyleConstants.cpp:
-        (WebCore::operator<<):
-        * rendering/style/RenderStyleConstants.h:
-        * rendering/updating/RenderTreeBuilder.cpp:
-        (WebCore::RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers):
-        * rendering/updating/RenderTreeUpdater.cpp:
-        (WebCore::RenderTreeUpdater::updateAfterDescendants):
-        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
-        (WebCore::RenderTreeUpdater::GeneratedContent::updateBackdropRenderer):
-        * rendering/updating/RenderTreeUpdaterGeneratedContent.h:
-        * style/StyleTreeResolver.cpp:
-        (WebCore::Style::TreeResolver::resolvePseudoStyle):
-
 2021-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         document.hasFocus() returns true for unfocused pages
