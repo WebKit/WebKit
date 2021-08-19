@@ -2322,5 +2322,7 @@ imported/w3c/web-platform-tests/mathml/relations/html5-tree/display-2.html [ Pas
 
 webkit.org/b/229244 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.worker.html [ Pass Crash ]
 
+webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
