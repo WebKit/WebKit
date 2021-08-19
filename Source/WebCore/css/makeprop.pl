@@ -1013,7 +1013,7 @@ sub colorFromPrimitiveValue {
   my $primitiveValue = shift;
   my $forVisitedLink = @_ ? shift : NOT_FOR_VISITED_LINK;
 
-  return "builderState.colorFromPrimitiveValue(" . $primitiveValue . ", /* forVisitedLink */ " . ($forVisitedLink ? "true" : "false") . ")";
+  return "builderState.colorFromPrimitiveValue(" . $primitiveValue . ", ForVisitedLink::" . ($forVisitedLink ? "Yes" : "No") . ")";
 }
 
 use constant {

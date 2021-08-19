@@ -290,7 +290,7 @@ bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiv
     }
 }
 
-Color BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool forVisitedLink) const
+Color BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink) const
 {
     if (value.isRGBColor())
         return value.color();
@@ -300,7 +300,7 @@ Color BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool
     case CSSValueWebkitText:
         return document().textColor();
     case CSSValueWebkitLink:
-        return (element() && element()->isLink() && forVisitedLink) ? document().visitedLinkColor() : document().linkColor();
+        return (element() && element()->isLink() && forVisitedLink == ForVisitedLink::Yes) ? document().visitedLinkColor() : document().linkColor();
     case CSSValueWebkitActivelink:
         return document().activeLinkColor();
     case CSSValueWebkitFocusRingColor:

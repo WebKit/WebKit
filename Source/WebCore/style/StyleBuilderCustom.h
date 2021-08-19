@@ -825,13 +825,13 @@ inline void BuilderCustom::applyValueCaretColor(BuilderState& builderState, CSSV
         if (primitiveValue.valueID() == CSSValueAuto)
             builderState.style().setHasAutoCaretColor();
         else
-            builderState.style().setCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ false));
+            builderState.style().setCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::No));
     }
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         if (primitiveValue.valueID() == CSSValueAuto)
             builderState.style().setHasVisitedLinkAutoCaretColor();
         else
-            builderState.style().setVisitedLinkCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
+            builderState.style().setVisitedLinkCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::Yes));
     }
 }
 
@@ -2024,9 +2024,9 @@ inline void BuilderCustom::applyValueStrokeColor(BuilderState& builderState, CSS
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (builderState.applyPropertyToRegularStyle())
-        builderState.style().setStrokeColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ false));
+        builderState.style().setStrokeColor(builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::No));
     if (builderState.applyPropertyToVisitedLinkStyle())
-        builderState.style().setVisitedLinkStrokeColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
+        builderState.style().setVisitedLinkStrokeColor(builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::Yes));
     builderState.style().setHasExplicitlySetStrokeColor(true);
 }
 
