@@ -38,6 +38,9 @@
 #import "SimpleRange.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
+#if PLATFORM(COCOA)
+#import <Metal/Metal.h>
+#endif
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -45,6 +48,8 @@
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
 #endif
+
+
 
 namespace WebCore {
 
@@ -145,5 +150,26 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 
     return !sandbox_check(pid, "iokit-open", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_IOKIT_CONNECTION | SANDBOX_CHECK_NO_REPORT), ioKitClass.utf8().data());
 }
+
+#if ENABLE(WEBGL) && PLATFORM(COCOA)
+bool Internals::platformSupportsMetal(bool isWebGL2)
+{
+    auto device = MTLCreateSystemDefaultDevice();
+
+    if (device) {
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+        // A8 devices (iPad Mini 4, iPad Air 2) cannot use WebGL2 via Metal.
+        // This check can be removed once they are no longer supported.
+        if (isWebGL2)
+            return [device supportsFamily:MTLGPUFamilyApple3];
+#else
+        UNUSED_PARAM(isWebGL2);
+#endif
+        return true;
+    }
+
+    return false;
+}
+#endif
 
 }

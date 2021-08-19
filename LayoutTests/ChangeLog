@@ -1,3 +1,18 @@
+2021-08-19  Kyle Piddington  <kpiddington@apple.com>
+
+        WebGL via Metal experimental feature does not correctly toggle metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=229267
+        <rdar://81855735>
+
+        Add tests to verify WebGL feature flag works as intended.
+
+        Reviewed by Dean Jackson.
+
+        * webgl/webgl-metal-disabled-expected.txt: Added.
+        * webgl/webgl-metal-disabled.html: Added.
+        * webgl/webgl-metal-enabled-expected.txt: Added.
+        * webgl/webgl-metal-enabled.html: Added.
+
 2021-08-19  Antti Koivisto  <antti@apple.com>
 
         TextDecorationPainter should not depend on LegacyInlineTextBox
