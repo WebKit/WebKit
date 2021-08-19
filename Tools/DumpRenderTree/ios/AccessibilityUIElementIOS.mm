@@ -597,7 +597,7 @@ AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
     return nullptr;
 }
 
-bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
+bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return false;
 }

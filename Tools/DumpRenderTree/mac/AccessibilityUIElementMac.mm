@@ -1938,7 +1938,7 @@ AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
     return nullptr;
 }
 
-bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange* markerRange)
+bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilitySetValue:markerRange->platformTextMarkerRange() forAttribute:NSAccessibilitySelectedTextMarkerRangeAttribute];

@@ -1472,7 +1472,7 @@ void AccessibilityUIElement::dismiss()
     END_AX_OBJC_EXCEPTIONS
 }
 
-bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange* markerRange)
+bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange* markerRange)
 {
     if (!markerRange)
         return false;

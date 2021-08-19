@@ -1,3 +1,44 @@
+2021-08-19  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rename AccessibilityUIElement::setSelectedVisibleTextRange to setSelectedTextMarkerRange for naming consistency and maintainability.
+        https://bugs.webkit.org/show_bug.cgi?id=229290
+        <rdar://problem/82128453>
+
+        Reviewed by Chris Fleizach.
+
+        Renamed this method for consistency and to reflect what it is actually
+        doing. The goal is to avoid confusion with methods for VisiblePosition,
+        VisibleSelection and so forth, which are Core objects not exposed to AX
+        clients.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (setSelectedTextMarkerRangeCallback):
+        (AccessibilityUIElement::setSelectedTextMarkerRange):
+        (AccessibilityUIElement::getJSClass):
+        (setSelectedVisibleTextRangeCallback): Deleted.
+        (AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::setSelectedTextMarkerRange):
+        (AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::setSelectedTextMarkerRange):
+        (AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::setSelectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::setSelectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::setSelectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp:
+        (WTR::AccessibilityUIElement::setSelectedTextMarkerRange):
+        (WTR::AccessibilityUIElement::setSelectedVisibleTextRange): Deleted.
+
 2021-08-19  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Handle json crash logs (Part 1)

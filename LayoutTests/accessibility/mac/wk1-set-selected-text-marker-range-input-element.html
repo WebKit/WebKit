@@ -30,7 +30,7 @@ var successfullyParsed = false;
             
             var iframe = document.getElementById("iframe");
             iframe.contentDocument.getElementById("input").focus();
-            webArea.setSelectedVisibleTextRange(selectedRange);
+            webArea.setSelectedTextMarkerRange(selectedRange);
             eventSender.keyDown("1");
             debug(input.stringValue);
             finishJSTest();

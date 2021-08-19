@@ -333,7 +333,7 @@ public:
     RefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
     RefPtr<AccessibilityTextMarker> startTextMarker();
     RefPtr<AccessibilityTextMarker> endTextMarker();
-    bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);
+    bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*);
     RefPtr<AccessibilityTextMarkerRange> leftWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarkerRange> rightWordTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarker> previousWordStartTextMarkerForTextMarker(AccessibilityTextMarker*);

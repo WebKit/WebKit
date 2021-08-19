@@ -1,3 +1,17 @@
+2021-08-19  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rename AccessibilityUIElement::setSelectedVisibleTextRange to setSelectedTextMarkerRange for naming consistency and maintainability.
+        https://bugs.webkit.org/show_bug.cgi?id=229290
+        <rdar://problem/82128453>
+
+        Reviewed by Chris Fleizach.
+
+        Updated all test files to use new name.
+
+        * accessibility/mac/selected-visible-position-range.html:
+        * accessibility/mac/selection-sync.html:
+        * accessibility/mac/wk1-set-selected-text-marker-range-input-element.html:
+
 2021-08-19  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for overflow-wrap: anywhere

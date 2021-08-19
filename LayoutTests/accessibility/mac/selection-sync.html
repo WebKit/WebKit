@@ -81,8 +81,8 @@
         var markerFour = axTextbox.textMarkerForIndex(4);
         var moveRange = axTextbox.textMarkerRangeForMarkers(markerThree, markerThree);
         var extendRange = axTextbox.textMarkerRangeForMarkers(markerThree, markerFour);
-        webArea.setSelectedVisibleTextRange(moveRange);
-        webArea.setSelectedVisibleTextRange(extendRange);
+        webArea.setSelectedTextMarkerRange(moveRange);
+        webArea.setSelectedTextMarkerRange(extendRange);
     } else
         debug("window.accessibilityController is not present");
 

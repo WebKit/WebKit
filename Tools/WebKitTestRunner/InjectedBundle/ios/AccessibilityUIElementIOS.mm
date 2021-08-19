@@ -930,7 +930,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     return [rangeDescription createJSStringRef];
 }
 
-bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
+bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return false;
 }

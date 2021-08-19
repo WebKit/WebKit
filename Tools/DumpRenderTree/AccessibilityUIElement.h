@@ -279,7 +279,7 @@ public:
     AccessibilityTextMarker nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarkerRange selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();
-    bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);
+    bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*);
     bool replaceTextInRange(JSStringRef, int position, int length);
     bool insertText(JSStringRef);
 

@@ -1141,7 +1141,7 @@ static JSValueRef nextSentenceEndTextMarkerForTextMarkerCallback(JSContextRef co
     return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->nextSentenceEndTextMarkerForTextMarker(marker));
 }
 
-static JSValueRef setSelectedVisibleTextRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef setSelectedTextMarkerRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityUIElement* uiElement = toAXElement(thisObject);
     AccessibilityTextMarkerRange* textMarkerRange = nullptr;
@@ -1149,7 +1149,7 @@ static JSValueRef setSelectedVisibleTextRangeCallback(JSContextRef context, JSOb
         textMarkerRange = toTextMarkerRange(JSValueToObject(context, arguments[0], exception));
 
     if (uiElement)
-        return JSValueMakeBoolean(context, uiElement->setSelectedVisibleTextRange(textMarkerRange));
+        return JSValueMakeBoolean(context, uiElement->setSelectedTextMarkerRange(textMarkerRange));
 
     return JSValueMakeBoolean(context, false);
 }
@@ -1784,7 +1784,7 @@ AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
     return nullptr;
 }
 
-bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
+bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return false;
 }
@@ -2054,7 +2054,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "setSelectedChildAtIndex", setSelectedChildAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeSelectionAtIndex", removeSelectionAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setValue", setValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setSelectedVisibleTextRange", setSelectedVisibleTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setSelectedTextMarkerRange", setSelectedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedChildAtIndex", selectedChildAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollToMakeVisible", scrollToMakeVisibleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollToGlobalPoint", scrollToGlobalPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

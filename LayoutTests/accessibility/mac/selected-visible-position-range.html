@@ -42,7 +42,7 @@
             var end = content.startTextMarkerForTextMarkerRange(selectedRange);
             var start = content.previousParagraphStartTextMarkerForTextMarker(end);
             var range = content.textMarkerRangeForMarkers(start, end);
-            content.setSelectedVisibleTextRange(range);
+            content.setSelectedTextMarkerRange(range);
 
             await waitFor(() => {
                 selectedRange = content.selectedTextMarkerRange();
@@ -54,7 +54,7 @@
             // Set the selection range to a collapsed range at the second character of the last paragraph.
             end = content.nextTextMarker(end);
             range = content.textMarkerRangeForMarkers(end, end);
-            content.setSelectedVisibleTextRange(range);
+            content.setSelectedTextMarkerRange(range);
 
             var index = -1;
             await waitFor(() => {
