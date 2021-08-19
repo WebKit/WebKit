@@ -134,7 +134,7 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
     if (isClosed())
         return Exception { InvalidStateError };
 
-    for (auto& transceiver : m_transceiverSet.list()) {
+    for (auto& transceiver : m_transceiverSet->list()) {
         if (transceiver->sender().trackId() == track->id())
             return Exception { InvalidAccessError };
     }
@@ -158,7 +158,7 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 
     bool shouldAbort = true;
     RTCRtpTransceiver* senderTransceiver = nullptr;
-    for (auto& transceiver : m_transceiverSet.list()) {
+    for (auto& transceiver : m_transceiverSet->list()) {
         if (&sender == &transceiver->sender()) {
             senderTransceiver = transceiver.get();
             shouldAbort = sender.isStopped() || !sender.track();
@@ -465,7 +465,7 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise>&& promise)
 {
     if (selector) {
-        for (auto& transceiver : m_transceiverSet.list()) {
+        for (auto& transceiver : m_transceiverSet->list()) {
             if (transceiver->sender().track() == selector) {
                 m_backend->getStats(transceiver->sender(), WTFMove(promise));
                 return;
@@ -513,7 +513,7 @@ bool RTCPeerConnection::doClose()
     m_iceConnectionState = RTCIceConnectionState::Closed;
     m_signalingState = RTCSignalingState::Closed;
 
-    for (auto& transceiver : m_transceiverSet.list()) {
+    for (auto& transceiver : m_transceiverSet->list()) {
         transceiver->stop();
         transceiver->sender().stop();
         transceiver->receiver().stop();
@@ -610,7 +610,7 @@ bool RTCPeerConnection::virtualHasPendingActivity() const
 void RTCPeerConnection::addInternalTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
 {
     transceiver->setConnection(*this);
-    m_transceiverSet.append(WTFMove(transceiver));
+    m_transceiverSet->append(WTFMove(transceiver));
 }
 
 void RTCPeerConnection::setSignalingState(RTCSignalingState newState)
@@ -777,19 +777,19 @@ void RTCPeerConnection::generateCertificate(JSC::JSGlobalObject& lexicalGlobalOb
 Vector<std::reference_wrapper<RTCRtpSender>> RTCPeerConnection::getSenders() const
 {
     m_backend->collectTransceivers();
-    return m_transceiverSet.senders();
+    return m_transceiverSet->senders();
 }
 
 Vector<std::reference_wrapper<RTCRtpReceiver>> RTCPeerConnection::getReceivers() const
 {
     m_backend->collectTransceivers();
-    return m_transceiverSet.receivers();
+    return m_transceiverSet->receivers();
 }
 
 const Vector<RefPtr<RTCRtpTransceiver>>& RTCPeerConnection::getTransceivers() const
 {
     m_backend->collectTransceivers();
-    return m_transceiverSet.list();
+    return m_transceiverSet->list();
 }
 
 void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<void(Ref<DeferredPromise>&&)>&& operation)
@@ -855,7 +855,7 @@ RefPtr<RTCDtlsTransport> RTCPeerConnection::getOrCreateDtlsTransport(std::unique
 
 void RTCPeerConnection::updateTransceiverTransports()
 {
-    for (auto& transceiver : m_transceiverSet.list()) {
+    for (auto& transceiver : m_transceiverSet->list()) {
         auto& sender = transceiver->sender();
         if (auto* senderBackend = sender.backend())
             sender.setTransport(getOrCreateDtlsTransport(senderBackend->dtlsTransportBackend()));
