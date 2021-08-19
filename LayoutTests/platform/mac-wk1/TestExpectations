@@ -1391,3 +1391,5 @@ webkit.org/b/229252 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-
 
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80345048>:
 [ Monterey ] webrtc/h264-high.html [ Failure ]
+
+webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]

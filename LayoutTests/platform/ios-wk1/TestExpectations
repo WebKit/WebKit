@@ -1953,3 +1953,5 @@ http/tests/is-logged-in/ [ Skip ]
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
 webkit.org/b/223193 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
+
+webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]

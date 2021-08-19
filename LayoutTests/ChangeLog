@@ -1,3 +1,18 @@
+2021-08-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Fetch API][WebKit1] http/tests/fetch/keepalive-fetch-2.html is randomly failing
+        https://bugs.webkit.org/show_bug.cgi?id=229247
+
+        Unreviewed test gardening.
+
+        WebKit1 doesn't properly support keepalive fetch. Marked it as
+        flaky. Increased the number of fetches for testing WebKit2 more.
+
+        * http/tests/fetch/keepalive-fetch-2.html:
+        * http/tests/fetch/resources/keepalive-fetch-2-window.html:
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-18  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac wk1 Debug] imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm is a flaky timeout.
