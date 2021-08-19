@@ -2647,7 +2647,7 @@ static inline bool isAssistableElement(Element& element)
 static inline bool isObscuredElement(Element& element)
 {
     auto topDocument = makeRef(element.document().topDocument());
-    auto elementRectInMainFrame = element.clientRect();
+    auto elementRectInMainFrame = element.boundingBoxInRootViewCoordinates();
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::IgnoreClipping };
     HitTestResult result(elementRectInMainFrame.center());
@@ -4571,7 +4571,7 @@ void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<vo
         context.webPageIdentifier = m_identifier;
         context.documentIdentifier = document.identifier();
         context.elementIdentifier = document.identifierForElement(element);
-        context.boundingRect = element->clientRect();
+        context.boundingRect = element->boundingBoxInRootViewCoordinates();
         return context;
     });
     completionHandler(contexts);

@@ -7260,7 +7260,7 @@ std::optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Eleme
     if (!frame)
         return std::nullopt;
 
-    return WebCore::ElementContext { element.clientRect(), m_identifier, document.identifier(), document.identifierForElement(element) };
+    return WebCore::ElementContext { element.boundingBoxInRootViewCoordinates(), m_identifier, document.identifier(), document.identifierForElement(element) };
 }
 
 void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, CompletionHandler<void()>&& completionHandler)

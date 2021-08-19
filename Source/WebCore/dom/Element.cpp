@@ -1467,6 +1467,13 @@ IntRect Element::boundsInRootViewSpace()
     return view->contentsToRootView(enclosingIntRect(unitedBoundingBoxes(quads)));
 }
 
+IntRect Element::boundingBoxInRootViewCoordinates() const
+{
+    if (RenderObject* renderer = this->renderer())
+        return document().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+    return IntRect();
+}
+
 static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
 {
     if (renderBox.isRenderView())
@@ -1681,14 +1688,6 @@ FloatRect Element::boundingClientRect()
 Ref<DOMRect> Element::getBoundingClientRect()
 {
     return DOMRect::create(boundingClientRect());
-}
-
-// Note that this is not web-exposed, and does not use the same coordinate system as getBoundingClientRect() and friends.
-IntRect Element::clientRect() const
-{
-    if (RenderObject* renderer = this->renderer())
-        return document().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
-    return IntRect();
 }
     
 IntRect Element::screenRect() const

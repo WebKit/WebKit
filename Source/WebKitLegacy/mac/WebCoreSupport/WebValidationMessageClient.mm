@@ -56,7 +56,7 @@ void WebValidationMessageClient::showValidationMessage(const Element& anchor, co
         hideValidationMessage(*m_currentAnchor);
 
     m_currentAnchor = &anchor;
-    m_currentAnchorRect = anchor.clientRect();
+    m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
     [m_view showFormValidationMessage:message withAnchorRect:m_currentAnchorRect];
 }
 
@@ -92,6 +92,6 @@ void WebValidationMessageClient::updateValidationBubbleStateIfNeeded()
 
     // We currently hide the validation bubble if its position is outdated instead of trying
     // to update its position.
-    if (m_currentAnchorRect != m_currentAnchor->clientRect())
+    if (m_currentAnchorRect != m_currentAnchor->boundingBoxInRootViewCoordinates())
         hideValidationMessage(*m_currentAnchor);
 }

@@ -1,3 +1,26 @@
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename Element::clientRect() which does not return a value in web-exposed "client" coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=229243
+
+        Reviewed by Wenson Hsieh.
+
+        The result of Element::clientRect() is in the coordinate space of the root view,
+        not in the space of the Element's Frame, so does not match the other functions on Element
+        with "client" in the name.
+
+        Rename to Element::boundingBoxInRootViewCoordinates() for clarity.
+
+        * dom/Element.cpp:
+        (WebCore::Element::boundingBoxInRootViewCoordinates const):
+        (WebCore::Element::clientRect const): Deleted.
+        * dom/Element.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::isElementMainContentForPurposesOfAutoplay):
+        (WebCore::isElementRectMostlyInMainFrame):
+        * page/Page.cpp:
+        (WebCore::Page::editableElementsInRect const):
+
 2021-08-13  Tim Nguyen  <ntim@apple.com>
 
         Top layer: handle display: contents and non out-of-flow position values

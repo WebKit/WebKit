@@ -989,7 +989,7 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
 
     // Hit test the area of the main frame where the element appears, to determine if the element is being obscured.
     // Elements which are obscured by other elements cannot be main content.
-    IntRect rectRelativeToView = element.clientRect();
+    IntRect rectRelativeToView = element.boundingBoxInRootViewCoordinates();
     ScrollPosition scrollPosition = mainFrame.view()->documentScrollPositionRelativeToViewOrigin();
     IntRect rectRelativeToTopDocument(rectRelativeToView.location() + scrollPosition, rectRelativeToView.size());
     OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent };
@@ -1018,7 +1018,7 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
         return false;
 
     IntRect mainFrameRectAdjustedForScrollPosition = IntRect(-mainFrameView->documentScrollPositionRelativeToViewOrigin(), mainFrameView->contentsSize());
-    IntRect elementRectInMainFrame = element.clientRect();
+    IntRect elementRectInMainFrame = element.boundingBoxInRootViewCoordinates();
     auto totalElementArea = elementRectInMainFrame.area<RecordOverflow>();
     if (totalElementArea.hasOverflowed())
         return false;

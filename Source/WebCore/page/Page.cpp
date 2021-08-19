@@ -1006,7 +1006,7 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     auto& nodeSet = hitTestResult.listBasedTestResult();
     for (auto& node : nodeSet) {
         if (auto* editableElement = rootEditableElement(node)) {
-            ASSERT(searchRectInRootViewCoordinates.inclusivelyIntersects(editableElement->clientRect()));
+            ASSERT(searchRectInRootViewCoordinates.inclusivelyIntersects(editableElement->boundingBoxInRootViewCoordinates()));
             rootEditableElements.add(*editableElement);
         }
     }
@@ -1017,7 +1017,7 @@ Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInR
     // focused element is inside the search rect it's the most likely target for future editing operations,
     // even if it's empty. So, we special case it here.
     if (auto* focusedElement = focusController().focusedOrMainFrame().document()->focusedElement()) {
-        if (searchRectInRootViewCoordinates.inclusivelyIntersects(focusedElement->clientRect())) {
+        if (searchRectInRootViewCoordinates.inclusivelyIntersects(focusedElement->boundingBoxInRootViewCoordinates())) {
             if (auto* editableElement = rootEditableElement(*focusedElement))
                 rootEditableElements.add(*editableElement);
         }
