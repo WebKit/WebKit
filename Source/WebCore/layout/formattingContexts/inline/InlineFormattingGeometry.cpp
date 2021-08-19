@@ -249,7 +249,7 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
         }
         // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
-            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), lineBox.contentLogicalWidth());
+            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth());
             setVerticalGeometryForInlineBox(inlineBox);
             simplifiedAlignVerticallyIfApplicable(inlineBox, { });
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
@@ -314,7 +314,7 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
             // and adjust it later if we come across an inlineBoxEnd run (see below).
             // Inline box run is based on margin box. Let's convert it to border box.
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
-            auto initialLogicalWidth = lineBox.contentLogicalWidth() - (run.logicalLeft() + marginStart);
+            auto initialLogicalWidth = rootInlineBox.logicalWidth() - (run.logicalLeft() + marginStart);
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, logicalLeft + marginStart, initialLogicalWidth);
             setVerticalGeometryForInlineBox(inlineBox);
@@ -589,7 +589,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 break;
             case VerticalAlign::Bottom:
                 // Note that this logical top is not relative to the parent inline box.
-                logicalTop = lineBox.logicalHeight() - inlineLevelBox.layoutBounds().descent - inlineLevelBox.baseline();
+                logicalTop = lineBox.logicalRect().height() - inlineLevelBox.layoutBounds().descent - inlineLevelBox.baseline();
                 break;
             default:
                 ASSERT_NOT_IMPLEMENTED_YET();

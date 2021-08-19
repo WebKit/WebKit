@@ -1,3 +1,27 @@
+2021-08-19  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove redundant LineBox functions
+        https://bugs.webkit.org/show_bug.cgi?id=228046
+
+        Reviewed by Sam Weinig.
+
+        The line box's contentLogicalWidth always matches the root inlinebox's logical width. 
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        * layout/formattingContexts/inline/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::LineBox):
+        * layout/formattingContexts/inline/InlineLineBox.h:
+        (WebCore::Layout::LineBox::logicalRect const):
+        (WebCore::Layout::LineBox::logicalWidth const): Deleted.
+        (WebCore::Layout::LineBox::logicalHeight const): Deleted.
+        (WebCore::Layout::LineBox::logicalTopLeft const): Deleted.
+        (WebCore::Layout::LineBox::logicalSize const): Deleted.
+        (WebCore::Layout::LineBox::contentLogicalWidth const): Deleted.
+
 2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove support for the meaningful tap heuristic

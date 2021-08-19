@@ -63,12 +63,6 @@ public:
     LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
-    InlineLayoutUnit logicalWidth() const { return logicalSize().width(); }
-    InlineLayoutUnit logicalHeight() const { return logicalSize().height(); }
-    InlineLayoutPoint logicalTopLeft() const { return logicalRect().topLeft(); }
-    InlineLayoutSize logicalSize() const { return logicalRect().size(); }
-    InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
-
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasContent() const { return m_hasContent; }
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
@@ -106,7 +100,6 @@ private:
 
 private:
     InlineRect m_logicalRect;
-    InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_hasContent { false };
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 

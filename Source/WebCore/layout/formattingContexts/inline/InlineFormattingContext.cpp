@@ -474,7 +474,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto& lineBoxLogicalRect = lineBox.logicalRect();
     if (!lineBox.hasContent()) {
         // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
-        ASSERT(!lineBox.contentLogicalWidth() && !lineBoxLogicalRect.height());
+        ASSERT(!lineBox.rootInlineBox().hasContent() && !lineBoxLogicalRect.height());
         auto updateInlineBoxesGeometryIfApplicable = [&] {
             if (!lineBox.hasInlineBox())
                 return;

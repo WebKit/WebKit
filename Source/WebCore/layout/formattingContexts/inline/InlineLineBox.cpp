@@ -36,7 +36,6 @@ namespace Layout {
 
 LineBox::LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopleft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount)
     : m_logicalRect(logicalTopleft, InlineLayoutSize { lineLogicalWidth, { } })
-    , m_contentLogicalWidth(contentLogicalWidth)
     , m_rootInlineBox(rootLayoutBox, contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox)
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
