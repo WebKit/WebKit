@@ -20,18 +20,6 @@
 
         * platform/glib/TestExpectations: http/tests/images/image-supports-video.html no longer crashes.
 
-2021-08-19  Tim Nguyen  <ntim@apple.com>
-
-        Implement ::backdrop pseudo element
-        https://bugs.webkit.org/show_bug.cgi?id=227801
-
-        Reviewed by Antti Koivisto.
-
-        This adds UA styles, RenderTreeBuilder support and WebInspector support for ::backdrop.
-        Some imported blink tests now start passing, some still need proper top layer support.
-
-        * TestExpectations:
-
 2021-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

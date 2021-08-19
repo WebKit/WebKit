@@ -180,7 +180,6 @@ namespace WebCore {
         enum PseudoElementType {
             PseudoElementUnknown = 0,
             PseudoElementAfter,
-            PseudoElementBackdrop,
             PseudoElementBefore,
 #if ENABLE(VIDEO)
             PseudoElementCue,

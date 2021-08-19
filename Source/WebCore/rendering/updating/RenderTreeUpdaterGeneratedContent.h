@@ -38,7 +38,6 @@ class RenderTreeUpdater::GeneratedContent {
 public:
     GeneratedContent(RenderTreeUpdater&);
 
-    void updateBackdropRenderer(RenderElement&);
     void updatePseudoElement(Element&, const Style::ElementUpdates&, PseudoId);
     void updateRemainingQuotes();
 

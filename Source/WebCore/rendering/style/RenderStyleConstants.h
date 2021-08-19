@@ -95,7 +95,6 @@ enum class PseudoId : uint16_t {
     Before,
     After,
     Selection,
-    Backdrop,
     Scrollbar,
 
     // Internal:
