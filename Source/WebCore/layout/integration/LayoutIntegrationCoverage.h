@@ -99,8 +99,7 @@ enum class AvoidanceReason : uint64_t {
     InlineBoxNeedsLayer                          = 1LLU  << 59,
     InlineBoxHasBorderOrBorderImage              = 1LLU  << 60,
     InlineBoxHasBackground                       = 1LLU  << 61,
-    InlineBoxHasNegativeMargin                   = 1LLU  << 62,
-    EndOfReasons                                 = 1LLU  << 63
+    EndOfReasons                                 = 1LLU  << 62
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);

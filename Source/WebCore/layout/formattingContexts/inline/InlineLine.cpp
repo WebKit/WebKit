@@ -194,16 +194,16 @@ void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
     m_runs.append({ inlineItem, logicalLeft, logicalWidth });
-    m_contentLogicalWidth += logicalWidth;
+    // Do not let negative margin make the content shorter than it already is.
+    auto runLogicalRight = logicalLeft + logicalWidth;
+    m_contentLogicalWidth = std::max(m_contentLogicalWidth, runLogicalRight);
 }
 
 void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline box <span>.
-    auto& boxGeometry = formattingContext().geometryForBox(inlineItem.layoutBox());
-    auto adjustedRunStart = contentLogicalRight() + std::min(boxGeometry.marginStart(), 0_lu);
     ++m_nonSpanningInlineLevelBoxCount;
-    appendNonBreakableSpace(inlineItem, adjustedRunStart, logicalWidth);
+    appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
 }
 
 void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
@@ -217,7 +217,7 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit log
     // Prevent trailing letter-spacing from spilling out of the inline box.
     // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
     removeTrailingLetterSpacing();
-    appendNonBreakableSpace(inlineItem, contentLogicalWidth(), logicalWidth);
+    appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
 }
 
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)

@@ -312,13 +312,11 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
         if (run.isInlineBoxStart()) {
             // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
             // and adjust it later if we come across an inlineBoxEnd run (see below).
-            auto initialLogicalWidth = lineBox.contentLogicalWidth() - run.logicalLeft();
-            ASSERT(initialLogicalWidth >= 0);
             // Inline box run is based on margin box. Let's convert it to border box.
-            auto marginStart = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginStart());
-            logicalLeft += marginStart;
-            initialLogicalWidth -= marginStart;
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, logicalLeft, initialLogicalWidth);
+            auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
+            auto initialLogicalWidth = lineBox.contentLogicalWidth() - (run.logicalLeft() + marginStart);
+            ASSERT(initialLogicalWidth >= 0);
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, logicalLeft + marginStart, initialLogicalWidth);
             setVerticalGeometryForInlineBox(inlineBox);
             simplifiedAlignVerticallyIfApplicable(inlineBox, { });
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
@@ -326,12 +324,17 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
         }
         if (run.isInlineBoxEnd()) {
             // Adjust the logical width when the inline box closes on this line.
+            // Note that margin end does not affect the logical width (e.g. positive margin right does not make the run wider).
             auto& inlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox);
             ASSERT(inlineBox.isInlineBox());
             // Inline box run is based on margin box. Let's convert it to border box.
-            auto marginEnd = std::max(0_lu, formattingContext().geometryForBox(layoutBox).marginEnd());
-            auto inlineBoxLogicalRight = logicalLeft + run.logicalWidth() - marginEnd;
-            inlineBox.setLogicalWidth(inlineBoxLogicalRight - inlineBox.logicalLeft());
+            // Negative margin end makes the run have negative width.
+            auto marginEndAdjustemnt = -formattingContext().geometryForBox(layoutBox).marginEnd();
+            auto logicalWidth = run.logicalWidth() + marginEndAdjustemnt;
+            auto inlineBoxLogicalRight = logicalLeft + logicalWidth;
+            // When the content pulls the </span> to the logical left direction (e.g. negative letter space)
+            // make sure we don't end up with negative logical width on the inline box.
+            inlineBox.setLogicalWidth(std::max(0.f, inlineBoxLogicalRight - inlineBox.logicalLeft()));
             simplifiedAlignVerticallyIfApplicable(inlineBox, { });
             continue;
         }
