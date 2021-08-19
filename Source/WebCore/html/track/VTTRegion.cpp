@@ -304,13 +304,13 @@ void VTTRegion::displayLastTextTrackCueBox()
     if (isScrollingRegion())
         m_cueContainer->classList().add(textTrackCueContainerScrollingClass());
 
-    float regionBottom = m_regionDisplayTree->getBoundingClientRect()->bottom();
+    float regionBottom = m_regionDisplayTree->boundingClientRect().maxY();
 
     // Find first cue that is not entirely displayed and scroll it upwards.
     for (auto& child : childrenOfType<Element>(*m_cueContainer)) {
-        auto rect = child.getBoundingClientRect();
-        float childTop = rect->top();
-        float childBottom = rect->bottom();
+        auto rect = child.boundingClientRect();
+        float childTop = rect.y();
+        float childBottom = rect.maxY();
 
         if (regionBottom >= childBottom)
             continue;
@@ -330,7 +330,7 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
     LOG(Media, "VTTRegion::willRemoveTextTrackCueBox");
     ASSERT(m_cueContainer->contains(box));
 
-    double boxHeight = box->getBoundingClientRect()->bottom() - box->getBoundingClientRect()->top();
+    double boxHeight = box->boundingClientRect().height();
 
     m_cueContainer->classList().remove(textTrackCueContainerScrollingClass());
 

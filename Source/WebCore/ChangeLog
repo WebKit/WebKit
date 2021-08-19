@@ -1,3 +1,17 @@
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid DOMRect overhead in VTTRegion
+        https://bugs.webkit.org/show_bug.cgi?id=229249
+
+        Reviewed by Eric Carlson.
+
+        Use Element::boundingClientRect() instead of Element::getBoundingClientRect() to
+        avoid DOMRect overhead. No behavior change.
+
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::displayLastTextTrackCueBox):
+        (WebCore::VTTRegion::willRemoveTextTrackCueBox):
+
 2021-08-19  Antti Koivisto  <antti@apple.com>
 
         TextDecorationPainter should not depend on LegacyInlineTextBox
