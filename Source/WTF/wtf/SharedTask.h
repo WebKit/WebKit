@@ -119,7 +119,7 @@ Ref<SharedTask<FunctionType>> createSharedTask(const Functor& functor)
 template<typename FunctionType, typename Functor>
 Ref<SharedTask<FunctionType>> createSharedTask(Functor&& functor)
 {
-    return adoptRef(*new SharedTaskFunctor<FunctionType, Functor>(WTFMove(functor)));
+    return adoptRef(*new SharedTaskFunctor<FunctionType, Functor>(std::forward<Functor>(functor)));
 }
 
 } // namespace WTF

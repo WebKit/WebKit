@@ -125,7 +125,7 @@ ScopedLambdaFunctor<FunctionType, Functor> scopedLambda(const Functor& functor)
 template<typename FunctionType, typename Functor>
 ScopedLambdaFunctor<FunctionType, Functor> scopedLambda(Functor&& functor)
 {
-    return ScopedLambdaFunctor<FunctionType, Functor>(WTFMove(functor));
+    return ScopedLambdaFunctor<FunctionType, Functor>(std::forward<Functor>(functor));
 }
 
 template<typename FunctionType, typename Functor> class ScopedLambdaRefFunctor;

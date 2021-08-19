@@ -575,7 +575,7 @@ template<typename T, size_t inlineCapacity>
 template<typename U, typename Func>
 inline void Deque<T, inlineCapacity>::appendAndBubble(U&& value, const Func& func)
 {
-    append(WTFMove(value));
+    append(std::forward<U>(value));
     iterator begin = this->begin();
     iterator iter = end();
     --iter;

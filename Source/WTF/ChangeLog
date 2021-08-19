@@ -1,3 +1,20 @@
+2021-08-19  David Kilzer  <ddkilzer@apple.com>
+
+        [WTF] Fix static analyzer warnings for clang tidy bugprone-move-forwarding-reference checker
+        <https://webkit.org/b/229114>
+
+        Reviewed by Darin Adler.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::appendAndBubble):
+        * wtf/Scope.h:
+        (WTF::ScopeExit::ScopeExit):
+        * wtf/ScopedLambda.h:
+        (WTF::scopedLambda):
+        * wtf/SharedTask.h:
+        (WTF::createSharedTask):
+        - Replace WTFMove() with std::forward<>().
+
 2021-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove more non-inclusive language from Source

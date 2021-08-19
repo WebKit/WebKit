@@ -37,7 +37,7 @@ class ScopeExit final {
 public:
     template<typename ExitFunctionParameter>
     explicit ScopeExit(ExitFunctionParameter&& exitFunction)
-        : m_exitFunction(WTFMove(exitFunction))
+        : m_exitFunction(std::forward<ExitFunctionParameter>(exitFunction))
     {
     }
 
