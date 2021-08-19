@@ -2222,7 +2222,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return cb->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(logicalHeightLength.value()));
 }
 
-void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     if (ancestorContainer == this)
         return;
@@ -2245,17 +2245,17 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     // If this box has a transform, it acts as a fixed position container for fixed descendants,
     // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
     if (hasTransform() && !isFixedPos)
-        mode &= ~IsFixed;
+        mode.remove(IsFixed);
     else if (isFixedPos)
-        mode |= IsFixed;
+        mode.add(IsFixed);
 
     if (wasFixed)
-        *wasFixed = mode & IsFixed;
+        *wasFixed = mode.contains(IsFixed);
     
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
     
-    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
-    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
+    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
+    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
         getTransformFromContainer(container, containerOffset, t);
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
@@ -2270,7 +2270,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
         return;
     }
 
-    mode &= ~ApplyContainerFlip;
+    mode.remove(ApplyContainerFlip);
 
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
@@ -2310,15 +2310,15 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     return ancestorSkipped ? ancestorToStopAt : container;
 }
 
-void RenderBox::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
+void RenderBox::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {
     bool isFixedPos = isFixedPositioned();
     if (hasTransform() && !isFixedPos) {
         // If this box has a transform, it acts as a fixed position container for fixed descendants,
         // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-        mode &= ~IsFixed;
+        mode.remove(IsFixed);
     } else if (isFixedPos)
-        mode |= IsFixed;
+        mode.add(IsFixed);
 
     RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
 }

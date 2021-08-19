@@ -73,10 +73,10 @@ struct RenderGeometryMapStep {
 class RenderGeometryMap {
     WTF_MAKE_NONCOPYABLE(RenderGeometryMap);
 public:
-    explicit RenderGeometryMap(MapCoordinatesFlags = UseTransforms);
+    explicit RenderGeometryMap(OptionSet<MapCoordinatesMode> = UseTransforms);
     ~RenderGeometryMap();
 
-    MapCoordinatesFlags mapCoordinatesFlags() const { return m_mapCoordinatesFlags; }
+    OptionSet<MapCoordinatesMode> mapCoordinatesFlags() const { return m_mapCoordinatesFlags; }
 
     FloatPoint absolutePoint(const FloatPoint& p) const
     {
@@ -123,13 +123,13 @@ private:
 
     typedef Vector<RenderGeometryMapStep, 32> RenderGeometryMapSteps;
 
-    size_t m_insertionPosition;
-    int m_nonUniformStepsCount;
-    int m_transformedStepsCount;
-    int m_fixedStepsCount;
+    size_t m_insertionPosition { notFound };
+    int m_nonUniformStepsCount { 0 };
+    int m_transformedStepsCount { 0 };
+    int m_fixedStepsCount { 0 };
     RenderGeometryMapSteps m_mapping;
     LayoutSize m_accumulatedOffset;
-    MapCoordinatesFlags m_mapCoordinatesFlags;
+    OptionSet<MapCoordinatesMode> m_mapCoordinatesFlags;
 #if ASSERT_ENABLED
     bool m_accumulatedOffsetMightBeSaturated { false };
 #endif

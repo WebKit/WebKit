@@ -994,7 +994,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const Lay
     return offset;
 }
 
-void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     if (ancestorContainer == this)
         return;
@@ -1013,18 +1013,18 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorCon
     if (!container)
         return;
 
-    if (mode & ApplyContainerFlip && is<RenderBox>(*container)) {
+    if (mode.contains(ApplyContainerFlip) && is<RenderBox>(*container)) {
         if (container->style().isFlippedBlocksWritingMode()) {
             LayoutPoint centerPoint(transformState.mappedPoint());
             transformState.move(downcast<RenderBox>(*container).flipForWritingMode(centerPoint) - centerPoint);
         }
-        mode &= ~ApplyContainerFlip;
+        mode.remove(ApplyContainerFlip);
     }
 
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
-    bool preserve3D = mode & UseTransforms && (container->style().preserves3D() || style().preserves3D());
-    if (mode & UseTransforms && shouldUseTransformFromContainer(container)) {
+    bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
+    if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
         TransformationMatrix t;
         getTransformFromContainer(container, containerOffset, t);
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);

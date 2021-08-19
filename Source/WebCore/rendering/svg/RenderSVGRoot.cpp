@@ -398,10 +398,10 @@ std::optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const
 // This method expects local CSS box coordinates.
 // Callers with local SVG viewport coordinates should first apply the localToBorderBoxTransform
 // to convert from SVG viewport coordinates to local CSS box coordinates.
-void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, MapCoordinatesFlags mode, bool* wasFixed) const
+void RenderSVGRoot::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
-    ASSERT(mode & ~IsFixed); // We should have no fixed content in the SVG rendering tree.
-    ASSERT(mode & UseTransforms); // mapping a point through SVG w/o respecting trasnforms is useless.
+    ASSERT(!mode.contains(IsFixed)); // We should have no fixed content in the SVG rendering tree.
+    ASSERT(mode.contains(UseTransforms)); // mapping a point through SVG w/o respecting transforms is useless.
 
     RenderReplaced::mapLocalToContainer(ancestorContainer, transformState, mode | ApplyContainerFlip, wasFixed);
 }

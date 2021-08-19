@@ -1,5 +1,76 @@
 2021-08-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Use an OptionSet<MapCoordinatesMode> in place of MapCoordinatesFlags
+        https://bugs.webkit.org/show_bug.cgi?id=229170
+
+        Reviewed by Antti Koivisto.
+
+        Replace MapCoordinatesFlags with OptionSet<MapCoordinatesMode>. No behavior
+        change.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::appendServerMapMousePosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer const):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint const):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::mapLocalToContainer const):
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::RenderGeometryMap):
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+        * rendering/RenderGeometryMap.h:
+        (WebCore::RenderGeometryMap::mapCoordinatesFlags const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer const):
+        * rendering/RenderInline.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::mapAbsoluteToLocalPoint const):
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRect const):
+        (WebCore::RenderObject::localToAbsolute const):
+        (WebCore::RenderObject::absoluteToLocal const):
+        (WebCore::RenderObject::absoluteToLocalQuad const):
+        (WebCore::RenderObject::mapLocalToContainer const):
+        (WebCore::RenderObject::mapAbsoluteToLocalPoint const):
+        (WebCore::RenderObject::localToContainerQuad const):
+        (WebCore::RenderObject::localToContainerPoint const):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::absoluteToLocal):
+        (WebCore::RenderObject::localToAbsoluteQuad const):
+        * rendering/RenderObjectEnums.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::volumeSliderOffsetFromMuteButton const):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer const):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint const):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer const):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer const):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer const):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer const):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer const):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
         Remove duplicate LayerTreeAsText enums and use an OptionSet<>
         https://bugs.webkit.org/show_bug.cgi?id=229226
 

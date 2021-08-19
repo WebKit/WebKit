@@ -59,6 +59,5 @@ enum MapCoordinatesMode {
     UseTransforms       = 1 << 1,
     ApplyContainerFlip  = 1 << 2
 };
-typedef unsigned MapCoordinatesFlags;
 
 }

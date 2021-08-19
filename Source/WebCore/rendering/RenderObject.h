@@ -529,18 +529,18 @@ public:
     WEBCORE_EXPORT RenderBlock* containingBlock() const;
     RenderBlock* containingBlockForObjectInFlow() const;
 
-    // Convert the given local point to absolute coordinates. If MapCoordinatesFlags includes UseTransforms, take transforms into account.
-    WEBCORE_EXPORT FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), MapCoordinatesFlags = 0, bool* wasFixed = nullptr) const;
-    FloatPoint absoluteToLocal(const FloatPoint&, MapCoordinatesFlags = 0) const;
+    // Convert the given local point to absolute coordinates. If OptionSet<MapCoordinatesMode> includes UseTransforms, take transforms into account.
+    WEBCORE_EXPORT FloatPoint localToAbsolute(const FloatPoint& localPoint = FloatPoint(), OptionSet<MapCoordinatesMode> = { }, bool* wasFixed = nullptr) const;
+    FloatPoint absoluteToLocal(const FloatPoint&, OptionSet<MapCoordinatesMode> = { }) const;
 
     // Convert a local quad to absolute coordinates, taking transforms into account.
-    FloatQuad localToAbsoluteQuad(const FloatQuad&, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
+    FloatQuad localToAbsoluteQuad(const FloatQuad&, OptionSet<MapCoordinatesMode> = UseTransforms, bool* wasFixed = nullptr) const;
     // Convert an absolute quad to local coordinates.
-    FloatQuad absoluteToLocalQuad(const FloatQuad&, MapCoordinatesFlags = UseTransforms) const;
+    FloatQuad absoluteToLocalQuad(const FloatQuad&, OptionSet<MapCoordinatesMode> = UseTransforms) const;
 
     // Convert a local quad into the coordinate system of container, taking transforms into account.
-    WEBCORE_EXPORT FloatQuad localToContainerQuad(const FloatQuad&, const RenderLayerModelObject* container, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
-    WEBCORE_EXPORT FloatPoint localToContainerPoint(const FloatPoint&, const RenderLayerModelObject* container, MapCoordinatesFlags = UseTransforms, bool* wasFixed = nullptr) const;
+    WEBCORE_EXPORT FloatQuad localToContainerQuad(const FloatQuad&, const RenderLayerModelObject* container, OptionSet<MapCoordinatesMode> = UseTransforms, bool* wasFixed = nullptr) const;
+    WEBCORE_EXPORT FloatPoint localToContainerPoint(const FloatPoint&, const RenderLayerModelObject* container, OptionSet<MapCoordinatesMode> = UseTransforms, bool* wasFixed = nullptr) const;
 
     // Return the offset from the container() renderer (excluding transforms). In multi-column layout,
     // different offsets apply at different points, so return the offset that applies to the given point.
@@ -711,8 +711,8 @@ public:
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
-    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed = nullptr) const;
-    virtual void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const;
+    virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed = nullptr) const;
+    virtual void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const;
 
     // Pushes state onto RenderGeometryMap about how to map coordinates from this renderer to its container, or ancestorToStopAt (whichever is encountered first).
     // Returns the renderer which was mapped to (container or ancestorToStopAt).
@@ -1133,7 +1133,7 @@ inline void RenderObject::setPositionState(PositionType position)
     m_bitfields.setPositionedState(static_cast<int>(position));
 }
 
-inline FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& quad, MapCoordinatesFlags mode, bool* wasFixed) const
+inline FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& quad, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     return localToContainerQuad(quad, nullptr, mode, wasFixed);
 }

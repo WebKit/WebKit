@@ -101,7 +101,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderElement& renderer, const 
 
     transformState.applyTransform(transform);
 
-    MapCoordinatesFlags mode = UseTransforms;
+    OptionSet<MapCoordinatesMode> mode = UseTransforms;
     parent.mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
