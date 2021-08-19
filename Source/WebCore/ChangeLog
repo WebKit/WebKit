@@ -1,3 +1,30 @@
+2021-08-19  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for overflow-wrap: anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=227695
+
+        Reviewed by Antti Koivisto.
+
+        Adjust the line breaking logic in IFC to support "overflow-wrap: anywhere".
+        From the line breaking point of view, "anywhere" and "break-word" work the same way
+        (i.e. an unbreakable content can be broken at an arbitrary position if there are no other, previous break points in the line).
+
+        https://drafts.csswg.org/css-text-3/#overflow-wrap-property
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator OverflowWrap const):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::wordBreakBehavior const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::breakWords const):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.h:
+
 2021-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove more non-inclusive language from Source

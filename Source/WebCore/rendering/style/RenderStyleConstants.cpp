@@ -821,7 +821,8 @@ TextStream& operator<<(TextStream& ts, OverflowWrap overflowWrap)
 {
     switch (overflowWrap) {
     case OverflowWrap::Normal: ts << "normal"; break;
-    case OverflowWrap::Break: ts << "break"; break;
+    case OverflowWrap::BreakWord: ts << "break-word"; break;
+    case OverflowWrap::Anywhere: ts << "anywhere"; break;
     }
     return ts;
 }

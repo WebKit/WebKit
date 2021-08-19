@@ -670,9 +670,9 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     // FIXME-NEWPARSER: Support?
     // case CSSPropertyOverflowAnchor:
     //    return valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAuto;
-    case CSSPropertyOverflowWrap: // normal | break-word
+    case CSSPropertyOverflowWrap: // normal | break-word | anywhere
     case CSSPropertyWordWrap:
-        return valueID == CSSValueNormal || valueID == CSSValueBreakWord;
+        return valueID == CSSValueNormal || valueID == CSSValueBreakWord || valueID == CSSValueAnywhere;
     case CSSPropertyOverflowX: // visible | hidden | scroll | auto | overlay (overlay is a synonym for auto)
         if (context.overflowClipEnabled && valueID == CSSValueClip)
             return true;

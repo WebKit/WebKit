@@ -552,7 +552,8 @@ enum class WordBreak : uint8_t {
 
 enum class OverflowWrap : uint8_t {
     Normal,
-    Break
+    BreakWord,
+    Anywhere
 };
 
 enum class NBSPMode : uint8_t {

@@ -1,3 +1,12 @@
+2021-08-19  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for overflow-wrap: anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=227695
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: Progressions.
+
 2021-08-19  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS 15 wk2] storage/indexeddb/dont-wedge-private.html is a flaky failure.

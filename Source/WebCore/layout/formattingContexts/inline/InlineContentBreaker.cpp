@@ -417,8 +417,8 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
         breakRules.add({ WordBreakRule::AtArbitraryPosition });
         return breakRules;
     }
-    // OverflowWrap::Break: An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
-    if (style.overflowWrap() == OverflowWrap::Break && !hasWrapOpportunityAtPreviousPosition) {
+    // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
+    if ((style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition) {
         breakRules.add({ WordBreakRule::AtArbitraryPosition });
         return breakRules;
     }

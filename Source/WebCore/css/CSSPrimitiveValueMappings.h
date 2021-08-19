@@ -2951,7 +2951,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(OverflowWrap e)
     case OverflowWrap::Normal:
         m_value.valueID = CSSValueNormal;
         break;
-    case OverflowWrap::Break:
+    case OverflowWrap::Anywhere:
+        m_value.valueID = CSSValueAnywhere;
+        break;
+    case OverflowWrap::BreakWord:
         m_value.valueID = CSSValueBreakWord;
         break;
     }
@@ -2963,7 +2966,9 @@ template<> inline CSSPrimitiveValue::operator OverflowWrap() const
 
     switch (m_value.valueID) {
     case CSSValueBreakWord:
-        return OverflowWrap::Break;
+        return OverflowWrap::BreakWord;
+    case CSSValueAnywhere:
+        return OverflowWrap::Anywhere;
     case CSSValueNormal:
         return OverflowWrap::Normal;
     default:
