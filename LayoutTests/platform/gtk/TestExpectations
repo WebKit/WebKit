@@ -1213,6 +1213,10 @@ webkit.org/b/224524 editing/selection/user-select-all-with-single-click.html [ F
 
 webkit.org/b/224791 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-screenx-screeny.html [ Timeout Pass ]
 
+webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Timeout Pass ]
+
+webkit.org/b/229268 media/media-fragments/TC0009.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1275,6 +1279,8 @@ imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.htm
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html [ Slow ]
+
+webrtc/concurrentVideoPlayback2.html [ Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests

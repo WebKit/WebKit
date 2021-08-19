@@ -1,3 +1,23 @@
+2021-08-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of layout tests
+
+        Unreviewed test gardening.
+
+        Mark expected failures after r281108 and others and update list of flaky tests.
+        Rebaseline tests after r281136, r281127 and r281097.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/repaint/line-layout-block-shrink-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em-expected.txt: Added.
+
 2021-08-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Fetch API][WebKit1] http/tests/fetch/keepalive-fetch-2.html is randomly failing

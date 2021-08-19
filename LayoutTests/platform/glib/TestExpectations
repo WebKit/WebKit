@@ -352,6 +352,8 @@ accessibility/embedded-image-description.html [ Skip ]
 # Not supported. Skipped also in mac-wk1 and win ports.
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 
+webkit.org/b/229261 accessibility/element-line-rects-and-text.html [ Missing ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2351,6 +2353,10 @@ webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
 
 # Test is a flaky timeout. The test is also skipped in iOS and Windows.
 media/video-remote-control-playpause.html [ Skip ]
+
+webkit.org/b/229266 imported/w3c/web-platform-tests/html/browsers/offline/introduction-4/event_cached.https.html [ Timeout Pass ]
+
+webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
