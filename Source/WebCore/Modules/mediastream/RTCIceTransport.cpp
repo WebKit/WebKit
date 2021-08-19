@@ -34,6 +34,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCIceTransport);
 
+RTCIceTransport::~RTCIceTransport()
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

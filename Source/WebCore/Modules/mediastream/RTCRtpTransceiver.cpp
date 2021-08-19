@@ -46,7 +46,6 @@ RTCRtpTransceiver::RTCRtpTransceiver(Ref<RTCRtpSender>&& sender, Ref<RTCRtpRecei
     : m_direction(RTCRtpTransceiverDirection::Sendrecv)
     , m_sender(WTFMove(sender))
     , m_receiver(WTFMove(receiver))
-    , m_iceTransport(RTCIceTransport::create())
     , m_backend(WTFMove(backend))
 {
 }
