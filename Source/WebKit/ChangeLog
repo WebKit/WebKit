@@ -1,3 +1,27 @@
+2021-08-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Adjust fallback SandboxExtension std::optional<Handle> construction
+        https://bugs.webkit.org/show_bug.cgi?id=229233
+
+        Reviewed by Carlos Garcia Campos.
+
+        In r240512, std::optional<> was adopted as the return type for handle
+        creation methods in the SandboxExtension class. For no-op methods,
+        the construction of these return values was done using empty initializer
+        lists.
+
+        The changes here should match pre-r240512 behavior by creating empty
+        Handle objects and using those to implicitly construct the returning
+        std::optional<> object. In addition, this avoids compilation breakage
+        with GCC 8 where ambiguity between possible std::optional<> constructors
+        is detected.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        (WebKit::SandboxExtension::createHandleForGenericExtension):
+
 2021-08-19  Youenn Fablet  <youenn@apple.com>
 
         Rename MediaPlayer::setVisible to MediaPlayer::setPageIsVisible

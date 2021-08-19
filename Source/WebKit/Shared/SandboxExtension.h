@@ -162,12 +162,12 @@ inline const SandboxExtension::Handle* SandboxExtension::HandleArray::end() cons
 inline void SandboxExtension::HandleArray::encode(IPC::Encoder&) const { }
 inline auto SandboxExtension::HandleArray::decode(IPC::Decoder&) -> std::optional<HandleArray> { return { HandleArray() }; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
-inline auto SandboxExtension::createHandle(const String&, Type) -> std::optional<Handle> { return {{ }}; }
+inline auto SandboxExtension::createHandle(const String&, Type) -> std::optional<Handle> { return Handle { }; }
 inline SandboxExtension::HandleArray SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) { return { }; }
-inline auto SandboxExtension::createHandleWithoutResolvingPath(const String&, Type) -> std::optional<Handle> { return {{ }}; }
-inline auto SandboxExtension::createHandleForReadWriteDirectory(const String&) -> std::optional<Handle> { return {{ }}; }
+inline auto SandboxExtension::createHandleWithoutResolvingPath(const String&, Type) -> std::optional<Handle> { return Handle { }; }
+inline auto SandboxExtension::createHandleForReadWriteDirectory(const String&) -> std::optional<Handle> { return Handle { }; }
 inline auto SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type) -> std::optional<std::pair<Handle, String>> { return std::optional<std::pair<Handle, String>> { std::pair<Handle, String> { Handle { }, String { } } }; }
-inline auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral /*extensionClass*/) -> std::optional<Handle> { return {{ }}; }
+inline auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral /*extensionClass*/) -> std::optional<Handle> { return Handle { }; }
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }
