@@ -2324,5 +2324,7 @@ webkit.org/b/229244 imported/w3c/web-platform-tests/IndexedDB/key-generators/rea
 
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
 
+#rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ] 
+
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
