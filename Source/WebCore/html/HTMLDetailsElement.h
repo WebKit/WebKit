@@ -27,16 +27,22 @@ namespace WebCore {
 
 class HTMLSlotElement;
 
+template<typename T> class EventSender;
+using DetailEventSender = EventSender<HTMLDetailsElement>;
+
 class HTMLDetailsElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLDetailsElement);
 public:
     static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
+    ~HTMLDetailsElement();
 
     void toggleOpen();
 
     bool isOpen() const { return m_isOpen; }
     bool isActiveSummary(const HTMLSummaryElement&) const;
 
+    void dispatchPendingEvent(DetailEventSender*);
+    
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
@@ -51,7 +57,6 @@ private:
     HTMLSlotElement* m_summarySlot { nullptr };
     HTMLSummaryElement* m_defaultSummary { nullptr };
     RefPtr<HTMLSlotElement> m_defaultSlot;
-    bool m_isToggleEventTaskQueued { false };
 };
 
 } // namespace WebCore
