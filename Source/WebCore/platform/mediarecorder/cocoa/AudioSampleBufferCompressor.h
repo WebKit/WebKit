@@ -60,7 +60,7 @@ private:
     size_t computeBufferSizeForAudioFormat(AudioStreamBasicDescription, UInt32, Float32);
     void attachPrimingTrimsIfNeeded(CMSampleBufferRef);
     RetainPtr<NSNumber> gradualDecoderRefreshCount();
-    CMSampleBufferRef sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList);
+    RetainPtr<CMSampleBufferRef> sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList);
     void processSampleBuffersUntilLowWaterTime(CMTime);
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
 

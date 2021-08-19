@@ -1,3 +1,27 @@
+2021-08-18  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of CMSampleBufferRef (up to 2.25 KB each) in com.apple.WebKit.GPU.Development process
+        <https://webkit.org/b/229262>
+        <rdar://problem/82076765>
+
+        Reviewed by Darin Adler.
+
+        Covered by running layout tests with --leaks plus future patch
+        to check for leaks in the GPU process.
+
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.h:
+        (WebCore::AudioSampleBufferCompressor::sampleBufferWithNumPackets):
+        - Update signature to return RetainPtr<CMSampleBufferRef>.
+
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm:
+        (WebCore::AudioSampleBufferCompressor::sampleBufferWithNumPackets):
+        - Update signature to return RetainPtr<CMSampleBufferRef>.
+        - Rename `sampleBuffer` to `rawSampleBuffer` to match similar
+          pattern used in other code, then use `sampleBuffer` to store
+          `rawSampleBuffer` wrapped in a RetainPtr<>.
+        (WebCore::AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime):
+        - Add get() to `buffer` variable since it is now a RetainPtr<>.
+
 2021-08-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r281206.

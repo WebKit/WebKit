@@ -262,7 +262,7 @@ RetainPtr<NSNumber> AudioSampleBufferCompressor::gradualDecoderRefreshCount()
     return retainPtr([NSNumber numberWithInt:(primeInfo.leadingFrames / m_destinationFormat.mFramesPerPacket)]);
 }
 
-CMSampleBufferRef AudioSampleBufferCompressor::sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList fillBufferList)
+RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList fillBufferList)
 {
     Vector<char> cookie;
     if (!m_destinationFormatDescription) {
@@ -302,15 +302,17 @@ CMSampleBufferRef AudioSampleBufferCompressor::sampleBufferWithNumPackets(UInt32
         return nil;
     }
 
-    CMSampleBufferRef sampleBuffer;
-    auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), true, NULL, NULL, m_destinationFormatDescription.get(), numPackets, m_currentNativePresentationTimeStamp, m_destinationPacketDescriptions.data(), &sampleBuffer);
+    CMSampleBufferRef rawSampleBuffer;
+    auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, buffer.get(), true, NULL, NULL, m_destinationFormatDescription.get(), numPackets, m_currentNativePresentationTimeStamp, m_destinationPacketDescriptions.data(), &rawSampleBuffer);
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMAudioSampleBufferCreateWithPacketDescriptions failed with %d", error);
         return nil;
     }
 
+    auto sampleBuffer = adoptCF(rawSampleBuffer);
+
     if ([m_gdrCountNum intValue])
-        PAL::CMSetAttachment(sampleBuffer, PAL::kCMSampleBufferAttachmentKey_GradualDecoderRefresh, (__bridge CFTypeRef)m_gdrCountNum.get(), kCMAttachmentMode_ShouldPropagate);
+        PAL::CMSetAttachment(sampleBuffer.get(), PAL::kCMSampleBufferAttachmentKey_GradualDecoderRefresh, (__bridge CFTypeRef)m_gdrCountNum.get(), kCMAttachmentMode_ShouldPropagate);
 
     return sampleBuffer;
 }
@@ -480,21 +482,21 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
 
         auto buffer = sampleBufferWithNumPackets(numOutputPackets, fillBufferList);
 
-        attachPrimingTrimsIfNeeded(buffer);
+        attachPrimingTrimsIfNeeded(buffer.get());
 
-        error = CMSampleBufferSetOutputPresentationTimeStamp(buffer, m_currentOutputPresentationTimeStamp);
+        error = CMSampleBufferSetOutputPresentationTimeStamp(buffer.get(), m_currentOutputPresentationTimeStamp);
         if (error) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMSampleBufferSetOutputPresentationTimeStamp failed with %d", error);
             return;
         }
 
-        CMTime nativeDuration = CMSampleBufferGetDuration(buffer);
+        CMTime nativeDuration = CMSampleBufferGetDuration(buffer.get());
         m_currentNativePresentationTimeStamp = CMTimeAdd(m_currentNativePresentationTimeStamp, nativeDuration);
 
-        CMTime outputDuration = CMSampleBufferGetOutputDuration(buffer);
+        CMTime outputDuration = CMSampleBufferGetOutputDuration(buffer.get());
         m_currentOutputPresentationTimeStamp = CMTimeAdd(m_currentOutputPresentationTimeStamp, outputDuration);
 
-        error = CMBufferQueueEnqueue(m_outputBufferQueue.get(), buffer);
+        error = CMBufferQueueEnqueue(m_outputBufferQueue.get(), buffer.get());
         if (error) {
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor CMBufferQueueEnqueue failed with %d", error);
             return;
