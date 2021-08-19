@@ -142,7 +142,7 @@ public:
     Vector<std::reference_wrapper<RTCRtpReceiver>> getReceivers() const;
     const Vector<RefPtr<RTCRtpTransceiver>>& getTransceivers() const;
 
-    const Vector<RefPtr<RTCRtpTransceiver>>& currentTransceivers() const { return m_transceiverSet->list(); }
+    const Vector<RefPtr<RTCRtpTransceiver>>& currentTransceivers() const { return m_transceiverSet.list(); }
 
     ExceptionOr<Ref<RTCRtpSender>> addTrack(Ref<MediaStreamTrack>&&, const Vector<std::reference_wrapper<MediaStream>>&);
     ExceptionOr<void> removeTrack(RTCRtpSender&);
@@ -243,7 +243,7 @@ private:
     const void* m_logIdentifier;
 #endif
 
-    std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
+    RtpTransceiverSet m_transceiverSet;
 
     std::unique_ptr<PeerConnectionBackend> m_backend;
 
