@@ -1,3 +1,19 @@
+2021-08-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        [App Privacy Report] Some HTTP Redirects from non app initiated requests are marked app initiated
+        https://bugs.webkit.org/show_bug.cgi?id=229202
+        <rdar://problem/79467871>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage. This bug was only reproducing with media-related
+        loading, so these tests redirect to load an mp4.
+
+        * http/tests/app-privacy-report/app-attribution-media-redirect-expected.txt: Added.
+        * http/tests/app-privacy-report/app-attribution-media-redirect.html: Added.
+        * http/tests/app-privacy-report/user-attribution-media-redirect-expected.txt: Added.
+        * http/tests/app-privacy-report/user-attribution-media-redirect.html: Added.
+
 2021-08-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GStreamer gardening

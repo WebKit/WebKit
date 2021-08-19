@@ -597,13 +597,31 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
         WebCore::ResourceResponse resourceResponse(response);
         networkDataTask->checkTAO(resourceResponse);
 
-        networkDataTask->willPerformHTTPRedirection(WTFMove(resourceResponse), request, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS](auto&& request) {
+        bool isAppInitiated = true;
+#if ENABLE(APP_PRIVACY_REPORT)
+        isAppInitiated = request.attribution == NSURLRequestAttributionDeveloper;
+#endif
+
+        networkDataTask->willPerformHTTPRedirection(WTFMove(resourceResponse), request, [session = networkDataTask->networkSession(), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, shouldIgnoreHSTS, isAppInitiated](auto&& request) {
 #if !LOG_DISABLED
             LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (%s)", taskIdentifier, request.url().string().utf8().data());
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif
             auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody));
+
+#if ENABLE(APP_PRIVACY_REPORT)
+            if (session) {
+                RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest mutableCopy]);
+                mutableRequest.get().attribution = isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+                nsRequest = mutableRequest.get();
+
+                session->appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
+            }
+#else
+            UNUSED_PARAM(isAppInitiated);
+            UNUSED_PARAM(session);
+#endif
             updateIgnoreStrictTransportSecuritySetting(nsRequest, shouldIgnoreHSTS);
             completionHandler(nsRequest.get());
         });

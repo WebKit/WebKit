@@ -1,3 +1,22 @@
+2021-08-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        [App Privacy Report] Some HTTP Redirects from non app initiated requests are marked app initiated
+        https://bugs.webkit.org/show_bug.cgi?id=229202
+        <rdar://problem/79467871>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/app-privacy-report/app-attribution-media-redirect.html
+               http/tests/app-privacy-report/user-attribution-media-redirect.html
+
+        The request returned in the completion handler of
+        NetworkDataTaskCocoa::willPerformHTTPRedirection does not always have
+        the attribution property of the original request. We should pass it
+        along and set it.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+
 2021-08-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Adjust fallback SandboxExtension std::optional<Handle> construction
