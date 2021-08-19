@@ -187,7 +187,7 @@ FrameView::FrameView(Frame& frame)
     , m_layoutContext(*this)
     , m_updateEmbeddedObjectsTimer(*this, &FrameView::updateEmbeddedObjectsTimerFired)
     , m_updateWidgetPositionsTimer(*this, &FrameView::updateWidgetPositionsTimerFired)
-    , m_delayedScrollEventTimer(*this, &FrameView::sendScrollEvent)
+    , m_delayedScrollEventTimer(*this, &FrameView::scheduleScrollEvent)
     , m_delayedScrollToFocusedElementTimer(*this, &FrameView::scrollToFocusedElementTimerFired)
     , m_speculativeTilingEnableTimer(*this, &FrameView::speculativeTilingEnableTimerFired)
 {
@@ -2504,7 +2504,7 @@ void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const S
 
     if (throttlingDelay == 0_s) {
         m_delayedScrollEventTimer.stop();
-        sendScrollEvent();
+        scheduleScrollEvent();
     } else if (!m_delayedScrollEventTimer.isActive())
         m_delayedScrollEventTimer.startOneShot(throttlingDelay);
 
@@ -5110,9 +5110,9 @@ void FrameView::scrollableAreaSetChanged()
         scrollingCoordinator->frameViewEventTrackingRegionsChanged(*this);
 }
 
-void FrameView::sendScrollEvent()
+void FrameView::scheduleScrollEvent()
 {
-    frame().eventHandler().sendScrollEvent();
+    frame().eventHandler().scheduleScrollEvent();
     frame().eventHandler().dispatchFakeMouseMoveEventSoon();
 }
 

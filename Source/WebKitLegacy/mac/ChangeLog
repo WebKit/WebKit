@@ -1,3 +1,16 @@
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename EventHandler::sendScrollEvent() to scheduleScrollEvent() since the event is not sent synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=229256
+
+        Reviewed by Geoffrey Garen.
+
+        Rename EventHandler::sendScrollEvent() and FrameView::sendScrollEvent()
+        to scheduleScrollEvent() since the event dispatch happens via the next rendering update.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame sendScrollEvent]):
+
 2021-08-16  David Kilzer  <ddkilzer@apple.com>
 
         "make analyze" should run clang static analyzer in deep mode

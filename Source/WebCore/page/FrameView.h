@@ -811,7 +811,7 @@ private:
     void scrollToAnchor();
     void scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
     void scrollableAreaSetChanged();
-    void sendScrollEvent();
+    void scheduleScrollEvent();
     void resetScrollAnchor();
 
     bool hasCustomScrollbars() const;

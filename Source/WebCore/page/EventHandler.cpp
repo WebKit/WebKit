@@ -4362,7 +4362,7 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
         event.setDefaultHandled();
 }
 
-void EventHandler::sendScrollEvent()
+void EventHandler::scheduleScrollEvent()
 {
     Ref<Frame> protectedFrame(m_frame);
     setFrameWasScrolledByUser();

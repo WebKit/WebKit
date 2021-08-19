@@ -1832,7 +1832,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (void)sendScrollEvent
 {
     ASSERT(WebThreadIsLockedOrDisabled());
-    _private->coreFrame->eventHandler().sendScrollEvent();
+    _private->coreFrame->eventHandler().scheduleScrollEvent();
 }
 
 - (void)_userScrolled

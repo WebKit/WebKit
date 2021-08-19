@@ -280,7 +280,7 @@ public:
 
     void focusDocumentView();
     
-    WEBCORE_EXPORT void sendScrollEvent();
+    WEBCORE_EXPORT void scheduleScrollEvent();
 
 #if PLATFORM(MAC)
     WEBCORE_EXPORT void mouseDown(NSEvent *, NSEvent *correspondingPressureEvent);
