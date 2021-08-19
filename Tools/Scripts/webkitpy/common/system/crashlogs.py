@@ -1,5 +1,5 @@
 # Copyright (c) 2011, Google Inc. All rights reserved.
-# Copyright (c) 2015, Apple Inc. All rights reserved.
+# Copyright (c) 2015, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import datetime
+import json
 import logging
 import re
 
@@ -65,8 +66,21 @@ class CrashLogs(object):
         contents = self._host.symbolicate_crash_log_if_needed(path)
         if not contents:
             return (None, None, None)
+
+        lines = contents.splitlines()
+        if len(lines) >= 2 and lines[0].startswith('{') and lines[1].startswith('{'):
+            try:
+                json.loads(lines[0])
+                decoded = json.loads('\n'.join(lines[1:]))
+                name = decoded.get('procName')
+                pid = decoded.get('pid')
+                if name and pid:
+                    return (name, pid, contents)
+            except ValueError:
+                pass
+
         is_sandbox_violation = False
-        for line in contents.splitlines():
+        for line in lines:
             if line.startswith('Sandbox Violation:'):
                 is_sandbox_violation = True
             match = CrashLogs.DARWIN_PROCESS_REGEX.match(line)
@@ -79,7 +93,7 @@ class CrashLogs(object):
             if self._crash_logs_to_skip and fs.join(dirpath, basename) in self._crash_logs_to_skip:
                 return False
             return (basename.startswith(process_name + '_') and (basename.endswith('.crash')) or
-                    (process_name in basename  and basename.endswith('.ips')))
+                    (process_name in basename and basename.endswith('.ips')))
 
         logs = self._host.filesystem.files_under(self._crash_log_directory, file_filter=is_crash_log)
         errors = ''

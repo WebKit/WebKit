@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2021, Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -72,6 +73,24 @@ Network Service: Ethernet 2, Ethernet, en1
 PCI Card: NVIDIA GeForce GT 120, sppci_displaycontroller, MXM-Slot
 Serial ATA Device: OPTIARC DVD RW AD-5670S
 """.format(process_name=process_name, pid=pid)
+
+
+def make_mock_ips_crash_report_darwin(process_name, pid):
+    return """{{"app_name":"{name}","timestamp":"2011-12-07 13:27:34.816 -0800","name":"{name}"}}
+{{
+  "uptime" : 6900,
+  "procRole" : "Non UI",
+  "version" : 2,
+  "userID" : 501,
+  "deployVersion" : 209,
+  "modelCode" : "MacBookPro16,4",
+  "coalitionID" : 512,
+  "captureTime" : "2011-12-07 13:27:34.816 -0800",
+  "incident" : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "bug_type" : "309",
+  "pid" : {pid},
+  "procName" : "{name}"
+}}""".format(name=process_name, pid=pid)
 
 
 def make_mock_sandbox_report_darwin(process_name, pid):
@@ -286,7 +305,7 @@ class CrashLogsTest(unittest.TestCase):
         self.older_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)
         self.sandbox_crash_report = make_mock_sandbox_report_darwin('DumpRenderTree', 28530)
         self.mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28530)
-        self.newer_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28529)
+        self.newer_mock_crash_report = make_mock_ips_crash_report_darwin('DumpRenderTree', 28529)
         self.other_process_mock_crash_report = make_mock_crash_report_darwin('FooProcess', 28527)
         self.misformatted_mock_crash_report = 'Junk that should not appear in a crash report' + make_mock_crash_report_darwin('DumpRenderTree', 28526)[200:]
         self.files = {}
@@ -295,7 +314,7 @@ class CrashLogsTest(unittest.TestCase):
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150717_quadzen_2.crash'] = self.older_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen.crash'] = self.sandbox_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash'] = self.mock_crash_report
-        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150720_quadzen.crash'] = self.newer_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150720_quadzen.ips'] = self.newer_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash'] = None
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150722_quadzen.crash'] = self.other_process_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150723_quadzen.crash'] = self.misformatted_mock_crash_report

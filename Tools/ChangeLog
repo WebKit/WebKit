@@ -1,3 +1,16 @@
+2021-08-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Handle json crash logs (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=229288
+        <rdar://problem/77074039>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._parse_darwin_crash_log): Attempt to parse crash logs as json, since Monterey .ips
+        (CrashLogs._find_newest_log_darwin.is_crash_log):
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+
 2021-08-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         document.hasFocus() returns true for unfocused pages
