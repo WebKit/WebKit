@@ -57,10 +57,10 @@ messages -> WebPage LegacyReceiver {
     SetScreenIsBeingCaptured(bool captured)
 
     AttemptSyntheticClick(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId)
-    PotentialTapAtPosition(uint64_t requestID, WebCore::FloatPoint point, bool shouldRequestMagnificationInformation)
+    PotentialTapAtPosition(WebKit::TapIdentifier requestID, WebCore::FloatPoint point, bool shouldRequestMagnificationInformation)
     CommitPotentialTap(OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId, WebCore::PointerID pointerId)
     CancelPotentialTap()
-    TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
+    TapHighlightAtPosition(WebKit::TapIdentifier requestID, WebCore::FloatPoint point)
     DidRecognizeLongPress()
     HandleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId)
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
@@ -107,7 +107,7 @@ messages -> WebPage LegacyReceiver {
     ContentSizeCategoryDidChange(String contentSizeCategory)
     GetSelectionContext() -> (String selectedText, String textBefore, String textAfter) Async
     SetAllowsMediaDocumentInlinePlayback(bool allows)
-    HandleTwoFingerTapAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t requestID)
+    HandleTwoFingerTapAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TapIdentifier requestID)
     SetForceAlwaysUserScalable(bool userScalable)
     GetRectsForGranularityWithSelectionOffset(enum:uint8_t WebCore::TextGranularity granularity, int32_t offset) -> (Vector<WebCore::SelectionGeometry> rect) Async
     GetRectsAtSelectionOffsetWithText(int32_t offset, String text) -> (Vector<WebCore::SelectionGeometry> rect) Async

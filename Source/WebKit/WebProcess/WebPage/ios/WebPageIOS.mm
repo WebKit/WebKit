@@ -1086,7 +1086,7 @@ void WebPage::computeAndSendEditDragSnapshot()
 
 #endif
 
-void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
+void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID, Node* node)
 {
 #if ENABLE(TOUCH_EVENTS)
     if (!node)
@@ -1129,7 +1129,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 #endif
 }
 
-void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t requestID)
+void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TapIdentifier requestID)
 {
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
@@ -1143,7 +1143,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::TwoFingerTap);
 }
 
-void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation)
+void WebPage::potentialTapAtPosition(WebKit::TapIdentifier requestID, const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation)
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
 
@@ -1244,7 +1244,7 @@ void WebPage::didRecognizeLongPress()
     ContentChangeObserver::didRecognizeLongPress(m_page->mainFrame());
 }
 
-void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& position)
+void WebPage::tapHighlightAtPosition(WebKit::TapIdentifier requestID, const FloatPoint& position)
 {
     Frame& mainframe = m_page->mainFrame();
     FloatPoint adjustedPoint;

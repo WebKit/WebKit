@@ -1,3 +1,53 @@
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Replace the uint64_t used to identify taps with an ObjectIdentifier<> type
+        https://bugs.webkit.org/show_bug.cgi?id=229278
+
+        Reviewed by Wenson Hsieh.
+
+        Interaction code used "uint64_t requestID" to identify taps, but there are other
+        things that used "uint64_t requestID", which may result in bugs.
+
+        Fix by using a strongly typed ObjectIdentifier<TapIdentifierType> to identify taps.
+        This is defined in IdentifierTypes.h since I expect to add more of them.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/IdentifierTypes.h: Added.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::disableDoubleTapGesturesDuringTapIfNecessary):
+        (WebKit::PageClientImpl::handleSmartMagnificationInformationForPotentialTap):
+        (WebKit::PageClientImpl::didGetTapHighlightGeometries):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:nodeHasBuiltInClickHandling:]):
+        (-[WKContentView _disableDoubleTapGesturesDuringTapIfNecessary:]):
+        (-[WKContentView _handleSmartMagnificationInformationForPotentialTap:renderRect:fitEntireRect:viewportMinimumScale:viewportMaximumScale:nodeIsRootLevel:]):
+        (-[WKContentView nextTapIdentifier]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        (-[WKContentView _singleTapIdentified:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+        (WebKit::WebPageProxy::potentialTapAtPosition):
+        (WebKit::WebPageProxy::tapHighlightAtPosition):
+        (WebKit::WebPageProxy::didGetTapHighlightGeometries):
+        (WebKit::WebPageProxy::disableDoubleTapGesturesDuringTapIfNecessary):
+        (WebKit::WebPageProxy::handleSmartMagnificationInformationForPotentialTap):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::potentialTapAtPosition):
+        (WebKit::WebPage::tapHighlightAtPosition):
+
 2021-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove more non-inclusive language from Source
