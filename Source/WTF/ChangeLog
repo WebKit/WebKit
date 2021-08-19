@@ -1,3 +1,15 @@
+2021-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [ iOS Debug ] 12 TestWebKitAPI.WebKitLegacy. tests are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=229250
+
+        Reviewed by Wenson Hsieh.
+
+        Disable the assertion when Web Thread is enabled for now.
+
+        * wtf/CheckedRef.h:
+        (WTF::SingleThreadIntegralWrapper::assertThread const):
+
 2021-08-18  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded UIKitSPI declarations

@@ -248,10 +248,14 @@ public:
     SingleThreadIntegralWrapper& operator--();
 
 private:
+#if ASSERT_ENABLED && !USE(WEB_THREAD)
     void assertThread() const { ASSERT(m_thread.ptr() == &Thread::current()); }
+#else
+    constexpr void assertThread() const { }
+#endif
 
     IntegralType m_value;
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED && !USE(WEB_THREAD)
     Ref<Thread> m_thread;
 #endif
 };
@@ -259,7 +263,7 @@ private:
 template <typename IntegralType>
 inline SingleThreadIntegralWrapper<IntegralType>::SingleThreadIntegralWrapper(IntegralType value)
     : m_value { value }
-#if ASSERT_ENABLED
+#if ASSERT_ENABLED && !USE(WEB_THREAD)
     , m_thread { Thread::current() }
 #endif
 { }
