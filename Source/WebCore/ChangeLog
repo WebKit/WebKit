@@ -1,5 +1,17 @@
 2021-08-19  Alan Bujtas  <zalan@apple.com>
 
+        [Line layout] "zero width space" (U+200B) is a breaking space
+        https://bugs.webkit.org/show_bug.cgi?id=227858
+
+        Reviewed by Antti Koivisto.
+
+        This is a workaround for handling mismatching prior-context content in break iterators.
+
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+
+2021-08-19  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for negative horizontal margin (inline box)
         https://bugs.webkit.org/show_bug.cgi?id=227837
 
