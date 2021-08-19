@@ -1,5 +1,21 @@
 2021-08-18  David Kilzer  <ddkilzer@apple.com>
 
+        Bug 229264: Leak of CMBufferQueueRef (up to 752 bytes each) in com.apple.WebKit.GPU.Development process
+        <https://webkit.org/b/229264>
+        <rdar://problem/82101153>
+
+        Reviewed by Anders Carlsson.
+
+        Covered by running layout tests with --leaks plus future patch
+        to check for leaks in the GPU process.
+
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm:
+        (WebCore::VideoSampleBufferCompressor::initialize):
+        - Use adoptCF() to fix the leak since CMBufferQueueCreate()
+          returns a retained object.
+
+2021-08-18  David Kilzer  <ddkilzer@apple.com>
+
         Leak of CMSampleBufferRef (up to 2.25 KB each) in com.apple.WebKit.GPU.Development process
         <https://webkit.org/b/229262>
         <rdar://problem/82076765>

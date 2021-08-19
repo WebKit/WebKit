@@ -80,7 +80,7 @@ bool VideoSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
         RELEASE_LOG_ERROR(MediaStream, "VideoSampleBufferCompressor unable to create buffer queue %d", error);
         return false;
     }
-    m_outputBufferQueue = outputBufferQueue;
+    m_outputBufferQueue = adoptCF(outputBufferQueue);
     PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, NULL);
 
     m_isEncoding = true;
