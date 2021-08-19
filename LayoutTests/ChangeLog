@@ -1,3 +1,18 @@
+2021-08-13  Tim Nguyen  <ntim@apple.com>
+
+        Top layer: handle display: contents and non out-of-flow position values
+        https://bugs.webkit.org/show_bug.cgi?id=229093
+
+        Reviewed by Simon Fraser.
+
+        From: https://fullscreen.spec.whatwg.org/#new-stacking-layer
+        If its specified display property is contents, it computes to block.
+        If its specified position property is not absolute or fixed, it computes to absolute.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-display-contents.html
+
+        * TestExpectations:
+
 2021-08-19  Tim Nguyen  <ntim@apple.com>
 
         Re-import html/semantics/interactive-elements/the-dialog-element WPT - August 19th 2021

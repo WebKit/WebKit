@@ -313,6 +313,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
                 style.setEffectiveDisplay(DisplayType::Block);
         }
 
+        // Top layer elements are always position: absolute; unless the position is set to fixed.
+        // https://fullscreen.spec.whatwg.org/#new-stacking-layer
+        bool isInTopLayer = style.styleType() == PseudoId::Backdrop || (m_element && m_element->isInTopLayer());
+        if (style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayer)
+            style.setPosition(PositionType::Absolute);
+
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document.documentElement() == m_element))
             style.setEffectiveDisplay(equivalentBlockDisplay(style, m_document));
@@ -568,18 +574,18 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 
 void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
-    if (!m_element) {
-        if (style.styleType() != PseudoId::Before && style.styleType() != PseudoId::After)
-            style.setEffectiveDisplay(DisplayType::None);
-        return;
-    }
-
-    if (m_document.documentElement() == m_element) {
+    bool isInTopLayer = style.styleType() == PseudoId::Backdrop || (m_element && m_element->isInTopLayer());
+    if (isInTopLayer || m_document.documentElement() == m_element) {
         style.setEffectiveDisplay(DisplayType::Block);
         return;
     }
 
-    if (hasEffectiveDisplayNoneForDisplayContents(*m_element))
+    if (!m_element && style.styleType() != PseudoId::Before && style.styleType() != PseudoId::After) {
+        style.setEffectiveDisplay(DisplayType::None);
+        return;
+    }
+
+    if (m_element && hasEffectiveDisplayNoneForDisplayContents(*m_element))
         style.setEffectiveDisplay(DisplayType::None);
 }
 
