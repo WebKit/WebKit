@@ -50,8 +50,6 @@ class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCCertificate;
 class RTCDataChannelHandler;
-class RTCDtlsTransport;
-class RTCDtlsTransportBackend;
 class RTCIceCandidate;
 class RTCPeerConnection;
 class RTCRtpReceiver;

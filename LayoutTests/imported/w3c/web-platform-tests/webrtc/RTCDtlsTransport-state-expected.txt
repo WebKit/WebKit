@@ -1,5 +1,5 @@
 
-PASS DTLS transport goes to connected state
-FAIL close() causes the local transport to close immediately assert_equals: expected "closed" but got "connected"
-PASS close() causes the other end's DTLS transport to close
+FAIL DTLS transport goes to connected state promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: RTCDtlsTransport"
+FAIL close() causes the local transport to close immediately promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'dtlstransport.state')"
+FAIL close() causes the other end's DTLS transport to close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'dtlstransport.state')"
 

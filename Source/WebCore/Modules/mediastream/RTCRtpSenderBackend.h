@@ -33,7 +33,6 @@ namespace WebCore {
 
 class MediaStreamTrack;
 class RTCDTMFSenderBackend;
-class RTCDtlsTransportBackend;
 class RTCRtpSender;
 class RTCRtpTransformBackend;
 class ScriptExecutionContext;
@@ -52,7 +51,6 @@ public:
     virtual std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() = 0;
     virtual Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() = 0;
     virtual void setMediaStreamIds(const Vector<String>&) = 0;
-    virtual std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() = 0;
 };
 
 } // namespace WebCore

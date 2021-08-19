@@ -25,7 +25,6 @@
 #include "config.h"
 #include "LibWebRTCRtpReceiverBackend.h"
 
-#include "LibWebRTCDtlsTransportBackend.h"
 #include "LibWebRTCRtpReceiverTransformBackend.h"
 #include "LibWebRTCUtils.h"
 #include "RTCRtpTransformBackend.h"
@@ -123,12 +122,6 @@ Ref<RTCRtpTransformBackend> LibWebRTCRtpReceiverBackend::rtcRtpTransformBackend(
     if (!m_transformBackend)
         m_transformBackend = LibWebRTCRtpReceiverTransformBackend::create(m_rtcReceiver);
     return *m_transformBackend;
-}
-
-std::unique_ptr<RTCDtlsTransportBackend> LibWebRTCRtpReceiverBackend::dtlsTransportBackend()
-{
-    auto backend = m_rtcReceiver->dtls_transport();
-    return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(WTFMove(backend)) : nullptr;
 }
 
 } // namespace WebCore

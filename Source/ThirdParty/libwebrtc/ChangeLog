@@ -1,14 +1,3 @@
-2021-08-19  Youenn Fablet  <youenn@apple.com>
-
-        Add support for RTCDtlsTransport
-        https://bugs.webkit.org/show_bug.cgi?id=229133
-
-        Reviewed by Eric Carlson.
-
-        * Configurations/libwebrtc.iOS.exp:
-        * Configurations/libwebrtc.iOSsim.exp:
-        * Configurations/libwebrtc.mac.exp:
-
 2021-08-13  Youenn Fablet  <youenn@apple.com>
 
         Use profile auto level for WebRTC H264 encoder on Apple Silicon

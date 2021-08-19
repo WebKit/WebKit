@@ -191,7 +191,6 @@ namespace WebCore {
     macro(RTCDTMFToneChangeEvent) \
     macro(RTCDataChannel) \
     macro(RTCDataChannelEvent) \
-    macro(RTCDtlsTransport) \
     macro(RTCEncodedAudioFrame) \
     macro(RTCEncodedVideoFrame) \
     macro(RTCIceCandidate) \

@@ -35,8 +35,7 @@
     Exposed=Window
 ] interface RTCRtpSender {
     readonly attribute MediaStreamTrack? track;
-    readonly attribute RTCDtlsTransport? transport;
-
+    // FIXME 169662: readonly attribute RTCDtlsTransport? transport;
     [CallWith=ScriptExecutionContext] static RTCRtpCapabilities? getCapabilities(DOMString kind);
     RTCRtpSendParameters getParameters();
     Promise<undefined> setParameters(RTCRtpSendParameters parameters);

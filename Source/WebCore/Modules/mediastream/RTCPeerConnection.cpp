@@ -51,8 +51,6 @@
 #include "RTCConfiguration.h"
 #include "RTCController.h"
 #include "RTCDataChannel.h"
-#include "RTCDtlsTransport.h"
-#include "RTCDtlsTransportBackend.h"
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateInit.h"
 #include "RTCOfferOptions.h"
@@ -833,49 +831,6 @@ void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<
 Document* RTCPeerConnection::document()
 {
     return downcast<Document>(scriptExecutionContext());
-}
-
-RefPtr<RTCDtlsTransport> RTCPeerConnection::getOrCreateDtlsTransport(std::unique_ptr<RTCDtlsTransportBackend>&& backend)
-{
-    if (!backend)
-        return nullptr;
-
-    auto* context = scriptExecutionContext();
-    if (!context)
-        return nullptr;
-
-    auto index = m_transports.findMatching([&backend](auto& transport) { return *backend == transport->backend(); });
-    if (index == notFound) {
-        index = m_transports.size();
-        m_transports.append(RTCDtlsTransport::create(*context, makeUniqueRefFromNonNullUniquePtr(WTFMove(backend))));
-    }
-
-    return m_transports[index].copyRef();
-}
-
-void RTCPeerConnection::updateTransceiverTransports()
-{
-    for (auto& transceiver : m_transceiverSet->list()) {
-        auto& sender = transceiver->sender();
-        if (auto* senderBackend = sender.backend())
-            sender.setTransport(getOrCreateDtlsTransport(senderBackend->dtlsTransportBackend()));
-
-        auto& receiver = transceiver->receiver();
-        if (auto* receiverBackend = receiver.backend())
-            receiver.setTransport(getOrCreateDtlsTransport(receiverBackend->dtlsTransportBackend()));
-    }
-}
-
-// https://w3c.github.io/webrtc-pc/#set-description step 4.9.1
-void RTCPeerConnection::updateTransceiversAfterSuccessfulLocalDescription()
-{
-    updateTransceiverTransports();
-}
-
-// https://w3c.github.io/webrtc-pc/#set-description step 4.9.2
-void RTCPeerConnection::updateTransceiversAfterSuccessfulRemoteDescription()
-{
-    updateTransceiverTransports();
 }
 
 #if !RELEASE_LOG_DISABLED
