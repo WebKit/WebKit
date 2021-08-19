@@ -1,3 +1,20 @@
+2021-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Remove more non-inclusive language from Source
+        https://bugs.webkit.org/show_bug.cgi?id=229230
+
+        Reviewed by Myles C. Maxfield.
+
+        * UserInterface/External/three.js/three.js:
+        (return.parseTrackName):
+        (parseTrackName):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._formatWithSubstitutionString.styleFormatter):
+        (WI.ConsoleMessageView.prototype._formatWithSubstitutionString.isAllowedProperty):
+        (WI.ConsoleMessageView.prototype._formatWithSubstitutionString.isWhitelistedProperty): Deleted.
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.populateDOMNodeContextMenu):
+
 2021-08-19  Tim Nguyen  <ntim@apple.com>
 
         Implement ::backdrop pseudo element

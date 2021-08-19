@@ -364,7 +364,7 @@
         "url": "https://w3c.github.io/webappsec-csp/2/",
         "keywords": ["csp", "cross-site scripting", "xss", "injection", "header", "security"],
         "category": "webapps",
-        "description": "A mechanism that web applications can use to mitigate content injection vulnerabilities, such as cross-site scripting (XSS). Developers can declare a CSP policy to prohibit their web application from loading content or executing scripts that have not been whitelisted among other capabilities.",
+        "description": "A mechanism that web applications can use to mitigate content injection vulnerabilities, such as cross-site scripting (XSS). Developers can declare a CSP policy to prohibit their web application from loading content or executing scripts that have not been allowed among other capabilities.",
         "contact": {
             "name": "Daniel Bates",
             "email": "dbates@webkit.org"

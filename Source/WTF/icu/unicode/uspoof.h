@@ -734,8 +734,9 @@ uspoof_clone(const USpoofChecker *sc, UErrorCode *status);
  * }
  * </pre>
  *
- * To disable specific checks and enable all others, the "blacklisted" checks should be ANDed away from
- * ALL_CHECKS. For example, if you are not planning to use the {@link uspoof_areConfusable} functionality,
+ * To disable specific checks and enable all others, 
+ * start with ALL_CHECKS and "AND away" the not-desired checks.
+ * For example, if you are not planning to use the {@link uspoof_areConfusable} functionality,
  * it is good practice to disable the CONFUSABLE check:
  *
  * <pre>

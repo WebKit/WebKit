@@ -262,7 +262,7 @@ WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
 WTF_EXPORT_PRIVATE bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
-WTF_EXPORT_PRIVATE bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
+WTF_EXPORT_PRIVATE bool portAllowed(const URL&); // Disallow ports that should never be used for Web resources.
 
 WTF_EXPORT_PRIVATE void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol);
 WTF_EXPORT_PRIVATE void clearDefaultPortForProtocolMapForTesting();

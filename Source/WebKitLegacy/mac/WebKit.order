@@ -525,7 +525,6 @@ _WKCGContextIsBitmapContext
 -[WebView currentNodeHighlight]
 -[WebClipView resetAdditionalClip]
 __Z14CallUIDelegateP7WebViewP13objc_selectorP11objc_object
-+[WebView(WebPrivate) _addOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]
 __ZN7WebCore14SecurityOriginD2Ev
 -[WebView initWithFrame:frameName:groupName:]
 -[WebView(WebPrivate) _initWithFrame:frameName:groupName:usesDocumentViews:]
@@ -1196,7 +1195,6 @@ _WKGetPreferredExtensionForMIMEType
 -[WebView(WebPrivate) setProhibitsMainFrameScrolling:]
 __ZN15WebChromeClient35selectItemWritingDirectionIsNaturalEv
 __ZN15WebChromeClient46selectItemAlignmentFollowsMenuWritingDirectionEv
-+[WebView(WebPrivate) _removeOriginAccessWhitelistEntryWithSourceOrigin:destinationProtocol:destinationHost:allowDestinationSubdomains:]
 -[WebSecurityOrigin initWithURL:]
 -[WebDatabaseManager deleteOrigin:]
 -[WebSecurityOrigin(WebInternal) _core]
@@ -1293,7 +1291,6 @@ _WKSetHTTPCookieAcceptPolicy
 +[WebView(WebPrivate) _removeAllUserContentFromGroup:]
 -[WebView(WebPrivate) setTracksRepaints:]
 +[WebView(WebPrivate) _setUsesTestModeFocusRingColor:]
-+[WebView(WebPrivate) _resetOriginAccessWhitelists]
 +[WebView(WebPrivate) _setAllowsRoundingHacks:]
 -[WebFrame(WebPrivate) _clearOpener]
 -[WebView(WebPendingPublic) setHistoryDelegate:]
@@ -1597,14 +1594,6 @@ _WKCGContextGetShouldSmoothFonts
 __ZN7WebCore15InspectorClient23overridesShowPaintRectsEv
 -[WebBasePluginPackage bundleVersion]
 _WKShouldBlockPlugin
-__ZN15PluginBlacklist17shouldBlockPluginEP8NSStringS1_
-____ZL30initializePluginBlacklistQueuev_block_invoke
-____ZN15PluginBlacklist17shouldBlockPluginEP8NSStringS1__block_invoke
-__ZL32reloadPluginBlacklistIfNecessaryv
-__ZN15PluginBlacklist6createEP8NSStringP11objc_object
-__ZN15PluginBlacklist14splitOSVersionEP8NSString
-__ZN15PluginBlacklistC2EP12NSDictionaryS1_P5NSSet
-__ZNK15PluginBlacklist11shouldBlockEP8NSStringS1_
 +[WebHostedNetscapePluginView initialize]
 -[WebBaseNetscapePluginView .cxx_construct]
 -[WebHostedNetscapePluginView .cxx_construct]
@@ -2339,7 +2328,6 @@ __Z14CallUIDelegateP7WebViewP13objc_selector
 -[WebView _zoomOut:isTextOnly:]
 -[WebView(WebPendingPublic) zoomPageIn:]
 -[WebView _zoomIn:isTextOnly:]
-+[WebView(WebPrivate) _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]
 __ZL14toStringVectorP7NSArray
 -[WebFrameView scrollToBeginningOfDocument:]
 -[WebFrameView _scrollToBeginningOfDocument]
@@ -2537,7 +2525,6 @@ __ZN3JSC8Bindings8Instance3putEPNS_8JSObjectEPNS_9ExecStateENS_12PropertyNameENS
 __XPCSetException
 _WKPCSetException
 __ZN6WebKit27NetscapePluginInstanceProxy18setGlobalExceptionERKN3WTF6StringE
-+[WebView(WebPrivate) _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]
 __ZN7WebCore14PluginViewBase27privateBrowsingStateChangedEb
 -[WebHostedNetscapePluginView privateBrowsingModeDidChange]
 __ZN6WebKit27NetscapePluginInstanceProxy28privateBrowsingModeDidChangeEb

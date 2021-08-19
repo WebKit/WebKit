@@ -837,7 +837,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 }, WI.isBeingEdited(attributeNode));
             }
 
-            if (InspectorBackend.hasCommand("DOM.setNodeName") && !DOMTreeElement.EditTagBlacklist.has(this.representedObject.nodeNameInCorrectCase())) {
+            if (InspectorBackend.hasCommand("DOM.setNodeName") && !DOMTreeElement.UneditableTagNames.has(this.representedObject.nodeNameInCorrectCase())) {
                 let tagNameNode = event.target.closest(".html-tag-name");
 
                 subMenus.edit.appendItem(WI.UIString("Tag", "A submenu item of 'Edit' to change DOM element's tag name"), () => {
@@ -1026,7 +1026,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }
 
         var tagName = tagNameElement.textContent;
-        if (WI.DOMTreeElement.EditTagBlacklist.has(tagName.toLowerCase()))
+        if (WI.DOMTreeElement.UneditableTagNames.has(tagName.toLowerCase()))
             return false;
 
         if (WI.isBeingEdited(tagNameElement))
@@ -2094,7 +2094,7 @@ WI.DOMTreeElement.ForbiddenClosingTagElements = new Set([
 ]);
 
 // These tags we do not allow editing their tag name.
-WI.DOMTreeElement.EditTagBlacklist = new Set([
+WI.DOMTreeElement.UneditableTagNames = new Set([
     "html", "head", "body"
 ]);
 

@@ -790,12 +790,12 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             buffer.setAttribute("style", obj.description);
             for (var i = 0; i < buffer.style.length; i++) {
                 var property = buffer.style[i];
-                if (isWhitelistedProperty(property))
+                if (isAllowedProperty(property))
                     currentStyle[property] = buffer.style[property];
             }
         }
 
-        function isWhitelistedProperty(property)
+        function isAllowedProperty(property)
         {
             for (var prefix of ["background", "border", "color", "font", "line", "margin", "padding", "text"]) {
                 if (property.startsWith(prefix) || property.startsWith("-webkit-" + prefix))

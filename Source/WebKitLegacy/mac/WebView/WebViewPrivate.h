@@ -797,10 +797,10 @@ Could be worth adding to the API.
 - (NSPasteboard *)_insertionPasteboard;
 #endif
 
-// Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
+// Allow lists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
 // - destinationProtocol: The protocol to grant access to.
 // - destinationHost: The host to grant access to.
-// - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
+// - allowDestinationSubdomains: If host is a domain, setting this to YES will allow host and all its subdomains, recursively.
 + (void)_addOriginAccessAllowListEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains;
 + (void)_removeOriginAccessAllowListEntryWithSourceOrigin:(NSString *)sourceOrigin destinationProtocol:(NSString *)destinationProtocol destinationHost:(NSString *)destinationHost allowDestinationSubdomains:(BOOL)allowDestinationSubdomains;
 

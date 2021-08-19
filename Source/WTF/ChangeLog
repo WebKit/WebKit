@@ -1,3 +1,14 @@
+2021-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Remove more non-inclusive language from Source
+        https://bugs.webkit.org/show_bug.cgi?id=229230
+
+        Reviewed by Myles C. Maxfield.
+
+        * icu/unicode/uspoof.h:
+        This comment change comes from upstream ICU.
+        * wtf/URL.h:
+
 2021-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         [ iOS Debug ] 12 TestWebKitAPI.WebKitLegacy. tests are crashing
