@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS checkAddTransceiverNoTrack
 PASS checkAddTransceiverWithTrack
 PASS checkAddTransceiverWithAddTrack
@@ -12,7 +10,7 @@ PASS checkAddTransceiverBadKind
 PASS checkNoMidOffer
 PASS checkNoMidAnswer
 PASS checkSetDirection
-PASS checkCurrentDirection
+FAIL checkCurrentDirection assert_equals: expected "[{currentDirection:null}]" but got "[{currentDirection:\"inactive\"}]"
 PASS checkSendrecvWithNoSendTrack
 PASS checkSendrecvWithTracklessStream
 PASS checkAddTransceiverNoTrackDoesntPair
@@ -23,20 +21,20 @@ PASS checkAddTrackPairs
 PASS checkReplaceTrackNullDoesntPreventPairing
 PASS checkRemoveAndReadd
 PASS checkAddTrackExistingTransceiverThenRemove
-FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
 FAIL checkMute assert_true: expected true got false
-FAIL checkStop assert_equals: expected "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}},stopped:true}]" but got "[{currentDirection:null,direction:\"sendrecv\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null},stopped:true}]"
-FAIL checkStopAfterCreateOffer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
-FAIL checkStopAfterSetLocalOffer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
-FAIL checkStopAfterSetRemoteOffer assert_equals: expected "[]" but got "[{isTrusted:true}]"
-FAIL checkStopAfterCreateAnswer assert_equals: expected "[{mid:null,stopped:true}]" but got "[{mid:\"0\",stopped:true}]"
-TIMEOUT checkStopAfterSetLocalAnswer Test timed out
-NOTRUN checkStopAfterClose
-NOTRUN checkLocalRollback
-NOTRUN checkRollbackAndSetRemoteOfferWithDifferentType
-NOTRUN checkRemoteRollback
-NOTRUN checkMsectionReuse
-NOTRUN checkStopAfterCreateOfferWithReusedMsection
-NOTRUN checkAddIceCandidateToStoppedTransceiver
-NOTRUN checkBundleTagRejected
+FAIL checkStop assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}}}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null}}]"
+FAIL checkStopAfterCreateOffer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
+FAIL checkStopAfterSetLocalOffer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
+FAIL checkStopAfterSetRemoteOffer assert_equals: expected "stopped" but got "inactive"
+FAIL checkStopAfterCreateAnswer assert_equals: expected "[{currentDirection:null,direction:\"stopped\"}]" but got "[{currentDirection:null,direction:\"inactive\"}]"
+FAIL checkStopAfterSetLocalAnswer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
+PASS checkStopAfterClose
+FAIL checkLocalRollback promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
+FAIL checkRollbackAndSetRemoteOfferWithDifferentType promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
+FAIL checkRemoteRollback promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
+FAIL checkMsectionReuse assert_equals: expected "[{currentDirection:null,mid:null}]" but got "[{currentDirection:\"inactive\",mid:\"0\"}]"
+PASS checkStopAfterCreateOfferWithReusedMsection
+FAIL checkAddIceCandidateToStoppedTransceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
+FAIL checkBundleTagRejected promise_test: Unhandled rejection with value: object "InvalidAccessError: Failed to set remote offer sdp: The m= section with mid='1' should be rejected."
 

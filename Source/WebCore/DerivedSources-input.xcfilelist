@@ -219,6 +219,8 @@ $(PROJECT_DIR)/Modules/mediastream/RTCDTMFToneChangeEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDataChannel.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDataChannelEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDegradationPreference.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCDtlsTransport.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCDtlsTransportState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDtxStatus.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCEncodedAudioFrame.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCEncodedVideoFrame.idl
@@ -726,13 +728,13 @@ $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/svg.css
-$(PROJECT_DIR)/css/typedom/StylePropertyMap.idl
-$(PROJECT_DIR)/css/typedom/StylePropertyMapReadOnly.idl
-$(PROJECT_DIR)/css/typedom/CSSStyleImageValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
+$(PROJECT_DIR)/css/typedom/CSSStyleImageValue.idl
 $(PROJECT_DIR)/css/typedom/CSSStyleValue.idl
 $(PROJECT_DIR)/css/typedom/CSSUnitValue.idl
 $(PROJECT_DIR)/css/typedom/CSSUnparsedValue.idl
+$(PROJECT_DIR)/css/typedom/StylePropertyMap.idl
+$(PROJECT_DIR)/css/typedom/StylePropertyMapReadOnly.idl
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl

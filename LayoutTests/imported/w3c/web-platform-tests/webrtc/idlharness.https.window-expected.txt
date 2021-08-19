@@ -232,7 +232,7 @@ PASS RTCRtpSender interface: existence and properties of interface prototype obj
 PASS RTCRtpSender interface: existence and properties of interface prototype object's "constructor" property
 PASS RTCRtpSender interface: existence and properties of interface prototype object's @@unscopables property
 PASS RTCRtpSender interface: attribute track
-FAIL RTCRtpSender interface: attribute transport assert_true: The prototype object must have a property "transport" expected true got false
+PASS RTCRtpSender interface: attribute transport
 PASS RTCRtpSender interface: operation getCapabilities(DOMString)
 PASS RTCRtpSender interface: operation setParameters(RTCRtpSendParameters)
 PASS RTCRtpSender interface: operation getParameters()
@@ -243,7 +243,7 @@ PASS RTCRtpSender interface: attribute dtmf
 PASS RTCRtpSender must be primary interface of new RTCPeerConnection().addTransceiver('audio').sender
 PASS Stringification of new RTCPeerConnection().addTransceiver('audio').sender
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "track" with the proper type
-FAIL RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "transport" with the proper type assert_inherits: property "transport" not found in prototype chain
+PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "transport" with the proper type
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "getCapabilities(DOMString)" with the proper type
 PASS RTCRtpSender interface: calling getCapabilities(DOMString) on new RTCPeerConnection().addTransceiver('audio').sender with too few arguments must throw TypeError
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "setParameters(RTCRtpSendParameters)" with the proper type
@@ -262,7 +262,7 @@ PASS RTCRtpReceiver interface: existence and properties of interface prototype o
 PASS RTCRtpReceiver interface: existence and properties of interface prototype object's "constructor" property
 PASS RTCRtpReceiver interface: existence and properties of interface prototype object's @@unscopables property
 PASS RTCRtpReceiver interface: attribute track
-FAIL RTCRtpReceiver interface: attribute transport assert_true: The prototype object must have a property "transport" expected true got false
+PASS RTCRtpReceiver interface: attribute transport
 PASS RTCRtpReceiver interface: operation getCapabilities(DOMString)
 PASS RTCRtpReceiver interface: operation getParameters()
 PASS RTCRtpReceiver interface: operation getContributingSources()
@@ -271,7 +271,7 @@ PASS RTCRtpReceiver interface: operation getStats()
 PASS RTCRtpReceiver must be primary interface of new RTCPeerConnection().addTransceiver('audio').receiver
 PASS Stringification of new RTCPeerConnection().addTransceiver('audio').receiver
 PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "track" with the proper type
-FAIL RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "transport" with the proper type assert_inherits: property "transport" not found in prototype chain
+PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "transport" with the proper type
 PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "getCapabilities(DOMString)" with the proper type
 PASS RTCRtpReceiver interface: calling getCapabilities(DOMString) on new RTCPeerConnection().addTransceiver('audio').receiver with too few arguments must throw TypeError
 PASS RTCRtpReceiver interface: new RTCPeerConnection().addTransceiver('audio').receiver must inherit property "getParameters()" with the proper type
@@ -301,17 +301,17 @@ PASS RTCRtpTransceiver interface: new RTCPeerConnection().addTransceiver('audio'
 PASS RTCRtpTransceiver interface: new RTCPeerConnection().addTransceiver('audio') must inherit property "stop()" with the proper type
 PASS RTCRtpTransceiver interface: new RTCPeerConnection().addTransceiver('audio') must inherit property "setCodecPreferences(sequence<RTCRtpCodecCapability>)" with the proper type
 PASS RTCRtpTransceiver interface: calling setCodecPreferences(sequence<RTCRtpCodecCapability>) on new RTCPeerConnection().addTransceiver('audio') with too few arguments must throw TypeError
-FAIL RTCDtlsTransport interface: existence and properties of interface object assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface object length assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface object name assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: attribute iceTransport assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: attribute state assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: operation getRemoteCertificates() assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: attribute onstatechange assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
-FAIL RTCDtlsTransport interface: attribute onerror assert_own_property: self does not have own property "RTCDtlsTransport" expected property "RTCDtlsTransport" missing
+PASS RTCDtlsTransport interface: existence and properties of interface object
+PASS RTCDtlsTransport interface object length
+PASS RTCDtlsTransport interface object name
+PASS RTCDtlsTransport interface: existence and properties of interface prototype object
+PASS RTCDtlsTransport interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCDtlsTransport interface: existence and properties of interface prototype object's @@unscopables property
+FAIL RTCDtlsTransport interface: attribute iceTransport assert_true: The prototype object must have a property "iceTransport" expected true got false
+PASS RTCDtlsTransport interface: attribute state
+PASS RTCDtlsTransport interface: operation getRemoteCertificates()
+PASS RTCDtlsTransport interface: attribute onstatechange
+PASS RTCDtlsTransport interface: attribute onerror
 FAIL RTCDtlsTransport must be primary interface of idlTestObjects.dtlsTransport assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL Stringification of idlTestObjects.dtlsTransport assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "iceTransport" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"

@@ -1,3 +1,79 @@
+2021-08-19  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCDtlsTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229133
+
+        Reviewed by Eric Carlson.
+
+        RTCDtlsTransport is an object representing the transport used by RTCRtp senders and receivers.
+        Add WebIDL and backend implementation.
+        In particular, we set sender/receiver transports as per spec when setting the descriptions.
+        Add support for state and certificates access. Add support for statechange event.
+
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCDtlsTransport.cpp: Added.
+        (WebCore::RTCDtlsTransport::RTCDtlsTransport):
+        (WebCore::RTCDtlsTransport::~RTCDtlsTransport):
+        (WebCore::RTCDtlsTransport::getRemoteCertificates):
+        (WebCore::RTCDtlsTransport::stop):
+        (WebCore::RTCDtlsTransport::virtualHasPendingActivity const):
+        (WebCore::RTCDtlsTransport::onStateChanged):
+        (WebCore::RTCDtlsTransport::onError):
+        * Modules/mediastream/RTCDtlsTransport.h: Added.
+        * Modules/mediastream/RTCDtlsTransport.idl: Added.
+        * Modules/mediastream/RTCDtlsTransportBackend.h: Added.
+        (WebCore::operator==):
+        * Modules/mediastream/RTCDtlsTransportState.h: Added.
+        * Modules/mediastream/RTCDtlsTransportState.idl: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::getOrCreateDtlsTransport):
+        (WebCore::RTCPeerConnection::updateTransceiverTransports):
+        (WebCore::RTCPeerConnection::updateTransceiversAfterSuccessfulLocalDescription):
+        (WebCore::RTCPeerConnection::updateTransceiversAfterSuccessfulRemoteDescription):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpReceiverBackend.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp: Added.
+        (WebCore::toRTCDtlsTransportState):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::LibWebRTCDtlsTransportBackendObserver):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::updateState):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::start):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::stop):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::OnStateChange):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::OnError):
+        (WebCore::LibWebRTCDtlsTransportBackend::LibWebRTCDtlsTransportBackend):
+        (WebCore::LibWebRTCDtlsTransportBackend::~LibWebRTCDtlsTransportBackend):
+        (WebCore::LibWebRTCDtlsTransportBackend::registerClient):
+        (WebCore::LibWebRTCDtlsTransportBackend::unregisterClient):
+        * Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+        (WebCore::LibWebRTCRtpReceiverBackend::rtpDtlsTransportBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::rtpDtlsTransportBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventTargetFactory.in:
+
 2021-08-18  David Kilzer  <ddkilzer@apple.com>
 
         Bug 229264: Leak of CMBufferQueueRef (up to 752 bytes each) in com.apple.WebKit.GPU.Development process

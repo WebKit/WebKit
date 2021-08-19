@@ -1,10 +1,10 @@
 
-FAIL RTCRtpSender.transport is null when unconnected assert_equals: expected (object) null but got (undefined) undefined
-FAIL RTCRtpSender/receiver.transport has a value when connected promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'sender.transport.iceTransport')"
-FAIL RTCRtpSender/receiver.transport at the right time, with bundle policy balanced assert_equals: expected (object) null but got (undefined) undefined
-FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy balanced assert_equals: expected (object) null but got (undefined) undefined
-FAIL RTCRtpSender/receiver.transport at the right time, with bundle policy max-bundle assert_equals: expected (object) null but got (undefined) undefined
-FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-bundle assert_equals: expected (object) null but got (undefined) undefined
-FAIL RTCRtpSender/receiver.transport at the right time, with bundle policy max-compat assert_equals: expected (object) null but got (undefined) undefined
-FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-compat assert_equals: expected (object) null but got (undefined) undefined
+PASS RTCRtpSender.transport is null when unconnected
+PASS RTCRtpSender/receiver.transport has a value when connected
+PASS RTCRtpSender/receiver.transport at the right time, with bundle policy balanced
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy balanced promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller.sctp.transport')"
+PASS RTCRtpSender/receiver.transport at the right time, with bundle policy max-bundle
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-bundle promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller.sctp.transport')"
+PASS RTCRtpSender/receiver.transport at the right time, with bundle policy max-compat
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-compat promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller.sctp.transport')"
 

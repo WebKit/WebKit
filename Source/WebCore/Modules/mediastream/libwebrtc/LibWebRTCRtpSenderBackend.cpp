@@ -29,6 +29,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "LibWebRTCDTMFSenderBackend.h"
+#include "LibWebRTCDtlsTransportBackend.h"
 #include "LibWebRTCPeerConnectionBackend.h"
 #include "LibWebRTCRtpSenderTransformBackend.h"
 #include "LibWebRTCUtils.h"
@@ -165,6 +166,12 @@ Ref<RTCRtpTransformBackend> LibWebRTCRtpSenderBackend::rtcRtpTransformBackend()
     if (!m_transformBackend)
         m_transformBackend = LibWebRTCRtpSenderTransformBackend::create(m_rtcSender);
     return *m_transformBackend;
+}
+
+std::unique_ptr<RTCDtlsTransportBackend> LibWebRTCRtpSenderBackend::dtlsTransportBackend()
+{
+    auto backend = m_rtcSender->dtls_transport();
+    return backend ? makeUnique<LibWebRTCDtlsTransportBackend>(WTFMove(backend)) : nullptr;
 }
 
 void LibWebRTCRtpSenderBackend::setMediaStreamIds(const Vector<String>& streamIds)

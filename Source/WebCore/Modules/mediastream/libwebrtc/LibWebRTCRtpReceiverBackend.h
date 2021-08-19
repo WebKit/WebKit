@@ -53,6 +53,7 @@ private:
     Vector<RTCRtpContributingSource> getContributingSources() const final;
     Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const final;
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() final;
+    std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() final;
 
     rtc::scoped_refptr<webrtc::RtpReceiverInterface> m_rtcReceiver;
     RefPtr<RTCRtpTransformBackend> m_transformBackend;

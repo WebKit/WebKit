@@ -66,6 +66,7 @@ private:
     void setParameters(const RTCRtpSendParameters&, DOMPromiseDeferred<void>&&) final;
     std::unique_ptr<RTCDTMFSenderBackend> createDTMFBackend() final;
     Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() final;
+    std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend() final;
     void setMediaStreamIds(const Vector<String>&) final;
 
     void startSource();

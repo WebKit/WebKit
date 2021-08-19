@@ -161,6 +161,7 @@ Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCDataChannelEvent.cpp
 Modules/mediastream/RTCDataChannelRemoteHandler.cpp
 Modules/mediastream/RTCDataChannelRemoteSource.cpp
+Modules/mediastream/RTCDtlsTransport.cpp
 Modules/mediastream/RTCEncodedAudioFrame.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCEncodedVideoFrame.cpp
@@ -186,6 +187,7 @@ Modules/mediastream/STUNMessageParsing.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
+Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
@@ -3295,6 +3297,8 @@ JSRTCDataChannel.cpp
 JSRTCDataChannelEvent.cpp
 JSRTCDegradationPreference.cpp
 JSRTCDtxStatus.cpp
+JSRTCDtlsTransport.cpp
+JSRTCDtlsTransportState.cpp
 JSRTCEncodedAudioFrame.cpp
 JSRTCEncodedVideoFrame.cpp
 JSRTCIceCandidate.cpp

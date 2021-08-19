@@ -1,3 +1,3 @@
 
-FAIL Setting up a connection using helpers and defaults should work promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+PASS Setting up a connection using helpers and defaults should work
 

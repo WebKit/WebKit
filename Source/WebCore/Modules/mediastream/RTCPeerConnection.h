@@ -58,6 +58,8 @@ class DOMPromiseDeferredBase;
 class MediaStream;
 class MediaStreamTrack;
 class RTCController;
+class RTCDtlsTransport;
+class RTCDtlsTransportBackend;
 class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
@@ -182,6 +184,9 @@ public:
 
     void doTask(Function<void()>&&);
 
+    void updateTransceiversAfterSuccessfulLocalDescription();
+    void updateTransceiversAfterSuccessfulRemoteDescription();
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -224,6 +229,9 @@ private:
 
     ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet);
 
+    RefPtr<RTCDtlsTransport> getOrCreateDtlsTransport(std::unique_ptr<RTCDtlsTransportBackend>&&);
+    void updateTransceiverTransports();
+
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };
     RTCIceGatheringState m_iceGatheringState { RTCIceGatheringState::New };
@@ -247,6 +255,7 @@ private:
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
     bool m_shouldFireNegotiationNeededOnceOperationChainIsEmpty { false };
+    Vector<Ref<RTCDtlsTransport>> m_transports;
 };
 
 } // namespace WebCore

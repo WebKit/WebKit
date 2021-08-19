@@ -1,5 +1,5 @@
 
-FAIL Candidates are added dynamically; connection should work promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
-FAIL Candidates are added at PC1; connection should work promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
-FAIL Candidates are added at PC2; connection should work promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'transport.state')"
+PASS Candidates are added dynamically; connection should work
+PASS Candidates are added at PC1; connection should work
+PASS Candidates are added at PC2; connection should work
 

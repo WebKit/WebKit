@@ -34,6 +34,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "MediaStreamTrack.h"
+#include "RTCDtlsTransport.h"
 #include "RTCRtpSenderBackend.h"
 #include "RTCRtpTransceiverDirection.h"
 #include "RTCRtpTransform.h"
@@ -63,6 +64,9 @@ public:
     static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
     MediaStreamTrack* track() { return m_track.get(); }
+
+    RTCDtlsTransport* transport() { return m_transport.get(); }
+    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTFMove(transport); }
 
     const String& trackId() const { return m_trackId; }
     const String& trackKind() const { return m_trackKind; }
@@ -103,6 +107,7 @@ private:
 #endif
 
     RefPtr<MediaStreamTrack> m_track;
+    RefPtr<RTCDtlsTransport> m_transport;
     String m_trackId;
     String m_trackKind;
     std::unique_ptr<RTCRtpSenderBackend> m_backend;
