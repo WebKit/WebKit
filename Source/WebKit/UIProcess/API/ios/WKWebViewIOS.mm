@@ -2092,16 +2092,16 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     CGPoint contentOffset = [_scrollView contentOffset];
     CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffset);
 
-    CGFloat horiontalRubberbandAmountInContentCoordinates = (contentOffset.x - boundedOffset.x) / scaleFactor;
+    CGFloat horizontalRubberbandAmountInContentCoordinates = (contentOffset.x - boundedOffset.x) / scaleFactor;
     CGFloat verticalRubberbandAmountInContentCoordinates = (contentOffset.y - boundedOffset.y) / scaleFactor;
 
     CGRect extendedBounds = [_contentView bounds];
 
-    if (horiontalRubberbandAmountInContentCoordinates < 0) {
-        extendedBounds.origin.x += horiontalRubberbandAmountInContentCoordinates;
-        extendedBounds.size.width -= horiontalRubberbandAmountInContentCoordinates;
-    } else if (horiontalRubberbandAmountInContentCoordinates > 0)
-        extendedBounds.size.width += horiontalRubberbandAmountInContentCoordinates;
+    if (horizontalRubberbandAmountInContentCoordinates < 0) {
+        extendedBounds.origin.x += horizontalRubberbandAmountInContentCoordinates;
+        extendedBounds.size.width -= horizontalRubberbandAmountInContentCoordinates;
+    } else if (horizontalRubberbandAmountInContentCoordinates > 0)
+        extendedBounds.size.width += horizontalRubberbandAmountInContentCoordinates;
 
     if (verticalRubberbandAmountInContentCoordinates < 0) {
         extendedBounds.origin.y += verticalRubberbandAmountInContentCoordinates;
