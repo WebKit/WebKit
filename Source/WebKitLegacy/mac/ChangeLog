@@ -1,3 +1,13 @@
+2021-08-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove old unused code and out of date comments.
+        https://bugs.webkit.org/show_bug.cgi?id=229210
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+
 2021-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove more non-inclusive language from Source

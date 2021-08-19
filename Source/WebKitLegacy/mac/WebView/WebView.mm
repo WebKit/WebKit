@@ -959,11 +959,6 @@ NSString *WebQuickLookUTIKey      = @"WebQuickLookUTIKey";
 NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStartAcceleratedCompositing";
 NSString * const WebViewWillCloseNotification = @"WebViewWillCloseNotification";
 
-#if ENABLE(REMOTE_INSPECTOR)
-// FIXME: Legacy, remove this, switch to something from JavaScriptCore Inspector::RemoteInspectorServer.
-NSString *_WebViewRemoteInspectorHasSessionChangedNotification = @"_WebViewRemoteInspectorHasSessionChangedNotification";
-#endif
-
 @interface WebProgressItem : NSObject
 {
 @public
@@ -8105,13 +8100,11 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 #if !PLATFORM(IOS_FAMILY)
 @implementation WebView (WebViewGrammarChecking)
 
-// FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (BOOL)isGrammarCheckingEnabled
 {
     return grammarCheckingEnabled;
 }
 
-// FIXME: This method should be merged into WebViewEditing when we're not in API freeze
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
     if (grammarCheckingEnabled == flag)
@@ -8128,7 +8121,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
         [[self mainFrame] _unmarkAllBadGrammar];
 }
 
-// FIXME: This method should be merged into WebIBActions when we're not in API freeze
 - (void)toggleGrammarChecking:(id)sender
 {
     [self setGrammarCheckingEnabled:![self isGrammarCheckingEnabled]];

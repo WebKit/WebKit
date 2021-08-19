@@ -1,3 +1,12 @@
+2021-08-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove old unused code and out of date comments.
+        https://bugs.webkit.org/show_bug.cgi?id=229210
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.iOS.exp:
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead

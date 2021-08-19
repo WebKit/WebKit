@@ -40,8 +40,5 @@ _WebViewportWidthKey
 _WebViewProgressBackgroundColorKey
 _WebViewProgressEstimatedProgressKey
 
-# For WebInspector notifications
-__WebViewRemoteInspectorHasSessionChangedNotification
-
 # WebKit1 internal types exposed for WebKit2.
 .objc_class_name_WebGeolocationCoreLocationProvider

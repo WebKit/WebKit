@@ -105,13 +105,6 @@ extern NSString *WebElementIsInScrollBarKey;
 // One of the subviews of the WebView entered compositing mode.
 extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
 
-#if ENABLE_REMOTE_INSPECTOR
-// FIXME: Legacy, remove this, switch to something from JavaScriptCore Inspector::RemoteInspectorServer.
-// Notification when the number of inspector sessions becomes non-zero or returns to 0.
-// Check the current state via -[WebView _hasRemoteInspectorSession].
-extern NSString *_WebViewRemoteInspectorHasSessionChangedNotification;
-#endif
-
 #if TARGET_OS_IPHONE
 extern NSString *WebQuickLookFileNameKey;
 extern NSString *WebQuickLookUTIKey;
@@ -160,11 +153,6 @@ typedef enum {
     WebPaginationModeRightToLeft,
     WebPaginationModeTopToBottom,
     WebPaginationModeBottomToTop,
-#if TARGET_OS_IPHONE
-    // FIXME: Remove these once UIKit has switched to the above.
-    WebPaginationModeHorizontal = WebPaginationModeLeftToRight,
-    WebPaginationModeVertical = WebPaginationModeTopToBottom,
-#endif
 } WebPaginationMode;
 
 enum {
@@ -949,11 +937,9 @@ typedef struct WebEdgeInsets {
 
 @interface WebView (WebViewGrammarChecking)
 
-// FIXME: These two methods should be merged into WebViewEditing when we're not in API freeze
 - (BOOL)isGrammarCheckingEnabled;
 - (void)setGrammarCheckingEnabled:(BOOL)flag;
 
-// FIXME: This method should be merged into WebIBActions when we're not in API freeze
 - (void)toggleGrammarChecking:(id)sender;
 
 @end
