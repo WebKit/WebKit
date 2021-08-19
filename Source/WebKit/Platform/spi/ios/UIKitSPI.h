@@ -108,6 +108,10 @@
 #import <UIKit/UIContextMenuInteraction_Private.h>
 #endif
 
+#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
+#import <UIKit/_UIDatePickerOverlayPresentation.h>
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #endif
@@ -221,6 +225,28 @@ typedef NS_ENUM(NSInteger, UIDatePickerStyle) {
 #endif
 - (UIEdgeInsets)_appliedInsetsToEdgeOfContent;
 @end
+
+#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
+
+typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
+    _UIDatePickerOverlayAnchorSourceRect = 2
+};
+
+@interface _UIDatePickerOverlayPresentation : NSObject
+
+- (instancetype)initWithSourceView:(UIView *)sourceView;
+- (void)presentDatePicker:(UIDatePicker *)datePicker onDismiss:(void(^)(BOOL retargeted))dismissHandler;
+- (void)dismissPresentationAnimated:(BOOL)animated;
+
+@property (nonatomic, weak, readonly) UIView *sourceView;
+@property (nonatomic, assign) CGRect sourceRect;
+@property (nonatomic, assign) _UIDatePickerOverlayAnchor overlayAnchor;
+@property (nonatomic, strong) UIView *accessoryView;
+@property (nonatomic, assign) BOOL accessoryViewIgnoresDefaultInsets;
+
+@end
+
+#endif
 
 @interface UIDevice ()
 - (void)setOrientation:(UIDeviceOrientation)orientation animated:(BOOL)animated;
@@ -1452,30 +1478,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface UIView (Staging_75759822)
 @property (nonatomic, readwrite, copy) UIFocusEffect *focusEffect;
 @end
-#endif
-
-#if HAVE(UIDATEPICKER_OVERLAY_PRESENTATION)
-
-// FIXME: Import the header directly once bots are updated to a build containing rdar://78779655.
-
-typedef NS_ENUM(NSInteger, _UIDatePickerOverlayAnchor) {
-    _UIDatePickerOverlayAnchorSourceRect = 2
-};
-
-@interface _UIDatePickerOverlayPresentation : NSObject
-
-- (instancetype)initWithSourceView:(UIView *)sourceView;
-- (void)presentDatePicker:(UIDatePicker *)datePicker onDismiss:(void(^)(BOOL retargeted))dismissHandler;
-- (void)dismissPresentationAnimated:(BOOL)animated;
-
-@property (nonatomic, weak, readonly) UIView *sourceView;
-@property (nonatomic, assign) CGRect sourceRect;
-@property (nonatomic, assign) _UIDatePickerOverlayAnchor overlayAnchor;
-@property (nonatomic, strong) UIView *accessoryView;
-@property (nonatomic, assign) BOOL accessoryViewIgnoresDefaultInsets;
-
-@end
-
 #endif
 
 WTF_EXTERN_C_BEGIN

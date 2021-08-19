@@ -501,9 +501,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     [_datePickerPresentation setSourceRect:_view.focusedElementInformation.interactionRect];
     [_datePickerPresentation setAccessoryView:_accessoryView.get()];
     [_datePickerPresentation setAccessoryViewIgnoresDefaultInsets:YES];
-
-    if ([_datePickerPresentation respondsToSelector:@selector(setOverlayAnchor:)])
-        [_datePickerPresentation setOverlayAnchor:_UIDatePickerOverlayAnchorSourceRect];
+    [_datePickerPresentation setOverlayAnchor:_UIDatePickerOverlayAnchorSourceRect];
 
     [_datePickerPresentation presentDatePicker:_datePicker.get() onDismiss:[weakSelf = WeakObjCPtr<WKDateTimePicker>(self)](BOOL) {
         if (auto strongSelf = weakSelf.get())

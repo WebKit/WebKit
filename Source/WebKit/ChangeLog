@@ -1,3 +1,15 @@
+2021-08-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        Remove __has_include guard for _UIDatePickerOverlayPresentation
+        https://bugs.webkit.org/show_bug.cgi?id=227298
+        rdar://79970171
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker showDateTimePicker]):
+
 2021-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Use Vector<SandboxExtension::Handle> instead of SandboxExtension::HandleArray

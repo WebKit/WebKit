@@ -1,3 +1,13 @@
+2021-08-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        Remove __has_include guard for _UIDatePickerOverlayPresentation
+        https://bugs.webkit.org/show_bug.cgi?id=227298
+        rdar://79970171
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+
 2021-08-19  David Kilzer  <ddkilzer@apple.com>
 
         [WTF] Fix static analyzer warnings for clang tidy bugprone-move-forwarding-reference checker
