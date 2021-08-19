@@ -202,6 +202,7 @@ public:
     }
 
 private:
+    friend class PathRun;
     friend class RunIterator;
 
     TextBoxSelectableRange selectableRange() const

@@ -296,9 +296,6 @@ public:
 
     void computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const;
 
-    void maxLogicalBottomForTextDecorationLine(float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration>) const;
-    void minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration>) const;
-
 private:
     bool isInlineFlowBox() const final { return true; }
     void boxModelObject() const = delete;

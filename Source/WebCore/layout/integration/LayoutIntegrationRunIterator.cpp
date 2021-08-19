@@ -74,7 +74,12 @@ RunIterator RunIterator::previousOnLineIgnoringLineBreak() const
 
 LineIterator RunIterator::line() const
 {
-    return WTF::switchOn(m_run.m_pathVariant, [](const RunIteratorLegacyPath& path) {
+    return m_run.line();
+}
+
+LineIterator PathRun::line() const
+{
+    return WTF::switchOn(m_pathVariant, [](const RunIteratorLegacyPath& path) {
         return LineIterator(LineIteratorLegacyPath(&path.rootInlineBox()));
     }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -83,6 +88,11 @@ LineIterator RunIterator::line() const
     }
 #endif
     );
+}
+
+const RenderStyle& PathRun::style() const
+{
+    return line().isFirst() ? renderer().firstLineStyle() : renderer().style();
 }
 
 TextRunIterator::TextRunIterator(PathRun::PathVariant&& pathVariant)
@@ -178,6 +188,11 @@ TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
     }
 
     return firstTextRunFor(text);
+}
+
+TextRunIterator textRunFor(const LegacyInlineTextBox* legacyInlineTextBox)
+{
+    return { RunIteratorLegacyPath { legacyInlineTextBox } };
 }
 
 TextRunRange textRunsFor(const RenderText& text)

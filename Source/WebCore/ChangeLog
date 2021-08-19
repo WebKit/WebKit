@@ -1,5 +1,62 @@
 2021-08-19  Antti Koivisto  <antti@apple.com>
 
+        TextDecorationPainter should not depend on LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=228814
+
+        Reviewed by Alan Bujtas.
+
+        Use the inline iterator instead.
+
+        * layout/integration/LayoutIntegrationLineIterator.h:
+        (WebCore::LayoutIntegration::LineIterator::isFirst const):
+        (WebCore::LayoutIntegration::PathLine::baselineType const):
+        * layout/integration/LayoutIntegrationLineIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LineIteratorLegacyPath::baselineType const):
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+        (WebCore::LayoutIntegration::LineIteratorModernPath::baselineType const):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::line const):
+        (WebCore::LayoutIntegration::PathRun::line const):
+        (WebCore::LayoutIntegration::PathRun::style const):
+        (WebCore::LayoutIntegration::textRunFor):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::renderer const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::maxLogicalBottomForTextDecorationLine const): Deleted.
+        (WebCore::LegacyInlineFlowBox::minLogicalTopForTextDecorationLine const): Deleted.
+        * rendering/LegacyInlineFlowBox.h:
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::paintMarkedTextDecoration):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::enclosingRendererWithTextDecoration const): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/TextDecorationPainter.h:
+        (WebCore::TextDecorationPainter::setTextRunIterator):
+        (WebCore::TextDecorationPainter::setInlineTextBox): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::isAncestorAndWithinBlock):
+        (WebCore::minLogicalTopForTextDecorationLine):
+        (WebCore::maxLogicalBottomForTextDecorationLine):
+
+        Moved from LegacyInlineFlowBox.
+
+        (WebCore::enclosingRendererWithTextDecoration):
+
+        Moved from RenderElement.
+
+        (WebCore::computeUnderlineOffset):
+        (WebCore::visualOverflowForDecorations):
+        * style/InlineTextBoxStyle.h:
+
+2021-08-19  Antti Koivisto  <antti@apple.com>
+
         Move MarkedTextStyle into StyledMarkedText scope
         https://bugs.webkit.org/show_bug.cgi?id=228956
 

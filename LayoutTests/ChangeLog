@@ -1,3 +1,15 @@
+2021-08-19  Antti Koivisto  <antti@apple.com>
+
+        TextDecorationPainter should not depend on LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=228814
+
+        Reviewed by Alan Bujtas.
+
+        Fix the expected results to not depend on inline culling (which this patch ignores).
+
+        * fast/text/text-underline-first-line-decoration-expected.html:
+        * fast/text/text-underline-vertical-first-line-decoration-expected.html:
+
 2021-08-19  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] fast/forms/* tests are flaky crashing FAULTING_IP:  WebKit!WebCore::FontCache::lastResortFallbackFont+ec [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Source\WebCore\platform\graphics\win\FontCacheWin.cpp @ 424].

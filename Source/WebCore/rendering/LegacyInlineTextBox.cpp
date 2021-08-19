@@ -872,7 +872,7 @@ void LegacyInlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const 
     auto textDecorations = lineStyle().textDecorationsInEffect();
     textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
     TextDecorationPainter decorationPainter { context, textDecorations, renderer(), isFirstLine(), lineFont(), markedText.style.textDecorationStyles };
-    decorationPainter.setInlineTextBox(this);
+    decorationPainter.setTextRunIterator(LayoutIntegration::textRunFor(this));
     decorationPainter.setWidth(snappedSelectionRect.width());
     decorationPainter.setIsHorizontal(isHorizontal());
     if (markedText.style.textShadow) {

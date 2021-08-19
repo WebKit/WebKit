@@ -34,6 +34,7 @@ namespace WebCore {
 
 class RenderLineBreak;
 class RenderObject;
+class RenderStyle;
 class RenderText;
 
 namespace LayoutIntegration {
@@ -79,6 +80,7 @@ public:
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
 
     const RenderObject& renderer() const;
+    const RenderStyle& style() const;
 
     // For intermediate porting steps only.
     LegacyInlineBox* legacyInlineBox() const;
@@ -86,6 +88,8 @@ public:
 protected:
     friend class RunIterator;
     friend class TextRunIterator;
+
+    LineIterator line() const;
 
     // To help with debugging.
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -113,6 +117,7 @@ public:
     bool isSelectable(unsigned start, unsigned end) const;
     LayoutRect selectionRect(unsigned start, unsigned end) const;
 
+    const RenderText& renderer() const { return downcast<RenderText>(PathRun::renderer()); }
     LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(PathRun::legacyInlineBox()); }
 };
 
@@ -195,6 +200,7 @@ private:
 
 TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
+TextRunIterator textRunFor(const LegacyInlineTextBox*);
 TextRunRange textRunsFor(const RenderText&);
 RunIterator runFor(const RenderLineBreak&);
 RunIterator runFor(const RenderBox&);

@@ -32,6 +32,7 @@
 #include "HTMLParserIdioms.h"
 #include "InlineIterator.h"
 #include "InlineTextBoxStyle.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "LegacyInlineElementBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LineLayoutState.h"
@@ -546,7 +547,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
 
     // Include text decoration visual overflow as part of the glyph overflow.
     if (!renderer.style().textDecorationsInEffect().isEmpty())
-        glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), downcast<LegacyInlineTextBox>(run->box())));
+        glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), LayoutIntegration::textRunFor(downcast<LegacyInlineTextBox>(run->box()))));
 
     if (!glyphOverflow.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());

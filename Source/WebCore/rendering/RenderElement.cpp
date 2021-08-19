@@ -1733,24 +1733,6 @@ LayoutRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) 
     return absoluteAnchorRect(insideFixed);
 }
 
-const RenderElement* RenderElement::enclosingRendererWithTextDecoration(OptionSet<TextDecoration> textDecoration, bool firstLine) const
-{
-    const RenderElement* current = this;
-    do {
-        if (current->isRenderBlock())
-            return current;
-        if (!current->isRenderInline() || current->isRubyText())
-            return nullptr;
-        
-        const RenderStyle& styleToUse = firstLine ? current->firstLineStyle() : current->style();
-        if (styleToUse.textDecoration() & textDecoration)
-            return current;
-        current = current->parent();
-    } while (current && (!current->element() || (!is<HTMLAnchorElement>(*current->element()) && !current->element()->hasTagName(HTMLNames::fontTag))));
-
-    return current;
-}
-
 void RenderElement::drawLineForBoxSide(GraphicsContext& graphicsContext, const FloatRect& rect, BoxSide side, Color color, BorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias) const
 {
     auto drawBorderRect = [&graphicsContext] (const FloatRect& rect)

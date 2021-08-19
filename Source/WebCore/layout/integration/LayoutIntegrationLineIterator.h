@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontBaseline.h"
 #include "LayoutIntegrationLineIteratorLegacyPath.h"
 #include "LayoutIntegrationLineIteratorModernPath.h"
 #include <wtf/Variant.h>
@@ -70,6 +71,8 @@ public:
 
     bool isHorizontal() const;
 
+    FontBaseline baselineType() const;
+
     const RenderBlockFlow& containingBlock() const;
     const LegacyRootInlineBox* legacyRootInlineBox() const;
 
@@ -91,6 +94,8 @@ public:
 
     LineIterator next() const;
     LineIterator previous() const;
+
+    bool isFirst() const { return !previous(); }
 
     explicit operator bool() const { return !atEnd(); }
 
@@ -221,6 +226,13 @@ inline bool PathLine::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.isHorizontal();
+    });
+}
+
+inline FontBaseline PathLine::baselineType() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.baselineType();
     });
 }
 
