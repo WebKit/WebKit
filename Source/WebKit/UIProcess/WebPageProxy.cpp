@@ -8662,28 +8662,28 @@ void WebPageProxy::didDestroyNotification(uint64_t notificationID)
     m_process->processPool().supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
 }
 
-float WebPageProxy::headerHeight(WebFrameProxy& frame)
+float WebPageProxy::headerHeightForPrinting(WebFrameProxy& frame)
 {
     if (frame.isDisplayingPDFDocument())
         return 0;
     return m_uiClient->headerHeight(*this, frame);
 }
 
-float WebPageProxy::footerHeight(WebFrameProxy& frame)
+float WebPageProxy::footerHeightForPrinting(WebFrameProxy& frame)
 {
     if (frame.isDisplayingPDFDocument())
         return 0;
     return m_uiClient->footerHeight(*this, frame);
 }
 
-void WebPageProxy::drawHeader(WebFrameProxy& frame, FloatRect&& rect)
+void WebPageProxy::drawHeaderForPrinting(WebFrameProxy& frame, FloatRect&& rect)
 {
     if (frame.isDisplayingPDFDocument())
         return;
     m_uiClient->drawHeader(*this, frame, WTFMove(rect));
 }
 
-void WebPageProxy::drawFooter(WebFrameProxy& frame, FloatRect&& rect)
+void WebPageProxy::drawFooterForPrinting(WebFrameProxy& frame, FloatRect&& rect)
 {
     if (frame.isDisplayingPDFDocument())
         return;

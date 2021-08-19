@@ -115,10 +115,13 @@ private:
         void setWindowFrame(WebPageProxy&, const WebCore::FloatRect&) final;
         void windowFrame(WebPageProxy&, Function<void(WebCore::FloatRect)>&&) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
+
+        // Printing.
         float headerHeight(WebPageProxy&, WebFrameProxy&) final;
         float footerHeight(WebPageProxy&, WebFrameProxy&) final;
         void drawHeader(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
         void drawFooter(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
+
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEvent::Modifier>, API::Object*);

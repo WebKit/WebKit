@@ -1,5 +1,30 @@
 2021-08-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename WebPageProxy::headerHeight() and related to make it clear they are for printing
+        https://bugs.webkit.org/show_bug.cgi?id=229242
+
+        Reviewed by Tim Horton.
+
+        Disambiguate WebPageProxy::headerHeight(), used for printing, from FrameView::headerHeight()
+        which is not.
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::headerHeightForPrinting):
+        (WebKit::WebPageProxy::footerHeightForPrinting):
+        (WebKit::WebPageProxy::drawHeaderForPrinting):
+        (WebKit::WebPageProxy::drawFooterForPrinting):
+        (WebKit::WebPageProxy::headerHeight): Deleted.
+        (WebKit::WebPageProxy::footerHeight): Deleted.
+        (WebKit::WebPageProxy::drawHeader): Deleted.
+        (WebKit::WebPageProxy::drawFooter): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]):
+        (-[WKPrintingView drawPageBorderWithSize:]):
+
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
         Use a Ref<> argument to keep WebPage alive in TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition()
         https://bugs.webkit.org/show_bug.cgi?id=229239
 

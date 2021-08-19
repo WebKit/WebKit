@@ -158,8 +158,8 @@ static BOOL isForcingPreviewUpdate;
     }
     
     CGFloat scale = [info scalingFactor];
-    [info setTopMargin:originalTopMargin + _webFrame->page()->headerHeight(*_webFrame) * scale];
-    [info setBottomMargin:originalBottomMargin + _webFrame->page()->footerHeight(*_webFrame) * scale];
+    [info setTopMargin:originalTopMargin + _webFrame->page()->headerHeightForPrinting(*_webFrame) * scale];
+    [info setBottomMargin:originalBottomMargin + _webFrame->page()->footerHeightForPrinting(*_webFrame) * scale];
 }
 
 - (BOOL)_isPrintingPreview
@@ -662,18 +662,20 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     NSSize paperSize = [printInfo paperSize];
     CGFloat headerFooterLeft = [printInfo leftMargin] / scale;
     CGFloat headerFooterWidth = (paperSize.width - ([printInfo leftMargin] + [printInfo rightMargin])) / scale;
-    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin] / scale - _webFrame->page()->footerHeight(*_webFrame), headerFooterWidth, _webFrame->page()->footerHeight(*_webFrame));
-    NSRect headerRect = NSMakeRect(headerFooterLeft, (paperSize.height - [printInfo topMargin]) / scale, headerFooterWidth, _webFrame->page()->headerHeight(*_webFrame));
+    CGFloat headerHeight = _webFrame->page()->headerHeightForPrinting(*_webFrame);
+    CGFloat footerHeight = _webFrame->page()->footerHeightForPrinting(*_webFrame);
+    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin] / scale - footerHeight, headerFooterWidth, footerHeight);
+    NSRect headerRect = NSMakeRect(headerFooterLeft, (paperSize.height - [printInfo topMargin]) / scale, headerFooterWidth, headerHeight);
 
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     [currentContext saveGraphicsState];
     NSRectClip(headerRect);
-    _webFrame->page()->drawHeader(*_webFrame, headerRect);
+    _webFrame->page()->drawHeaderForPrinting(*_webFrame, headerRect);
     [currentContext restoreGraphicsState];
 
     [currentContext saveGraphicsState];
     NSRectClip(footerRect);
-    _webFrame->page()->drawFooter(*_webFrame, footerRect);
+    _webFrame->page()->drawFooterForPrinting(*_webFrame, footerRect);
     [currentContext restoreGraphicsState];
 }
 

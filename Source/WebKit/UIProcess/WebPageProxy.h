@@ -1196,10 +1196,10 @@ public:
     void runJavaScriptInFrameInScriptWorld(WebCore::RunJavaScriptParameters&&, std::optional<WebCore::FrameIdentifier>, API::ContentWorld&, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&&);
     void forceRepaint(CompletionHandler<void()>&&);
 
-    float headerHeight(WebFrameProxy&);
-    float footerHeight(WebFrameProxy&);
-    void drawHeader(WebFrameProxy&, WebCore::FloatRect&&);
-    void drawFooter(WebFrameProxy&, WebCore::FloatRect&&);
+    float headerHeightForPrinting(WebFrameProxy&);
+    float footerHeightForPrinting(WebFrameProxy&);
+    void drawHeaderForPrinting(WebFrameProxy&, WebCore::FloatRect&&);
+    void drawFooterForPrinting(WebFrameProxy&, WebCore::FloatRect&&);
 
 #if PLATFORM(COCOA)
     // Dictionary.
