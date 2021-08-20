@@ -165,31 +165,61 @@ public:
         m_offsetsInString.shrink(truncationPoint);
     }
 
-    // FontCascade::layoutText() returns a GlyphBuffer which includes layout information that is split
-    // into "advances" and "origins". See the ASCII-art diagram in ComplexTextController.h
-    // In order to get paint advances, we need to run this "flatten" operation.
-    // This merges the layout advances and origins together,
-    // leaves the paint advances in the "m_advances" field,
-    // and zeros-out the origins in the "m_origins" field.
+    /*
+     * This is the unflattened format:
+     *
+     *                                              X (Paint glyph position)   X (Paint glyph position)   X (Paint glyph position)
+     *                                             7                          7                          7
+     *                                            /                          /                          /
+     *                                           / (Origin)                 / (Origin)                 / (Origin)
+     *                                          /                          /                          /
+     *                                         /                          /                          /
+     *                X---------------------->X------------------------->X------------------------->X------------------------->X
+     * (text position ^)  (Initial advance)            (Advance)                  (Advance)                   (Advance)
+     *
+     *
+     *
+     *
+     *
+     * And this is what we transform it into:
+     *
+     *                                        ----->X------------------------->X------------------------->X
+     *                                       /               (Advance)                   (Advance)         \
+     *                                      /                                                               \
+     *                   (Initial advance) /                                                                 \   (Advance)
+     *                  -------------------                                                                   ----------------
+     *                 /                                                                                                      \
+     *                X                                                                                                        X
+     * (text position ^)
+     *
+     * This is an operation that discards all layout information, and preserves only paint information.
+     */
     void flatten()
     {
+        ASSERT(size() || (!width(m_initialAdvance) && !height(m_initialAdvance)));
+        if (size()) {
+            m_initialAdvance = makeGlyphBufferAdvance(
+                width(m_initialAdvance) + x(m_origins[0]),
+                height(m_initialAdvance) + y(m_origins[0]));
+        }
         for (unsigned i = 0; i < size(); ++i) {
             m_advances[i] = makeGlyphBufferAdvance(
                 -x(m_origins[i]) + width(m_advances[i]) + (i + 1 < size() ? x(m_origins[i + 1]) : 0),
-                -y(m_origins[i]) + height(m_advances[i]) + (i + 1 < size() ? y(m_origins[i + 1]) : 0)
-            );
+                -y(m_origins[i]) + height(m_advances[i]) + (i + 1 < size() ? y(m_origins[i + 1]) : 0));
             m_origins[i] = makeGlyphBufferOrigin();
         }
     }
 
+#if ASSERT_ENABLED
     bool isFlattened() const
     {
         for (unsigned i = 0; i < size(); ++i) {
-            if (m_origins[i] != makeGlyphBufferOrigin())
+            if (x(m_origins[i]) || y(m_origins[i]))
                 return false;
         }
         return true;
     }
+#endif
 
 private:
     void swap(unsigned index1, unsigned index2)

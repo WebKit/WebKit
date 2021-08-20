@@ -90,13 +90,13 @@ inline auto WidthIterator::shouldApplyFontTransforms(const GlyphBuffer& glyphBuf
     return TransformsType::NotForced;
 }
 
-inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font& font, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font& font, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace) -> ApplyFontTransformsResult
 {
     ASSERT_UNUSED(currentCharacterIndex, shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex) != WidthIterator::TransformsType::None);
 
     auto glyphBufferSize = glyphBuffer.size();
     if (!force && glyphBufferSize <= lastGlyphCount + 1)
-        return 0;
+        return { 0, makeGlyphBufferAdvance() };
 
     GlyphBufferAdvance* advances = glyphBuffer.advances(0);
     float beforeWidth = 0;
@@ -105,7 +105,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
 
     ASSERT(lastGlyphCount <= glyphBufferSize);
 
-    font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font.fontDescription().computedLocale(), m_run.text(), m_run.direction());
+    auto initialAdvance = font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_font.fontDescription().computedLocale(), m_run.text(), m_run.direction());
 
 #if USE(CTFONTSHAPEGLYPHS_WORKAROUND)
     // <rdar://problem/80798113>: If a character is not in BMP, and we don't have a glyph for it,
@@ -154,7 +154,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsign
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
         afterWidth += width(advances[i]);
 
-    return afterWidth - beforeWidth;
+    return { afterWidth - beforeWidth, initialAdvance };
 }
 
 static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeftExpansion, bool forbidRightExpansion, bool forceLeftExpansion, bool forceRightExpansion)
@@ -186,11 +186,52 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     return std::make_pair(expandLeft, expandRight);
 }
 
+static void expandWithInitialAdvance(GlyphBufferAdvance& advanceToExpand, const GlyphBufferAdvance& initialAdvance)
+{
+    setWidth(advanceToExpand, width(advanceToExpand) + width(initialAdvance));
+    setHeight(advanceToExpand, height(advanceToExpand) + height(initialAdvance));
+}
+
+void WidthIterator::applyInitialAdvance(GlyphBuffer& glyphBuffer, std::optional<GlyphBufferAdvance> initialAdvance, unsigned lastGlyphCount)
+{
+    ASSERT(glyphBuffer.size() >= lastGlyphCount);
+
+    if (glyphBuffer.size() <= lastGlyphCount)
+        return;
+
+    ASSERT(lastGlyphCount || (!width(m_leftoverInitialAdvance) && !height(m_leftoverInitialAdvance)));
+
+    if (m_run.direction() == TextDirection::RTL && lastGlyphCount) {
+        auto& visuallyLastAdvance = *glyphBuffer.advances(lastGlyphCount);
+        expandWithInitialAdvance(visuallyLastAdvance, m_leftoverInitialAdvance);
+        m_runWidthSoFar += width(m_leftoverInitialAdvance);
+        m_leftoverInitialAdvance = makeGlyphBufferAdvance();
+    }
+
+    if (initialAdvance) {
+        if (m_run.direction() == TextDirection::RTL)
+            m_leftoverInitialAdvance = initialAdvance.value();
+        else {
+            if (lastGlyphCount) {
+                auto& visuallyPreviousAdvance = *glyphBuffer.advances(lastGlyphCount - 1);
+                expandWithInitialAdvance(visuallyPreviousAdvance, initialAdvance.value());
+                m_runWidthSoFar += width(initialAdvance.value());
+            } else
+                glyphBuffer.expandInitialAdvance(initialAdvance.value());
+        }
+    }
+}
+
 void WidthIterator::commitCurrentFontRange(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font& font, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
+    std::optional<GlyphBufferAdvance> initialAdvance;
     auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex);
-    if (transformsType != TransformsType::None)
-        m_runWidthSoFar += applyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex, font, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+    if (transformsType != TransformsType::None) {
+        auto applyFontTransformsResult = applyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex, font, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+        m_runWidthSoFar += applyFontTransformsResult.additionalAdvance;
+        initialAdvance = applyFontTransformsResult.initialAdvance;
+    }
+    applyInitialAdvance(glyphBuffer, initialAdvance, lastGlyphCount);
     m_currentCharacterIndex = currentCharacterIndex;
 
     if (widthOfCurrentFontRange && m_fallbackFonts && &font != &primaryFont) {
@@ -479,7 +520,9 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
 void WidthIterator::finalize(GlyphBuffer& buffer)
 {
     ASSERT(m_run.rtl() || !m_leftoverJustificationWidth);
-    // In LTR this does nothing. In RTL, this adds left width by moving the whole run to the right.
+    // In LTR these do nothing. In RTL, these add left width by moving the whole run to the right.
+    buffer.expandInitialAdvance(m_leftoverInitialAdvance);
+    m_runWidthSoFar += width(m_leftoverInitialAdvance);
     buffer.expandInitialAdvance(m_leftoverJustificationWidth);
     m_runWidthSoFar += m_leftoverJustificationWidth;
     m_leftoverJustificationWidth = 0;

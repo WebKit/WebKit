@@ -584,11 +584,10 @@ float Font::platformWidthForGlyph(Glyph glyph) const
 
 #endif
 
-void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
 {
     UNUSED_PARAM(requiresShaping);
 
-    // FIXME: Implement GlyphBuffer initial advance.
 #if USE(CTFONTSHAPEGLYPHS)
     auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer, CGPoint** newOffsetsPointer, CFIndex** newIndicesPointer)
     {
@@ -616,17 +615,22 @@ void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphInde
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] -= beginningStringIndex;
 
-    CTFontShapeGlyphs(
+    auto numberOfInputGlyphs = glyphBuffer.size() - beginningGlyphIndex;
+
+    auto initialAdvance = CTFontShapeGlyphs(
         m_platformData.ctFont(),
         glyphBuffer.glyphs(beginningGlyphIndex),
-        reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningGlyphIndex)),
-        reinterpret_cast<CGPoint*>(glyphBuffer.origins(beginningGlyphIndex)),
+        glyphBuffer.advances(beginningGlyphIndex),
+        glyphBuffer.origins(beginningGlyphIndex),
         glyphBuffer.offsetsInString(beginningGlyphIndex),
         reinterpret_cast<const UniChar*>(upconvertedCharacters.get()),
-        glyphBuffer.size() - beginningGlyphIndex,
+        numberOfInputGlyphs,
         options,
         localeString.get(),
         handler);
+
+    ASSERT(numberOfInputGlyphs || glyphBuffer.size() == beginningGlyphIndex);
+    ASSERT(numberOfInputGlyphs || (!initialAdvance.width && !initialAdvance.height));
 
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] += beginningStringIndex;
@@ -652,11 +656,15 @@ void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphInde
 
     CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | kCTFontTransformApplyShaping;
     CTFontTransformGlyphs(m_platformData.ctFont(), glyphBuffer.glyphs(beginningGlyphIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningGlyphIndex)), glyphBuffer.size() - beginningGlyphIndex, options);
+
+    auto initialAdvance = makeGlyphBufferAdvance();
 #endif
 
     // See the comment above in this function where the other call to reverse() is.
     if (textDirection == TextDirection::RTL)
         glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
+
+    return initialAdvance;
 }
 
 static int extractNumber(CFNumberRef number)

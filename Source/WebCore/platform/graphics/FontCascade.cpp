@@ -254,6 +254,8 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
         simpleIterator.advance(run.length(), glyphBuffer);
         totalWidth = simpleIterator.runWidthSoFar();
         simpleIterator.finalize(glyphBuffer);
+        // FIXME: Finalizing the WidthIterator can affect the total width.
+        // We might need to adjust the various widths we've measured to account for that.
     }
 
     if (outWidthBeforeRange)
@@ -319,13 +321,15 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
         glyphBuffer.add(glyph, font, glyphWidth, i);
     }
 
-    font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
+    auto initialAdvance = font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
     // This is needed only to match the result of the slow path.
     // Same glyph widths but different floating point arithmetic can produce different run width.
     float runWidthDifferenceWithTransformApplied = -runWidth;
     for (size_t i = 0; i < glyphBuffer.size(); ++i)
         runWidthDifferenceWithTransformApplied += WebCore::width(glyphBuffer.advanceAt(i));
     runWidth += runWidthDifferenceWithTransformApplied;
+
+    runWidth += WebCore::width(initialAdvance);
 
     if (cacheEntry)
         *cacheEntry = runWidth;
@@ -1270,11 +1274,6 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
         initialAdvance = beforeWidth;
     }
     glyphBuffer.expandInitialAdvance(initialAdvance);
-    if (!glyphBuffer.isEmpty()) {
-        // The initial advance is supposed to point directly to the first glyph's paint position.
-        // See the ascii-art diagram in ComplexTextController.h.
-        glyphBuffer.expandInitialAdvance(makeGlyphBufferAdvance(x(glyphBuffer.originAt(0)), y(glyphBuffer.originAt(0))));
-    }
 
     // The glyph buffer is currently in logical order,
     // but we need to return the results in visual order.
@@ -1326,6 +1325,7 @@ inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotRead
     return !font.isInterstitial() || font.visibility() == Font::Visibility::Visible || customFontNotReadyAction == FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady;
 }
 
+// This function assumes the GlyphBuffer's initial advance has already been incorporated into the start point.
 void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(glyphBuffer.isFlattened());
@@ -1387,6 +1387,9 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     Glyph markGlyph = markGlyphData.value().glyph;
     Glyph spaceGlyph = markFontData->spaceGlyph();
 
+    // FIXME: This needs to take the initial advance into account.
+    // The problem might actually be harder for complex text, though.
+    // Putting a mark over every glyph probably isn't great in complex scripts.
     float middleOfLastGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, 0);
     FloatPoint startPoint(point.x() + middleOfLastGlyph - offsetToMiddleOfGlyph(*markFontData, markGlyph), point.y());
 

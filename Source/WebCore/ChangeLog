@@ -1,5 +1,61 @@
 2021-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        The fast text codepath does not handle run initial advances
+        https://bugs.webkit.org/show_bug.cgi?id=227979
+
+        Reviewed by Alan Bujtas.
+
+        This is the next step to delete the complex text codepath from Cocoa ports.
+
+        The initial advance contributes to the layout width of text. Its purpose is to move
+        all the visually successive glyphs to the right. For the leftmost run, WidthIterator
+        saves this initial advance to the GlyphBuffer, because knowing it is necessary to
+        compute the paint location of glyphs (inside GlyphBuffer::flatten()). For all other
+        runs other than the leftmost run, those runs' initial advance is added to the advance
+        width of whichever glyph ends up being just to the left of the run. In LTR, this is
+        the last glyph of the last (logical) run, whereas in RTL this is the first glyph of
+        the next (logical) run.
+
+        Because this is just adding infrastructure, it doesn't add any tests yet. This will be
+        tested when we delete the complex text codepath.
+
+        * platform/graphics/ComplexTextController.h: Because we're going to stop using
+        ComplexTextController, we should move this (presumably helpful) comment somewhere
+        where it will be accessible to the Cocoa ports. This would be GlyphBuffer::flatten().
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::applyTransforms const): Return the initial advance.
+        * platform/graphics/Font.h: Ditto.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthOfTextRange const):
+        (WebCore::FontCascade::widthForSimpleText const): Make sure that the initial advance
+        contributes to layout width.
+        (WebCore::FontCascade::layoutSimpleText const): The initial advance is actually NOT
+        supposed to point directly to the first glyph's paint position. See
+        https://bugs.webkit.org/show_bug.cgi?id=228180.
+        (WebCore::FontCascade::drawEmphasisMarks const):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::flatten):
+        (WebCore::GlyphBuffer::isFlattened const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms): Return the initial advance.
+        (WebCore::expandWithInitialAdvance):
+        (WebCore::WidthIterator::applyInitialAdvance): This implements the logic above, where
+        the initial advance of non-leftmost runs get added to the visually previous glyph's
+        advance. For LTR, we can just add it directly to the previously-recorded glyph advance.
+        However, for RTL, we have to save the initial advance to a variable, which is named
+        m_leftoverInitialAdvance, and apply it when we encounter the next run. This is because
+        WidthIterator encounters run in logical order.
+        (WebCore::WidthIterator::commitCurrentFontRange):
+        (WebCore::WidthIterator::finalize): For RTL, if the last run has an initial advance,
+        we need to save it to the GlyphBuffer's initial advance field. We know if the last run
+        has an initial advance because there will still be data in m_leftoverInitialAdvance
+        left over.
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::Font::applyTransforms const): Return the initial advance.
+
+2021-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Stop honoring any dot-prefixed font names
         https://bugs.webkit.org/show_bug.cgi?id=228177
 

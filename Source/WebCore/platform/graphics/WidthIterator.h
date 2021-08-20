@@ -63,8 +63,13 @@ private:
 
     enum class TransformsType { None, Forced, NotForced };
     TransformsType shouldApplyFontTransforms(const GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex) const;
-    float applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, bool force, CharactersTreatedAsSpace&);
+    struct ApplyFontTransformsResult {
+        float additionalAdvance;
+        GlyphBufferAdvance initialAdvance;
+    };
+    ApplyFontTransformsResult applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, bool force, CharactersTreatedAsSpace&);
     void commitCurrentFontRange(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace&);
+    void applyInitialAdvance(GlyphBuffer&, std::optional<GlyphBufferAdvance> initialAdvance, unsigned lastGlyphCount);
 
     bool hasExtraSpacing() const;
     void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
@@ -82,6 +87,7 @@ private:
     HashSet<const Font*>* m_fallbackFonts { nullptr };
 
     std::optional<unsigned> m_lastCharacterIndex;
+    GlyphBufferAdvance m_leftoverInitialAdvance { makeGlyphBufferAdvance() };
     unsigned m_currentCharacterIndex { 0 };
     float m_leftoverJustificationWidth { 0 };
     float m_runWidthSoFar { 0 };
