@@ -8469,18 +8469,22 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
 
 void Document::addToTopLayer(Element& element)
 {
+    element.isInTopLayerWillChange();
+
     // To add an element to a top layer, remove it from top layer and then append it to top layer.
     m_topLayerElements.appendOrMoveToLast(element);
 
-    element.invalidateStyle();
+    element.isInTopLayerDidChange();
 }
 
 void Document::removeFromTopLayer(Element& element)
 {
+    element.isInTopLayerWillChange();
+
     if (!m_topLayerElements.remove(element))
         return;
 
-    element.invalidateStyle();
+    element.isInTopLayerDidChange();
 }
 
 HTMLDialogElement* Document::activeModalDialog() const

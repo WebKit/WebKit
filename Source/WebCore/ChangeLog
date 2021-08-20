@@ -1,3 +1,30 @@
+2021-08-19  Tim Nguyen  <ntim@apple.com>
+
+        Implement top layer rendering bits
+        https://bugs.webkit.org/show_bug.cgi?id=84796
+
+        Reviewed by Simon Fraser.
+
+        Enabled relevant WPTs. Some WPTs need extra layout work.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addToTopLayer):
+        (WebCore::Document::removeFromTopLayer):
+        * dom/Element.cpp:
+        (WebCore::Element::isInTopLayerWillChange):
+        (WebCore::Element::isInTopLayerDidChange):
+        * dom/Element.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::stackingContext const):
+        (WebCore::RenderLayer::rebuildZOrderLists):
+        (WebCore::RenderLayer::collectLayers):
+        (WebCore::RenderLayer::enclosingAncestorForPosition const):
+        (WebCore::RenderLayer::establishesTopLayer const):
+        (WebCore::RenderLayer::establishesTopLayerWillChange):
+        (WebCore::RenderLayer::establishesTopLayerDidChange):
+        * rendering/RenderLayer.h:
+
 2021-08-19  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Basic support

@@ -3358,6 +3358,24 @@ void Element::willBecomeFullscreenElement()
         child.ancestorWillEnterFullscreen();
 }
 
+void Element::isInTopLayerWillChange()
+{
+    if (renderer()) {
+        if (renderer()->hasLayer())
+            downcast<RenderLayerModelObject>(*renderer()).layer()->establishesTopLayerWillChange();
+    }
+}
+
+void Element::isInTopLayerDidChange()
+{
+    invalidateStyle();
+
+    if (renderer()) {
+        if (renderer()->hasLayer())
+            downcast<RenderLayerModelObject>(*renderer()).layer()->establishesTopLayerDidChange();
+    }
+}
+
 static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoId pseudoElementSpecifier)
 {
     switch (pseudoElementSpecifier) {

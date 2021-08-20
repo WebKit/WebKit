@@ -816,6 +816,10 @@ public:
 
     Element* enclosingElement() const;
 
+    bool establishesTopLayer() const;
+    void establishesTopLayerWillChange();
+    void establishesTopLayerDidChange();
+
     enum ViewportConstrainedNotCompositedReason {
         NoNotCompositedReason,
         NotCompositedForBoundsOutOfView,

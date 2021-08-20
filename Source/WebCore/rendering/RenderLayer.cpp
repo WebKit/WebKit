@@ -555,7 +555,8 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
         || !renderer.style().hasAutoUsedZIndex()
-        || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext());
+        || (renderer.style().willChange() && renderer.style().willChange()->canCreateStackingContext())
+        || layer.establishesTopLayer();
 }
 
 static void expandScrollRectToVisibleTargetRectToIncludeScrollPadding(RenderBox* renderBox, const LayoutRect& viewRect, LayoutRect& targetRect)
@@ -647,6 +648,9 @@ void RenderLayer::setParent(RenderLayer* parent)
 
 RenderLayer* RenderLayer::stackingContext() const
 {
+    if (establishesTopLayer())
+        return renderer().view().layer();
+
     auto* layer = parent();
     while (layer && !layer->isStackingContext())
         layer = layer->parent();
@@ -763,11 +767,32 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
         std::stable_sort(negZOrderList->begin(), negZOrderList->end(), compareZIndex);
         negZOrderList->shrinkToFit();
     }
+
+    if (isRenderViewLayer()) {
+        auto topLayerElements = renderer().document().topLayerElements();
+        for (auto& element : topLayerElements) {
+            RenderElement* renderer = element->renderer();
+            if (!renderer)
+                continue;
+            auto backdropRenderer = renderer->backdropRenderer();
+            if (backdropRenderer && backdropRenderer->hasLayer()) {
+                RenderLayer* layer = backdropRenderer->layer();
+                posZOrderList->append(layer);
+            }
+            if (renderer->hasLayer()) {
+                RenderLayer* layer = downcast<RenderLayerModelObject>(*renderer).layer();
+                posZOrderList->append(layer);
+            }
+        }
+    }
 }
 
 void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)
 {
     updateDescendantDependentFlags();
+
+    if (establishesTopLayer())
+        return;
 
     bool isStacking = isStackingContext();
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
@@ -1776,6 +1801,9 @@ bool RenderLayer::ancestorLayerIsInContainingBlockChain(const RenderLayer& ances
 
 RenderLayer* RenderLayer::enclosingAncestorForPosition(PositionType position) const
 {
+    if (establishesTopLayer())
+        return renderer().view().layer();
+
     RenderLayer* curr = parent();
     while (curr && !isContainerForPositioned(*curr, position))
         curr = curr->parent();
@@ -3940,6 +3968,26 @@ Element* RenderLayer::enclosingElement() const
             return e;
     }
     return nullptr;
+}
+
+bool RenderLayer::establishesTopLayer() const
+{
+    if (!renderer().element())
+        return renderer().style().styleType() == PseudoId::Backdrop;
+
+    return renderer().element()->isInTopLayer();
+}
+
+void RenderLayer::establishesTopLayerWillChange()
+{
+    dirtyStackingContextZOrderLists();
+}
+
+void RenderLayer::establishesTopLayerDidChange()
+{
+    dirtyStackingContextZOrderLists();
+    if (isStackingContext())
+        dirtyZOrderLists();
 }
 
 RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
