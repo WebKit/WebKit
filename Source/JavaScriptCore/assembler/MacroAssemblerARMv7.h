@@ -540,6 +540,17 @@ public:
         m_assembler.sub(dest, left, right);
     }
 
+    void sub32(RegisterID left, TrustedImm32 right, RegisterID dest)
+    {
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(right.m_value);
+        if (armImm.isValid())
+            m_assembler.sub(dest, left, armImm);
+        else {
+            move(right, dataTempRegister);
+            m_assembler.sub(dest, left, dataTempRegister);
+        }
+    }
+
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);

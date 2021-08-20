@@ -1,5 +1,25 @@
 2021-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove unnecessary moves in Yarr's sub32 / add32 related code
+        https://bugs.webkit.org/show_bug.cgi?id=228813
+
+        Reviewed by Mark Lam.
+
+        This patch adds three operand sub32 to X64 masm so that we can use it in all masms.
+        We use add32 and sub32 in YarrJIT to remove unnecessary mov instructions in ARM64.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::sub32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::sub32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::sub32):
+        * assembler/testmasm.cpp:
+        (JSC::testSub32ArgImm):
+        * yarr/YarrJIT.cpp:
+
+2021-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove MacroAssemblerX86
         https://bugs.webkit.org/show_bug.cgi?id=229331
 

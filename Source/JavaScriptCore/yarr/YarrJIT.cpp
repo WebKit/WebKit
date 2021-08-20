@@ -1704,10 +1704,9 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         if (m_decodeSurrogatePairs)
             op.m_jumps.append(jumpIfNoAvailableInput());
 
-        move(index, countRegister);
         Checked<unsigned> scaledMaxCount = term->quantityMaxCount;
         scaledMaxCount *= U_IS_BMP(ch) ? 1 : 2;
-        sub32(Imm32(scaledMaxCount), countRegister);
+        sub32(index, Imm32(scaledMaxCount), countRegister);
 
         Label loop(this);
         readCharacter(m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
@@ -1911,15 +1910,12 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
         if (m_decodeSurrogatePairs)
             op.m_jumps.append(jumpIfNoAvailableInput());
 
-        move(index, countRegister);
-
         Checked<unsigned> scaledMaxCount = term->quantityMaxCount;
-
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
         if (m_decodeSurrogatePairs && term->characterClass->hasOnlyNonBMPCharacters() && !term->invert())
             scaledMaxCount *= 2;
 #endif
-        sub32(Imm32(scaledMaxCount), countRegister);
+        sub32(index, Imm32(scaledMaxCount), countRegister);
 
         Label loop(this);
         JumpList matchDest;
@@ -2485,8 +2481,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         if (!m_pattern.m_body->m_hasFixedSize) {
                             outOfLengthFailure.link(this);
                             if (alternative->m_minimumSize) {
-                                move(index, regT0);
-                                sub32(Imm32(alternative->m_minimumSize), regT0);
+                                sub32(index, Imm32(alternative->m_minimumSize), regT0);
                                 setMatchStart(regT0);
                             } else
                                 setMatchStart(index);
@@ -2500,8 +2495,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         // by BoyerMoore search.
                         if (!m_pattern.m_body->m_hasFixedSize) {
                             if (alternative->m_minimumSize) {
-                                move(index, regT0);
-                                sub32(Imm32(alternative->m_minimumSize), regT0);
+                                sub32(index, Imm32(alternative->m_minimumSize), regT0);
                                 setMatchStart(regT0);
                             } else
                                 setMatchStart(index);
@@ -2525,9 +2519,10 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 // not have yet set the value in the first 
                 ASSERT(index != returnRegister);
                 if (m_pattern.m_body->m_hasFixedSize) {
-                    move(index, returnRegister);
                     if (priorAlternative->m_minimumSize)
-                        sub32(Imm32(priorAlternative->m_minimumSize), returnRegister);
+                        sub32(index, Imm32(priorAlternative->m_minimumSize), returnRegister);
+                    else
+                        move(index, returnRegister);
                     if (m_compileMode == JITCompileMode::IncludeSubpatterns)
                         storePair32(returnRegister, index, output, TrustedImm32(0));
                 } else {
@@ -2718,8 +2713,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     if (term->quantityType == QuantifierType::FixedCount)
                         inputOffset += term->parentheses.disjunction->m_minimumSize;
                     if (inputOffset) {
-                        move(index, indexTemporary);
-                        sub32(Imm32(inputOffset), indexTemporary);
+                        sub32(index, Imm32(inputOffset), indexTemporary);
                         setSubpatternStart(indexTemporary, term->parentheses.subpatternId);
                     } else
                         setSubpatternStart(index, term->parentheses.subpatternId);
@@ -2746,8 +2740,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 if (term->capture() && m_compileMode == JITCompileMode::IncludeSubpatterns) {
                     unsigned inputOffset = m_checkedOffset - term->inputPosition;
                     if (inputOffset) {
-                        move(index, indexTemporary);
-                        sub32(Imm32(inputOffset), indexTemporary);
+                        sub32(index, Imm32(inputOffset), indexTemporary);
                         setSubpatternEnd(indexTemporary, term->parentheses.subpatternId);
                     } else
                         setSubpatternEnd(index, term->parentheses.subpatternId);
@@ -2855,8 +2848,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     if (term->quantityType == QuantifierType::FixedCount)
                         inputOffset += term->parentheses.disjunction->m_minimumSize;
                     if (inputOffset) {
-                        move(index, indexTemporary);
-                        sub32(Imm32(inputOffset), indexTemporary);
+                        sub32(index, Imm32(inputOffset), indexTemporary);
                         setSubpatternStart(indexTemporary, term->parentheses.subpatternId);
                     } else
                         setSubpatternStart(index, term->parentheses.subpatternId);
@@ -2895,8 +2887,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                     
                     unsigned inputOffset = m_checkedOffset - term->inputPosition;
                     if (inputOffset) {
-                        move(index, indexTemporary);
-                        sub32(Imm32(inputOffset), indexTemporary);
+                        sub32(index, Imm32(inputOffset), indexTemporary);
                         setSubpatternEnd(indexTemporary, term->parentheses.subpatternId);
                     } else
                         setSubpatternEnd(index, term->parentheses.subpatternId);
@@ -3070,11 +3061,10 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                             if (alternative->m_minimumSize == 1)
                                 setMatchStart(index);
                             else {
-                                move(index, regT0);
                                 if (alternative->m_minimumSize)
-                                    sub32(Imm32(alternative->m_minimumSize - 1), regT0);
+                                    sub32(index, Imm32(alternative->m_minimumSize - 1), regT0);
                                 else
-                                    add32(TrustedImm32(1), regT0);
+                                    add32(TrustedImm32(1), index, regT0);
                                 setMatchStart(regT0);
                             }
                         }
@@ -3188,8 +3178,7 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                         if (!m_pattern.m_body->m_minimumSize)
                             setMatchStart(index);
                         else {
-                            move(index, regT0);
-                            sub32(Imm32(m_pattern.m_body->m_minimumSize), regT0);
+                            sub32(index, Imm32(m_pattern.m_body->m_minimumSize), regT0);
                             setMatchStart(regT0);
                         }
                     }

@@ -1025,23 +1025,6 @@ void testSub32Imm()
     }
 }
 
-void testSub32ArgImm()
-{
-    for (auto immediate : int32Operands()) {
-        auto sub = compile([=] (CCallHelpers& jit) {
-            emitFunctionPrologue(jit);
-
-            jit.sub32(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate), GPRInfo::returnValueGPR);
-
-            emitFunctionEpilogue(jit);
-            jit.ret();
-        });
-
-        for (auto value : int32Operands())
-            CHECK_EQ(invoke<uint32_t>(sub, value), static_cast<uint32_t>(value - immediate));
-    }
-}
-
 void testSub64Imm32()
 {
     for (auto immediate : int64Operands()) {
@@ -3963,6 +3946,23 @@ void testLoadStorePair32()
     CHECK_EQ(buffer[9], initialValue + 9);
 }
 
+void testSub32ArgImm()
+{
+    for (auto immediate : int32Operands()) {
+        auto sub = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            jit.sub32(GPRInfo::argumentGPR0, CCallHelpers::TrustedImm32(immediate), GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        for (auto value : int32Operands())
+            CHECK_EQ(invoke<uint32_t>(sub, value), static_cast<uint32_t>(value - immediate));
+    }
+}
+
 #if CPU(ARM64)
 void testLoadStorePair64Int64()
 {
@@ -5645,6 +5645,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     RUN(testMul32WithImmediates());
     RUN(testLoadStorePair32());
+    RUN(testSub32ArgImm());
 
 #if CPU(X86_64)
     RUN(testBranchTestBit32RegReg());
@@ -5673,7 +5674,6 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     RUN(testSub32Args());
     RUN(testSub32Imm());
-    RUN(testSub32ArgImm());
     RUN(testSub64Imm32());
     RUN(testSub64ArgImm32());
     RUN(testSub64Imm64());

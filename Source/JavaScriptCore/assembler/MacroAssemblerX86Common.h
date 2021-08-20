@@ -837,6 +837,12 @@ public:
         sub32(right, dest);
     }
 
+    void sub32(RegisterID left, TrustedImm32 right, RegisterID dest)
+    {
+        move(left, dest);
+        sub32(right, dest);
+    }
+
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
         if (imm.m_value == 1)

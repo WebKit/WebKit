@@ -1757,6 +1757,16 @@ public:
         } else
             sub32(imm.asTrustedImm32(), dest);
     }
+
+    void sub32(RegisterID src, Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = additionBlindedConstant(imm);
+            sub32(src, key.value1, dest);
+            sub32(key.value2, dest);
+        } else
+            sub32(src, imm.asTrustedImm32(), dest);
+    }
     
     void subPtr(Imm32 imm, RegisterID dest)
     {
