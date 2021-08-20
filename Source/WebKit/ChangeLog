@@ -1,5 +1,20 @@
 2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Fix the apple internal build after r281277
+        https://bugs.webkit.org/show_bug.cgi?id=229100
+        <rdar://problem/82145920>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update code guarded by `USE(APPLE_INTERNAL_SDK)`, such that it works with a `Vector<SandboxExtension::Handle>`.
+        Preserve the existing behavior of appending `handles` and `ids` in reverse order, but leave a FIXME questioning
+        the need for this.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+
+2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Remove support for the meaningful tap heuristic
         https://bugs.webkit.org/show_bug.cgi?id=229298
         rdar://82130066
