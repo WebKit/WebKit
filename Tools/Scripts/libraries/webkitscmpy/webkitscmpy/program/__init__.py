@@ -23,6 +23,7 @@
 import argparse
 import logging
 import os
+import sys
 
 from .blame import Blame
 from .canonicalize import Canonicalize
@@ -71,6 +72,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     for program in programs:
         subparser = subparsers.add_parser(program.name, help=program.help)
         subparser.set_defaults(main=program.main)
+        subparser.set_defaults(program=program.name)
         arguments.LoggingGroup(
             subparser,
             loggers=loggers,
@@ -78,7 +80,14 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
         )
         program.parser(subparser, loggers=loggers)
 
-    parsed = parser.parse_args(args=args)
+    args = args or sys.argv[1:]
+    parsed, unknown = parser.parse_known_args(args=args)
+    if unknown:
+        program_index = args.index(parsed.program)
+        if getattr(parsed, 'args', None):
+            parsed.args = [arg for arg in args[program_index:] if arg in parsed.args or arg in unknown]
+        if any([option not in getattr(parsed, 'args', []) for option in unknown]):
+            parsed = parser.parse_args(args=args)
 
     if parsed.repository.startswith(('https://', 'http://')):
         repository = remote.Scm.from_url(parsed.repository, contributors=contributors)
