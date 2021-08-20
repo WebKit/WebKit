@@ -767,10 +767,6 @@ Bug(WPE) fast/history/page-cache-notification-suspendable.html [ Skip ]
 
 Bug(WPE) fast/dom/HTMLAnchorElement [ Skip ]
 
-Bug(WPE) fast/regex/unicodeCaseInsensitive.html [ Skip ]
-
-Bug(WPE) js/reserved-words.html [ Skip ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////

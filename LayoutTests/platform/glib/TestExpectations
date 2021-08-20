@@ -1779,6 +1779,10 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 
 # Common failures between GTK and WPE.
 
+Bug(WPE) fast/regex/unicodeCaseInsensitive.html [ Skip ]
+
+Bug(WPE) js/reserved-words.html [ Skip ]
+
 # TODO: Needs bug ticket.
 
 # ENABLE(DRAGGABLE_REGION) is disabled
