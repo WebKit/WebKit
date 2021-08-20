@@ -1,3 +1,43 @@
+2021-08-20  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281178. rdar://problem/82083485
+
+    Add an option for canonicalizePrePostIncrements
+    https://bugs.webkit.org/show_bug.cgi?id=229211
+    <rdar://problem/82050126>
+    
+    Reviewed by Mark Lam.
+    
+    The current phase has bugs. Let's disable it for now until the bugs
+    are fixed. See discussion about the bugs I spotted in:
+    https://bugs.webkit.org/show_bug.cgi?id=228538
+    
+    * b3/B3Generate.cpp:
+    (JSC::B3::generateToAir):
+    * b3/testb3_3.cpp:
+    (addShrTests):
+    * runtime/OptionsList.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281178 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-17  Saam Barati  <sbarati@apple.com>
+
+            Add an option for canonicalizePrePostIncrements
+            https://bugs.webkit.org/show_bug.cgi?id=229211
+            <rdar://problem/82050126>
+
+            Reviewed by Mark Lam.
+
+            The current phase has bugs. Let's disable it for now until the bugs
+            are fixed. See discussion about the bugs I spotted in:
+            https://bugs.webkit.org/show_bug.cgi?id=228538
+
+            * b3/B3Generate.cpp:
+            (JSC::B3::generateToAir):
+            * b3/testb3_3.cpp:
+            (addShrTests):
+            * runtime/OptionsList.h:
+
 2021-08-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r280996. rdar://problem/81901248
