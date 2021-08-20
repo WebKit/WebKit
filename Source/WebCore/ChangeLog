@@ -1,5 +1,17 @@
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Use the logical width when passing in the constraint for the inline content
+        https://bugs.webkit.org/show_bug.cgi?id=228942
+
+        Reviewed by Simon Fraser.
+
+        Let's pass in the logical width (e.g. block box's height in case of vertical writing direction) to the inline line layout.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for justified non-breaking space
         https://bugs.webkit.org/show_bug.cgi?id=228727
 
