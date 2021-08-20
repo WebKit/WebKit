@@ -1,3 +1,12 @@
+2021-08-20  Eric Hutchison  <ehutchison@apple.com>
+
+        Update baseline for http/tests/websocket/tests/hybi/close-code-and-reason.html.
+        <rdar://82186597>.
+
+        Unreviewed rebaseline.
+
+        * http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt:
+
 2021-08-20  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Unreviewed. Skip failing tests in 32 bits archs
