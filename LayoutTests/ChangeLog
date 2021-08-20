@@ -1,3 +1,21 @@
+2021-08-20  Dean Jackson  <dino@apple.com>
+
+        [WebXR] A session with only one view should cover the full screen
+        https://bugs.webkit.org/show_bug.cgi?id=229110
+        <rdar://problem/81940621>
+
+        Reviewed by Tim Horton.
+
+        Add a test that provides an immersive session with only one view.
+        This required copying a few more things over from the WPT directory.
+
+        * http/wpt/webxr/resources/test-only-api.js: Added.
+        (loadScript):
+        * http/wpt/webxr/resources/webxr_test_constants_single_view.js: Added.
+        * http/wpt/webxr/resources/webxr_util.js: Added.
+        * http/wpt/webxr/xrViewport_singleView_valid.https-expected.txt: Added.
+        * http/wpt/webxr/xrViewport_singleView_valid.https.html: Added.
+
 2021-08-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of expected failures

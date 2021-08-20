@@ -324,18 +324,13 @@ void WebXRWebGLLayer::computeViewports()
     auto width = framebufferWidth();
     auto height = framebufferHeight();
 
-    if (m_session->mode() == XRSessionMode::ImmersiveVr) {
-        // Update left viewport
-        auto scale = m_leftViewportData.currentScale;
-        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, roundDown(width * 0.5 * scale), roundDown(height * scale)));
-
-        // Update right viewport
-        scale = m_rightViewportData.currentScale;
-        m_rightViewportData.viewport->updateViewport(IntRect(width * 0.5, 0, roundDown(width * 0.5 * scale), roundDown(height * scale)));
-    } else {
-        // We reuse m_leftViewport for XREye::None.
+    if (m_session->mode() == XRSessionMode::ImmersiveVr && m_session->views().size() > 1) {
+        auto leftScale = m_leftViewportData.currentScale;
+        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, roundDown(width * 0.5 * leftScale), roundDown(height * leftScale)));
+        auto rightScale = m_rightViewportData.currentScale;
+        m_rightViewportData.viewport->updateViewport(IntRect(width * 0.5, 0, roundDown(width * 0.5 * rightScale), roundDown(height * rightScale)));
+    } else
         m_leftViewportData.viewport->updateViewport(IntRect(0, 0, width, height));
-    }
 
     m_viewportsDirty = false;
 }
