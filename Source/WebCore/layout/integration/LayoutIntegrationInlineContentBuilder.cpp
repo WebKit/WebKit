@@ -179,11 +179,10 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
     auto& rootStyle = m_layoutState.root().style();
     auto shouldCheckHorizontalOverflowForContentReplacement = rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() != TextOverflow::Clip;
 
-    LineLevelVisualAdjustmentsForRunsList lineLevelVisualAdjustmentsForRuns(lines.size());
+    auto lineLevelVisualAdjustmentsForRuns = LineLevelVisualAdjustmentsForRunsList { lines.size() };
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto lineNeedsLegacyIntegralVerticalPosition = [&] {
             // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
-            auto& rootInlineBox = inlineFormattingState.lineBoxes()[lineIndex].rootInlineBox();
             auto& nonRootInlineLevelBoxList = inlineFormattingState.lineBoxes()[lineIndex].nonRootInlineLevelBoxes();
             if (nonRootInlineLevelBoxList.isEmpty()) {
                 // This is text content only with root inline box.
@@ -195,15 +194,14 @@ InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder
                 if (contentPreventsIntegralSnapping)
                     return false;
 
-                auto& rootInlineBoxStyle = rootInlineBox.style();
                 auto& inlineLevelBoxStyle = inlineLevelBox.style();
-                auto stylePreventsIntegralSnapping = rootInlineBoxStyle.lineHeight() != inlineLevelBoxStyle.lineHeight() || inlineLevelBoxStyle.verticalAlign() != VerticalAlign::Baseline;
+                auto stylePreventsIntegralSnapping = rootStyle.lineHeight() != inlineLevelBoxStyle.lineHeight() || inlineLevelBoxStyle.verticalAlign() != VerticalAlign::Baseline;
                 if (stylePreventsIntegralSnapping)
                     return false;
 
-                auto& rootInlineBoxFontMetrics = rootInlineBoxStyle.fontCascade().fontMetrics();
+                auto& rootFontMetrics = rootStyle.fontCascade().fontMetrics();
                 auto& inlineLevelBoxFontMetrics = inlineLevelBoxStyle.fontCascade().fontMetrics();
-                auto fontPreventsIntegralSnapping = !rootInlineBoxFontMetrics.hasIdenticalAscentDescentAndLineGap(inlineLevelBoxFontMetrics);
+                auto fontPreventsIntegralSnapping = !rootFontMetrics.hasIdenticalAscentDescentAndLineGap(inlineLevelBoxFontMetrics);
                 if (fontPreventsIntegralSnapping)
                     return false;
             }

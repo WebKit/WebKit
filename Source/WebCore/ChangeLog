@@ -1,3 +1,15 @@
+2021-08-19  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] The root inlinebox's style is always the IFC's root style
+        https://bugs.webkit.org/show_bug.cgi?id=228062
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for keeping the inline box structure private to the layout code.
+
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns const):
+
 2021-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Stop treating the system font as a non-variable font
