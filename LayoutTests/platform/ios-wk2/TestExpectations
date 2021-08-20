@@ -1979,6 +1979,8 @@ webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-mod
 
 webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
 
+webkit.org/b/229338 animations/unprefixed-events.html [ Pass Failure ]
+
 webkit.org/b/227931 imported/w3c/web-platform-tests/css/conditional/idlharness.html [ Pass Failure ]
 
 webkit.org/b/228082 fast/canvas/canvas-overloads-setShadow.html [ Pass Timeout ]
