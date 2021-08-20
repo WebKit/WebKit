@@ -1,3 +1,21 @@
+2021-08-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [build.webkit.org] Port old unit test with the expected build steps to the new buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=229311
+
+        Reviewed by Aakash Jain.
+
+        Port the test that checked every worker and the expected steps to the new buildbot version.
+        Also delete the file steps_unittest_old.py because the gross of the other tests contained in
+        this old file are already ported in the current steps_unittests.py
+
+        * CISupport/build-webkit-org/factories_unittest.py: Added.
+        (TestExpectedBuildSteps):
+        (TestExpectedBuildSteps.setUp):
+        (TestExpectedBuildSteps.test_all_expected_results):
+        (TestExpectedBuildSteps.test_unnecessary_expected_results):
+        * CISupport/build-webkit-org/steps_unittest_old.py: Removed.
+
 2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove support for the meaningful tap heuristic
