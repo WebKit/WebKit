@@ -37,65 +37,65 @@
 
 namespace WebCore {
 
-    class ModePredicate;
-    class WorkerOrWorkletGlobalScope;
-    class WorkerSharedTimer;
+class ModePredicate;
+class WorkerOrWorkletGlobalScope;
+class WorkerSharedTimer;
 
-    class WorkerRunLoop {
+class WorkerRunLoop {
+public:
+    WorkerRunLoop();
+    ~WorkerRunLoop();
+    
+    // Blocking call. Waits for tasks and timers, invokes the callbacks.
+    void run(WorkerOrWorkletGlobalScope*);
+
+    enum WaitMode { WaitForMessage, DontWaitForMessage };
+
+    // Waits for a single task and returns.
+    MessageQueueWaitResult runInMode(WorkerOrWorkletGlobalScope*, const String& mode, WaitMode = WaitForMessage);
+    MessageQueueWaitResult runInDebuggerMode(WorkerOrWorkletGlobalScope&);
+
+    void terminate();
+    bool terminated() const { return m_messageQueue.killed(); }
+
+    void postTask(ScriptExecutionContext::Task&&);
+    void postTaskAndTerminate(ScriptExecutionContext::Task&&);
+    WEBCORE_EXPORT void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode);
+    void postDebuggerTask(ScriptExecutionContext::Task&&);
+
+    unsigned long createUniqueId() { return ++m_uniqueId; }
+
+    WEBCORE_EXPORT static String defaultMode();
+    class Task {
+        WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
     public:
-        WorkerRunLoop();
-        ~WorkerRunLoop();
-        
-        // Blocking call. Waits for tasks and timers, invokes the callbacks.
-        void run(WorkerOrWorkletGlobalScope*);
-
-        enum WaitMode { WaitForMessage, DontWaitForMessage };
-
-        // Waits for a single task and returns.
-        MessageQueueWaitResult runInMode(WorkerOrWorkletGlobalScope*, const String& mode, WaitMode = WaitForMessage);
-        MessageQueueWaitResult runInDebuggerMode(WorkerOrWorkletGlobalScope&);
-
-        void terminate();
-        bool terminated() const { return m_messageQueue.killed(); }
-
-        void postTask(ScriptExecutionContext::Task&&);
-        void postTaskAndTerminate(ScriptExecutionContext::Task&&);
-        WEBCORE_EXPORT void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode);
-        void postDebuggerTask(ScriptExecutionContext::Task&&);
-
-        unsigned long createUniqueId() { return ++m_uniqueId; }
-
-        WEBCORE_EXPORT static String defaultMode();
-        class Task {
-            WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
-        public:
-            Task(ScriptExecutionContext::Task&&, const String& mode);
-            const String& mode() const { return m_mode; }
-
-        private:
-            void performTask(WorkerOrWorkletGlobalScope*);
-
-            ScriptExecutionContext::Task m_task;
-            String m_mode;
-
-            friend class WorkerRunLoop;
-        };
+        Task(ScriptExecutionContext::Task&&, const String& mode);
+        const String& mode() const { return m_mode; }
 
     private:
-        friend class RunLoopSetup;
-        MessageQueueWaitResult runInMode(WorkerOrWorkletGlobalScope*, const ModePredicate&, WaitMode);
+        void performTask(WorkerOrWorkletGlobalScope*);
 
-        // Runs any clean up tasks that are currently in the queue and returns.
-        // This should only be called when the context is closed or loop has been terminated.
-        void runCleanupTasks(WorkerOrWorkletGlobalScope*);
+        ScriptExecutionContext::Task m_task;
+        String m_mode;
 
-        bool isBeingDebugged() const { return m_debugCount >= 1; }
-
-        MessageQueue<Task> m_messageQueue;
-        std::unique_ptr<WorkerSharedTimer> m_sharedTimer;
-        int m_nestedCount { 0 };
-        int m_debugCount { 0 };
-        unsigned long m_uniqueId { 0 };
+        friend class WorkerRunLoop;
     };
+
+private:
+    friend class RunLoopSetup;
+    MessageQueueWaitResult runInMode(WorkerOrWorkletGlobalScope*, const ModePredicate&, WaitMode);
+
+    // Runs any clean up tasks that are currently in the queue and returns.
+    // This should only be called when the context is closed or loop has been terminated.
+    void runCleanupTasks(WorkerOrWorkletGlobalScope*);
+
+    bool isBeingDebugged() const { return m_debugCount >= 1; }
+
+    MessageQueue<Task> m_messageQueue;
+    std::unique_ptr<WorkerSharedTimer> m_sharedTimer;
+    int m_nestedCount { 0 };
+    int m_debugCount { 0 };
+    unsigned long m_uniqueId { 0 };
+};
 
 } // namespace WebCore
