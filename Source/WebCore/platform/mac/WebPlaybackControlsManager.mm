@@ -61,6 +61,16 @@ using WebCore::PlaybackSessionInterfaceMac;
     [super dealloc];
 }
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingCanSeek
+{
+    return [NSSet setWithObject:@"seekableTimeRanges"];
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingContentDuration
+{
+    return [NSSet setWithObject:@"seekableTimeRanges"];
+}
+
 - (NSTimeInterval)contentDuration
 {
     return [_seekableTimeRanges count] ? _contentDuration : std::numeric_limits<double>::infinity();
@@ -89,7 +99,6 @@ using WebCore::PlaybackSessionInterfaceMac;
 - (void)setSeekableTimeRanges:(NSArray *)timeRanges
 {
     _seekableTimeRanges = timeRanges;
-
     _canSeek = timeRanges.count;
 }
 
@@ -123,6 +132,11 @@ using WebCore::PlaybackSessionInterfaceMac;
 {
     UNUSED_PARAM(numberOfSamples);
     completionHandler(@[ ]);
+}
+
++ (NSSet<NSString *> *)keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing
+{
+    return [NSSet setWithObjects:@"canSeek", "contentDuration", nil];
 }
 
 - (BOOL)canBeginTouchBarScrubbing

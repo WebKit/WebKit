@@ -1,3 +1,28 @@
+2021-08-19  Jean-Yves Avenard  <jya@apple.com>
+
+        Touchbar not showing time scrubbing
+        https://bugs.webkit.org/show_bug.cgi?id=229269
+        rdar://81349236
+
+        Reviewed by Jer Noble.
+
+        AVKit uses canSeek to determine when to show the time scrubber
+        in the touch bar. This was a synthesized method determined on weither the video
+        is seekable and has a seekable range set.
+        Should the value of either boolean change which would impact the final value of
+        [AVTouchBarPlaybackControlsControlling canSeek] , no observers would be called.
+        Add the appropriate obj-c methods to explicitly set a dependency between properties
+        willChange/didChange.
+        Been unable to reproduce the problem programatically, the issue is highly timing
+        dependent.
+        An API test will be added with https://bugs.webkit.org/show_bug.cgi?id=229286.
+
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (+[WebPlaybackControlsManager keyPathsForValuesAffectingCanSeek]):
+        (+[WebPlaybackControlsManager keyPathsForValuesAffectingContentDuration]):
+        (-[WebPlaybackControlsManager setSeekableTimeRanges:]):
+        (+[WebPlaybackControlsManager keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing]):
+
 2021-08-19  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove redundant inlineBoxEndSet in InlineFormattingContext::computeGeometryForLineContent
