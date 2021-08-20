@@ -61,7 +61,7 @@ public:
 
     enum BaseTypeFlag : uint8_t {
         BoxFlag                    = 1 << 0,
-        LegacyInlineTextBoxFlag          = 1 << 1,
+        InlineTextBoxFlag          = 1 << 1,
         LineBreakBoxFlag           = 1 << 2,
         ReplacedBoxFlag            = 1 << 3,
         InitialContainingBlockFlag = 1 << 4,
@@ -152,7 +152,7 @@ public:
     Box* nextSibling() { return m_nextSibling; }
 
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
-    bool isInlineTextBox() const { return baseTypeFlags().contains(LegacyInlineTextBoxFlag); }
+    bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
     bool isLineBreakBox() const { return baseTypeFlags().contains(LineBreakBoxFlag); }
     bool isReplacedBox() const { return baseTypeFlags().contains(ReplacedBoxFlag); }
 
