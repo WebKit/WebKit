@@ -899,6 +899,8 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassNthOfType:
     case CSSSelector::PseudoClassNthLastOfType:
     case CSSSelector::PseudoClassDrag:
+    case CSSSelector::PseudoClassHas:
+    case CSSSelector::PseudoClassRelativeScope:
 #if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassDir:
     case CSSSelector::PseudoClassRole:

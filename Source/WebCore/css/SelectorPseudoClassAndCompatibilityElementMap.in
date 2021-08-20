@@ -33,6 +33,7 @@ first-of-type
 focus
 focus-visible
 focus-within
+has
 #if ENABLE(ATTACHMENT_ELEMENT)
 has-attachment
 #endif

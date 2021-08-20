@@ -473,6 +473,18 @@ HTTP3Enabled:
     WebKit:
       default: false
 
+HasPseudoClassEnabled:
+  type: bool
+  humanReadableName: ":has() pseudo-class"
+  humanReadableDescription: "Enable :has() pseudo-class"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 HighlightAPIEnabled:
   type: bool
   humanReadableName: "Highlight API"

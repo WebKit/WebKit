@@ -1,3 +1,15 @@
+2021-08-19  Antti Koivisto  <antti@apple.com>
+
+        [:has() pseudo-class] Basic support
+        https://bugs.webkit.org/show_bug.cgi?id=228894
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/selectors/has-basic-expected.txt:
+        * web-platform-tests/css/selectors/has-relative-argument-expected.txt:
+        * web-platform-tests/css/selectors/parsing/parse-has-expected.txt:
+        * web-platform-tests/dom/nodes/Element-closest-expected.txt:
+
 2021-08-19  Chris Dumez  <cdumez@apple.com>
 
         Implement Crypto.randomUUID()

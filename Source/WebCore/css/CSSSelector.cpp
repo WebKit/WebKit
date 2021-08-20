@@ -508,6 +508,11 @@ String CSSSelector::selectorText(const String& rightSide) const
                 builder.append(":future");
                 break;
 #endif
+            case CSSSelector::PseudoClassHas:
+                builder.append(":has(");
+                cs->selectorList()->buildSelectorsText(builder);
+                builder.append(')');
+                break;
 #if ENABLE(ATTACHMENT_ELEMENT)
             case CSSSelector::PseudoClassHasAttachment:
                 builder.append(":has-attachment");
@@ -642,6 +647,9 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassScope:
                 builder.append(":scope");
                 break;
+            case CSSSelector::PseudoClassRelativeScope:
+                // Just remove the space from the start to generate a relative selector string like in ":has(> foo)".
+                return rightSide.substring(1);
             case CSSSelector::PseudoClassSingleButton:
                 builder.append(":single-button");
                 break;

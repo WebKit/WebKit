@@ -1,25 +1,25 @@
 
-FAIL :has(#a) matches expected elements The string did not match the expected pattern.
-FAIL :has(.ancestor) matches expected elements The string did not match the expected pattern.
-FAIL :has(.target) matches expected elements The string did not match the expected pattern.
-FAIL :has(.descendant) matches expected elements The string did not match the expected pattern.
-FAIL .parent:has(.target) matches expected elements The string did not match the expected pattern.
-FAIL :has(.sibling ~ .target) matches expected elements The string did not match the expected pattern.
-FAIL .parent:has(.sibling ~ .target) matches expected elements The string did not match the expected pattern.
-FAIL :has(:is(.target ~ .sibling .descendant)) matches expected elements The string did not match the expected pattern.
-FAIL .parent:has(:is(.target ~ .sibling .descendant)) matches expected elements The string did not match the expected pattern.
-FAIL .sibling:has(.descendant) ~ .target matches expected elements The string did not match the expected pattern.
-FAIL :has(.sibling:has(.descendant) ~ .target) matches expected elements The string did not match the expected pattern.
-FAIL :has(.sibling:has(.descendant) ~ .target) ~ .parent > .descendant matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope .target) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope > .parent) matches expected elements The string did not match the expected pattern.
-FAIL :has(> .target) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope > .target) matches expected elements The string did not match the expected pattern.
-FAIL :has(+ #h) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope + #h) matches expected elements The string did not match the expected pattern.
-FAIL .parent:has(~ #h) matches expected elements The string did not match the expected pattern.
-FAIL .parent:has(:scope ~ #h) matches expected elements The string did not match the expected pattern.
-FAIL .sibling:has(.descendant) matches expected element The string did not match the expected pattern.
-FAIL closest(.ancestor:has(.descendant)) returns expected element The string did not match the expected pattern.
-FAIL :has(.target ~ .sibling .descendant) matches expectedly The string did not match the expected pattern.
+PASS :has(#a) matches expected elements
+PASS :has(.ancestor) matches expected elements
+PASS :has(.target) matches expected elements
+PASS :has(.descendant) matches expected elements
+PASS .parent:has(.target) matches expected elements
+PASS :has(.sibling ~ .target) matches expected elements
+PASS .parent:has(.sibling ~ .target) matches expected elements
+PASS :has(:is(.target ~ .sibling .descendant)) matches expected elements
+PASS .parent:has(:is(.target ~ .sibling .descendant)) matches expected elements
+PASS .sibling:has(.descendant) ~ .target matches expected elements
+PASS :has(.sibling:has(.descendant) ~ .target) matches expected elements
+PASS :has(.sibling:has(.descendant) ~ .target) ~ .parent > .descendant matches expected elements
+PASS :has(:scope .target) matches expected elements
+PASS :has(:scope > .parent) matches expected elements
+PASS :has(> .target) matches expected elements
+PASS :has(:scope > .target) matches expected elements
+PASS :has(+ #h) matches expected elements
+PASS :has(:scope + #h) matches expected elements
+PASS .parent:has(~ #h) matches expected elements
+PASS .parent:has(:scope ~ #h) matches expected elements
+PASS .sibling:has(.descendant) matches expected element
+PASS closest(.ancestor:has(.descendant)) returns expected element
+PASS :has(.target ~ .sibling .descendant) matches expectedly
 

@@ -138,10 +138,12 @@ namespace WebCore {
             PseudoClassNot,
             PseudoClassRoot,
             PseudoClassScope,
+            PseudoClassRelativeScope, // Like :scope but for internal use with relative selectors like :has(> foo).
             PseudoClassWindowInactive,
             PseudoClassCornerPresent,
             PseudoClassDecrement,
             PseudoClassIncrement,
+            PseudoClassHas,
             PseudoClassHorizontal,
             PseudoClassVertical,
             PseudoClassStart,

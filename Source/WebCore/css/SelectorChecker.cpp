@@ -45,6 +45,7 @@
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
 #include "Text.h"
+#include "TypedElementDescendantIterator.h"
 
 namespace WebCore {
 
@@ -828,6 +829,32 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     matchType = localMatchType;
                 return hasMatchedAnything;
             }
+        case CSSSelector::PseudoClassHas: {
+            // FIXME: This is the worst possible implementation in terms of performance.
+            auto checkRelative = [&](auto& elementToCheck) {
+                for (auto* subselector = selector.selectorList()->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+                    SelectorChecker selectorChecker(element.document());
+                    CheckingContext selectorCheckingContext(SelectorChecker::Mode::ResolvingStyle);
+                    selectorCheckingContext.scope = &element;
+                    if (selectorChecker.match(*subselector, elementToCheck, selectorCheckingContext))
+                        return true;
+                }
+                return false;
+            };
+            for (auto& descendant : descendantsOfType<Element>(element)) {
+                if (checkRelative(descendant))
+                    return true;
+            }
+            for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+                if (checkRelative(*sibling))
+                    return true;
+                for (auto& descendant : descendantsOfType<Element>(*sibling)) {
+                    if (checkRelative(descendant))
+                        return true;
+                }
+            }
+            return false;
+        }
         case CSSSelector::PseudoClassPlaceholderShown:
             if (is<HTMLTextFormControlElement>(element)) {
                 addStyleRelation(checkingContext, element, Style::Relation::Unique);
@@ -1038,7 +1065,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesPastCuePseudoClass(element);
 #endif
 
-        case CSSSelector::PseudoClassScope: {
+        case CSSSelector::PseudoClassScope:
+        case CSSSelector::PseudoClassRelativeScope: {
             const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
             if (&element == contextualReferenceNode)
                 return true;

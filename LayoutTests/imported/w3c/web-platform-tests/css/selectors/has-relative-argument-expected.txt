@@ -1,129 +1,129 @@
 
-FAIL .x:has(:scope .a) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope .a .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .a) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .a .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .a) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .a .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .a ~ .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .a) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .a .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .a + .b > .c) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .a + .b .c) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .a + .b > .c) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .a + .b .c) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .a) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .a > .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .a .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .a + .b) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .a + .b > .c) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .a + .b .c) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(.d .e) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(.d .e) .f matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope .d .e) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope .d .e) .f matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .d) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope > .d) .f matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .d ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .d ~ .e) ~ .f matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .d ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .d ~ .e) ~ .f matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .d .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope .d .e) .f matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .d) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope > .d) .f matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .d ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ .d ~ .e) ~ .f matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .d ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + .d ~ .e) ~ .f matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .d .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x .d .e) .f matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .d) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x > .d) .f matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .d ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ .d ~ .e) ~ .f matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .d ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + .d ~ .e) ~ .f matches expected elements The string did not match the expected pattern.
-FAIL .y:has(:scope > .g .h) matches expected elements The string did not match the expected pattern.
-FAIL .y:has(:scope .g .h) matches expected elements The string did not match the expected pattern.
-FAIL .y:has(:scope > .g .h) .i matches expected elements The string did not match the expected pattern.
-FAIL .y:has(:scope .g .h) .i matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .y:has(:scope > .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .y:has(:scope .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .y:has(:scope > .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope + .y:has(:scope .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .y:has(:scope > .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(:scope ~ .y:has(:scope .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(.y:scope > .g .h) matches expected elements The string did not match the expected pattern.
-FAIL :has(.y:scope .g .h) matches expected elements The string did not match the expected pattern.
-FAIL :has(.y:scope > .g .h) .i matches expected elements The string did not match the expected pattern.
-FAIL :has(.y:scope .g .h) .i matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + :has(.y:scope > .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + :has(.y:scope .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + :has(.y:scope > .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope + :has(.y:scope .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ :has(.y:scope > .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(.x:scope ~ :has(.y:scope .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.y > .g .h) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.y .g .h) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.y > .g .h) .i matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.y .g .h) .i matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + :has(:scope.y > .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + :has(:scope.y .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + :has(:scope.y > .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x + :has(:scope.y .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ :has(:scope.y > .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope.x ~ :has(:scope.y .g .h) .i) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(.d :scope .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.d .x:scope .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.d :scope.x .e) matches expected elements The string did not match the expected pattern.
-FAIL .x:has(.d ~ :scope ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.d ~ .x:scope ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(.d ~ :scope.x ~ .e) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope .d :scope) matches expected elements The string did not match the expected pattern.
-FAIL :has(:scope ~ .d ~ :scope) matches expected elements The string did not match the expected pattern.
+PASS .x:has(:scope .a) matches expected elements
+PASS .x:has(:scope .a > .b) matches expected elements
+PASS .x:has(:scope .a .b) matches expected elements
+PASS .x:has(:scope .a + .b) matches expected elements
+PASS .x:has(:scope .a ~ .b) matches expected elements
+PASS :has(.x:scope .a) matches expected elements
+PASS :has(.x:scope .a > .b) matches expected elements
+PASS :has(.x:scope .a .b) matches expected elements
+PASS :has(.x:scope .a + .b) matches expected elements
+PASS :has(.x:scope .a ~ .b) matches expected elements
+PASS :has(:scope.x .a) matches expected elements
+PASS :has(:scope.x .a > .b) matches expected elements
+PASS :has(:scope.x .a .b) matches expected elements
+PASS :has(:scope.x .a + .b) matches expected elements
+PASS :has(:scope.x .a ~ .b) matches expected elements
+PASS .x:has(:scope > .a) matches expected elements
+PASS .x:has(:scope > .a > .b) matches expected elements
+PASS .x:has(:scope > .a .b) matches expected elements
+PASS .x:has(:scope > .a + .b) matches expected elements
+PASS .x:has(:scope > .a ~ .b) matches expected elements
+PASS :has(.x:scope > .a) matches expected elements
+PASS :has(.x:scope > .a > .b) matches expected elements
+PASS :has(.x:scope > .a .b) matches expected elements
+PASS :has(.x:scope > .a + .b) matches expected elements
+PASS :has(.x:scope > .a ~ .b) matches expected elements
+PASS :has(:scope.x > .a) matches expected elements
+PASS :has(:scope.x > .a > .b) matches expected elements
+PASS :has(:scope.x > .a .b) matches expected elements
+PASS :has(:scope.x > .a + .b) matches expected elements
+PASS :has(:scope.x > .a ~ .b) matches expected elements
+PASS .x:has(:scope + .a) matches expected elements
+PASS .x:has(:scope + .a > .b) matches expected elements
+PASS .x:has(:scope + .a .b) matches expected elements
+PASS .x:has(:scope + .a + .b) matches expected elements
+PASS .x:has(:scope + .a ~ .b) matches expected elements
+PASS :has(.x:scope + .a) matches expected elements
+PASS :has(.x:scope + .a > .b) matches expected elements
+PASS :has(.x:scope + .a .b) matches expected elements
+PASS :has(.x:scope + .a + .b) matches expected elements
+PASS :has(.x:scope + .a ~ .b) matches expected elements
+PASS :has(:scope.x + .a) matches expected elements
+PASS :has(:scope.x + .a > .b) matches expected elements
+PASS :has(:scope.x + .a .b) matches expected elements
+PASS :has(:scope.x + .a + .b) matches expected elements
+PASS :has(:scope.x + .a ~ .b) matches expected elements
+PASS .x:has(:scope ~ .a) matches expected elements
+PASS .x:has(:scope ~ .a > .b) matches expected elements
+PASS .x:has(:scope ~ .a .b) matches expected elements
+PASS .x:has(:scope ~ .a + .b) matches expected elements
+PASS .x:has(:scope ~ .a + .b > .c) matches expected elements
+PASS .x:has(:scope ~ .a + .b .c) matches expected elements
+PASS :has(.x:scope ~ .a) matches expected elements
+PASS :has(.x:scope ~ .a > .b) matches expected elements
+PASS :has(.x:scope ~ .a .b) matches expected elements
+PASS :has(.x:scope ~ .a + .b) matches expected elements
+PASS :has(.x:scope ~ .a + .b > .c) matches expected elements
+PASS :has(.x:scope ~ .a + .b .c) matches expected elements
+PASS :has(:scope.x ~ .a) matches expected elements
+PASS :has(:scope.x ~ .a > .b) matches expected elements
+PASS :has(:scope.x ~ .a .b) matches expected elements
+PASS :has(:scope.x ~ .a + .b) matches expected elements
+PASS :has(:scope.x ~ .a + .b > .c) matches expected elements
+PASS :has(:scope.x ~ .a + .b .c) matches expected elements
+PASS .x:has(.d .e) matches expected elements
+PASS .x:has(.d .e) .f matches expected elements
+PASS .x:has(:scope .d .e) matches expected elements
+PASS .x:has(:scope .d .e) .f matches expected elements
+PASS .x:has(:scope > .d) matches expected elements
+PASS .x:has(:scope > .d) .f matches expected elements
+PASS .x:has(:scope ~ .d ~ .e) matches expected elements
+PASS .x:has(:scope ~ .d ~ .e) ~ .f matches expected elements
+PASS .x:has(:scope + .d ~ .e) matches expected elements
+PASS .x:has(:scope + .d ~ .e) ~ .f matches expected elements
+PASS :has(.x:scope .d .e) matches expected elements
+PASS :has(.x:scope .d .e) .f matches expected elements
+PASS :has(.x:scope > .d) matches expected elements
+PASS :has(.x:scope > .d) .f matches expected elements
+PASS :has(.x:scope ~ .d ~ .e) matches expected elements
+PASS :has(.x:scope ~ .d ~ .e) ~ .f matches expected elements
+PASS :has(.x:scope + .d ~ .e) matches expected elements
+PASS :has(.x:scope + .d ~ .e) ~ .f matches expected elements
+PASS :has(:scope.x .d .e) matches expected elements
+PASS :has(:scope.x .d .e) .f matches expected elements
+PASS :has(:scope.x > .d) matches expected elements
+PASS :has(:scope.x > .d) .f matches expected elements
+PASS :has(:scope.x ~ .d ~ .e) matches expected elements
+PASS :has(:scope.x ~ .d ~ .e) ~ .f matches expected elements
+PASS :has(:scope.x + .d ~ .e) matches expected elements
+PASS :has(:scope.x + .d ~ .e) ~ .f matches expected elements
+PASS .y:has(:scope > .g .h) matches expected elements
+PASS .y:has(:scope .g .h) matches expected elements
+PASS .y:has(:scope > .g .h) .i matches expected elements
+PASS .y:has(:scope .g .h) .i matches expected elements
+PASS .x:has(:scope + .y:has(:scope > .g .h) .i) matches expected elements
+PASS .x:has(:scope + .y:has(:scope .g .h) .i) matches expected elements
+PASS .x:has(:scope + .y:has(:scope > .g .h) .i) ~ .j matches expected elements
+PASS .x:has(:scope + .y:has(:scope .g .h) .i) ~ .j matches expected elements
+PASS .x:has(:scope ~ .y:has(:scope > .g .h) .i) matches expected elements
+PASS .x:has(:scope ~ .y:has(:scope .g .h) .i) matches expected elements
+PASS :has(.y:scope > .g .h) matches expected elements
+PASS :has(.y:scope .g .h) matches expected elements
+PASS :has(.y:scope > .g .h) .i matches expected elements
+PASS :has(.y:scope .g .h) .i matches expected elements
+PASS :has(.x:scope + :has(.y:scope > .g .h) .i) matches expected elements
+PASS :has(.x:scope + :has(.y:scope .g .h) .i) matches expected elements
+PASS :has(.x:scope + :has(.y:scope > .g .h) .i) ~ .j matches expected elements
+PASS :has(.x:scope + :has(.y:scope .g .h) .i) ~ .j matches expected elements
+PASS :has(.x:scope ~ :has(.y:scope > .g .h) .i) matches expected elements
+PASS :has(.x:scope ~ :has(.y:scope .g .h) .i) matches expected elements
+PASS :has(:scope.y > .g .h) matches expected elements
+PASS :has(:scope.y .g .h) matches expected elements
+PASS :has(:scope.y > .g .h) .i matches expected elements
+PASS :has(:scope.y .g .h) .i matches expected elements
+PASS :has(:scope.x + :has(:scope.y > .g .h) .i) matches expected elements
+PASS :has(:scope.x + :has(:scope.y .g .h) .i) matches expected elements
+PASS :has(:scope.x + :has(:scope.y > .g .h) .i) ~ .j matches expected elements
+PASS :has(:scope.x + :has(:scope.y .g .h) .i) ~ .j matches expected elements
+PASS :has(:scope.x ~ :has(:scope.y > .g .h) .i) matches expected elements
+PASS :has(:scope.x ~ :has(:scope.y .g .h) .i) matches expected elements
+PASS .x:has(.d :scope .e) matches expected elements
+PASS :has(.d .x:scope .e) matches expected elements
+PASS :has(.d :scope.x .e) matches expected elements
+PASS .x:has(.d ~ :scope ~ .e) matches expected elements
+PASS :has(.d ~ .x:scope ~ .e) matches expected elements
+PASS :has(.d ~ :scope.x ~ .e) matches expected elements
+PASS :has(:scope .d :scope) matches expected elements
+PASS :has(:scope ~ .d ~ :scope) matches expected elements
 

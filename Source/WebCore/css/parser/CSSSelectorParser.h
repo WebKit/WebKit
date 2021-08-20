@@ -52,11 +52,15 @@ public:
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
 
 private:
-    CSSSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
+    template<typename ConsumeSelector> CSSSelectorList consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
+
+    CSSSelectorList consumeForgivingComplexSelectorList(CSSParserTokenRange&);
+    CSSSelectorList consumeForgivingRelativeSelectorList(CSSParserTokenRange&);
     CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
 
     std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeCompoundSelector(CSSParserTokenRange&);
+    std::unique_ptr<CSSParserSelector> consumeRelativeSelector(CSSParserTokenRange&);
 
     // This doesn't include element names, since they're handled specially.
     std::unique_ptr<CSSParserSelector> consumeSimpleSelector(CSSParserTokenRange&);
