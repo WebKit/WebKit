@@ -1,3 +1,31 @@
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBox provides redundant geometry information
+        https://bugs.webkit.org/show_bug.cgi?id=228050
+
+        Reviewed by Sam Weinig.
+
+        LineBoxGeometry class provides the line's geometry. This is also in preparation for making LineBox a non-persistent type of structure.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::build):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        (WebCore::Layout::InlineFormattingGeometry::verticallyAdjustedLineForLineContent const):
+        (WebCore::Layout::InlineFormattingGeometry::lineBoxForLineContent const): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+        * layout/formattingContexts/inline/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::m_rootInlineBox): Deleted.
+        * layout/formattingContexts/inline/InlineLineBox.h:
+        (WebCore::Layout::LineBox::logicalRect const): Deleted.
+        (WebCore::Layout::LineBox::alignmentBaseline const): Deleted.
+        (WebCore::Layout::LineBox::setLogicalHeight): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayNonRootInlineBoxes const):
+
 2021-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to <trac.webkit.org/r281288>

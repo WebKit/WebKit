@@ -60,9 +60,8 @@ struct SimplifiedVerticalAlignment;
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LineBox(const Box& rootLayoutBox, const InlineLayoutPoint& logicalTopLeft, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount);
+    LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount);
 
-    const InlineRect& logicalRect() const { return m_logicalRect; }
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasContent() const { return m_hasContent; }
     bool hasInlineBox() const { return m_boxTypes.contains(InlineLevelBox::Type::InlineBox); }
@@ -81,12 +80,8 @@ public:
     using InlineLevelBoxList = Vector<InlineLevelBox>;
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
-    InlineLayoutUnit alignmentBaseline() const { return m_rootInlineBox.logicalTop() + m_rootInlineBox.baseline(); }
-
 private:
     friend class LineBoxBuilder;
-
-    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
 
     void addInlineLevelBox(InlineLevelBox&&);
     InlineLevelBoxList& nonRootInlineLevelBoxes() { return m_nonRootInlineLevelBoxList; }
@@ -99,7 +94,6 @@ private:
     void setHasContent(bool hasContent) { m_hasContent = hasContent; }
 
 private:
-    InlineRect m_logicalRect;
     bool m_hasContent { false };
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 

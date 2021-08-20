@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Layout {
 
-class InlineLineGeometry {
+class LineGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct EnclosingTopAndBottom {
@@ -40,7 +40,7 @@ public:
         InlineLayoutUnit top { 0 };
         InlineLayoutUnit bottom { 0 };
     };
-    InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth);
+    LineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth);
 
     const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
 
@@ -65,7 +65,7 @@ private:
     InlineLayoutUnit m_contentLogicalWidth { 0 };
 };
 
-inline InlineLineGeometry::InlineLineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth)
+inline LineGeometry::LineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth)
     : m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)
     , m_aligmentBaseline(aligmentBaseline)

@@ -467,11 +467,15 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 {
     auto& formattingState = this->formattingState();
     auto& formattingGeometry = this->formattingGeometry();
-
-    formattingState.addLineBox(formattingGeometry.lineBoxForLineContent(lineContent));
-    const auto& lineBox = formattingState.lineBoxes().last();
     auto lineIndex = formattingState.lines().size();
-    auto& lineBoxLogicalRect = lineBox.logicalRect();
+
+    auto lineBoxAndGeometry = formattingGeometry.lineBoxForLineContent(lineContent);
+    formattingState.addLineBox(WTFMove(lineBoxAndGeometry.lineBox));
+    formattingState.addLine(lineBoxAndGeometry.lineGeometry);
+
+    const auto& lineBox = formattingState.lineBoxes().last();
+    auto lineBoxLogicalRect = lineBoxAndGeometry.lineGeometry.lineBoxLogicalRect();
+
     if (!lineBox.hasContent()) {
         // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
         ASSERT(!lineBox.rootInlineBox().hasContent() && !lineBoxLogicalRect.height());
@@ -495,14 +499,10 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             }
         };
         updateInlineBoxesGeometryIfApplicable();
-        formattingState.addLine({ lineBoxLogicalRect, { { }, { } }, { }, { }, { } });
         return lineBoxLogicalRect;
     }
 
-    auto rootInlineBoxLogicalRect = lineBox.logicalRectForRootInlineBox();
-    auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.bottom() };
     HashSet<const Box*> inlineBoxStartSet;
-
     auto constructLineRunsAndUpdateBoxGeometry = [&] {
         // Create the inline runs on the current line. This is mostly text and atomic inline runs.
         for (auto& lineRun : lineContent.runs) {
@@ -539,11 +539,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                     borderBoxLogicalTopLeft += formattingGeometry.inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
                 // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
                 boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
-
-                auto borderBoxTop = borderBoxLogicalTopLeft.y();
-                auto borderBoxBottom = borderBoxTop + boxGeometry.borderBoxHeight();
-                enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBoxTop);
-                enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBoxBottom);
                 continue;
             }
             if (lineRun.isInlineBoxStart()) {
@@ -551,19 +546,9 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 auto inlineBoxLogicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
                 formattingState.addLineRun({ lineIndex, layoutBox, inlineBoxLogicalRect, lineRun.expansion(), { } });
                 inlineBoxStartSet.add(&layoutBox);
-                enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, inlineBoxLogicalRect.top());
                 continue;
             }
-            if (lineRun.isInlineBoxEnd()) {
-                if (!inlineBoxStartSet.contains(&layoutBox)) {
-                    // An inline box can span multiple lines. Use the [inline box end] signal to include it in the enclosing geometry
-                    // only when it starts at a previous line.
-                    auto inlineBoxLogicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingState.boxGeometry(layoutBox));
-                    enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, inlineBoxLogicalRect.bottom());
-                }
-                continue;
-            }
-            ASSERT(lineRun.isWordBreakOpportunity());
+            ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
         }
     };
     constructLineRunsAndUpdateBoxGeometry();
@@ -603,12 +588,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
         }
     };
     updateBoxGeometryForInlineBoxes();
-
-    auto constructLineGeometry = [&] {
-        formattingState.addLine({ lineBoxLogicalRect, enclosingTopAndBottom, lineBox.alignmentBaseline(), rootInlineBoxLogicalRect.left(), lineContent.contentLogicalWidth });
-    };
-    constructLineGeometry();
-
+    
     return lineBoxLogicalRect;
 }
 

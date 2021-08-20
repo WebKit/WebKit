@@ -38,7 +38,7 @@ namespace WebCore {
 namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
-using InlineLines = Vector<InlineLineGeometry>;
+using InlineLines = Vector<LineGeometry>;
 using InlineLineBoxes = Vector<LineBox>;
 using InlineLineRuns = Vector<LineRun>;
 
@@ -55,7 +55,7 @@ public:
 
     const InlineLines& lines() const { return m_lines; }
     InlineLines& lines() { return m_lines; }
-    void addLine(const InlineLineGeometry& line) { m_lines.append(line); }
+    void addLine(const LineGeometry& line) { m_lines.append(line); }
 
     const InlineLineBoxes& lineBoxes() const { return m_lineBoxes; }
     void addLineBox(LineBox&& lineBox) { m_lineBoxes.append(WTFMove(lineBox)); }

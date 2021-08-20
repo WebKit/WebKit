@@ -52,7 +52,7 @@ struct LineLevelVisualAdjustmentsForRuns {
     bool needsTrailingContentReplacement { false };
 };
 
-inline Layout::InlineLineGeometry::EnclosingTopAndBottom operator+(const Layout::InlineLineGeometry::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
+inline Layout::LineGeometry::EnclosingTopAndBottom operator+(const Layout::LineGeometry::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
 {
     return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
 }
@@ -383,7 +383,7 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
         if (!lineBox.hasInlineBox())
             continue;
 
-        auto& lineBoxLogicalRect = lineBox.logicalRect();
+        auto lineBoxLogicalRect = inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             if (!inlineLevelBox.isInlineBox())
                 continue;
