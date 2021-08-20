@@ -4,20 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (8,8) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (0,0) size 185x46
+        RenderText {#text} at (0,0) size 191x46
           text run at (0,0) width 185: "Lorem ipsum dolor"
+          text run at (184,0) width 7: " "
           text run at (0,23) width 79: "sit amet"
       RenderBlock (floating) {DIV} at (224,8) size 200x46 [bgcolor=#FFFFE0]
-        RenderText {#text} at (7,0) size 186x46
+        RenderText {#text} at (7,0) size 192x46
           text run at (7,0) width 186: "Lorem ipsum dolor"
+          text run at (192,0) width 7: " "
           text run at (60,23) width 80: "sit amet"
       RenderBlock (floating) {DIV} at (440,8) size 200x46 [bgcolor=#FFFFE0]
         RenderText {#text} at (15,0) size 185x46
           text run at (15,0) width 185: "Lorem ipsum dolor"
+          text run at (200,0) width 0: " "
           text run at (121,23) width 79: "sit amet"
       RenderBlock (floating) {DIV} at (8,70) size 200x46 [bgcolor=#FFFFE0]
         RenderText {#text} at (0,0) size 200x46
           text run at (0,0) width 200: "Lorem ipsum dolor"
+          text run at (200,0) width 0: " "
           text run at (0,23) width 79: "sit amet"
       RenderBlock (floating) {DIV} at (224,70) size 200x46 [bgcolor=#FFFFE0]
         RenderText {#text} at (0,0) size 185x46

@@ -1,3 +1,16 @@
+2021-08-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r281307.
+        https://bugs.webkit.org/show_bug.cgi?id=229336
+
+        broke layout tests
+
+        Reverted changeset:
+
+        "[IFC][Integration] Enable non-auto line-break values"
+        https://bugs.webkit.org/show_bug.cgi?id=228842
+        https://commits.webkit.org/r281307
+
 2021-08-20  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable full underline support
