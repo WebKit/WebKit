@@ -45,6 +45,8 @@ class Box;
 namespace LayoutIntegration {
 
 class LineLayout;
+class RunIterator;
+class TextRunIterator;
 
 struct InlineContent : public RefCounted<InlineContent> {
     static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }
@@ -66,6 +68,9 @@ struct InlineContent : public RefCounted<InlineContent> {
     const LineLayout& lineLayout() const;
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& containingBlock() const;
+
+    RunIterator iteratorForRun(const Run&) const;
+    TextRunIterator iteratorForTextRun(const Run&) const;
 
 private:
     InlineContent(const LineLayout&);

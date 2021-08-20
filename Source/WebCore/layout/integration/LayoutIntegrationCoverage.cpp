@@ -123,9 +123,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case AvoidanceReason::FlowHasUnsupportedUnderlineDecoration:
-        stream << "text-underline-position: under";
-        break;
     case AvoidanceReason::FlowHasJustifiedNonLatinText:
         stream << "text-align: justify with non-latin text";
         break;
@@ -543,8 +540,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (!style.textDecorationsInEffect().isEmpty() && (style.textUnderlinePosition() != TextUnderlinePosition::Auto || !style.textUnderlineOffset().isAuto() || !style.textDecorationThickness().isAuto()))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedUnderlineDecoration, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
     if (!(style.lineBoxContain().contains(LineBoxContain::Block)))

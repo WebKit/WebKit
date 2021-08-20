@@ -48,7 +48,7 @@ enum class AvoidanceReason : uint64_t {
     FlowParentIsTextAreaWithWrapping             = 1LLU  << 8,
     FlowHasNonSupportedChild                     = 1LLU  << 9,
     FlowHasUnsupportedFloat                      = 1LLU  << 10,
-    FlowHasUnsupportedUnderlineDecoration        = 1LLU  << 11,
+    // Unused                                    = 1LLU  << 11,
     FlowHasJustifiedNonLatinText                 = 1LLU  << 12,
     FlowHasOverflowNotVisible                    = 1LLU  << 13,
     // Unused                                    = 1LLU  << 14,

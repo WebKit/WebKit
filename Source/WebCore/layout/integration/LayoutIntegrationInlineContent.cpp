@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutIntegrationLineLayout.h"
+#include "LayoutIntegrationRunIterator.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextPainter.h"
 
@@ -69,6 +70,17 @@ const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layou
 const RenderBlockFlow& InlineContent::containingBlock() const
 {
     return m_lineLayout->flow();
+}
+
+RunIterator InlineContent::iteratorForRun(const Run& run) const
+{
+    return { RunIteratorModernPath { *this, static_cast<size_t>(&run - runs.begin()) } };
+}
+
+TextRunIterator InlineContent::iteratorForTextRun(const Run& run) const
+{
+    ASSERT(run.textContent());
+    return { RunIteratorModernPath { *this, static_cast<size_t>(&run - runs.begin()) } };
 }
 
 }

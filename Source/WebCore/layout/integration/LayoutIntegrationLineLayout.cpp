@@ -509,9 +509,10 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         if (!style.textDecorationsInEffect().isEmpty()) {
             auto& textRenderer = downcast<RenderText>(m_boxTree.rendererForLayoutBox(run.layoutBox()));
-            auto painter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), textRenderer, false, fontCascade };
-            painter.setWidth(rect.width());
-            painter.paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
+            auto decorationPainter = TextDecorationPainter { paintInfo.context(), style.textDecorationsInEffect(), textRenderer, false, fontCascade };
+            decorationPainter.setTextRunIterator(inlineContent.iteratorForTextRun(run));
+            decorationPainter.setWidth(rect.width());
+            decorationPainter.paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
         }
     }
 }

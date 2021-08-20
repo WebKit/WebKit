@@ -1,3 +1,23 @@
+2021-08-20  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable full underline support
+        https://bugs.webkit.org/show_bug.cgi?id=229322
+
+        Reviewed by Alan Bujtas.
+
+        We can now paint all underlines.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForStyle):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::iteratorForRun const):
+        (WebCore::LayoutIntegration::InlineContent::iteratorForTextRun const):
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable custom hyphen strings
