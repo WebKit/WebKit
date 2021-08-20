@@ -513,7 +513,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/MacroAssemblerCodeRef.h
     assembler/MacroAssemblerHelpers.h
     assembler/MacroAssemblerMIPS.h
-    assembler/MacroAssemblerX86.h
     assembler/MacroAssemblerX86Common.h
     assembler/MacroAssemblerX86_64.h
     assembler/Printer.h

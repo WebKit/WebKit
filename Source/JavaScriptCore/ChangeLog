@@ -1,3 +1,18 @@
+2021-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove MacroAssemblerX86
+        https://bugs.webkit.org/show_bug.cgi?id=229331
+
+        Reviewed by Mark Lam.
+
+        This patch removes MacroAssemblerX86, which allows simplifying some 32bit MacroAssembler code
+        in a subsequent patch.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerX86.h: Removed.
+
 2021-08-20  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Fix DFG compilation of StringCharAt in 32 bits jsc debug build

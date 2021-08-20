@@ -50,11 +50,6 @@ namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 #define TARGET_MACROASSEMBLER MacroAssemblerMIPS
 #include "MacroAssemblerMIPS.h"
 
-#elif CPU(X86)
-#define TARGET_ASSEMBLER X86Assembler
-#define TARGET_MACROASSEMBLER MacroAssemblerX86
-#include "MacroAssemblerX86.h"
-
 #elif CPU(X86_64)
 #define TARGET_ASSEMBLER X86Assembler
 #define TARGET_MACROASSEMBLER MacroAssemblerX86_64
