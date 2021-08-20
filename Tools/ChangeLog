@@ -1,3 +1,25 @@
+2021-08-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [ews-build.webkit.org] Add unit test with the expected build steps for each queue
+        https://bugs.webkit.org/show_bug.cgi?id=229319
+
+        Reviewed by Aakash Jain.
+
+        Add a unit test listing all the expected build steps for each queue
+        like the one added in r281286 for build.webkit.org
+        Also remove the previous unit tests to not duplicate test functionality.
+        And replace doble-quotes with single-ones on the test for build.webkit.org
+
+        * CISupport/build-webkit-org/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        (TestExpectedBuildSteps.test_all_expected_steps):
+        (TestExpectedBuildSteps.test_unnecessary_expected_steps):
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        (TestExpectedBuildSteps.setUp):
+        (TestExpectedBuildSteps.test_all_expected_steps):
+        (TestExpectedBuildSteps.test_unnecessary_expected_steps):
+
 2021-08-20  Youenn Fablet  <youenn@apple.com>
 
         Remove all WTR output before Content-Type:text/plain for WebRTC tests in case of known excessive logging
