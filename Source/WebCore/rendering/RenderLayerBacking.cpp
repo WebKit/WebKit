@@ -2429,6 +2429,10 @@ ScrollingNodeID RenderLayerBacking::scrollingNodeIDForChildren() const
 float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
 {
     float finalOpacity = rendererOpacity;
+
+    // Top layer elements should not be affected by parent elements opacity
+    if (m_owningLayer.establishesTopLayer())
+        return finalOpacity;
     
     for (auto* curr = m_owningLayer.parent(); curr; curr = curr->parent()) {
         // We only care about parents that are stacking contexts.
