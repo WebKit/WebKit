@@ -502,7 +502,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto rootInlineBoxLogicalRect = lineBox.logicalRectForRootInlineBox();
     auto enclosingTopAndBottom = InlineLineGeometry::EnclosingTopAndBottom { rootInlineBoxLogicalRect.top(), rootInlineBoxLogicalRect.bottom() };
     HashSet<const Box*> inlineBoxStartSet;
-    HashSet<const Box*> inlineBoxEndSet;
 
     auto constructLineRunsAndUpdateBoxGeometry = [&] {
         // Create the inline runs on the current line. This is mostly text and atomic inline runs.
@@ -556,7 +555,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             if (lineRun.isInlineBoxEnd()) {
-                inlineBoxEndSet.add(&layoutBox);
                 if (!inlineBoxStartSet.contains(&layoutBox)) {
                     // An inline box can span multiple lines. Use the [inline box end] signal to include it in the enclosing geometry
                     // only when it starts at a previous line.
