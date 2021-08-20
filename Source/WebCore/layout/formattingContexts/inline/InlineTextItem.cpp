@@ -42,12 +42,12 @@ struct WhitespaceContent {
     size_t length { 0 };
     bool isWordSeparator { true };
 };
-static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline, bool preserveTab)
+static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(const StringView& textContent, size_t startPosition, bool preserveNewline, bool preserveTab, bool treatNonBreakingSpaceAsRegularSpace)
 {
     auto hasWordSeparatorCharacter = false;
     auto isWhitespaceCharacter = [&](auto character) {
         // white space processing in CSS affects only the document white space characters: spaces (U+0020), tabs (U+0009), and segment breaks.
-        auto isTreatedAsSpaceCharacter = character == space || (character == newlineCharacter && !preserveNewline) || (character == tabCharacter && !preserveTab);
+        auto isTreatedAsSpaceCharacter = character == space || (character == newlineCharacter && !preserveNewline) || (character == tabCharacter && !preserveTab) || (character == noBreakSpace && treatNonBreakingSpaceAsRegularSpace);
         hasWordSeparatorCharacter = hasWordSeparatorCharacter || isTreatedAsSpaceCharacter;
         return isTreatedAsSpaceCharacter || character == tabCharacter;
     };
@@ -81,6 +81,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto& font = style.fontCascade();
     auto whitespaceContentIsTreatedAsSingleSpace = !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
+    auto shouldTreatNonBreakingSpaceAsRegularSpace = style.nbspMode() == NBSPMode::Space;
     auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     unsigned currentPosition = 0;
 
@@ -102,7 +103,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             continue;
         }
 
-        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, !whitespaceContentIsTreatedAsSingleSpace)) {
+        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, !whitespaceContentIsTreatedAsSingleSpace, shouldTreatNonBreakingSpaceAsRegularSpace)) {
             ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);

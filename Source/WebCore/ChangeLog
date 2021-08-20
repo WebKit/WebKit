@@ -1,3 +1,25 @@
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for -webkit-nbsp-mode: space
+        https://bugs.webkit.org/show_bug.cgi?id=228805
+
+        Reviewed by Antti Koivisto.
+
+        Treat non-breaking space as regular space.
+        TextUtil::findNextBreakablePosition already covers the "find the soft wrapping opportunity" part.
+
+        e.g.
+            <div style="-webkit-nbsp-mode: space">1&nbsp2</div>
+          produces 3 InlineTextItem objects as follows
+            [1][whitespace][2]
+          as opposed to just 1 [1non-breakable-space2]
+
+        * layout/formattingContexts/inline/InlineTextItem.cpp:
+        (WebCore::Layout::moveToNextNonWhitespacePosition):
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForStyle):
+
 2021-08-20  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r280732) [GStreamer] fast/mediastream/getDisplayMedia-max-constraints1.html and other are failing

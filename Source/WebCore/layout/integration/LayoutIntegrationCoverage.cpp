@@ -132,9 +132,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasOverflowNotVisible:
         stream << "overflow: hidden | scroll | auto";
         break;
-    case AvoidanceReason::FlowHasWebKitNBSPMode:
-        stream << "-webkit-nbsp-mode: space";
-        break;
     case AvoidanceReason::FlowIsNotLTR:
         stream << "dir is not LTR";
         break;
@@ -581,8 +578,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasBorderFitLines, reasons, includeReasons);
     if (style.lineBreak() != LineBreak::Auto)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonAutoLineBreak, reasons, includeReasons);
-    if (style.nbspMode() != NBSPMode::Normal)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasWebKitNBSPMode, reasons, includeReasons);
     // Special handling of text-security:disc is not yet implemented in the simple line layout code path.
     // See RenderBlock::updateSecurityDiscCharacters.
     if (style.textSecurity() != TextSecurity::None)

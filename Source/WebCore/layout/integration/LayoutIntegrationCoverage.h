@@ -51,7 +51,7 @@ enum class AvoidanceReason : uint64_t {
     FlowHasUnsupportedUnderlineDecoration        = 1LLU  << 11,
     FlowHasJustifiedNonLatinText                 = 1LLU  << 12,
     FlowHasOverflowNotVisible                    = 1LLU  << 13,
-    FlowHasWebKitNBSPMode                        = 1LLU  << 14,
+    // Unused                                    = 1LLU  << 14,
     FlowIsNotLTR                                 = 1LLU  << 15,
     FlowHasLineBoxContainProperty                = 1LLU  << 16,
     FlowIsNotTopToBottom                         = 1LLU  << 17,
