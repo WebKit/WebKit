@@ -1,3 +1,16 @@
+2021-03-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r274992): Nullptr crash in FontCache::retrieveOrAddCachedFonts
+        https://bugs.webkit.org/show_bug.cgi?id=223858
+        <rdar://75883697>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fonts/font-cache-crash-expected.txt: Added.
+        * fonts/font-cache-crash.html: Added.
+
 2021-03-22  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Nullptr crash in  WebCore::RenderObject::RenderObjectBitfields::isLineBreak() where a NULL check is missing.

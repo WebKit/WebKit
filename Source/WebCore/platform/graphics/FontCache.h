@@ -37,6 +37,7 @@
 #include <array>
 #include <limits.h>
 #include <wtf/Forward.h>
+#include <wtf/HashTraits.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -183,6 +184,8 @@ struct FontCascadeCacheKey {
     unsigned fontSelectorVersion;
 };
 
+bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&);
+
 struct FontCascadeCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -194,8 +197,19 @@ public:
     Ref<FontCascadeFonts> fonts;
 };
 
-// FIXME: Should make hash traits for FontCascadeCacheKey instead of using a hash as the key (so we hash a hash).
-typedef HashMap<unsigned, std::unique_ptr<FontCascadeCacheEntry>, AlreadyHashed> FontCascadeCache;
+struct FontCascadeCacheKeyHash {
+    static unsigned hash(const WebCore::FontCascadeCacheKey&);
+    static bool equal(const WebCore::FontCascadeCacheKey& a, const WebCore::FontCascadeCacheKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct FontCascadeCacheKeyHashTraits : WTF::GenericHashTraits<WebCore::FontCascadeCacheKey> {
+    static WebCore::FontCascadeCacheKey emptyValue() { return { }; }
+    static void constructDeletedValue(WebCore::FontCascadeCacheKey& slot) { slot.fontSelectorId = std::numeric_limits<unsigned>::max(); }
+    static bool isDeletedValue(const WebCore::FontCascadeCacheKey& slot) { return slot.fontSelectorId == std::numeric_limits<unsigned>::max(); }
+};
+
+using FontCascadeCache = HashMap<FontCascadeCacheKey, std::unique_ptr<FontCascadeCacheEntry>, FontCascadeCacheKeyHash, FontCascadeCacheKeyHashTraits>;
 
 class FontCache {
     friend class WTF::NeverDestroyed<FontCache>;

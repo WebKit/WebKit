@@ -403,7 +403,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     platformPurgeInactiveFontData();
 }
 
-static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
+bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
 {
     if (a.fontDescriptionKey != b.fontDescriptionKey)
         return false;
@@ -417,6 +417,18 @@ static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b
             return false;
     }
     return true;
+}
+
+unsigned FontCascadeCacheKeyHash::hash(const FontCascadeCacheKey& key)
+{
+    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
+    Hasher hasher;
+    add(hasher, key.fontDescriptionKey.computeHash());
+    add(hasher, key.fontSelectorId);
+    add(hasher, key.fontSelectorVersion);
+    for (auto& family : key.families)
+        add(hasher, family.isNull() ? 0 : WebCore::FontCascadeDescription::familyNameHash(family));
+    return hasher.hash();
 }
 
 void FontCache::invalidateFontCascadeCache()
@@ -443,20 +455,6 @@ static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription&
     return key;
 }
 
-static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
-{
-    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
-    IntegerHasher hasher;
-    hasher.add(key.fontDescriptionKey.computeHash());
-    hasher.add(key.fontSelectorId);
-    hasher.add(key.fontSelectorVersion);
-    for (unsigned i = 0; i < key.families.size(); ++i) {
-        auto& family = key.families[i];
-        hasher.add(family.isNull() ? 0 : FontCascadeDescription::familyNameHash(family));
-    }
-    return hasher.hash();
-}
-
 void FontCache::pruneUnreferencedEntriesFromFontCascadeCache()
 {
     m_fontCascadeCache.removeIf([](auto& entry) {
@@ -473,10 +471,8 @@ void FontCache::pruneSystemFallbackFonts()
 Ref<FontCascadeFonts> FontCache::retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
 {
     auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
-
-    unsigned hash = computeFontCascadeCacheHash(key);
-    auto addResult = m_fontCascadeCache.add(hash, nullptr);
-    if (!addResult.isNewEntry && keysMatch(addResult.iterator->value->key, key))
+    auto addResult = m_fontCascadeCache.add(key, nullptr);
+    if (!addResult.isNewEntry)
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
