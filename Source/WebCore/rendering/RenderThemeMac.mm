@@ -1174,7 +1174,7 @@ bool RenderThemeMac::paintMeter(const RenderObject& renderObject, const PaintInf
     NSLevelIndicatorCell* cell = levelIndicatorFor(downcast<RenderMeter>(renderObject));
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
-    [cell drawWithFrame:rect inView:documentViewFor(renderObject)];
+    paintCellAndSetFocusedElementNeedsRepaintIfNecessary(cell, renderObject, paintInfo, rect);
     [cell setControlView:nil];
     return false;
 }

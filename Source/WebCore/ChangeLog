@@ -1,3 +1,16 @@
+2021-08-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Crash when painting <meter> with large scale
+        https://bugs.webkit.org/show_bug.cgi?id=229273
+        rdar://81219669
+
+        Reviewed by Wenson Hsieh.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMeter):
+
+        Draw the cell into an image buffer to avoid an assertion beneath WebKit.
+
 2021-08-20  Patrick Angle  <pangle@apple.com>
 
         Release assert in ScriptController::canExecuteScripts via WebCore::WebSocket::didReceiveMessage
