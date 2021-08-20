@@ -1,3 +1,15 @@
+2021-08-19  Chris Dumez  <cdumez@apple.com>
+
+        Implement Crypto.randomUUID()
+        https://bugs.webkit.org/show_bug.cgi?id=229240
+
+        Reviewed by Geoff Garen.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/WebCryptoAPI/randomUUID.https.any-expected.txt:
+        * web-platform-tests/WebCryptoAPI/randomUUID.https.any.worker-expected.txt:
+
 2021-08-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for overflow-wrap: anywhere
