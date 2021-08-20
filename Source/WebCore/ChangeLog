@@ -1,3 +1,22 @@
+2021-08-20  Patrick Angle  <pangle@apple.com>
+
+        Release assert in ScriptController::canExecuteScripts via WebCore::WebSocket::didReceiveMessage
+        https://bugs.webkit.org/show_bug.cgi?id=229301
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html
+
+        `WebCore::WebSocket::didReceiveMessage` and other functions that fire JS events may be called while the
+        `WebSocketChannel` is being resumed, but it is not yet safe to evaluate JavaScript during resuming. This was
+        already accounted for with some events like errors and closing, but it holds true for all events. We should
+        delay firing these events as well.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::didReceiveMessage):
+        (WebCore::WebSocket::didReceiveBinaryData):
+
 2021-08-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281307.
