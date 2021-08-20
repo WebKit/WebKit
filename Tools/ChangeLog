@@ -1,3 +1,28 @@
+2021-08-20  Jon Lee  <jonlee@apple.com>
+
+        Teach run-webkit-tests to print a summary of test status
+        https://bugs.webkit.org/show_bug.cgi?id=200556
+
+        Reviewed by Simon Fraser.
+
+        Add a new option to print a summary listing test expectation health.
+        It uses the same expected results as --print-expectations.
+
+        To run it: run-webkit-tests --print-summary
+
+        You can pass the same arguments as normal run-webkit-tests and it will
+        return stats based on the tests collected.
+
+        It also outputs a .csv file with the data.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.print_expectations): Gather the tests. Note whether the test
+        is marked as skip, pass, flaky, or fail, the definitions of which are
+        dictated by model.get_tests_with_result_type(). Output the results to
+        command line as well as to file.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Add the new option.
+        It goes through the same path as --print-expectations.
+
 2021-08-20  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Forward unknown args to log and blame

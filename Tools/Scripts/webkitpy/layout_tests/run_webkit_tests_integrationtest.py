@@ -924,7 +924,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
+            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
 
         current_type = None
         by_type = {}
@@ -971,7 +971,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
+            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
 
         current_type = None
         by_type = {}

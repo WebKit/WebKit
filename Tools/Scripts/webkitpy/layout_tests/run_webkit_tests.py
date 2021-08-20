@@ -79,7 +79,7 @@ def main(argv, stdout, stderr):
     log_stack_trace_on_signal('SIGTERM', output_file=stack_trace_path)
     log_stack_trace_on_signal('SIGINT', output_file=stack_trace_path)
 
-    if options.print_expectations:
+    if options.print_expectations or options.print_summary:
         return _print_expectations(port, options, args, stderr)
 
     try:
@@ -332,6 +332,9 @@ def parse_args(args):
             "--print-expectations", action="store_true", default=False,
             help=("Print the expected outcome for the given test, or all tests listed in TestExpectations. Does not run any tests.")),
         optparse.make_option(
+            "--print-summary", action="store_true", default=False,
+            help=("Print a summary of how tests are expected to run, grouped by directory. Does not run any tests.")),
+        optparse.make_option(
             "--webgl-test-suite", action="store_true", default=False,
             help=("Run exhaustive webgl list, including test ordinarily skipped for performance reasons. Equivalent to '--additional-expectations=LayoutTests/webgl/TestExpectations webgl'")),
         optparse.make_option(
@@ -394,7 +397,10 @@ def _print_expectations(port, options, args, logging_stream):
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)
 
-        exit_code = manager.print_expectations(args)
+        if options.print_expectations:
+            exit_code = manager.print_expectations(args)
+        else:
+            exit_code = manager.print_summary(args)
         _log.debug("Printing expectations completed, Exit status: %d", exit_code)
         return exit_code
     except Exception as error:

@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 #
@@ -34,9 +36,12 @@ objects to the Manager. The Manager then aggregates the TestFailures to
 create a final report.
 """
 
+import csv
 import json
 import logging
+import os
 import random
+import re
 import shutil
 import sys
 import time
@@ -771,5 +776,136 @@ class Manager(object):
 
         for device_type in device_type_list[1:]:
             self._print_expectations_for_subset(device_type, test_col_width, tests_to_run_by_device[device_type])
+
+        return 0
+
+    def print_summary(self, args):
+        device_type_list = self._port.DEFAULT_DEVICE_TYPES or [self._port.DEVICE_TYPE]
+        test_stats = {}
+
+        try:
+            self._collect_tests(args, device_type_list)
+        except IOError:
+            # This is raised if --test-list doesn't exist
+            return test_run_results.RunDetails(exit_code=-1)
+
+        for device_type, expectations in self._expectations.items():
+            test_stats[device_type] = {'__root__': {'count': 0, 'skip': 0, 'pass': 0, 'flaky': 0, 'fail': 0, 'has_tests': False}}
+            device_test_stats = test_stats[device_type]
+
+            model = expectations.model()
+            tests_skipped = model.get_tests_with_result_type(test_expectations.SKIP)
+            tests_passing = model.get_tests_with_result_type(test_expectations.PASS)
+            tests_flaky = model.get_tests_with_result_type(test_expectations.FLAKY)
+            tests_misc_fail = model.get_tests_with_result_type(test_expectations.FAIL)
+
+            def _increment_stat(dirname, test_name, test_in_directory):
+                if dirname in device_test_stats:
+                    device_test_stats[dirname]['count'] += 1
+                else:
+                    device_test_stats[dirname] = {'count': 1, 'skip': 0, 'pass': 0, 'flaky': 0, 'fail': 0, 'has_tests': False}
+
+                if test_name in tests_skipped:
+                    device_test_stats[dirname]['skip'] += 1
+                if test_name in tests_passing:
+                    device_test_stats[dirname]['pass'] += 1
+                if test_name in tests_flaky:
+                    device_test_stats[dirname]['flaky'] += 1
+                if test_name in tests_misc_fail:
+                    device_test_stats[dirname]['fail'] += 1
+                device_test_stats[dirname]['has_tests'] = device_test_stats[dirname]['has_tests'] or test_in_directory
+
+            for test_name in expectations._full_test_list:
+                path = test_name
+                test_in_directory = True
+                while path != '':
+                    path = os.path.dirname(path)
+                    _increment_stat(path or '__root__', test_name, test_in_directory)
+                    test_in_directory = False
+
+            print('')
+            print('Summary of test expectations {}in layout test directories:'.format(u'for {} '.format(device_type) if device_type else ''))
+            root = device_test_stats['__root__']
+            print('    {} total tests'.format(root['count']))
+            print('    {} pass'.format(root['pass']))
+            print('    {} are skipped'.format(root['skip']))
+            print('    {} are flaky'.format(root['flaky']))
+            print('    {} fail for other reasons'.format(root['fail']))
+
+            print('')
+            print('Per directory results:')
+            print('(* means there are no tests in that specific directory)')
+            print('')
+            row_format = u'    {0:50s}{1:>8d}{2:>8d}{3:>8d}{4:>8d}{5:>8d}'
+            srow_format = row_format.replace('d', 's')
+            print(srow_format.format('DIRECTORY', 'TOTAL', 'PASS', 'SKIP', 'FLAKY', 'FAIL'))
+            print(srow_format.format('---------', '-----', '----', '----', '-----', '----'))
+
+            def _should_include_dir_in_report(dirname):
+                num_dirs = dirname.count('/')
+                if num_dirs > 0:
+                    if num_dirs > 1:
+                        if num_dirs > 2:
+                            if num_dirs > 3:
+                                return False
+                            elif not re.match(r'^(imported/w3c/web-platform-tests)/', dirname):
+                                return False
+                        elif not re.match(r'(imported|http|platform)/', dirname):
+                            return False
+                    elif not re.match(r'^(fast|platform|imported|http)/', dirname):
+                        return False
+                return True
+
+            for dirname in sorted(device_test_stats.keys()):
+                if not _should_include_dir_in_report(dirname):
+                    continue
+
+                truncated_dirname = re.sub(r'^.*(.{47})$', '...\g<1>', dirname if device_test_stats[dirname]['has_tests'] else '{}*'.format(dirname))
+                count = device_test_stats[dirname]['count']
+                passing = device_test_stats[dirname]['pass']
+                skip = device_test_stats[dirname]['skip']
+                flaky = device_test_stats[dirname]['flaky']
+                fail = device_test_stats[dirname]['fail']
+                if passing == count:
+                    # Don't print this line if an ancestor directory is all pass also
+                    ancestor_dirname = os.path.dirname(dirname)
+                    while ancestor_dirname and ancestor_dirname not in device_test_stats:
+                        ancestor_dirname = os.path.dirname(ancestor_dirname)
+                    if ancestor_dirname and device_test_stats[ancestor_dirname]['pass'] == device_test_stats[ancestor_dirname]['count']:
+                        continue
+                    print(srow_format.format(truncated_dirname, str(count), u"██ PASS", u' ███████', u'████████', u'████████'))
+                    continue
+                elif skip == count:
+                    # Don't print this line if an ancestor directory is all skip also
+                    ancestor_dirname = os.path.dirname(dirname)
+                    while ancestor_dirname and ancestor_dirname not in device_test_stats:
+                        ancestor_dirname = os.path.dirname(ancestor_dirname)
+                    if ancestor_dirname and device_test_stats[ancestor_dirname]['skip'] == device_test_stats[ancestor_dirname]['count']:
+                        continue
+                    print(srow_format.format(truncated_dirname, str(count), u'░░░░░░░', u"░░░ SKIP", u' ░░░░░░░', u'░░░░░░░░'))
+                    continue
+                print(row_format.format(truncated_dirname, count, passing, skip, flaky, fail))
+
+        with open('layout_tests.csv', 'w') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+
+            header_row_1 = [''] * 2
+            header_row_2 = ["Directory", "Total"]
+            for device_type in sorted(device_type_list):
+                header_row_1.append('{}{}'.format(self._port.name(), ', {}'.format(device_type) if device_type else ''))
+                header_row_1.extend([''] * 3)
+                header_row_2.extend(['Pass', 'Skip', 'Flaky', 'Fail'])
+            writer.writerow(header_row_1)
+            writer.writerow(header_row_2)
+
+            a_device_test_stat = test_stats[device_type_list[0]]
+            for dirname in sorted(a_device_test_stat.keys()):
+                if not _should_include_dir_in_report(dirname):
+                    continue
+                row = [dirname, a_device_test_stat[dirname]['count']]
+                for device_type in sorted(device_type_list):
+                    stats = test_stats[device_type][dirname]
+                    row.extend([stats['pass'], stats['skip'], stats['flaky'], stats['fail']])
+                writer.writerow(row)
 
         return 0
