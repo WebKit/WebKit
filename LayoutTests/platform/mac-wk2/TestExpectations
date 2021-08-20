@@ -307,7 +307,7 @@ webkit.org/b/96438 fast/spatial-navigation
 [ Monterey+ ] http/wpt/mediarecorder/mute-tracks.html [ Pass Failure Timeout ]
 [ Monterey+ ] http/wpt/mediarecorder/pause-recording.html [ Pass Crash Timeout ]
 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Timeout ]
-[ Monterey+ ] http/wpt/mediarecorder/video-rotation.html [ Pass Failure Timeout ]
+[ BigSur+ ] http/wpt/mediarecorder/video-rotation.html [ Pass Failure Timeout ]
 
 # rdar://76909385
 [ Monterey+ ] http/tests/websocket/tests/hybi/interleaved-fragments.html [ Pass Failure Timeout ]

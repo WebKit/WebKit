@@ -2002,6 +2002,9 @@ webkit.org/b/228604 http/tests/cookies/same-site/fetch-in-cross-origin-service-w
 #rdar://82134088 ([iOS 15] storage/indexeddb/dont-wedge-private.html is a flaky failure)
 storage/indexeddb/dont-wedge-private.html [ Pass Failure ]
 
+#<rdar://76434263>
+http/wpt/mediarecorder/video-rotation.html [ Pass Failure ]
+
 # These tests currently fail or are flaky in EWS on iOS 14.
 editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.html [ Pass Timeout ]
 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure ]

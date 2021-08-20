@@ -1,3 +1,13 @@
+2021-08-20  Eric Hutchison  <ehutchison@apple.com>
+
+        [iOS wk2, Mac wk2] http/wpt/mediarecorder/video-rotation.html is a flaky failure.
+        <rdar://76434263>.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-20  Patrick Angle  <pangle@apple.com>
 
         Release assert in ScriptController::canExecuteScripts via WebCore::WebSocket::didReceiveMessage
