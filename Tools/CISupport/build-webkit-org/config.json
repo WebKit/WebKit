@@ -436,7 +436,7 @@
                       "workernames": ["gtk-linux-bot-18"]
                     },
                     {
-                      "name": "GTK-Linux-64-bit-Release-Skip-Failing-Tests", "factory": "TestAllButJSCFactory", "builddir": "gtk-linux-64-release-skip-failing-tests",
+                      "name": "GTK-Linux-64-bit-Release-Skip-Failing-Tests", "factory": "TestLayoutFactory", "builddir": "gtk-linux-64-release-skip-failing-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--skip-failing-tests"],
                       "workernames": ["gtk-linux-bot-19"]

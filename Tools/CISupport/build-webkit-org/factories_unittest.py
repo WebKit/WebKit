@@ -1052,12 +1052,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'archive-test-results',
             'upload',
             'extract-test-results',
-            'set-permissions',
-            'webkitpy-test',
-            'webkitperl-test',
-            'bindings-generation-tests',
-            'builtins-generator-tests',
-            'API-tests'
+            'set-permissions'
         ],
         'WinCairo-64-bit-WKL-Release-Build': [
             'configure-build',

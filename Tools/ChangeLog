@@ -1,5 +1,21 @@
 2021-08-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [build.webkit.org] GTK-Linux-64-bit-Release-Skip-Failing-Tests worker should run only layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=229312
+
+        Reviewed by Jonathan Bedard.
+
+        Add a new factory for testing only layout tests and make this bot use it.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories.py:
+        (TestLayoutFactory):
+        (TestLayoutFactory.__init__):
+        * CISupport/build-webkit-org/factories_unittest.py:
+        (TestExpectedBuildSteps):
+
+2021-08-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [ews-build.webkit.org] Add unit test with the expected build steps for each queue
         https://bugs.webkit.org/show_bug.cgi?id=229319
 

@@ -215,6 +215,20 @@ class TestJSFactory(Factory):
         self.addStep(RunTest262Tests())
 
 
+class TestLayoutFactory(Factory):
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+        self.addStep(RunWebKitTests())
+        if not platform.startswith('win'):
+            self.addStep(RunDashboardTests())
+        self.addStep(ArchiveTestResults())
+        self.addStep(UploadTestResults())
+        self.addStep(ExtractTestResults())
+        self.addStep(SetPermissions())
+
+
 class TestWebDriverFactory(Factory):
     def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
