@@ -1,3 +1,12 @@
+2021-08-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of expected failures
+
+        Unreviewed gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-08-20  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS wk2, Mac wk2] http/wpt/mediarecorder/video-rotation.html is a flaky failure.

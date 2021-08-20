@@ -943,6 +943,13 @@ webkit.org/b/224590 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 webkit.org/b/224967 webkit.org/b/225659 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Crash Failure ]
 
+webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-009.html [ ImageOnlyFailure ]
+webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-010.html [ ImageOnlyFailure ]
+webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-001.html [ ImageOnlyFailure ]
+webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-002.html [ ImageOnlyFailure ]
+webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-003.html [ ImageOnlyFailure ]
+webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-004.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1216,6 +1223,9 @@ webkit.org/b/224791 imported/w3c/web-platform-tests/html/browsers/the-window-obj
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Timeout Pass ]
 
 webkit.org/b/229268 media/media-fragments/TC0009.html [ Failure Pass ]
+
+# Flaky on skip-failing-test bot (EWS)
+webkit.org/b/229270 fast/events/monotonic-event-time.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
