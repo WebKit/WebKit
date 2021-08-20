@@ -358,6 +358,7 @@ def conditions_for_header(header):
         '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
         '"GestureTypes.h"': ["PLATFORM(IOS_FAMILY)"],
         '<WebCore/MediaPlaybackTargetContext.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
+        '<WebCore/DataDetectorType.h>': ["ENABLE(DATA_DETECTION)"],
     }
     if not header in conditions:
         return None

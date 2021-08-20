@@ -231,7 +231,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(DATA_DETECTION)
-    DetectDataInAllFrames(uint64_t types) -> (struct WebKit::DataDetectionResult result) Async
+    DetectDataInAllFrames(OptionSet<WebCore::DataDetectorType> types) -> (struct WebKit::DataDetectionResult result) Async
     RemoveDataDetectedLinks() -> (struct WebKit::DataDetectionResult result) Async
 #endif
 
