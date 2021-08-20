@@ -1,5 +1,36 @@
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for justified non-breaking space
+        https://bugs.webkit.org/show_bug.cgi?id=228727
+
+        Reviewed by Antti Koivisto.
+
+        Let's use FontCascade::expansionOpportunityCount to figure out the number of expansion counts in a run.
+        It helps with finding non-breakable space in an otherwise non-whitespace content (foo&nbsp;bar where the contet forms one run but the because
+        of the non-breakable _space_ in the middle, it also produces an expansion opportunity).
+        This patch moves all the expansion handling over to Line::applyRunExpansion as we anyway need to walk the content to find such spaces (i.e. not worth trying to pre-compute them).
+
+        * layout/formattingContexts/inline/InlineLine.cpp:
+        (WebCore::Layout::Line::applyRunExpansion):
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::Run::visuallyCollapseTrailingWhitespace):
+        (WebCore::Layout::Line::Run::setExpansionBehavior): Deleted.
+        (WebCore::Layout::Line::Run::expansionBehavior const): Deleted.
+        (WebCore::Layout::Line::Run::setHorizontalExpansion): Deleted.
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::expansion const):
+        (WebCore::Layout::Line::Run::setExpansion):
+        (WebCore::Layout::Line::Run::hasExpansionOpportunity const): Deleted.
+        (WebCore::Layout::Line::Run::expansionOpportunityCount const): Deleted.
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForCharacter):
+        (WebCore::LayoutIntegration::canUseForText):
+        (WebCore::LayoutIntegration::canUseForFontAndText):
+        (WebCore::LayoutIntegration::canUseForStyle):
+
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] LineBox provides redundant geometry information
         https://bugs.webkit.org/show_bug.cgi?id=228050
 

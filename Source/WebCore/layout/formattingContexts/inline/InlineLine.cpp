@@ -73,36 +73,66 @@ void Line::applyRunExpansion(InlineLayoutUnit extraHorizontalSpace)
     // the last line before a forced break or the end of the block is start-aligned.
     if (m_runs.isEmpty() || m_runs.last().isLineBreak())
         return;
+    // Anything to distribute?
+    if (!extraHorizontalSpace)
+        return;
 
-    auto expansionOpportunityCount = 0;
-    Run* lastRunWithContent = nullptr;
     // Collect and distribute the expansion opportunities.
-    for (auto& run : m_runs) {
-        expansionOpportunityCount += run.expansionOpportunityCount();
+    size_t lineExpansionOpportunities = 0;
+    Vector<size_t> runsExpansionOpportunities(m_runs.size());
+    Vector<ExpansionBehavior> runsExpansionBehaviors(m_runs.size());
+    auto lastRunIndexWithContent = std::optional<size_t> { };
+
+    // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
+    auto runIsAfterExpansion = true;
+    for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
+        auto& run = m_runs[runIndex];
+        auto& style = run.style();
+        int expansionBehavior = DefaultExpansion;
+        size_t expansionOpportunitiesInRun = 0;
+
+        if (run.isText() && !TextUtil::shouldPreserveSpacesAndTabs(run.layoutBox())) {
+            if (style.textCombine() == TextCombine::Horizontal)
+                expansionBehavior = ForbidLeftExpansion | ForbidRightExpansion;
+            else {
+                expansionBehavior = (runIsAfterExpansion ? ForbidLeftExpansion : AllowLeftExpansion) | AllowRightExpansion;
+                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(run.textContent()->content()).substring(run.textContent()->start(), run.textContent()->length()), run.style().direction(), expansionBehavior);
+            }
+        } else if (run.isBox())
+            runIsAfterExpansion = false;
+
+        runsExpansionBehaviors[runIndex] = expansionBehavior;
+        runsExpansionOpportunities[runIndex] = expansionOpportunitiesInRun;
+        lineExpansionOpportunities += expansionOpportunitiesInRun;
+
         if (run.isText() || run.isBox())
-            lastRunWithContent = &run;
+            lastRunIndexWithContent = runIndex;
     }
     // Need to fix up the last run's trailing expansion.
-    if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
+    if (lastRunIndexWithContent && runsExpansionOpportunities[*lastRunIndexWithContent]) {
         // Turn off the trailing bits first and add the forbid trailing expansion.
-        auto leadingExpansion = lastRunWithContent->expansionBehavior() & LeftExpansionMask;
-        lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidRightExpansion);
+        auto leadingExpansion = runsExpansionBehaviors[*lastRunIndexWithContent] & LeftExpansionMask;
+        runsExpansionBehaviors[*lastRunIndexWithContent] = leadingExpansion | ForbidRightExpansion;
+        if (runIsAfterExpansion) {
+            // When the last run has an after expansion (e.g. CJK ideograph) we need to remove this trailing expansion opportunity.
+            // Note that this is not about trailing collapsible whitespace as at this point we trimmed them all.
+            ASSERT(lineExpansionOpportunities && runsExpansionOpportunities[*lastRunIndexWithContent]);
+            --lineExpansionOpportunities;
+            --runsExpansionOpportunities[*lastRunIndexWithContent];
+        }
     }
     // Anything to distribute?
-    if (!expansionOpportunityCount || !extraHorizontalSpace)
+    if (!lineExpansionOpportunities)
         return;
     // Distribute the extra space.
-    auto expansionToDistribute = extraHorizontalSpace / expansionOpportunityCount;
+    auto expansionToDistribute = extraHorizontalSpace / lineExpansionOpportunities;
     auto accumulatedExpansion = InlineLayoutUnit { };
-    for (auto& run : m_runs) {
+    for (size_t runIndex = 0; runIndex < m_runs.size(); ++runIndex) {
+        auto& run = m_runs[runIndex];
         // Expand and move runs by the accumulated expansion.
         run.moveHorizontally(accumulatedExpansion);
-        if (!run.hasExpansionOpportunity())
-            continue;
-        ASSERT(run.expansionOpportunityCount());
-        auto computedExpansion = expansionToDistribute * run.expansionOpportunityCount();
-        // FIXME: Check why we need to set both.
-        run.setHorizontalExpansion(computedExpansion);
+        auto computedExpansion = expansionToDistribute * runsExpansionOpportunities[runIndex];
+        run.setExpansion({ runsExpansionBehaviors[runIndex], computedExpansion });
         run.shrinkHorizontally(-computedExpansion);
         accumulatedExpansion += computedExpansion;
     }
@@ -436,20 +466,14 @@ Line::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLef
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_logicalLeft(logicalLeft)
     , m_logicalWidth(logicalWidth)
-    , m_whitespaceIsExpansionOpportunity(!TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox()))
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
+    , m_trailingWhitespaceWidth(m_trailingWhitespaceType != TrailingWhitespace::None ? logicalWidth : InlineLayoutUnit { })
     , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
 {
-    if (m_trailingWhitespaceType != TrailingWhitespace::None) {
-        m_trailingWhitespaceWidth = logicalWidth;
-        if (m_whitespaceIsExpansionOpportunity)
-            m_expansionOpportunityCount = 1;
-    }
 }
 
 void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)
 {
-    // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount.
     ASSERT(!hasCollapsedTrailingWhitespace());
     ASSERT(isText() && inlineTextItem.isText());
     ASSERT(m_layoutBox == &inlineTextItem.layoutBox());
@@ -459,14 +483,10 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
 
     if (m_trailingWhitespaceType == TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = { };
-        setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
         m_textContent->expand(inlineTextItem.length());
         return;
     }
     m_trailingWhitespaceWidth += logicalWidth;
-    if (m_whitespaceIsExpansionOpportunity)
-        ++m_expansionOpportunityCount;
-    setExpansionBehavior(DefaultExpansion);
     m_textContent->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
 }
 
@@ -509,33 +529,8 @@ InlineLayoutUnit Line::Run::visuallyCollapseTrailingWhitespace(InlineLayoutUnit 
     if (!m_trailingWhitespaceWidth) {
         // We trimmed the trailing whitespace completely.
         m_trailingWhitespaceType = TrailingWhitespace::None;
-
-        if (m_whitespaceIsExpansionOpportunity) {
-            ASSERT(m_expansionOpportunityCount);
-            m_expansionOpportunityCount--;
-        }
-        setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
     }
     return trimmedWidth;
-}
-
-void Line::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)
-{
-    ASSERT(isText());
-    m_expansion.behavior = expansionBehavior;
-}
-
-ExpansionBehavior Line::Run::expansionBehavior() const
-{
-    ASSERT(isText());
-    return m_expansion.behavior;
-}
-
-void Line::Run::setHorizontalExpansion(InlineLayoutUnit logicalExpansion)
-{
-    ASSERT(isText());
-    ASSERT(hasExpansionOpportunity());
-    m_expansion.horizontalExpansion = logicalExpansion;
 }
 
 }

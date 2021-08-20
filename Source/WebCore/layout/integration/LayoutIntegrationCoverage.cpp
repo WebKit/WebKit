@@ -123,9 +123,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasUnsupportedFloat:
         stream << "complicated float";
         break;
-    case AvoidanceReason::FlowHasJustifiedNonLatinText:
-        stream << "text-align: justify with non-latin text";
-        break;
     case AvoidanceReason::FlowHasOverflowNotVisible:
         stream << "overflow: hidden | scroll | auto";
         break;
@@ -418,21 +415,11 @@ static void printModernLineLayoutCoverage(void)
 }
 #endif
 
-template <typename CharacterType> OptionSet<AvoidanceReason> canUseForCharacter(CharacterType, bool textIsJustified, IncludeReasons);
+template <typename CharacterType> OptionSet<AvoidanceReason> canUseForCharacter(CharacterType, IncludeReasons);
 
-template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, bool textIsJustified, IncludeReasons includeReasons)
+template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
-    if (textIsJustified) {
-        if (character == noBreakSpace)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonBreakingSpace, reasons, includeReasons);
-        // Include characters up to Latin Extended-B and some punctuation range when text is justified.
-        bool isLatinIncludingExtendedB = character <= 0x01FF;
-        bool isPunctuationRange = character >= 0x2010 && character <= 0x2027;
-        if (!(isLatinIncludingExtendedB || isPunctuationRange))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasJustifiedNonLatinText, reasons, includeReasons);
-    }
-
     if (U16_IS_SURROGATE(character))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSurrogatePair, reasons, includeReasons);
 
@@ -446,16 +433,13 @@ template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, bool t
     return reasons;
 }
 
-template<> OptionSet<AvoidanceReason> canUseForCharacter(LChar character, bool textIsJustified, IncludeReasons)
+template<> OptionSet<AvoidanceReason> canUseForCharacter(LChar, IncludeReasons)
 {
-    if (textIsJustified && character == noBreakSpace)
-        return { AvoidanceReason::FlowHasJustifiedNonBreakingSpace };
     return { };
 }
 
 template <typename CharacterType>
-static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint,
-    bool textIsJustified, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     auto& primaryFont = fontCascade.primaryFont();
@@ -470,7 +454,7 @@ static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsig
 
     for (unsigned i = 0; i < length; ++i) {
         auto character = text[i];
-        auto characterReasons = canUseForCharacter(character, textIsJustified, includeReasons);
+        auto characterReasons = canUseForCharacter(character, includeReasons);
         if (characterReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);
 
@@ -487,11 +471,11 @@ static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsig
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, bool textIsJustified, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, IncludeReasons includeReasons)
 {
     if (text.is8Bit())
-        return canUseForText(text.characters8(), text.length(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
-    return canUseForText(text.characters16(), text.length(), fontCascade, lineHeightConstraint, textIsJustified, includeReasons);
+        return canUseForText(text.characters8(), text.length(), fontCascade, lineHeightConstraint, includeReasons);
+    return canUseForText(text.characters16(), text.length(), fontCascade, lineHeightConstraint, includeReasons);
 }
 
 static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
@@ -505,7 +489,6 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
     std::optional<float> lineHeightConstraint;
     if (style.lineBoxContain().contains(LineBoxContain::Glyphs))
         lineHeightConstraint = container.lineHeight(false, HorizontalLine, PositionOfInteriorLineBoxes).toFloat();
-    bool flowIsJustified = style.textAlign() == TextAlignMode::Justify;
     for (const auto& textRenderer : childrenOfType<RenderText>(container)) {
         // FIXME: Do not return until after checking all children.
         if (textRenderer.isCombineText())
@@ -528,7 +511,7 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
         }
 
-        auto textReasons = canUseForText(textRenderer.stringView(), fontCascade, lineHeightConstraint, flowIsJustified, includeReasons);
+        auto textReasons = canUseForText(textRenderer.stringView(), fontCascade, lineHeightConstraint, includeReasons);
         if (textReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }

@@ -78,9 +78,6 @@ public:
         InlineLayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
         const LineRun::Expansion& expansion() const { return m_expansion; }
-        bool hasExpansionOpportunity() const { return m_expansionOpportunityCount; }
-        ExpansionBehavior expansionBehavior() const;
-        unsigned expansionOpportunityCount() const { return m_expansionOpportunityCount; }
 
         bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
@@ -95,8 +92,7 @@ public:
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
         void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
-        void setExpansionBehavior(ExpansionBehavior);
-        void setHorizontalExpansion(InlineLayoutUnit logicalExpansion);
+        void setExpansion(LineRun::Expansion expansion) { m_expansion = expansion; }
         void setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
         enum class TrailingWhitespace {
@@ -119,12 +115,10 @@ public:
         const Box* m_layoutBox { nullptr };
         InlineLayoutUnit m_logicalLeft { 0 };
         InlineLayoutUnit m_logicalWidth { 0 };
-        bool m_whitespaceIsExpansionOpportunity { false };
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         std::optional<LineRun::Text> m_textContent;
         LineRun::Expansion m_expansion;
-        unsigned m_expansionOpportunityCount { 0 };
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
