@@ -132,6 +132,8 @@ class SingleTestRunner(object):
         expected_driver_output.strip_patterns(patterns)
         driver_output.strip_patterns(patterns)
 
+        driver_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
+
         driver_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
 
         test_result = self._compare_output(expected_driver_output, driver_output)

@@ -114,6 +114,20 @@ class DriverOutput(object):
         for pattern in patterns:
             self.text = re.sub(pattern[0], pattern[1], self.text)
 
+    def strip_text_start_if_needed(self, detectors):
+        if not self.text or not len(detectors):
+            return
+
+        result = self.text.split('Content-Type: text/plain\n')
+        if len(result) != 2:
+            return
+
+        for detector in detectors:
+            if detector in result[0]:
+                self.text = result[1]
+                self.error += '\nRemoved logging from stdout:\n' + result[0]
+                return
+
     def strip_stderror_patterns(self, patterns):
         if not self.error:
             return
