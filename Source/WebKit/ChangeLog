@@ -1,3 +1,29 @@
+2021-08-20  Alex Christensen  <achristensen@webkit.org>
+
+        Make UIEventAttribution tests less platform dependent
+        https://bugs.webkit.org/show_bug.cgi?id=229323
+
+        Reviewed by John Wilander.
+
+        This allows me to run the UIEventAttribution tests on macOS.
+        It also makes them not time out, which they were doing since r277447.
+        To accomplish this, I added more test SPI to prevent the network process
+        suspension message, which was causing the test to time out on the iOS simulator.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _setUIEventAttributionForTesting:withNonce:]): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::preventSuspensionForTesting):
+        (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
 2021-08-20  Simon Fraser  <simon.fraser@apple.com>
 
         Change the mysterious uint64_t argument to detectDataInAllFrames() to OptionSet<WebCore::DataDetectorType>

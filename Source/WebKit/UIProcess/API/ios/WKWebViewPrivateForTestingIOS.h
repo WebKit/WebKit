@@ -87,10 +87,6 @@
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
 
-#if !TARGET_OS_TV && !TARGET_OS_WATCH
-- (void)_setUIEventAttributionForTesting:(UIEventAttribution *)attribution withNonce:(NSString *)nonce;
-#endif
-
 - (NSString *)_serializedSelectionCaretBackgroundColorForTesting;
 
 @end

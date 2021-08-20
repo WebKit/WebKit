@@ -44,6 +44,8 @@ struct WKAppPrivacyReportTestingData {
 
 @interface WKWebView (WKTesting)
 
+- (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(nullable NSString *)nonce WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin;
 - (CGFloat)_pageScale;
 

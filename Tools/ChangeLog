@@ -1,3 +1,15 @@
+2021-08-20  Alex Christensen  <achristensen@webkit.org>
+
+        Make UIEventAttribution tests less platform dependent
+        https://bugs.webkit.org/show_bug.cgi?id=229323
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::exampleURL):
+        (TestWebKitAPI::runBasicEventAttributionTest):
+        (TestWebKitAPI::TEST):
+
 2021-08-20  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Add pull-request command (Part 1)

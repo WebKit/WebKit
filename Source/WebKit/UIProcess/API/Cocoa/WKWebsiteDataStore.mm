@@ -731,6 +731,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     WebKit::WebsiteDataStore::makeNextNetworkProcessLaunchFailForTesting();
 }
 
++ (void)_preventNetworkProcessSuspensionForTesting
+{
+    WebKit::NetworkProcessProxy::preventSuspensionForTesting();
+}
+
 - (BOOL)_networkProcessExists
 {
     return !!_websiteDataStore->networkProcessIfExists();

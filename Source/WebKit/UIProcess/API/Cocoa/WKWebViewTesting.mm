@@ -55,6 +55,21 @@
 
 @implementation WKWebView (WKTesting)
 
+- (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(NSString *)nonce
+{
+    WebCore::PrivateClickMeasurement measurement(
+        WebCore::PrivateClickMeasurement::SourceID(sourceID),
+        WebCore::PrivateClickMeasurement::SourceSite(reportEndpoint),
+        WebCore::PrivateClickMeasurement::AttributionDestinationSite(destination),
+        sourceDescription,
+        purchaser
+    );
+    if (nonce)
+        measurement.setEphemeralSourceNonce({ nonce });
+
+    _page->setPrivateClickMeasurement(WTFMove(measurement));
+}
+
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin
 {
     _page->scalePage(scale, WebCore::roundedIntPoint(origin));
