@@ -30,18 +30,44 @@ namespace WebCore {
 
 class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource {
 public:
-    static Ref<MockRealtimeVideoSource> createForMockDisplayCapturer(String&& deviceID, String&& name, String&& hashSalt);
-
-    static CaptureSourceOrError createMockDisplayCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
-
+    MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt);
     ~MockRealtimeVideoSourceGStreamer() = default;
 
 private:
     friend class MockRealtimeVideoSource;
-    MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt);
 
     void updateSampleBuffer() final;
     bool canResizeVideoFrames() const final { return true; }
+};
+
+class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource {
+public:
+    static CaptureSourceOrError create(const CaptureDevice&, const MediaConstraints*);
+
+private:
+    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&& source, CaptureDevice::DeviceType type)
+        : RealtimeMediaSource(Type::Video, source->name().isolatedCopy())
+        , m_source(WTFMove(source))
+        , m_type(type) { }
+
+    friend class MockRealtimeVideoSourceGStreamer;
+
+    void startProducingData() final { m_source->start(); }
+    void stopProducingData() final { m_source->stop(); }
+    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final { m_currentSettings = { }; }
+    bool isCaptureSource() const final { return true; }
+    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceSettings& settings() final;
+    CaptureDevice::DeviceType deviceType() const { return m_type; }
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
+#endif
+
+    Ref<MockRealtimeVideoSourceGStreamer> m_source;
+    CaptureDevice::DeviceType m_type;
+    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 };
 
 } // namespace WebCore

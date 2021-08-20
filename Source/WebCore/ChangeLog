@@ -1,3 +1,29 @@
+2021-08-20  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r280732) [GStreamer] fast/mediastream/getDisplayMedia-max-constraints1.html and other are failing
+        https://bugs.webkit.org/show_bug.cgi?id=228941
+
+        Reviewed by Youenn Fablet.
+
+        The GStreamer mock display capture source is now wrapped in another RealtimeMediaSource in
+        order to avoid a spurious setSize() call from the RealtimeVideoSource constructor that would
+        then prevent the mock source to ensure its size matches the intrinsic size.
+
+        For the non-mock display capture source, we now ensure the size matches the intrinsic size
+        whenever the capture settings have changed.
+
+        * platform/mediastream/RealtimeVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::settingsDidChange):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockDisplayCaptureSourceGStreamer::create):
+        (WebCore::MockDisplayCaptureSourceGStreamer::capabilities):
+        (WebCore::MockDisplayCaptureSourceGStreamer::settings):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+
 2021-08-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         GlyphBuffer can become inconsistent with its backing string

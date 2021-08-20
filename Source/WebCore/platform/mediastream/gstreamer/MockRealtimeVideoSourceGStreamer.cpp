@@ -50,20 +50,59 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
     return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
 }
 
-CaptureSourceOrError MockRealtimeVideoSourceGStreamer::createMockDisplayCaptureSource(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevice& device, const MediaConstraints* constraints)
 {
-    auto source = MockRealtimeVideoSourceGStreamer::createForMockDisplayCapturer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt));
+    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, String { device.label() }, { }));
+
     if (constraints) {
-        if (auto error = source->applyConstraints(*constraints))
+        if (auto error = mockSource->applyConstraints(*constraints))
             return WTFMove(error.value().badConstraint);
     }
 
-    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
+    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(WTFMove(mockSource), device.type()));
+    return CaptureSourceOrError(WTFMove(source));
 }
 
-Ref<MockRealtimeVideoSource> MockRealtimeVideoSourceGStreamer::createForMockDisplayCapturer(String&& deviceID, String&& name, String&& hashSalt)
+const RealtimeMediaSourceCapabilities& MockDisplayCaptureSourceGStreamer::capabilities()
 {
-    return adoptRef(*new MockRealtimeVideoSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt)));
+    if (!m_capabilities) {
+        RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
+
+        // FIXME: what should these be?
+        capabilities.setWidth(CapabilityValueOrRange(1, 3840));
+        capabilities.setHeight(CapabilityValueOrRange(1, 2160));
+        capabilities.setFrameRate(CapabilityValueOrRange(.01, 30.0));
+
+        m_capabilities = WTFMove(capabilities);
+    }
+    return m_capabilities.value();
+}
+
+const RealtimeMediaSourceSettings& MockDisplayCaptureSourceGStreamer::settings()
+{
+    if (!m_currentSettings) {
+        RealtimeMediaSourceSettings settings;
+        settings.setFrameRate(frameRate());
+
+        m_source->ensureIntrinsicSizeMaintainsAspectRatio();
+        auto size = m_source->size();
+        settings.setWidth(size.width());
+        settings.setHeight(size.height());
+
+        settings.setLogicalSurface(false);
+
+        RealtimeMediaSourceSupportedConstraints supportedConstraints;
+        supportedConstraints.setSupportsFrameRate(true);
+        supportedConstraints.setSupportsWidth(true);
+        supportedConstraints.setSupportsHeight(true);
+        supportedConstraints.setSupportsDisplaySurface(true);
+        supportedConstraints.setSupportsLogicalSurface(true);
+
+        settings.setSupportedConstraints(supportedConstraints);
+
+        m_currentSettings = WTFMove(settings);
+    }
+    return m_currentSettings.value();
 }
 
 MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt)

@@ -51,6 +51,8 @@ public:
     double observedFrameRate() const { return m_observedFrameRate; }
     Vector<VideoPresetData> presetsData();
 
+    void ensureIntrinsicSizeMaintainsAspectRatio();
+
 protected:
     RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt);
 
@@ -72,8 +74,6 @@ protected:
 
     void dispatchMediaSampleToObservers(MediaSample&);
     const Vector<IntSize>& standardVideoSizes();
-
-    void ensureIntrinsicSizeMaintainsAspectRatio();
 
 private:
     struct CaptureSizeAndFrameRate {

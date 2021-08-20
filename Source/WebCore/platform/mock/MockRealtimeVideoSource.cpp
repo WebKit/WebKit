@@ -432,9 +432,6 @@ void MockRealtimeVideoSource::generateFrame()
         m_delayUntil = MonotonicTime();
     }
 
-    if (mockDisplay() && !m_frameNumber)
-        ensureIntrinsicSizeMaintainsAspectRatio();
-
     ImageBuffer* buffer = imageBuffer();
     if (!buffer)
         return;

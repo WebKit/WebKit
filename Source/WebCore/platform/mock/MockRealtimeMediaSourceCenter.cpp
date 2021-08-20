@@ -165,7 +165,7 @@ public:
 #if PLATFORM(MAC)
             return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
 #elif USE(GSTREAMER)
-            return MockRealtimeVideoSourceGStreamer::createMockDisplayCaptureSource(String { device.persistentId() }, String { device.label() }, String { }, constraints);
+            return MockDisplayCaptureSourceGStreamer::create(device, constraints);
 #else
             return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, String { }, constraints);
 #endif
