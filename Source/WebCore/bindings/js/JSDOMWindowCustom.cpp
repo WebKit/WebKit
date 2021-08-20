@@ -122,9 +122,6 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowInstanceFunction_postMessageNonCaching, (JSG
 template<typename Visitor>
 void JSDOMWindow::visitAdditionalChildren(Visitor& visitor)
 {
-    if (Frame* frame = wrapped().frame())
-        visitor.addOpaqueRoot(frame);
-
     visitor.addOpaqueRoot(&wrapped());
     
     // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
