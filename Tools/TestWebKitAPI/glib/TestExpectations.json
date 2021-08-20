@@ -321,9 +321,6 @@
         "subtests": {
             "/jsc/vm": {
                 "expected": {"all": {"slow": true}}
-            },
-            "/jsc/weak-value": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/222972"}}
             }
         }
     },
