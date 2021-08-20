@@ -4,5 +4,5 @@ I'm editable
 I'm tabindexed.
  Link
 
-FAIL Test that inert nodes are not focusable. assert_equals: body expected false but got true
+PASS Test that inert nodes are not focusable.
 

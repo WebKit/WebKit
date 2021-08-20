@@ -44,6 +44,7 @@
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
+#include "HTMLDialogElement.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLSlotElement.h"
@@ -1125,6 +1126,9 @@ bool Node::canStartSelection() const
 {
     if (hasEditableStyle())
         return true;
+
+    if (isInert())
+        return false;
 
     if (renderer()) {
         const RenderStyle& style = renderer()->style();
@@ -2615,6 +2619,23 @@ void* Node::opaqueRootSlow() const
         node = nextNode;
     }
     return const_cast<void*>(static_cast<const void*>(node));
+}
+
+bool Node::isInert() const
+{
+    if (!isConnected())
+        return true;
+
+    if (this != &document() && this != document().documentElement()) {
+        Node* activeModalDialog = document().activeModalDialog();
+        if (activeModalDialog && !activeModalDialog->containsIncludingShadowDOM(this))
+            return true;
+    }
+
+    if (!document().frame() || !document().frame()->ownerElement())
+        return false;
+
+    return document().frame()->ownerElement()->isInert();
 }
 
 template<> ContainerNode* parent<Tree>(const Node& node)

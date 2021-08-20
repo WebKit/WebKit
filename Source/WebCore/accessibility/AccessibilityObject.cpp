@@ -3227,6 +3227,9 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 // http://www.w3.org/TR/wai-aria/terms#def_hidden
 bool AccessibilityObject::isAXHidden() const
 {
+    if (node() && node()->isInert())
+        return true;
+
     if (isFocused())
         return false;
     
