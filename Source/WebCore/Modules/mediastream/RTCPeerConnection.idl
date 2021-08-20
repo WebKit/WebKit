@@ -99,8 +99,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     readonly attribute RTCIceGatheringState iceGatheringState;
     readonly attribute RTCIceConnectionState iceConnectionState;
     readonly attribute RTCPeerConnectionState connectionState;
-    // FIXME 169644: missing canTrickleIceCandidates
-    // FIXME 169644: missing defaultIceServers
+    readonly attribute boolean? canTrickleIceCandidates;
 
     undefined restartIce();
     RTCConfiguration getConfiguration();
@@ -140,8 +139,4 @@ typedef (object or DOMString) AlgorithmIdentifier;
 
     // 8.2 Statistics API
     Promise<RTCStatsReport> getStats(optional MediaStreamTrack? selector = null);
-
-
-    // 9.6 Identity Provider API
-    // FIXME 169644: missing IdP
 };

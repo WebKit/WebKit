@@ -1,3 +1,14 @@
+2021-08-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCPeerConnection.canTrickleIceCandidates
+        https://bugs.webkit.org/show_bug.cgi?id=229287
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-canTrickleIceCandidates-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-constructor-expected.txt:
+        * web-platform-tests/webrtc/idlharness.https.window-expected.txt:
+
 2021-08-19  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Basic support

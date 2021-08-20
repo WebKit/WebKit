@@ -134,6 +134,8 @@ public:
     virtual void disableICECandidateFiltering();
     void enableICECandidateFiltering();
 
+    virtual std::optional<bool> canTrickleIceCandidates() const = 0;
+
     virtual void applyRotationForOutgoingVideoSources() { }
 
 #if !RELEASE_LOG_DISABLED

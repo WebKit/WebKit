@@ -20,5 +20,5 @@ PASS signalingState initial value
 PASS iceGatheringState initial value
 PASS iceConnectionState initial value
 PASS connectionState initial value
-FAIL canTrickleIceCandidates initial value assert_equals: expected (object) null but got (undefined) undefined
+PASS canTrickleIceCandidates initial value
 

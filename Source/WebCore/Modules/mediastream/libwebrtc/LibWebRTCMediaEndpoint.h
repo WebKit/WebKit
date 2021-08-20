@@ -117,6 +117,8 @@ public:
     void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
     void collectTransceivers();
 
+    std::optional<bool> canTrickleIceCandidates() const;
+
     void suspend();
     void resume();
     LibWebRTCProvider::SuspendableSocketFactory* rtcSocketFactory() { return m_rtcSocketFactory.get(); }

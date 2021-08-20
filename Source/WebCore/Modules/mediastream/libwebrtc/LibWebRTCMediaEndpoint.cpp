@@ -402,6 +402,13 @@ void LibWebRTCMediaEndpoint::collectTransceivers()
     }
 }
 
+std::optional<bool> LibWebRTCMediaEndpoint::canTrickleIceCandidates() const
+{
+    if (!m_backend)
+        return { };
+    return m_backend->can_trickle_ice_candidates();
+}
+
 void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&& rtcTransceiver)
 {
     auto rtcReceiver = rtcTransceiver->receiver();

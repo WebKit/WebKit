@@ -464,6 +464,11 @@ void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
     }
 }
 
+std::optional<bool> LibWebRTCPeerConnectionBackend::canTrickleIceCandidates() const
+{
+    return m_endpoint->canTrickleIceCandidates();
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)

@@ -126,6 +126,7 @@ public:
     RTCIceGatheringState iceGatheringState() const { return m_iceGatheringState; }
     RTCIceConnectionState iceConnectionState() const { return m_iceConnectionState; }
     RTCPeerConnectionState connectionState() const { return m_connectionState; }
+    std::optional<bool> canTrickleIceCandidates() const;
 
     void restartIce() { m_backend->restartIce(); }
     const RTCConfiguration& getConfiguration() const { return m_configuration; }

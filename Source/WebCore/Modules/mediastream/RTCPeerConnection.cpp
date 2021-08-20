@@ -334,6 +334,13 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
     });
 }
 
+std::optional<bool> RTCPeerConnection::canTrickleIceCandidates() const
+{
+    if (isClosed() || !remoteDescription())
+        return { };
+    return m_backend-> canTrickleIceCandidates();
+}
+
 // Implementation of https://w3c.github.io/webrtc-pc/#set-pc-configuration
 ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection::iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet)
 {

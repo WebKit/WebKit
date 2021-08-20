@@ -37,7 +37,7 @@ PASS RTCPeerConnection interface: attribute signalingState
 PASS RTCPeerConnection interface: attribute iceGatheringState
 PASS RTCPeerConnection interface: attribute iceConnectionState
 PASS RTCPeerConnection interface: attribute connectionState
-FAIL RTCPeerConnection interface: attribute canTrickleIceCandidates assert_true: The prototype object must have a property "canTrickleIceCandidates" expected true got false
+PASS RTCPeerConnection interface: attribute canTrickleIceCandidates
 PASS RTCPeerConnection interface: operation restartIce()
 PASS RTCPeerConnection interface: operation getConfiguration()
 FAIL RTCPeerConnection interface: operation setConfiguration(optional RTCConfiguration) assert_equals: property has wrong .length expected 0 but got 1
@@ -88,7 +88,7 @@ PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property 
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "iceGatheringState" with the proper type
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "iceConnectionState" with the proper type
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "connectionState" with the proper type
-FAIL RTCPeerConnection interface: new RTCPeerConnection() must inherit property "canTrickleIceCandidates" with the proper type assert_inherits: property "canTrickleIceCandidates" not found in prototype chain
+PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "canTrickleIceCandidates" with the proper type
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "restartIce()" with the proper type
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "getConfiguration()" with the proper type
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "setConfiguration(optional RTCConfiguration)" with the proper type

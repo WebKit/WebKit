@@ -1,3 +1,27 @@
+2021-08-20  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCPeerConnection.canTrickleIceCandidates
+        https://bugs.webkit.org/show_bug.cgi?id=229287
+
+        Reviewed by Eric Carlson.
+
+        Add support for https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-cantrickleicecandidates.
+        Return null in case connection is closed or setRemoteDescription was never called successfully.
+        Add binding code to get the value from webrtc backend.
+        Covered by rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::canTrickleIceCandidates const):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::canTrickleIceCandidates const):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::canTrickleIceCandidates const):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2021-08-19  Tim Nguyen  <ntim@apple.com>
 
         Implement top layer rendering bits
