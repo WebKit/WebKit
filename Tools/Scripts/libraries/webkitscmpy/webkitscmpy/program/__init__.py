@@ -65,14 +65,18 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    programs = [Find, Info, Checkout, Canonicalize, Pull, Clean, Log, Blame, Setup]
+    programs = [Blame, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 
     for program in programs:
-        subparser = subparsers.add_parser(program.name, help=program.help)
+        kwargs = dict(help=program.help)
+        if sys.version_info > (3, 0):
+            kwargs['aliases'] = program.aliases
+        subparser = subparsers.add_parser(program.name, **kwargs)
         subparser.set_defaults(main=program.main)
         subparser.set_defaults(program=program.name)
+        subparser.set_defaults(aliases=program.aliases)
         arguments.LoggingGroup(
             subparser,
             loggers=loggers,
@@ -83,7 +87,11 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     args = args or sys.argv[1:]
     parsed, unknown = parser.parse_known_args(args=args)
     if unknown:
-        program_index = args.index(parsed.program)
+        program_index = 0
+        for candidate in [parsed.program] + parsed.aliases:
+            if candidate in args:
+                program_index = args.index(candidate)
+                break
         if getattr(parsed, 'args', None):
             parsed.args = [arg for arg in args[program_index:] if arg in parsed.args or arg in unknown]
         if any([option not in getattr(parsed, 'args', []) for option in unknown]):

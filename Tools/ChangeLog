@@ -1,3 +1,19 @@
+2021-08-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add pull-request command (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=229089
+        <rdar://problem/81908751>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Sort programs, add aliases.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (Command): Add alias
+        (FilteredCommand): Inherit from Command.
+
 2021-08-20  Jon Lee  <jonlee@apple.com>
 
         Teach run-webkit-tests to print a summary of test status
