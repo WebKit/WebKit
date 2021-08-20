@@ -157,6 +157,10 @@ WTF_EXPORT_PRIVATE void registerPtrTagLookup(PtrTagLookup*);
 WTF_EXPORT_PRIVATE void reportBadTag(const void*, PtrTag expectedTag);
 
 #if ENABLE(PTRTAG_DEBUGGING)
+
+WTF_EXPORT_PRIVATE const char* ptrTagName(PtrTag);
+WTF_EXPORT_PRIVATE const char* tagForPtr(const void*);
+
 constexpr bool enablePtrTagDebugAssert = true;
 #define REPORT_BAD_TAG(success, ptr, expectedTag) do { \
         if (UNLIKELY(!success)) \
