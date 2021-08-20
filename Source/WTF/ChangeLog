@@ -1,3 +1,30 @@
+2021-08-20  Mark Lam  <mark.lam@apple.com>
+
+        Remove assertIsTagged and assertIsNullOrTagged.
+        https://bugs.webkit.org/show_bug.cgi?id=229329
+        rdar://82162851
+
+        Reviewed by Yusuke Suzuki.
+
+        These assertion utility functions rely on tagged pointers always having non-zero
+        PAC bits.  This is an incorrect assumption.  A tagged pointer can have PAC bits
+        that are completely zero.  Hence, these assert functions cannot be made to work
+        reliably.  We should remove them to prevent them from being used, and potentially
+        resulting in flaky assertion failures that will be hard to debug later.
+
+        Note: assertIsNotTagged is fine to keep.  It asserts that PAC bits of a pointer
+        are all 0.  As a result, this assertion can have false positives where it may think
+        a tagged pointer is an untagged pointer.  However, this is rare because it is not
+        common to have 0 PAC bits in tagged pointers.  False positives on this assertion
+        won't result in flaky test failures that will waste our time later.  Hence,
+        keeping the assertion will do more good (it will tend to help us find bugs) than
+        bad (it will rarely let false positives thru).  As a result, I'm opting to not
+        remove it.
+
+        * wtf/PtrTag.h:
+        (WTF::assertIsTagged): Deleted.
+        (WTF::assertIsNullOrTagged): Deleted.
+
 2021-08-19  Antti Koivisto  <antti@apple.com>
 
         [:has() pseudo-class] Basic support

@@ -318,20 +318,6 @@ void assertIsNotTagged(PtrType value)
     WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, NoPtrTag, ptr == removeCodePtrTag(ptr));
 }
 
-template<typename PtrType>
-void assertIsTagged(PtrType value)
-{
-    void* ptr = bitwise_cast<void*>(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, ptr, AnyPtrTag, ptr != removeCodePtrTag(ptr));
-}
-
-template<typename PtrType>
-void assertIsNullOrTagged(PtrType ptr)
-{
-    if (ptr)
-        assertIsTagged(ptr);
-}
-
 template<PtrTag tag, typename PtrType>
 bool isTaggedWith(PtrType value)
 {
@@ -578,8 +564,6 @@ using WTF::untagInt;
 using WTF::assertIsCFunctionPtr;
 using WTF::assertIsNullOrCFunctionPtr;
 using WTF::assertIsNotTagged;
-using WTF::assertIsTagged;
-using WTF::assertIsNullOrTagged;
 using WTF::isTaggedWith;
 using WTF::assertIsTaggedWith;
 using WTF::assertIsNullOrTaggedWith;
