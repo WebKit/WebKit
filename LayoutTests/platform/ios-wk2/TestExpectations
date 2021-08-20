@@ -1904,6 +1904,8 @@ webkit.org/b/227283 imported/w3c/web-platform-tests/css/css-grid/grid-items/repl
 
 webkit.org/b/215929 compositing/video/poster.html [ Pass Timeout ]
 
+webkit.org/b/223900 compositing/video/video-update-rendering.html [ Pass Failure ]
+
 webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
 
 webkit.org/b/216156 http/tests/misc/script-async.html [ Pass Failure ]
