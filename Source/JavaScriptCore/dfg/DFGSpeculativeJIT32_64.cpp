@@ -2565,7 +2565,7 @@ void SpeculativeJIT::compile(Node* node)
         JSValueRegsTemporary result;
         compileGetByValOnString(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat)>([&] (DataFormat preferredFormat) {
             result = JSValueRegsTemporary(this);
-            ASSERT(preferredFormat & DataFormatJS);
+            ASSERT(preferredFormat == DataFormatJS || preferredFormat == DataFormatCell);
             return std::make_pair(result.regs(), preferredFormat);
         }));
         break;

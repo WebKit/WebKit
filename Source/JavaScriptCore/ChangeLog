@@ -1,3 +1,17 @@
+2021-08-20  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix DFG compilation of StringCharAt in 32 bits jsc debug build
+        https://bugs.webkit.org/show_bug.cgi?id=229293
+
+        Reviewed by Keith Miller.
+
+        In SpeculativeJIT::compileGetByValOnString the format can be either DataFormatJS
+        or DataFormatCell so assert either value when compiling it in 32 bits.
+        It's the same assert already present in the DFG 64 bits counterpart
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2021-08-20  Mark Lam  <mark.lam@apple.com>
 
         Add some offlineasm enhancements.
