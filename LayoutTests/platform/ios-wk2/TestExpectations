@@ -2010,3 +2010,6 @@ editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.htm
 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Failure ]
+
+#rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
+editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]

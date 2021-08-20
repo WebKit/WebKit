@@ -1,3 +1,12 @@
+2021-08-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure.
+        <rdar://82183980>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-20  Dean Jackson  <dino@apple.com>
 
         [WebXR] A session with only one view should cover the full screen
