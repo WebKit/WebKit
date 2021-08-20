@@ -1,3 +1,37 @@
+2021-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an ObjectIdentifier<> for text checker requests
+        https://bugs.webkit.org/show_bug.cgi?id=229302
+
+        Reviewed by Wenson Hsieh.
+
+        Introduce TextCheckerRequestID and use it to identify text checker requests in a type-safe
+        way.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/IdentifierTypes.h:
+        * UIProcess/TextCheckerCompletion.cpp:
+        (WebKit::TextCheckerCompletion::create):
+        (WebKit::TextCheckerCompletion::TextCheckerCompletion):
+        * UIProcess/TextCheckerCompletion.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestCheckingOfString):
+        (WebKit::WebPageProxy::didFinishCheckingText):
+        (WebKit::WebPageProxy::didCancelCheckingText):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestCheckingOfString):
+        (WebKit::generateTextCheckingRequestID): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addTextCheckingRequest):
+        (WebKit::WebPage::didFinishCheckingText):
+        (WebKit::WebPage::didCancelCheckingText):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix the apple internal build after r281277

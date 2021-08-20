@@ -32,4 +32,7 @@ namespace WebKit {
 enum TapIdentifierType { };
 using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
 
+enum TextCheckerRequestType { };
+using TextCheckerRequestID = ObjectIdentifier<TextCheckerRequestType>;
+
 } // namespace WebKit

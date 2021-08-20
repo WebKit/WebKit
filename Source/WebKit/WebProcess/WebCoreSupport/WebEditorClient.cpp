@@ -69,12 +69,6 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-static uint64_t generateTextCheckingRequestID()
-{
-    static uint64_t uniqueTextCheckingRequestID = 1;
-    return uniqueTextCheckingRequestID++;
-}
-
 bool WebEditorClient::shouldDeleteRange(const std::optional<SimpleRange>& range)
 {
     return m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, range);
@@ -581,7 +575,7 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
 
 void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, const WebCore::VisibleSelection& currentSelection)
 {
-    uint64_t requestID = generateTextCheckingRequestID();
+    auto requestID = TextCheckerRequestID::generate();
     m_page->addTextCheckingRequest(requestID, request);
 
     m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request.data(), insertionPointFromCurrentSelection(currentSelection)));

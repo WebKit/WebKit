@@ -1154,9 +1154,9 @@ public:
     bool canShowMIMEType(const String& MIMEType) const;
     bool canShowResponse(const WebCore::ResourceResponse&) const;
 
-    void addTextCheckingRequest(uint64_t requestID, Ref<WebCore::TextCheckingRequest>&&);
-    void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
-    void didCancelCheckingText(uint64_t requestID);
+    void addTextCheckingRequest(TextCheckerRequestID, Ref<WebCore::TextCheckingRequest>&&);
+    void didFinishCheckingText(TextCheckerRequestID, const Vector<WebCore::TextCheckingResult>&);
+    void didCancelCheckingText(TextCheckerRequestID);
 
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResults(NSArray *);
@@ -1935,7 +1935,7 @@ private:
     HashSet<PluginView*> m_pluginViews;
     bool m_hasSeenPlugin { false };
 
-    HashMap<uint64_t, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
+    HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
 
     bool m_useFixedLayout { false };
 

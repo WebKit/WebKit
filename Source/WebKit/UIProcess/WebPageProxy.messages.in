@@ -297,7 +297,7 @@ messages -> WebPageProxy {
     GetGuessesForWord(String word, String context, int32_t insertionPoint) -> (Vector<String> guesses) Synchronous
     LearnWord(String word)
     IgnoreWord(String word)
-    RequestCheckingOfString(uint64_t requestID, WebCore::TextCheckingRequestData request, int32_t insertionPoint)
+    RequestCheckingOfString(WebKit::TextCheckerRequestID requestID, WebCore::TextCheckingRequestData request, int32_t insertionPoint)
 
     # Drag and drop messages
 #if ENABLE(DRAG_SUPPORT)

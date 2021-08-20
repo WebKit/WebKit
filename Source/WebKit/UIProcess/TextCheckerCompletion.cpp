@@ -31,12 +31,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<TextCheckerCompletion> TextCheckerCompletion::create(uint64_t requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
+Ref<TextCheckerCompletion> TextCheckerCompletion::create(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
 {
     return adoptRef(*new TextCheckerCompletion(requestID, requestData, page));
 }
 
-TextCheckerCompletion::TextCheckerCompletion(uint64_t requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
+TextCheckerCompletion::TextCheckerCompletion(TextCheckerRequestID requestID, const TextCheckingRequestData& requestData, WebPageProxy* page)
     : m_requestID(requestID)
     , m_requestData(requestData)
     , m_page(page)

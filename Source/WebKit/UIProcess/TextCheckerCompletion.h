@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IdentifierTypes.h"
 #include <WebCore/TextChecking.h>
 #include <wtf/Forward.h>
 
@@ -36,7 +37,7 @@ class WebPageProxy;
 
 class TextCheckerCompletion : public RefCounted<TextCheckerCompletion> {
 public:
-    static Ref<TextCheckerCompletion> create(uint64_t requestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
+    static Ref<TextCheckerCompletion> create(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
 
     const WebCore::TextCheckingRequestData& textCheckingRequestData() const;
     SpellDocumentTag spellDocumentTag();
@@ -44,9 +45,9 @@ public:
     void didCancelCheckingText() const;
 
 private:
-    TextCheckerCompletion(uint64_t requestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
+    TextCheckerCompletion(TextCheckerRequestID, const WebCore::TextCheckingRequestData&, WebPageProxy*);
 
-    const uint64_t m_requestID;
+    const TextCheckerRequestID m_requestID;
     const WebCore::TextCheckingRequestData m_requestData;
     WebPageProxy* m_page;
 };

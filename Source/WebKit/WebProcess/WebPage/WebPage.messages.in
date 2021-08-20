@@ -359,8 +359,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     # Spelling and grammar.
     AdvanceToNextMisspelling(bool startBeforeSelection)
     ChangeSpellingToWord(String word)
-    DidFinishCheckingText(uint64_t requestID, Vector<WebCore::TextCheckingResult> result)
-    DidCancelCheckingText(uint64_t requestID)
+    DidFinishCheckingText(WebKit::TextCheckerRequestID requestID, Vector<WebCore::TextCheckingResult> result)
+    DidCancelCheckingText(WebKit::TextCheckerRequestID requestID)
 #if USE(APPKIT)
     UppercaseWord()
     LowercaseWord()

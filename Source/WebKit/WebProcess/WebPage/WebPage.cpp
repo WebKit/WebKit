@@ -6241,12 +6241,12 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
     return false;
 }
 
-void WebPage::addTextCheckingRequest(uint64_t requestID, Ref<TextCheckingRequest>&& request)
+void WebPage::addTextCheckingRequest(TextCheckerRequestID requestID, Ref<TextCheckingRequest>&& request)
 {
     m_pendingTextCheckingRequestMap.add(requestID, WTFMove(request));
 }
 
-void WebPage::didFinishCheckingText(uint64_t requestID, const Vector<TextCheckingResult>& result)
+void WebPage::didFinishCheckingText(TextCheckerRequestID requestID, const Vector<TextCheckingResult>& result)
 {
     RefPtr<TextCheckingRequest> request = m_pendingTextCheckingRequestMap.take(requestID);
     if (!request)
@@ -6255,7 +6255,7 @@ void WebPage::didFinishCheckingText(uint64_t requestID, const Vector<TextCheckin
     request->didSucceed(result);
 }
 
-void WebPage::didCancelCheckingText(uint64_t requestID)
+void WebPage::didCancelCheckingText(TextCheckerRequestID requestID)
 {
     RefPtr<TextCheckingRequest> request = m_pendingTextCheckingRequestMap.take(requestID);
     if (!request)
