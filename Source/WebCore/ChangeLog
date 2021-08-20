@@ -1,3 +1,21 @@
+2021-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Stop honoring any dot-prefixed font names
+        https://bugs.webkit.org/show_bug.cgi?id=228177
+
+        Reviewed by Sam Weinig.
+
+        Dot-prefixed fonts are intentionally unsupported. We should stop supporting them.
+        If authors want to access the various system fonts, they can use system-ui,
+        ui-serif, ui-monospace, or ui-rounded.
+
+        Test: fast/text/font-lookup-dot-prefix-case-sensitive.html
+
+        * platform/cocoa/VersionChecks.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isDotPrefixedForbiddenFont):
+        (WebCore::platformFontLookupWithFamily):
+
 2021-08-19  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] The root inlinebox's style is always the IFC's root style

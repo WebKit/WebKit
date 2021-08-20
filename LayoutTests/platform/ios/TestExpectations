@@ -2623,7 +2623,7 @@ imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-003.html [ 
 fast/text/accessibility-bold-system-font-2.html [ Pass ]
 
 # This test is specific to Core Text.
-fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ ImageOnlyFailure ]
 
 # Missing support for 521-bit elliptic curves.
 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html

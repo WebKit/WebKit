@@ -74,6 +74,7 @@ enum class SDKVersion : uint32_t {
     FirstWithBlankViewOnJSPrompt = DYLD_IOS_VERSION_14_5,
     FirstWithApplicationCacheDisabledByDefault = DYLD_IOS_VERSION_15_0,
     FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_IOS_VERSION_15_0,
+    FirstForbiddingDotPrefixedFonts = DYLD_IOS_VERSION_16_0,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
@@ -99,6 +100,7 @@ enum class SDKVersion : uint32_t {
     FirstWithoutClientCertificateLookup = DYLD_MACOSX_VERSION_11_3,
     FirstWithApplicationCacheDisabledByDefault = DYLD_MACOSX_VERSION_12_00,
     FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_MACOSX_VERSION_12_00,
+    FirstForbiddingDotPrefixedFonts = DYLD_MACOSX_VERSION_13_0,
 #endif
 };
 

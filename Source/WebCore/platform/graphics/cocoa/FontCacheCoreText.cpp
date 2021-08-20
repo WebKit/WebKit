@@ -31,6 +31,7 @@
 #include "FontFamilySpecificationCoreText.h"
 #include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
+#include "VersionChecks.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 
 #include <CoreText/SFNTLayoutTypes.h>
@@ -1107,17 +1108,24 @@ struct FontLookup {
     bool createdFromPostScriptName { false };
 };
 
+static bool isDotPrefixedForbiddenFont(const AtomString& family)
+{
+    if (linkedOnOrAfter(SDKVersion::FirstForbiddingDotPrefixedFonts))
+        return family.startsWith('.');
+    return equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")
+        || equalLettersIgnoringASCIICase(family, ".sf ns mono")
+        || equalLettersIgnoringASCIICase(family, ".sf ui mono")
+        || equalLettersIgnoringASCIICase(family, ".sf arabic")
+        || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded");
+}
+
 static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     const auto& allowlist = fontAllowlist();
     if (!isSystemFont(family.string()) && allowlist.size() && !allowlist.contains(family))
         return { nullptr };
 
-    if (equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")
-        || equalLettersIgnoringASCIICase(family, ".sf ns mono")
-        || equalLettersIgnoringASCIICase(family, ".sf ui mono")
-        || equalLettersIgnoringASCIICase(family, ".sf arabic")
-        || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded")) {
+    if (isDotPrefixedForbiddenFont(family)) {
         // If you want to use these fonts, use system-ui, ui-serif, ui-monospace, or ui-rounded.
         return { nullptr };
     }
