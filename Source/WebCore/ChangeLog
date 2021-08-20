@@ -1,3 +1,24 @@
+2021-08-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        GlyphBuffer can become inconsistent with its backing string
+        https://bugs.webkit.org/show_bug.cgi?id=229064
+
+        Reviewed by Alan Bujtas.
+
+        This is split out from https://bugs.webkit.org/show_bug.cgi?id=215643.
+
+        Before shaping, the glyphs in the GlyphBuffer need to match one-to-one with code units in the string.
+        We iterate over the string, adding glyphs into the GlyphBuffer, but there was one early "continue"
+        in the loop that skips the add() call.
+
+        Because this patch adds ASSERT()s, this is actually covered by existing tests.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::commitCurrentFontRange):
+        (WebCore::addToGlyphBuffer):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/WidthIterator.h:
+
 2021-08-20  Tim Nguyen  <ntim@apple.com>
 
         Ensure ancestors with opacity don't affect top layer elements

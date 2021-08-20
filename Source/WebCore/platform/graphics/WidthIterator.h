@@ -68,7 +68,7 @@ private:
         GlyphBufferAdvance initialAdvance;
     };
     ApplyFontTransformsResult applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, bool force, CharactersTreatedAsSpace&);
-    void commitCurrentFontRange(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace&);
+    void commitCurrentFontRange(GlyphBuffer&, unsigned& lastGlyphCount, unsigned currentCharacterIndex, const Font*&, const Font& newFont, const Font& primaryFont, UChar32 character, float& widthOfCurrentFontRange, float nextCharacterWidth, CharactersTreatedAsSpace&);
     void applyInitialAdvance(GlyphBuffer&, std::optional<GlyphBufferAdvance> initialAdvance, unsigned lastGlyphCount);
 
     bool hasExtraSpacing() const;

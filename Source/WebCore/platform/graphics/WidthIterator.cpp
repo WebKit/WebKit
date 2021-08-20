@@ -222,34 +222,59 @@ void WidthIterator::applyInitialAdvance(GlyphBuffer& glyphBuffer, std::optional<
     }
 }
 
-void WidthIterator::commitCurrentFontRange(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font& font, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+void WidthIterator::commitCurrentFontRange(GlyphBuffer& glyphBuffer, unsigned& lastGlyphCount, unsigned currentCharacterIndex, const Font*& font, const Font& newFont, const Font& primaryFont, UChar32 character, float& widthOfCurrentFontRange, float nextCharacterWidth, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
+#if ASSERT_ENABLED
+    ASSERT(font);
+    for (unsigned i = lastGlyphCount; i < glyphBuffer.size(); ++i)
+        ASSERT(&glyphBuffer.fontAt(i) == font);
+#endif
+
     std::optional<GlyphBufferAdvance> initialAdvance;
     auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex);
     if (transformsType != TransformsType::None) {
-        auto applyFontTransformsResult = applyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex, font, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+        auto applyFontTransformsResult = applyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex, *font, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
         m_runWidthSoFar += applyFontTransformsResult.additionalAdvance;
         initialAdvance = applyFontTransformsResult.initialAdvance;
     }
     applyInitialAdvance(glyphBuffer, initialAdvance, lastGlyphCount);
     m_currentCharacterIndex = currentCharacterIndex;
 
-    if (widthOfCurrentFontRange && m_fallbackFonts && &font != &primaryFont) {
+    if (widthOfCurrentFontRange && m_fallbackFonts && font != &primaryFont) {
         // FIXME: This does a little extra work that could be avoided if
         // glyphDataForCharacter() returned whether it chose to use a small caps font.
         if (!m_font.isSmallCaps() || character == u_toupper(character))
-            m_fallbackFonts->add(&font);
+            m_fallbackFonts->add(font);
         else {
             auto glyphFont = m_font.glyphDataForCharacter(u_toupper(character), m_run.rtl()).font;
             if (glyphFont != &primaryFont)
                 m_fallbackFonts->add(glyphFont);
         }
     }
+
+    lastGlyphCount = glyphBuffer.size();
+    font = &newFont;
+    widthOfCurrentFontRange = nextCharacterWidth;
 }
 
 bool WidthIterator::hasExtraSpacing() const
 {
     return (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
+}
+
+static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, UChar32 character)
+{
+    glyphBuffer.add(glyph, font, width, currentCharacterIndex);
+#if USE(CTFONTSHAPEGLYPHS)
+    // These 0 glyphs are needed by shapers if the source text has surrogate pairs.
+    // However, CTFontTransformGlyphs() can't delete these 0 glyphs from the shaped text,
+    // so we shouldn't add them in the first place if we're using that shaping routine.
+    // Any other shaping routine should delete these glyphs from the shaped text.
+    if (!U_IS_BMP(character))
+        glyphBuffer.add(0, font, 0, currentCharacterIndex + 1);
+#else
+    UNUSED_PARAM(character);
+#endif
 }
 
 template <typename TextIterator>
@@ -291,6 +316,11 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         const GlyphData& glyphData = m_font.glyphDataForCharacter(character, rtl);
         Glyph glyph = glyphData.glyph;
         if (!glyph && !characterMustDrawSomething) {
+            commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, lastFontData, primaryFont, primaryFont, character, widthOfCurrentFontRange, width, charactersTreatedAsSpace);
+
+            Glyph deletedGlyph = 0xFFFF;
+            addToGlyphBuffer(glyphBuffer, deletedGlyph, primaryFont, 0, currentCharacterIndex, character);
+
             textIterator.advance(advanceLength);
             currentCharacterIndex = textIterator.currentIndex();
             continue;
@@ -300,12 +330,9 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         previousWidth = width;
         width = font.widthForGlyph(glyph);
 
-        if (&font != lastFontData) {
-            commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, *lastFontData, primaryFont, character, widthOfCurrentFontRange, charactersTreatedAsSpace);
-            lastGlyphCount = glyphBuffer.size();
-            lastFontData = &font;
-            widthOfCurrentFontRange = width;
-        } else
+        if (&font != lastFontData)
+            commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, lastFontData, font, primaryFont, character, widthOfCurrentFontRange, width, charactersTreatedAsSpace);
+        else
             widthOfCurrentFontRange += width;
 
         auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, currentCharacterIndex);
@@ -326,15 +353,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (m_forTextEmphasis && !FontCascade::canReceiveTextEmphasis(character))
             glyph = 0;
 
-        glyphBuffer.add(glyph, font, width, currentCharacterIndex);
-#if USE(CTFONTSHAPEGLYPHS)
-        // These 0 glyphs are needed by shapers if the source text has surrogate pairs.
-        // However, CTFontTransformGlyphs() can't delete these 0 glyphs from the shaped text,
-        // so we shouldn't add them in the first place if we're using that shaping routine.
-        // Any other shaping routine should delete these glyphs from the shaped text.
-        if (!U_IS_BMP(character))
-            glyphBuffer.add(0, font, 0, currentCharacterIndex + 1);
-#endif
+        addToGlyphBuffer(glyphBuffer, glyph, font, width, currentCharacterIndex, character);
 
         // Advance past the character we just dealt with.
         textIterator.advance(advanceLength);
@@ -349,7 +368,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         }
     }
 
-    commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, *lastFontData, primaryFont, character, widthOfCurrentFontRange, charactersTreatedAsSpace);
+    commitCurrentFontRange(glyphBuffer, lastGlyphCount, currentCharacterIndex, lastFontData, primaryFont, primaryFont, character, widthOfCurrentFontRange, width, charactersTreatedAsSpace);
 }
 
 auto WidthIterator::calculateAdditionalWidth(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const -> AdditionalWidth
