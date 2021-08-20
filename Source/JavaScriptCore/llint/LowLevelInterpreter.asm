@@ -1964,6 +1964,8 @@ _js_trampoline_llint_function_for_construct_arity_check_tag_wide16:
 _js_trampoline_llint_function_for_construct_arity_check_tag_wide32:
     crash()
 
+include? LowLevelInterpreterAdditions
+
 # Value-representation-specific code.
 if JSVALUE64
     include LowLevelInterpreter64

@@ -495,7 +495,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #if CPU(ARM_THUMB2)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)          \
     ".text\n"                                    \
-    ".align 4\n"                                 \
+    ".balign 4\n"                                 \
     ".globl " SYMBOL_STRING(label) "\n"          \
     HIDE_SYMBOL(label) "\n"                      \
     ".thumb\n"                                   \
@@ -504,7 +504,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 #elif CPU(ARM64)
 #define OFFLINE_ASM_GLOBAL_LABEL(label)         \
     ".text\n"                                   \
-    ".align 4\n"                                \
+    ".balign 4\n"                                \
     ".globl " SYMBOL_STRING(label) "\n"         \
     HIDE_SYMBOL(label) "\n"                     \
     SYMBOL_STRING(label) ":\n"

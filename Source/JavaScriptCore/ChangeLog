@@ -1,5 +1,63 @@
 2021-08-20  Mark Lam  <mark.lam@apple.com>
 
+        Add some offlineasm enhancements.
+        https://bugs.webkit.org/show_bug.cgi?id=229332
+        rdar://82163923
+
+        Reviewed by Keith Miller.
+
+        1. Enhance "include" offlineasm Instruction to always attempt to include an asm
+           file from <build-products>/usr/local/include/WebKitAdditions/ first.  If the
+           specified file is not available there, then it will attempt to include the file
+           from the same directory as the current source file (which in practice, means
+           Source/JavaScriptCore/llint/).
+
+        2. Enhance "include" offlineasm Instruction to allow an optional file to be
+           included if it exists.  For example, the following offlineasm code:
+
+                include? LowLevelInterpreterAdditions
+
+           ... will attempt to include a file LowLevelInterpreterAdditions.asm.  If the
+           file does not exist, this will be a no-op.  Note: the "?" after the "include"
+           means the include is optional.
+
+        3. Enhanced "emit" offlineasm Instruction to be able to take more than one operand.
+
+           "emit" used to just copy the string operand that follows into the generated
+           LLIntAssembly.h.  Now, "emit" can take multiple comma separated operands, and
+           will concatenate all the operands.
+
+           Additionally, "emit" can now take a LocalLabelReference as an operand.  For
+           example, this offline asm code:
+
+                   emit "b ", .done
+                   ...
+                .done:
+
+           ... will generate this inline asm code in LLIntAssembly.h:
+
+                "b " LOCAL_LABEL_STRING(_offlineasm_someLabel_done) "\n"
+
+           This makes it easier to emit branches to local labels.
+
+        4. Also fixed LLInt code alignment for ARM_THUMB2 and ARM64.
+
+           Previously, it was aligned using ".align 4" which means aligned on a 4
+           instruction boundary.  Note: the interpretation of .align varies for different
+           target CPU architectures.
+
+           Now, we do the alignment using ".balign 4" which means align on a 4 byte
+           boundary.  This is the intended alignment because ARM64 instruction size is
+           4 bytes, and ARM_THUMB2 instruction size is either 2 bytes or 4 bytes.
+           Using .align before was potentially wasting some code space.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        * offlineasm/ast.rb:
+        * offlineasm/parser.rb:
+
+2021-08-20  Mark Lam  <mark.lam@apple.com>
+
         Reduce StructureID entropy bits to 5 to make room for more StructureIDs.
         https://bugs.webkit.org/show_bug.cgi?id=229326
         rdar://60141624
