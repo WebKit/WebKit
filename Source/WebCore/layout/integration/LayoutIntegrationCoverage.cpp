@@ -108,8 +108,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasTextOverflow:
         stream << "text-overflow";
         break;
-    case AvoidanceReason::FlowIsDepricatedFlexBox:
-        stream << "depricatedFlexBox";
+    case AvoidanceReason::FlowHasLineClamp:
+        stream << "-webkit-line-clamp";
         break;
     case AvoidanceReason::FlowParentIsPlaceholderElement:
         stream << "placeholder element";
@@ -780,8 +780,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (flow.parent()->isDeprecatedFlexibleBox())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsDepricatedFlexBox, reasons, includeReasons);
+    if (!flow.parent()->style().lineClamp().isNone())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineClamp, reasons, includeReasons);
     // FIXME: Placeholders do something strange.
     if (is<RenderTextControl>(*flow.parent()) && downcast<RenderTextControl>(*flow.parent()).textFormControlElement().placeholderElement())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsPlaceholderElement, reasons, includeReasons);

@@ -42,6 +42,7 @@
 #include "LegacyLineLayout.h"
 #include "Logging.h"
 #include "RenderCombineText.h"
+#include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -3802,7 +3803,32 @@ void RenderBlockFlow::ensureLineBoxes()
     } else
         legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
-    updateLogicalHeight();
+    {
+        struct DeprecatedBoxStrechingScope {
+            DeprecatedBoxStrechingScope(RenderElement& parent)
+            {
+                if (is<RenderDeprecatedFlexibleBox>(parent) && parent.style().boxAlign() == BoxAlignment::Stretch) {
+                    // While modern flex box's uses override height to stretch its children, deprecated flex box
+                    // uses a flag which is consulted at updateLogicalHeight().
+                    // This scope class ensures that we don't collapse flex items while swapping the line structures.
+                    // see RenderBox::computeLogicalHeight where isStretchingChildren() is consulted.
+                    strechingRenderer = makeWeakPtr(downcast<RenderDeprecatedFlexibleBox>(parent));
+                    strechingRenderer->setIsStretchingChildren(true);
+                }
+            }
+
+            ~DeprecatedBoxStrechingScope()
+            {
+                if (strechingRenderer)
+                    strechingRenderer->setIsStretchingChildren(false);
+            }
+
+            WeakPtr<RenderDeprecatedFlexibleBox> strechingRenderer;
+
+        };
+        auto deprecatedBoxStrechingScope = DeprecatedBoxStrechingScope(*parent());
+        updateLogicalHeight();
+    }
     ASSERT(didNeedLayout || ceilf(logicalHeight()) == ceilf(oldHeight));
 
     if (!didNeedLayout)

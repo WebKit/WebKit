@@ -43,7 +43,7 @@ enum class AvoidanceReason : uint64_t {
     ContentIsRuby                                = 1LLU  << 3,
     FlowIsPaginated                              = 1LLU  << 4,
     FlowHasTextOverflow                          = 1LLU  << 5,
-    FlowIsDepricatedFlexBox                      = 1LLU  << 6,
+    FlowHasLineClamp                             = 1LLU  << 6,
     FlowParentIsPlaceholderElement               = 1LLU  << 7,
     FlowParentIsTextAreaWithWrapping             = 1LLU  << 8,
     FlowHasNonSupportedChild                     = 1LLU  << 9,
