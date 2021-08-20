@@ -2013,5 +2013,7 @@ editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure 
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Failure ]
 
+# rdar://80393995 ([ iOS15 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout) http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
+
 #rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]

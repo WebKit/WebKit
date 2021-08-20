@@ -81,9 +81,6 @@ fast/css/ios/system-color-for-css-value.html [ Pass ]
 # rdar://80385521 ([ iOS15 ] editing/selection/preserve-selection-when-clicking-button.html is a consistent failure)
 editing/selection/preserve-selection-when-clicking-button.html [ Pass ]
 
-# rdar://80393995 ([ iOS15 WK2 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout)
-http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Pass ]
-
 # rdar://80384564 ([ iOS15 ] editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html is failing)
 editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Pass ]
 
