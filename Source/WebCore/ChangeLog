@@ -1,5 +1,23 @@
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Make mid-word breaking surrogate pair aware
+        https://bugs.webkit.org/show_bug.cgi?id=229026
+
+        Reviewed by Antti Koivisto.
+
+        Surrogate pairs represent one "character" (U16_IS_LEAD + U16_IS_TAIL).
+        We should never break them half even when CSS tells us to break the word at arbitrary position. 
+        This is in preparation for removing the U16_IS_SURROGATE check in canUseForCharacter.
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::midWorkdBreak):
+        (WebCore::Layout::TextUtil::split): Deleted.
+        * layout/formattingContexts/inline/text/TextUtil.h:
+
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
         [LFC][Integration] Use the logical width when passing in the constraint for the inline content
         https://bugs.webkit.org/show_bug.cgi?id=228942
 

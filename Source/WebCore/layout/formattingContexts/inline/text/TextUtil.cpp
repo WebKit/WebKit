@@ -84,30 +84,49 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
 }
 
-TextUtil::SplitData TextUtil::split(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
+TextUtil::MidWorkdBreak TextUtil::midWorkdBreak(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
     ASSERT(availableWidth >= 0);
     auto startPosition = inlineTextItem.start();
     auto length = inlineTextItem.length();
     ASSERT(length);
 
+    auto text = inlineTextItem.inlineTextBox().content();
+    auto surrogatePairAwareIndex = [&] (auto index) {
+        // We should never break in the middle of a surrogate pair. They are considered one joint entity.
+        RELEASE_ASSERT(index < text.length());
+        if (!U16_IS_LEAD(text[index]))
+            return index;
+        RELEASE_ASSERT(index + 1 < text.length());
+        ASSERT(U16_IS_TRAIL(text[index + 1]));
+        return ++index;
+    };
+
     auto left = startPosition;
     // Pathological case of (extremely)long string and narrow lines.
     // Adjust the range so that we can pick a reasonable midpoint.
-    InlineLayoutUnit averageCharacterWidth = textWidth / length;
+    auto averageCharacterWidth = InlineLayoutUnit { textWidth / length };
     unsigned offset = toLayoutUnit(2 * availableWidth / averageCharacterWidth).toUnsigned();
-    auto right = std::min<unsigned>(left + offset, (startPosition + length - 1));
+    auto right = surrogatePairAwareIndex(std::min<unsigned>(left + offset, (startPosition + length - 1)));
     // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
-    InlineLayoutUnit leftSideWidth = 0;
+    auto leftSideWidth = InlineLayoutUnit { 0 };
     while (left < right) {
-        auto middle = (left + right) / 2;
+        auto middle = surrogatePairAwareIndex((left + right) / 2);
         auto width = TextUtil::width(inlineTextItem, startPosition, middle + 1, contentLogicalLeft);
         if (width < availableWidth) {
             left = middle + 1;
             leftSideWidth = width;
-        } else if (width > availableWidth)
-            right = middle;
-        else {
+        } else if (width > availableWidth) {
+            auto surrogatePairAwareStart = [&] (auto index) {
+                if (!U16_IS_TRAIL(text[middle]))
+                    return index;
+                RELEASE_ASSERT(index);
+                ASSERT(U16_IS_LEAD(text[index - 1]));
+                return --index;
+            };
+            // When the substring does not fit, the right side is supposed to be the start of the surrogate pair if applicable. 
+            right = surrogatePairAwareStart(middle);
+        } else {
             right = middle + 1;
             leftSideWidth = width;
             break;
