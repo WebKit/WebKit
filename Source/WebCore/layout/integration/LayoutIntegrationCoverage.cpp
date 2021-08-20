@@ -577,11 +577,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
     // See RenderBlock::updateSecurityDiscCharacters.
     if (style.textSecurity() != TextSecurity::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextSecurity, reasons, includeReasons);
-    if (style.hyphens() == Hyphens::Auto) {
-        auto textReasons = canUseForText(style.hyphenString(), style.fontCascade(), std::nullopt, false, includeReasons);
-        if (textReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
-    }
     return reasons;
 }
 
