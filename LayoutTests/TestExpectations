@@ -5127,3 +5127,6 @@ http/wpt/crypto/aes-cbc-crash.any.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/crypto/aes-ctr-crash.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.html [ DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/228176 fast/text/variable-system-font.html [ Pass ImageOnlyFailure ]
+webkit.org/b/228176 fast/text/variable-system-font-2.html [ Pass ImageOnlyFailure ]

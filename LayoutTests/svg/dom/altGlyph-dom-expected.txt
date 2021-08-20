@@ -8,7 +8,6 @@ PASS altGlyph.tagName is "altGlyph"
 PASS altGlyph.namespaceURI is "http://www.w3.org/2000/svg"
 PASS altGlyph.format is "image/svg+xml"
 PASS altGlyph.format = 'x' threw exception NoModificationAllowedError: The object can not be modified..
-FAIL altGlyph.getStartPositionOfChar(0).x should be 0. Was 72.
 PASS successfullyParsed is true
 
 TEST COMPLETE

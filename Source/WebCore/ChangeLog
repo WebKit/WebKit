@@ -1,3 +1,19 @@
+2021-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Stop treating the system font as a non-variable font
+        https://bugs.webkit.org/show_bug.cgi?id=228176
+
+        Reviewed by Sam Weinig.
+
+        Modern versions of macOS and iOS can treat the system font as a variable font,
+        and be able to apply weights like "342" instead of just "300" or "400".
+
+        Tests: fast/text/variable-system-font-2.html
+               fast/text/variable-system-font.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+
 2021-08-19  Jean-Yves Avenard  <jya@apple.com>
 
         Touchbar not showing time scrubbing

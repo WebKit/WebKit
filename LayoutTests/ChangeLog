@@ -1,3 +1,23 @@
+2021-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Stop treating the system font as a non-variable font
+        https://bugs.webkit.org/show_bug.cgi?id=228176
+
+        Reviewed by Sam Weinig.
+
+        Update tests.
+
+        * fast/text/resources/Ahem-trak.ttf: Added. This is a font which has a trak table.
+        * fast/text/trak-optimizeLegibility-expected-mismatch.html: Added.
+        * fast/text/trak-optimizeLegibility-expected.txt: Removed.
+        * fast/text/trak-optimizeLegibility.html:
+        * fast/text/variable-system-font-2-expected-mismatch.html: Added.
+        * fast/text/variable-system-font-2.html: Added.
+        * fast/text/variable-system-font-expected-mismatch.html: Added.
+        * fast/text/variable-system-font.html: Added.
+        * svg/dom/altGlyph-dom-expected.txt:
+        * svg/dom/resources/altGlyph-dom.js:
+
 2021-08-19  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS] 3 imported/w3c/web-platform-tests/css/css-typed-om/ tests are flaky failure.

@@ -335,6 +335,7 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font)
     return result;
 }
 
+#if USE(NON_VARIABLE_SYSTEM_FONT)
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (isSystemFont(font))
@@ -343,6 +344,7 @@ static inline bool fontIsSystemFont(CTFontRef font)
     auto name = adoptCF(CTFontCopyPostScriptName(font));
     return fontNameIsSystemFont(name.get());
 }
+#endif
 
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
 // FIXME: <rdar://problem/31312602> Get the real values from Core Text.
@@ -505,7 +507,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     // Step 2: font-weight, font-stretch, and font-style
     // The system font is somewhat magical. Don't mess with its variations.
-    if (applyWeightWidthSlopeVariations && !fontIsSystemFont(originalFont)) {
+    if (applyWeightWidthSlopeVariations
+#if USE(NON_VARIABLE_SYSTEM_FONT)
+        && !fontIsSystemFont(originalFont)
+#endif
+    ) {
         float weight = fontSelectionRequest.weight;
         float width = fontSelectionRequest.width;
         float slope = fontSelectionRequest.slope.value_or(normalItalicValue());

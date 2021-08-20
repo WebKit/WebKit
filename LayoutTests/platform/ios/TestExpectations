@@ -3483,3 +3483,6 @@ imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html [ Pa
 imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em.html [ Pass Failure ]
 
 webkit.org/b/228200 editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Failure ]
+
+webkit.org/b/228176 fast/text/variable-system-font.html [ ImageOnlyFailure ]
+webkit.org/b/228176 fast/text/variable-system-font-2.html [ Pass ]

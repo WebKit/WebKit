@@ -2328,3 +2328,6 @@ webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 
 webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
 
+webkit.org/b/228176 [ Mojave Catalina BigSur ] fast/text/variable-system-font.html [ ImageOnlyFailure ]
+webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font.html [ Pass ]
+webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
