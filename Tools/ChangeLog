@@ -1,3 +1,31 @@
+2021-08-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add pull-request command (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=229089
+        <rdar://problem/81908751>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Bump version, export pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/pull_request.py:
+        (PullRequest.State):
+        (PullRequest.create_body): Create pull-request body from commits and comment.
+        (PullRequest.parse_body): Turn a body from a pull-request into a comment string and partial commits.
+        (PullRequest.__init__):
+        (PullRequest.__repr__):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        (TestPullRequest):
+        (TestPullRequest.test_representation):
+        (TestPullRequest.test_create_body_single):
+        (TestPullRequest.test_parse_body_single):
+        (TestPullRequest.test_create_body_multiple):
+        (TestPullRequest.test_parse_body_multiple):
+        (TestPullRequest.test_create_body_empty):
+        (TestPullRequest.test_parse_body_empty):
+        (TestPullRequest.test_create_body_comment):
+        (TestPullRequest.test_parse_body_single):
+
 2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Single characters don't get shaped in the fast text codepath

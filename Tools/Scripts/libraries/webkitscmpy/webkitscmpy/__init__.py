@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(1, 1, 6)
+version = Version(1, 1, 7)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('monotonic', Version(1, 5)))
@@ -55,6 +55,7 @@ AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit
+from webkitscmpy.pull_request import PullRequest
 from webkitscmpy.scm_base import ScmBase
 
 from webkitscmpy import local
