@@ -67,6 +67,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringImpl.h>
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -609,24 +610,29 @@ unsigned intlDefaultNumberOption(JSGlobalObject* globalObject, JSValue value, Pr
 // http://www.unicode.org/reports/tr35/#Unicode_locale_identifier
 bool isUnicodeLocaleIdentifierType(StringView string)
 {
-    ASSERT(!string.isNull());
-
-    for (auto part : string.splitAllowingEmptyEntries('-')) {
-        auto length = part.length();
-        if (length < 3 || length > 8)
-            return false;
-
-        for (auto character : part.codeUnits()) {
-            if (!isASCIIAlphanumeric(character))
+    // Matching the Unicode Locale Identifier type nonterminal.
+    // Because the spec abstract operation is not mentioning to BCP-47 conformance for this matching,
+    // '-' and '_' separators are allowed while BCP-47 only accepts '-'.
+    // On the other hand, IsStructurallyValidLanguageTag explicitly mentions to BCP-47.
+    return readCharactersForParsing(string, [](auto buffer) -> bool {
+        while (true) {
+            auto begin = buffer.position();
+            while (buffer.hasCharactersRemaining() && isASCIIAlphanumeric(*buffer))
+                ++buffer;
+            unsigned length = buffer.position() - begin;
+            if (length < 3 || length > 8)
                 return false;
+            if (!buffer.hasCharactersRemaining())
+                return true;
+            if (*buffer != '-' && *buffer != '_')
+                return false;
+            ++buffer;
         }
-    }
-
-    return true;
+    });
 }
 
 // https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
-static String canonicalizeLanguageTag(const CString& tag)
+String canonicalizeUnicodeLocaleID(const CString& tag)
 {
     auto buffer = localeIDBufferForLanguageTagWithNullTerminator(tag);
     if (buffer.isEmpty())
@@ -702,7 +708,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
 
             if (isStructurallyValidLanguageTag(tag)) {
                 ASSERT(tag.isAllASCII());
-                String canonicalizedTag = canonicalizeLanguageTag(tag.ascii());
+                String canonicalizedTag = canonicalizeUnicodeLocaleID(tag.ascii());
                 if (!canonicalizedTag.isNull()) {
                     if (seenSet.add(canonicalizedTag).isNewEntry)
                         seen.append(canonicalizedTag);
@@ -739,14 +745,14 @@ String defaultLocale(JSGlobalObject* globalObject)
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as userPreferredLanguages()[0].
     if (auto defaultLanguage = globalObject->globalObjectMethodTable()->defaultLanguage) {
-        String locale = canonicalizeLanguageTag(defaultLanguage().utf8());
+        String locale = canonicalizeUnicodeLocaleID(defaultLanguage().utf8());
         if (!locale.isEmpty())
             return locale;
     }
 
     Vector<String> languages = userPreferredLanguages();
     for (const auto& language : languages) {
-        String locale = canonicalizeLanguageTag(language.utf8());
+        String locale = canonicalizeUnicodeLocaleID(language.utf8());
         if (!locale.isEmpty())
             return locale;
     }
@@ -1469,9 +1475,19 @@ std::optional<String> mapICUCalendarKeywordToBCP47(const String& calendar)
     return std::nullopt;
 }
 
+std::optional<String> mapBCP47ToICUCalendarKeyword(const String& calendar)
+{
+    if (calendar == "gregory"_s)
+        return "gregorian"_s;
+    if (calendar == "islamicc"_s)
+        return "islamic-civil"_s;
+    if (calendar == "ethioaa"_s)
+        return "ethiopic-amete-alem"_s;
+    return std::nullopt;
+}
+
 std::optional<String> mapICUCollationKeywordToBCP47(const String& collation)
 {
-    // Map keyword values to BCP 47 equivalents.
     if (collation == "dictionary"_s)
         return "dict"_s;
     if (collation == "gb2312han"_s)

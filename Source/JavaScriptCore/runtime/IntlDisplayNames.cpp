@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IntlDisplayNames.h"
 
+#include "IntlCache.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -95,7 +96,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "narrow"_s, Style::Narrow }, { "short"_s, Style::Short }, { "long"_s, Style::Long } }, "style must be either \"narrow\", \"short\", or \"long\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto type = intlOption<std::optional<Type>>(globalObject, options, vm.propertyNames->type, { { "language"_s, Type::Language }, { "region"_s, Type::Region }, { "script"_s, Type::Script }, { "currency"_s, Type::Currency } }, "type must be either \"language\", \"region\", \"script\", or \"currency\""_s, std::nullopt);
+    auto type = intlOption<std::optional<Type>>(globalObject, options, vm.propertyNames->type, { { "language"_s, Type::Language }, { "region"_s, Type::Region }, { "script"_s, Type::Script }, { "currency"_s, Type::Currency }, { "calendar"_s, Type::Calendar }, { "dateTimeField"_s, Type::DateTimeField } }, "type must be either \"language\", \"region\", \"script\", \"currency\", \"calendar\", or \"dateTimeField\""_s, std::nullopt);
     RETURN_IF_EXCEPTION(scope, void());
     if (!type) {
         throwTypeError(globalObject, scope, "type must not be undefined"_s);
@@ -103,7 +104,10 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
     }
     m_type = type.value();
 
-    m_fallback = intlOption<Fallback>(globalObject, options, Identifier::fromString(vm, "fallback"), { { "code"_s, Fallback::Code }, { "none"_s, Fallback::None } }, "fallback must be either \"code\" or \"none\""_s, Fallback::Code);
+    m_fallback = intlOption<Fallback>(globalObject, options, vm.propertyNames->fallback, { { "code"_s, Fallback::Code }, { "none"_s, Fallback::None } }, "fallback must be either \"code\" or \"none\""_s, Fallback::Code);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    m_languageDisplay = intlOption<LanguageDisplay>(globalObject, options, vm.propertyNames->languageDisplay, { { "dialect"_s, LanguageDisplay::Dialect }, { "standard"_s, LanguageDisplay::Standard } }, "languageDisplay must be either \"dialect\" or \"standard\""_s, LanguageDisplay::Dialect);
     RETURN_IF_EXCEPTION(scope, void());
 
 #if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
@@ -111,9 +115,8 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
 
     UDisplayContext contexts[] = {
         // en_GB displays as 'English (United Kingdom)' (Standard Names) or 'British English' (Dialect Names).
-        // We use Dialect Names here, aligned to the examples in the spec draft and V8's behavior.
         // https://github.com/tc39/proposal-intl-displaynames#language-display-names
-        UDISPCTX_DIALECT_NAMES,
+        (m_type == Type::Language && m_languageDisplay == LanguageDisplay::Standard) ? UDISPCTX_STANDARD_NAMES : UDISPCTX_DIALECT_NAMES,
 
         // Capitailization mode can be picked from several options. Possibly either UDISPCTX_CAPITALIZATION_NONE or UDISPCTX_CAPITALIZATION_FOR_STANDALONE is
         // preferable in Intl.DisplayNames. We use UDISPCTX_CAPITALIZATION_FOR_STANDALONE because it makes standalone date format better (fr "Juillet 2008" in ICU test suites),
@@ -153,10 +156,82 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
     auto code = codeValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-intl-displaynames/#sec-canonicalcodefordisplaynames
+    auto canonicalizeCodeForDisplayNames = [](Type type, String&& code) -> CString {
+        ASSERT(code.isAllASCII());
+        switch (type) {
+        case Type::Language: {
+            return canonicalizeUnicodeLocaleID(code.ascii()).ascii();
+        }
+        case Type::Region: {
+            // Let code be the result of mapping code to upper case as described in 6.1.
+            auto result = code.ascii();
+            char* mutableData = result.mutableData();
+            for (unsigned index = 0; index < result.length(); ++index)
+                mutableData[index] = toASCIIUpper(mutableData[index]);
+            return result;
+        }
+        case Type::Script: {
+            // Let code be the result of mapping the first character in code to upper case, and mapping the second, third and fourth character in code to lower case, as described in 6.1.
+            auto result = code.ascii();
+            char* mutableData = result.mutableData();
+            if (result.length() >= 1)
+                mutableData[0] = toASCIIUpper(mutableData[0]);
+            for (unsigned index = 1; index < result.length(); ++index)
+                mutableData[index] = toASCIILower(mutableData[index]);
+            return result;
+        }
+        case Type::Currency:
+            ASSERT_NOT_REACHED();
+            break;
+        case Type::Calendar: {
+            // Let code be the result of mapping code to lower case as described in 6.1.
+            String lowered = code.convertToASCIILowercase();
+            if (auto mapped = mapBCP47ToICUCalendarKeyword(lowered))
+                lowered = WTFMove(mapped.value());
+            return lowered.ascii();
+        }
+        case Type::DateTimeField: {
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        }
+        return { };
+    };
+
     Vector<UChar, 32> buffer;
     UErrorCode status = U_ZERO_ERROR;
-
-    if (m_type == Type::Currency) {
+    CString canonicalCode;
+    switch (m_type) {
+    case Type::Language: {
+        if (!isUnicodeLanguageId(code)) {
+            throwRangeError(globalObject, scope, "argument is not a language id"_s);
+            return { };
+        }
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        // Do not use uldn_languageDisplayName since it is not expected one for this "language" type. It returns "en-US" for "en-US" code, instead of "American English".
+        status = callBufferProducingFunction(uldn_localeDisplayName, m_displayNames.get(), canonicalCode.data(), buffer);
+        break;
+    }
+    case Type::Region: {
+        if (!isUnicodeRegionSubtag(code)) {
+            throwRangeError(globalObject, scope, "argument is not a region subtag"_s);
+            return { };
+        }
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        status = callBufferProducingFunction(uldn_regionDisplayName, m_displayNames.get(), canonicalCode.data(), buffer);
+        break;
+    }
+    case Type::Script: {
+        if (!isUnicodeScriptSubtag(code)) {
+            throwRangeError(globalObject, scope, "argument is not a script subtag"_s);
+            return { };
+        }
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        status = callBufferProducingFunction(uldn_scriptDisplayName, m_displayNames.get(), canonicalCode.data(), buffer);
+        break;
+    }
+    case Type::Currency: {
         // We do not use uldn_keyValueDisplayName + "currency". This is because of the following reasons.
         //     1. ICU does not respect UDISPCTX_LENGTH_FULL / UDISPCTX_LENGTH_SHORT in its implementation.
         //     2. There is no way to set "narrow" style in ULocaleDisplayNames while currency have "narrow" symbol style.
@@ -202,84 +277,82 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         // ICU API document.
         // > Returns pointer to display string of 'len' UChars. If the resource data contains no entry for 'currency', then 'currency' itself is returned.
         if (status == U_USING_DEFAULT_WARNING && result == currency)
-            return (m_fallback == Fallback::None) ? jsUndefined() : codeValue;
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(currency, 3));
         return jsString(vm, String(result, length));
     }
+    case Type::Calendar: {
+        // a. If code does not match the Unicode Locale Identifier type nonterminal, throw a RangeError exception.
+        if (!isUnicodeLocaleIdentifierType(code)) {
+            throwRangeError(globalObject, scope, "argument is not a calendar code"_s);
+            return { };
+        }
+        canonicalCode = canonicalizeCodeForDisplayNames(m_type, WTFMove(code));
+        status = callBufferProducingFunction(uldn_keyValueDisplayName, m_displayNames.get(), "calendar", canonicalCode.data(), buffer);
+        break;
+    }
+    case Type::DateTimeField: {
+        // We do not use uldn_keyValueDisplayName since it cannot handle narrow length.
+        // Instead, we use udatpg_getFieldDisplayName.
 
-    // https://tc39.es/proposal-intl-displaynames/#sec-canonicalcodefordisplaynames
-    auto canonicalizeCodeForDisplayNames = [](Type type, const String& code) -> CString {
-        ASSERT(code.isAllASCII());
-        auto result = code.ascii();
-        char* mutableData = result.mutableData();
-        switch (type) {
-        case Type::Language: {
-            // Let code be the result of mapping code to lower case as described in 6.1.
-            for (unsigned index = 0; index < result.length(); ++index)
-                mutableData[index] = toASCIILower(mutableData[index]);
-            break;
-        }
-        case Type::Region: {
-            // Let code be the result of mapping code to upper case as described in 6.1.
-            for (unsigned index = 0; index < result.length(); ++index)
-                mutableData[index] = toASCIIUpper(mutableData[index]);
-            break;
-        }
-        case Type::Script: {
-            // Let code be the result of mapping the first character in code to upper case, and mapping the second, third and fourth character in code to lower case, as described in 6.1.
-            if (result.length() >= 1)
-                mutableData[0] = toASCIIUpper(mutableData[0]);
-            for (unsigned index = 1; index < result.length(); ++index)
-                mutableData[index] = toASCIILower(mutableData[index]);
-            break;
-        }
-        case Type::Currency:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-        return result;
-    };
+        // https://tc39.es/intl-displaynames-v2/#sec-isvaliddatetimefieldcode
+        auto isValidDateTimeFieldCode = [](const String& code) -> std::optional<UDateTimePatternField> {
+            if (code == "era"_s)
+                return UDATPG_ERA_FIELD;
+            if (code == "year"_s)
+                return UDATPG_YEAR_FIELD;
+            if (code == "quarter"_s)
+                return UDATPG_QUARTER_FIELD;
+            if (code == "month"_s)
+                return UDATPG_MONTH_FIELD;
+            if (code == "weekOfYear"_s)
+                return UDATPG_WEEK_OF_YEAR_FIELD;
+            if (code == "weekday"_s)
+                return UDATPG_WEEKDAY_FIELD;
+            if (code == "day"_s)
+                return UDATPG_DAY_FIELD;
+            if (code == "dayPeriod"_s)
+                return UDATPG_DAYPERIOD_FIELD;
+            if (code == "hour"_s)
+                return UDATPG_HOUR_FIELD;
+            if (code == "minute"_s)
+                return UDATPG_MINUTE_FIELD;
+            if (code == "second"_s)
+                return UDATPG_SECOND_FIELD;
+            if (code == "timeZoneName"_s)
+                return UDATPG_ZONE_FIELD;
+            return std::nullopt;
+        };
 
-    switch (m_type) {
-    case Type::Language: {
-        // If code does not matches the unicode_language_id production, throw a RangeError exception
-        if (!isUnicodeLanguageId(code)) {
-            throwRangeError(globalObject, scope, "argument is not a language id"_s);
+        auto field = isValidDateTimeFieldCode(code);
+        if (!field) {
+            throwRangeError(globalObject, scope, "argument is not a dateTimeField code"_s);
             return { };
         }
-        auto language = canonicalizeCodeForDisplayNames(m_type, code);
-        // Do not use uldn_languageDisplayName since it is not expected one for this "language" type. It returns "en-US" for "en-US" code, instead of "American English".
-        status = callBufferProducingFunction(uldn_localeDisplayName, m_displayNames.get(), language.data(), buffer);
-        break;
-    }
-    case Type::Region: {
-        // If code does not matches the unicode_region_subtag production, throw a RangeError exception
-        if (!isUnicodeRegionSubtag(code)) {
-            throwRangeError(globalObject, scope, "argument is not a region subtag"_s);
-            return { };
+
+        UDateTimePGDisplayWidth style = UDATPG_WIDE;
+        switch (m_style) {
+        case Style::Long:
+            style = UDATPG_WIDE;
+            break;
+        case Style::Short:
+            style = UDATPG_ABBREVIATED;
+            break;
+        case Style::Narrow:
+            style = UDATPG_NARROW;
+            break;
         }
-        auto region = canonicalizeCodeForDisplayNames(m_type, code);
-        status = callBufferProducingFunction(uldn_regionDisplayName, m_displayNames.get(), region.data(), buffer);
-        break;
+
+        buffer = vm.intlCache().getFieldDisplayName(m_localeCString.data(), field.value(), style, status);
+        if (U_FAILURE(status))
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, code);
+        return jsString(vm, String(buffer));
     }
-    case Type::Script: {
-        // If code does not matches the unicode_script_subtag production, throw a RangeError exception
-        if (!isUnicodeScriptSubtag(code)) {
-            throwRangeError(globalObject, scope, "argument is not a script subtag"_s);
-            return { };
-        }
-        auto script = canonicalizeCodeForDisplayNames(m_type, code);
-        status = callBufferProducingFunction(uldn_scriptDisplayName, m_displayNames.get(), script.data(), buffer);
-        break;
-    }
-    case Type::Currency:
-        ASSERT_NOT_REACHED();
-        break;
     }
     if (U_FAILURE(status)) {
         // uldn_localeDisplayName, uldn_regionDisplayName, and uldn_scriptDisplayName return U_ILLEGAL_ARGUMENT_ERROR if the display-name is not found.
         // We should return undefined if fallback is "none". Otherwise, we should return input value.
         if (status == U_ILLEGAL_ARGUMENT_ERROR)
-            return (m_fallback == Fallback::None) ? jsUndefined() : codeValue;
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(canonicalCode.data(), canonicalCode.length()));
         return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
     }
     return jsString(vm, String(buffer));
@@ -298,7 +371,9 @@ JSObject* IntlDisplayNames::resolvedOptions(JSGlobalObject* globalObject) const
     options->putDirect(vm, vm.propertyNames->locale, jsString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->style, jsNontrivialString(vm, styleString(m_style)));
     options->putDirect(vm, vm.propertyNames->type, jsNontrivialString(vm, typeString(m_type)));
-    options->putDirect(vm, Identifier::fromString(vm, "fallback"), jsNontrivialString(vm, fallbackString(m_fallback)));
+    options->putDirect(vm, vm.propertyNames->fallback, jsNontrivialString(vm, fallbackString(m_fallback)));
+    if (m_type == Type::Language)
+        options->putDirect(vm, vm.propertyNames->languageDisplay, jsNontrivialString(vm, languageDisplayString(m_languageDisplay)));
     return options;
 }
 
@@ -327,6 +402,10 @@ ASCIILiteral IntlDisplayNames::typeString(Type type)
         return "script"_s;
     case Type::Currency:
         return "currency"_s;
+    case Type::Calendar:
+        return "calendar"_s;
+    case Type::DateTimeField:
+        return "dateTimeField"_s;
     }
     ASSERT_NOT_REACHED();
     return ASCIILiteral::null();
@@ -339,6 +418,18 @@ ASCIILiteral IntlDisplayNames::fallbackString(Fallback fallback)
         return "code"_s;
     case Fallback::None:
         return "none"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return ASCIILiteral::null();
+}
+
+ASCIILiteral IntlDisplayNames::languageDisplayString(LanguageDisplay languageDisplay)
+{
+    switch (languageDisplay) {
+    case LanguageDisplay::Dialect:
+        return "dialect"_s;
+    case LanguageDisplay::Standard:
+        return "standard"_s;
     }
     ASSERT_NOT_REACHED();
     return ASCIILiteral::null();

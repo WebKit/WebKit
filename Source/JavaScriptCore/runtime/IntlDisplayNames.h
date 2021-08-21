@@ -72,12 +72,14 @@ private:
     void finishCreation(VM&);
 
     enum class Style : uint8_t { Narrow, Short, Long };
-    enum class Type : uint8_t { Language, Region, Script, Currency };
+    enum class Type : uint8_t { Language, Region, Script, Currency, Calendar, DateTimeField };
     enum class Fallback : uint8_t { Code, None };
+    enum class LanguageDisplay : uint8_t { Dialect, Standard };
 
     static ASCIILiteral styleString(Style);
     static ASCIILiteral typeString(Type);
     static ASCIILiteral fallbackString(Fallback);
+    static ASCIILiteral languageDisplayString(LanguageDisplay);
 
     using ULocaleDisplayNamesDeleter = ICUDeleter<uldn_close>;
     std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter> m_displayNames;
@@ -88,6 +90,7 @@ private:
     Style m_style { Style::Long };
     Type m_type { Type::Language };
     Fallback m_fallback { Fallback::Code };
+    LanguageDisplay m_languageDisplay { LanguageDisplay::Dialect };
 };
 
 } // namespace JSC

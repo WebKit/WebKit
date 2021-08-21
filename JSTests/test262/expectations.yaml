@@ -609,9 +609,6 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
-test/built-ins/Array/prototype/Symbol.unscopables/value.js:
-  default: 'Test262Error: `findLast` property value Expected SameValue(«undefined», «true») to be true'
-  strict mode: 'Test262Error: `findLast` property value Expected SameValue(«undefined», «true») to be true'
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'

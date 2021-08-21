@@ -178,7 +178,7 @@ if ($vm.icuVersion() >= 61) {
                 return 'en-AA';
             }
         };
-        shouldBe(languageNames.of(object), object);
+        shouldBe(languageNames.of(object), 'en-AA');
     }
 
     languageNames = new Intl.DisplayNames(['en'], {type: 'language', fallback: 'none'});

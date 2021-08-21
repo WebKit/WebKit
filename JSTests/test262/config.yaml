@@ -30,7 +30,6 @@ skip:
     - import-assertions
     - json-modules
     - class-static-block
-    - Intl.DisplayNames-v2
     - callable-boundary-realms
   paths:
   files:

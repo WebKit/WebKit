@@ -116,6 +116,7 @@
     macro(exec) \
     macro(executionCount) \
     macro(exitKind) \
+    macro(fallback) \
     macro(flags) \
     macro(forEach) \
     macro(formatMatcher) \
@@ -154,6 +155,7 @@
     macro(jettisonReason) \
     macro(join) \
     macro(language) \
+    macro(languageDisplay) \
     macro(lastIndex) \
     macro(length) \
     macro(line) \

@@ -1,5 +1,39 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Intl.DisplayNames v2
+        https://bugs.webkit.org/show_bug.cgi?id=227832
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl.DisplayNames v2[1].
+        Newly added names are calendar names and date time field names.
+        For the language name, language display option is added.
+
+        [1]: https://github.com/tc39/intl-displaynames-v2
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlCache.cpp:
+        (JSC::IntlCache::getFieldDisplayName):
+        * runtime/IntlCache.h:
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        (JSC::IntlDisplayNames::of const):
+        (JSC::IntlDisplayNames::resolvedOptions const):
+        (JSC::IntlDisplayNames::typeString):
+        (JSC::IntlDisplayNames::languageDisplayString):
+        * runtime/IntlDisplayNames.h:
+        * runtime/IntlObject.cpp:
+        (JSC::isUnicodeLocaleIdentifierType):
+        (JSC::canonicalizeUnicodeLocaleID):
+        (JSC::canonicalizeLocaleList):
+        (JSC::defaultLocale):
+        (JSC::mapBCP47ToICUCalendarKeyword):
+        (JSC::mapICUCollationKeywordToBCP47):
+        (JSC::canonicalizeLanguageTag): Deleted.
+        * runtime/IntlObject.h:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Intl Locale Info
         https://bugs.webkit.org/show_bug.cgi?id=227830
 
