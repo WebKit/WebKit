@@ -1,3 +1,15 @@
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable non-auto line-break values
+        https://bugs.webkit.org/show_bug.cgi?id=228842
+
+        Reviewed by Antti Koivisto.
+
+        IFC already supports line-break (except after-white-space).
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForStyle):
+
 2021-08-20  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Style rules declared after a rule whose selector has over 8192 components are not shown correctly
