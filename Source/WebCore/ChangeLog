@@ -1,3 +1,16 @@
+2021-08-21  Zalan Bujtas  <zalan@apple.com>
+
+        Fix spelling: MidWorkdBreak -> MidWordBreak
+
+        Unreviewed.
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::midWordBreak):
+        (WebCore::Layout::TextUtil::midWorkdBreak): Deleted.
+        * layout/formattingContexts/inline/text/TextUtil.h:
+
 2021-08-21  Youenn Fablet  <youenn@apple.com>
 
         Prevent AudioSession category from moving out of PlayAndRecord too quickly

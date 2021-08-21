@@ -46,12 +46,12 @@ public:
     static InlineLayoutUnit width(const InlineTextItem&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
     static InlineLayoutUnit width(const InlineTextBox&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
 
-    struct MidWorkdBreak {
+    struct MidWordBreak {
         size_t start { 0 };
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
     };
-    static MidWorkdBreak midWorkdBreak(const InlineTextItem&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    static MidWordBreak midWordBreak(const InlineTextItem&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
 
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
     static LineBreakIteratorMode lineBreakIteratorMode(LineBreak);

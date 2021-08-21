@@ -84,7 +84,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
 }
 
-TextUtil::MidWorkdBreak TextUtil::midWorkdBreak(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
+TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
     ASSERT(availableWidth >= 0);
     auto startPosition = inlineTextItem.start();

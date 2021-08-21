@@ -459,7 +459,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 auto availableWidthExcludingHyphen = *availableWidth - hyphenWidth;
                 if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
                     return { };
-                leftSideLength = TextUtil::midWorkdBreak(inlineTextItem, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
+                leftSideLength = TextUtil::midWordBreak(inlineTextItem, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
             }
             if (leftSideLength < limitBefore)
                 return { };
@@ -493,8 +493,8 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 // Fast path for cases when there's no room at all. The content is breakable but we don't have space for it.
                 return { };
             }
-            auto midWorkdBreak = TextUtil::midWorkdBreak(inlineTextItem, overflowingRun.logicalWidth, *availableWidth, logicalLeft);
-            return { midWorkdBreak.length, midWorkdBreak.logicalWidth };
+            auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, overflowingRun.logicalWidth, *availableWidth, logicalLeft);
+            return { midWordBreak.length, midWordBreak.logicalWidth };
         };
         // With arbitrary breaking there's always a valid breaking position (even if it is before the first position).
         return tryBreakingAtArbitraryPosition();
