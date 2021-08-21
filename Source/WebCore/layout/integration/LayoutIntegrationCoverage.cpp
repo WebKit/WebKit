@@ -510,18 +510,12 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
     if (!style.isLeftToRightDirection())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotLTR, reasons, includeReasons);
-    if (!(style.lineBoxContain().contains(LineBoxContain::Block)))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
     if (style.writingMode() != WritingMode::TopToBottom)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
     if (style.unicodeBidi() != UBNormal)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonNormalUnicodeBiDi, reasons, includeReasons);
     if (style.rtlOrdering() != Order::Logical)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasRTLOrdering, reasons, includeReasons);
-    if (style.lineAlign() != LineAlign::None)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
-    if (style.lineSnap() != LineSnap::None)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.textShadow())
@@ -534,14 +528,22 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
     if (style.backgroundClip() == FillBox::Text)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextFillBox, reasons, includeReasons);
-    if (style.borderFit() == BorderFit::Lines)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasBorderFitLines, reasons, includeReasons);
-    if (style.lineBreak() == LineBreak::AfterWhiteSpace)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasAfterWhiteSpaceLineBreak, reasons, includeReasons);
     // Special handling of text-security:disc is not yet implemented in the simple line layout code path.
     // See RenderBlock::updateSecurityDiscCharacters.
     if (style.textSecurity() != TextSecurity::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextSecurity, reasons, includeReasons);
+
+    // These are non-standard properties.
+    if (style.lineBreak() == LineBreak::AfterWhiteSpace)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasAfterWhiteSpaceLineBreak, reasons, includeReasons);
+    if (!(style.lineBoxContain().contains(LineBoxContain::Block)))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
+    if (style.lineAlign() != LineAlign::None)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
+    if (style.lineSnap() != LineSnap::None)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
+    if (style.borderFit() == BorderFit::Lines)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasBorderFitLines, reasons, includeReasons);    
     return reasons;
 }
 

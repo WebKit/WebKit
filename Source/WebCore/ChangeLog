@@ -1,3 +1,16 @@
+2021-08-21  Zalan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Group non-standard CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=228855
+        <rdar://problem/81880442>
+
+        Reviewed by Antti Koivisto.
+
+        List of unsupported non-standard CSS properties (consider it a priority list).
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForStyle):
+
 2021-08-21  Per Arne  <pvollan@apple.com>
 
         [Win] Crash under FontCache::lastResortFallbackFont
