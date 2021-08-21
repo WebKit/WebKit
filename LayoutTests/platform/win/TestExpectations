@@ -4685,3 +4685,5 @@ accessibility/selected-state-changed-notifications.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
 
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
+
+webkit.org/b/229372 http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html [ Skip ]
