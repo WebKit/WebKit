@@ -1,3 +1,20 @@
+2021-08-20  Zalan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable inline level boxes with relative (min/max)width and (min/max)height values
+        https://bugs.webkit.org/show_bug.cgi?id=229065
+
+        Reviewed by Antti Koivisto.
+
+        When a block level box's style changes, while we mark the box itself for layout we normally don't
+        walk the subtree for damaged inline content. Instead during layout, we dirty these individual descendant renderers as needed.
+        Inline level boxes with relative width/height values are part of this group.
+        It's also similar to what we do in LegacyLineLayout::layoutLineBoxes.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutModernLines):
+
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Enable non-auto line-break values

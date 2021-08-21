@@ -594,12 +594,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
     auto isSupportedStyle = [] (const auto& style) {
         if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
             return false;
-        if (style.width().isPercentOrCalculated() || style.height().isPercentOrCalculated())
-            return false;
-        if (style.minWidth().isPercentOrCalculated() || style.maxWidth().isPercentOrCalculated())
-            return false;
-        if (style.minHeight().isPercentOrCalculated() || style.maxHeight().isPercentOrCalculated())
-            return false;
         if (style.boxShadow())
             return false;
         if (!style.hangingPunctuation().isEmpty())
