@@ -204,8 +204,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowChildIsSelected:
         stream << "selected content";
         break;
-    case AvoidanceReason::FlowFontHasOverflowGlyph:
-        stream << "-webkit-line-box-contain: glyphs with overflowing text.";
+    case AvoidanceReason::FlowHasLineBoxContainGlyphs:
+        stream << "-webkit-line-box-contain: glyphs";
         break;
     case AvoidanceReason::FlowTextHasSurrogatePair:
         stream << "surrogate pair";
@@ -436,18 +436,10 @@ template<> OptionSet<AvoidanceReason> canUseForCharacter(LChar, IncludeReasons)
 }
 
 template <typename CharacterType>
-static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     auto& primaryFont = fontCascade.primaryFont();
-    auto& fontMetrics = primaryFont.fontMetrics();
-    auto availableSpaceForGlyphAscent = fontMetrics.ascent();
-    auto availableSpaceForGlyphDescent = fontMetrics.descent();
-    if (lineHeightConstraint) {
-        auto lineHeightPadding = *lineHeightConstraint - fontMetrics.height();
-        availableSpaceForGlyphAscent += lineHeightPadding / 2;
-        availableSpaceForGlyphDescent += lineHeightPadding / 2;
-    }
 
     for (unsigned i = 0; i < length; ++i) {
         auto character = text[i];
@@ -458,21 +450,15 @@ static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsig
         auto glyphData = fontCascade.glyphDataForCharacter(character, false);
         if (!glyphData.isValid() || glyphData.font != &primaryFont)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
-
-        if (lineHeightConstraint) {
-            auto bounds = primaryFont.boundsForGlyph(glyphData.glyph);
-            if (ceilf(-bounds.y()) > availableSpaceForGlyphAscent || ceilf(bounds.maxY()) > availableSpaceForGlyphDescent)
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowFontHasOverflowGlyph, reasons, includeReasons);
-        }
     }
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, std::optional<float> lineHeightConstraint, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, IncludeReasons includeReasons)
 {
     if (text.is8Bit())
-        return canUseForText(text.characters8(), text.length(), fontCascade, lineHeightConstraint, includeReasons);
-    return canUseForText(text.characters16(), text.length(), fontCascade, lineHeightConstraint, includeReasons);
+        return canUseForText(text.characters8(), text.length(), fontCascade, includeReasons);
+    return canUseForText(text.characters16(), text.length(), fontCascade, includeReasons);
 }
 
 static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
@@ -483,9 +469,8 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
     auto& fontCascade = style.fontCascade();
     if (fontCascade.primaryFont().isInterstitial())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsMissingPrimaryFont, reasons, includeReasons);
-    std::optional<float> lineHeightConstraint;
     if (style.lineBoxContain().contains(LineBoxContain::Glyphs))
-        lineHeightConstraint = container.lineHeight(false, HorizontalLine, PositionOfInteriorLineBoxes).toFloat();
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainGlyphs, reasons, includeReasons);
     for (const auto& textRenderer : childrenOfType<RenderText>(container)) {
         // FIXME: Do not return until after checking all children.
         if (textRenderer.isCombineText())
@@ -508,7 +493,7 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
         }
 
-        auto textReasons = canUseForText(textRenderer.stringView(), fontCascade, lineHeightConstraint, includeReasons);
+        auto textReasons = canUseForText(textRenderer.stringView(), fontCascade, includeReasons);
         if (textReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }

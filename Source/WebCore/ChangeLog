@@ -1,5 +1,21 @@
 2021-08-21  Zalan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Do not scan the content for overflowing glyph when line-box-contain is set to glyph
+        https://bugs.webkit.org/show_bug.cgi?id=228895
+        <rdar://problem/81651487>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for removing content scanning completely. 
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForText):
+        (WebCore::LayoutIntegration::canUseForFontAndText):
+        * layout/integration/LayoutIntegrationCoverage.h:
+
+2021-08-21  Zalan Bujtas  <zalan@apple.com>
+
         Fix spelling: MidWorkdBreak -> MidWordBreak
 
         Unreviewed.
