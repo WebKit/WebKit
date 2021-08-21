@@ -34,6 +34,14 @@ PASS Array.prototype[Symbol.unscopables]["findIndex"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findIndex").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findIndex").enumerable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findIndex").configurable is true
+PASS Array.prototype[Symbol.unscopables]["findLast"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findLast").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findLast").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findLast").configurable is true
+PASS Array.prototype[Symbol.unscopables]["findLastIndex"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findLastIndex").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findLastIndex").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "findLastIndex").configurable is true
 PASS Array.prototype[Symbol.unscopables]["flat"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "flat").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "flat").enumerable is true

@@ -82,7 +82,9 @@ ALL PROPERTIES:
     keys
     entries
     find
+    findLast
     findIndex
+    findLastIndex
     includes
     copyWithin
     at
@@ -136,7 +138,9 @@ OWN PROPERTIES:
     keys
     entries
     find
+    findLast
     findIndex
+    findLastIndex
     includes
     copyWithin
     at
@@ -175,7 +179,9 @@ DISPLAYABLE PROPERTIES:
     keys
     entries
     find
+    findLast
     findIndex
+    findLastIndex
     includes
     copyWithin
     at
@@ -214,7 +220,9 @@ ALL PROPERTIES:
     keys
     entries
     find
+    findLast
     findIndex
+    findLastIndex
     includes
     copyWithin
     at

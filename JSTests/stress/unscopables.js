@@ -11,7 +11,7 @@ function test(actual, expected) {
 
     test(typeof unscopables, "object");
     test(unscopables.__proto__, undefined);
-    test(String(Object.keys(unscopables).sort()), "at,copyWithin,entries,fill,find,findIndex,flat,flatMap,includes,keys,values");
+    test(String(Object.keys(unscopables).sort()), "at,copyWithin,entries,fill,find,findIndex,findLast,findLastIndex,flat,flatMap,includes,keys,values");
 }());
 
 (function () {

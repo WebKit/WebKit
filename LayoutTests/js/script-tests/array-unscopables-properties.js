@@ -13,6 +13,8 @@ let expectedEntries = [
     "fill",
     "find",
     "findIndex",
+    "findLast",
+    "findLastIndex",
     "flat",
     "flatMap",
     "includes",

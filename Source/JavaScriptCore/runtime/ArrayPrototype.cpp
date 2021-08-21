@@ -127,25 +127,24 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSObject* unscopables = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     unscopables->convertToDictionary(vm);
     const Identifier* const unscopableNames[] = {
+        Options::useAtMethod() ? &vm.propertyNames->builtinNames().atPublicName() : nullptr,
         &vm.propertyNames->builtinNames().copyWithinPublicName(),
         &vm.propertyNames->builtinNames().entriesPublicName(),
         &vm.propertyNames->builtinNames().fillPublicName(),
         &vm.propertyNames->builtinNames().findPublicName(),
         &vm.propertyNames->builtinNames().findIndexPublicName(),
+        Options::useArrayFindLastMethod() ? &vm.propertyNames->builtinNames().findLastPublicName() : nullptr,
+        Options::useArrayFindLastMethod() ? &vm.propertyNames->builtinNames().findLastIndexPublicName() : nullptr,
         &vm.propertyNames->builtinNames().flatPublicName(),
         &vm.propertyNames->builtinNames().flatMapPublicName(),
         &vm.propertyNames->builtinNames().includesPublicName(),
         &vm.propertyNames->builtinNames().keysPublicName(),
         &vm.propertyNames->builtinNames().valuesPublicName()
     };
-    if (Options::useArrayFindLastMethod()) {
-        unscopables->putDirect(vm, vm.propertyNames->builtinNames().findLastPublicName(), jsBoolean(true));
-        unscopables->putDirect(vm, vm.propertyNames->builtinNames().findLastIndexPublicName(), jsBoolean(true));
+    for (const auto* unscopableName : unscopableNames) {
+        if (unscopableName)
+            unscopables->putDirect(vm, *unscopableName, jsBoolean(true));
     }
-    if (Options::useAtMethod())
-        unscopables->putDirect(vm, vm.propertyNames->builtinNames().atPublicName(), jsBoolean(true));
-    for (const auto* unscopableName : unscopableNames)
-        unscopables->putDirect(vm, *unscopableName, jsBoolean(true));
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, unscopables, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 

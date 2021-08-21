@@ -1,3 +1,16 @@
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable Array#findLast method
+        https://bugs.webkit.org/show_bug.cgi?id=229355
+
+        Reviewed by Saam Barati.
+
+        This patch enables Array#findLast and Array#findLastIndex methods.
+
+        * runtime/ArrayPrototype.cpp: Order of unscopables is alphabet ordering (https://tc39.es/ecma262/#sec-array.prototype-@@unscopables)
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/OptionsList.h:
+
 2021-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Simplify moveIntsToDouble

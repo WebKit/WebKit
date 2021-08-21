@@ -1,3 +1,16 @@
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable Array#findLast method
+        https://bugs.webkit.org/show_bug.cgi?id=229355
+
+        Reviewed by Saam Barati.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/array-unscopables-properties-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/array-unscopables-properties.js:
+
 2021-08-21  Youenn Fablet  <youenn@apple.com>
 
         Prevent AudioSession category from moving out of PlayAndRecord too quickly
