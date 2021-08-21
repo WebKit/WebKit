@@ -2531,6 +2531,8 @@
 		0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeScrollingNodeDelegateIOS.h; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeIOS.mm; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeScrollingNodeDelegateIOS.mm; sourceTree = "<group>"; };
+		0F9FA7DA26CEFAD100872684 /* MediaKeySystemPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
+		0F9FA7DB26CEFADA00872684 /* MediaKeySystemPermissionRequestProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaKeySystemPermissionRequestProxy.cpp; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		0FBB5FBF2609A0910054572C /* DisplayRefreshMonitorMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorMac.h; sourceTree = "<group>"; };
 		0FBB5FC02609A0910054572C /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
@@ -10069,7 +10071,9 @@
 				5CEABA2A2333247700797797 /* LegacyGlobalSettings.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
 				9ACC07B025C815D800DC6386 /* MediaKeySystemPermissionRequest.h */,
+				0F9FA7DA26CEFAD100872684 /* MediaKeySystemPermissionRequestManagerProxy.cpp */,
 				9ACC07B225C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h */,
+				0F9FA7DB26CEFADA00872684 /* MediaKeySystemPermissionRequestProxy.cpp */,
 				9ACC07B425C8160B00DC6386 /* MediaKeySystemPermissionRequestProxy.h */,
 				93425898255B534B0059EEDD /* MediaPermissionUtilities.h */,
 				7137BA7E25F1540B00914EE3 /* ModelElementController.cpp */,

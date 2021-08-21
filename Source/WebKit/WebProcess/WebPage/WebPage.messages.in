@@ -377,8 +377,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam
-    UserMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice audioDevice, WebCore::CaptureDevice videoDevice, String mediaDeviceIdentifierHashSalt, WebKit::SandboxExtension::Handle sandboxExtensionHandle) -> () Async
-    UserMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
+    UserMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::CaptureDevice audioDevice, WebCore::CaptureDevice videoDevice, String mediaDeviceIdentifierHashSalt, WebKit::SandboxExtension::Handle sandboxExtensionHandle) -> () Async
+    UserMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier userMediaID, uint64_t reason, String invalidConstraint)
     CaptureDevicesChanged()
 #endif
 

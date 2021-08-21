@@ -962,6 +962,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/UserContentTypes.h
     page/UserContentURLPattern.h
     page/UserInterfaceDirectionPolicy.h
+    page/UserMediaRequestIdentifier.h
     page/UserMessageHandler.h
     page/UserMessageHandlerDescriptor.h
     page/UserMessageHandlersNamespace.h

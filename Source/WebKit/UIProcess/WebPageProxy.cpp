@@ -8506,7 +8506,7 @@ void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& reque
 
 #endif
 
-void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, FrameIdentifier frameID, const WebCore::SecurityOriginData&  userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, WebCore::MediaStreamRequest&& request)
+void WebPageProxy::requestUserMediaPermissionForFrame(UserMediaRequestIdentifier userMediaID, FrameIdentifier frameID, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, WebCore::MediaStreamRequest&& request)
 {
 #if ENABLE(MEDIA_STREAM)
     MESSAGE_CHECK(m_process, m_process->webFrame(frameID));

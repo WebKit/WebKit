@@ -90,6 +90,7 @@
 #include <WebCore/UserActivity.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/UserScriptTypes.h>
 #include <WebCore/VisibilityState.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
@@ -1764,8 +1765,8 @@ private:
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
 
 #if ENABLE(MEDIA_STREAM)
-    void userMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice&& audioDeviceUID, WebCore::CaptureDevice&& videoDeviceUID, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&&, CompletionHandler<void()>&&);
-    void userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String&& invalidConstraint);
+    void userMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier, WebCore::CaptureDevice&& audioDeviceUID, WebCore::CaptureDevice&& videoDeviceUID, String&& mediaDeviceIdentifierHashSalt, SandboxExtension::Handle&&, CompletionHandler<void()>&&);
+    void userMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier, uint64_t reason, String&& invalidConstraint);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

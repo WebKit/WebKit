@@ -51,7 +51,7 @@ public:
 
     void invalidatePendingRequests();
 
-    Ref<MediaKeySystemPermissionRequestProxy> createRequestForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem);
+    Ref<MediaKeySystemPermissionRequestProxy> createRequestForFrame(uint64_t mediaKeySystemID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem);
 
     void grantRequest(MediaKeySystemPermissionRequestProxy&);
     void denyRequest(MediaKeySystemPermissionRequestProxy&, const String& message = { });

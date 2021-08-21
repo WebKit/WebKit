@@ -21,6 +21,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "IdentifierTypes.h"
 #include "SandboxExtension.h"
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
@@ -50,8 +51,8 @@ public:
 
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);
-    void userMediaAccessWasGranted(uint64_t, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&&);
-    void userMediaAccessWasDenied(uint64_t, WebCore::UserMediaRequest::MediaAccessDenialReason, String&&);
+    void userMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&&);
+    void userMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier, WebCore::UserMediaRequest::MediaAccessDenialReason, String&&);
 
     void enumerateMediaDevices(WebCore::Document&, CompletionHandler<void(const Vector<WebCore::CaptureDevice>&, const String&)>&&);
 

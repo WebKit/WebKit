@@ -40,6 +40,7 @@
 #include "MediaConstraints.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamRequest.h"
+#include "UserMediaRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/UniqueRef.h>
@@ -50,9 +51,6 @@ class MediaStream;
 class SecurityOrigin;
 
 template<typename IDLType> class DOMPromiseDeferred;
-
-enum UserMediaRequestIdentifierType { };
-using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject {
 public:

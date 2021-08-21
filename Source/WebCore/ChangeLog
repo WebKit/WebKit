@@ -1,3 +1,16 @@
+2021-08-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Use UserMediaRequestIdentifier in WebKit rather than a mysterious uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=229308
+
+        Reviewed by Youenn Fablet.
+
+        Move UserMediaRequestIdentifier to its own header.
+
+        * Headers.cmake:
+        * Modules/mediastream/UserMediaRequest.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Initialize root box's border and padding values

@@ -269,13 +269,13 @@ messages -> WebPageProxy {
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
-    RequestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
+    RequestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
     EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt) Async
     BeginMonitoringCaptureDevices()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    RequestMediaKeySystemPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, String keySystem)
+    RequestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, String keySystem)
 #endif
 
     # Notification messages

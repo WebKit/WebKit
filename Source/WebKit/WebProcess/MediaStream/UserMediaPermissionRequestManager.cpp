@@ -80,7 +80,7 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& u
     ASSERT(webFrame);
 
     auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier().toUInt64(), webFrame->frameID(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier(), webFrame->frameID(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -117,9 +117,9 @@ void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
         sendUserMediaRequest(pendingRequest);
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
+void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaRequestIdentifier requestID, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, String&& deviceIdentifierHashSalt, CompletionHandler<void()>&& completionHandler)
 {
-    auto request = m_ongoingUserMediaRequests.take(makeObjectIdentifier<UserMediaRequestIdentifierType>(requestID));
+    auto request = m_ongoingUserMediaRequests.take(requestID);
     if (!request) {
         completionHandler();
         return;
@@ -128,9 +128,9 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t reque
     request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt), WTFMove(completionHandler));
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t requestID, UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
+void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
 {
-    auto request = m_ongoingUserMediaRequests.take(makeObjectIdentifier<UserMediaRequestIdentifierType>(requestID));
+    auto request = m_ongoingUserMediaRequests.take(requestID);
     if (!request)
         return;
 
