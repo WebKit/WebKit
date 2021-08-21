@@ -115,6 +115,8 @@ private:
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
 
+    void paintTextRunUsingPhysicalCoordinates(PaintInfo&, const LayoutPoint& paintOffset, const Line&, const Run&);
+
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
     void releaseInlineItemCache();

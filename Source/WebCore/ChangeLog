@@ -1,3 +1,24 @@
+2021-08-21  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Add painting support for vertical text content
+        https://bugs.webkit.org/show_bug.cgi?id=228940
+
+        Reviewed by Antti Koivisto.
+
+        Translate the logical layout coordinates to physical paint coordinates by taking the writing mode into account.
+        (e.g. writing-mode: vertical-rl;
+          run logical rect: [0, 0][20x18]
+          in a flipped block box: [10, 10][100x50]
+          with the paint offset: [8, 8]
+
+          translates to: [90, 8][20x18]
+        )
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+
 2021-08-21  Zalan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Do not scan the content for overflowing glyph when line-box-contain is set to glyph
