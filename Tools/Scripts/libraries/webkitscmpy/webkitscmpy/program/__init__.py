@@ -26,6 +26,7 @@ import os
 import sys
 
 from .blame import Blame
+from .branch import Branch
 from .canonicalize import Canonicalize
 from .clean import Clean
 from .command import Command
@@ -65,7 +66,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    programs = [Blame, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, Setup]
+    programs = [Branch, Blame, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 

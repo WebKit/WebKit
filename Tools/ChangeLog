@@ -1,3 +1,30 @@
+2021-08-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add pull-request command (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=229089
+        <rdar://problem/81908751>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add 'check-ref-format' and 'checkout -b'.
+        (Git.checkout): Add ability to create branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Add Branch command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch.parser): Allow user to specify engineering branch name.
+        (Branch.normalize_issue): Turn provided string into eng branch if it isn't already.
+        (Branch.main): Create eng branch from current checkout state.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/branch_unittest.py:
+        (TestBranch):
+        (TestBranch.setUp):
+        (TestBranch.test_basic_svn):
+        (TestBranch.test_basic_git):
+        (TestBranch.test_prompt_git):
+        (TestBranch.test_invalid_branch):
+
 2021-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Make UIEventAttribution tests less platform dependent

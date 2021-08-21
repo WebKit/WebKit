@@ -333,10 +333,15 @@ nothing to commit, working tree clean
                     stdout='\n'.join(sorted(self.branches_on(args[4]))) + '\n',
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
+                self.executable, 'checkout', '-b', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=True) else mocks.ProcessCompletion(returncode=1)
+            ), mocks.Subprocess.Route(
                 self.executable, 'checkout', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[2]) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'filter-branch', '-f',
                 cwd=self.path,
@@ -380,6 +385,10 @@ nothing to commit, working tree clean
                 completion=mocks.ProcessCompletion(
                     returncode=0,
                 ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'check-ref-format', re.compile(r'.+'),
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0) if re.match(r'^[A-Za-z0-9-]+/[A-Za-z0-9/-]+$', args[2]) else mocks.ProcessCompletion(),
             ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
@@ -473,8 +482,23 @@ nothing to commit, working tree clean
                     result.add(branch)
         return result
 
-    def checkout(self, something):
+    def checkout(self, something, create=False):
         commit = self.find(something)
+        if create:
+            if commit:
+                return False
+            if self.head.branch == self.default_branch:
+                self.commits[something] = [self.head]
+            else:
+                self.commits[something] = [
+                    commit for commit in self.commits[self.head.branch]
+                    if not commit.branch_point or commit.identifier <= self.head.identifier
+                ]
+            self.commits[something][-1] = Commit.from_json(Commit.Encoder().default(self.head))
+            self.head = self.commits[something][-1]
+            self.head.branch = something
+            return True
+
         if commit:
             self.head = commit
             self.detached = something not in self.commits.keys()
