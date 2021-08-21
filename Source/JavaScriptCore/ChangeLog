@@ -1,5 +1,16 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Enable String,TypedArray#at
+        https://bugs.webkit.org/show_bug.cgi?id=229354
+
+        Reviewed by Saam Barati.
+
+        Enable String and TypedArray's `at` method.
+
+        * runtime/OptionsList.h:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Enable Array#findLast method
         https://bugs.webkit.org/show_bug.cgi?id=229355
 
