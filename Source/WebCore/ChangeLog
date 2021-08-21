@@ -1,3 +1,35 @@
+2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Single characters don't get shaped in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=186804
+
+        Reviewed by Alan Bujtas.
+
+        Previously, single characters weren't shaped in the fast text codepath,
+        because shaping in the fast text codepath was just for kerning and
+        ligatures. Kerning didn't need to shape individual characters because
+        kerning only applies to pairs of characters, and ligatures didn't need
+        to shape individual characters because two characters are required to
+        form a ligature. However, now that we want to replace the complex text
+        codepath with a new-and-improved fast text codepath, we have to perform
+        all shaping in the fast text codepath, regardless of how many characters
+        are present.
+
+        Test: fast/text/single-character-shaping.html
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::commitCurrentFontRange):
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::shouldApplyFontTransforms const): Deleted.
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::Font::applyTransforms): Keep kerning disabled for single glyphs,
+        because of performance. This will be able to be removed when rdar://82195405
+        is fixed.
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+
 2021-08-21  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Add painting support for vertical text content

@@ -1,3 +1,16 @@
+2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Single characters don't get shaped in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=186804
+
+        Reviewed by Alan Bujtas.
+
+        Huge thanks to Laurence Penney to contributing this test font!!!
+
+        * fast/text/resources/UniversTofu-GSUB-rvrn.ttf: Added. The license is Apache 2.0.
+        * fast/text/single-character-shaping-expected.html: Added.
+        * fast/text/single-character-shaping.html: Added.
+
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable Array#findLast method

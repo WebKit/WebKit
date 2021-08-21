@@ -608,14 +608,14 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
     auto substring = text.substring(beginningStringIndex);
     auto upconvertedCharacters = substring.upconvertedCharacters();
     auto localeString = LocaleCocoa::canonicalLanguageIdentifierFromString(locale).string().createCFString();
+    auto numberOfInputGlyphs = glyphBuffer.size() - beginningGlyphIndex;
+    // FIXME: Enable kerning for single glyphs when rdar://82195405 is fixed
     CTFontShapeOptions options = kCTFontShapeWithClusterComposition
-        | (enableKerning ? kCTFontShapeWithKerning : 0)
+        | (enableKerning && numberOfInputGlyphs ? kCTFontShapeWithKerning : 0)
         | (textDirection == TextDirection::RTL ? kCTFontShapeRightToLeft : 0);
 
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] -= beginningStringIndex;
-
-    auto numberOfInputGlyphs = glyphBuffer.size() - beginningGlyphIndex;
 
     auto initialAdvance = CTFontShapeGlyphs(
         m_platformData.ctFont(),

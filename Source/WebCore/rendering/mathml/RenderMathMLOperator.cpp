@@ -199,8 +199,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
             GlyphData data = style().fontCascade().glyphDataForCharacter(textContent(), false);
             float glyphWidth = data.font ? data.font->widthForGlyph(data.glyph) : 0;
-            ASSERT(glyphWidth <= preferredWidth);
-            preferredWidth -= glyphWidth;
+            preferredWidth -= std::min(LayoutUnit(glyphWidth), preferredWidth);
         }
     } else
         preferredWidth = m_mathOperator.maxPreferredWidth();
