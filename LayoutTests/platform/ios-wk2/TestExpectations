@@ -1004,6 +1004,9 @@ http/tests/cache/disk-cache/disk-cache-validation.html
 # Failures as of 06/09/2015
 editing/input/emacs-ctrl-o.html [ Failure ]
 
+# rdar://82191308 ([ Sky ] editing/input/cocoa/autocorrect-on.html is timing out)
+editing/input/cocoa/autocorrect-on.html [ Timeout ]
+
 # Time outs as of 06/09/2015
 fast/images/animated-gif-webkit-transform.html
 

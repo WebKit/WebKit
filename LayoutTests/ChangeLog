@@ -1,3 +1,12 @@
+2021-08-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Sky ] editing/input/cocoa/autocorrect-on.html is timing out.
+        <rdar://82191308>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-20  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html.
