@@ -232,13 +232,15 @@ void LineLayout::constructContent()
     inlineContentBuilder.build(inlineFormattingContext, ensureInlineContent());
     ASSERT(m_inlineContent);
 
-    for (auto& run : m_inlineContent->runs) {
-        auto& layoutBox = run.layoutBox();
+    auto& boxAndRendererList = m_boxTree.boxAndRendererList();
+    for (auto& boxAndRenderer : boxAndRendererList) {
+        auto& layoutBox = *boxAndRenderer.box;
         if (!layoutBox.isReplacedBox())
             continue;
 
-        auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-        renderer.setLocation(flooredLayoutPoint(run.rect().location()));
+        auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
+        auto& boxGeometry = inlineFormattingContext.geometryForBox(layoutBox);
+        renderer.setLocation(Layout::BoxGeometry::borderBoxTopLeft(boxGeometry));
     }
 
     m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();

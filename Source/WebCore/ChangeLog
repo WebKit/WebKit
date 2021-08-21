@@ -1,3 +1,18 @@
+2021-08-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Walk the box tree to update the replaced content location
+        https://bugs.webkit.org/show_bug.cgi?id=229105
+
+        Reviewed by Antti Koivisto.
+
+        Normally there are more runs than entries in the box list. It's more performant to iterate
+        the box list for the renderer location adjustment.
+
+        * layout/integration/LayoutIntegrationBoxTree.h:
+        (WebCore::LayoutIntegration::BoxTree::boxAndRendererList):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::constructContent):
+
 2021-08-20  Simon Fraser  <simon.fraser@apple.com>
 
         Use UserMediaRequestIdentifier in WebKit rather than a mysterious uint64_t

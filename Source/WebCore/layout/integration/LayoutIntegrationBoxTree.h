@@ -58,16 +58,18 @@ public:
 
     size_t boxCount() const { return m_boxes.size(); }
 
+    struct BoxAndRenderer {
+        std::unique_ptr<Layout::Box> box;
+        RenderObject* renderer { nullptr };
+    };
+    const auto& boxAndRendererList() const { return m_boxes; }
+
 private:
     void buildTree();
     void appendChild(std::unique_ptr<Layout::Box>, RenderObject&);
 
     RenderBlockFlow& m_flow;
     Layout::InitialContainingBlock m_root;
-    struct BoxAndRenderer {
-        std::unique_ptr<Layout::Box> box;
-        RenderObject* renderer { nullptr };
-    };
     Vector<BoxAndRenderer, 1> m_boxes;
 
     HashMap<const RenderObject*, Layout::Box*> m_rendererToBoxMap;
