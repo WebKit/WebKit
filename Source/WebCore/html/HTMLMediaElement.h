@@ -457,7 +457,7 @@ public:
     WEBCORE_EXPORT static void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&);
     static void resetMediaEngines();
 
-    bool isPlaying() const { return m_playing; }
+    bool isPlaying() const final { return m_playing; }
 
 #if ENABLE(WEB_AUDIO)
     MediaElementAudioSourceNode* audioSourceNode() { return m_audioSourceNode; }

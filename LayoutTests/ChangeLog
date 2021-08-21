@@ -1,3 +1,14 @@
+2021-08-21  Youenn Fablet  <youenn@apple.com>
+
+        Prevent AudioSession category from moving out of PlayAndRecord too quickly
+        https://bugs.webkit.org/show_bug.cgi?id=229327
+        <rdar://81997024>
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-stream/audio-capture-and-category.https-expected.txt: Added.
+        * http/tests/media/media-stream/audio-capture-and-category.https.html: Added.
+
 2021-08-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281343.

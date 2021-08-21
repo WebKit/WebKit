@@ -130,6 +130,7 @@ private:
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
+    bool isPlaying() const final;
     MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
 
     // MediaCanStartListener.

@@ -322,6 +322,11 @@ bool PlatformMediaSession::isSuspended() const
     return m_client.isSuspended();
 }
 
+bool PlatformMediaSession::isPlaying() const
+{
+    return m_client.isPlaying();
+}
+
 bool PlatformMediaSession::shouldOverrideBackgroundLoadingRestriction() const
 {
     return m_client.shouldOverrideBackgroundLoadingRestriction();
