@@ -1,3 +1,15 @@
+2021-08-20  Tim Nguyen  <ntim@apple.com>
+
+        Walk up stacking contexts in RenderLayerBacking::compositingOpacity
+        https://bugs.webkit.org/show_bug.cgi?id=229350
+
+        Reviewed by Simon Fraser.
+
+        Shorter way to do the same thing, since stackingContext() chain is top-layer aware and opacity creates stacking contexts anyway.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::compositingOpacity const):
+
 2021-08-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] canUseForLineLayoutWithReason's establishesInlineFormattingContext should check against inflow content
