@@ -1,5 +1,17 @@
 2021-08-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove AsyncRequest, which is unused
+        https://bugs.webkit.org/show_bug.cgi?id=229358
+
+        Reviewed by Alex Christensen.
+
+        * Shared/AsyncRequest.cpp: Removed.
+        * Shared/AsyncRequest.h: Removed.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-08-20  Simon Fraser  <simon.fraser@apple.com>
+
         Use UserMediaRequestIdentifier in WebKit rather than a mysterious uint64_t
         https://bugs.webkit.org/show_bug.cgi?id=229308
 
