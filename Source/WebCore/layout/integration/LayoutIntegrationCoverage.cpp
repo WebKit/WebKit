@@ -702,13 +702,12 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
             return false;
         }
         ASSERT(flow.parent());
-        // FIXME: This should really get the first _inflow_ child.
-        auto* firstChild = flow.firstChild();
-        if (!firstChild) {
+        auto* firstInFlowChild = flow.firstInFlowChild();
+        if (!firstInFlowChild) {
             // Empty block containers do not initiate inline formatting context.
             return false;
         }
-        return firstChild->isInline() || firstChild->isInlineBlockOrInlineTable();
+        return firstInFlowChild->isInline() || firstInFlowChild->isInlineBlockOrInlineTable();
     };
     if (!establishesInlineFormattingContext())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowDoesNotEstablishInlineFormattingContext, reasons, includeReasons);
