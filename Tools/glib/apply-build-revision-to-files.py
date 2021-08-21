@@ -37,7 +37,13 @@ def get_build_revision():
                     revision = "r%s" % contents.decode('utf-8').strip()
                     break
         elif os.path.isdir('.git'):
-            commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "origin/HEAD"), stderr=devnull)
+            try:
+                commit_message = subprocess.check_output(("git", "log", "-1", "--pretty=%B", "origin/HEAD"), stderr=devnull)
+            except subprocess.CalledProcessError:
+                # This may happen with shallow checkouts whose HEAD has been
+                # modified; there is no origin reference anymore, and git
+                # will fail - let's pretend that this is not a repo at all
+                commit_message = ""
             # Commit messages tend to be huge and the metadata we're looking
             # for is at the very end. Also a spoofed 'Canonical link' mention
             # could appear early on. So make sure we get the right metadata by
