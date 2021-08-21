@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStylesForNode.LargeSelectors");
+
+    function addTestCase({name, description, selector, authoredRuleHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refreshIfNeeded();
+
+                let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, 1, "Should have one matching authored rule.");
+
+                let authoredRule = authoredRules[0];
+
+                await authoredRuleHandler(authoredRule);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStylesForNode.LargeSelectors.StylePreceedingLargeSelector",
+        description: "Ensure that for rules declared before a large selector that both the parsed and raw selector and style properties are in agreement.",
+        selector: "#test1",
+        async authoredRuleHandler(rule) {
+            InspectorTest.expectEqual(rule.selectors.length, 1, "Should have `1` parsed selector.");
+            InspectorTest.expectEqual(rule.selectors[0].text, "#test1", "First parsed selector should be `#test1`.");
+            InspectorTest.expectEqual(rule.selectorText, "#test1", "Raw selector should be `#test1`.");
+
+            InspectorTest.expectEqual(rule.sourceCodeLocation?.lineNumber, 97, "Rule should have a source code line number of `97`.");
+
+            InspectorTest.expectEqual(rule.style.properties.length, 1, "Should have one CSS property.");
+            let property = rule.style.properties[0];
+
+            InspectorTest.expectEqual(property.text.trim(), rule.style.text.trim(), "Parsed property and raw style text should be the same.");
+            InspectorTest.expectEqual(property.value, "rebeccapurple", "Property value should be `rebeccapurple`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStylesForNode.LargeSelectors.StyleWithLargeSelector",
+        description: "Ensure that for rules with a large selector that both the parsed and raw selector and style properties are in agreement.",
+        selector: "#test2",
+        async authoredRuleHandler(rule) {
+            InspectorTest.expectEqual(rule.selectors.length, 165, "Should have `165` parsed selectors.");
+            InspectorTest.expectEqual(rule.selectors[0].text, "#test2", "First parsed selector should be `#test2`.");
+            for (let i = 1; i < rule.selectors.length; ++i)
+                InspectorTest.assert(rule.selectors[i].text === `a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y`);
+            InspectorTest.expectTrue(rule.selectorText.startsWith("#test2,"), "Raw selector should start with `#test2`.");
+
+            InspectorTest.expectEqual(rule.sourceCodeLocation?.lineNumber, 101, "Rule should have a source code line number of `101`.");
+
+            InspectorTest.expectEqual(rule.style.properties.length, 1, "Should have one CSS property.");
+            let property = rule.style.properties[0];
+
+            InspectorTest.expectEqual(property.text.trim(), rule.style.text.trim(), "Parsed property and raw style text should be the same.");
+            InspectorTest.expectEqual(property.value, "aliceblue", "Property value should be `aliceblue`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStylesForNode.LargeSelectors.StyleFollowingLargeSelector",
+        description: "Ensure that for rules declared after a large selector that both the parsed and raw selector and style properties are in agreement.",
+        selector: "#test3",
+        async authoredRuleHandler(rule) {
+            InspectorTest.expectEqual(rule.selectors.length, 1, "Should have `1` parsed selector.");
+            InspectorTest.expectEqual(rule.selectors[0].text, "#test3", "First parsed selector should be `#test3`.");
+            InspectorTest.expectEqual(rule.selectorText, "#test3", "Raw selector should be `#test3`.");
+
+            InspectorTest.expectEqual(rule.sourceCodeLocation?.lineNumber, 437, "Rule should have a source code line number of `437`.");
+
+            InspectorTest.expectEqual(rule.style.properties.length, 1, "Should have one CSS property.");
+            let property = rule.style.properties[0];
+
+            InspectorTest.expectEqual(property.text.trim(), rule.style.text.trim(), "Parsed property and raw style text should be the same.");
+            InspectorTest.expectEqual(property.value, "papayawhip", "Property value should be `papayawhip`.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #test1 {
+        background-color: rebeccapurple;
+    }
+
+    #test2,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y,
+    a b c d e f g h i j k l m n o p q r s t u v w x y A B C D E F G H I J K L M N O P Q R S T U V W X Y {
+        background-color: aliceblue;
+    }
+
+    /* Test that two rules with large selectors don't run together into a single set of parsed selectors for the first rule. */
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B,
+    z y x w v u t s r q p o n m l k j i h g f e d c b Z Y X W V U T S R Q P O N M L K J I H G F E D C B {
+        /* This rule intentionally left blank. */
+    }
+
+    #test3 {
+        background-color: papayawhip;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStylesForNode command and very large selectors.</p>
+    <div id="test1"></div>
+    <div id="test2"></div>
+    <div id="test3"></div>
+</body>
+</html>

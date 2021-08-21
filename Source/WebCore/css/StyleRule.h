@@ -97,6 +97,11 @@ public:
     MutableStyleProperties& mutableProperties();
     const StyleProperties* propertiesWithoutDeferredParsing() const;
 
+    bool isSplitRule() const { return m_isSplitRule; }
+    void markAsSplitRule() { m_isSplitRule = true; }
+    bool isLastRuleInSplitRule() const { return m_isLastRuleInSplitRule; }
+    void markAsLastRuleInSplitRule() { m_isLastRuleInSplitRule = true; }
+
     using StyleRuleBase::hasDocumentSecurityOrigin;
 
     void wrapperAdoptSelectorList(CSSSelectorList&&);
@@ -122,6 +127,9 @@ private:
 #if ENABLE(CSS_SELECTOR_JIT)
     mutable UniqueArray<CompiledSelector> m_compiledSelectors;
 #endif
+
+    bool m_isSplitRule { false };
+    bool m_isLastRuleInSplitRule { false };
 };
 
 class StyleRuleFontFace final : public StyleRuleBase {
