@@ -114,9 +114,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowParentIsPlaceholderElement:
         stream << "placeholder element";
         break;
-    case AvoidanceReason::FlowParentIsTextAreaWithWrapping:
-        stream << "wrapping textarea";
-        break;
     case AvoidanceReason::FlowHasNonSupportedChild:
         stream << "unsupported child renderer";
         break;
@@ -757,9 +754,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // FIXME: Placeholders do something strange.
     if (is<RenderTextControl>(*flow.parent()) && downcast<RenderTextControl>(*flow.parent()).textFormControlElement().placeholderElement())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsPlaceholderElement, reasons, includeReasons);
-    // FIXME: Implementation of wrap=hard looks into lineboxes.
-    if (flow.parent()->isTextArea() && flow.parent()->element()->hasAttributeWithoutSynchronization(HTMLNames::wrapAttr))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowParentIsTextAreaWithWrapping, reasons, includeReasons);
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (auto walker = InlineWalker(const_cast<RenderBlockFlow&>(flow)); !walker.atEnd(); walker.advance()) {
