@@ -3600,7 +3600,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Op bytecode, PatchableJump& badTy
     Jump ready = jump();
     doubleCase.link(this);
     slowCases.append(branch32(Above, lateScratch, TrustedImm32(JSValue::LowestTag)));
-    moveIntsToDouble(earlyScratch, lateScratch, fpRegT0, fpRegT1);
+    moveIntsToDouble(earlyScratch, lateScratch, fpRegT0);
     ready.link(this);
 #endif
     

@@ -2072,9 +2072,8 @@ public:
         m_assembler.vmov(dest1, dest2, src);
     }
 
-    void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)
+    void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest)
     {
-        UNUSED_PARAM(scratch);
         m_assembler.vmov(dest, src1, src2);
     }
 
