@@ -29,7 +29,12 @@
 
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include <unicode/ucal.h>
+#include <unicode/ucol.h>
+#include <unicode/udat.h>
+#include <unicode/udatpg.h>
 #include <unicode/uloc.h>
+#include <unicode/unumsys.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -530,6 +535,335 @@ TriState IntlLocale::numeric()
     if (m_numeric == TriState::Indeterminate)
         m_numeric = triState(keywordValue("colnumeric"_s, isBoolean) == "yes"_s);
     return m_numeric;
+}
+
+static inline JSArray* createArrayFromStringVector(JSGlobalObject* globalObject, Vector<String, 1>&& elements)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
+    if (!result) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    for (unsigned index = 0; index < elements.size(); ++index) {
+        result->putDirectIndex(globalObject, index, jsString(vm, WTFMove(elements[index])));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return result;
+}
+
+JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<String, 1> elements;
+
+    String preferred = calendar();
+    if (!preferred.isEmpty()) {
+        elements.append(WTFMove(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    constexpr bool commonlyUsed = true;
+    auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", m_localeID.data(), commonlyUsed, &status));
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    const char* pointer;
+    int32_t length = 0;
+    while ((pointer = uenum_next(calendars.get(), &length, &status)) && U_SUCCESS(status)) {
+        String calendar(pointer, length);
+        if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
+            elements.append(WTFMove(mapped.value()));
+        else
+            elements.append(WTFMove(calendar));
+    }
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+}
+
+JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<String, 1> elements;
+
+    String preferred = collation();
+    if (!preferred.isEmpty()) {
+        elements.append(WTFMove(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    constexpr bool commonlyUsed = true;
+    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucol_getKeywordValuesForLocale("collation", m_localeID.data(), commonlyUsed, &status));
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    const char* pointer;
+    int32_t length = 0;
+    while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
+        String collation(pointer, length);
+        // 1.1.3 step 4, The values "standard" and "search" must be excluded from list.
+        if (collation == "standard"_s || collation == "search"_s)
+            continue;
+        if (auto mapped = mapICUCollationKeywordToBCP47(collation))
+            elements.append(WTFMove(mapped.value()));
+        else
+            elements.append(WTFMove(collation));
+    }
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+}
+
+JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<String, 1> elements;
+
+    String preferred = hourCycle();
+    if (!preferred.isEmpty()) {
+        elements.append(WTFMove(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(m_localeID.data(), &status));
+    if (U_FAILURE(status))
+        return nullptr;
+
+    // Use "j" skeleton and parse pattern to retrieve the configured hour-cycle information.
+    constexpr const UChar skeleton[] = { 'j', 0 };
+    Vector<UChar, 32> pattern;
+    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(), skeleton, 1, UDATPG_MATCH_HOUR_FIELD_LENGTH, pattern);
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    for (unsigned i = 0; i < pattern.size(); ++i) {
+        UChar currentCharacter = pattern[i];
+        if (!isASCIIAlpha(currentCharacter))
+            continue;
+
+        while (i + 1 < pattern.size() && pattern[i + 1] == currentCharacter)
+            ++i;
+
+        switch (currentCharacter) {
+        case 'h': {
+            elements.append("h12"_s);
+            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        }
+        case 'H': {
+            elements.append("h23"_s);
+            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        }
+        case 'k': {
+            elements.append("h24"_s);
+            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        }
+        case 'K': {
+            elements.append("h11"_s);
+            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+        }
+        default:
+            break;
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+}
+
+JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<String, 1> elements;
+    String preferred = numberingSystem();
+    if (!preferred.isEmpty()) {
+        elements.append(WTFMove(preferred));
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto numberingSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_open(m_localeID.data(), &status));
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+    elements.append(unumsys_getName(numberingSystem.get()));
+
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+}
+
+JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<String, 1> elements;
+
+    // 11.6-3 Let region be the substring of locale corresponding to the unicode_region_subtag production of the unicode_language_id.
+    String region = this->region();
+    if (region.isEmpty())
+        return jsUndefined();
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, region.utf8().data(), nullptr, &status));
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return { };
+    }
+
+    int32_t length;
+    const char* collation;
+    while ((collation = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status))
+        elements.constructAndAppend(collation, length);
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return { };
+    }
+
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+}
+
+JSObject* IntlLocale::textInfo(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    UErrorCode status = U_ZERO_ERROR;
+    ULayoutType layout = uloc_getCharacterOrientation(m_localeID.data(), &status);
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    JSString* layoutString = nullptr;
+    switch (layout) {
+    default:
+    case ULOC_LAYOUT_LTR:
+        layoutString = jsString(vm, "ltr"_s);
+        break;
+    case ULOC_LAYOUT_RTL:
+        layoutString = jsString(vm, "rtl"_s);
+        break;
+    case ULOC_LAYOUT_TTB:
+        layoutString = jsString(vm, "ttb"_s);
+        break;
+    case ULOC_LAYOUT_BTT:
+        layoutString = jsString(vm, "btt"_s);
+        break;
+    }
+
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, Identifier::fromString(vm, "direction"), layoutString);
+    return result;
+}
+
+JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(nullptr, 0, m_localeID.data(), UCAL_DEFAULT, &status));
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    int32_t firstDayOfWeek = ucal_getAttribute(calendar.get(), UCAL_FIRST_DAY_OF_WEEK);
+    int32_t minimalDays = ucal_getAttribute(calendar.get(), UCAL_MINIMAL_DAYS_IN_FIRST_WEEK);
+
+    auto canonicalizeDayOfWeekType = [](UCalendarWeekdayType type) {
+        switch (type) {
+        // UCAL_WEEKEND_ONSET is a day that starts as a weekday and transitions to the weekend. It means this is WeekDay.
+        case UCAL_WEEKEND_ONSET:
+        case UCAL_WEEKDAY:
+            return UCAL_WEEKDAY;
+        // UCAL_WEEKEND_CEASE is a day that starts as the weekend and transitions to a weekday. It means this is WeekEnd.
+        case UCAL_WEEKEND_CEASE:
+        case UCAL_WEEKEND:
+            return UCAL_WEEKEND;
+        default:
+            return UCAL_WEEKEND;
+        }
+    };
+
+    static_assert(UCAL_SUNDAY == 1);
+    static_assert(UCAL_SATURDAY == 7);
+    UCalendarWeekdayType previous = canonicalizeDayOfWeekType(ucal_getDayOfWeekType(calendar.get(), UCAL_SATURDAY, &status));
+    if (!U_SUCCESS(status)) {
+        throwTypeError(globalObject, scope, "invalid locale"_s);
+        return nullptr;
+    }
+
+    int32_t weekendStart = 0;
+    int32_t weekendEnd = 0;
+    for (int32_t day = UCAL_SUNDAY; day <= UCAL_SATURDAY; ++day) {
+        UCalendarWeekdayType type = canonicalizeDayOfWeekType(ucal_getDayOfWeekType(calendar.get(), static_cast<UCalendarDaysOfWeek>(day), &status));
+        if (!U_SUCCESS(status)) {
+            throwTypeError(globalObject, scope, "invalid locale"_s);
+            return nullptr;
+        }
+        if (previous != type) {
+            switch (type) {
+            case UCAL_WEEKDAY: // WeekEnd => WeekDay
+                if (day == UCAL_SUNDAY)
+                    weekendEnd = UCAL_SATURDAY;
+                else
+                    weekendEnd = day - 1;
+                break;
+            case UCAL_WEEKEND: // WeekDay => WeekEnd
+                weekendStart = day;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+        previous = type;
+    }
+
+    auto convertUCalendarDaysOfWeekToMondayBasedDay = [](int32_t day) -> int32_t {
+        // Convert from
+        //     Sunday => 1
+        //     Saturday => 7
+        // to
+        //     Monday => 1
+        //     Sunday => 7
+        if (day == UCAL_SUNDAY)
+            return 7;
+        return day - 1;
+    };
+
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, Identifier::fromString(vm, "firstDay"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(firstDayOfWeek)));
+    result->putDirect(vm, Identifier::fromString(vm, "weekendStart"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(weekendStart)));
+    result->putDirect(vm, Identifier::fromString(vm, "weekendEnd"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(weekendEnd)));
+    result->putDirect(vm, Identifier::fromString(vm, "minimalDays"), jsNumber(minimalDays));
+    return result;
 }
 
 } // namespace JSC

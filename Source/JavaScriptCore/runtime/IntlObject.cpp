@@ -1458,6 +1458,31 @@ std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const 
 #endif
 }
 
+std::optional<String> mapICUCalendarKeywordToBCP47(const String& calendar)
+{
+    if (calendar == "gregorian"_s)
+        return "gregory"_s;
+    if (calendar == "islamic-civil"_s)
+        return "islamicc"_s;
+    if (calendar == "ethiopic-amete-alem"_s)
+        return "ethioaa"_s;
+    return std::nullopt;
+}
+
+std::optional<String> mapICUCollationKeywordToBCP47(const String& collation)
+{
+    // Map keyword values to BCP 47 equivalents.
+    if (collation == "dictionary"_s)
+        return "dict"_s;
+    if (collation == "gb2312han"_s)
+        return "gb2312"_s;
+    if (collation == "phonebook"_s)
+        return "phonebk"_s;
+    if (collation == "traditional"_s)
+        return "trad"_s;
+    return std::nullopt;
+}
+
 JSC_DEFINE_HOST_FUNCTION(intlObjectFuncGetCanonicalLocales, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     // Intl.getCanonicalLocales(locales)

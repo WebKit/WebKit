@@ -165,13 +165,8 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
             ASSERT(U_SUCCESS(status));
             String calendar = String(availableName, nameLength);
             keyLocaleData.append(calendar);
-            // Ensure aliases used in language tag are allowed.
-            if (calendar == "gregorian")
-                keyLocaleData.append("gregory"_s);
-            else if (calendar == "islamic-civil")
-                keyLocaleData.append("islamicc"_s);
-            else if (calendar == "ethiopic-amete-alem")
-                keyLocaleData.append("ethioaa"_s);
+            if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
+                keyLocaleData.append(WTFMove(mapped.value()));
         }
         uenum_close(calendars);
         break;

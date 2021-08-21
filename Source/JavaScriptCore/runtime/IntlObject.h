@@ -136,4 +136,7 @@ struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;
 };
 
+std::optional<String> mapICUCollationKeywordToBCP47(const String&);
+std::optional<String> mapICUCalendarKeywordToBCP47(const String&);
+
 } // namespace JSC

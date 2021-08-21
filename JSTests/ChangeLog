@@ -1,5 +1,19 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Intl Locale Info
+        https://bugs.webkit.org/show_bug.cgi?id=227830
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-locale-info.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+        (let.enGB.new.Intl.Locale.shouldBe):
+        (let.l.new.Intl.Locale.shouldBe):
+        * test262/config.yaml:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Extend Intl TimeZoneName Option
         https://bugs.webkit.org/show_bug.cgi?id=227831
 

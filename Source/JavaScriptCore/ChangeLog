@@ -1,5 +1,32 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Intl Locale Info
+        https://bugs.webkit.org/show_bug.cgi?id=227830
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl.Locale's extension (Intl Locale Info proposal)[1], which is already stage 3.
+        Intl.Locale#{calendars,collations,hourCycles,numberingSystems,timeZones} can return array of preferred
+        configuration for the given locale. And Intl.Locale#textInfo can return text layout direction and Intl.Locale#weekInfo
+        can return weekday information (e.g. when weekend starts).
+
+        [1]: https://github.com/tc39/proposal-intl-locale-info
+
+        * runtime/IntlLocale.cpp:
+        (JSC::createArrayFromStringVector):
+        (JSC::IntlLocale::calendars):
+        (JSC::IntlLocale::collations):
+        (JSC::IntlLocale::hourCycles):
+        (JSC::IntlLocale::numberingSystems):
+        (JSC::IntlLocale::timeZones):
+        (JSC::IntlLocale::textInfo):
+        (JSC::IntlLocale::weekInfo):
+        * runtime/IntlLocale.h:
+        * runtime/IntlLocalePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Extend Intl TimeZoneName Option
         https://bugs.webkit.org/show_bug.cgi?id=227831
 
