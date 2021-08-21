@@ -205,19 +205,21 @@ void LineLayout::updateStyle(const RenderBoxModelObject& renderer)
 
 void LineLayout::layout()
 {
-    if (!rootLayoutBox().hasInFlowOrFloatingChild())
+    auto& rootLayoutBox = this->rootLayoutBox();
+    if (!rootLayoutBox.hasInFlowOrFloatingChild())
         return;
 
     prepareLayoutState();
     prepareFloatingState();
 
     m_inlineContent = nullptr;
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
+    auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox);
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState };
 
     auto invalidationState = Layout::InvalidationState { };
-    auto horizontalConstraints = Layout::HorizontalConstraints { flow().borderAndPaddingStart(), flow().contentLogicalWidth() };
+    auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
 
-    inlineFormattingContext.lineLayoutForIntergration(invalidationState, { horizontalConstraints, flow().borderAndPaddingBefore() });
+    inlineFormattingContext.lineLayoutForIntergration(invalidationState, { horizontalConstraints, rootGeometry.contentBoxTop() });
 
     constructContent();
 }
@@ -246,12 +248,13 @@ void LineLayout::constructContent()
 
 void LineLayout::prepareLayoutState()
 {
-    m_layoutState.setViewportSize(flow().frame().view()->size());
+    auto& flow = this->flow();
+    m_layoutState.setViewportSize(flow.frame().view()->size());
 
     auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
-    rootGeometry.setContentBoxWidth(flow().contentSize().width());
-    rootGeometry.setPadding({ });
-    rootGeometry.setBorder({ });
+    rootGeometry.setContentBoxWidth(flow.contentSize().width());
+    rootGeometry.setPadding(Layout::Edges { { flow.paddingStart(), flow.paddingEnd() }, { flow.paddingBefore(), flow.paddingAfter() } });
+    rootGeometry.setBorder(Layout::Edges { { flow.borderStart(), flow.borderEnd() }, { flow.borderBefore(), flow.borderAfter() } });
     rootGeometry.setHorizontalMargin({ });
     rootGeometry.setVerticalMargin({ });
 }
