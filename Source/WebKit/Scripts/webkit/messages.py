@@ -285,6 +285,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::GraphicsContextGLAttributes',
         'WebCore::ImageDecoderIdentifier',
         'WebCore::LibWebRTCSocketIdentifier',
+        'WebCore::MediaKeySystemRequestIdentifier',
         'WebCore::MediaPlayerIdentifier',
         'WebCore::MediaSessionIdentifier',
         'WebCore::NativeImageReference',

@@ -51,7 +51,7 @@ public:
 
     void invalidatePendingRequests();
 
-    Ref<MediaKeySystemPermissionRequestProxy> createRequestForFrame(uint64_t mediaKeySystemID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem);
+    Ref<MediaKeySystemPermissionRequestProxy> createRequestForFrame(WebCore::MediaKeySystemRequestIdentifier, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem);
 
     void grantRequest(MediaKeySystemPermissionRequestProxy&);
     void denyRequest(MediaKeySystemPermissionRequestProxy&, const String& message = { });
@@ -64,7 +64,7 @@ private:
 
     WebPageProxy& m_page;
 
-    HashMap<uint64_t, RefPtr<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
+    HashMap<WebCore::MediaKeySystemRequestIdentifier, RefPtr<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;
 
 #if !RELEASE_LOG_DISABLED

@@ -1,3 +1,41 @@
+2021-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Use MediaKeySystemRequestIdentifier, rather than mysterious uint64_t values, in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=229310
+
+        Reviewed by Youenn Fablet.
+
+        WebCore already had an ObjectIdentifer<> type for media system key requests, MediaKeySystemRequestIdentifier.
+        Use it in the WebKit layer.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp:
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::denyRequest):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::grantRequest):
+        (WebKit::MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame):
+        * UIProcess/MediaKeySystemPermissionRequestManagerProxy.h:
+        * UIProcess/MediaKeySystemPermissionRequestProxy.cpp:
+        (WebKit::MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy):
+        * UIProcess/MediaKeySystemPermissionRequestProxy.h:
+        (WebKit::MediaKeySystemPermissionRequestProxy::create):
+        (WebKit::MediaKeySystemPermissionRequestProxy::mediaKeySystemID const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestMediaKeySystemPermissionForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp:
+        (WebKit::MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest):
+        (WebKit::MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted):
+        (WebKit::MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied):
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mediaKeySystemWasGranted):
+        (WebKit::WebPage::mediaKeySystemWasDenied):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-08-20  Simon Fraser  <simon.fraser@apple.com>
 
         Remove AsyncRequest, which is unused

@@ -29,6 +29,7 @@
 #include "ActiveDOMObject.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
+#include "MediaKeySystemRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/ObjectIdentifier.h>
@@ -40,9 +41,6 @@ class SecurityOrigin;
 class MediaKeySystem;
 
 template <typename IDLType> class DOMPromiseDeferred;
-
-enum MediaKeySystemRequestIdentifierType { };
-using MediaKeySystemRequestIdentifier = ObjectIdentifier<MediaKeySystemRequestIdentifierType>;
 
 class MediaKeySystemRequest : public RefCounted<MediaKeySystemRequest>, public ActiveDOMObject {
 public:

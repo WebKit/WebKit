@@ -86,7 +86,7 @@ void MediaKeySystemPermissionRequestManagerProxy::denyRequest(MediaKeySystemPerm
     if (!m_page.hasRunningProcess())
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, request.mediaKeySystemID(), ", reason: ", message);
+    ALWAYS_LOG(LOGIDENTIFIER, request.mediaKeySystemID().toUInt64(), ", reason: ", message);
 
 #if ENABLE(ENCRYPTED_MEDIA)
     m_page.send(Messages::WebPage::MediaKeySystemWasDenied(request.mediaKeySystemID(), message));
@@ -101,7 +101,7 @@ void MediaKeySystemPermissionRequestManagerProxy::grantRequest(MediaKeySystemPer
         return;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    ALWAYS_LOG(LOGIDENTIFIER, request.mediaKeySystemID(), ", keySystem: ", request.keySystem());
+    ALWAYS_LOG(LOGIDENTIFIER, request.mediaKeySystemID().toUInt64(), ", keySystem: ", request.keySystem());
 
     m_page.sendWithAsyncReply(Messages::WebPage::MediaKeySystemWasGranted { request.mediaKeySystemID() }, [] { });
 #else
@@ -109,9 +109,9 @@ void MediaKeySystemPermissionRequestManagerProxy::grantRequest(MediaKeySystemPer
 #endif
 }
 
-Ref<MediaKeySystemPermissionRequestProxy> MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame(uint64_t mediaKeySystemID, FrameIdentifier frameID, Ref<SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
+Ref<MediaKeySystemPermissionRequestProxy> MediaKeySystemPermissionRequestManagerProxy::createRequestForFrame(MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier frameID, Ref<SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, mediaKeySystemID);
+    ALWAYS_LOG(LOGIDENTIFIER, mediaKeySystemID.toUInt64());
 
     auto request = MediaKeySystemPermissionRequestProxy::create(*this, mediaKeySystemID, m_page.mainFrame()->frameID(), frameID, WTFMove(topLevelDocumentOrigin), keySystem);
     m_pendingRequests.add(mediaKeySystemID, request.ptr());

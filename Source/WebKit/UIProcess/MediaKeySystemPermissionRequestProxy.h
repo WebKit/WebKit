@@ -27,6 +27,8 @@
 
 #include "APIObject.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/MediaKeySystemRequest.h>
+#include <WebCore/MediaKeySystemRequestIdentifier.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -41,7 +43,7 @@ class MediaKeySystemPermissionRequestManagerProxy;
 
 class MediaKeySystemPermissionRequestProxy : public RefCounted<MediaKeySystemPermissionRequestProxy> {
 public:
-    static Ref<MediaKeySystemPermissionRequestProxy> create(MediaKeySystemPermissionRequestManagerProxy& manager, uint64_t mediaKeySystemID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
+    static Ref<MediaKeySystemPermissionRequestProxy> create(MediaKeySystemPermissionRequestManagerProxy& manager, WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier frameID, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem)
     {
         return adoptRef(*new MediaKeySystemPermissionRequestProxy(manager, mediaKeySystemID, mainFrameID, frameID, WTFMove(topLevelDocumentOrigin), keySystem));
     }
@@ -51,7 +53,7 @@ public:
 
     void invalidate();
 
-    uint64_t mediaKeySystemID() const { return m_mediaKeySystemID; }
+    WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID() const { return m_mediaKeySystemID; }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
@@ -63,10 +65,10 @@ public:
     void doDefaultAction();
 
 private:
-    MediaKeySystemPermissionRequestProxy(MediaKeySystemPermissionRequestManagerProxy&, uint64_t mediaKeySystemID, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem);
+    MediaKeySystemPermissionRequestProxy(MediaKeySystemPermissionRequestManagerProxy&, WebCore::MediaKeySystemRequestIdentifier, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, const String& keySystem);
 
     WeakPtr<MediaKeySystemPermissionRequestManagerProxy> m_manager;
-    uint64_t m_mediaKeySystemID;
+    WebCore::MediaKeySystemRequestIdentifier m_mediaKeySystemID;
     WebCore::FrameIdentifier m_mainFrameID;
     WebCore::FrameIdentifier m_frameID;
     Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;

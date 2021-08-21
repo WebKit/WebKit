@@ -82,7 +82,7 @@ void MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest(MediaKeyS
     ASSERT(webFrame);
 
     auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
-    m_page.send(Messages::WebPageProxy::RequestMediaKeySystemPermissionForFrame(userRequest.identifier().toUInt64(), webFrame->frameID(), topLevelDocumentOrigin->data(), userRequest.keySystem()));
+    m_page.send(Messages::WebPageProxy::RequestMediaKeySystemPermissionForFrame(userRequest.identifier(), webFrame->frameID(), topLevelDocumentOrigin->data(), userRequest.keySystem()));
 }
 
 void MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest(MediaKeySystemRequest& request)
@@ -119,9 +119,9 @@ void MediaKeySystemPermissionRequestManager::mediaCanStart(Document& document)
         sendMediaKeySystemRequest(pendingRequest);
 }
 
-void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(uint64_t requestID, CompletionHandler<void()>&& completionHandler)
+void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier requestID, CompletionHandler<void()>&& completionHandler)
 {
-    auto request = m_ongoingMediaKeySystemRequests.take(makeObjectIdentifier<MediaKeySystemRequestIdentifierType>(requestID));
+    auto request = m_ongoingMediaKeySystemRequests.take(requestID);
     if (!request) {
         completionHandler();
         return;
@@ -130,9 +130,9 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(uint64_t r
     request->allow(WTFMove(completionHandler));
 }
 
-void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(uint64_t requestID, String&& message)
+void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier requestID, String&& message)
 {
-    auto request = m_ongoingMediaKeySystemRequests.take(makeObjectIdentifier<MediaKeySystemRequestIdentifierType>(requestID));
+    auto request = m_ongoingMediaKeySystemRequests.take(requestID);
     if (!request)
         return;
 

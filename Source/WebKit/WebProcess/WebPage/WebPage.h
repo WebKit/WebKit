@@ -76,6 +76,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
+#include <WebCore/MediaKeySystemRequest.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
@@ -1770,8 +1771,8 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void mediaKeySystemWasGranted(uint64_t mediaKeySystemID, CompletionHandler<void()>&&);
-    void mediaKeySystemWasDenied(uint64_t mediaKeySystemID, String&& message);
+    void mediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier, CompletionHandler<void()>&&);
+    void mediaKeySystemWasDenied(WebCore::MediaKeySystemRequestIdentifier, String&& message);
 #endif
 
     void requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&&);

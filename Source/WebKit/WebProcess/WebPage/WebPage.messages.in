@@ -383,8 +383,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    MediaKeySystemWasGranted(uint64_t mediaKeySystemID) -> () Async
-    MediaKeySystemWasDenied(uint64_t mediaKeySystemID, String message)
+    MediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID) -> () Async
+    MediaKeySystemWasDenied(WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, String message)
 #endif
 
     RequestMediaPlaybackState() -> (enum:uint8_t WebKit::MediaPlaybackState state) Async

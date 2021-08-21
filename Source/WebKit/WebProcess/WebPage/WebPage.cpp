@@ -4734,12 +4734,12 @@ void WebPage::captureDevicesChanged()
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void WebPage::mediaKeySystemWasGranted(uint64_t mediaKeySystemID, CompletionHandler<void()>&& completionHandler)
+void WebPage::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier mediaKeySystemID, CompletionHandler<void()>&& completionHandler)
 {
     m_mediaKeySystemPermissionRequestManager->mediaKeySystemWasGranted(mediaKeySystemID, WTFMove(completionHandler));
 }
 
-void WebPage::mediaKeySystemWasDenied(uint64_t mediaKeySystemID, String&& message)
+void WebPage::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier mediaKeySystemID, String&& message)
 {
     m_mediaKeySystemPermissionRequestManager->mediaKeySystemWasDenied(mediaKeySystemID, WTFMove(message));
 }

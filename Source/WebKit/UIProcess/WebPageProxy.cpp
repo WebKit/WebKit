@@ -8559,7 +8559,7 @@ void WebPageProxy::clearUserMediaState()
 #endif
 }
 
-void WebPageProxy::requestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, FrameIdentifier frameID, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const String& keySystem)
+void WebPageProxy::requestMediaKeySystemPermissionForFrame(MediaKeySystemRequestIdentifier mediaKeySystemID, FrameIdentifier frameID, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const String& keySystem)
 {
 #if ENABLE(ENCRYPTED_MEDIA)
     MESSAGE_CHECK(m_process, m_process->webFrame(frameID));

@@ -275,7 +275,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    RequestMediaKeySystemPermissionForFrame(uint64_t mediaKeySystemID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, String keySystem)
+    RequestMediaKeySystemPermissionForFrame(WebCore::MediaKeySystemRequestIdentifier mediaKeySystemID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, String keySystem)
 #endif
 
     # Notification messages
