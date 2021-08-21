@@ -1,5 +1,23 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Extend Intl TimeZoneName Option
+        https://bugs.webkit.org/show_bug.cgi?id=227831
+
+        Reviewed by Ross Kirsling.
+
+        https://github.com/tc39/proposal-intl-extend-timezonename
+
+        This patch implements Extend Intl TimeZoneName proposal, which adds "shortOffset", "longOffset", "shortGeneric", "longGeneric"
+        timeZoneName variants.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::setFormatsFromPattern):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::timeZoneNameString):
+        * runtime/IntlDateTimeFormat.h:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Enable String,TypedArray#at
         https://bugs.webkit.org/show_bug.cgi?id=229354
 

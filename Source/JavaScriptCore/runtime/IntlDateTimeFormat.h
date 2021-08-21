@@ -102,7 +102,7 @@ private:
     enum class Hour : uint8_t { None, TwoDigit, Numeric };
     enum class Minute : uint8_t { None, TwoDigit, Numeric };
     enum class Second : uint8_t { None, TwoDigit, Numeric };
-    enum class TimeZoneName : uint8_t { None, Short, Long };
+    enum class TimeZoneName : uint8_t { None, Short, Long, ShortOffset, LongOffset, ShortGeneric, LongGeneric };
     enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
     void setFormatsFromPattern(const StringView&);

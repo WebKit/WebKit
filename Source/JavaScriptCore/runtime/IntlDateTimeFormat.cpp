@@ -411,12 +411,23 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
                 m_second = Second::TwoDigit;
             break;
         case 'z':
-        case 'v':
-        case 'V':
             if (count == 1)
                 m_timeZoneName = TimeZoneName::Short;
             else if (count == 4)
                 m_timeZoneName = TimeZoneName::Long;
+            break;
+        case 'O':
+            if (count == 1)
+                m_timeZoneName = TimeZoneName::ShortOffset;
+            else if (count == 4)
+                m_timeZoneName = TimeZoneName::LongOffset;
+            break;
+        case 'v':
+        case 'V':
+            if (count == 1)
+                m_timeZoneName = TimeZoneName::ShortGeneric;
+            else if (count == 4)
+                m_timeZoneName = TimeZoneName::LongGeneric;
             break;
         case 'S':
             m_fractionalSecondDigits = count;
@@ -789,7 +800,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     for (unsigned i = 0; i < fractionalSecondDigits; ++i)
         skeletonBuilder.append('S');
 
-    TimeZoneName timeZoneName = intlOption<TimeZoneName>(globalObject, options, vm.propertyNames->timeZoneName, { { "short"_s, TimeZoneName::Short }, { "long"_s, TimeZoneName::Long } }, "timeZoneName must be \"short\" or \"long\""_s, TimeZoneName::None);
+    TimeZoneName timeZoneName = intlOption<TimeZoneName>(globalObject, options, vm.propertyNames->timeZoneName, { { "short"_s, TimeZoneName::Short }, { "long"_s, TimeZoneName::Long }, { "shortOffset"_s, TimeZoneName::ShortOffset }, { "longOffset"_s, TimeZoneName::LongOffset }, { "shortGeneric"_s, TimeZoneName::ShortGeneric}, { "longGeneric"_s, TimeZoneName::LongGeneric } }, "timeZoneName must be \"short\", \"long\", \"shortOffset\", \"longOffset\", \"shortGenric\", or \"longGeneric\""_s, TimeZoneName::None);
     RETURN_IF_EXCEPTION(scope, void());
     switch (timeZoneName) {
     case TimeZoneName::Short:
@@ -797,6 +808,18 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         break;
     case TimeZoneName::Long:
         skeletonBuilder.append("zzzz");
+        break;
+    case TimeZoneName::ShortOffset:
+        skeletonBuilder.append('O');
+        break;
+    case TimeZoneName::LongOffset:
+        skeletonBuilder.append("OOOO");
+        break;
+    case TimeZoneName::ShortGeneric:
+        skeletonBuilder.append('v');
+        break;
+    case TimeZoneName::LongGeneric:
+        skeletonBuilder.append("vvvv");
         break;
     case TimeZoneName::None:
         break;
@@ -1100,6 +1123,14 @@ ASCIILiteral IntlDateTimeFormat::timeZoneNameString(TimeZoneName timeZoneName)
         return "short"_s;
     case TimeZoneName::Long:
         return "long"_s;
+    case TimeZoneName::ShortOffset:
+        return "shortOffset"_s;
+    case TimeZoneName::LongOffset:
+        return "longOffset"_s;
+    case TimeZoneName::ShortGeneric:
+        return "shortGeneric"_s;
+    case TimeZoneName::LongGeneric:
+        return "longGeneric"_s;
     case TimeZoneName::None:
         ASSERT_NOT_REACHED();
         return ASCIILiteral::null();

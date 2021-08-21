@@ -1,5 +1,17 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Extend Intl TimeZoneName Option
+        https://bugs.webkit.org/show_bug.cgi?id=227831
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-extended-timezone-names.js: Added.
+        (shouldBe):
+        (timeZoneTest):
+        * test262/config.yaml:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Enable Array#findLast method
         https://bugs.webkit.org/show_bug.cgi?id=229355
 
