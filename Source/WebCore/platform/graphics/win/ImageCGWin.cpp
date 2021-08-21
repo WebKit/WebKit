@@ -68,6 +68,9 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     GetObject(bmp, sizeof(BITMAP), &bmpInfo);
 
     ASSERT(bmpInfo.bmBitsPixel == 32);
+    if (bmpInfo.bmBitsPixel != 32)
+        return false;
+
     int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
     
     auto cgContext = adoptCF(CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,

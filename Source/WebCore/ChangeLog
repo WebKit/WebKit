@@ -1,3 +1,21 @@
+2021-08-21  Per Arne  <pvollan@apple.com>
+
+        [Win] Crash under FontCache::lastResortFallbackFont
+        https://bugs.webkit.org/show_bug.cgi?id=228186
+
+        Reviewed by Myles C. Maxfield.
+
+        Add null check to resolve crash in FontCache::lastResortFallbackFont. Additionally, return early in BitmapImage::getHBITMAPOfSize
+        when the bits per pixel in the bitmap is of unexpected size, since that will cause a crash under this function. This can happen
+        if an event is being handled while already in the Windows paint handler.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::lastResortFallbackFont):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::CGContextWithHDC):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+
 2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Single characters don't get shaped in the fast text codepath

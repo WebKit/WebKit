@@ -420,8 +420,11 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
         }
     });
 
-    if (!fallbackFontName.get().isEmpty())
-        return *fontForFamily(fontDescription, fallbackFontName);
+    if (!fallbackFontName.get().isEmpty()) {
+        auto fallbackFont = fontForFamily(fontDescription, fallbackFontName);
+        if (fallbackFont)
+            return *fallbackFont;
+    }
 
     auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
     FontPlatformData platformData(WTFMove(hFont), fontDescription.computedPixelSize(), false, false, false);

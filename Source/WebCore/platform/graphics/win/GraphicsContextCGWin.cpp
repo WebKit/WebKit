@@ -51,8 +51,10 @@ static RetainPtr<CGContextRef> CGContextWithHDC(HDC hdc, bool hasAlpha)
     // exit gracefully and look at it later:
     //  https://bugs.webkit.org/show_bug.cgi?id=52041   
     // ASSERT(bitmapBits.bitsPerPixel() == 32);
-    if (pixelData.bitsPerPixel() != 32)
+    if (pixelData.bitsPerPixel() != 32) {
+        fprintf(stderr, "Invalid bits per pixel requested: %d hdc = %p", pixelData.bitsPerPixel(), hdc);
         return 0;
+    }
 
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | (hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst);
     auto context = adoptCF(CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8, pixelData.bytesPerRow(), sRGBColorSpaceRef(), bitmapInfo));

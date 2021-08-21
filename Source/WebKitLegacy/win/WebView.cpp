@@ -1378,6 +1378,9 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 
     RECT rect = dirtyRectPixels;
 
+    if (!bitmapDC)
+        return;
+    
 #if FLASH_BACKING_STORE_REDRAW
     {
         HWndDC dc(m_viewWindow);
