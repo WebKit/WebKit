@@ -1,5 +1,14 @@
 2021-08-21  Per Arne  <pvollan@apple.com>
 
+        [Win] The layout test fast/visual-viewport/resize-event-fired-window-resized.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=229379
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2021-08-21  Per Arne  <pvollan@apple.com>
+
         [Win] The layout test http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html is timing out
         https://bugs.webkit.org/show_bug.cgi?id=229372
 
