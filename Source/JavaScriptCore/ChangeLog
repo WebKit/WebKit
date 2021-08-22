@@ -1,5 +1,28 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove Intl runtime feature flags for already shipped ones
+        https://bugs.webkit.org/show_bug.cgi?id=229371
+
+        Reviewed by Ross Kirsling.
+
+        Since they are already shipped, we should remove these runtime flags.
+
+        * builtins/DatePrototype.js:
+        (globalPrivate.toDateTimeOptionsAnyAll):
+        (globalPrivate.toDateTimeOptionsTimeTime):
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::toDateTimeOptionsAnyDate):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::resolvedOptions const):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        * runtime/OptionsList.h:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Intl.DisplayNames v2
         https://bugs.webkit.org/show_bug.cgi?id=227832
 

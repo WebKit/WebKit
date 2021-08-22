@@ -245,12 +245,10 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     // ii. Let value be Get(options, prop).
     // iii. ReturnIfAbrupt(value).
     // iv. If value is not undefined, then let needDefaults be false.
-    if (Options::useIntlDateTimeFormatDayPeriod()) {
-        JSValue dayPeriod = options->get(globalObject, vm.propertyNames->dayPeriod);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!dayPeriod.isUndefined())
-            needDefaults = false;
-    }
+    JSValue dayPeriod = options->get(globalObject, vm.propertyNames->dayPeriod);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!dayPeriod.isUndefined())
+        needDefaults = false;
 
     JSValue hour = options->get(globalObject, vm.propertyNames->hour);
     RETURN_IF_EXCEPTION(scope, { });
@@ -691,11 +689,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         break;
     }
 
-    DayPeriod dayPeriod = DayPeriod::None;
-    if (Options::useIntlDateTimeFormatDayPeriod()) {
-        dayPeriod = intlOption<DayPeriod>(globalObject, options, vm.propertyNames->dayPeriod, { { "narrow"_s, DayPeriod::Narrow }, { "short"_s, DayPeriod::Short }, { "long"_s, DayPeriod::Long } }, "dayPeriod must be \"narrow\", \"short\", or \"long\""_s, DayPeriod::None);
-        RETURN_IF_EXCEPTION(scope, void());
-    }
+    DayPeriod dayPeriod = intlOption<DayPeriod>(globalObject, options, vm.propertyNames->dayPeriod, { { "narrow"_s, DayPeriod::Narrow }, { "short"_s, DayPeriod::Short }, { "long"_s, DayPeriod::Long } }, "dayPeriod must be \"narrow\", \"short\", or \"long\""_s, DayPeriod::None);
+    RETURN_IF_EXCEPTION(scope, void());
 
     Hour hour = intlOption<Hour>(globalObject, options, vm.propertyNames->hour, { { "2-digit"_s, Hour::TwoDigit }, { "numeric"_s, Hour::Numeric } }, "hour must be \"2-digit\" or \"numeric\""_s, Hour::None);
     RETURN_IF_EXCEPTION(scope, void());
@@ -746,22 +741,20 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         }
     }
 
-    if (Options::useIntlDateTimeFormatDayPeriod()) {
-        // dayPeriod must be set after setting hour.
-        // https://unicode-org.atlassian.net/browse/ICU-20731
-        switch (dayPeriod) {
-        case DayPeriod::Narrow:
-            skeletonBuilder.append("BBBBB");
-            break;
-        case DayPeriod::Short:
-            skeletonBuilder.append('B');
-            break;
-        case DayPeriod::Long:
-            skeletonBuilder.append("BBBB");
-            break;
-        case DayPeriod::None:
-            break;
-        }
+    // dayPeriod must be set after setting hour.
+    // https://unicode-org.atlassian.net/browse/ICU-20731
+    switch (dayPeriod) {
+    case DayPeriod::Narrow:
+        skeletonBuilder.append("BBBBB");
+        break;
+    case DayPeriod::Short:
+        skeletonBuilder.append('B');
+        break;
+    case DayPeriod::Long:
+        skeletonBuilder.append("BBBB");
+        break;
+    case DayPeriod::None:
+        break;
     }
 
     Minute minute = intlOption<Minute>(globalObject, options, vm.propertyNames->minute, { { "2-digit"_s, Minute::TwoDigit }, { "numeric"_s, Minute::Numeric } }, "minute must be \"2-digit\" or \"numeric\""_s, Minute::None);
@@ -1184,10 +1177,8 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
     if (m_day != Day::None)
         options->putDirect(vm, vm.propertyNames->day, jsNontrivialString(vm, dayString(m_day)));
 
-    if (Options::useIntlDateTimeFormatDayPeriod()) {
-        if (m_dayPeriod != DayPeriod::None)
-            options->putDirect(vm, vm.propertyNames->dayPeriod, jsNontrivialString(vm, dayPeriodString(m_dayPeriod)));
-    }
+    if (m_dayPeriod != DayPeriod::None)
+        options->putDirect(vm, vm.propertyNames->dayPeriod, jsNontrivialString(vm, dayPeriodString(m_dayPeriod)));
 
     if (m_hour != Hour::None)
         options->putDirect(vm, vm.propertyNames->hour, jsNontrivialString(vm, hourString(m_hour)));

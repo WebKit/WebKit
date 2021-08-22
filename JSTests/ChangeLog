@@ -1,5 +1,15 @@
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove Intl runtime feature flags for already shipped ones
+        https://bugs.webkit.org/show_bug.cgi?id=229371
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-datetimeformat-day-period.js:
+        * test262/config.yaml:
+
+2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Intl.DisplayNames v2
         https://bugs.webkit.org/show_bug.cgi?id=227832
 

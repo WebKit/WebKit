@@ -10,7 +10,6 @@ flags:
   class-static-fields-private: usePrivateStaticClassFields
   class-static-methods-private: usePrivateMethods
   error-cause: useErrorCause
-  Intl.DateTimeFormat-dayPeriod: useIntlDateTimeFormatDayPeriod
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
   Array.prototype.at: useAtMethod
