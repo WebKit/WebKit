@@ -1,3 +1,26 @@
+2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Control characters (Unicode category Cc) should be rendered visibly
+        https://bugs.webkit.org/show_bug.cgi?id=149128
+        <rdar://problem/79224941>
+
+        Reviewed by Alan Bujtas.
+
+        Update existing tests.
+
+        * fast/text/fixed-pitch-control-characters-expected.txt:
+        * fast/text/wide-zero-width-space.html:
+        * fast/text/zero-width-characters.html:
+        * platform/ios/fast/dom/52776-expected.txt:
+        * platform/mac/fast/dom/52776-expected.txt:
+        * platform/mac/fast/text/wide-zero-width-space-expected.txt: This actually shows
+          that there's a difference between the fast text codepath and the complex text
+          codepath, but that's okay for now because the complex text codepath is going
+          away. Also, it's not practical to fix this in the complex text codepath,
+          because that would require a CoreText change. So, for now, we can just encode
+          the behavior difference in our test, and when the complex codepath finally 
+          goes away, this test will be updated to be working correctly again.
+
 2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         overwriteCodePoint() in createAndFillGlyphPage() is wrong

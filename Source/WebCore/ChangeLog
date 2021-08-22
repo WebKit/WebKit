@@ -1,3 +1,22 @@
+2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Control characters (Unicode category Cc) should be rendered visibly
+        https://bugs.webkit.org/show_bug.cgi?id=149128
+        <rdar://problem/79224941>
+
+        Reviewed by Alan Bujtas.
+
+        We can map these glyphs to the .notdef glyph, which is (supposed to be) visible.
+
+        Tests: fast/dom/52776.html
+               fast/text/fixed-pitch-control-characters.html
+               fast/text/wide-zero-width-space.html
+               fast/text/zero-width-characters.html
+               imported/w3c/web-platform-tests/css/css-text/white-space*
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyCSSVisibilityRules):
+
 2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         overwriteCodePoint() in createAndFillGlyphPage() is wrong

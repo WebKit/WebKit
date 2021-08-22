@@ -5,9 +5,6 @@ function test()
     if (window.testRunner)
         testRunner.dumpAsText();
     var testString = "";
-    for (var i = 0; i < 32; ++i) // >
-        if (i != 9 && i != 10 && i != 13) // ;
-            testString += String.fromCharCode(i);
     testString += String.fromCharCode(0x200B);
     testString += String.fromCharCode(0x200C);
     testString += String.fromCharCode(0x200D);

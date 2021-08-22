@@ -537,8 +537,19 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
             continue;
         }
 
-        // FIXME: "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
         // https://www.w3.org/TR/css-text-3/#white-space-processing
+        // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
+        if (u_charType(characterResponsibleForThisGlyph) == U_CONTROL_CHAR) {
+            // Let's assume that .notdef is visible.
+            auto previousAdvance = glyphBuffer.advanceAt(i);
+            GlyphBufferGlyph visibleGlyph = 0;
+            glyphBuffer.glyphs(i)[0] = visibleGlyph;
+            ASSERT(glyphBuffer.fonts(i)[0]);
+            glyphBuffer.advances(i)[0] = makeGlyphBufferAdvance(glyphBuffer.fonts(i)[0]->widthForGlyph(visibleGlyph), height(previousAdvance));
+            m_runWidthSoFar += width(glyphBuffer.advanceAt(i)) - width(previousAdvance);
+            glyphBuffer.origins(i)[0] = makeGlyphBufferOrigin(0, -yPosition);
+            continue;
+        }
 
         if ((characterResponsibleForThisGlyph >= nullCharacter && characterResponsibleForThisGlyph < space)
             || (characterResponsibleForThisGlyph >= deleteCharacter && characterResponsibleForThisGlyph < noBreakSpace)) {

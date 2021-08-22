@@ -1,3 +1,75 @@
+2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Control characters (Unicode category Cc) should be rendered visibly
+        https://bugs.webkit.org/show_bug.cgi?id=149128
+        <rdar://problem/79224941>
+
+        Reviewed by Alan Bujtas.
+
+        These tests were erroneously marked as reference tests, when they should be reference-mismatch tests.
+
+        * web-platform-tests/css/css-text/white-space/control-chars-001-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-001-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-002-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-002-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-003-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-003-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-004-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-004-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-005-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-005-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-006-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-006-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-007-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-007-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-008-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-008-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-00B-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-00B-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-00C-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-00C-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-00E-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-00E-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-00F-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-00F-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-010-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-010-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-011-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-011-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-012-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-012-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-013-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-013-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-014-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-014-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-015-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-015-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-016-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-016-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-017-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-017-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-018-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-018-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-019-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-019-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-01A-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-01A-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-01B-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-01B-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-01C-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-01C-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-01D-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-01D-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-01E-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-01E-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-01F-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-01F-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-07F-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-07F-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-080-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-080-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-081-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-081-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-082-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-082-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-083-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-083-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-084-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-084-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-085-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-085-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-086-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-086-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-087-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-087-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-088-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-088-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-089-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-089-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-08A-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-08A-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-08B-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-08B-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-08C-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-08C-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-08D-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-08D-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-08E-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-08E-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-08F-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-08F-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-090-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-090-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-091-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-091-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-092-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-092-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-093-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-093-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-094-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-094-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-095-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-095-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-096-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-096-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-097-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-097-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-098-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-098-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-099-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-099-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-09A-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09A-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-09B-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09B-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-09C-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09C-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-09D-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09D-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-09E-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09E-expected.html.
+        * web-platform-tests/css/css-text/white-space/control-chars-09F-expected-mismatch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09F-expected.html.
+
 2021-08-20  Tim Nguyen  <ntim@apple.com>
 
         Initial implementation of inert subtrees
