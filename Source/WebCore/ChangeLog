@@ -1,3 +1,16 @@
+2021-08-21  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: crash when triggering IDBOpenRequest completion back on a worker thread
+        https://bugs.webkit.org/show_bug.cgi?id=229375
+
+        Reviewed by Brady Eidson.
+
+        Client may dispatch custom events to an IDBRequest, and we should only change request state based on events
+        created internally.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+
 2021-08-21  Zalan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Group non-standard CSS properties
