@@ -61,6 +61,7 @@
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
+#include "WidthIterator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -106,7 +107,7 @@ static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontC
         return false;
 
     for (unsigned i = 0; i < content.length(); ++i) {
-        if ((!whitespaceIsCollapsed && content[i] == '\t') || content[i] == noBreakSpace || content[i] == softHyphen || content[i] >= HiraganaLetterSmallA)
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(content[i], whitespaceIsCollapsed))
             return false;
     }
     return true;

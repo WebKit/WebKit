@@ -1,3 +1,25 @@
+2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r281389): canUseSimplifiedTextMeasuring() needs to match with WidthIterator::applyCSSVisibilityRules()
+        https://bugs.webkit.org/show_bug.cgi?id=229388
+
+        Reviewed by Alan Bujtas.
+
+        WidthIterator::applyCSSVisibilityRules() has some special handling for specific characters.
+        If those characters are present, we need to make sure we actually use WidthIterator::applyCSSVisibilityRules()
+        instead of taking the fast path in FontCascade::widthForSimpleText().
+
+        This is split out from https://bugs.webkit.org/show_bug.cgi?id=215643, and will be tested by that bug's test.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::canUseSimplifiedTextMeasuring):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::characterCanUseSimplifiedTextMeasuring):
+        (WebCore::WidthIterator::applyCSSVisibilityRules):
+        * platform/graphics/WidthIterator.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeCanUseSimplifiedTextMeasuring const):
+
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for vertical-align: sub

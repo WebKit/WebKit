@@ -52,6 +52,7 @@
 #include "Text.h"
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
+#include "WidthIterator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -1433,7 +1434,7 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
 
     auto whitespaceIsCollapsed = style().collapseWhiteSpace();
     for (unsigned i = 0; i < text().length(); ++i) {
-        if ((!whitespaceIsCollapsed && text()[i] == '\t') || text()[i] == noBreakSpace || text()[i] == softHyphen || text()[i] >= HiraganaLetterSmallA)
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(text()[i], whitespaceIsCollapsed))
             return false;
     }
     return true;

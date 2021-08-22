@@ -56,6 +56,8 @@ public:
     float runWidthSoFar() const { return m_runWidthSoFar; }
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
+    static bool characterCanUseSimplifiedTextMeasuring(UChar, bool whitespaceIsCollapsed);
+
 private:
     GlyphData glyphDataForCharacter(UChar32, bool mirror);
     template <typename TextIterator>

@@ -515,8 +515,51 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
     }
 }
 
+bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool whitespaceIsCollapsed)
+{
+    // This function needs to be kept in sync with applyCSSVisibilityRules().
+
+    switch (character) {
+    case tabCharacter:
+        if (!whitespaceIsCollapsed)
+            return false;
+        break;
+    case noBreakSpace:
+    case softHyphen:
+    case newlineCharacter:
+    case carriageReturn:
+    case leftToRightMark:
+    case rightToLeftMark:
+    case leftToRightEmbed:
+    case rightToLeftEmbed:
+    case leftToRightOverride:
+    case rightToLeftOverride:
+    case leftToRightIsolate:
+    case rightToLeftIsolate:
+    case zeroWidthNonJoiner:
+    case zeroWidthJoiner:
+    case popDirectionalFormatting:
+    case popDirectionalIsolate:
+    case firstStrongIsolate:
+    case objectReplacementCharacter:
+    case zeroWidthNoBreakSpace:
+        return false;
+        break;
+    }
+
+    if (character >= HiraganaLetterSmallA
+        || u_charType(character) == U_CONTROL_CHAR
+        || (character >= nullCharacter && character < space)
+        || (character >= deleteCharacter && character < noBreakSpace))
+        return false;
+
+    return true;
+}
+
 void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex)
 {
+    // This function needs to be kept in sync with characterCanUseSimplifiedTextMeasuring().
+
     Vector<unsigned> glyphsIndicesToBeDeleted;
 
     float yPosition = height(glyphBuffer.initialAdvance());
