@@ -1,3 +1,44 @@
+2021-08-22  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r281384. rdar://problem/82218746
+
+    IndexedDB: crash when triggering IDBOpenRequest completion back on a worker thread
+    https://bugs.webkit.org/show_bug.cgi?id=229375
+    
+    Source/WebCore:
+    
+    Reviewed by Brady Eidson.
+    
+    Client may dispatch custom events to an IDBRequest, and we should only change request state based on events
+    created internally.
+    
+    * Modules/indexeddb/IDBRequest.cpp:
+    (WebCore::IDBRequest::dispatchEvent):
+    
+    Source/WTF:
+    
+    Protect callee in CrossThreadTask if it inherits from ThreadSafeRefCounted<T>.
+    
+    Reviewed by Brady Eidson.
+    
+    * wtf/CrossThreadTask.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281384 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-21  Sihui Liu  <sihui_liu@apple.com>
+
+            IndexedDB: crash when triggering IDBOpenRequest completion back on a worker thread
+            https://bugs.webkit.org/show_bug.cgi?id=229375
+
+            Reviewed by Brady Eidson.
+
+            Client may dispatch custom events to an IDBRequest, and we should only change request state based on events
+            created internally.
+
+            * Modules/indexeddb/IDBRequest.cpp:
+            (WebCore::IDBRequest::dispatchEvent):
+
 2021-08-04  Russell Epstein  <repstein@apple.com>
 
         Revert r280492. rdar://problem/81522050
