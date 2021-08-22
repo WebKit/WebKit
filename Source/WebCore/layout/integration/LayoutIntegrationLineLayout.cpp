@@ -226,10 +226,8 @@ void LineLayout::layout()
 
 void LineLayout::constructContent()
 {
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState };
-
     auto inlineContentBuilder = InlineContentBuilder { m_layoutState, flow(), m_boxTree };
-    inlineContentBuilder.build(inlineFormattingContext, ensureInlineContent());
+    inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
     ASSERT(m_inlineContent);
 
     auto& boxAndRendererList = m_boxTree.boxAndRendererList();
@@ -239,8 +237,7 @@ void LineLayout::constructContent()
             continue;
 
         auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
-        auto& boxGeometry = inlineFormattingContext.geometryForBox(layoutBox);
-        renderer.setLocation(Layout::BoxGeometry::borderBoxTopLeft(boxGeometry));
+        renderer.setLocation(Layout::BoxGeometry::borderBoxTopLeft(m_inlineFormattingState.boxGeometry(layoutBox)));
     }
 
     m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();

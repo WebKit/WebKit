@@ -1,5 +1,22 @@
 2021-08-21  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Do not create an InlineFormattingContext object for constructing display lines and runs
+        https://bugs.webkit.org/show_bug.cgi?id=228061
+
+        Reviewed by Sam Weinig.
+
+        We've got all we need in the inlineFormattingState object.
+
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::constructContent):
+
+2021-08-21  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for -webkit-text-security: disc
         https://bugs.webkit.org/show_bug.cgi?id=229047
 
