@@ -34,7 +34,8 @@ function shouldBe(actual, expected) {
 }
 {
     let locale = new Intl.Locale("ar-SA")
-    shouldBe(JSON.stringify(locale.calendars), `["islamic-umalqura","islamic-rgsa","islamic","gregory"]`);
+    let calendars = JSON.stringify(locale.calendars);
+    shouldBe(calendars === `["islamic-umalqura","islamic-rgsa","islamic","gregory"]` || calendars === `["islamic-umalqura","gregory","islamic","islamic-rgsa"]`, true);
     shouldBe(JSON.stringify(locale.collations), `["compat","emoji","eor"]`);
     shouldBe(JSON.stringify(locale.hourCycles), `["h12"]`);
     shouldBe(JSON.stringify(locale.numberingSystems), `["arab"]`);

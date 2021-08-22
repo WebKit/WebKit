@@ -1,3 +1,11 @@
+2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, speculative fix for old ICU
+        https://bugs.webkit.org/show_bug.cgi?id=229385
+
+        * stress/intl-locale-info.js:
+        (shouldBe):
+
 2021-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove Intl runtime feature flags for already shipped ones
