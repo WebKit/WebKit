@@ -85,7 +85,7 @@ void callMemberFunctionForCrossThreadTask(C* object, MF function, ArgsTuple&& ar
     callMemberFunctionForCrossThreadTaskImpl(object, function, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
-template<typename T, typename std::enable_if<std::is_base_of<ThreadSafeRefCounted<T>, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
+template<typename T, typename std::enable_if<std::is_base_of<ThreadSafeRefCountedBase, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
 CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
 {
     return CrossThreadTask([callee = makeRefPtr(&callee), method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
@@ -93,7 +93,7 @@ CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...
     });
 }
 
-template<typename T, typename std::enable_if<!std::is_base_of<ThreadSafeRefCounted<T>, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
+template<typename T, typename std::enable_if<!std::is_base_of<ThreadSafeRefCountedBase, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
 CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
 {
     return CrossThreadTask([callee = &callee, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
