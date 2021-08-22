@@ -1,3 +1,34 @@
+2021-08-22  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r242732. rdar://problem/82218742
+
+    Crash under WebCore::IDBDatabase::connectionToServerLost
+    https://bugs.webkit.org/show_bug.cgi?id=195563
+    <rdar://problem/37193655>
+    
+    CrossThreadTask should protect callee if it is ThreadSafeRefCounted.
+    
+    Reviewed by Geoffrey Garen.
+    
+    * wtf/CrossThreadTask.h:
+    (WTF::createCrossThreadTask):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242732 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-11  Sihui Liu  <sihui_liu@apple.com>
+
+            Crash under WebCore::IDBDatabase::connectionToServerLost
+            https://bugs.webkit.org/show_bug.cgi?id=195563
+            <rdar://problem/37193655>
+
+            CrossThreadTask should protect callee if it is ThreadSafeRefCounted.
+
+            Reviewed by Geoffrey Garen.
+
+            * wtf/CrossThreadTask.h:
+            (WTF::createCrossThreadTask):
+
 2019-07-01  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r244621. rdar://problem/52492610
