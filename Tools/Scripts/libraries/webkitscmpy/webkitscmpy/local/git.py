@@ -254,7 +254,7 @@ class Git(Scm):
 
 
     GIT_COMMIT = re.compile(r'commit (?P<hash>[0-9a-f]+)')
-    SSH_REMOTE = re.compile('(ssh://)?git@(?P<host>.+):(?P<path>.+).git')
+    SSH_REMOTE = re.compile('(ssh://)?git@(?P<host>[^:/]+)[:/](?P<path>.+).git')
     HTTP_REMOTE = re.compile('(?P<protocol>https?)://(?P<host>.+)/(?P<path>.+).git')
 
     @classmethod
