@@ -1,3 +1,47 @@
+2021-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Use the strongly typed PageGroupIdentifier in place of uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=229356
+
+        Reviewed by Alex Christensen.
+
+        Replace uses of uint64_t for page group identifiers with PageGroupIdentifier.
+
+        There are two places where we convert between StorageNamespaceIdentifier and
+        PageGroupIdentifier because, as the comments state, those are equivalent.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/IdentifierTypes.h:
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::get):
+        (WebKit::pageGroupData):
+        (WebKit::generatePageGroupID): Deleted.
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::pageGroupID const):
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::getOrCreate):
+        (WebKit::WebDatabaseProvider::WebDatabaseProvider):
+        * WebProcess/Databases/WebDatabaseProvider.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::WebSWContextManagerConnection):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebKit::WebPageGroupProxy::pageGroupID const):
+        (WebKit::WebPageGroupProxy::localStorageNamespaceIdentifier const):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webPageGroup):
+        (WebKit::WebProcess::establishWorkerContextConnectionToNetworkProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/WebStorage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::pageGroupID const):
+        * WebProcess/WebStorage/StorageNamespaceImpl.h:
+
 2021-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Use MediaKeySystemRequestIdentifier, rather than mysterious uint64_t values, in WebKit

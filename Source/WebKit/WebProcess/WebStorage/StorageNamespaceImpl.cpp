@@ -130,10 +130,10 @@ PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const
     return *m_sessionPageID;
 }
 
-uint64_t StorageNamespaceImpl::pageGroupID() const
+PageGroupIdentifier StorageNamespaceImpl::pageGroupID() const
 {
     ASSERT(m_storageType == StorageType::Local || m_storageType == StorageType::TransientLocal);
-    return m_storageNamespaceID.toUInt64();
+    return makeObjectIdentifier<PageGroupIdentifierType>(m_storageNamespaceID.toUInt64());
 }
 
 } // namespace WebKit

@@ -43,7 +43,7 @@ std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
     if (!identifier)
         return std::nullopt;
     
-    std::optional<uint64_t> pageGroupID;
+    std::optional<PageGroupIdentifier> pageGroupID;
     decoder >> pageGroupID;
     if (!pageGroupID)
         return std::nullopt;

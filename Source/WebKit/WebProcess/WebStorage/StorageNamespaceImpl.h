@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IdentifierTypes.h"
 #include "StorageNamespaceIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
@@ -52,8 +53,9 @@ public:
 
     WebCore::StorageType storageType() const { return m_storageType; }
     Identifier storageNamespaceID() const { return m_storageNamespaceID; }
+    // Namespace IDs for local storage namespaces are currently equivalent to web page group IDs.
     WebCore::PageIdentifier sessionStoragePageID() const;
-    uint64_t pageGroupID() const;
+    PageGroupIdentifier pageGroupID() const;
     WebCore::SecurityOrigin* topLevelOrigin() const { return m_topLevelOrigin.get(); }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
     PAL::SessionID sessionID() const override;

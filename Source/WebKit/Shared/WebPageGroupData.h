@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "UserContentControllerIdentifier.h"
+#include "IdentifierTypes.h"
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -40,7 +40,7 @@ struct WebPageGroupData {
     static std::optional<WebPageGroupData> decode(IPC::Decoder&);
 
     String identifier;
-    uint64_t pageGroupID;
+    PageGroupIdentifier pageGroupID;
 };
 
 } // namespace WebKit

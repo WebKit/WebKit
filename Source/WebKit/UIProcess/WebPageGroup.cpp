@@ -40,13 +40,7 @@
 
 namespace WebKit {
 
-static uint64_t generatePageGroupID()
-{
-    static uint64_t uniquePageGroupID = 1;
-    return uniquePageGroupID++;
-}
-
-typedef HashMap<uint64_t, WebPageGroup*> WebPageGroupMap;
+typedef HashMap<PageGroupIdentifier, WebPageGroup*> WebPageGroupMap;
 
 static WebPageGroupMap& webPageGroupMap()
 {
@@ -59,7 +53,7 @@ Ref<WebPageGroup> WebPageGroup::create(const String& identifier)
     return adoptRef(*new WebPageGroup(identifier));
 }
 
-WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
+WebPageGroup* WebPageGroup::get(PageGroupIdentifier pageGroupID)
 {
     return webPageGroupMap().get(pageGroupID);
 }
@@ -77,18 +71,18 @@ static WebPageGroupData pageGroupData(const String& identifier)
 {
     WebPageGroupData data;
 
-    static NeverDestroyed<HashMap<String, uint64_t>> map;
-    if (HashMap<String, uint64_t>::isValidKey(identifier)) {
+    static NeverDestroyed<HashMap<String, PageGroupIdentifier>> map;
+    if (HashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
         data.pageGroupID = map.get().ensure(identifier, [] {
-            return generatePageGroupID();
+            return PageGroupIdentifier::generate();
         }).iterator->value;
     } else
-        data.pageGroupID = generatePageGroupID();
+        data.pageGroupID = PageGroupIdentifier::generate();
 
     if (!identifier.isEmpty())
         data.identifier = identifier;
     else
-        data.identifier = makeString("__uniquePageGroupID-", data.pageGroupID);
+        data.identifier = makeString("__uniquePageGroupID-", data.pageGroupID.toUInt64());
 
     return data;
 }

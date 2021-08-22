@@ -335,7 +335,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaIm
 
     Vector<RefPtr<Frame>> frames;
 
-    // Namespace IDs for local storage namespaces are equivalent to web page group IDs.
+    // Namespace IDs for local storage namespaces are currently equivalent to web page group IDs.
     auto& pageGroup = *WebProcess::singleton().webPageGroup(m_namespace.pageGroupID())->corePageGroup();
     for (auto& page : pageGroup.pages())
         frames.appendVector(framesForEventDispatching(page, m_securityOrigin, StorageType::Local, storageAreaImplID));

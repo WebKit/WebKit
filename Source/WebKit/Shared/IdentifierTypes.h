@@ -29,6 +29,9 @@
 
 namespace WebKit {
 
+enum PageGroupIdentifierType { };
+using PageGroupIdentifier = ObjectIdentifier<PageGroupIdentifierType>;
+
 enum TapIdentifierType { };
 using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
 
