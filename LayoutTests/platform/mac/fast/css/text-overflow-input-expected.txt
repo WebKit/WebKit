@@ -151,7 +151,7 @@ layer at (513,73) size 141x13 scrollWidth 289
 layer at (13,96) size 141x13 scrollWidth 386
   RenderBlock {DIV} at (0,0) size 141x13
     RenderText {#text} at (0,0) size 385x13
-      text run at (0,0) width 385: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+      text run at (0,0) width 385: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"
 layer at (13,119) size 140x13 scrollX 148 scrollWidth 288
   RenderBlock {DIV} at (3,3) size 140x13 [color=#A9A9A9]
     RenderText {#text} at (-147,0) size 288x13

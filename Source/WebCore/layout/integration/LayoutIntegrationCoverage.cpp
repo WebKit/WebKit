@@ -162,9 +162,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasAfterWhiteSpaceLineBreak:
         stream << "line-break is after-white-space";
         break;
-    case AvoidanceReason::FlowHasTextSecurity:
-        stream << "text-security is not none";
-        break;
     case AvoidanceReason::FlowHasSVGFont:
         stream << "SVG font";
         break;
@@ -525,10 +522,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
     if (style.backgroundClip() == FillBox::Text)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextFillBox, reasons, includeReasons);
-    // Special handling of text-security:disc is not yet implemented in the simple line layout code path.
-    // See RenderBlock::updateSecurityDiscCharacters.
-    if (style.textSecurity() != TextSecurity::None)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextSecurity, reasons, includeReasons);
 
     // These are non-standard properties.
     if (style.lineBreak() == LineBreak::AfterWhiteSpace)

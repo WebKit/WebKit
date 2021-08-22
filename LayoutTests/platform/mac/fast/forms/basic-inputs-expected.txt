@@ -81,8 +81,8 @@ layer at (210,330) size 140x13
 layer at (24,353) size 141x13
   RenderBlock {DIV} at (0,0) size 141x13
     RenderText {#text} at (0,0) size 21x13
-      text run at (0,0) width 21: "\x{2022}\x{2022}\x{2022}"
+      text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"
 layer at (239,353) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13 [color=#545454]
     RenderText {#text} at (0,0) size 21x13
-      text run at (0,0) width 21: "\x{2022}\x{2022}\x{2022}"
+      text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"

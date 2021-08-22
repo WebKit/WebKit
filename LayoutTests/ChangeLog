@@ -1,5 +1,23 @@
 2021-08-21  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for -webkit-text-security: disc
+        https://bugs.webkit.org/show_bug.cgi?id=229047
+
+        Reviewed by Antti Koivisto.
+        
+        Let's dump the actual disc characters.
+
+        * platform/ios-simulator/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt:
+        * platform/ios/fast/css/text-overflow-input-expected.txt:
+        * platform/ios/fast/forms/basic-inputs-expected.txt:
+        * platform/ios/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+
+2021-08-21  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Enable modern line layout for placeholder elements
         https://bugs.webkit.org/show_bug.cgi?id=228887
 

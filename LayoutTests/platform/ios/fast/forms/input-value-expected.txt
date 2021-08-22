@@ -213,7 +213,7 @@ layer at (399,142) size 141x14
 layer at (399,171) size 142x14
   RenderBlock {DIV} at (0,0) size 142x14
     RenderText {#text} at (0,0) size 42x14
-      text run at (0,0) width 42: "\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}\x{25CF}"
+      text run at (0,0) width 42: "\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}\x{F79A}"
 layer at (399,328) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
     RenderText {#text} at (0,0) size 25x14

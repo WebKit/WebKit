@@ -73,7 +73,7 @@ layer at (35,364) size 141x14 scrollWidth 161
 layer at (28,389) size 142x14 backgroundClip at (28,389) size 141x14 clip at (28,389) size 141x14
   RenderBlock {DIV} at (0,0) size 142x14
     RenderText {#text} at (0,0) size 21x14
-      text run at (0,0) width 21: "\x{25CF}\x{25CF}\x{25CF}"
+      text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"
 layer at (215,361) size 153x21
   RenderTextControl {INPUT} at (196,3) size 154x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
 layer at (221,364) size 139x14
@@ -87,4 +87,4 @@ layer at (244,386) size 153x21
 layer at (251,389) size 140x14
   RenderBlock {DIV} at (0,0) size 140x14 [color=#545454]
     RenderText {#text} at (0,0) size 21x14
-      text run at (0,0) width 21: "\x{25CF}\x{25CF}\x{25CF}"
+      text run at (0,0) width 21: "\x{F79A}\x{F79A}\x{F79A}"

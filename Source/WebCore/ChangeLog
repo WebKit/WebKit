@@ -1,5 +1,21 @@
 2021-08-21  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for -webkit-text-security: disc
+        https://bugs.webkit.org/show_bug.cgi?id=229047
+
+        Reviewed by Antti Koivisto.
+
+        The disc glyph affects layout, so let's replace the text before we start measuring the inline content.
+
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForStyle):
+        * layout/integration/LayoutIntegrationCoverage.h:
+
+2021-08-21  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Enable modern line layout for placeholder elements
         https://bugs.webkit.org/show_bug.cgi?id=228887
 

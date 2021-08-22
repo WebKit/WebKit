@@ -66,7 +66,9 @@ void BoxTree::buildTree()
         if (is<RenderText>(childRenderer)) {
             auto& textRenderer = downcast<RenderText>(childRenderer);
             auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
-            return makeUnique<Layout::InlineTextBox>(textRenderer.text(), textRenderer.canUseSimplifiedTextMeasuring(), WTFMove(style));
+            return makeUnique<Layout::InlineTextBox>(
+                style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text())
+                , textRenderer.canUseSimplifiedTextMeasuring(), WTFMove(style));
         }
 
         auto style = RenderStyle::clone(childRenderer.style());
