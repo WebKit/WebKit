@@ -885,8 +885,6 @@ auto LLIntGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     }
     for (TypedExpression expression : enclosingStack)
         osrEntryData.append(expression);
-    for (TypedExpression expression : newStack)
-        osrEntryData.append(expression);
 
     WasmLoopHint::emit(this);
 

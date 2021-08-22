@@ -42,7 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic, getter=isAnimating) BOOL animating;
 
 - (id)initWithWebView:(WKWebView *)webView;
-- (void)invalidate;
 - (void)showUI;
 - (void)hideUI;
 - (void)videoControlsManagerDidChange;

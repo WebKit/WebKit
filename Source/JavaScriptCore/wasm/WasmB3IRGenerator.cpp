@@ -295,7 +295,7 @@ private:
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
-    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack);
+    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -1808,7 +1808,7 @@ void B3IRGenerator::emitEntryTierUpCheck()
     });
 }
 
-void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack)
+void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack)
 {
     uint32_t outerLoopIndex = this->outerLoopIndex();
     m_outerLoops.append(loopIndex);
@@ -1834,8 +1834,6 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
             stackmap.append(value);
     }
     for (TypedExpression value : enclosingStack)
-        stackmap.append(value);
-    for (TypedExpression value : newStack)
         stackmap.append(value);
 
     PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Void, origin);
@@ -1887,14 +1885,19 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
     BasicBlock* continuation = m_proc.addBlock();
 
     block = ControlData(m_proc, origin(), signature, BlockType::Loop, continuation, body);
-    unsigned offset = enclosingStack.size() - signature->argumentCount();
-    for (unsigned i = 0; i < signature->argumentCount(); ++i) {
-        TypedExpression value = enclosingStack.at(offset + i);
-        auto* upsilon = m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), value);
-        Value* phi = block.phis[i];
-        body->append(phi);
-        upsilon->setPhi(phi);
-        newStack.constructAndAppend(value.type(), phi);
+
+    ExpressionList args;
+    {
+        unsigned offset = enclosingStack.size() - signature->argumentCount();
+        for (unsigned i = 0; i < signature->argumentCount(); ++i) {
+            TypedExpression value = enclosingStack.at(offset + i);
+            auto* upsilon = m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), value);
+            Value* phi = block.phis[i];
+            body->append(phi);
+            upsilon->setPhi(phi);
+            newStack.constructAndAppend(value.type(), phi);
+        }
+        enclosingStack.shrink(offset);
     }
 
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
@@ -1955,22 +1958,15 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
             auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
             connectControlEntry(data, expressionStack);
         }
-        for (unsigned i = 0; i < signature->argumentCount(); ++i) {
-            TypedExpression value = enclosingStack.at(offset + i);
-            Value* phi = block.phis[i];
-            m_currentBlock->appendNew<UpsilonValue>(m_proc, value->origin(), loadFromScratchBuffer(value->type()), phi);
-        }
-        enclosingStack.shrink(offset);
         connectControlEntry(block, enclosingStack);
 
         m_osrEntryScratchBufferSize = indexInBuffer;
         m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
         body->addPredecessor(m_currentBlock);
-    } else
-        enclosingStack.shrink(offset);
+    }
 
     m_currentBlock = body;
-    emitLoopTierUpCheck(loopIndex, enclosingStack, newStack);
+    emitLoopTierUpCheck(loopIndex, enclosingStack);
     return { };
 }
 

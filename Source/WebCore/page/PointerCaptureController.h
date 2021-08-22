@@ -69,12 +69,7 @@ public:
     void processPendingPointerCapture(PointerID);
 
 private:
-    struct CapturingData : public RefCounted<CapturingData> {
-        static Ref<CapturingData> create(const String& pointerType)
-        {
-            return adoptRef(*new CapturingData(pointerType));
-        }
-
+    struct CapturingData {
         RefPtr<Element> pendingTargetOverride;
         RefPtr<Element> targetOverride;
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
@@ -93,14 +88,9 @@ private:
         bool preventsCompatibilityMouseEvents { false };
         bool pointerIsPressed { false };
         short previousMouseButton { -1 };
-
-    private:
-        CapturingData(const String& pointerType)
-            : pointerType(pointerType)
-        { }
     };
 
-    Ref<CapturingData> ensureCapturingDataForPointerEvent(const PointerEvent&);
+    CapturingData& ensureCapturingDataForPointerEvent(const PointerEvent&);
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
     void pointerEventWasDispatched(const PointerEvent&);
     
@@ -109,7 +99,7 @@ private:
     Page& m_page;
     // While PointerID is defined as int32_t, we use int64_t here so that we may use a value outside of the int32_t range to have safe
     // empty and removed values, allowing any int32_t to be provided through the API for lookup in this hashmap.
-    using PointerIdToCapturingDataMap = HashMap<int64_t, Ref<CapturingData>, WTF::IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>>;
+    using PointerIdToCapturingDataMap = HashMap<int64_t, CapturingData, WTF::IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>>;
     PointerIdToCapturingDataMap m_activePointerIdsToCapturingData;
     bool m_processingPendingPointerCapture { false };
     bool m_haveAnyCapturingElement { false };

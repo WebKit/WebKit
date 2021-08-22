@@ -39,7 +39,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/WeakObjCPtr.h>
 
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
@@ -53,8 +52,7 @@ public:
 
     void rateChanged(bool isPlaying, float) override
     {
-        if (auto *controller = m_parent.getAutoreleased())
-            controller.playing = isPlaying; 
+        m_parent.playing = isPlaying;
     }
 
     void isPictureInPictureSupportedChanged(bool) override
@@ -63,8 +61,7 @@ public:
 
     void pictureInPictureActiveChanged(bool active) override
     {
-        if (auto *controller = m_parent.getAutoreleased())
-            controller.pictureInPictureActive = active;
+        m_parent.pictureInPictureActive = active;
     }
 
     void setInterface(WebCore::PlaybackSessionInterfaceAVKit* interface)
@@ -80,7 +77,7 @@ public:
     }
 
 private:
-    WeakObjCPtr<WKFullScreenViewController> m_parent;
+    WKFullScreenViewController *m_parent { nullptr };
     RefPtr<WebCore::PlaybackSessionInterfaceAVKit> m_interface;
 };
 
@@ -112,7 +109,6 @@ private:
 @end
 
 @implementation WKFullScreenViewController {
-    BOOL _valid;
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIView> _animatingView;
     RetainPtr<WKFullscreenStackView> _stackView;
@@ -146,27 +142,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._webView = webView;
 
     _playbackClient.setParent(self);
-    _valid = YES;
 
     return self;
 }
 
-- (void)invalidate
-{
-    if (!_valid)
-        return;
-
-    _valid = NO;
-
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    _playbackClient.setParent(nullptr);
-    _playbackClient.setInterface(nullptr);
-}
-
 - (void)dealloc
 {
-    [self invalidate];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    _playbackClient.setParent(nullptr);
+    _playbackClient.setInterface(nullptr);
 
     [_target release];
     [_location release];
@@ -176,7 +162,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)showUI
 {
-    ASSERT(_valid);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
 
     if (_playing) {
@@ -199,7 +184,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)hideUI
 {
-    ASSERT(_valid);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
 
@@ -222,7 +206,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)videoControlsManagerDidChange
 {
-    ASSERT(_valid);
     auto page = [self._webView _page];
     auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
     auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
@@ -241,7 +224,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setAnimatingViewAlpha:(CGFloat)alpha
 {
-    ASSERT(_valid);
     [UIView animateWithDuration:pipHideAnimationDuration animations:^{
         _animatingView.get().alpha = alpha;
     }];
@@ -249,7 +231,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
 {
-    ASSERT(_valid);
     _prefersStatusBarHidden = value;
     [self setNeedsStatusBarAppearanceUpdate];
     [self _updateWebViewFullscreenInsets];
@@ -257,14 +238,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setPrefersHomeIndicatorAutoHidden:(BOOL)value
 {
-    ASSERT(_valid);
     _prefersHomeIndicatorAutoHidden = value;
     [self setNeedsUpdateOfHomeIndicatorAutoHidden];
 }
 
 - (void)setPlaying:(BOOL)isPlaying
 {
-    ASSERT(_valid);
     if (_playing == isPlaying)
         return;
 
@@ -284,7 +263,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setPictureInPictureActive:(BOOL)active
 {
-    ASSERT(_valid);
     if (_pictureInPictureActive == active)
         return;
 
@@ -294,7 +272,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)setAnimating:(BOOL)animating
 {
-    ASSERT(_valid);
     if (_animating == animating)
         return;
     _animating = animating;
@@ -437,7 +414,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @dynamic _manager;
 - (WebKit::WebFullScreenManagerProxy*)_manager
 {
-    ASSERT(_valid);
     if (auto page = [self._webView _page])
         return page->fullScreenManager();
     return nullptr;
@@ -446,7 +422,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @dynamic _effectiveFullscreenInsets;
 - (WebCore::FloatBoxExtent)_effectiveFullscreenInsets
 {
-    ASSERT(_valid);
     auto safeAreaInsets = self.view.safeAreaInsets;
     WebCore::FloatBoxExtent insets { safeAreaInsets.top, safeAreaInsets.right, safeAreaInsets.bottom, safeAreaInsets.left };
 
@@ -458,13 +433,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_cancelAction:(id)sender
 {
-    ASSERT(_valid);
     [[self target] performSelector:[self exitFullScreenAction]];
 }
 
 - (void)_togglePiPAction:(id)sender
 {
-    ASSERT(_valid);
     auto page = [self._webView _page];
     if (!page)
         return;
@@ -486,7 +459,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_touchDetected:(id)sender
 {
-    ASSERT(_valid);
     if ([_touchGestureRecognizer state] == UIGestureRecognizerStateEnded) {
         double score = _secheuristic.scoreOfNextTouch([_touchGestureRecognizer locationInView:self.view]);
         if (score > _secheuristic.requiredScore())
@@ -498,7 +470,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_statusBarFrameDidChange:(NSNotificationCenter *)notification
 {
-    ASSERT(_valid);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CGFloat height = UIApplication.sharedApplication.statusBarFrame.size.height;
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -511,14 +482,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_updateWebViewFullscreenInsets
 {
-    ASSERT(_valid);
     if (auto* manager = self._manager)
         manager->setFullscreenInsets(self._effectiveFullscreenInsets);
 }
 
 - (void)_showPhishingAlert
 {
-    ASSERT(_valid);
     NSString *alertTitle = WEB_UI_STRING("It looks like you are typing while in full screen", "Full Screen Deceptive Website Warning Sheet Title");
     NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.", "Full Screen Deceptive Website Warning Sheet Content Text"), (NSString *)self.location];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
