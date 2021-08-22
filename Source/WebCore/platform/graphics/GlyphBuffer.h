@@ -71,7 +71,7 @@ public:
         ASSERT(m_fonts[index]);
         return *m_fonts[index];
     }
-    Glyph glyphAt(unsigned index) const { return m_glyphs[index]; }
+    GlyphBufferGlyph glyphAt(unsigned index) const { return m_glyphs[index]; }
     GlyphBufferAdvance advanceAt(unsigned index) const { return m_advances[index]; }
     GlyphBufferOrigin originAt(unsigned index) const { return m_origins[index]; }
     GlyphBufferStringOffset uncheckedStringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
@@ -115,6 +115,14 @@ public:
         m_advances.remove(location, length);
         m_origins.remove(location, length);
         m_offsetsInString.remove(location, length);
+    }
+
+    void deleteGlyphWithoutAffectingSize(unsigned index)
+    {
+        // GlyphID 0xFFFF is the "deleted glyph" and is supposed to be invisible when rendered.
+        static const constexpr GlyphBufferGlyph deletedGlyph = 0xFFFF;
+        m_glyphs[index] = deletedGlyph;
+        m_advances[index] = makeGlyphBufferAdvance();
     }
 
     void makeHole(unsigned location, unsigned length, const Font* font)

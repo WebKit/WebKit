@@ -73,6 +73,8 @@ private:
 
     bool hasExtraSpacing() const;
     void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
+    void applyCSSVisibilityRules(GlyphBuffer&, unsigned glyphBufferStartIndex);
+
     struct AdditionalWidth {
         float left;
         float right;

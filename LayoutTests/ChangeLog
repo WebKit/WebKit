@@ -1,3 +1,18 @@
+2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        overwriteCodePoint() in createAndFillGlyphPage() is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=215643
+        <rdar://problem/67430461>
+
+        Reviewed by Alan Bujtas.
+
+        * fast/text/resources/Ahem-GSUB-ligatures.ttf: Added.
+        * fast/text/zwj-ligature-expected.html: Added.
+        * fast/text/zwj-ligature.html: Added.
+        * platform/mac/fast/text/format-control-expected.txt: Progression! A new ligature is formed that wasn't formed before.
+              Also, this ligature is formed in both Chrome and Firefox, so we match them now.
+        * platform/win/TestExpectations:
+
 2021-08-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for -webkit-text-security: disc

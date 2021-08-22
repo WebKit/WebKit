@@ -1,3 +1,43 @@
+2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        overwriteCodePoint() in createAndFillGlyphPage() is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=215643
+        <rdar://problem/67430461>
+
+        Reviewed by Alan Bujtas.
+
+        The CSS spec says that certain characters have to be invisible. Previously, we were doing this
+        by just treating these characters as if they were the zero width space character. However, this
+        is wrong for 2 reasons:
+
+        1. If the primary font supports the desired character but doesn't support the zero width space
+               character, we'll fallback past it and trigger a download for secondary fonts until
+               we find one that supports the ZWS character (which the page didn't even ask for!)
+        2. Shaping is Turing-complete, and expects that the correct glyphIDs are fed into the shaper.
+               We can't just arbitrarily swap out glyphIDs before shaping just because we feel like it.
+
+        Instead, the solution is to handle these invisible characters after font fallback, and after
+        shaping. This patch does it just like we handle adding letter-spacing, word-spacing, and
+        justification after shaping - by iterating over the glyphs output by the shaper and seeing if
+        any need to be adjusted.
+
+        This patch also includes a fix for the situation where the glyph buffer might be left in an
+        inconsistent state, where the array of glyphs is shorter than the array of characters -
+        this new codepath added in this patch revealed this existing problem, and fixes it here too.
+
+        Test: fast/text/zwj-ligature.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::createAndFillGlyphPage):
+        (WebCore::overrideControlCharacters): Deleted.
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt const):
+        (WebCore::GlyphBuffer::deleteGlyphWithoutAffectingSize):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyCSSVisibilityRules):
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/WidthIterator.h:
+
 2021-08-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Do not create an InlineFormattingContext object for constructing display lines and runs

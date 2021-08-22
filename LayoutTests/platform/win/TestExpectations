@@ -4689,3 +4689,5 @@ webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 webkit.org/b/229372 http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html [ Skip ]
 
 webkit.org/b/229379 fast/visual-viewport/resize-event-fired-window-resized.html [ Skip ]
+
+webkit.org/b/215318 fast/text/zwj-ligature.html [ ImageOnlyFailure ]

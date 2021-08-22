@@ -306,7 +306,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
     return result;
 }
 
-#if !USE(FREETYPE)
+#if PLATFORM(WIN)
 static void overrideControlCharacters(Vector<UChar>& buffer, unsigned start, unsigned end)
 {
     auto overwriteCodePoints = [&](unsigned minimum, unsigned maximum, UChar newCodePoint) {
@@ -364,13 +364,13 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
     unsigned start = GlyphPage::startingCodePointInPageNumber(pageNumber);
     Vector<UChar> buffer(glyphPageSize * 2 + 2);
     unsigned bufferLength;
-    // Fill in a buffer with the entire "page" of characters that we want to look up glyphs for.
     if (U_IS_BMP(start)) {
         bufferLength = glyphPageSize;
         for (unsigned i = 0; i < bufferLength; i++)
             buffer[i] = start + i;
 
-#if !USE(FREETYPE)
+#if PLATFORM(WIN)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215318 Delete this and use https://bugs.webkit.org/show_bug.cgi?id=215643 on Windows.
         overrideControlCharacters(buffer, start, start + glyphPageSize);
 #endif
     } else {

@@ -515,6 +515,64 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
     }
 }
 
+void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex)
+{
+    Vector<unsigned> glyphsIndicesToBeDeleted;
+
+    float yPosition = height(glyphBuffer.initialAdvance());
+    for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); yPosition += height(glyphBuffer.advanceAt(i)), ++i) {
+        auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run.length());
+        if (!stringOffset)
+            continue;
+        auto characterResponsibleForThisGlyph = m_run[stringOffset.value()];
+
+        switch (characterResponsibleForThisGlyph) {
+        case newlineCharacter:
+        case carriageReturn:
+        case tabCharacter:
+        case noBreakSpace:
+            ASSERT(glyphBuffer.fonts(i)[0]);
+            // FIXME: Is this actually necessary? If the font specifically has a glyph for NBSP, I don't see a reason not to use it.
+            glyphBuffer.glyphs(i)[0] = glyphBuffer.fonts(i)[0]->spaceGlyph();
+            continue;
+        }
+
+        // FIXME: "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
+        // https://www.w3.org/TR/css-text-3/#white-space-processing
+
+        if ((characterResponsibleForThisGlyph >= nullCharacter && characterResponsibleForThisGlyph < space)
+            || (characterResponsibleForThisGlyph >= deleteCharacter && characterResponsibleForThisGlyph < noBreakSpace)) {
+            m_runWidthSoFar -= width(glyphBuffer.advanceAt(i));
+            glyphBuffer.deleteGlyphWithoutAffectingSize(i);
+            continue;
+        }
+
+        switch (characterResponsibleForThisGlyph) {
+        case softHyphen:
+        case leftToRightMark:
+        case rightToLeftMark:
+        case leftToRightEmbed:
+        case rightToLeftEmbed:
+        case leftToRightOverride:
+        case rightToLeftOverride:
+        case leftToRightIsolate:
+        case rightToLeftIsolate:
+        case zeroWidthNonJoiner:
+        case zeroWidthJoiner:
+        case popDirectionalFormatting:
+        case popDirectionalIsolate:
+        case firstStrongIsolate:
+        case objectReplacementCharacter:
+        case zeroWidthNoBreakSpace:
+            m_runWidthSoFar -= width(glyphBuffer.advanceAt(i));
+            glyphBuffer.deleteGlyphWithoutAffectingSize(i);
+            continue;
+        }
+    }
+
+    
+}
+
 void WidthIterator::finalize(GlyphBuffer& buffer)
 {
     ASSERT(m_run.rtl() || !m_leftoverJustificationWidth);
@@ -559,6 +617,8 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
 
     if (hasExtraSpacing() || m_containsTabs || m_run.horizontalGlyphStretch() != 1)
         applyExtraSpacingAfterShaping(glyphBuffer, characterStartIndex, glyphBufferStartIndex, offset, startingRunWidth);
+
+    applyCSSVisibilityRules(glyphBuffer, glyphBufferStartIndex);
 }
 
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
