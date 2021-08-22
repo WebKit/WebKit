@@ -1,3 +1,15 @@
+2021-08-21  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable modern line layout for placeholder elements
+        https://bugs.webkit.org/show_bug.cgi?id=228887
+
+        Reviewed by Antti Koivisto.
+
+        Apparently placeholders don't do strange things anymore (this check is originated in SLL).
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+
 2021-08-21  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: crash when triggering IDBOpenRequest completion back on a worker thread

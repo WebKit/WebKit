@@ -44,7 +44,7 @@ enum class AvoidanceReason : uint64_t {
     FlowIsPaginated                              = 1LLU  << 4,
     FlowHasTextOverflow                          = 1LLU  << 5,
     FlowHasLineClamp                             = 1LLU  << 6,
-    FlowParentIsPlaceholderElement               = 1LLU  << 7,
+    // Unused                                    = 1LLU  << 7,
     // Unused                                    = 1LLU  << 8,
     FlowHasNonSupportedChild                     = 1LLU  << 9,
     FlowHasUnsupportedFloat                      = 1LLU  << 10,
