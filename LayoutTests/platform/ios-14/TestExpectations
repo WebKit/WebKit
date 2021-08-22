@@ -42,9 +42,6 @@ http/wpt/mediarecorder/mute-tracks.html [ Pass ]
 # rdar://80396502 ([ iOS15 ] http/wpt/mediarecorder/pause-recording.html is a flaky crash)
 http/wpt/mediarecorder/pause-recording.html [ Pass ]
 
-#rdar://80384177 ([ iOS15 ] editing/selection/ios/change-selection-by-tapping-with-existing-selection.html is failing)
-editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Pass ]
-
 #rdar://80385434 ([ iOS15 ] editing/selection/ios/select-text-in-existing-selection.html [ Failure ])
 editing/selection/ios/select-text-in-existing-selection.html  [ Pass ]
 
@@ -77,12 +74,6 @@ fast/events/ios/key-events-comprehensive/key-events-meta-shift.html [ Pass ]
 
 # rdar://80386075 ([ iOS15 ] fast/css/ios/system-color-for-css-value.html)
 fast/css/ios/system-color-for-css-value.html [ Pass ]
-
-# rdar://80385521 ([ iOS15 ] editing/selection/preserve-selection-when-clicking-button.html is a consistent failure)
-editing/selection/preserve-selection-when-clicking-button.html [ Pass ]
-
-# rdar://80384564 ([ iOS15 ] editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html is failing)
-editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Pass ]
 
 # rdar://77070325 (REGRESSION: [ iOS15 ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html is flaky failling)
 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Pass ]

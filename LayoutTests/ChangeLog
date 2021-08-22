@@ -1,3 +1,24 @@
+2021-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Fix and reenable several layout tests to account for the changes in rdar://80384564
+        https://bugs.webkit.org/show_bug.cgi?id=229316
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more details.
+
+        * fast/images/text-recognition/ios/reselect-word-in-image-overlay.html:
+
+        Add a short delay to avoid timing out, due to the second long press gesture to select text not triggering.
+
+        * platform/ios-14/TestExpectations:
+
+        Remove iOS 14-specific PASS expectations, and remove the more generic FAIL expectation in the ios directory.
+        Instead, just mark these three layout tests as FAIL on iOS 15, and PASS elsewhere.
+
+        * platform/ios-15/TestExpectations: Added.
+        * platform/ios/TestExpectations:
+
 2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Control characters (Unicode category Cc) should be rendered visibly

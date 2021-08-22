@@ -39,6 +39,7 @@ addEventListener("load", async () => {
     shouldBe("selectionRects.length", "1");
 
     await UIHelper.activateAt(200, 300);
+    await UIHelper.waitForDoubleTapDelay();
     await UIHelper.waitForSelectionToDisappear();
     testPassed("Dismissed selection");
 

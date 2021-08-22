@@ -1,3 +1,35 @@
+2021-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Fix and reenable several layout tests to account for the changes in rdar://80384564
+        https://bugs.webkit.org/show_bug.cgi?id=229316
+
+        Reviewed by Tim Horton.
+
+        After rdar://80384564, UIKit's non-editable text tap recognizer will no longer cause us to clear the active text
+        selection range when tapping outside of currently selected text in the page. Instead, WebKit's synthetic click
+        gesture recognizer should now manages clearing the selection (unless the page has prevented the "mousedown"
+        event).
+
+        With just the UIKit-side change, this already mostly works as expected since `commitPotentialTapFailed()` clears
+        out non-editable selections. However, there is one scenario in which we do want to clear out the selection when
+        tapping that isn't covered by the synthetic click gesture: when tapping on an element that does not handle or
+        prevent "mousedown"; this behavior is exercised by the existing layout test
+        `editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html`. To preserve this behavior, we
+        add a call to `clearSelectionAfterTapIfNeeded()` when completing a synthetic click, in the case where the
+        "mousedown" event was not swallowed.
+
+        These 3 tests should pass after the changes in rdar://80384564:
+        - editing/selection/ios/change-selection-by-tapping-with-existing-selection.html
+        - editing/selection/preserve-selection-when-clicking-button.html
+        - editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html
+
+        And these WebKit-side changes are needed to keep these 2 tests passing:
+        - editing/selection/ios/hide-selection-after-tap-on-prevent-default-element.html
+        - fast/images/text-recognition/ios/reselect-word-in-image-overlay.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
 2021-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         Use the strongly typed PageGroupIdentifier in place of uint64_t

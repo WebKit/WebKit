@@ -1,0 +1,4 @@
+# These three tests will be fixed by rdar://80384564.
+editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Failure ]
+editing/selection/preserve-selection-when-clicking-button.html [ Failure ]
+editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Failure ]
