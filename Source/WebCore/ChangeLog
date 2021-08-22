@@ -1,3 +1,17 @@
+2021-08-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for vertical-align: sub
+        https://bugs.webkit.org/show_bug.cgi?id=228217
+
+        Reviewed by Antti Koivisto.
+
+        Adjust legacy's integral alignment too.
+
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
 2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Control characters (Unicode category Cc) should be rendered visibly

@@ -472,6 +472,11 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 logicalTop = parentInlineBoxLogicalBottom - inlineLevelBox.layoutBounds().height();
                 break;
             }
+            case VerticalAlign::Sub: {
+                auto logicalTopOffsetFromParentBaseline = inlineLevelBox.layoutBounds().ascent - (parentInlineBox.style().fontCascade().size() / 5 + 1);
+                logicalTop = parentInlineBox.layoutBounds().ascent - logicalTopOffsetFromParentBaseline;
+                break;
+            }
             default:
                 ASSERT_NOT_IMPLEMENTED_YET();
                 break;
@@ -541,6 +546,9 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 case VerticalAlign::TextBottom:
                     baselineOffsetFromParentBaseline = inlineLevelBox.layoutBounds().descent - *parentInlineBox.descent();
                     break;
+                case VerticalAlign::Sub:
+                    baselineOffsetFromParentBaseline = -(parentInlineBox.style().fontCascade().size() / 5 + 1);
+                    break;
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
@@ -604,6 +612,11 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 auto& style = inlineLevelBox.style();
                 auto verticalAlignOffset = floatValueForLength(style.verticalAlignLength(), style.computedLineHeight());
                 auto logicalTopOffsetFromParentBaseline = verticalAlignOffset + inlineLevelBox.baseline();
+                logicalTop = parentInlineBox.baseline() - logicalTopOffsetFromParentBaseline;
+                break;
+            }
+            case VerticalAlign::Sub: {
+                auto logicalTopOffsetFromParentBaseline = inlineLevelBox.baseline() - (parentInlineBox.style().fontCascade().size() / 5 + 1);
                 logicalTop = parentInlineBox.baseline() - logicalTopOffsetFromParentBaseline;
                 break;
             }

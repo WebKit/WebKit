@@ -566,7 +566,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
 #if ALLOW_IMAGES || ALLOW_ALL_REPLACED || ALLOW_INLINE_BLOCK
     auto isSupportedStyle = [] (const auto& style) {
-        if (style.verticalAlign() == VerticalAlign::Sub || style.verticalAlign() == VerticalAlign::Super)
+        if (style.verticalAlign() == VerticalAlign::Super)
             return false;
         if (style.boxShadow())
             return false;

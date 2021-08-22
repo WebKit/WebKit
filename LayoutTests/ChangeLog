@@ -1,3 +1,14 @@
+2021-08-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for vertical-align: sub
+        https://bugs.webkit.org/show_bug.cgi?id=228217
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/fast/selectors/018b-expected.txt:
+        * platform/mac/fast/text/whitespace/020-expected.txt:
+
 2021-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Fix and reenable several layout tests to account for the changes in rdar://80384564
