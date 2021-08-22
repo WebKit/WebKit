@@ -75,6 +75,9 @@ class Git(mocks.Subprocess):
         self.remotes = {'origin/{}'.format(branch): commits[-1] for branch, commits in self.commits.items()}
         self.tags = {}
 
+        self.staged = {}
+        self.modified = {}
+
         # If the directory provided actually exists, populate it
         if self.path != '/' and os.path.isdir(self.path):
             if not os.path.isdir(os.path.join(self.path, '.git')):
@@ -385,6 +388,25 @@ nothing to commit, working tree clean
                 completion=mocks.ProcessCompletion(
                     returncode=0,
                 ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'diff', '--name-only',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0, stdout='\n'.join(sorted([
+                        key for key, value in self.modified.items() if value.startswith('diff')
+                    ]))),
+            ), mocks.Subprocess.Route(
+                self.executable, 'diff', '--name-only', '--staged',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0, stdout='\n'.join(sorted(self.staged.keys()))),
+            ), mocks.Subprocess.Route(
+                self.executable, 'diff', '--name-status', '--staged',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0, stdout='\n'.join(sorted([
+                        '{}       {}'.format('M' if value.startswith('diff') else 'A', key) for key, value in self.staged.items()
+                    ]))),
             ), mocks.Subprocess.Route(
                 self.executable, 'check-ref-format', re.compile(r'.+'),
                 generator=lambda *args, **kwargs:

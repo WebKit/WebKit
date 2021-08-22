@@ -784,3 +784,32 @@ class Git(Scm):
         return run([
             self.executable(), 'reset', 'HEAD', '--hard',
         ], cwd=self.root_path).returncode
+
+    def modified(self, staged=None):
+        if staged in [True, False]:
+            command = run(
+                [self.executable(), 'diff', '--name-only'] + (['--staged'] if staged else []),
+                capture_output=True, encoding='utf-8', cwd=self.root_path,
+            )
+            if command.returncode:
+                return []
+            return command.stdout.splitlines()
+
+        # When the user hasn't specified what they're looking for, we need to make some assumptions.
+        # If all staged files are added, the user probably wants to include non-staged files too
+        command = run(
+            [self.executable(), 'diff', '--name-status', '--staged'],
+            capture_output=True, encoding='utf-8', cwd=self.root_path,
+        )
+        if command.returncode:
+            return []
+        added = set()
+        for line in command.stdout.splitlines():
+            state, file = line.split(None, 1)
+            if state == 'A':
+                added.add(file)
+
+        staged = self.modified(staged=True)
+        if set(staged) - added:
+            return staged
+        return staged + self.modified(staged=False)

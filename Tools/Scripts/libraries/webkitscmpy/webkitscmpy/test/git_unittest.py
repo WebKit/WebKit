@@ -422,6 +422,54 @@ CommitDate: Sat Oct 03 02:06:40 2020 +0000
             self.assertEqual(local.Git.config()['user.name'], 'Tim Apple')
             self.assertEqual(local.Git.config()['sendemail.transferencoding'], 'base64')
 
+    def test_modified(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+
+            self.assertEqual(repo.modified(), [])
+
+            mrepo.modified['unstaged-added.txt'] = 'added'
+            self.assertEqual(repo.modified(), [])
+
+            mrepo.modified['unstaged-modified.txt'] = 'diff'
+            self.assertEqual(repo.modified(), ['unstaged-modified.txt'])
+
+            mrepo.staged['staged-added.txt'] = 'added'
+            self.assertEqual(repo.modified(), ['staged-added.txt', 'unstaged-modified.txt'])
+
+            mrepo.staged['staged-modified.txt'] = 'diff'
+            self.assertEqual(repo.modified(), ['staged-added.txt', 'staged-modified.txt'])
+
+    def test_modified_no_staged(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+
+            self.assertEqual(repo.modified(staged=False), [])
+
+            mrepo.staged['staged-added.txt'] = 'added'
+            self.assertEqual(repo.modified(staged=False), [])
+
+            mrepo.modified['added.txt'] = 'added'
+            self.assertEqual(repo.modified(staged=False), [])
+
+            mrepo.modified['modified.txt'] = 'diff'
+            self.assertEqual(repo.modified(staged=False), ['modified.txt'])
+
+    def test_modified_staged(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+
+            self.assertEqual(repo.modified(staged=True), [])
+
+            mrepo.modified['unstaged-added.txt'] = 'added'
+            self.assertEqual(repo.modified(staged=True), [])
+
+            mrepo.staged['added.txt'] = 'added'
+            self.assertEqual(repo.modified(staged=True), ['added.txt'])
+
+            mrepo.staged['modified.txt'] = 'diff'
+            self.assertEqual(repo.modified(staged=True), ['added.txt', 'modified.txt'])
+
 
 class TestGitHub(testing.TestCase):
     remote = 'https://github.example.com/WebKit/WebKit'
