@@ -1,3 +1,12 @@
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for fast/forms/ios/ipad/open-picker-using-keyboard.html and fast/forms/ios/accessory-bar-navigation.html.
+        <rdar://80391927>, <rdar://80390931>.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r271146): editing/selection/ios/scrolling-to-focused-element-inside-iframe.html is failing
