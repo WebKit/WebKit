@@ -1,5 +1,38 @@
 2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove already-shipped wasm option flags
+        https://bugs.webkit.org/show_bug.cgi?id=229386
+
+        Reviewed by Ross Kirsling.
+
+        This patch removes some wasm option flags which are already shipped.
+
+        * runtime/OptionsList.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseElement):
+        (JSC::Wasm::SectionParser::parseData):
+        (JSC::Wasm::SectionParser::parseDataCount):
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::finishCreation):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove already-shipped JS feature flags
         https://bugs.webkit.org/show_bug.cgi?id=229387
 

@@ -65,10 +65,9 @@ inline bool isValueType(Type type)
     case TypeKind::I64:
     case TypeKind::F32:
     case TypeKind::F64:
-        return true;
     case TypeKind::Externref:
     case TypeKind::Funcref:
-        return Options::useWebAssemblyReferences();
+        return true;
     case TypeKind::TypeIdx:
         return Options::useWebAssemblyTypedFunctionReferences();
     default:

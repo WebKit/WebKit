@@ -569,7 +569,6 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
             FALLTHROUGH;
         case TypeKind::Externref:
             unboxedValue = bitwise_cast<uint64_t>(value);
-            RELEASE_ASSERT(Options::useWebAssemblyReferences());
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

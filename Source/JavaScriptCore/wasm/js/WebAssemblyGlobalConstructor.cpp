@@ -94,9 +94,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             type = Wasm::Types::F32;
         else if (valueString == "f64"_s)
             type = Wasm::Types::F64;
-        else if (Options::useWebAssemblyReferences() && (valueString == "anyfunc"_s || valueString == "funcref"_s))
+        else if (valueString == "anyfunc"_s || valueString == "funcref"_s)
             type = Wasm::Types::Funcref;
-        else if (Options::useWebAssemblyReferences() && valueString == "externref"_s)
+        else if (valueString == "externref"_s)
             type = Wasm::Types::Externref;
         else
             return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"_s)));
@@ -138,7 +138,6 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         break;
     }
     case Wasm::TypeKind::Funcref: {
-        ASSERT(Options::useWebAssemblyReferences());
         if (argument.isUndefined())
             argument = defaultValueForReferenceType(type);
         if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
@@ -149,7 +148,6 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         break;
     }
     case Wasm::TypeKind::Externref: {
-        ASSERT(Options::useWebAssemblyReferences());
         if (argument.isUndefined())
             argument = defaultValueForReferenceType(type);
         initialValue = JSValue::encode(argument);

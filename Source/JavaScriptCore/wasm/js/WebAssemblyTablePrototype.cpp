@@ -94,12 +94,11 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue defaultValue = jsNull();
-    if (Options::useWebAssemblyReferences()) {
-        if (callFrame->argumentCount() < 2)
-            defaultValue = defaultValueForReferenceType(table->table()->wasmType());
-        else
-            defaultValue = callFrame->uncheckedArgument(1);
-    }
+    if (callFrame->argumentCount() < 2)
+        defaultValue = defaultValueForReferenceType(table->table()->wasmType());
+    else
+        defaultValue = callFrame->uncheckedArgument(1);
+
     if (table->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue))
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow expects the second argument to be null or an instance of WebAssembly.Function"_s);
     uint32_t oldLength = table->length();
@@ -141,7 +140,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
         return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects an integer less than the length of the table"_s);
 
     JSValue value = callFrame->argument(1);
-    if (Options::useWebAssemblyReferences() && callFrame->argumentCount() < 2)
+    if (callFrame->argumentCount() < 2)
         value = defaultValueForReferenceType(table->table()->wasmType());
 
     if (table->table()->asFuncrefTable()) {

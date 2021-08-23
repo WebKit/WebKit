@@ -1312,11 +1312,11 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, *optionalTestSpecificOptio
 end
 
 def runWebAssemblySpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "spec-harness", "--useWebAssemblyReferences=false")
+    runWebAssemblySpecTestBase(mode, "spec-harness")
 end
 
 def runWebAssemblyReferenceSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "ref-spec-harness", "--useWebAssemblyReferences=true")
+    runWebAssemblySpecTestBase(mode, "ref-spec-harness")
 end
 
 def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)

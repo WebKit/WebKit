@@ -1,4 +1,3 @@
-//@ requireOptions("--useWebAssemblyReferences=1")
 import Builder from '../Builder.js'
 import * as assert from '../assert.js'
 

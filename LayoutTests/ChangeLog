@@ -1,3 +1,12 @@
+2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove already-shipped wasm option flags
+        https://bugs.webkit.org/show_bug.cgi?id=229386
+
+        Reviewed by Ross Kirsling.
+
+        * workers/wasm-references.html:
+
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
         [iOS] Unreviewed test gardening.

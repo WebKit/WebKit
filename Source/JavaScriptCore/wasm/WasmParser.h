@@ -284,8 +284,6 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
         return { };
     }
 
-    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyMultiValues(), "Type table indices for block signatures are not supported yet");
-
     int64_t index;
     WASM_PARSER_FAIL_IF(!parseVarInt64(index), "Block-like instruction doesn't return value type but can't decode type section index");
     WASM_PARSER_FAIL_IF(index < 0, "Block-like instruction signature index is negative");

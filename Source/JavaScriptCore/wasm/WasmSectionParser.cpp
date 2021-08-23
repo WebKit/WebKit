@@ -66,7 +66,6 @@ auto SectionParser::parseType() -> PartialResult
 
         uint32_t returnCount;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get ", i, "th Type's return count");
-        WASM_PARSER_FAIL_IF(returnCount > 1 && !Options::useWebAssemblyMultiValues(), "Signatures cannot have more than one result type yet.");
 
         Vector<Type, 1> returnTypes;
         WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th signature");
@@ -410,8 +409,6 @@ auto SectionParser::parseElement() -> PartialResult
             break;
         }
         case 0x01: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-
             uint8_t elementKind;
             WASM_FAIL_IF_HELPER_FAILS(parseElementKind(elementKind));
 
@@ -447,8 +444,6 @@ auto SectionParser::parseElement() -> PartialResult
             break;
         }
         case 0x03: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-
             uint8_t elementKind;
             WASM_FAIL_IF_HELPER_FAILS(parseElementKind(elementKind));
 
@@ -462,7 +457,6 @@ auto SectionParser::parseElement() -> PartialResult
             break;
         }
         case 0x04: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             constexpr uint32_t tableIndex = 0;
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
@@ -481,7 +475,6 @@ auto SectionParser::parseElement() -> PartialResult
             break;
         }
         case 0x05: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
             WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
@@ -497,8 +490,6 @@ auto SectionParser::parseElement() -> PartialResult
             break;
         }
         case 0x06: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-
             uint32_t tableIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
@@ -522,8 +513,6 @@ auto SectionParser::parseElement() -> PartialResult
             break;
         }
         case 0x07: {
-            WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
-
             Type refType;
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, refType), "can't parse reftype in elem section");
             WASM_PARSER_FAIL_IF(!refType.isFuncref(), "reftype in element section should be funcref");
@@ -750,7 +739,7 @@ auto SectionParser::parseData() -> PartialResult
         uint32_t memoryIndexOrDataFlag = UINT32_MAX;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndexOrDataFlag), "can't get ", segmentNumber, "th Data segment's flag");
 
-        if (!Options::useWebAssemblyReferences() || !memoryIndexOrDataFlag) {
+        if (!memoryIndexOrDataFlag) {
             const uint32_t memoryIndex = memoryIndexOrDataFlag;
             WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
 
@@ -771,8 +760,6 @@ auto SectionParser::parseData() -> PartialResult
             m_info->data.uncheckedAppend(WTFMove(segment));
             continue;
         }
-
-        ASSERT(Options::useWebAssemblyReferences());
 
         const uint32_t dataFlag = memoryIndexOrDataFlag;
         if (dataFlag == 0x01) {
@@ -823,7 +810,6 @@ auto SectionParser::parseData() -> PartialResult
 
 auto SectionParser::parseDataCount() -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(!Options::useWebAssemblyReferences(), "references are not enabled");
     uint32_t numberOfDataSegments;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfDataSegments), "can't get Data Count section's count");
 
