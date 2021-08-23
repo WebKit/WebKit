@@ -588,7 +588,6 @@ webkit.org/b/228820 media/media-source/media-webm-opus-partial-abort.html [ Fail
 webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Crash Pass ]
 
 # See also bug #175578.
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
@@ -618,7 +617,6 @@ webkit.org/b/154390 http/tests/media/hls/hls-audio-tracks-locale-selection.html 
 
 webkit.org/b/199617 http/tests/media/hls/hls-video-resize.html [ Skip ]
 
-webkit.org/b/227258 media/media-source/media-source-has-audio-video.html [ Timeout ]
 webkit.org/b/227258 media/media-source/media-source-seek-unbuffered.html [ Timeout ]
 
 webkit.org/b/227661 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout ]
@@ -2260,7 +2258,6 @@ webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
-webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Crash Timeout ]
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]

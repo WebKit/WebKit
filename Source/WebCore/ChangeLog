@@ -1,3 +1,67 @@
+2021-08-23  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Implement multi-track support
+        https://bugs.webkit.org/show_bug.cgi?id=229072
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch adds support for SourceBuffer having more than one track in
+        the GStreamer port.
+
+        This fixes the following LayoutTests:
+
+        imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html
+        media/media-source/media-source-has-audio-video.html
+        media/media-source/only-bcp47-language-tags-accepted-as-valid.html
+
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (GstIteratorAdaptor::GstIteratorAdaptor):
+        (GstIteratorAdaptor::iterator::iterator):
+        (GstIteratorAdaptor::iterator::operator*):
+        (GstIteratorAdaptor::iterator::operator++):
+        (GstIteratorAdaptor::iterator::operator==):
+        (GstIteratorAdaptor::iterator::operator!=):
+        (GstIteratorAdaptor::begin):
+        (GstIteratorAdaptor::end):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::handleEndOfAppend):
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::didReceiveInitializationSegment):
+        (WebCore::AppendPipeline::consumeAppsinksAvailableSamples):
+        (WebCore::AppendPipeline::resetParserState):
+        (WebCore::AppendPipeline::handleAppsinkNewSampleFromStreamingThread):
+        (WebCore::createOptionalParserForFormat):
+        (WebCore::AppendPipeline::generateTrackId):
+        (WebCore::AppendPipeline::tryCreateTrackFromPad):
+        (WebCore::AppendPipeline::tryMatchPadToExistingTrack):
+        (WebCore::AppendPipeline::linkPadWithTrack):
+        (WebCore::AppendPipeline::makeWebKitTrack):
+        (WebCore::AppendPipeline::Track::initializeElements):
+        (WebCore::AppendPipeline::hookTrackEvents):
+        (WebCore::AppendPipeline::streamTypeToString):
+        (WebCore::AppendPipeline::id): Deleted.
+        (WebCore::AppendPipeline::trackId): Deleted.
+        (WebCore::AppendPipeline::consumeAppsinkAvailableSamples): Deleted.
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread): Deleted.
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink): Deleted.
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::sourceBufferPrivate):
+        (WebCore::AppendPipeline::Track::Track):
+        (WebCore::AppendPipeline::appsrc):
+        (WebCore::AppendPipeline::appsinkCaps): Deleted.
+        (WebCore::AppendPipeline::track): Deleted.
+        (WebCore::AppendPipeline::appsink): Deleted.
+        (WebCore::AppendPipeline::demuxerSrcPadCaps): Deleted.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setInitialVideoSize):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected): Deleted.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2021-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Freetype] Set maximum allowed font size for Freetype

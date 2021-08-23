@@ -331,25 +331,20 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     }
 }
 
-void MediaPlayerPrivateGStreamerMSE::trackDetected(AppendPipeline& appendPipeline, RefPtr<WebCore::TrackPrivateBase> newTrack)
+void MediaPlayerPrivateGStreamerMSE::setInitialVideoSize(const FloatSize& videoSize)
 {
     ASSERT(isMainThread());
-    ASSERT(appendPipeline.track() == newTrack);
-
-    GstCaps* caps = appendPipeline.appsinkCaps();
-    ASSERT(caps);
-    GST_DEBUG("Demuxer parsed metadata with track ID: %s, caps: %" GST_PTR_FORMAT, newTrack->id().string().latin1().data(), caps);
 
     // We set the size of the video only for the first initialization segment.
     // This is intentional: Normally the video size depends on the frames arriving
     // at the sink in the playback pipeline, not in the append pipeline; but we still
     // want to report an initial size for HAVE_METADATA (first initialization segment).
-    if (m_videoSize.isEmpty() && doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
-        if (auto size = getVideoResolutionFromCaps(caps)) {
-            m_videoSize = *size;
-            GST_DEBUG("Setting initial video size: %gx%g", m_videoSize.width(), m_videoSize.height());
-        }
-    }
+
+    if (!m_videoSize.isEmpty())
+        return;
+
+    GST_DEBUG("Setting initial video size: %gx%g", videoSize.width(), videoSize.height());
+    m_videoSize = videoSize;
 }
 
 void MediaPlayerPrivateGStreamerMSE::startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)

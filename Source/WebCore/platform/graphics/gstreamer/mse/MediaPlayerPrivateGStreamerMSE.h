@@ -71,7 +71,7 @@ public:
     void setReadyState(MediaPlayer::ReadyState);
     MediaSourcePrivateClient* mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
-    void trackDetected(AppendPipeline&, RefPtr<WebCore::TrackPrivateBase>);
+    void setInitialVideoSize(const FloatSize&);
 
     void blockDurationChanges();
     void unblockDurationChanges();

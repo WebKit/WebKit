@@ -1,3 +1,17 @@
+2021-08-23  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Implement multi-track support
+        https://bugs.webkit.org/show_bug.cgi?id=229072
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update expectations and rebaseline one test is which the buffered
+        ranges have changed slightly due to the audio track previously
+        discarded now being parsed.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-remove-expected.txt:
+
 2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove already-shipped wasm option flags
