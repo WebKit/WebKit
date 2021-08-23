@@ -64,7 +64,7 @@ public:
     WEBCORE_EXPORT ~CSSParser();
 
     enum class RuleParsing { Normal, Deferred };
-    void parseSheet(StyleSheetContents*, const String&, RuleParsing = RuleParsing::Normal);
+    void parseSheet(StyleSheetContents&, const String&, RuleParsing = RuleParsing::Normal);
     
     static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
     

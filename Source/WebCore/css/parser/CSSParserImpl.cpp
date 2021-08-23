@@ -243,16 +243,16 @@ RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSPa
     return rule;
 }
 
-void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext& context, StyleSheetContents* styleSheet, CSSParser::RuleParsing ruleParsing)
+void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext& context, StyleSheetContents& styleSheet, CSSParser::RuleParsing ruleParsing)
 {
-    CSSParserImpl parser(context, string, styleSheet, nullptr, ruleParsing);
+    CSSParserImpl parser(context, string, &styleSheet, nullptr, ruleParsing);
     bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), TopLevelRuleList, [&styleSheet](RefPtr<StyleRuleBase> rule) {
         if (rule->isCharsetRule())
             return;
-        styleSheet->parserAppendRule(rule.releaseNonNull());
+        styleSheet.parserAppendRule(rule.releaseNonNull());
     });
-    styleSheet->setHasSyntacticallyValidCSSHeader(firstRuleValid);
-    styleSheet->shrinkToFit();
+    styleSheet.setHasSyntacticallyValidCSSHeader(firstRuleValid);
+    styleSheet.shrinkToFit();
     parser.adoptTokenizerEscapedStrings();
 }
 

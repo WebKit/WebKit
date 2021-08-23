@@ -65,7 +65,7 @@ CSSParser::CSSParser(const CSSParserContext& context)
 
 CSSParser::~CSSParser() = default;
 
-void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, RuleParsing ruleParsing)
+void CSSParser::parseSheet(StyleSheetContents& sheet, const String& string, RuleParsing ruleParsing)
 {
     return CSSParserImpl::parseStyleSheet(string, m_context, sheet, ruleParsing);
 }

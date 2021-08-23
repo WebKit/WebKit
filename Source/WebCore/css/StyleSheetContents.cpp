@@ -78,7 +78,7 @@ StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String&
 
 StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     : RefCounted<StyleSheetContents>()
-    , m_ownerRule(0)
+    , m_ownerRule(nullptr)
     , m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_importRules(o.m_importRules.size())
@@ -339,14 +339,14 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
         return false;
     }
 
-    CSSParser(parserContext()).parseSheet(this, sheetText, CSSParser::RuleParsing::Deferred);
+    CSSParser(parserContext()).parseSheet(*this, sheetText, CSSParser::RuleParsing::Deferred);
     return true;
 }
 
 bool StyleSheetContents::parseString(const String& sheetText)
 {
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, parserContext().mode != UASheetMode ? CSSParser::RuleParsing::Deferred : CSSParser::RuleParsing::Normal);
+    p.parseSheet(*this, sheetText, parserContext().mode != UASheetMode ? CSSParser::RuleParsing::Deferred : CSSParser::RuleParsing::Normal);
     return true;
 }
 
@@ -406,7 +406,7 @@ Node* StyleSheetContents::singleOwnerNode() const
 {
     StyleSheetContents* root = rootStyleSheet();
     if (root->m_clients.isEmpty())
-        return 0;
+        return nullptr;
     ASSERT(root->m_clients.size() == 1);
     return root->m_clients[0]->ownerNode();
 }
@@ -414,7 +414,7 @@ Node* StyleSheetContents::singleOwnerNode() const
 Document* StyleSheetContents::singleOwnerDocument() const
 {
     Node* ownerNode = singleOwnerNode();
-    return ownerNode ? &ownerNode->document() : 0;
+    return ownerNode ? &ownerNode->document() : nullptr;
 }
 
 static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, const WTF::Function<bool (const StyleRuleBase&)>& handler)
@@ -528,7 +528,7 @@ bool StyleSheetContents::isLoadingSubresources() const
 
 StyleSheetContents* StyleSheetContents::parentStyleSheet() const
 {
-    return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0;
+    return m_ownerRule ? m_ownerRule->parentStyleSheet() : nullptr;
 }
 
 void StyleSheetContents::registerClient(CSSStyleSheet* sheet)

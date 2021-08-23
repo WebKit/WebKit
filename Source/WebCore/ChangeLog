@@ -1,3 +1,25 @@
+2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Tiny cleanups in CSS parsing code
+        https://bugs.webkit.org/show_bug.cgi?id=229369
+
+        Reviewed by Alan Bujtas.
+
+        Use references for non-nullable pointers, and pass nullptr instead of 0 to other pointer parameters.
+
+        No new tests because there is no behavior change.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::parseString):
+        * css/StyleSheetContents.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseStyleSheet):
+        * css/parser/CSSParserImpl.h:
+
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for out-of-flow box static positioning

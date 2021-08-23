@@ -48,11 +48,11 @@ class StyleSheetContents final : public RefCounted<StyleSheetContents>, public C
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {
-        return adoptRef(*new StyleSheetContents(0, String(), context));
+        return adoptRef(*new StyleSheetContents(nullptr, String(), context));
     }
     static Ref<StyleSheetContents> create(const String& originalURL, const CSSParserContext& context)
     {
-        return adoptRef(*new StyleSheetContents(0, originalURL, context));
+        return adoptRef(*new StyleSheetContents(nullptr, originalURL, context));
     }
     static Ref<StyleSheetContents> create(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
     {
@@ -111,7 +111,7 @@ public:
     
     StyleSheetContents* parentStyleSheet() const;
     StyleRuleImport* ownerRule() const { return m_ownerRule; }
-    void clearOwnerRule() { m_ownerRule = 0; }
+    void clearOwnerRule() { m_ownerRule = nullptr; }
     
     // Note that href is the URL that started the redirect chain that led to
     // this style sheet. This property probably isn't useful for much except
