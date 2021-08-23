@@ -488,8 +488,9 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // Compute the container-relative area within which the sticky element is allowed to move.
     containerContentRect.contract(minMargin);
 
-    // Finally compute container rect relative to the scrolling ancestor.
-    FloatRect containerRectRelativeToScrollingAncestor = containingBlock->localToContainerQuad(FloatRect(containerContentRect), &enclosingClippingBox).boundingBox();
+    // Finally compute container rect relative to the scrolling ancestor. We pass an empty
+    // mode here, because sticky positioning should ignore transforms.
+    FloatRect containerRectRelativeToScrollingAncestor = containingBlock->localToContainerQuad(FloatRect(containerContentRect), &enclosingClippingBox, { } /* ignore transforms */).boundingBox();
     if (enclosingClippingLayer) {
         FloatPoint containerLocationRelativeToScrollingAncestor = containerRectRelativeToScrollingAncestor.location() -
             FloatSize(enclosingClippingBox.borderLeft() + enclosingClippingBox.paddingLeft(),
@@ -508,15 +509,16 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // Ideally, it would be possible to call this->localToContainerQuad to determine the frame
     // rectangle in the coordinate system of the scrolling ancestor, but localToContainerQuad
     // itself depends on sticky positioning! Instead, start from the parent but first adjusting
-    // the rectangle for the writing mode of this stickily-positioned element.
+    // the rectangle for the writing mode of this stickily-positioned element. We also pass an
+    // empty mode here because sticky positioning should ignore transforms.
     //
-    // FIXME: For now, assume that |this| is not transformed. It would also be nice to not have to
-    // call localToContainerQuad again since we have already done a similar call to move from
-    // the containing block to the scrolling ancestor above, but localToContainerQuad takes care
-    // of a lot of complex situations involving inlines, tables, and transformations.
+    // FIXME: It would also be nice to not have to call localToContainerQuad again since we
+    // have already done a similar call to move from the containing block to the scrolling
+    // ancestor above, but localToContainerQuad takes care of a lot of complex situations
+    // involving inlines, tables, and transformations.
     if (parent()->isBox())
         downcast<RenderBox>(parent())->flipForWritingMode(stickyBoxRect);
-    auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), &enclosingClippingBox).boundingBox();
+    auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), &enclosingClippingBox, { } /* ignore transforms */).boundingBox();
 
     if (enclosingClippingLayer) {
         stickyBoxRelativeToScrollingAncestor.move(-FloatSize(enclosingClippingBox.borderLeft() + enclosingClippingBox.paddingLeft(),
