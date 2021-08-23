@@ -1,3 +1,15 @@
+2021-08-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for vertical-align: super
+        https://bugs.webkit.org/show_bug.cgi?id=228235
+
+        Reviewed by Antti Koivisto.
+
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
 2021-08-22  Kate Cheney  <katherine_cheney@apple.com>
 
         Report correct blocked URI in CSP violation report

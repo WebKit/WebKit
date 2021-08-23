@@ -54,9 +54,9 @@ layer at (0,0) size 800x4470
           text run at (0,59) width 262: "different from that of the parent element."
       RenderBlock {P} at (0,414) size 784x75
         RenderImage {IMG} at (0,0) size 15x50
-        RenderInline {SPAN} at (0,0) size 129x20
-          RenderText {#text} at (15,28) size 129x20
-            text run at (15,28) width 129: "The first four words"
+        RenderInline {SPAN} at (0,0) size 129x19
+          RenderText {#text} at (15,29) size 129x19
+            text run at (15,29) width 129: "The first four words"
         RenderText {#text} at (143,35) size 766x39
           text run at (143,35) width 304: " in this sentence should be superscript-aligned. "
           text run at (446,35) width 320: "The font size of the subscripted text should not be"
@@ -397,9 +397,9 @@ layer at (0,0) size 800x4470
                   text run at (0,59) width 281: "be different from that of the parent element."
               RenderBlock {P} at (4,99) size 762x75
                 RenderImage {IMG} at (0,0) size 15x50
-                RenderInline {SPAN} at (0,0) size 129x20
-                  RenderText {#text} at (15,28) size 129x20
-                    text run at (15,28) width 129: "The first four words"
+                RenderInline {SPAN} at (0,0) size 129x19
+                  RenderText {#text} at (15,29) size 129x19
+                    text run at (15,29) width 129: "The first four words"
                 RenderText {#text} at (143,35) size 747x39
                   text run at (143,35) width 304: " in this sentence should be superscript-aligned. "
                   text run at (446,35) width 301: "The font size of the subscripted text should not"

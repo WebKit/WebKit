@@ -477,6 +477,11 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 logicalTop = parentInlineBox.layoutBounds().ascent - logicalTopOffsetFromParentBaseline;
                 break;
             }
+            case VerticalAlign::Super: {
+                auto logicalTopOffsetFromParentBaseline = inlineLevelBox.layoutBounds().ascent + parentInlineBox.style().fontCascade().size() / 3 + 1;
+                logicalTop = parentInlineBox.layoutBounds().ascent - logicalTopOffsetFromParentBaseline;
+                break;
+            }
             default:
                 ASSERT_NOT_IMPLEMENTED_YET();
                 break;
@@ -549,6 +554,9 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                 case VerticalAlign::Sub:
                     baselineOffsetFromParentBaseline = -(parentInlineBox.style().fontCascade().size() / 5 + 1);
                     break;
+                case VerticalAlign::Super:
+                    baselineOffsetFromParentBaseline = parentInlineBox.style().fontCascade().size() / 3 + 1;
+                    break;
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
@@ -617,6 +625,11 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
             }
             case VerticalAlign::Sub: {
                 auto logicalTopOffsetFromParentBaseline = inlineLevelBox.baseline() - (parentInlineBox.style().fontCascade().size() / 5 + 1);
+                logicalTop = parentInlineBox.baseline() - logicalTopOffsetFromParentBaseline;
+                break;
+            }
+            case VerticalAlign::Super: {
+                auto logicalTopOffsetFromParentBaseline = inlineLevelBox.baseline() + parentInlineBox.style().fontCascade().size() / 3 + 1;
                 logicalTop = parentInlineBox.baseline() - logicalTopOffsetFromParentBaseline;
                 break;
             }
