@@ -1,3 +1,20 @@
+2021-08-23  Saam Barati  <sbarati@apple.com>
+
+        compileEnumeratorHasProperty uses flushRegisters incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=229412
+        <rdar://82020767>
+
+        Reviewed by Keith Miller.
+
+        We were calling flushRegisters() inside code that isn't always runs inside the
+        EnumeratorInByVal/EnumeratorHasOwnProperty nodes. That is a violation of how
+        flushRegisters() must be used, since flushRegisters() updates global register
+        allocation state, and therefore must run each time a node is run. To fix, we
+        move flushRegisters() before the code starts emitting branches.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasProperty):
+
 2021-08-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] emitArrayProfilingSiteWithCell should not load indexingType unnecessarily
