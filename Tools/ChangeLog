@@ -1,3 +1,22 @@
+2021-08-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [Cygwin] Support Python 3 in run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=229360
+        <rdar://problem/82192362>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/task_pool_unittest.py:
+        (TaskPoolUnittest): Skip some tests on cygwin.
+        * Scripts/webkitpy/common/system/abstractexecutive.py:
+        (AbstractExecutive.command_for_printing): Strings might be bytes on some platforms.
+        * Scripts/webkitpy/common/system/path.py:
+        (_CygPath.convert): Cygwin path process is not unicode.
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._win_version_str): Return Windows version string as unicode string.
+
 2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove already-shipped wasm option flags

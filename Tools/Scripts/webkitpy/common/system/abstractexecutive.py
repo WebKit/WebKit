@@ -107,8 +107,8 @@ class AbstractExecutive(object):
     def command_for_printing(self, args):
         """Returns a print-ready string representing command args.
         The string should be copy/paste ready for execution in a shell."""
-        args = self._stringify_args(args)
-        return string_utils.decode(string_utils.encode(' '.join(args), encoding='unicode_escape'))
+        args = [elm for elm in self._stringify_args(args)]
+        return string_utils.decode(string_utils.encode((b' ' if isinstance(args[0], bytes) else ' ').join(args), encoding='unicode_escape'))
 
     def run_command(self, args, cwd=None, env=None, input=None, stdout=None, error_handler=None, ignore_errors=False,
         return_exit_code=False, return_stderr=True, decode_output=True):

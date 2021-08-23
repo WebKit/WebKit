@@ -251,4 +251,4 @@ class PlatformInfo(object):
         if version:
             return version
         # Note that this should only ever be called on windows, so this should always work.
-        return self._executive.run_command(['cmd', '/c', 'ver'], decode_output=False)
+        return self._executive.run_command(['cmd', '/c', 'ver'], decode_output=True)
