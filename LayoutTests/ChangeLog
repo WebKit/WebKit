@@ -1,3 +1,16 @@
+2021-08-23  Chris Dumez  <cdumez@apple.com>
+
+        WebKit2 can only have one active navigation policy check for a given frame
+        https://bugs.webkit.org/show_bug.cgi?id=229012
+
+        Reviewed by Youenn Fablet.
+
+        Unskip a couple of tests that are no longer timing out in WebKit2.
+
+        * platform/ios-wk1/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name-expected.txt: Removed.
+        * platform/wk2/TestExpectations:
+
 2021-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Create a RenderLineBreak when BR element has unsupported content data style

@@ -86,7 +86,7 @@ public:
 
     enum class ForNavigationAction { No, Yes };
     uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
-    void invalidatePolicyListener();
+    void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
     uint64_t setUpWillSubmitFormListener(CompletionHandler<void()>&&);
@@ -200,10 +200,13 @@ private:
 
     WeakPtr<WebCore::Frame> m_coreFrame;
 
-    uint64_t m_policyListenerID { 0 };
-    std::optional<WebCore::PolicyCheckIdentifier> m_policyIdentifier;
-    WebCore::FramePolicyFunction m_policyFunction;
-    ForNavigationAction m_policyFunctionForNavigationAction { ForNavigationAction::No };
+    struct PolicyCheck {
+        WebCore::PolicyCheckIdentifier corePolicyIdentifier;
+        ForNavigationAction forNavigationAction { ForNavigationAction::No };
+        WebCore::FramePolicyFunction policyFunction;
+    };
+    HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
+
     HashMap<uint64_t, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
     std::optional<DownloadID> m_policyDownloadID;
 

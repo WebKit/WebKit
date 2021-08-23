@@ -1,3 +1,32 @@
+2021-08-23  Chris Dumez  <cdumez@apple.com>
+
+        WebKit2 can only have one active navigation policy check for a given frame
+        https://bugs.webkit.org/show_bug.cgi?id=229012
+
+        Reviewed by Youenn Fablet.
+
+        WebKit2 could only have one active navigation policy check for a given frame
+        and there was a FIXME comment about this in the code. This was causing some
+        WPT tests to timeout in WebKit2 only because those tests would trigger
+        several navigations (e.g. in new windows) and only the last one would proceed
+        (earlier ones would get cancelled).
+
+        This patch updates the policy checking logic in WebFrame so that we can support
+        several concurrent policy checks.
+
+        No new tests, unskipped / rebaselined existing tests.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::cancelPolicyCheck):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::~WebFrame):
+        (WebKit::WebFrame::setUpPolicyListener):
+        (WebKit::WebFrame::setUpWillSubmitFormListener):
+        (WebKit::WebFrame::continueWillSubmitForm):
+        (WebKit::WebFrame::invalidatePolicyListeners):
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+
 2021-08-22  Kate Cheney  <katherine_cheney@apple.com>
 
         Report correct blocked URI in CSP violation report

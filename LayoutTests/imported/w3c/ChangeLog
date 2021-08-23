@@ -1,5 +1,16 @@
 2021-08-23  Chris Dumez  <cdumez@apple.com>
 
+        WebKit2 can only have one active navigation policy check for a given frame
+        https://bugs.webkit.org/show_bug.cgi?id=229012
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline test that is now passing one more check.
+
+        * web-platform-tests/html/browsers/windows/noreferrer-window-name-expected.txt:
+
+2021-08-23  Chris Dumez  <cdumez@apple.com>
+
         HTMLStyleElement should be able to fire the load event more than once
         https://bugs.webkit.org/show_bug.cgi?id=228975
 

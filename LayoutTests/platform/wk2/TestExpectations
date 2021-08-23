@@ -846,12 +846,6 @@ webkit.org/b/186406 compositing/iframes/display-none-subframe.html [ Pass Failur
 
 webkit.org/b/187766 http/wpt/service-workers/update-service-worker.https.html [ Pass Failure Timeout ]
 
-# These 2 tests have been failing on WK2 only since adding support for BroadcastChannel. The test triggers several navigations with
-# target=_blank and it seems only the last one proceeds. I suspect this is an async policy decision issue and previous navigations
-# are getting cancelled when triggering a new one.
-imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Skip ]
-
 # Newly imported test that is flaky on WebKit2 only.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html [ Pass Failure ]
 

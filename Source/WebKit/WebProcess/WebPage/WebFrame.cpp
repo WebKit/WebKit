@@ -150,7 +150,7 @@ WebFrame::~WebFrame()
 {
     ASSERT(!m_coreFrame);
 
-    auto willSubmitFormCompletionHandlers = WTFMove(m_willSubmitFormCompletionHandlers);
+    auto willSubmitFormCompletionHandlers = std::exchange(m_willSubmitFormCompletionHandlers, { });
     for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
         completionHandler();
 
@@ -208,21 +208,19 @@ void WebFrame::invalidate()
 
 uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier, WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
 {
-    // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
+    auto policyListenerID = generateListenerID();
+    m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
+        identifier,
+        forNavigationAction,
+        WTFMove(policyFunction)
+    });
 
-    invalidatePolicyListener();
-
-    m_policyIdentifier = identifier;
-    m_policyListenerID = generateListenerID();
-    m_policyFunction = WTFMove(policyFunction);
-    m_policyFunctionForNavigationAction = forNavigationAction;
-    return m_policyListenerID;
+    return policyListenerID;
 }
 
 uint64_t WebFrame::setUpWillSubmitFormListener(CompletionHandler<void()>&& completionHandler)
 {
     uint64_t identifier = generateListenerID();
-    invalidatePolicyListener();
     m_willSubmitFormCompletionHandlers.set(identifier, WTFMove(completionHandler));
     return identifier;
 }
@@ -232,21 +230,15 @@ void WebFrame::continueWillSubmitForm(uint64_t listenerID)
     Ref<WebFrame> protectedThis(*this);
     if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
         completionHandler();
-    invalidatePolicyListener();
 }
 
-void WebFrame::invalidatePolicyListener()
+void WebFrame::invalidatePolicyListeners()
 {
-    if (!m_policyListenerID)
-        return;
-
     m_policyDownloadID = { };
-    m_policyListenerID = 0;
-    auto identifier = m_policyIdentifier;
-    m_policyIdentifier = std::nullopt;
-    if (auto function = std::exchange(m_policyFunction, nullptr))
-        function(PolicyAction::Ignore, *identifier);
-    m_policyFunctionForNavigationAction = ForNavigationAction::No;
+
+    auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
+    for (auto& policyCheck : pendingPolicyChecks.values())
+        policyCheck.policyFunction(PolicyAction::Ignore, policyCheck.corePolicyIdentifier);
 
     auto willSubmitFormCompletionHandlers = WTFMove(m_willSubmitFormCompletionHandlers);
     for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
@@ -255,16 +247,17 @@ void WebFrame::invalidatePolicyListener()
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
 {
-    if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction)
+    if (!m_coreFrame)
         return;
 
-    ASSERT(policyDecision.identifier == m_policyIdentifier);
-    m_policyIdentifier = std::nullopt;
+    auto policyCheck = m_pendingPolicyChecks.take(listenerID);
+    if (!policyCheck.policyFunction)
+        return;
 
-    FramePolicyFunction function = WTFMove(m_policyFunction);
-    bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;
+    ASSERT(policyDecision.identifier == policyCheck.corePolicyIdentifier);
 
-    invalidatePolicyListener();
+    FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
+    bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
 
     if (forNavigationAction && frameLoaderClient() && policyDecision.websitePoliciesData) {
         ASSERT(page());
