@@ -1,3 +1,12 @@
+2021-08-23  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-* fail
+        https://bugs.webkit.org/show_bug.cgi?id=229389
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-08-23  Alan Bujtas  <zalan@apple.com>
 
         Pre-formatted content gets distorted when attempting to select content
