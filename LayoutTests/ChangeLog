@@ -1,5 +1,15 @@
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
+        Updated test expectations for fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html and fast/events/touch/ios/long-press-then-drag-to-select-text.html.
+        <rdar://80386523>, <rdar://80386061>.
+
+        Unreviewed test gardening.
+
+        * platform/ios-14/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for fast/events/touch/page-scaled-touch-gesture-click.html.
         https://bugs.webkit.org/show_bug.cgi?id=168961.
 
