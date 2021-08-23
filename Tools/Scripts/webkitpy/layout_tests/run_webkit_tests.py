@@ -343,6 +343,7 @@ def parse_args(args):
         optparse.make_option(
             "--prefer-integrated-gpu", action="store_true", default=False,
             help=("Prefer using the lower-power integrated GPU on a dual-GPU system. Note that other running applications and the tests themselves can override this request.")),
+        optparse.make_option('--show-window', action="store_true", default=False, help="Make the test runner window visible during testing."),
     ]))
 
     option_group_definitions.append(("Web Platform Test Server Options", [

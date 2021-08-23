@@ -145,7 +145,7 @@ void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode)
         SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
 
     UINT flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS;
-    if (m_options.shouldShowWebView())
+    if (m_options.shouldShowWindow())
         flags |= SWP_NOMOVE;
     ::SetWindowPos(
         m_window,

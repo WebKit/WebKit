@@ -537,6 +537,8 @@ class Driver(object):
             cmd.append('--no-timeout')
         if self._port.get_option('show_touches'):
             cmd.append('--show-touches')
+        if self._port.get_option('show_window'):
+            cmd.append('--show-window')
         if self._port.get_option('accessibility_isolated_tree'):
             cmd.append('--accessibility-isolated-tree')
 

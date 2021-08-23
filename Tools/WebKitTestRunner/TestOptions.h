@@ -65,7 +65,7 @@ public:
     bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }
     bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }
     bool shouldShowTouches() const { return boolTestRunnerFeatureValue("shouldShowTouches"); }
-    bool shouldShowWebView() const { return boolTestRunnerFeatureValue("shouldShowWebView"); }
+    bool shouldShowWindow() const { return boolTestRunnerFeatureValue("shouldShowWindow"); }
     bool textInteractionEnabled() const { return boolTestRunnerFeatureValue("textInteractionEnabled"); }
     bool useCharacterSelectionGranularity() const { return boolTestRunnerFeatureValue("useCharacterSelectionGranularity"); }
     bool useDataDetection() const { return boolTestRunnerFeatureValue("useDataDetection"); }

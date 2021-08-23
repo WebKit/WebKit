@@ -1,3 +1,33 @@
+2021-08-23  Peng Liu  <peng.liu6@apple.com>
+
+        Add a new option '--show-window' to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=229253
+
+        Reviewed by Simon Fraser.
+
+        Add the new option so that we can let WKTR show a window with webview.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.cmd_line):
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionShowWindow):
+        (WTR::OptionsHandler::OptionsHandler):
+        (WTR::handleOptionShowWebView): Deleted.
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::shouldShowWindow const):
+        (WTR::TestOptions::shouldShowWebView const): Deleted.
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::finishCreatingPlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::setWindowFrame):
+
 2021-08-23  Jonathan Bedard  <jbedard@apple.com>
 
         [Cygwin] Support Python 3 in run-webkit-tests
