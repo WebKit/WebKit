@@ -1,5 +1,7 @@
 <script>
-location.assign('//\u2000');
+try {
+    location.assign('//\u2000');
+} catch (e) { }
 testRunner.waitUntilDone();
 testRunner.dumpAsText();
 setTimeout(function() { 

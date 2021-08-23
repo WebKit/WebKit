@@ -1,3 +1,15 @@
+2021-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        Setting window.location.href to an invalid URL should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=229303
+
+        Reviewed by Chris Dumez.
+
+        This matches Firefox and the specification, and Chrome also throws an exception in this case.
+
+        * page/Location.cpp:
+        (WebCore::Location::setLocation):
+
 2021-08-23  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when getting current color in DisplayList::DrawGlyphsRecorder

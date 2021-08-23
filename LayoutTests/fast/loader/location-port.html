@@ -35,7 +35,9 @@
         var internalFrame = document.getElementById ('internal');
         shouldBe('internalFrame.contentWindow.location.port == ""', true);
 
-        internalFrame.contentWindow.location.port = 80;
+        try {
+            internalFrame.contentWindow.location.port = 80;
+        } catch (e) { }
         setTimeout(checkTest3, 300);
     }
 
@@ -43,7 +45,9 @@
         var internalFrame = document.getElementById ('internal');
         shouldBe('internalFrame.contentWindow.location.port == ""', true);
 
-        internalFrame.contentWindow.location.port = 0;
+        try {
+            internalFrame.contentWindow.location.port = 0;
+        } catch (e) { }
         setTimeout(checkTest4, 300);
     }
 
@@ -66,7 +70,9 @@
         var internalFrame = document.getElementById ('internal');
         shouldBe('internalFrame.contentWindow.location.port == ""', true);
 
-        internalFrame.contentWindow.location.port = 88;
+        try {
+            internalFrame.contentWindow.location.port = 88;
+        } catch (e) { }
         setTimeout(checkTest1, 300);
     };
     </script>

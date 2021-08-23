@@ -14,11 +14,11 @@ PASS testWindow.location.search is ''
 PASS testWindow.location.hash is ''
 PASS testWindow.location.href = 'data:text/plain,b' is 'data:text/plain,b'
 PASS testWindow.location.protocol = 'data' is 'data'
-PASS testWindow.location.host = 'c' is 'c'
-PASS testWindow.location.hostname = 'd' is 'd'
-PASS testWindow.location.port = 'e' is 'e'
-PASS testWindow.location.pathname = 'f' is 'f'
-PASS testWindow.location.search = 'g' is 'g'
+PASS testWindow.location.host = 'c' threw exception TypeError: Invalid URL.
+PASS testWindow.location.hostname = 'd' threw exception TypeError: Invalid URL.
+PASS testWindow.location.port = 'e' threw exception TypeError: Invalid URL.
+PASS testWindow.location.pathname = 'f' threw exception TypeError: Invalid URL.
+PASS testWindow.location.search = 'g' threw exception TypeError: Invalid URL.
 PASS testWindow.location.hash = 'h' is 'h'
 PASS testWindow.location.assign('data:text/plain,i') is undefined
 PASS testWindow.location.replace('data:text/plain,j') is undefined

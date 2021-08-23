@@ -30,11 +30,11 @@ shouldBe("testWindow.location.hash", "''");
 
 shouldBe("testWindow.location.href = 'data:text/plain,b'", "'data:text/plain,b'");
 shouldBe("testWindow.location.protocol = 'data'", "'data'"); // Firefox throws an exception
-shouldBe("testWindow.location.host = 'c'", "'c'"); // Firefox throws an exception
-shouldBe("testWindow.location.hostname = 'd'", "'d'"); // Firefox throws an exception
-shouldBe("testWindow.location.port = 'e'", "'e'"); // Firefox throws an exception
-shouldBe("testWindow.location.pathname = 'f'", "'f'"); // Firefox throws an exception
-shouldBe("testWindow.location.search = 'g'", "'g'");
+shouldThrow("testWindow.location.host = 'c'");
+shouldThrow("testWindow.location.hostname = 'd'");
+shouldThrow("testWindow.location.port = 'e'");
+shouldThrow("testWindow.location.pathname = 'f'");
+shouldThrow("testWindow.location.search = 'g'");
 shouldBe("testWindow.location.hash = 'h'", "'h'");
 
 shouldBe("testWindow.location.assign('data:text/plain,i')", "undefined");

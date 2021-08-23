@@ -38,7 +38,9 @@ function runTest()
     var subframe = document.getElementById("subframe");
     subframe.onload = subframeLoaded;
     subframe.onerror = subframeError;
-    subframe.contentWindow.location = subframeLocation;
+    try {
+        subframe.contentWindow.location = subframeLocation;
+    } catch (e) { }
     setTimeout(subframeDidNotLoad, 100);
 }
 

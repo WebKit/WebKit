@@ -1,3 +1,20 @@
+2021-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        Setting window.location.href to an invalid URL should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=229303
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/location-new-window-no-crash-expected.txt:
+        * fast/dom/location-new-window-no-crash.html:
+        * fast/loader/file-URL-with-port-number.html:
+        * fast/loader/location-port.html:
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt:
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html:
+        * fast/url/navigate-non-ascii.html:
+        * platform/ios-wk1/fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt: Removed.
+        * platform/mac-wk1/fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt: Removed.
+
 2021-08-23  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur EWS ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html is flaky crash.

@@ -11,9 +11,15 @@ jsTestIsAsync = true;
 <body>
 <script>
 description("Tests that we do not redirect to an invalid URL initiated by JavaScript. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: http://A=a%B=b&quot; followed by &quot;didCancelClientRedirectForFrame&quot;.");
+var caughtException = false;
 onload = function() {
-    window.location.href = "http://A=a%B=b";
-    shouldBecomeEqual("testRunner.didCancelClientRedirect", "true", finishJSTest);
+    try {
+        window.location.href = "http://A=a%B=b";
+    } catch (e) {
+        caughtException = true;
+    }
+    shouldBe("caughtException", "true");
+    finishJSTest();
 }
 </script>
 </body>

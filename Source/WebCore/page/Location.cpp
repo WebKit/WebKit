@@ -277,9 +277,8 @@ ExceptionOr<void> Location::setLocation(DOMWindow& incumbentWindow, DOMWindow& f
 
     URL completedURL = firstFrame->document()->completeURL(urlString);
 
-    // FIXME: The specification says to throw a SyntaxError if the URL is not valid.
-    if (completedURL.isNull())
-        return { };
+    if (!completedURL.isValid())
+        return Exception { TypeError, "Invalid URL"_s };
 
     if (!incumbentWindow.document()->canNavigate(frame, completedURL))
         return Exception { SecurityError };
