@@ -1,3 +1,34 @@
+2021-08-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Import permissions tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=229349
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/permissions/META.yml: Added.
+        * web-platform-tests/permissions/feature-policy-permissions-query.html: Added.
+        * web-platform-tests/permissions/idlharness.any-expected.txt: Added.
+        * web-platform-tests/permissions/idlharness.any.html: Added.
+        * web-platform-tests/permissions/idlharness.any.js: Added.
+        (async idl_array):
+        * web-platform-tests/permissions/idlharness.any.worker-expected.txt: Added.
+        * web-platform-tests/permissions/idlharness.any.worker.html: Added.
+        * web-platform-tests/permissions/nfc-permission-expected.txt: Added.
+        * web-platform-tests/permissions/nfc-permission.html: Added.
+        * web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub-expected.txt: Added.
+        * web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub.html: Added.
+        * web-platform-tests/permissions/permissionsstatus-name-expected.txt: Added.
+        * web-platform-tests/permissions/permissionsstatus-name.html: Added.
+        * web-platform-tests/permissions/screen-wake-lock-permission-expected.txt: Added.
+        * web-platform-tests/permissions/screen-wake-lock-permission.html: Added.
+        * web-platform-tests/permissions/test-background-fetch-permission-expected.txt: Added.
+        * web-platform-tests/permissions/test-background-fetch-permission.html: Added.
+        * web-platform-tests/permissions/test-periodic-background-sync-permission-expected.txt: Added.
+        * web-platform-tests/permissions/test-periodic-background-sync-permission.html: Added.
+        * web-platform-tests/permissions/w3c-import.log: Added.
+
 2021-08-23  Martin Robinson  <mrobinson@webkit.org>
 
         Sticky position should not use transformed position to compute sticky offset.

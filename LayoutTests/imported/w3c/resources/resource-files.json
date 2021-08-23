@@ -2796,6 +2796,7 @@
         "web-platform-tests/payment-request/blank.html",
         "web-platform-tests/payment-request/payment-request-response-id.html",
         "web-platform-tests/payment-request/show-method-postmessage-iframe.html",
+        "web-platform-tests/permissions/feature-policy-permissions-query.html",
         "web-platform-tests/resource-timing/iframe-setdomain.sub.html",
         "web-platform-tests/secure-contexts/postMessage-helper.html",
         "web-platform-tests/secure-contexts/postMessage-helper.https.html",

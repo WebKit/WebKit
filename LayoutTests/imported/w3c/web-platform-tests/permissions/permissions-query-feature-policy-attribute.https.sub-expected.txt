@@ -1,0 +1,6 @@
+
+FAIL Permissions.state is "prompt" with allow="geolocation" in same-origin iframes. assert_equals: navigator.permissions.query("geolocation") expected (string) "prompt" but got (object) null
+FAIL Permissions.state is "prompt" with allow="geolocation" in cross-origin iframes. assert_equals: navigator.permissions.query("geolocation") expected (string) "prompt" but got (object) null
+FAIL Permission.state is "prompt" in same-origin iframes. assert_equals: navigator.permissions.query("geolocation") expected (string) "prompt" but got (object) null
+FAIL Permission.state is "denied" in cross-origin iframes. assert_equals: navigator.permissions.query("geolocation") expected (string) "denied" but got (object) null
+

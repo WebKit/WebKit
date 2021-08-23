@@ -1,0 +1,3 @@
+
+FAIL Test Web NFC Permission. undefined is not an object (evaluating 'navigator.permissions.query')
+
