@@ -1,5 +1,11 @@
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
+        [iOS] Unreviewed test gardening.
+
+        * platform/ios-wk2/fast/repaint/placeholder-after-caps-lock-hidden-expected.txt:
+
+2021-08-22  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for vertical-align: super
         https://bugs.webkit.org/show_bug.cgi?id=228235
 
