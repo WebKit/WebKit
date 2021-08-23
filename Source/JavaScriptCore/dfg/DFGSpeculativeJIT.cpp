@@ -13743,6 +13743,8 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
         GPRReg modeGPR = mode.gpr();
         GPRReg enumeratorGPR = enumerator.gpr();
 
+        flushRegisters();
+
         JSValueRegsTemporary result(this);
         JSValueRegs resultRegs = result.regs();
 
@@ -13762,7 +13764,6 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
 
         operationCases.link(&m_jit);
 
-        flushRegisters();
 #if USE(JSVALUE32_64)
         m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
         auto baseRegs = JSValueRegs(baseCellGPR, resultRegs.tagGPR());
