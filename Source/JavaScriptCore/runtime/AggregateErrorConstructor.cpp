@@ -60,7 +60,7 @@ JSC_DEFINE_HOST_FUNCTION(callAggregateErrorConstructor, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     JSValue errors = callFrame->argument(0);
     JSValue message = callFrame->argument(1);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(2) : jsUndefined();
+    JSValue options = callFrame->argument(2);
     Structure* errorStructure = globalObject->errorStructure(ErrorType::AggregateError);
     return JSValue::encode(createAggregateError(globalObject, vm, errorStructure, errors, message, options, nullptr, TypeNothing, false));
 }
@@ -71,7 +71,7 @@ JSC_DEFINE_HOST_FUNCTION(constructAggregateErrorConstructor, (JSGlobalObject* gl
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue errors = callFrame->argument(0);
     JSValue message = callFrame->argument(1);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(2) : jsUndefined();
+    JSValue options = callFrame->argument(2);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* errorStructure = JSC_GET_DERIVED_STRUCTURE(vm, errorStructureWithErrorType<ErrorType::AggregateError>, newTarget, callFrame->jsCallee());

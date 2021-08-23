@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=true")
-
 class C {
     #field;
 

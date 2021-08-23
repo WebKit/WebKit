@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=true")
-
 let assert = {
     sameValue: (a, e) => {
         if (a !== e) 

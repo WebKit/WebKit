@@ -1,5 +1,3 @@
-//@ requireOptions("--useWeakRefs=true")
-
 asyncTestStart(1);
 var objects = [];
 var weakRefs = [];

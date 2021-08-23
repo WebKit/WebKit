@@ -1,21 +1,11 @@
 
 ---
 flags:
-  WeakRef: useWeakRefs
-  FinalizationRegistry: useWeakRefs
-  class-fields-private: usePrivateClassFields
-  class-methods-private: usePrivateMethods
-  class-fields-private-in: usePrivateIn
-  class-static-fields-public: usePublicStaticClassFields
-  class-static-fields-private: usePrivateStaticClassFields
-  class-static-methods-private: usePrivateMethods
-  error-cause: useErrorCause
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
   Array.prototype.at: useAtMethod
   TypedArray.prototype.at: useAtMethod
   String.prototype.at: useAtMethod
-  top-level-await: useTopLevelAwait
   array-find-from-last: useArrayFindLastMethod
 skip:
   features:

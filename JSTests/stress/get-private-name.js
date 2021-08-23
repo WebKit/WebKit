@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=1")
-
 // GetPrivateName should throw when the receiver does not have the requested private property
 let i, threw = false;
 class C {

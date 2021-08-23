@@ -1,5 +1,3 @@
-//@ requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 // Convoluted program which will compile turn GetPrivateName into GetPrivateNameById. GetById
 // will never OSR here due to bad structures, but will instead repatch to the generic case.
 

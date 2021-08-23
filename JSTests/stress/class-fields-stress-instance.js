@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=true")
-
 class A {
     a = 0;
     b = 1;

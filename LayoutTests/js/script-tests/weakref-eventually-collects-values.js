@@ -1,5 +1,3 @@
-//@ requireOptions("--useWeakRefs=true")
-
 asyncTestStart(1);
 
 function makeWeakRef() { return new WeakRef({foo: 1}); }

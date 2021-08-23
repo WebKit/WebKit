@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=1")
-
 function assert(a, e) {
     if (a !== e)
         throw new Error("Expected: " + e + " but got: " + a);

@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=1")
-
 function assert(a, message) {
     if (!a)
         throw new Error(message);

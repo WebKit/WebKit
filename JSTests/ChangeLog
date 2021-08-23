@@ -1,5 +1,130 @@
 2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove already-shipped JS feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=229387
+
+        Reviewed by Ross Kirsling.
+
+        * microbenchmarks/class-fields-private/get-private-name.js:
+        * microbenchmarks/class-fields-private/monomorphic-get-private-field.js:
+        * microbenchmarks/class-fields-private/polymorphic-get-private-field.js:
+        * microbenchmarks/class-fields-private/polymorphic-put-private-field.js:
+        * microbenchmarks/class-fields-private/put-private-field.js:
+        * stress/class-fields-private-as-function.js:
+        * stress/class-fields-private-cached-bytecode.js:
+        * stress/class-fields-private-freeze-out-of-line.js:
+        * stress/class-fields-private-freeze.js:
+        * stress/class-fields-private-harmony.js:
+        * stress/class-fields-private-on-proxy.js:
+        * stress/class-fields-private-out-of-line.js:
+        * stress/class-fields-private-prevent-extensions-out-of-line.js:
+        * stress/class-fields-private-prevent-extensions.js:
+        * stress/class-fields-private-seal-out-of-line.js:
+        * stress/class-fields-private-seal.js:
+        * stress/class-fields-private-use-eval.js:
+        * stress/class-fields-static-harmony.js:
+        * stress/class-fields-static-private-harmony.js:
+        * stress/class-fields-stress-instance.js:
+        * stress/class-private-method-access.js:
+        * stress/dfg-get-private-name-by-id-generic.js:
+        * stress/dfg-get-private-name-by-id-osr-bad-identifier.js:
+        * stress/dfg-get-private-name-by-id.js:
+        * stress/dfg-get-private-name-by-offset-osr-bad-identifier.js:
+        * stress/dfg-get-private-name-by-offset-osr-bad-structure.js:
+        * stress/dfg-get-private-name-by-offset.js:
+        * stress/dfg-get-private-name-by-val-generic.js:
+        * stress/dfg-put-private-name-check-barrier-insertion.js:
+        * stress/dfg-put-private-name-compiled-as-put-by-id-direct.js:
+        * stress/dfg-put-private-name-compiled-as-put-private-name-by-id.js:
+        * stress/ftl-get-private-name-by-id.js:
+        * stress/ftl-get-private-name-by-offset-multi.js:
+        * stress/get-private-name-cache-failure.js:
+        * stress/get-private-name-with-constant-ident.js:
+        * stress/get-private-name-with-constant-symbol.js:
+        * stress/get-private-name-with-different-symbol.js:
+        * stress/get-private-name-with-primitive.js:
+        * stress/get-private-name.js:
+        * stress/optional-chaining-and-private-fields.js:
+        * stress/private-accesor-duplicate-name-early-errors.js:
+        * stress/private-accessor-static-non-static.js:
+        * stress/private-brand-installed-after-super-call-from-arrow-function.js:
+        * stress/private-brand-installed-after-super-call-from-eval.js:
+        * stress/private-getter-brand-check.js:
+        * stress/private-getter-inner-class.js:
+        * stress/private-in-error.js:
+        * stress/private-in.js:
+        * stress/private-members-get-and-set.js:
+        * stress/private-method-and-field-named-constructor.js:
+        * stress/private-method-brand-check.js:
+        * stress/private-method-change-attribute-from-branded-structure.js:
+        * stress/private-method-change-prototype-from-branded-structure.js:
+        * stress/private-method-check-private-brand-ic.js:
+        * stress/private-method-check-structure-miss.js:
+        * stress/private-method-comparison.js:
+        * stress/private-method-delete-property-from-branded-structure.js:
+        * stress/private-method-extends-brand-check.js:
+        * stress/private-method-get-and-call.js:
+        * stress/private-method-invalid-multiple-brand-installation.js:
+        * stress/private-method-invalidate-compiled-with-constant-symbol.js:
+        * stress/private-method-nested-class.js:
+        * stress/private-method-on-sealed-objects.js:
+        * stress/private-method-on-uncacheable-dictionary.js:
+        * stress/private-method-polymorphic-with-constant-symbol.js:
+        * stress/private-method-set-brand-should-have-write-barrier.js:
+        * stress/private-method-untyped-use.js:
+        * stress/private-method-with-uncacheable-dictionary-transition.js:
+        * stress/private-methods-and-accessors-postfix-node.js:
+        * stress/private-methods-and-accessors-prefix-node.js:
+        * stress/private-methods-inline-cache.js:
+        * stress/private-methods-megamorphic-ic.js:
+        * stress/private-methods-on-proxy.js:
+        * stress/private-methods-poly-ic-multiple-classes.js:
+        * stress/private-methods-poly-ic-single-class.js:
+        * stress/private-name-access-in-computed-property.js:
+        * stress/private-names-available-on-direct-eval.js:
+        * stress/private-names-available-on-eval-during-field-initialization.js:
+        * stress/private-setter-brand-check.js:
+        * stress/private-setter-inner-class.js:
+        * stress/put-by-val-direct-addprivate.js:
+        * stress/put-by-val-direct-putprivate.js:
+        * stress/put-private-name-by-id-set-do-not-add-structure-trasition.js:
+        * stress/put-private-name-check-structure-miss.js:
+        * stress/put-private-name-constant-folding-to-mult-put-by-offset.js:
+        * stress/put-private-name-constant-folding-to-put-by-offset.js:
+        * stress/put-private-name-generic.js:
+        * stress/put-private-name-invalid-define.js:
+        * stress/put-private-name-invalid-store.js:
+        * stress/put-private-name-invalidate-compiled-with-constant-symbol.js:
+        * stress/put-private-name-polymorphic-with-constant-symbol.js:
+        * stress/put-private-name-untyped-use.js:
+        * stress/put-private-name-with-constant-symbol.js:
+        * stress/put-private-name-with-different-identifier.js:
+        * stress/put-private-name-with-primitive.js:
+        * stress/static-private-methods-and-accessor-inner-class.js:
+        * stress/static-private-methods-and-accessor-multiple-evaluation.js:
+        * stress/static-private-methods-and-accessors-postfix-node.js:
+        * stress/static-private-methods-and-accessors-prefix-node.js:
+        * stress/v8-cleanup-from-different-realm.js:
+        * stress/v8-cleanup-proxy-from-different-realm.js:
+        * stress/v8-finalization-registry-basics.js:
+        * stress/v8-finalizationregistry-and-weakref.js:
+        * stress/v8-finalizationregistry-keeps-holdings-alive.js:
+        * stress/v8-finalizationregistry-scheduled-for-cleanup-multiple-times.js:
+        * stress/v8-multiple-dirty-finalization-registries.js:
+        * stress/v8-reentrant-gc-from-cleanup.js:
+        * stress/v8-stress-finalizationregistry-dirty-enqueue.js:
+        * stress/v8-undefined-holdings.js:
+        * stress/v8-unregister-after-cleanup.js:
+        * stress/v8-unregister-before-cleanup.js:
+        * stress/v8-unregister-called-twice.js:
+        * stress/v8-unregister-inside-cleanup2.js:
+        * stress/v8-unregister-inside-cleanup3.js:
+        * stress/v8-unregister-many.js:
+        * stress/v8-weak-unregistertoken.js:
+        * test262/config.yaml:
+
+2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, speculative fix for old ICU
         https://bugs.webkit.org/show_bug.cgi?id=229385
 

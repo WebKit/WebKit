@@ -1232,7 +1232,7 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
             generator.emitPutThisToArrowFunctionContextScope();
 
         // Initialize instance fields after super-call.
-        if (Options::usePrivateMethods() && generator.privateBrandRequirement() == PrivateBrandRequirement::Needed)
+        if (generator.privateBrandRequirement() == PrivateBrandRequirement::Needed)
             generator.emitInstallPrivateBrand(generator.thisRegister());
 
         if (generator.needsClassFieldInitializer() == NeedsClassFieldInitializer::Yes) {

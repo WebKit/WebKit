@@ -1,5 +1,3 @@
-//@requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 // With many incompatible structure variants, this test will fail to generate GetByOffset dwuring DFGByteCodeParsing.
 // During FTL compilation, it will try again in DFGConstantFoldingPhase.
 function assert(expr, message) {

@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=1")
-
 // PrivateField "Create" access should throw if writing to a non-existent PrivateName.
 let c, i = 0, threw = false;
 class C {

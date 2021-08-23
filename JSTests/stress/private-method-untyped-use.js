@@ -1,4 +1,4 @@
-//@ requireOptions("--usePrivateMethods=true", "--useAccessInlining=false")
+//@ requireOptions("--useAccessInlining=false")
 
 let assert = {
     shouldThrow: function(exception, functor) {

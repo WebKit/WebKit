@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateMethods=true")
-
 function assert(actual, expected) {
     if (actual !== expected)
         throw Error("Expected: " + expected + " Actual: " + actual);

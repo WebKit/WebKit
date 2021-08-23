@@ -1,5 +1,3 @@
-//@requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 // With many incompatible structure variants, this test checks the GetPrivateName lowering in DFG when
 // reducing to GetByOffset is not possible.
 

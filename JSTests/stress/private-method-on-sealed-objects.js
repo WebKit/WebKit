@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateMethods=true")
-
 let assert = {
     sameValue: function (actual, expected) {
         if (actual !== expected)

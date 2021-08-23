@@ -51,7 +51,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyCompileError, (JSGlobalObject* gl
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(1) : jsUndefined();
+    JSValue options = callFrame->argument(1);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, webAssemblyCompileErrorStructure, newTarget, callFrame->jsCallee());
@@ -63,7 +63,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyCompileError, (JSGlobalObject* gl
 JSC_DEFINE_HOST_FUNCTION(callJSWebAssemblyCompileError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue message = callFrame->argument(0);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(1) : jsUndefined();
+    JSValue options = callFrame->argument(1);
     Structure* errorStructure = globalObject->webAssemblyCompileErrorStructure();
     return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, options, nullptr, TypeNothing, ErrorType::Error, false));
 }

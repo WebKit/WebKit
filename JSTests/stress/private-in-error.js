@@ -1,4 +1,3 @@
-//@ requireOptions("--usePrivateIn=1")
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;

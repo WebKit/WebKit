@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=1")
-
 let assert = Object.assign(
   function assert(expr, message = "") {
     if (expr == false)

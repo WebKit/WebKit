@@ -1,5 +1,3 @@
-//@requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 // With no incompatible structure variants, GetPrivateName is converted to GetByOffset
 // during bytecode parsing. We test that it's still semantically valid.
 

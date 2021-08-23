@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=1")
-
 let assert = {
     throws: (expectedError, functor) => {
         try {

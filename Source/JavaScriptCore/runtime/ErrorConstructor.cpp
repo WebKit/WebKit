@@ -53,7 +53,7 @@ JSC_DEFINE_HOST_FUNCTION(constructErrorConstructor, (JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(1) : jsUndefined();
+    JSValue options = callFrame->argument(1);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* errorStructure = JSC_GET_DERIVED_STRUCTURE(vm, errorStructure, newTarget, callFrame->jsCallee());
@@ -65,7 +65,7 @@ JSC_DEFINE_HOST_FUNCTION(constructErrorConstructor, (JSGlobalObject* globalObjec
 JSC_DEFINE_HOST_FUNCTION(callErrorConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSValue message = callFrame->argument(0);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(1) : jsUndefined();
+    JSValue options = callFrame->argument(1);
     Structure* errorStructure = globalObject->errorStructure();
     return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, options, nullptr, TypeNothing, ErrorType::Error, false));
 }

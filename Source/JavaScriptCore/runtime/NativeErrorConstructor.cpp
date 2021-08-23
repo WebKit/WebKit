@@ -50,7 +50,7 @@ inline EncodedJSValue NativeErrorConstructor<errorType>::constructImpl(JSGlobalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = callFrame->argument(0);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(1) : jsUndefined();
+    JSValue options = callFrame->argument(1);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* errorStructure = JSC_GET_DERIVED_STRUCTURE(vm, errorStructureWithErrorType<errorType>, newTarget, callFrame->jsCallee());
@@ -62,7 +62,7 @@ template<ErrorType errorType>
 inline EncodedJSValue NativeErrorConstructor<errorType>::callImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     JSValue message = callFrame->argument(0);
-    JSValue options = Options::useErrorCause() ? callFrame->argument(1) : jsUndefined();
+    JSValue options = callFrame->argument(1);
     Structure* errorStructure = globalObject->errorStructure(errorType);
     return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, options, nullptr, TypeNothing, errorType, false));
 }

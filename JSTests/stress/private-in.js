@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateIn=1")
-
 function assert(b) {
   if (!b) throw new Error;
 }

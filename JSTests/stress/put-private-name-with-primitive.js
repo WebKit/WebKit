@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateClassFields=true")
-
 let assert = {
     shouldThrow: function(exception, functor) {
         let threwException;

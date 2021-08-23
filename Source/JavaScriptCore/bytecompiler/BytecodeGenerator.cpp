@@ -732,7 +732,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             case ConstructorKind::None:
             case ConstructorKind::Base:
                 emitCreateThis(&m_thisRegister);
-                if (Options::usePrivateMethods() && privateBrandRequirement() == PrivateBrandRequirement::Needed)
+                if (privateBrandRequirement() == PrivateBrandRequirement::Needed)
                     emitInstallPrivateBrand(&m_thisRegister);
 
                 emitInstanceFieldInitializationIfNeeded(&m_thisRegister, &m_calleeRegister, m_scopeNode->position(), m_scopeNode->position(), m_scopeNode->position());

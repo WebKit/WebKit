@@ -1,4 +1,4 @@
-//@ requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true", "--maxPolymorphicAccessInliningListSize=2")
+//@ requireOptions("--maxPolymorphicAccessInliningListSize=2")
 
 let assert = {
     sameValue: function(a, e) {

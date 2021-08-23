@@ -1,5 +1,3 @@
-//@ run("--useClassFields=true --usePrivateMethods=true")
-
 function assert(a, e, m) {
     if (a !== e)
         throw new Error(m);

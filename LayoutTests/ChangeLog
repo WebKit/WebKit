@@ -1,3 +1,22 @@
+2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove already-shipped JS feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=229387
+
+        Reviewed by Ross Kirsling.
+
+        * js/script-tests/weakref-async-is-collected.js:
+        * js/script-tests/weakref-eventually-collects-values.js:
+        * js/script-tests/weakref-finalizationregistry.js:
+        * js/script-tests/weakref-microtasks-dont-collect.js:
+        * js/script-tests/weakref-weakset-consistency.js:
+        * js/weakref-async-is-collected.html:
+        * js/weakref-eventually-collects-values.html:
+        * js/weakref-finalizationregistry.html:
+        * js/weakref-microtasks-dont-collect.html:
+        * js/weakref-weakset-consistency.html:
+        * webaudio/finished-audio-buffer-source-nodes-should-be-collectable.html:
+
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for out-of-flow box static positioning

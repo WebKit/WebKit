@@ -1,4 +1,3 @@
-//@ requireOptions("--usePrivateStaticClassFields=1")
 //@ defaultNoEagerRun
 
 // Copyright 2018 the V8 project authors. All rights reserved.

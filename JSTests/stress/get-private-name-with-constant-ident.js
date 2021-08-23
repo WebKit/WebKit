@@ -1,5 +1,3 @@
-//@ requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 function assert(expr, message) {
   if (!expr)
     throw new Error(`Assertion Failed: ${message}`);

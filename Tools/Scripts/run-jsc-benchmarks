@@ -1798,7 +1798,7 @@ class PrivateFieldsBenchmark
     end
 
     def environment
-        {"JSC_usePrivateClassFields" => "true"}
+        {}
     end
 end
 

@@ -1,4 +1,4 @@
-//@requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true", "--useAccessInlining=false")
+//@requireOptions("--useAccessInlining=false")
 
 let assert = {
     throws: function(exception, functor) {

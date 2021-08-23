@@ -1,5 +1,3 @@
-//@ requireOptions("--usePrivateMethods=true")
-
 function assertSyntaxError(code) {
     try {
         eval(code);

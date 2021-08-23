@@ -1,5 +1,3 @@
-//@ requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 class C {
     #field;
 

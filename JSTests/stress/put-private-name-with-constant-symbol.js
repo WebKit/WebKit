@@ -1,5 +1,3 @@
-//@ requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 let assert = {
     sameValue: function (a, e) {
        if (a !== e) 

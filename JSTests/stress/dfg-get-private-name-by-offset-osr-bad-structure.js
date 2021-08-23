@@ -1,5 +1,3 @@
-//@ requireOptions("--allowUnsupportedTiers=true", "--usePrivateClassFields=true")
-
 // Convoluted program which will compile turn GetPrivateName into GetByOffset, and then OSRExit
 // from getField() due to a CheckStructure failure
 
