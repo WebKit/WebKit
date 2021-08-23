@@ -180,6 +180,32 @@ TEST(UIWKInteractionViewProtocol, SelectPositionAtPointInElementInNonFocusedFram
     EXPECT_WK_STREQ("DIV", [webView stringByEvaluatingJavaScript:@"document.querySelector('iframe').contentDocument.activeElement.tagName"]);
 }
 
+TEST(UIWKInteractionViewProtocol, TextInteractionCanBeginInExistingSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    bool didStartInputSession = false;
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) {
+        didStartInputSession = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView synchronouslyLoadTestPageNamed:@"editable-responsive-body"];
+    TestWebKitAPI::Util::run(&didStartInputSession);
+
+    auto contentView = [webView textInputContentView];
+    BOOL allowsTextInteractionOutsideOfSelection = [contentView textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:CGPointMake(50, 50)];
+    EXPECT_TRUE(allowsTextInteractionOutsideOfSelection);
+
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+
+    BOOL allowsTextInteractionInsideSelection = [contentView textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:CGPointMake(50, 50)];
+    EXPECT_TRUE(allowsTextInteractionInsideSelection);
+}
+
 } // namespace TestWebKitAPI
 
 #endif

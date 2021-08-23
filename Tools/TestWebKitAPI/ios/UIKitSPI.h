@@ -189,6 +189,10 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)accessoryDone;
 @end
 
+typedef NS_ENUM(NSInteger, UIWKGestureType) {
+    UIWKGestureLoupe
+};
+
 @protocol UIWKInteractionViewProtocol
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
@@ -199,6 +203,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler;
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler;
 - (void)selectWordForReplacement;
+- (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point;
 @property (nonatomic, readonly) NSString *selectedText;
 
 @optional

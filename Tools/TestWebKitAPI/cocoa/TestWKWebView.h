@@ -30,6 +30,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 @class _WKActivatedElementInfo;
+@class _WKTextInputContext;
 @protocol UITextInputInternal;
 @protocol UITextInputMultiDocument;
 @protocol UITextInputPrivate;
@@ -50,6 +51,7 @@
 @interface WKWebView (TestWebKitAPI)
 #if PLATFORM(IOS_FAMILY)
 @property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol, UITextInputTokenizer> *textInputContentView;
+- (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect;
 #endif
 @property (nonatomic, readonly) NSString *contentsAsString;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;

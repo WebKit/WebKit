@@ -82,18 +82,6 @@ static bool didScroll;
 
 @implementation TestWKWebView (SynchronousTextInputContext)
 
-- (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect
-{
-    __block bool finished = false;
-    __block RetainPtr<NSArray<_WKTextInputContext *>> result;
-    [self _requestTextInputContextsInRect:rect completionHandler:^(NSArray<_WKTextInputContext *> *contexts) {
-        result = contexts;
-        finished = true;
-    }];
-    TestWebKitAPI::Util::run(&finished);
-    return result.autorelease();
-}
-
 - (UIResponder<UITextInput> *)synchronouslyFocusTextInputContext:(_WKTextInputContext *)context placeCaretAt:(CGPoint)point
 {
     __block bool finished = false;

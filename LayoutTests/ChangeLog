@@ -1,3 +1,19 @@
+2021-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/selection/ios/select-text-in-existing-selection.html fails on iOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=229411
+        rdar://80385434
+
+        Reviewed by Tim Horton.
+
+        Remove this failing layout test, along with its test expectations. See API test in Tools/ChangeLog for more
+        details.
+
+        * editing/selection/ios/select-text-in-existing-selection-expected.txt: Removed.
+        * editing/selection/ios/select-text-in-existing-selection.html: Removed.
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
         Set test expectations for fast/events/ios/rotation/basic-rotation.html.

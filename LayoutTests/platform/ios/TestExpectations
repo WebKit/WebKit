@@ -3380,9 +3380,6 @@ http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
 # rdar://80396502 ([ iOS15 ] http/wpt/mediarecorder/pause-recording.html is a flaky crash)
 http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
 
-#rdar://80385434 ([ iOS15 ] editing/selection/ios/select-text-in-existing-selection.html [ Failure ])
-editing/selection/ios/select-text-in-existing-selection.html  [ Failure ]
-
 # rdar://80383672 ([ iOS15 ] accessibility/misspelling-range.html is failing)
 accessibility/misspelling-range.html  [ Failure ]
 

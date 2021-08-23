@@ -1,3 +1,49 @@
+2021-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/selection/ios/select-text-in-existing-selection.html fails on iOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=229411
+        rdar://80385434
+
+        Reviewed by Tim Horton.
+
+        After the changes in rdar://70851909, UIKit's text selection interaction (which encompasses the loupe text
+        interaction gesture) is no longer allowed to transition to `Began` state when long pressing inside an existing
+        text selection. This causes us to no longer enter floating caret mode (via loupe gesture) and change the
+        selection when triggering a long press in selected text, which causes this layout test to fail.
+
+        This layout test was originally intended to test a fix for text selection via trackpad on iPadOS failing to
+        begin when clicking and dragging inside text that has already been selected. At that time, I intentionally wrote
+        this test in a way that didn't involve the trackpad at all, and instead simply exercised the codechange in
+        `-[WKContentView textInteractionGesture:shouldBeginAtPoint:]` by synthesizing touches.
+
+        Since UIKit no longer supports this behavior, we can rewrite this test to be more robust by calling and checking
+        the value of `-textInteractionGesture:shouldBeginAtPoint:` in an API test. This patch deletes the existing
+        layout test, and replaces it with an API test that directly exercises the SPI on `UIWKInteractionViewProtocol`.
+
+        Note that the original bug that was fixed by the change that came along with this failing test remains fixed,
+        because trackpad-based text selection on iPadOS uses `UITextLoupeCursorBehavior` rather than
+        `UITextLoupeTouchBehavior`, which (unlike the former) contains logic to explicitly avoid starting the loupe
+        text interaction when long pressing inside of selected text.
+
+        Test: UIWKInteractionViewProtocol.TextInteractionCanBeginInExistingSelection
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (-[TestWKWebView synchronouslyRequestTextInputContextsInRect:]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+        (-[TestWKWebView synchronouslyRequestTextInputContextsInRect:]): Deleted.
+
+        Drive-by fix: also fix a build warning by pulling duplicate implementations of this testing helper method into
+        a common location in `WKWebView (TestWebKitAPI)`, inside of `TestWKWebView.h`.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/editable-responsive-body.html: Added.
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView synchronouslyRequestTextInputContextsInRect:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2021-08-23  Peng Liu  <peng.liu6@apple.com>
 
         Add a new option '--show-window' to run-webkit-tests

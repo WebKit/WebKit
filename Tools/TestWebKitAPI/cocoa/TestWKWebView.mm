@@ -36,6 +36,7 @@
 #import <WebKit/WebKitPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKTextInputContext.h>
 #import <objc/runtime.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -136,6 +137,18 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (UIView <UITextInputPrivate, UITextInputMultiDocument> *)textInputContentView
 {
     return (UIView <UITextInputPrivate, UITextInputMultiDocument> *)[self valueForKey:@"_currentContentView"];
+}
+
+- (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect
+{
+    __block bool finished = false;
+    __block RetainPtr<NSArray<_WKTextInputContext *>> result;
+    [self _requestTextInputContextsInRect:rect completionHandler:^(NSArray<_WKTextInputContext *> *contexts) {
+        result = contexts;
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    return result.autorelease();
 }
 
 #endif // PLATFORM(IOS_FAMILY)

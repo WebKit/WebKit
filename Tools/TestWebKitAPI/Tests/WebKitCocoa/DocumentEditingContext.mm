@@ -139,18 +139,6 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
     TestWebKitAPI::Util::run(&finished);
 }
 
-- (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect
-{
-    __block bool finished = false;
-    __block RetainPtr<NSArray<_WKTextInputContext *>> result;
-    [self _requestTextInputContextsInRect:rect completionHandler:^(NSArray<_WKTextInputContext *> *contexts) {
-        result = contexts;
-        finished = true;
-    }];
-    TestWebKitAPI::Util::run(&finished);
-    return result.autorelease();
-}
-
 - (UITextPlaceholder *)synchronouslyInsertTextPlaceholderWithSize:(CGSize)size
 {
     __block bool finished = false;
