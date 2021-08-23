@@ -3993,10 +3993,10 @@ void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testZShrArgImm32(0xffffffff, 63));
 
     if (Options::useB3CanonicalizePrePostIncrements()) {
-        RUN(testStorePreIndex32());
-        RUN(testStorePreIndex64());
-        RUN(testStorePostIndex32());
-        RUN(testStorePostIndex64());
+        RUN(testLoadPreIndex32());
+        RUN(testLoadPreIndex64());
+        RUN(testLoadPostIndex32());
+        RUN(testLoadPostIndex64());
     }
 }
 
