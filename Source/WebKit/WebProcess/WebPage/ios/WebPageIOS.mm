@@ -3177,17 +3177,13 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         return std::nullopt;
 
     auto focusedElement = m_focusedElement.copyRef();
-    bool willLayout = document->view()->needsLayout();
     layoutIfNeeded();
 
     // Layout may have detached the document or caused a change of focus.
     if (!document->view() || focusedElement != m_focusedElement)
         return std::nullopt;
 
-    if (willLayout)
-        sendEditorStateUpdate();
-    else
-        scheduleFullEditorStateUpdate();
+    scheduleFullEditorStateUpdate();
 
     FocusedElementInformation information;
 

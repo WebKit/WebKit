@@ -1,3 +1,69 @@
+2021-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271146): editing/selection/ios/scrolling-to-focused-element-inside-iframe.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229376
+        rdar://80384683
+
+        Reviewed by Megan Gardner.
+
+        This iOS-specific test verifies that tapping on an element that makes itself contenteditable inside of a click
+        event handler both (1) brings up the software keyboard, and (2) scrolls to reveal the focused, newly editable
+        element such that it is not obscured by the software keyboard. This test began failing after the changes in
+        r271146 -- specifically, the fact that the call to `Element::setFocus()` moved to before the focus event is
+        dispatched, rather than afterwards.
+
+        The following timeline of events (annotated with web and UI processes) illustrates why this happens:
+
+        (WEB)   1.  The click event on the element inside the subframe is handled; the element is made contentEditable,
+                    and we make it focused, by first calling `Element::setFocus` and then `Element::dispatchFocusEvent`.
+                    Right before dispatching the "focus" event, we call out to the client layer, via
+                    `WebPage::elementDidFocus`, and compute a FocusedElementInformation struct to encode and send to the
+                    UI process in the WebPageProxy::ElementDidFocus IPC message.
+
+                2.  In the process of populating this struct in `WebPage::focusedElementInformation`, we observe that
+                    layout is dirty, and immediately compute and send an EditorState underneath
+                    `WebPage::sendEditorStateUpdate()`.
+
+                3.  We then proceed to construct and send FocusedElementInformation to the UI process via
+                    `Messages::WebPageProxy::ElementDidFocus`.
+
+        (UI)    4.  We receive the EditorState that was computed and sent in step (2), which contains the up-to-date
+                    state corresponding to the newly focused contentEditable `div`.
+
+                5.  We then receive the FocusedElementInformation computed and sent in step (3), which makes us begin
+                    waiting for the next post-layout EditorState update before zooming to reveal the focused element, by
+                    setting WebPageProxy's `m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement` flag. However,
+                    this post-layout EditorState after focusing the `div` never arrives, since we've already computed it
+                    and sent it in step (2).
+
+                6.  The software keyboard finishes animating in, causing us to resolve the UIScriptController promise
+                    that we began to await after calling `UIHelper.activateAndWaitForInputSessionAt` in the test.
+
+        (WEB)   7.  The test finishes, calls `testRunner.notifyDone()`, and we destroy the focused subframe and clear
+                    the editable selection as well. This selection change causes us to compute another post-layout
+                    editor state and send it to the UI process.
+
+        (UI)    8.  The UI process *finally* receives the post-layout EditorState computed in (7). However, it's too
+                    late, since (a) the test has already finished, and (b) the post-layout EditorState is computed after
+                    the editable selection has already been cleared, so it's missing selection rect information anyways.
+
+        Prior to r271146, the call to `Element::setFocus` came *after* step (3), and caused us to compute and send
+        another EditorState to the UI process, which ensured that an up-to-date post layout EditorState would arrive in
+        the UI process shortly after step (5).
+
+        To fix this, we should avoid immediately computing and sending an EditorState to the UI process in the middle of
+        `WebPage::focusedElementInformation`, and instead simply schedule an EditorState during the next rendering
+        update. This ensures that the editor state triggered during element focus will always arrive after
+        `WebPageProxy::ElementDidFocus` in the UI process, rather than before, which allows us to scroll to the correct
+        selection rect in the UI process when focusing an editable element.
+
+        This also has the additional benefit of avoiding redundant EditorState computation and updates in the case where
+        focus is programmatically thrashed between elements during the same rendering update, since all of the editor
+        state updates are effectively batched together and dispatched at the end of the current rendering update.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::focusedElementInformation):
+
 2021-08-23  Chris Dumez  <cdumez@apple.com>
 
         WebKit2 can only have one active navigation policy check for a given frame

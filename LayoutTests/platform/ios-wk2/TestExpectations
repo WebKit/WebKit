@@ -2014,7 +2014,6 @@ http/wpt/mediarecorder/video-rotation.html [ Pass Failure ]
 editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.html [ Pass Timeout ]
 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
-editing/selection/ios/scrolling-to-focused-element-inside-iframe.html [ Failure ]
 
 # rdar://80393995 ([ iOS15 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout) http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
 
