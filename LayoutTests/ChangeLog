@@ -1,3 +1,12 @@
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac wk1] fast/canvas/webgl/texImage2D-video-flipY-false.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=229425.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-23  Alex Christensen  <achristensen@webkit.org>
 
         Setting window.location.href to an invalid URL should throw a TypeError
