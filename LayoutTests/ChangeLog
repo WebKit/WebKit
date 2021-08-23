@@ -1,5 +1,14 @@
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
+        [Monterey] fast/animation/request-animation-frame-throttling-detached-iframe.html is failing.
+        <rdar://80333935>.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for fast/events/ios/key-events-comprehensive/key-events-meta-shift.html.
         <rdar://80385777>.
 
