@@ -344,14 +344,12 @@ inline void JIT::emitValueProfilingSite(Metadata& metadata, GPRReg resultReg)
 }
 #endif
 
-inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile* arrayProfile)
+inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile* arrayProfile, RegisterID scratchGPR)
 {
     if (shouldEmitProfiling()) {
-        load32(MacroAssembler::Address(cell, JSCell::structureIDOffset()), indexingType);
-        store32(indexingType, arrayProfile->addressOfLastSeenStructureID());
+        load32(MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
+        store32(scratchGPR, arrayProfile->addressOfLastSeenStructureID());
     }
-
-    load8(Address(cell, JSCell::indexingTypeAndMiscOffset()), indexingType);
 }
 
 inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfile)

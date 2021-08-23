@@ -247,12 +247,12 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 
     if (metadata.m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
         auto notCell = branchIfNotCell(regT1);
-        emitArrayProfilingSiteWithCell(regT0, regT4, profile);
+        emitArrayProfilingSiteWithCell(regT0, profile, regT4);
         notCell.link(this);
         callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByVal, dst, TrustedImmPtr(m_codeBlock->globalObject()), JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2));
     } else {
         emitJumpSlowCaseIfNotJSCell(base, regT1);
-        emitArrayProfilingSiteWithCell(regT0, regT4, profile);
+        emitArrayProfilingSiteWithCell(regT0, profile, regT4);
 
         JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
 
@@ -474,12 +474,13 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     PatchableJump notIndex = patchableBranch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag));
     addSlowCase(notIndex);
-    emitArrayProfilingSiteWithCell(regT0, regT1, profile);
+    emitArrayProfilingSiteWithCell(regT0, profile, regT1);
     
     PatchableJump badType;
     JumpList slowCases;
 
     // FIXME: Maybe we should do this inline?
+    load8(Address(regT0, JSCell::indexingTypeAndMiscOffset()), regT1);
     addSlowCase(branchTest32(NonZero, regT1, TrustedImm32(CopyOnWrite)));
     and32(TrustedImm32(IndexingShapeMask), regT1);
     
@@ -744,7 +745,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
 
     if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
         Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
-        emitArrayProfilingSiteWithCell(regT0, regT2, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
+        emitArrayProfilingSiteWithCell(regT0, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile, regT2);
         notArrayLengthMode.link(this);
     }
 
@@ -921,7 +922,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
-    emitArrayProfilingSiteWithCell(regT0, regT4, profile);
+    emitArrayProfilingSiteWithCell(regT0, profile, regT4);
 
     JITInByValGenerator gen(
         m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
