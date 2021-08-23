@@ -1,3 +1,15 @@
+2021-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Freetype] Set maximum allowed font size for Freetype
+        https://bugs.webkit.org/show_bug.cgi?id=228893
+
+        Reviewed by Michael Catanzaro.
+
+        Maximum allowed font size in Freetype2 is 65535 because x_ppem and y_ppem fields in FreeType structs are of type
+        'unsigned short'.
+
+        * rendering/style/RenderStyleConstants.h:
+
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for vertical-align: super
