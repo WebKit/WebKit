@@ -1,3 +1,24 @@
+2021-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/events/ios/key-events-comprehensive/key-events-meta-shift.html is failing in iOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=229417
+        rdar://80385777
+
+        Reviewed by Tim Horton.
+
+        This test is failing in iOS 15 because "command + shift + /" now triggers a system-wide key command that shows
+        a help menu; this key command is handled very early on in UIKit, before keyboard code gets a chance to handle
+        the event as a WebEvent and dispatch it to the page.
+
+        rdar://82257764 tracks making this key command preventable by marking it as a key command that should be handled
+        after dispatching key events. For the time being, add this to the list of system key commands that we should
+        avoid in `key-tester.js`, and rebaseline the test.
+
+        * fast/events/ios/key-events-comprehensive/key-events-meta-shift-expected.txt:
+        * fast/events/ios/resources/key-tester.js:
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug] http/tests/inspector/network/fetch-network-data.html is a flaky failure.

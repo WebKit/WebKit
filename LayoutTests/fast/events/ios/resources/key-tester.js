@@ -78,6 +78,9 @@ let disallowedKeyCommands = [
 
     // FIXME: Command + A cannot be prevented from keypress. See <https://bugs.webkit.org/show_bug.cgi?id=199475>.
     new KeyCommand("a", ["metaKey"]),
+
+    // FIXME: Command + shift + / cannot be prevented. See <rdar://82257764>.
+    new KeyCommand("/", ["metaKey", "shiftKey"]),
 ];
 for (let i = 1; i <= 9; ++i)
     disallowedKeyCommands.push(new KeyCommand(i, ["metaKey"]));

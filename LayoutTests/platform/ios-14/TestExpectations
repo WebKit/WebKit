@@ -59,10 +59,6 @@ fast/events/touch/ios/long-press-on-link.html [ Pass ]
 # rdar://80392337 ([ iOS15 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html is a constant failure)
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Pass ]
 
-#Batch adding of test expectations group 4:
-# rdar://80385777 ([ iOS15 ] fast/events/ios/key-events-comprehensive/key-events-meta-shift.html is failing)
-fast/events/ios/key-events-comprehensive/key-events-meta-shift.html [ Pass ]
-
 # rdar://80386075 ([ iOS15 ] fast/css/ios/system-color-for-css-value.html)
 fast/css/ios/system-color-for-css-value.html [ Pass ]
 
