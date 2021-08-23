@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ColorSpace.h"
+#include <optional>
 
 typedef struct CGColorSpace *CGColorSpaceRef;
 
@@ -64,6 +65,8 @@ WEBCORE_EXPORT CGColorSpaceRef ROMMRGBColorSpaceRef();
 #if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
 WEBCORE_EXPORT CGColorSpaceRef xyzColorSpaceRef();
 #endif
+
+std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef);
 
 static inline CGColorSpaceRef cachedNullableCGColorSpace(ColorSpace colorSpace)
 {

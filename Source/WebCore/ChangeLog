@@ -1,3 +1,82 @@
+2021-08-23  Cameron McCormack  <heycam@apple.com>
+
+        Preserve color space when getting current color in DisplayList::DrawGlyphsRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=229024
+        <rdar://problem/81828477>
+
+        Reviewed by Sam Weinig.
+
+        When GPU canvas is enabled, DrawGlyphsRecorder records the text fill,
+        stroke, and shadow colors by getting them from the context using
+        CGGStateGetFillColor etc.  This is done so that color glyphs have each
+        part painted in the right color.  But the current conversion from
+        CGColor to WebCore::Color lossily converts to sRGB.  So we need to get
+        the color space and color components from the CGColor and preserve them.
+
+        The existing Color(CGColorRef) constructor is replaced by two
+        constructor functions, createAndPreserveColorSpace and
+        roundAndClampToSRGBALossy, so the conversion behavior is clear at call
+        sites.  createAndPreserveColorSpace will match the CGColor's color
+        space to one of the predefined spaces that WebCore::Color can
+        represent.  If it's some other color space, we convert to XYZ (on
+        platforms where that's available), since that will result in the least
+        loss, or to sRGB (on platforms where XYZ is not available).
+
+        CGColorSpaceEqualToColorSpace, which is used when determining the
+        CGColor's color space, is not very expensive, but it will do more than a
+        pointer comparison in case we pass in two CGColorSpaceRefs that are
+        equivalent but not the same pointer value.  Since our new
+        colorSpaceForCGColorSpace function will be used with CGColors that have
+        been set WebCore during canvas drawing, we will get back the same
+        pointers that we have cached in sRGBColorSpaceRef(),
+        displayP3ColorSpaceRef(), etc.  If calling CGColorSpaceEqualToColorSpace
+        on all our supported color spaces turns out to be too expensive, we
+        could start by doing a pointer comparison on each before calling
+        CGColorSpaceEqualToColorSpace.
+
+        The way colorSpaceForCGColorSpace is written we could end up
+        instantiating all of our supported color spaces, if an author used an
+        XYZ color when drawing text (the last color profile we check).  We
+        could try harder to avoid doing this if it's important.
+
+        Tests: imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html
+               imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html
+               imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsWindowCSS const):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsBackgroundCSS const):
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextColor const):
+        * platform/graphics/Color.h:
+        (WebCore::Color::createAndPreserveColorSpace):
+        (WebCore::Color::createAndLosslesslyConvertToSupportedColorSpace):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::backgroundColor const):
+        * platform/graphics/ca/cocoa/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer setBorderColor:]):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::backgroundColor const):
+        (printColor):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::drawRepaintCounters):
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::roundAndClampToSRGBALossy):
+        (WebCore::Color::createAndLosslesslyConvertToSupportedColorSpace):
+        (WebCore::Color::createAndPreserveColorSpace):
+        (WebCore::platformConvertColorComponents):
+        * platform/graphics/cg/ColorSpaceCG.cpp:
+        (WebCore::colorSpaceForCGColorSpace):
+        * platform/graphics/cg/ColorSpaceCG.h:
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DisplayList::DrawGlyphsRecorder::updateShadow):
+        (WebCore::DisplayList::DrawGlyphsRecorder::recordDrawGlyphs):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::color):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::systemColorFromCSSValueSystemColorInformation):
+
 2021-08-23  Alan Bujtas  <zalan@apple.com>
 
         Simplified text measuring only works with the primary font

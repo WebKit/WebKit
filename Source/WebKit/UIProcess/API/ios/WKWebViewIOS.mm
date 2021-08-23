@@ -481,7 +481,7 @@ enum class AllowPageBackgroundColorOverride : bool { No, Yes };
 static WebCore::Color baseScrollViewBackgroundColor(WKWebView *webView, AllowPageBackgroundColorOverride allowPageBackgroundColorOverride)
 {
     if (webView->_customContentView)
-        return [webView->_customContentView backgroundColor].CGColor;
+        return WebCore::roundAndClampToSRGBALossy([webView->_customContentView backgroundColor].CGColor);
 
     if (webView->_gestureController) {
         WebCore::Color color = webView->_gestureController->backgroundColorForCurrentSnapshot();
@@ -507,11 +507,11 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     WebCore::Color color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
 
     if (!color.isValid() && webView->_contentView)
-        color = [webView->_contentView backgroundColor].CGColor;
+        color = WebCore::roundAndClampToSRGBALossy([webView->_contentView backgroundColor].CGColor);
 
     if (!color.isValid()) {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-        color = UIColor.systemBackgroundColor.CGColor;
+        color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
 #else
         color = WebCore::Color::white;
 #endif

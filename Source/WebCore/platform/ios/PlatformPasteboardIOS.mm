@@ -315,7 +315,7 @@ Color PlatformPasteboard::color()
 {
     NSData *data = [m_pasteboard dataForPasteboardType:UIColorPboardType];
     UIColor *uiColor = [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getUIColorClass() fromData:data error:nil];
-    return Color(uiColor.CGColor);
+    return roundAndClampToSRGBALossy(uiColor.CGColor);
 }
 
 URL PlatformPasteboard::url()

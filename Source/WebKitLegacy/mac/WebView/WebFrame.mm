@@ -443,7 +443,7 @@ static NSURL *createUniqueWebDataURL();
             WebCore::Color color = WebCore::colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
             ALLOW_DEPRECATED_DECLARATIONS_END
 #else
-            WebCore::Color color = WebCore::Color(backgroundColor);
+            WebCore::Color color(WebCore::roundAndClampToSRGBALossy(backgroundColor));
 #endif
             view->setBaseBackgroundColor(color);
             view->setShouldUpdateWhileOffscreen([webView shouldUpdateWhileOffscreen]);
@@ -1388,7 +1388,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)setCaretColor:(CGColorRef)color
 {
-    WebCore::Color qColor = color ? WebCore::Color(color) : WebCore::Color::black;
+    WebCore::Color qColor = color ? WebCore::Color(WebCore::roundAndClampToSRGBALossy(color)) : WebCore::Color::black;
     WebCore::Frame *frame = core(self);
     frame->selection().setCaretColor(qColor);
 }

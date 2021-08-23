@@ -130,7 +130,7 @@ void PlatformCALayerWinInternal::drawRepaintCounters(CACFLayerRef caLayer, CGCon
         backgroundColor = cachedCGColor(Color::red);
 
     GraphicsContextCG graphicsContext(context);
-    PlatformCALayer::drawRepaintIndicator(graphicsContext, owner(), drawCount, backgroundColor);
+    PlatformCALayer::drawRepaintIndicator(graphicsContext, owner(), drawCount, roundAndClampToSRGBALossy(backgroundColor));
 }
 
 void PlatformCALayerWinInternal::internalSetNeedsDisplay(const FloatRect* dirtyRect)

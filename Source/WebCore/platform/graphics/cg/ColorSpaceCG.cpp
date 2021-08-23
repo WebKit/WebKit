@@ -108,6 +108,46 @@ CGColorSpaceRef xyzColorSpaceRef()
 }
 #endif
 
+std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
+{
+    if (CGColorSpaceEqualToColorSpace(colorSpace, sRGBColorSpaceRef()))
+        return ColorSpace::SRGB;
+
+#if HAVE(CORE_GRAPHICS_ADOBE_RGB_1998_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, adobeRGB1998ColorSpaceRef()))
+        return ColorSpace::A98RGB;
+#endif
+
+#if HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, displayP3ColorSpaceRef()))
+        return ColorSpace::DisplayP3;
+#endif
+
+    // FIXME: labColorSpaceRef() not implemented.
+
+#if HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, linearSRGBColorSpaceRef()))
+        return ColorSpace::LinearSRGB;
+#endif
+
+#if HAVE(CORE_GRAPHICS_ROMMRGB_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, ROMMRGBColorSpaceRef()))
+        return ColorSpace::ProPhotoRGB;
+#endif
+
+#if HAVE(CORE_GRAPHICS_ITUR_2020_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, ITUR_2020ColorSpaceRef()))
+        return ColorSpace::Rec2020;
+#endif
+
+#if HAVE(CORE_GRAPHICS_XYZ_COLOR_SPACE)
+    if (CGColorSpaceEqualToColorSpace(colorSpace, xyzColorSpaceRef()))
+        return ColorSpace::XYZ_D50;
+#endif
+
+    return std::nullopt;
+}
+
 }
 
 #endif // USE(CG)

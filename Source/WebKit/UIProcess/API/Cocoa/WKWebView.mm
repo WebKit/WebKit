@@ -1784,7 +1784,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (void)setUnderPageBackgroundColor:(CocoaColor *)underPageBackgroundColorOverride
 {
-    _page->setUnderPageBackgroundColorOverride(underPageBackgroundColorOverride.CGColor);
+    _page->setUnderPageBackgroundColorOverride(WebCore::roundAndClampToSRGBALossy(underPageBackgroundColorOverride.CGColor));
 }
 
 + (BOOL)automaticallyNotifiesObserversOfUnderPageBackgroundColor

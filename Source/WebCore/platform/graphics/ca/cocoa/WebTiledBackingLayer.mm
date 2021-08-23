@@ -147,7 +147,7 @@
 
 - (void)setBorderColor:(CGColorRef)borderColor
 {
-    _tileController->setTileDebugBorderColor(WebCore::Color(borderColor));
+    _tileController->setTileDebugBorderColor(WebCore::roundAndClampToSRGBALossy(borderColor));
 }
 
 - (void)setBorderWidth:(CGFloat)borderWidth

@@ -820,7 +820,7 @@ void PlatformCALayerCocoa::setMagnificationFilter(FilterType value)
 
 Color PlatformCALayerCocoa::backgroundColor() const
 {
-    return [m_layer backgroundColor];
+    return roundAndClampToSRGBALossy([m_layer backgroundColor]);
 }
 
 void PlatformCALayerCocoa::setBackgroundColor(const Color& value)

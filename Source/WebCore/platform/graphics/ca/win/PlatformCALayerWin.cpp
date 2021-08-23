@@ -572,7 +572,7 @@ void PlatformCALayerWin::setMagnificationFilter(FilterType value)
 
 Color PlatformCALayerWin::backgroundColor() const
 {
-    return CACFLayerGetBackgroundColor(m_layer.get());
+    return roundAndClampToSRGBALossy(CACFLayerGetBackgroundColor(m_layer.get()));
 }
 
 void PlatformCALayerWin::setBackgroundColor(const Color& value)
@@ -703,7 +703,7 @@ static void printTransform(StringBuilder& builder, const CATransform3D& transfor
 
 static void printColor(StringBuilder& builder, int indent, const String& label, CGColorRef color)
 {
-    Color layerColor(color);
+    Color layerColor(roundAndClampToSRGBALossy(color));
     if (!layerColor.isValid())
         return;
 

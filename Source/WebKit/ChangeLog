@@ -1,3 +1,23 @@
+2021-08-23  Cameron McCormack  <heycam@apple.com>
+
+        Preserve color space when getting current color in DisplayList::DrawGlyphsRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=229024
+        <rdar://problem/81828477>
+
+        Reviewed by Sam Weinig.
+
+        Change existing CGColor -> WebCore::Color conversions to be explicit
+        about lossily converting to sRGB.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setUnderPageBackgroundColor:]):
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest initWithCoder:]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformUnderPageBackgroundColor const):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+
 2021-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r271146): editing/selection/ios/scrolling-to-focused-element-inside-iframe.html is failing

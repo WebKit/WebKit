@@ -116,12 +116,11 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(Ref<PlatformCALayer>&
     CGRect rootBounds = m_rootChild->rootLayer()->bounds();
     m_rootChild->setPosition(rootBounds.origin);
     m_rootChild->setBounds(FloatRect(FloatPoint(), FloatSize(rootBounds.size)));
-    m_rootChild->setBackgroundColor(CGColorGetConstantColor(kCGColorBlack));
+    m_rootChild->setBackgroundColor(Color::black);
 #ifndef NDEBUG
-    RetainPtr<CGColorRef> redColor = adoptCF(CGColorCreateGenericRGB(1, 0, 0, 1));
-    rootLayer->setBackgroundColor(redColor.get());
+    rootLayer->setBackgroundColor(Color::red);
 #else
-    rootLayer->setBackgroundColor(CGColorGetConstantColor(kCGColorBlack));
+    rootLayer->setBackgroundColor(Color::black);
 #endif
 }
 #endif
