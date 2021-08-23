@@ -1432,9 +1432,15 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
     if (font.codePath(run) != FontCascade::CodePath::Simple)
         return false;
 
+    auto& fontCascade = style().fontCascade();
+    auto& primaryFont = fontCascade.primaryFont();
     auto whitespaceIsCollapsed = style().collapseWhiteSpace();
     for (unsigned i = 0; i < text().length(); ++i) {
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(text()[i], whitespaceIsCollapsed))
+        auto character = text()[i];
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
+            return false;
+        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
+        if (!glyphData.isValid() || glyphData.font != &primaryFont)
             return false;
     }
     return true;

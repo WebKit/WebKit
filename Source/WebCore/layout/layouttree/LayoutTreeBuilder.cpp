@@ -98,16 +98,20 @@ static std::optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuatio
     return block.relativePositionOffset();
 }
 
-static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontCascade& font, bool whitespaceIsCollapsed)
+static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
 {
-    if (font.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
+    if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
         return false;
 
-    if (font.wordSpacing() || font.letterSpacing())
+    if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
         return false;
 
+    auto& primaryFont = fontCascade.primaryFont();
     for (unsigned i = 0; i < content.length(); ++i) {
         if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(content[i], whitespaceIsCollapsed))
+            return false;
+        auto glyphData = fontCascade.glyphDataForCharacter(content[i], false);
+        if (!glyphData.isValid() || glyphData.font != &primaryFont)
             return false;
     }
     return true;

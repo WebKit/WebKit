@@ -21,6 +21,14 @@ if (window.internals) {
 </head>
 <body>
 This test makes sure that system fallback fonts during loading are invisible when the loading font is invisible. The test passes if this text is the only text on the page.
-<div style="font: 48px 'WebFont', 'Helvetica';">&#x306E;</div>
 </body>
 </html>
+<script>
+window.onload = function() {
+  let webFontDiv = document.createElement("div");
+  webFontDiv.style.fontSize = "48px";
+  webFontDiv.style.fontFamily = "WebFont, Helvetica";
+  webFontDiv.innerHTML = "&#x306E;";
+  document.body.appendChild(webFontDiv);
+};
+</script>

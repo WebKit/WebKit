@@ -1,5 +1,23 @@
 2021-08-23  Alan Bujtas  <zalan@apple.com>
 
+        Simplified text measuring only works with the primary font
+        https://bugs.webkit.org/show_bug.cgi?id=228617
+        <rdar://problem/81588175>
+
+        Reviewed by Myles C. Maxfield.
+
+        This is in preparation for adding fallback font support (IFC).
+
+        The reason why this works on trunk is because computeCanUseSimplifiedTextMeasuring() is only used by
+        the modern line layout codepath which does not support fallback font support yet.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::canUseSimplifiedTextMeasuring):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeCanUseSimplifiedTextMeasuring const):
+
+2021-08-23  Alan Bujtas  <zalan@apple.com>
+
         Pre-formatted content gets distorted when attempting to select content
         https://bugs.webkit.org/show_bug.cgi?id=228655
         <rdar://81288187>

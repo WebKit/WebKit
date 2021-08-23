@@ -2264,6 +2264,7 @@ webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-will-change/will-cha
 
 # A support file for a test
 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
 imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002.html
