@@ -1,3 +1,22 @@
+2021-08-23  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: CSS Changes: changes are not updated live
+        https://bugs.webkit.org/show_bug.cgi?id=229153
+        <rdar://problem/81989328>
+
+        Reviewed by Devin Rousso.
+
+        Dispatch an event whenever the list of modified styles changes.
+        Re-layout the Changes details sidebar panel in response to this event
+        to reflect the latest state of the modified styles.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.prototype.addModifiedStyle):
+        (WI.CSSManager.prototype.removeModifiedStyle):
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype.attached):
+        (WI.ChangesDetailsSidebarPanel.prototype.detached):
+
 2021-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove more non-inclusive language from Source

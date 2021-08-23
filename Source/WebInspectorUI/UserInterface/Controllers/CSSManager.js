@@ -355,6 +355,8 @@ WI.CSSManager = class CSSManager extends WI.Object
     addModifiedStyle(style)
     {
         this._modifiedStyles.set(style.stringId, style);
+
+        this.dispatchEventToListeners(WI.CSSManager.Event.ModifiedStylesChanged);
     }
 
     getModifiedStyle(style)
@@ -365,6 +367,8 @@ WI.CSSManager = class CSSManager extends WI.Object
     removeModifiedStyle(style)
     {
         this._modifiedStyles.delete(style.stringId);
+
+        this.dispatchEventToListeners(WI.CSSManager.Event.ModifiedStylesChanged);
     }
 
     // PageObserver
@@ -674,6 +678,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 WI.CSSManager.Event = {
     StyleSheetAdded: "css-manager-style-sheet-added",
     StyleSheetRemoved: "css-manager-style-sheet-removed",
+    ModifiedStylesChanged: "css-manager-modified-styles-changed",
     DefaultAppearanceDidChange: "css-manager-default-appearance-did-change",
     ForcedAppearanceDidChange: "css-manager-forced-appearance-did-change",
 };

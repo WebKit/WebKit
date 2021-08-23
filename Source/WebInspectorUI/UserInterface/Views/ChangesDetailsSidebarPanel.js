@@ -45,11 +45,13 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
         super.attached();
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.CSSManager.addEventListener(WI.CSSManager.Event.ModifiedStylesChanged, this.needsLayout, this);
     }
 
     detached()
     {
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
+        WI.CSSManager.removeEventListener(WI.CSSManager.Event.ModifiedStylesChanged, this.needsLayout, this);
 
         super.detached();
     }
