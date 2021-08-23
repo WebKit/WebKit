@@ -1,3 +1,14 @@
+2021-08-23  Alan Bujtas  <zalan@apple.com>
+
+        Pre-formatted content gets distorted when attempting to select content
+        https://bugs.webkit.org/show_bug.cgi?id=228655
+        <rdar://81288187>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/no-wrap-in-pre-with-word-wrap-expected.html: Added.
+        * fast/text/no-wrap-in-pre-with-word-wrap.html: Added.
+
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
         [Monterey] fast/animation/request-animation-frame-throttling-detached-iframe.html is failing.

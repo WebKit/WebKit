@@ -1,3 +1,24 @@
+2021-08-23  Alan Bujtas  <zalan@apple.com>
+
+        Pre-formatted content gets distorted when attempting to select content
+        https://bugs.webkit.org/show_bug.cgi?id=228655
+        <rdar://81288187>
+
+        Reviewed by Simon Fraser.
+
+        https://drafts.csswg.org/css-text/#overflow-wrap-property
+
+        "This property specifies whether the UA may break at otherwise disallowed points within
+        a line to prevent overflow, when an otherwise-unbreakable string is too long to fit within the line box.
+        It only has an effect when white-space allows wrapping."
+
+        (also see https://trac.webkit.org/changeset/10095/webkit where the wrapping behavior was introduced)
+
+        Test: fast/text/no-wrap-in-pre-with-word-wrap.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2021-08-23  Martin Robinson  <mrobinson@webkit.org>
 
         Sticky position should not use transformed position to compute sticky offset.
