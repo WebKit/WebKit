@@ -5031,6 +5031,7 @@ webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.htm
 
 webkit.org/b/226002 fast/layoutformattingcontext/table-simple-row-height.html [ Skip ]
 webkit.org/b/226364 fast/layoutformattingcontext/table-with-percent-columns-and-spacing.html [ Skip ]
+fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html [ Skip ]
 

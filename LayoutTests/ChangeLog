@@ -1,5 +1,15 @@
 2021-08-22  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add support for out-of-flow box static positioning
+        https://bugs.webkit.org/show_bug.cgi?id=229103
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/out-of-flow-with-static-position-in-ifc-expected.html: Added.
+        * fast/inline/out-of-flow-with-static-position-in-ifc.html: Added.
+
+2021-08-22  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for vertical-align: sub
         https://bugs.webkit.org/show_bug.cgi?id=228217
 

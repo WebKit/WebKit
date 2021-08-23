@@ -1,3 +1,27 @@
+2021-08-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for out-of-flow box static positioning
+        https://bugs.webkit.org/show_bug.cgi?id=229103
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for enabling positioned content for IFC handling.
+
+        In this patch we compute the static position for out-of-flow content inside the inline formatting context.
+        As per spec, the static position of an out-of-flow box is computed as if the position was set to static.
+        However it does not mean that the out-of-flow box should be involved in the inline layout process.
+        Instead we figure out this static position after the inline layout by looking at
+        the previous sibling (or parent) box's geometry and place the out-of-flow box at the logical right position.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayoutForIntergration):
+        (WebCore::Layout::InlineFormattingContext::computeStaticPositionForOutOfFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::InlineFormattingContext::collectContentIfNeeded):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentIfNeeded): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+
 2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r281389): canUseSimplifiedTextMeasuring() needs to match with WidthIterator::applyCSSVisibilityRules()
