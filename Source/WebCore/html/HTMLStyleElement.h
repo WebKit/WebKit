@@ -68,7 +68,6 @@ private:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     InlineStyleSheetOwner m_styleSheetOwner;
-    bool m_firedLoad { false };
     bool m_loadedSheet { false };
 };
 

@@ -139,11 +139,8 @@ void HTMLStyleElement::dispatchPendingEvent(StyleEventSender* eventSender)
 
 void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred)
 {
-    if (m_firedLoad)
-        return;
     m_loadedSheet = !errorOccurred;
     styleLoadEventSender().dispatchEventSoon(*this);
-    m_firedLoad = true;
 }
 
 void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

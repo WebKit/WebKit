@@ -1,3 +1,14 @@
+2021-08-23  Chris Dumez  <cdumez@apple.com>
+
+        HTMLStyleElement should be able to fire the load event more than once
+        https://bugs.webkit.org/show_bug.cgi?id=228975
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test that is now passing. This test was already passing in both Firefox and Chrome.
+
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/style_load_event-expected.txt:
+
 2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Control characters (Unicode category Cc) should be rendered visibly

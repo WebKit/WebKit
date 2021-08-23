@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT style load event should fire when textContent changed Test timed out
+PASS style load event should fire when textContent changed
 

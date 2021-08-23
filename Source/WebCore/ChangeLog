@@ -1,3 +1,20 @@
+2021-08-23  Chris Dumez  <cdumez@apple.com>
+
+        HTMLStyleElement should be able to fire the load event more than once
+        https://bugs.webkit.org/show_bug.cgi?id=228975
+
+        Reviewed by Youenn Fablet.
+
+        HTMLStyleElement should be able to fire the load event more than once. WebKit has a flag
+        preventing the load event to fire more than once but this behavior is not present in the
+        HTML specification and doesn't match other browsers.
+
+        No new tests, rebaselined existing test.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources):
+        * html/HTMLStyleElement.h:
+
 2021-08-23  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Implement multi-track support

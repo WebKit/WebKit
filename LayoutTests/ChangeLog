@@ -1,3 +1,14 @@
+2021-08-23  Chris Dumez  <cdumez@apple.com>
+
+        HTMLStyleElement should be able to fire the load event more than once
+        https://bugs.webkit.org/show_bug.cgi?id=228975
+
+        Reviewed by Youenn Fablet.
+
+        Unskip test that is no longer timing out.
+
+        * TestExpectations:
+
 2021-08-23  Xan Lopez  <xan@igalia.com>
 
         Skip failing test on 32bit (ARMv7/MIPS)

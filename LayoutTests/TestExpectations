@@ -540,7 +540,6 @@ imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigati
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-positive.html [ Skip ]
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-zero.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-element/style_load_event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/loop-from-ended.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue.html [ Skip ]
