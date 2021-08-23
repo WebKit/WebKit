@@ -1599,5 +1599,7 @@ imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure
 
 webkit.org/b/226789 [ Catalina Release ] imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Pass Failure ]
 
+webkit.org/b/229429 [ BigSur Debug ] http/tests/inspector/network/fetch-network-data.html [ Pass Failure ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]

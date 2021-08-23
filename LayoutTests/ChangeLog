@@ -1,5 +1,14 @@
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
+        [BigSur wk2 Debug] http/tests/inspector/network/fetch-network-data.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229429.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
         [Mac wk1] fast/canvas/webgl/texImage2D-video-flipY-false.html is a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=229425.
 
