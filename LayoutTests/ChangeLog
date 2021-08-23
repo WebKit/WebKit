@@ -1,5 +1,14 @@
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
+        Update test expectations for fast/events/touch/page-scaled-touch-gesture-click.html.
+        https://bugs.webkit.org/show_bug.cgi?id=168961.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for fast/events/wheelevent-in-frame.html.
         https://bugs.webkit.org/show_bug.cgi?id=168961.
 
