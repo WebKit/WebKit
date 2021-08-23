@@ -1,5 +1,14 @@
 2021-08-23  Eric Hutchison  <ehutchison@apple.com>
 
+        Set test expectations for fast/events/ios/rotation/basic-rotation.html.
+        <rdar://82259067>.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-08-23  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for fast/events/ios/key-events-comprehensive/key-events-meta-shift.html.
         <rdar://80385777>.
 

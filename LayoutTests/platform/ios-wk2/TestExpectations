@@ -2031,5 +2031,7 @@ webkit.org/b/168961 fast/events/touch/page-scaled-touch-gesture-click.html [ Tim
 
 #rdar://80385777 fast/events/ios/key-events-comprehensive/key-events-meta-shift.html is failing) [ iOS15 ] fast/events/ios/key-events-comprehensive/key-events-meta-shift.html [ Failure ]
 
+#rdar://82259067 ([iOS Debug]fast/events/ios/rotation/basic-rotation.html is a constant crash) fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
+
 #rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
