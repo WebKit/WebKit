@@ -100,6 +100,10 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
         cairo_surface_mark_dirty(m_snapshot);
     }
 
+#if WPE_CHECK_VERSION(1, 11, 1)
+    wpe_view_backend_set_fullscreen_handler(backend(), onDOMFullScreenRequest, this);
+#endif
+
     m_update.source = g_timeout_source_new(G_USEC_PER_SEC / 60000);
     g_source_set_callback(m_update.source, [](gpointer data) -> gboolean {
         static_cast<HeadlessViewBackend*>(data)->vsync();
@@ -195,5 +199,30 @@ void HeadlessViewBackend::vsync()
 #endif
     m_update.pending = false;
 }
+
+#if WPE_CHECK_VERSION(1, 11, 1)
+bool HeadlessViewBackend::onDOMFullScreenRequest(void* data, bool fullscreen)
+{
+    auto& headless = *static_cast<HeadlessViewBackend*>(data);
+
+    if (fullscreen == headless.m_is_fullscreen) {
+        // Handle situations where DOM fullscreen requests are mixed with system fullscreen commands (e.g F11)
+        headless.dispatchFullscreenEvent();
+        return true;
+    }
+    headless.m_is_fullscreen = fullscreen;
+    return true;
+}
+
+void HeadlessViewBackend::dispatchFullscreenEvent()
+{
+    if (m_is_fullscreen)
+        wpe_view_backend_dispatch_did_enter_fullscreen(backend());
+    else
+        wpe_view_backend_dispatch_did_exit_fullscreen(backend());
+}
+
+#endif
+
 
 } // namespace WPEToolingBackends

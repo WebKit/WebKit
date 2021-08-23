@@ -1063,11 +1063,66 @@
 
     "imported/w3c/webdriver/tests/fullscreen_window/fullscreen.py": {
         "subtests": {
+            "notes": "Some WPE tests are skipped as they trigger failure or timeout regardless of the expectation if they are run. Also, some tests expect the browser to start in non fullscreen mode, which isn't happening in the headless backend.",
+            "test_fullscreen": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_fullscreen_twice_is_idempotent": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}},
+                "notes": "This test also expects the browser to start in non-fullscreen mode, which is failing right now"
+            },
             "test_no_top_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
             },
             "test_no_browsing_context": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_payload": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            }
+        }
+    },
+
+    "imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py": {
+        "subtests": {
+            "notes": "Some WPE tests are skipped as they trigger failure or timeout regardless of the expectation if they are run. Also, some tests expect the browser to start in non fullscreen mode, which isn't happening in the headless backend.",
+            "test_accept[capabilities0-alert-None]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_accept[capabilities0-confirm-True]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_accept[capabilities0-prompt-]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_dismiss[capabilities0-alert-None]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_dismiss[capabilities0-confirm-False]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_dismiss[capabilities0-prompt-None]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            }
+        }
+    },
+    "imported/w3c/webdriver/tests/fullscreen_window/stress.py": {
+        "subtests": {
+            "notes": "Some WPE tests are skipped as they trigger failure or timeout regardless of the expectation if they are run. Also, some tests expect the browser to start in non fullscreen mode, which isn't happening in the headless backend.",
+            "test_stress[0]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_stress[1]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_stress[2]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_stress[3]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
+            },
+            "test_stress[4]": {
+                "expected": {"wpe": {"status": ["SKIP"], "bug": "webkit.org/b/212950"}}
             }
         }
     },

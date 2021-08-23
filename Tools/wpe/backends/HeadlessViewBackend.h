@@ -44,6 +44,12 @@ private:
     void updateSnapshot(struct wpe_fdo_shm_exported_buffer*);
     void vsync();
 
+#if WPE_CHECK_VERSION(1, 11, 1)
+    static bool onDOMFullScreenRequest(void* data, bool fullscreen);
+    void dispatchFullscreenEvent();
+#endif
+
+
     struct wpe_view_backend_exportable_fdo* m_exportable { nullptr };
 
     cairo_surface_t* m_snapshot { nullptr };
@@ -52,6 +58,10 @@ private:
         GSource* source { nullptr };
         bool pending { false };
     } m_update;
+
+#if WPE_CHECK_VERSION(1, 11, 1)
+    bool m_is_fullscreen { false };
+#endif
 };
 
 } // namespace WPEToolingBackends

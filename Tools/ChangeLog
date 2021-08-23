@@ -1,3 +1,29 @@
+2021-08-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][WebDriver] Basic fullscreen support for the headless backend
+        https://bugs.webkit.org/show_bug.cgi?id=229380
+
+        Reviewed by Adrian Perez de Castro.
+
+        r280774 added support for fullscreen in the WindowViewBackend, but
+        many webdriver tests started failing as they run in the headless
+        backend.
+
+        This commits adds basic support in HeadlessBackend to make some
+        tests pass. Currently, just storing the fullscreen state and
+        forwarding the events to the WPE backend functions.
+
+        A number of tests are still failing due to the missing multiple window
+        support (required through the `session` fixtures), but also there are
+        still some failing that expect the view to be started in
+        non-fullscreen mode, which does not happen in the headless backend.
+
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::onDOMFullScreenRequest):
+        (WPEToolingBackends::HeadlessViewBackend::dispatchFullscreenEvent):
+        * wpe/backends/HeadlessViewBackend.h:
+
 2021-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove already-shipped JS feature flags

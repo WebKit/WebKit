@@ -1,3 +1,12 @@
+2021-08-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][WebDriver] Basic fullscreen support for the headless backend
+        https://bugs.webkit.org/show_bug.cgi?id=229380
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestExpectations.json: Skip some tests still failing, mainly due to multiple window support missing.
+
 2021-05-23  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Gardening local GTK and WPE failures
