@@ -1,3 +1,20 @@
+2021-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Create a RenderLineBreak when BR element has unsupported content data style
+        https://bugs.webkit.org/show_bug.cgi?id=224849
+
+        Reviewed by Antti Koivisto.
+
+        Instead of falling back to RenderElement::createFor(), create a RenderLineBreak just ignoring the unsupported
+        content data.
+
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::createElementRenderer):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::isContentDataSupported):
+        (WebCore::RenderElement::createFor):
+        * rendering/RenderElement.h:
+
 2021-08-23  Chris Dumez  <cdumez@apple.com>
 
         HTMLStyleElement should be able to fire the load event more than once

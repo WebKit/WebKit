@@ -1,3 +1,12 @@
+2021-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Create a RenderLineBreak when BR element has unsupported content data style
+        https://bugs.webkit.org/show_bug.cgi?id=224849
+
+        Reviewed by Antti Koivisto.
+
+        * editing/execCommand/insert-image-in-composed-list-expected.txt: Rebaseline.
+
 2021-08-23  Chris Dumez  <cdumez@apple.com>
 
         HTMLStyleElement should be able to fire the load event more than once

@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class ContentData;
 class ControlStates;
 class KeyframeList;
 class RenderBlock;
@@ -38,6 +39,8 @@ class RenderElement : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderElement);
 public:
     virtual ~RenderElement();
+
+    static bool isContentDataSupported(const ContentData&);
 
     enum class ConstructBlockLevelRendererFor {
         Inline           = 1 << 0,
