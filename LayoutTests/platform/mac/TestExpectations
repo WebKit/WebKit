@@ -2330,4 +2330,7 @@ webkit.org/b/228396 fast/speechsynthesis/speech-synthesis-speak-empty-string.htm
 
 webkit.org/b/228176 [ Mojave Catalina BigSur ] fast/text/variable-system-font.html [ ImageOnlyFailure ]
 webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font.html [ Pass ]
+
+webkit.org/b/168961 [ Catalina ] fast/events/wheelevent-in-frame.html [ Pass Timeout ]
+
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]

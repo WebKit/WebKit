@@ -2021,5 +2021,7 @@ editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
 #rdar://80390931 (REGRESSION (r271861): [ iOS ] fast/forms/ios/accessory-bar-navigation.html is a constant timeout) fast/forms/ios/accessory-bar-navigation.html [ Timeout ] 
 
+webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
+
 #rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
