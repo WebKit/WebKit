@@ -1,3 +1,22 @@
+2021-08-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        Report correct blocked URI in CSP violation report
+        https://bugs.webkit.org/show_bug.cgi?id=226316
+        <rdar://problem/78552912>
+
+        Reviewed by Alex Christensen.
+
+        Currently for a blocked redirection we report the blocked URI as the
+        target URL. This is not up to spec and we should actually report the
+        requested URL.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::check):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::isAllowedByContentSecurityPolicy):
+        * NetworkProcess/NetworkLoadChecker.h:
+
 2021-08-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Fix and reenable several layout tests to account for the changes in rdar://80384564

@@ -600,7 +600,7 @@ bool ContentSecurityPolicy::allowMediaFromSource(const URL& url, RedirectRespons
     return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::mediaSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForMedia);
 }
 
-bool ContentSecurityPolicy::allowConnectToSource(const URL& url, RedirectResponseReceived redirectResponseReceived) const
+bool ContentSecurityPolicy::allowConnectToSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL) const
 {
     if (LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
         return true;
@@ -608,7 +608,7 @@ bool ContentSecurityPolicy::allowConnectToSource(const URL& url, RedirectRespons
     TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::connectSrc, violatedDirective, url, "Refused to connect to");
-        reportViolation(ContentSecurityPolicyDirectiveNames::connectSrc, violatedDirective, url, consoleMessage, sourceURL, sourcePosition);
+        reportViolation(ContentSecurityPolicyDirectiveNames::connectSrc, violatedDirective, url, consoleMessage, sourceURL, sourcePosition, preRedirectURL);
     };
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForConnectSource, url, redirectResponseReceived == RedirectResponseReceived::Yes);
 }
@@ -659,12 +659,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     return reportViolation(effectiveViolatedDirective, violatedDirective, violatedDirectiveList, blockedURL, consoleMessage, String(), TextPosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber::beforeFirst()), state);
 }
 
-void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject* state) const
+void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, const URL& preRedirectURL, JSC::JSGlobalObject* state) const
 {
-    return reportViolation(effectiveViolatedDirective, violatedDirective.text(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourcePosition, state);
+    return reportViolation(effectiveViolatedDirective, violatedDirective.text(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourcePosition, state, preRedirectURL);
 }
 
-void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject* state) const
+void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL) const
 {
     logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, sourcePosition.m_column, state);
 
@@ -699,7 +699,12 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
     ASSERT(m_client || is<Document>(m_scriptExecutionContext));
 
-    String blockedURI = deprecatedURLForReporting(blockedURL);
+    String blockedURI;
+    if (preRedirectURL.isNull())
+        blockedURI = deprecatedURLForReporting(blockedURL);
+    else
+        blockedURI = deprecatedURLForReporting(preRedirectURL);
+
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http" ? m_httpStatusCode : 0;
 

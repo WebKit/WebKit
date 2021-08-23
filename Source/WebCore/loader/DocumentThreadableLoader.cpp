@@ -328,7 +328,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
         return;
     }
 
-    if (!isAllowedByContentSecurityPolicy(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
+    if (!isAllowedByContentSecurityPolicy(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes, redirectResponse.url())) {
         reportContentSecurityPolicyError(redirectResponse.url());
         clearResource();
         return completionHandler(WTFMove(request));
@@ -675,7 +675,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     didFinishLoading(identifier);
 }
 
-bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived)
+bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, ContentSecurityPolicy::RedirectResponseReceived redirectResponseReceived, const URL& preRedirectURL)
 {
     switch (m_options.contentSecurityPolicyEnforcement) {
     case ContentSecurityPolicyEnforcement::DoNotEnforce:
@@ -683,7 +683,7 @@ bool DocumentThreadableLoader::isAllowedByContentSecurityPolicy(const URL& url, 
     case ContentSecurityPolicyEnforcement::EnforceChildSrcDirective:
         return contentSecurityPolicy().allowChildContextFromSource(url, redirectResponseReceived);
     case ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective:
-        return contentSecurityPolicy().allowConnectToSource(url, redirectResponseReceived);
+        return contentSecurityPolicy().allowConnectToSource(url, redirectResponseReceived, preRedirectURL);
     case ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective:
         return contentSecurityPolicy().allowScriptFromSource(url, redirectResponseReceived);
     }

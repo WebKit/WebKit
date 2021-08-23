@@ -1,3 +1,27 @@
+2021-08-22  Kate Cheney  <katherine_cheney@apple.com>
+
+        Report correct blocked URI in CSP violation report
+        https://bugs.webkit.org/show_bug.cgi?id=226316
+        <rdar://problem/78552912>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/security/contentSecurityPolicy/report-blocked-uri-after-blocked-redirect.html
+               http/tests/security/contentSecurityPolicy/report-blocked-uri-after-multiple-redirects.html
+        
+        Currently for a blocked redirection we report the blocked URI as the
+        target URL. This is not up to spec and we should actually report the
+        requested URL.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        (WebCore::DocumentThreadableLoader::isAllowedByContentSecurityPolicy):
+        * loader/DocumentThreadableLoader.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowConnectToSource const):
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        * page/csp/ContentSecurityPolicy.h:
+
 2021-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Tiny cleanups in CSS parsing code
