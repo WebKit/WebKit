@@ -1,3 +1,13 @@
+2021-08-23  Rob Buis  <rbuis@igalia.com>
+
+        Null check scriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=229272
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/text/font-face-set-add-crash-expected.txt: Added.
+        * fast/text/font-face-set-add-crash.html: Added.
+
 2021-08-23  John Wilander  <wilander@apple.com>
 
         PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement

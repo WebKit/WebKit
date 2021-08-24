@@ -1,3 +1,17 @@
+2021-08-23  Rob Buis  <rbuis@igalia.com>
+
+        Null check scriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=229272
+
+        Reviewed by Ryosuke Niwa.
+
+        Null check scriptExecutionContext in ensureLocalFontFacesForFamilyRegistered.
+
+        Tests: fast/text/font-face-set-add-crash.html
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered):
+
 2021-08-23  Alex Christensen  <achristensen@webkit.org>
 
         ThreadSanitizer: data race of WTF::StringImpl in WebCoreNSURLSessionDataTask._metrics instance variable
