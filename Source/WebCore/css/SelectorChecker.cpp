@@ -1063,6 +1063,20 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesFutureCuePseudoClass(element);
         case CSSSelector::PseudoClassPast:
             return matchesPastCuePseudoClass(element);
+        case CSSSelector::PseudoClassPlaying:
+            return matchesPlayingPseudoClass(element);
+        case CSSSelector::PseudoClassPaused:
+            return matchesPausedPseudoClass(element);
+        case CSSSelector::PseudoClassSeeking:
+            return matchesSeekingPseudoClass(element);
+        case CSSSelector::PseudoClassBuffering:
+            return matchesBufferingPseudoClass(element);
+        case CSSSelector::PseudoClassStalled:
+            return matchesStalledPseudoClass(element);
+        case CSSSelector::PseudoClassMuted:
+            return matchesMutedPseudoClass(element);
+        case CSSSelector::PseudoClassVolumeLocked:
+            return matchesVolumeLockedPseudoClass(element);
 #endif
 
         case CSSSelector::PseudoClassScope:

@@ -392,6 +392,15 @@ static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionIn
     return true;
 }
 
+static bool defaultVolumeLocked()
+{
+#if PLATFORM(IOS)
+    return true;
+#else
+    return false;
+#endif
+}
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document)
@@ -439,6 +448,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_processingPreferenceChange(false)
     , m_shouldAudioPlaybackRequireUserGesture(document.topDocument().audioPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
     , m_shouldVideoPlaybackRequireUserGesture(document.topDocument().videoPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
+    , m_volumeLocked(defaultVolumeLocked())
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_remote(RemotePlayback::create(*this))
 #endif
@@ -750,6 +760,10 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
     }
     else
         HTMLElement::parseAttribute(name, value);
+
+    // Changing the "muted" attribue could affect ":muted"
+    if (name == mutedAttr)
+        invalidateStyle();
 }
 
 void HTMLMediaElement::finishParsingChildren()
@@ -1177,7 +1191,7 @@ void HTMLMediaElement::prepareForLoad()
         m_readyStateMaximum = HAVE_NOTHING;
 
         // 6.6 - If the paused attribute is false, then set it to true.
-        m_paused = true;
+        setPaused(true);
 
         // 6.7 - If seeking is true, set it to false.
         clearSeeking();
@@ -2243,6 +2257,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     if (state == MediaPlayer::NetworkState::Empty) {
         // Just update the cached state and leave, we can't do anything.
         m_networkState = NETWORK_EMPTY;
+        invalidateStyle();
         return;
     }
 
@@ -2271,6 +2286,8 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
             changeNetworkStateFromLoadingToIdle();
         m_completelyLoaded = true;
     }
+
+    invalidateStyle();
 }
 
 void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
@@ -2489,7 +2506,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             // Notify about playing for the element.
             auto canTransition = canTransitionFromAutoplayToPlay();
             if (canTransition) {
-                m_paused = false;
+                setPaused(false);
                 setShowPosterFlag(false);
                 invalidateCachedTime();
                 setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithoutUserGesture);
@@ -2517,6 +2534,8 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     updatePlayState();
     updateMediaController();
     updateActiveTextTrackCues(currentMediaTime());
+
+    invalidateStyle();
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -2857,11 +2876,15 @@ void HTMLMediaElement::progressEventTimerFired()
         if (progress) {
             scheduleEvent(eventNames().progressEvent);
             m_previousProgressTime = time;
-            m_sentStalledEvent = false;
+            if (m_sentStalledEvent) {
+                m_sentStalledEvent = false;
+                invalidateStyle();
+            }
             updateRenderer();
         } else if (timedelta > 3_s && !m_sentStalledEvent) {
             scheduleEvent(eventNames().stalledEvent);
             m_sentStalledEvent = true;
+            invalidateStyle();
             setShouldDelayLoadEvent(false);
         }
     });
@@ -3338,6 +3361,14 @@ bool HTMLMediaElement::paused() const
     return m_paused;
 }
 
+void HTMLMediaElement::setPaused(bool paused)
+{
+    if (m_paused == paused)
+        return;
+    m_paused = paused;
+    invalidateStyle();
+}
+
 double HTMLMediaElement::defaultPlaybackRate() const
 {
 #if ENABLE(MEDIA_STREAM)
@@ -3574,7 +3605,7 @@ void HTMLMediaElement::playInternal()
         m_mediaController->bringElementUpToSpeed(*this);
 
     if (m_paused) {
-        m_paused = false;
+        setPaused(false);
         setShowPosterFlag(false);
         invalidateCachedTime();
 
@@ -3665,7 +3696,7 @@ void HTMLMediaElement::pauseInternal()
     setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
 
     if (!m_paused && !m_pausedInternal) {
-        m_paused = true;
+        setPaused(true);
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
         scheduleRejectPendingPlayPromises(DOMException::create(AbortError));
@@ -3802,9 +3833,49 @@ void HTMLMediaElement::setMuted(bool muted)
 #endif
         mediaSession().canProduceAudioChanged();
         updateSleepDisabling();
+
+        invalidateStyle();
     }
 
     schedulePlaybackControlsManagerUpdate();
+}
+
+void HTMLMediaElement::setVolumeLocked(bool locked)
+{
+    if (m_volumeLocked == locked)
+        return;
+
+    m_volumeLocked = locked;
+    invalidateStyle();
+}
+
+bool HTMLMediaElement::buffering() const
+{
+    // CSS Selectors Level 4; Editor's Draft, 2 July 2021
+    // <https://drafts.csswg.org/selectors/>
+    // 11.2. Media Loading State: the :buffering and :stalled pseudo-classes
+    //
+    // The :buffering pseudo-class represents an element that is capable of being “played” or “paused”,
+    // when that element cannot continue playing because it is actively attempting to obtain media data
+    // but has not yet obtained enough data to resume playback. (Note that the element is still considered
+    // to be “playing” when it is “buffering”. Whenever :buffering matches an element, :playing also
+    // matches the element.)
+    return !paused() && m_networkState == NETWORK_LOADING && m_readyState <= HAVE_CURRENT_DATA;
+}
+
+bool HTMLMediaElement::stalled() const
+{
+    // CSS Selectors Level 4; Editor's Draft, 2 July 2021
+    // <https://drafts.csswg.org/selectors/>
+    // 11.2. Media Loading State: the :buffering and :stalled pseudo-classes
+    //
+    // The :stalled pseudo-class represents an element when that element cannot continue playing because
+    // it is actively attempting to obtain media data but it has failed to receive any data for some
+    // amount of time. For the audio and video elements of HTML, this amount of time is the media element
+    // stall timeout. [HTML] (Note that, like with the :buffering pseudo-class, the element is still
+    // considered to be “playing” when it is “stalled”. Whenever :stalled matches an element, :playing
+    // also matches the element.)
+    return !paused() && m_networkState == NETWORK_LOADING && m_readyState <= HAVE_CURRENT_DATA && m_sentStalledEvent;
 }
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -4849,7 +4920,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
             // has still ended playback and paused is false,
             if (!m_mediaController && !m_paused) {
                 // changes paused to true and fires a simple event named pause at the media element.
-                m_paused = true;
+                setPaused(true);
                 scheduleEvent(eventNames().pauseEvent);
                 mediaSession().clientWillPausePlayback();
             }
@@ -4883,7 +4954,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
                 scheduleEvent(eventNames().endedEvent);
                 if (!wasSeeking)
                     addBehaviorRestrictionsOnEndIfNecessary();
-                m_paused = true;
+                setPaused(true);
                 setPlaying(false);
             }
         } else

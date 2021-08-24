@@ -235,6 +235,7 @@ public:
     WEBCORE_EXPORT double getStartDate() const;
     WEBCORE_EXPORT double duration() const override;
     WEBCORE_EXPORT bool paused() const override;
+    void setPaused(bool);
     double defaultPlaybackRate() const override;
     void setDefaultPlaybackRate(double) override;
     WEBCORE_EXPORT double playbackRate() const override;
@@ -317,6 +318,11 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setVolume(double) override;
     WEBCORE_EXPORT bool muted() const override;
     WEBCORE_EXPORT void setMuted(bool) override;
+
+    bool volumeLocked() const { return m_volumeLocked; }
+    WEBCORE_EXPORT void setVolumeLocked(bool);
+    bool buffering() const;
+    bool stalled() const;
 
     WEBCORE_EXPORT void togglePlayState();
     WEBCORE_EXPORT void beginScrubbing() override;
@@ -1108,6 +1114,7 @@ private:
     bool m_processingPreferenceChange : 1;
     bool m_shouldAudioPlaybackRequireUserGesture : 1;
     bool m_shouldVideoPlaybackRequireUserGesture : 1;
+    bool m_volumeLocked : 1;
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 

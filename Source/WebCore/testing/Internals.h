@@ -981,6 +981,8 @@ public:
     MediaSessionState mediaSessionState(HTMLMediaElement&);
 
     size_t mediaElementCount() const;
+
+    void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
 #endif
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);

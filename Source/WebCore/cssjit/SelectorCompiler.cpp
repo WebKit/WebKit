@@ -111,6 +111,13 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPictureInP
 #if ENABLE(VIDEO)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFutureCuePseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPastCuePseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPlayingPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPausedPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSeekingPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesBufferingPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesStalledPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesMutedPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesVolumeLockedPseudoClass, bool, (const Element&));
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttachment, bool, (const Element&));
@@ -741,6 +748,41 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesPastCuePseudoClass, bool, (const Elemen
 {
     return matchesPastCuePseudoClass(element);
 }
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesPlayingPseudoClass, bool, (const Element& element))
+{
+    return matchesPlayingPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesPausedPseudoClass, bool, (const Element& element))
+{
+    return matchesPausedPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesSeekingPseudoClass, bool, (const Element& element))
+{
+    return matchesSeekingPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesBufferingPseudoClass, bool, (const Element& element))
+{
+    return matchesBufferingPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesStalledPseudoClass, bool, (const Element& element))
+{
+    return matchesStalledPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesMutedPseudoClass, bool, (const Element& element))
+{
+    return matchesMutedPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesVolumeLockedPseudoClass, bool, (const Element& element))
+{
+    return matchesVolumeLockedPseudoClass(element);
+}
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -866,6 +908,27 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClassPast:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesPastCuePseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassPlaying:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesPlayingPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassPaused:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesPausedPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassSeeking:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesSeekingPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassBuffering:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesBufferingPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassStalled:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesStalledPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassMuted:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesMutedPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClassVolumeLocked:
+        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr<JSC::OperationPtrTag>(operationMatchesVolumeLockedPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
 

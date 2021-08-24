@@ -166,6 +166,13 @@ namespace WebCore {
 #if ENABLE(VIDEO)
             PseudoClassFuture,
             PseudoClassPast,
+            PseudoClassPlaying,
+            PseudoClassPaused,
+            PseudoClassSeeking,
+            PseudoClassBuffering,
+            PseudoClassStalled,
+            PseudoClassMuted,
+            PseudoClassVolumeLocked,
 #endif
 #if ENABLE(CSS_SELECTORS_LEVEL4)
             PseudoClassDir,

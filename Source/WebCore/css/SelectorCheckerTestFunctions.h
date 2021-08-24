@@ -47,6 +47,7 @@
 #endif
 
 #if ENABLE(VIDEO)
+#include "HTMLMediaElement.h"
 #include "WebVTTElement.h"
 #endif
 
@@ -442,6 +443,40 @@ ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
     return is<WebVTTElement>(element) && downcast<WebVTTElement>(element).isPastNode();
 }
 
+ALWAYS_INLINE bool matchesPlayingPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && !downcast<HTMLMediaElement>(element).paused();
+}
+
+ALWAYS_INLINE bool matchesPausedPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).paused();
+}
+
+ALWAYS_INLINE bool matchesSeekingPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).seeking();
+}
+
+ALWAYS_INLINE bool matchesBufferingPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).buffering();
+}
+
+ALWAYS_INLINE bool matchesStalledPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).stalled();
+}
+
+ALWAYS_INLINE bool matchesMutedPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).muted();
+}
+
+ALWAYS_INLINE bool matchesVolumeLockedPseudoClass(const Element& element)
+{
+    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).volumeLocked();
+}
 #endif
 
 ALWAYS_INLINE bool isFrameFocused(const Element& element)

@@ -507,6 +507,27 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassFuture:
                 builder.append(":future");
                 break;
+            case CSSSelector::PseudoClassPlaying:
+                builder.append(":playing");
+                break;
+            case CSSSelector::PseudoClassPaused:
+                builder.append(":paused");
+                break;
+            case CSSSelector::PseudoClassSeeking:
+                builder.append(":seeking");
+                break;
+            case CSSSelector::PseudoClassBuffering:
+                builder.append(":buffering");
+                break;
+            case CSSSelector::PseudoClassStalled:
+                builder.append(":stalled");
+                break;
+            case CSSSelector::PseudoClassMuted:
+                builder.append(":muted");
+                break;
+            case CSSSelector::PseudoClassVolumeLocked:
+                builder.append(":volume-locked");
+                break;
 #endif
             case CSSSelector::PseudoClassHas:
                 builder.append(":has(");

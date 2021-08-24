@@ -1,0 +1,11 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+EXPECTED (video.muted == 'false') OK
+EXPECTED (document.querySelector("video:muted") == 'null') OK
+EXPECTED (document.querySelector("video:not(:muted)") == '[object HTMLVideoElement]') OK
+RUN(video.muted = true)
+EXPECTED (document.querySelector("video:muted") == '[object HTMLVideoElement]') OK
+EXPECTED (document.querySelector("video:not(:muted)") == 'null') OK
+END OF TEST
+

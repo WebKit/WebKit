@@ -1,0 +1,25 @@
+<!doctype HTML>
+<html>
+<head>
+    <title>media-css-muted</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplay');
+        run('internals.setMediaElementVolumeLocked(video, false)');
+        testExpected('document.querySelector("video:volume-locked")', null);
+        testExpected('document.querySelector("video:not(:volume-locked)")', video);
+        run('internals.setMediaElementVolumeLocked(video, true)');
+        testExpected('document.querySelector("video:volume-locked")', video);
+        testExpected('document.querySelector("video:not(:volume-locked)")', null);
+        endTest();
+    });
+    </script>
+<head>
+<body>
+    <video></video>
+</body>
+</html>

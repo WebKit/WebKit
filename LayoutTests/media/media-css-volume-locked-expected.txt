@@ -1,0 +1,11 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+RUN(internals.setMediaElementVolumeLocked(video, false))
+EXPECTED (document.querySelector("video:volume-locked") == 'null') OK
+EXPECTED (document.querySelector("video:not(:volume-locked)") == '[object HTMLVideoElement]') OK
+RUN(internals.setMediaElementVolumeLocked(video, true))
+EXPECTED (document.querySelector("video:volume-locked") == '[object HTMLVideoElement]') OK
+EXPECTED (document.querySelector("video:not(:volume-locked)") == 'null') OK
+END OF TEST
+

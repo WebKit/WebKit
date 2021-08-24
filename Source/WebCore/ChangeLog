@@ -1,3 +1,68 @@
+2021-08-24  Jer Noble  <jer.noble@apple.com>
+
+        Add support for new pseudo-classes for media from CSS Selectors Level 4.
+        https://bugs.webkit.org/show_bug.cgi?id=229431
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/media-css-muted.html
+               media/media-css-playing-paused.html
+               media/media-css-volume-locked.html
+               (Tests for buffering and stalled states are forthcoming, waiting on
+               a non-flakey mechanism for inducing network stalls)
+
+        Add support for the following new pseudo-classes from CSS Selectors Level 4:
+        - :playing, :paused, :seeking
+        - :buffering, :stalled
+        - :muted, :volume-locked
+
+        Ensure CSS styles are invalidated when playback state changes by encapsulating
+        modifications to HTMLMediaElement::m_paused into a setPaused() function.
+
+        Add methods to query for volumeLocked() on HTMLMediaElement, as well as a way
+        to override the value through Internals.
+
+        Invalidate styles when the "muted" attribute changes state.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const):
+        * css/CSSSelector.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne const):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesPlayingPseudoClass):
+        (WebCore::matchesPausedPseudoClass):
+        (WebCore::matchesSeekingPseudoClass):
+        (WebCore::matchesBufferingPseudoClass):
+        (WebCore::matchesStalledPseudoClass):
+        (WebCore::matchesMutedPseudoClass):
+        (WebCore::matchesVolumeLockedPseudoClass):
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::JSC_DEFINE_JIT_OPERATION):
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::defaultVolumeLocked):
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::setNetworkState):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::setPaused):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::setVolumeLocked):
+        (WebCore::HTMLMediaElement::buffering const):
+        (WebCore::HTMLMediaElement::stalled const):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::volumeLocked const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementVolumeLocked):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         Fire a load event for <iframe src="about:blank#foo">

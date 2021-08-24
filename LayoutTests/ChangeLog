@@ -1,3 +1,17 @@
+2021-08-24  Jer Noble  <jer.noble@apple.com>
+
+        Add support for new pseudo-selectors for media from CSS Selectors Level 4.
+        https://bugs.webkit.org/show_bug.cgi?id=229431
+
+        Reviewed by Eric Carlson.
+
+        * media/media-css-muted-expected.txt: Added.
+        * media/media-css-muted.html: Added.
+        * media/media-css-playing-paused-expected.txt: Added.
+        * media/media-css-playing-paused.html: Added.
+        * media/media-css-volume-locked-expected.txt: Added.
+        * media/media-css-volume-locked.html: Added.
+
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug x86] http/tests/inspector/network/resource-timing.html is a flaky failure.

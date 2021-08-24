@@ -93,5 +93,12 @@ picture-in-picture
 #if ENABLE(VIDEO)
 future
 past
+playing
+paused
+seeking
+buffering
+stalled
+muted
+volume-locked
 #endif
 

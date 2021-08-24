@@ -4561,6 +4561,11 @@ size_t Internals::mediaElementCount() const
 {
     return HTMLMediaElement::allMediaElements().size();
 }
+
+void Internals::setMediaElementVolumeLocked(HTMLMediaElement& element, bool volumeLocked)
+{
+    element.setVolumeLocked(volumeLocked);
+}
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
