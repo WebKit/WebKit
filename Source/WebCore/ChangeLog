@@ -1,3 +1,101 @@
+2021-08-24  Darin Adler  <darin@apple.com>
+
+        Remove inefficient use of HashMap from FormController along with a bit of other streamlining and modernizing
+        https://bugs.webkit.org/show_bug.cgi?id=228854
+
+        Reviewed by Chris Dumez.
+
+        * html/FormController.cpp:
+        (WebCore::ownerForm): Renamed from ownerFormForState. Removed unnecessary use of
+        inline; trust the compiler to inline if needed without the keyword. Removed
+        "using namespace HTMLNames". Use nullptr instead of 0.
+        (WebCore::StringVectorReader::consumeString): Added. Helps parse a vector without
+        so many index range checks. Returns null string at end of vector.
+        (WebCore::StringVectorReader::consumeSubvector): Added. Helps parse a vector
+        without so many index range checks. Returns the subvector.
+        (WebCore::appendSerializedFormControlState): Renamed from
+        serializeFormControlStateTo to make clear this appends to an existing vector.
+        (WebCore::consumeSerializedFormControlState): Renamed from
+        deserializeFormControlState to make clear this reads part of a vector and
+        indicates what was read. Use the StringVectorReader class for the argument type
+        to make that clear. Refactored to use the new consumeString and consumeSubvector
+        functions. Also use parseInteger because there is no need to allow trailing junk.
+        (WebCore::FormElementKey): Deleted this entire class, kind of a lot of code,
+        because we can instead use std::pair and only lose a little bit of clarity.
+        (WebCore::FormController::SavedFormState): Made this class a member of
+        FormController. Also use std::pair, renamed m_stateForNewFormElements to m_map,
+        and removed m_controlStateCount. The only code that was using this was
+        in SavedFormState::serializeTo, and that in turn was only used on a
+        SavedFormState which contained
+        (WebCore::SavedFormState::serializeTo const): Deleted. All the logic from this
+        function is now in the FormController::formElementsState function, which is
+        the only place it was used.
+        (WebCore::FormController::SavedFormState::consumeSerializedState): Renamed
+        from deserialize to make it clear that it reads part of a vector and indicates
+        what is read. Use the StringVectorReader class for the argument type to make
+        that clear. Moved the isNotFormControlTypeCharacter from a separate function
+        to be a lambda inside this function. Use consumeString, StringView::contains,
+        and consumeSerializedFormControlState to streamline the implementation.
+        Moved call to HashMap::add here instead of separate appendControlState
+        function since we no longer need to track m_controlStateCount.
+        (WebCore::SavedFormState::appendControlState): Deleted.
+        (WebCore::FormController::SavedFormState::takeControlState): Take the arguments
+        as a FormElementKey, already in a pair, instead of as two separate values.
+        Removed the code to maintain m_controlStateCount.
+        (WebCore::FormController::SavedFormState::appendReferencedFilePaths const):
+        Renamed from referencedFilePaths and change this to append to an existing
+        vector, since that's what the only caller was doing.
+        (WebCore::FormController::FormKeyGenerator): Made this class a member of
+        FormController. Also changed to just use String for the formKey, since there
+        is no significant sharing or other optimization made possible by using
+        AtomString. Also use a reference instead of a pointer in one place.
+        (WebCore::recordFormStructure): Deleted.
+        (WebCore::formSignature): Merge in the logic from the recordFormStructure
+        function, since that was an awkward function name and this is clearer as
+        just one function. Added a comment about fragment identifiers. Use unsigned
+        instead of size_t to count up to 2. Improved the comment about why the
+        maximum is 2 and used simpler loop logic, is<> instead of a specific
+        function call, downcast<> instead of static_cast<>, and Ref instead of RefPtr<...>.
+        (WebCore::FormController::FormKeyGenerator::formKey): Use RefPtr on the
+        left side instead of makeRefPtr. Use String instead of AtomString.
+        (WebCore::FormController::FormKeyGenerator::willDeleteForm): Take a reference.
+        (WebCore::formStateSignature): Use MainThreadNeverDestroyed.
+        (WebCore::FormController::createSavedFormStateMap): Deleted. This was only
+        ever used by formElementsState, which does not need a map.
+        (WebCore::FormController::formElementsState const): Use a vector that
+        uses Ref<> since it's a little safer for object lifetime and that also stores
+        the form key so we can grouop controls in the same form as part of sorting.
+        Added an early return when there are no controls instead of
+        detecting that at the end of the function. Moved the code from
+        createSavedFormStateMap and SavedFormState::serializeTo in here to avoid
+        creating a HashMap just to iterate it and build a string vector, using
+        sorting to group and count the controls in each form. Use shrinkToFit to make
+        sure the vector is not permanently overallocated instead of an always-too-small
+        reserveInitialCapacity.
+        (WebCore::FormController::setStateForNewFormElements): Update for the change in
+        parseStateVector.
+        (WebCore::FormController::takeStateForFormElement): Updated for the change to
+        m_savedFormStateMap values. Use auto a bit and "iterator" insted of "it".
+        (WebCore::FormController::parseStateVector): Renamed from
+        formStatesFromStateVector and changed to use a return value instead of an out
+        argument. Use StringVectorReader and consumeString to streamline the code and
+        make it a bit more foolproof. Check the exhaustion of the input vector inside
+        the loop instead of checking for an error after the loop.
+        (WebCore::FormController::willDeleteForm): Pass a reference.
+        (WebCore::FormController::restoreControlStateFor): Tweak comment and use ||
+        instead of two separate if statements.
+        (WebCore::FormController::restoreControlStateIn): Ditto.
+        (WebCore::FormController::referencedFilePaths): Use parseStateVector and
+        appendReferencedFilePaths.
+
+        * html/FormController.h: Removed almost all the includes, which were not needed.
+        Made the FormKeyGenerator and SavedFormState classes members of FormController.
+        Changed SavedFormStateMap to use String as the key instead of RefPtr<AtomStringImpl>,
+        no need for the exotic type. Changed SavedFormStateMap to use SavedFormState
+        as the value instead of std::unique_ptr<SavedFormState>. Removed the unused
+        member function createSavedFormStateMap and renamed formStatesFromStateVector
+        to parseStateVector and changed it to use a return value.
+
 2021-08-24  Jer Noble  <jer.noble@apple.com>
 
         Add support for new pseudo-classes for media from CSS Selectors Level 4.
