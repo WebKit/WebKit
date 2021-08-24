@@ -59,9 +59,11 @@ if ($vm.icuVersion() >= 61) {
     shouldThrow(() => languageNames.of("sl-_rozaj"), `RangeError: argument is not a language id`);
     shouldThrow(() => languageNames.of("sl-Cyrl-"), `RangeError: argument is not a language id`);
     shouldThrow(() => languageNames.of("-sl-Cyrl-"), `RangeError: argument is not a language id`);
-    shouldBe(languageNames.of('hy-Latn-IT-arevela'), `Armenian (Latin, Italy, Eastern Armenian)`); // Language-Script-Region-Variant
+    let latinItalyEasternAmerican = languageNames.of('hy-Latn-IT-arevela');
+    shouldBe(latinItalyEasternAmerican === `Armenian (Latin, Italy, Eastern Armenian)` || latinItalyEasternAmerican === `Armenian (Latin, Italy)`, true); // Language-Script-Region-Variant
     shouldBe(languageNames.of('hy-Latn-IT'), `Armenian (Latin, Italy)`); // Language-Script-Region
-    shouldBe(languageNames.of('hy-Latn-arevela'), `Armenian (Latin, Eastern Armenian)`); // Language-Script-Variant
+    let latinEasternAmerican = languageNames.of('hy-Latn-arevela');
+    shouldBe(latinEasternAmerican === `Armenian (Latin, Eastern Armenian)` || latinEasternAmerican === `Armenian (Latin)`, true); // Language-Script-Variant
     shouldThrow(() => languageNames.of("hy-Latn-ITZ-arevela"), `RangeError: argument is not a language id`);
     shouldThrow(() => languageNames.of("hy-Latn-00-arevela"), `RangeError: argument is not a language id`);
     shouldThrow(() => languageNames.of("hy-Latn-arevelazzzzzzzzzzz"), `RangeError: argument is not a language id`);

@@ -1,5 +1,17 @@
 2021-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Update Intl tests to support ICU 68
+        https://bugs.webkit.org/show_bug.cgi?id=229467
+
+        Reviewed by Mark Lam.
+
+        ICU 68 changes some outputs of Intl tests. This patch adjusts that.
+
+        * stress/intl-parse-unicode-subtags.js:
+        (vm.icuVersion):
+
+2021-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add Intl Enumeration APIs
         https://bugs.webkit.org/show_bug.cgi?id=214795
 
