@@ -1,3 +1,12 @@
+2021-08-24  Eric Hutchison  <ehutchison@apple.com>
+
+        [Mac] http/tests/inspector/network/har/har-page.html, flaky failure on wk2, constant failure on wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=229458.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-24  Jer Noble  <jer.noble@apple.com>
 
         Add support for new pseudo-selectors for media from CSS Selectors Level 4.
