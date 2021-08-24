@@ -331,8 +331,8 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
 {
     NSString *runningBoardAssertionName = runningBoardNameForAssertionType(assertionType);
     ASSERT(runningBoardAssertionName);
-    if (!pid) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID is invalid", this, runningBoardAssertionName, reason.utf8().data());
+    if (pid <= 0) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}@ assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName, reason.utf8().data(), pid);
         m_wasInvalidated = true;
         return;
     }

@@ -1,3 +1,19 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Crash in [RBSTarget targetWithPid:] during WebProcessProxy::shutDown
+        https://bugs.webkit.org/show_bug.cgi?id=229444
+
+        Reviewed by Alex Christensen.
+
+        It appears xpc_connection_get_pid() may be able to return a PID that is less than 0
+        (likely when the process has just exited) and this causes RunningBoard to throw an
+        exception because the PID is invalid. Tweak the WebKit PID validation to use '>= 0'
+        instead of simply '!= 0', so that our validation is identical to the one used by
+        RunningBoard.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
 2021-08-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late August 2021
