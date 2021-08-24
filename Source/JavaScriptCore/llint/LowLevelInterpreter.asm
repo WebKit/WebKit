@@ -1994,10 +1994,6 @@ slowPathOp(define_accessor_property)
 slowPathOp(define_data_property)
 slowPathOp(get_by_val_with_this)
 slowPathOp(get_property_enumerator)
-slowPathOp(enumerator_next)
-slowPathOp(enumerator_get_by_val)
-slowPathOp(enumerator_in_by_val)
-slowPathOp(enumerator_has_own_property)
 
 if not JSVALUE64
     slowPathOp(get_prototype_of)
