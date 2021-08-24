@@ -1,3 +1,12 @@
+2021-08-24  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Catalina EWS ] media/track/track-disabled-addcue.html is flaky crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=229462
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug x86] http/tests/inspector/network/ping-type.html is a flaky failure.

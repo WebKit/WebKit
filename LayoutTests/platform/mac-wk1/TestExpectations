@@ -644,6 +644,8 @@ media/track/track-cues-enter-exit.html [ Pass Crash ]
 # <rdar://problem/61744994> media/track/track-cues-cuechange.html is flaky timing out.
 media/track/track-cues-cuechange.html [ Pass Crash Timeout ]
 
+webkit.org/b/229462 [ Catalina Debug ] media/track/track-disabled-addcue.html [ Pass Crash ]
+
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
 webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
