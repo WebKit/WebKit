@@ -37,6 +37,7 @@
 #include "BlobRegistry.h"
 #include "BlobURL.h"
 #include "CrossOriginOpenerPolicy.h"
+#include "PolicyContainer.h"
 #include "SecurityOrigin.h"
 #include <mutex>
 #include <wtf/CrossThreadQueue.h>

@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FloatingContext.h"
+#include "FontCascade.h"
 #include "FormattingContext.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingQuirks.h"

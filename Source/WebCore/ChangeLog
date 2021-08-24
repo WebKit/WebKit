@@ -1,3 +1,18 @@
+2021-08-24  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late August 2021
+        https://bugs.webkit.org/show_bug.cgi?id=229440
+
+        Unreviewed non-unified build fixes.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp: Add missing
+        LibWebRTCProvider.h and JavaScriptCore/ArrayBuffer.h headers.
+        * fileapi/ThreadableBlobRegistry.cpp: Add missing PolicyContainer.h header.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp: Add missing FontCascade.h
+        header.
+        * layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp: Add missing
+        FontCascade.h, InlineFormattingContext.h, and LayoutBoxGeometry.h headers.
+
 2021-08-24  Tim Nguyen  <ntim@apple.com>
 
         Move cancel dialog task to `defaultKeyboardEventHandler`.

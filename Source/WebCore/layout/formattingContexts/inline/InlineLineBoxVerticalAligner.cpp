@@ -28,6 +28,10 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FontCascade.h"
+#include "InlineFormattingContext.h"
+#include "LayoutBoxGeometry.h"
+
 namespace WebCore {
 namespace Layout {
 

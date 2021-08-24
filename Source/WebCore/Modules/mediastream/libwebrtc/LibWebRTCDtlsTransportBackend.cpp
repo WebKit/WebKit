@@ -27,6 +27,8 @@
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
+#include "LibWebRTCProvider.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <webrtc/api/dtls_transport_interface.h>
 
 namespace WebCore {

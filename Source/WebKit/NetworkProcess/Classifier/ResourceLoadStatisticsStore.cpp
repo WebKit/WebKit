@@ -44,6 +44,7 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
