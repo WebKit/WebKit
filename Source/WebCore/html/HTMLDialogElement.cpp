@@ -95,7 +95,7 @@ void HTMLDialogElement::close(const String& result)
     });
 }
 
-void HTMLDialogElement::cancel()
+void HTMLDialogElement::queueCancelTask()
 {
     document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
         auto cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, Event::IsCancelable::Yes);

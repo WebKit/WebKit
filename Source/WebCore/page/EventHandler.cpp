@@ -3520,13 +3520,6 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         }
     }
 
-    if (auto* activeModalDialog = m_frame.document()->activeModalDialog()) {
-        if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
-            activeModalDialog->cancel();
-            return true;
-        }
-    }
-
 #if ENABLE(FULLSCREEN_API)
     if (m_frame.document()->fullscreenManager().isFullscreen()) {
         if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
@@ -3807,7 +3800,10 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         m_frame.editor().handleKeyboardEvent(event);
         if (event.defaultHandled())
             return;
-        if (event.keyIdentifier() == "U+0009")
+        if (event.key() == "Escape") {
+            if (auto* activeModalDialog = m_frame.document()->activeModalDialog())
+                activeModalDialog->queueCancelTask();
+        } else if (event.keyIdentifier() == "U+0009")
             defaultTabEventHandler(event);
         else if (event.keyIdentifier() == "U+0008")
             defaultBackspaceEventHandler(event);

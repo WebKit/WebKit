@@ -43,9 +43,9 @@ public:
     ExceptionOr<void> showModal();
     void close(const String&);
 
-    void cancel();
-
     bool isModal() const { return m_isModal; };
+
+    void queueCancelTask();
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
