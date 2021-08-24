@@ -37,7 +37,7 @@ namespace Layout {
 
 class LineBox;
 class LineBoxBuilder;
-struct SimplifiedVerticalAlignment;
+class LineBoxVerticalAligner;
 
 class InlineLevelBox {
 public:
@@ -84,9 +84,9 @@ public:
     InlineLevelBox() = default;
 
 private:
-    friend struct SimplifiedVerticalAlignment;
-    friend class LineBoxBuilder;
     friend class LineBox;
+    friend class LineBoxBuilder;
+    friend class LineBoxVerticalAligner;
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     InlineLayoutUnit logicalTop() const { return m_logicalRect.top(); }

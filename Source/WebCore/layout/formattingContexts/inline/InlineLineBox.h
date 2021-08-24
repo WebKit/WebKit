@@ -40,7 +40,7 @@ namespace Layout {
 class BoxGeometry;
 class InlineFormattingContext;
 class LineBoxBuilder;
-struct SimplifiedVerticalAlignment;
+class LineBoxVerticalAligner;
 
 //   ____________________________________________________________ Line Box
 // |                                    --------------------
@@ -82,6 +82,7 @@ public:
 
 private:
     friend class LineBoxBuilder;
+    friend class LineBoxVerticalAligner;
 
     void addInlineLevelBox(InlineLevelBox&&);
     InlineLevelBoxList& nonRootInlineLevelBoxes() { return m_nonRootInlineLevelBoxList; }

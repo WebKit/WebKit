@@ -1,3 +1,32 @@
+2021-08-23  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Decouple line box building and vertical aligning
+        https://bugs.webkit.org/show_bug.cgi?id=229162
+        <rdar://problem/82260272>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting incremental inline layout.
+        We should be able to vertically align the inline level boxes on any line without rebuilding the LineBox.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::build):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::rootInlineBoxLogicalTop const): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::lineBoxHeight const): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::setEnabled): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::isEnabled const): Deleted.
+        (): Deleted.
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::SimplifiedVerticalAlignment): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::align): Deleted.
+        (WebCore::Layout::LineBoxBuilder::SimplifiedVerticalAlignment::adjust): Deleted.
+        * layout/formattingContexts/inline/InlineLevelBox.h:
+        * layout/formattingContexts/inline/InlineLineBox.h:
+
 2021-08-23  Alex Christensen  <achristensen@webkit.org>
 
         Setting window.location.href to an invalid URL should throw a TypeError

@@ -1460,6 +1460,7 @@ layout/formattingContexts/inline/InlineItem.cpp
 layout/formattingContexts/inline/InlineLine.cpp
 layout/formattingContexts/inline/InlineLineBox.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
+layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp
 layout/formattingContexts/inline/InlineTextItem.cpp
 layout/formattingContexts/inline/text/TextUtil.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
