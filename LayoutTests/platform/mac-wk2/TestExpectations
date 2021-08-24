@@ -1607,5 +1607,11 @@ webkit.org/b/229458 http/tests/inspector/network/har/har-page.html [ Pass Failur
 
 webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html [ Pass Failure ]
 
+#Multiple WebGL tests failing
+#webkit.org/b/228703 [ BigSur ] webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Failure ]
+webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Failure ] 
+webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples.html [ Failure ]
+webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad.html [ Failure ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]

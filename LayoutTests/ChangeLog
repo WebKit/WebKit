@@ -1,3 +1,12 @@
+2021-08-24  Eric Hutchison  <ehutchison@apple.com>
+
+        4 webgl/2.0.0/deqp/functional/gles3/ tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=228703.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-24  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         REGRESSION: [ Mac ] http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html is flaky failing.
