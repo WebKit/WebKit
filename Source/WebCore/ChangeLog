@@ -1,3 +1,22 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Fire a load event for <iframe src="about:blank#foo">
+        https://bugs.webkit.org/show_bug.cgi?id=228958
+        <rdar://problem/82035810>
+
+        Reviewed by Darin Adler.
+
+        When loading an iframe with src="about:blank#foo", we would fail to fire the load event because we would treat
+        the navigation as a fragment navigation. The reason for that is that the iframe is initially displaying the
+        initial empty document, which has URL "about:blank". Because the source and destination URL would be the same
+        when ignoring fragments, our logic would treat this as a pure fragment navigation. To address this, I have
+        updated FrameLoader::shouldPerformFragmentNavigation() to special case the initial empty document.        
+
+        Test: imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-event-iframe-element.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldPerformFragmentNavigation):
+
 2021-08-24  Alex Christensen  <achristensen@webkit.org>
 
         ThreadSanitizer: data race in WTF::StringImpl::deref() for WebCore::FormDataElement::EncodedFileData::filename

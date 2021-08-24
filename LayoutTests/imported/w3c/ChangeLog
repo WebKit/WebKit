@@ -1,3 +1,24 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Fire a load event for <iframe src="about:blank#foo">
+        https://bugs.webkit.org/show_bug.cgi?id=228958
+        <rdar://problem/82035810>
+
+        Reviewed by Darin Adler.
+
+        Import layout test coverage from WPT.
+
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/initial-content-replacement-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/initial-content-replacement.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-event-iframe-element-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-event-iframe-element.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-pageshow-events-iframe-contentWindow-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-pageshow-events-iframe-contentWindow.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-pageshow-events-window-open-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/load-pageshow-events-window-open.html: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/resources/helpers.js: Added.
+        (assertNoLoadAndPageshowEvent):
+
 2021-08-24  Tim Nguyen  <ntim@apple.com>
 
         Move cancel dialog task to `defaultKeyboardEventHandler`.

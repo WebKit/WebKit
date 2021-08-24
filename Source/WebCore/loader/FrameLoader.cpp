@@ -3232,7 +3232,8 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         && !shouldReload(m_frame.document()->url(), url)
         // We don't want to just scroll if a link from within a
         // frameset is trying to reload the frameset into _top.
-        && !m_frame.document()->isFrameSet();
+        && !m_frame.document()->isFrameSet()
+        && !stateMachine().isDisplayingInitialEmptyDocument();
 }
 
 static bool itemAllowsScrollRestoration(HistoryItem* historyItem)
