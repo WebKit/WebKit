@@ -1,3 +1,26 @@
+2021-08-24  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update baselines after r281422
+        https://bugs.webkit.org/show_bug.cgi?id=229450
+
+        Unreviewed test gardening.
+
+        * platform/gtk/css1/text_properties/vertical_align-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/gtk/editing/selection/3690703-2-expected.txt:
+        * platform/gtk/editing/selection/3690703-expected.txt:
+        * platform/gtk/editing/selection/3690719-expected.txt:
+        * platform/gtk/fast/selectors/018b-expected.txt: Copied from LayoutTests/platform/glib/fast/selectors/018b-expected.txt.
+        * platform/gtk/fast/text/capitalize-boundaries-expected.txt:
+        * platform/gtk/fast/text/whitespace/020-expected.txt:
+        * platform/wpe/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/wpe/editing/selection/3690703-2-expected.txt: Copied from LayoutTests/platform/gtk/editing/selection/3690703-2-expected.txt.
+        * platform/wpe/editing/selection/3690703-expected.txt: Copied from LayoutTests/platform/gtk/editing/selection/3690703-expected.txt.
+        * platform/wpe/editing/selection/3690719-expected.txt: Copied from LayoutTests/platform/gtk/editing/selection/3690719-expected.txt.
+        * platform/wpe/fast/selectors/018b-expected.txt: Renamed from LayoutTests/platform/glib/fast/selectors/018b-expected.txt.
+        * platform/wpe/fast/text/capitalize-boundaries-expected.txt:
+        * platform/wpe/fast/text/whitespace/020-expected.txt:
+
 2021-08-24  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r281305) [GStreamer] fast/mediastream/getDisplayMedia-frame-rate.html timeouts
