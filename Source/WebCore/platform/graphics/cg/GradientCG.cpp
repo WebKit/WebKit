@@ -40,37 +40,48 @@ void Gradient::stopsChanged()
     m_gradient = nullptr;
 }
 
+bool Gradient::hasOnlyBoundedSRGBColorStops() const
+{
+    for (const auto& stop : m_stops) {
+        if (stop.color.colorSpace() != ColorSpace::SRGB)
+            return false;
+    }
+    return true;
+}
+
 void Gradient::createCGGradient()
 {
     sortStops();
 
-    auto colorsArray = adoptCF(CFArrayCreateMutable(0, m_stops.size(), &kCFTypeArrayCallBacks));
     unsigned numStops = m_stops.size();
 
     const int reservedStops = 3;
     Vector<CGFloat, reservedStops> locations;
     locations.reserveInitialCapacity(numStops);
 
-    Vector<CGFloat, 4 * reservedStops> colorComponents;
-    colorComponents.reserveInitialCapacity(numStops * 4);
+    // If all the stops are bounded sRGB (as represented by the color having the color space
+    // ColorSpace::SRGB), it is faster to create a gradient using components than CGColors.
+    if (hasOnlyBoundedSRGBColorStops()) {
+        Vector<CGFloat, 4 * reservedStops> colorComponents;
+        colorComponents.reserveInitialCapacity(numStops * 4);
 
-    // FIXME: Consider making this into two loops to avoid unnecessary allocation of the
-    // CGColorRefs in the common case of all ColorSpace::SRGB.
+        for (const auto& stop : m_stops) {
+            auto [colorSpace, components] = stop.color.colorSpaceAndComponents();
+            auto [r, g, b, a] = components;
+            colorComponents.uncheckedAppend(r);
+            colorComponents.uncheckedAppend(g);
+            colorComponents.uncheckedAppend(b);
+            colorComponents.uncheckedAppend(a);
 
-    bool hasOnlyBoundedSRGBColorStops = true;
+            locations.uncheckedAppend(stop.offset);
+        }
+
+        m_gradient = adoptCF(CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), numStops));
+        return;
+    }
+
+    auto colorsArray = adoptCF(CFArrayCreateMutable(0, m_stops.size(), &kCFTypeArrayCallBacks));
     for (const auto& stop : m_stops) {
-        // If all the stops are bounded sRGB (as represented by the color having the color space
-        // ColorSpace::SRGB, it is faster to create a gradient using components than CGColors.
-        if (stop.color.colorSpace() != ColorSpace::SRGB)
-            hasOnlyBoundedSRGBColorStops = false;
-
-        auto [colorSpace, components] = stop.color.colorSpaceAndComponents();
-        auto [r, g, b, a] = components;
-        colorComponents.uncheckedAppend(r);
-        colorComponents.uncheckedAppend(g);
-        colorComponents.uncheckedAppend(b);
-        colorComponents.uncheckedAppend(a);
-
         CFArrayAppendValue(colorsArray.get(), cachedCGColor(stop.color));
         locations.uncheckedAppend(stop.offset);
     }
@@ -81,10 +92,7 @@ void Gradient::createCGGradient()
     auto extendedColorsGradientColorSpace = sRGBColorSpaceRef();
 #endif
 
-    if (hasOnlyBoundedSRGBColorStops)
-        m_gradient = adoptCF(CGGradientCreateWithColorComponents(sRGBColorSpaceRef(), colorComponents.data(), locations.data(), numStops));
-    else
-        m_gradient = adoptCF(CGGradientCreateWithColors(extendedColorsGradientColorSpace, colorsArray.get(), locations.data()));
+    m_gradient = adoptCF(CGGradientCreateWithColors(extendedColorsGradientColorSpace, colorsArray.get(), locations.data()));
 }
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
