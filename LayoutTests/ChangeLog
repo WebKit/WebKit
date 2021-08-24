@@ -1,3 +1,12 @@
+2021-08-24  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ EWS Catalina ] http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html is flaky timing out / failing.
+        https://bugs.webkit.org/show_bug.cgi?id=229459
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-08-24  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Gardening two WebXR-related failures
