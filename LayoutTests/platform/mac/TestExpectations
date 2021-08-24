@@ -2339,4 +2339,6 @@ webkit.org/b/168961 [ Catalina ] fast/events/wheelevent-in-frame.html [ Pass Tim
 
 #rdar://80333935 (REGRESSION (Star21A236a-21A254): [ Monterey wk2 arm64 ] fast/animation/request-animation-frame-throttling-detached-iframe.html and request-animation-frame-throttling-lowPowerMode.html failing) [ Monterey ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
 
+webkit.org/b/229463 [ BigSur Debug ] http/tests/inspector/network/resource-mime-type.html [ Pass Failure Timeout ]
+
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]

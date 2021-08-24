@@ -1,3 +1,12 @@
+2021-08-24  Eric Hutchison  <ehutchison@apple.com>
+
+        CONSOLE ASSERT ERROR:[BigSur] http/tests/inspector/network/resource-mime-type.html is a flaky failure on wk2 and flaky timeout on wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=229463.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-08-24  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Catalina EWS ] media/track/track-disabled-addcue.html is flaky crashing.
