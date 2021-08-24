@@ -2019,8 +2019,6 @@ editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
 #rdar://80391927 ([ iOS ] fast/forms/ios/ipad/open-picker-using-keyboard.html is a flaky timeout) fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
 
-#rdar://80390931 (REGRESSION (r271861): [ iOS ] fast/forms/ios/accessory-bar-navigation.html is a constant timeout) fast/forms/ios/accessory-bar-navigation.html [ Timeout ] 
-
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 
 webkit.org/b/168961 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]

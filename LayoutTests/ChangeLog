@@ -1,3 +1,27 @@
+2021-08-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r276598): [ iOS ] fast/forms/ios/accessory-bar-navigation.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=229471
+        rdar://80390931
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/ios/accessory-bar-navigation.html:
+
+        r276598 updated this test so that the second input is positioned out of
+        the viewport on larger devices. However, the change (increasing the margin)
+        also lead to the first input being positioned out of the viewport on
+        smaller devices. Consequently, the test times out when run on an iPhone SE
+        as it is unable to tap on the first input.
+
+        To fix, the original margin for the first input is restored, ensuring it is
+        positioned within the viewport, and can be tapped. Then, a separate margin
+        is applied to the second input, ensuring it remains positioned outside the
+        viewport, and the test can verify accessory bar navigation with an
+        element outside the viewport.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
         REGRESSION (r281182?): 4 Media tests flakily timing out.
