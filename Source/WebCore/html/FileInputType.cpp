@@ -364,12 +364,12 @@ bool FileInputType::allowsDirectories() const
     return element()->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }
 
-void FileInputType::setFiles(RefPtr<FileList>&& files)
+void FileInputType::setFiles(RefPtr<FileList>&& files, WasSetByJavaScript wasSetByJavaScript)
 {
-    setFiles(WTFMove(files), RequestIcon::Yes);
+    setFiles(WTFMove(files), RequestIcon::Yes, wasSetByJavaScript);
 }
 
-void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequestIcon)
+void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequestIcon, WasSetByJavaScript wasSetByJavaScript)
 {
     if (!files)
         return;
@@ -406,6 +406,9 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
 
     if (protectedInputElement->renderer())
         protectedInputElement->renderer()->repaint();
+
+    if (wasSetByJavaScript == WasSetByJavaScript::Yes)
+        return;
 
     if (pathsChanged) {
         // This call may cause destruction of this instance.
@@ -465,7 +468,7 @@ void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& i
     ASSERT(!allowsDirectories() || m_directoryFileListCreator);
     m_directoryFileListCreator = nullptr;
 
-    setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No);
+    setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No, WasSetByJavaScript::No);
     if (icon && !m_fileList->isEmpty() && element())
         iconLoaded(WTFMove(icon));
 }

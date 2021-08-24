@@ -33,7 +33,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute FileList? files;
+    [ImplementedAs=filesForBindings] attribute FileList? files;
     [CEReactions=NotNeeded] attribute USVString formAction;
 
     [CEReactions=NotNeeded] attribute DOMString formEnctype;

@@ -1413,9 +1413,9 @@ FileList* HTMLInputElement::files()
     return m_inputType->files();
 }
 
-void HTMLInputElement::setFiles(RefPtr<FileList>&& files)
+void HTMLInputElement::setFiles(RefPtr<FileList>&& files, WasSetByJavaScript wasSetByJavaScript)
 {
-    m_inputType->setFiles(WTFMove(files));
+    m_inputType->setFiles(WTFMove(files), wasSetByJavaScript);
 }
 
 #if ENABLE(DRAG_SUPPORT)

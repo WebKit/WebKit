@@ -1,0 +1,11 @@
+Makes sure that no change / input events are fired when setting input.files programmatically
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dispatchedInputEvent is false
+PASS dispatchedChangeEvent is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -680,7 +680,7 @@ FileList* InputType::files()
     return nullptr;
 }
 
-void InputType::setFiles(RefPtr<FileList>&&)
+void InputType::setFiles(RefPtr<FileList>&&, WasSetByJavaScript)
 {
 }
 

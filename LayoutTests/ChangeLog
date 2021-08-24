@@ -1,3 +1,15 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        change event is dispatched when .files property is set at <input type="file"> element
+        https://bugs.webkit.org/show_bug.cgi?id=180465
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLInputElement/input-setFiles-no-change-event-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-setFiles-no-change-event.html: Added.
+
 2021-08-24  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r276598): [ iOS ] fast/forms/ios/accessory-bar-navigation.html is a constant timeout

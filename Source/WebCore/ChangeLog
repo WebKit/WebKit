@@ -1,3 +1,32 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        change event is dispatched when .files property is set at <input type="file"> element
+        https://bugs.webkit.org/show_bug.cgi?id=180465
+
+        Reviewed by Darin Adler.
+
+        We should not dispatch a change / input events when setting input.files via JavaScript,
+        as per:
+        - https://html.spec.whatwg.org/multipage/input.html#dom-input-files
+
+        This aligns our behavior with both Chrome and Firefox.
+
+        Test: fast/dom/HTMLInputElement/input-setFiles-no-change-event.html
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setFiles):
+        (WebCore::FileInputType::didCreateFileList):
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setFiles):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::filesForBindings):
+        (WebCore::HTMLInputElement::setFilesForBindings):
+        * html/HTMLInputElement.idl:
+        * html/InputType.cpp:
+        (WebCore::InputType::setFiles):
+        * html/InputType.h:
+
 2021-08-24  Tim Nguyen  <ntim@apple.com>
 
         Use RefPtr instead of auto* in EventHandler::defaultKeyboardEventHandler.

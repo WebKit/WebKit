@@ -333,7 +333,7 @@ public:
     virtual void detach();
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
-    virtual void setFiles(RefPtr<FileList>&&);
+    virtual void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
     virtual Icon* icon() const;
     virtual bool shouldSendChangeEventAfterCheckedChanged();
     virtual bool canSetValue(const String&);

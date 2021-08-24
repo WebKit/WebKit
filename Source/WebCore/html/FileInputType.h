@@ -63,9 +63,9 @@ private:
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
     bool canSetStringValue() const final;
     FileList* files() final;
-    void setFiles(RefPtr<FileList>&&) final;
+    void setFiles(RefPtr<FileList>&&, WasSetByJavaScript) final;
     enum class RequestIcon { Yes, No };
-    void setFiles(RefPtr<FileList>&&, RequestIcon);
+    void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
     String displayString() const final;
     bool canSetValue(const String&) final;
     bool getTypeSpecificValue(String&) final; // Checked first, before internal storage or the value attribute.

@@ -53,6 +53,7 @@ struct InputElementClickState {
 
 enum class AnyStepHandling : bool;
 enum class DateComponentsType : uint8_t;
+enum class WasSetByJavaScript : bool { No, Yes };
 
 class HTMLInputElement : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
@@ -251,7 +252,10 @@ public:
     void setAutoFillAvailable(bool autoFillAvailable) { m_isAutoFillAvailable = autoFillAvailable; }
 
     WEBCORE_EXPORT FileList* files();
-    WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&);
+    WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
+
+    FileList* filesForBindings() { return files(); }
+    void setFilesForBindings(RefPtr<FileList>&& fileList) { return setFiles(WTFMove(fileList), WasSetByJavaScript::Yes); }
 
 #if ENABLE(DRAG_SUPPORT)
     // Returns true if the given DragData has more than one dropped files.
