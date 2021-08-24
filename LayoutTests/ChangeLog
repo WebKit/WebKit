@@ -1,3 +1,12 @@
+2021-08-24  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening two WebXR-related failures
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http/wpt/webxr/xrViewport_singleView_valid.https-expected.txt: Added.
+
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac] http/tests/inspector/network/har/har-page.html, flaky failure on wk2, constant failure on wk1.

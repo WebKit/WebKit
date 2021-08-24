@@ -265,6 +265,9 @@ webkit.org/b/222895 imported/w3c/web-platform-tests/svg/text/reftests/dominant-b
 # WebGL
 webkit.org/b/213203 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Failure Timeout ]
 
+# WebXR
+webkit.org/b/229455 webxr/high-performance.html [ Failure ]
+
 # Workers
 webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
 
