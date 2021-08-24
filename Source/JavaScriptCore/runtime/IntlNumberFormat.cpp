@@ -151,59 +151,8 @@ static unsigned computeCurrencyDigits(const String& currency)
     return 2;
 }
 
-// Create MeasureUnit like ICU4J.
-struct MeasureUnit {
-    ASCIILiteral type;
-    ASCIILiteral subType;
-};
-
 static std::optional<MeasureUnit> sanctionedSimpleUnitIdentifier(StringView unitIdentifier)
 {
-    static constexpr MeasureUnit simpleUnits[] = {
-        { "area"_s, "acre"_s },
-        { "digital"_s, "bit"_s },
-        { "digital"_s, "byte"_s },
-        { "temperature"_s, "celsius"_s },
-        { "length"_s, "centimeter"_s },
-        { "duration"_s, "day"_s },
-        { "angle"_s, "degree"_s },
-        { "temperature"_s, "fahrenheit"_s },
-        { "volume"_s, "fluid-ounce"_s },
-        { "length"_s, "foot"_s },
-        { "volume"_s, "gallon"_s },
-        { "digital"_s, "gigabit"_s },
-        { "digital"_s, "gigabyte"_s },
-        { "mass"_s, "gram"_s },
-        { "area"_s, "hectare"_s },
-        { "duration"_s, "hour"_s },
-        { "length"_s, "inch"_s },
-        { "digital"_s, "kilobit"_s },
-        { "digital"_s, "kilobyte"_s },
-        { "mass"_s, "kilogram"_s },
-        { "length"_s, "kilometer"_s },
-        { "volume"_s, "liter"_s },
-        { "digital"_s, "megabit"_s },
-        { "digital"_s, "megabyte"_s },
-        { "length"_s, "meter"_s },
-        { "length"_s, "mile"_s },
-        { "length"_s, "mile-scandinavian"_s },
-        { "volume"_s, "milliliter"_s },
-        { "length"_s, "millimeter"_s },
-        { "duration"_s, "millisecond"_s },
-        { "duration"_s, "minute"_s },
-        { "duration"_s, "month"_s },
-        { "mass"_s, "ounce"_s },
-        { "concentr"_s, "percent"_s },
-        { "digital"_s, "petabyte"_s },
-        { "mass"_s, "pound"_s },
-        { "duration"_s, "second"_s },
-        { "mass"_s, "stone"_s },
-        { "digital"_s, "terabit"_s },
-        { "digital"_s, "terabyte"_s },
-        { "duration"_s, "week"_s },
-        { "length"_s, "yard"_s },
-        { "duration"_s, "year"_s },
-    };
     ASSERT(
         std::is_sorted(std::begin(simpleUnits), std::end(simpleUnits),
             [](const MeasureUnit& a, const MeasureUnit& b) {

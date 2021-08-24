@@ -537,23 +537,6 @@ TriState IntlLocale::numeric()
     return m_numeric;
 }
 
-static inline JSArray* createArrayFromStringVector(JSGlobalObject* globalObject, Vector<String, 1>&& elements)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
-    if (!result) {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
-    for (unsigned index = 0; index < elements.size(); ++index) {
-        result->putDirectIndex(globalObject, index, jsString(vm, WTFMove(elements[index])));
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    return result;
-}
-
 JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();

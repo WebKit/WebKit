@@ -1,3 +1,14 @@
+2021-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add Intl Enumeration APIs
+        https://bugs.webkit.org/show_bug.cgi?id=214795
+
+        Reviewed by Ross Kirsling.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+        * wtf/text/StringImpl.h:
+
 2021-08-24  Tim Nguyen  <ntim@apple.com>
 
         Implement inert attribute behind feature flag

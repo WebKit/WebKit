@@ -1,3 +1,18 @@
+2021-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add Intl Enumeration APIs
+        https://bugs.webkit.org/show_bug.cgi?id=214795
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-datetimeformat.js:
+        * stress/intl-enumeration.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        * stress/intl-locale-info.js:
+        (let.l.new.Intl.Locale.shouldBe):
+        (shouldBe):
+
 2021-08-24  Keith Miller  <keith_miller@apple.com>
 
         (r281473) stress/for-in-has-own-property-shouldnt-flush-registers.js failing on Debug

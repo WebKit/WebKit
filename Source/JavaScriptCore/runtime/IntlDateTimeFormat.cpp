@@ -165,6 +165,9 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
             ASSERT(U_SUCCESS(status));
             String calendar = String(availableName, nameLength);
             keyLocaleData.append(calendar);
+            // Adding "islamicc" candidate for backward compatibility.
+            if (calendar == "islamic-civil"_s)
+                keyLocaleData.append("islamicc"_s);
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
                 keyLocaleData.append(WTFMove(mapped.value()));
         }
@@ -579,13 +582,13 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         return;
     }
 
-    m_calendar = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Ca)];
-    if (m_calendar == "gregorian")
-        m_calendar = "gregory"_s;
-    else if (m_calendar == "islamicc")
-        m_calendar = "islamic-civil"_s;
-    else if (m_calendar == "ethioaa")
-        m_calendar = "ethiopic-amete-alem"_s;
+    {
+        String calendar = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Ca)];
+        if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
+            m_calendar = WTFMove(mapped.value());
+        else
+            m_calendar = WTFMove(calendar);
+    }
 
     hourCycle = parseHourCycle(resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)]);
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];

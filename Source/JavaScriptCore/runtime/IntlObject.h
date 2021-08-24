@@ -60,6 +60,13 @@ JSC_INTL_RELEVANT_EXTENSION_KEYS(JSC_DECLARE_INTL_RELEVANT_EXTENSION_KEYS)
 static constexpr uint8_t numberOfRelevantExtensionKeys = 0 JSC_INTL_RELEVANT_EXTENSION_KEYS(JSC_COUNT_INTL_RELEVANT_EXTENSION_KEYS);
 #undef JSC_COUNT_INTL_RELEVANT_EXTENSION_KEYS
 
+struct MeasureUnit {
+    ASCIILiteral type;
+    ASCIILiteral subType;
+};
+
+extern JS_EXPORT_PRIVATE const MeasureUnit simpleUnits[43];
+
 class IntlObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -140,5 +147,7 @@ struct UFieldPositionIteratorDeleter {
 std::optional<String> mapICUCollationKeywordToBCP47(const String&);
 std::optional<String> mapICUCalendarKeywordToBCP47(const String&);
 std::optional<String> mapBCP47ToICUCalendarKeyword(const String&);
+
+JSArray* createArrayFromStringVector(JSGlobalObject*, Vector<String, 1>&&);
 
 } // namespace JSC

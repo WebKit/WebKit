@@ -33,6 +33,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIIFastPath.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringCommon.h>
@@ -249,6 +250,7 @@ public:
     // FIXME: Replace calls to these overloads of createFromLiteral to createWithoutCopying instead.
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(ASCIILiteral);
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const UChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const LChar*, unsigned length);

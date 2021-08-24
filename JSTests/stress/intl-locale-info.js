@@ -17,7 +17,7 @@ function shouldBe(actual, expected) {
 }
 {
     let locale = new Intl.Locale("ar")
-    shouldBe(JSON.stringify(locale.calendars), `["gregory","coptic","islamic","islamicc","islamic-tbla"]`);
+    shouldBe(JSON.stringify(locale.calendars), `["gregory","coptic","islamic","islamic-civil","islamic-tbla"]`);
     shouldBe(JSON.stringify(locale.collations), `["compat","emoji","eor"]`);
     shouldBe(JSON.stringify(locale.hourCycles), `["h12"]`);
     let ns = JSON.stringify(locale.numberingSystems);
@@ -26,7 +26,7 @@ function shouldBe(actual, expected) {
 }
 {
     let locale = new Intl.Locale("ar-EG")
-    shouldBe(JSON.stringify(locale.calendars), `["gregory","coptic","islamic","islamicc","islamic-tbla"]`);
+    shouldBe(JSON.stringify(locale.calendars), `["gregory","coptic","islamic","islamic-civil","islamic-tbla"]`);
     shouldBe(JSON.stringify(locale.collations), `["compat","emoji","eor"]`);
     shouldBe(JSON.stringify(locale.hourCycles), `["h12"]`);
     shouldBe(JSON.stringify(locale.numberingSystems), `["arab"]`);
@@ -99,7 +99,7 @@ function shouldBe(actual, expected) {
 }
 {
     let locale = new Intl.Locale("fa")
-    shouldBe(JSON.stringify(locale.calendars), `["persian","gregory","islamic","islamicc","islamic-tbla"]`);
+    shouldBe(JSON.stringify(locale.calendars), `["persian","gregory","islamic","islamic-civil","islamic-tbla"]`);
     shouldBe(JSON.stringify(locale.collations), `["emoji","eor"]`);
     shouldBe(JSON.stringify(locale.hourCycles), `["h23"]`);
     shouldBe(JSON.stringify(locale.numberingSystems), `["arabext"]`);

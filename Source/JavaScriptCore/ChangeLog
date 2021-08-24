@@ -1,3 +1,37 @@
+2021-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add Intl Enumeration APIs
+        https://bugs.webkit.org/show_bug.cgi?id=214795
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl enumeration API[1] which is in stage-3.
+        Supported keys are, "calendar", "collation", "currency", "numberingSystem", "timeZone", and "unit".
+
+        [1]: https://github.com/tc39/proposal-intl-enumeration
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::localeData):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlLocale.cpp:
+        (JSC::createArrayFromStringVector): Deleted.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::sanctionedSimpleUnitIdentifier):
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+        (JSC::mapICUCalendarKeywordToBCP47):
+        (JSC::availableCalendars):
+        (JSC::availableCollations):
+        (JSC::availableCurrencies):
+        (JSC::availableNumberingSystems):
+        (JSC::canonicalizeTimeZoneNameFromICUTimeZone):
+        (JSC::availableTimeZones):
+        (JSC::availableUnits):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::createArrayFromStringVector):
+        * runtime/IntlObject.h:
+        * runtime/OptionsList.h:
+
 2021-08-24  Keith Miller  <keith_miller@apple.com>
 
         (r281473) stress/for-in-has-own-property-shouldnt-flush-registers.js failing on Debug

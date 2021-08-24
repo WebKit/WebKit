@@ -163,6 +163,11 @@ Ref<StringImpl> StringImpl::createFromLiteral(const char* characters)
     return createFromLiteral(characters, strlen(characters));
 }
 
+Ref<StringImpl> StringImpl::createFromLiteral(ASCIILiteral literal)
+{
+    return createFromLiteral(literal.characters(), literal.length());
+}
+
 Ref<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length)
 {
     if (!length)

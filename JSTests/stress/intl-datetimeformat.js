@@ -314,7 +314,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-buddhist').resolvedOptions().calendar, 'bu
 shouldBe(Intl.DateTimeFormat('en-u-ca-chinese').resolvedOptions().calendar, 'chinese');
 shouldBe(Intl.DateTimeFormat('en-u-ca-coptic').resolvedOptions().calendar, 'coptic');
 shouldBe(Intl.DateTimeFormat('en-u-ca-dangi').resolvedOptions().calendar, 'dangi');
-shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethioaa').resolvedOptions().calendar, 'ethiopic-amete-alem');
+shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethioaa').resolvedOptions().calendar, 'ethioaa');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ethiopic').resolvedOptions().calendar, 'ethiopic');
 shouldBe(Intl.DateTimeFormat('ar-SA-u-ca-gregory').resolvedOptions().calendar, 'gregory');
 shouldBe(Intl.DateTimeFormat('en-u-ca-hebrew').resolvedOptions().calendar, 'hebrew');
@@ -325,7 +325,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601').resolvedOptions().calendar, 'iso
 shouldBe(Intl.DateTimeFormat('en-u-ca-japanese').resolvedOptions().calendar, 'japanese');
 shouldBe(Intl.DateTimeFormat('en-u-ca-persian').resolvedOptions().calendar, 'persian');
 shouldBe(Intl.DateTimeFormat('en-u-ca-roc').resolvedOptions().calendar, 'roc');
-shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar, 'ethiopic-amete-alem');
+shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem').resolvedOptions().calendar, 'ethioaa');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-umalqura').resolvedOptions().calendar, 'islamic-umalqura');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-tbla').resolvedOptions().calendar, 'islamic-tbla');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-civil').resolvedOptions().calendar, 'islamic-civil');
