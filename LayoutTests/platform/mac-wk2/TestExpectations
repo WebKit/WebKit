@@ -1605,5 +1605,7 @@ webkit.org/b/229454 [ BigSur Debug ] http/tests/inspector/network/resource-timin
 
 webkit.org/b/229458 http/tests/inspector/network/har/har-page.html [ Pass Failure ]
 
+webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html [ Pass Failure ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
