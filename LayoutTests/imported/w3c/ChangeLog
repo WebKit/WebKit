@@ -1,3 +1,39 @@
+2021-08-24  Tim Nguyen  <ntim@apple.com>
+
+        Implement inert attribute behind feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=165279
+
+        Reviewed by Chris Dumez.
+
+        Import inert/ WPT directory using `import-w3c-tests -t web-platform-tests/inert`.
+        WPT revision: https://github.com/web-platform-tests/wpt/commit/f02e38d7a67999683d05579f62b339430c61e4ec
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/inert/frame/button.html: Added.
+        * web-platform-tests/inert/frame/w3c-import.log: Added.
+        * web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative.html: Added.
+        * web-platform-tests/inert/inert-in-shadow-dom.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-in-shadow-dom.tentative.html: Added.
+        * web-platform-tests/inert/inert-inlines.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-inlines.tentative.html: Added.
+        * web-platform-tests/inert/inert-label-focus.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-label-focus.tentative.html: Added.
+        * web-platform-tests/inert/inert-node-is-uneditable.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-node-is-uneditable.tentative.html: Added.
+        * web-platform-tests/inert/inert-node-is-unfocusable.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-node-is-unfocusable.tentative.html: Added.
+        * web-platform-tests/inert/inert-node-is-unselectable.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-node-is-unselectable.tentative.html: Added.
+        * web-platform-tests/inert/inert-on-slots.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-on-slots.tentative.html: Added.
+        * web-platform-tests/inert/inert-retargeting-iframe.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-retargeting-iframe.tentative.html: Added.
+        * web-platform-tests/inert/inert-retargeting.tentative-expected.txt: Added.
+        * web-platform-tests/inert/inert-retargeting.tentative.html: Added.
+        * web-platform-tests/inert/w3c-import.log: Added.
+
 2021-08-23  Alex Christensen  <achristensen@webkit.org>
 
         Setting window.location.href to an invalid URL should throw a TypeError

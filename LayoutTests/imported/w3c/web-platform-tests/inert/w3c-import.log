@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-in-shadow-dom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-inlines.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-label-focus.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unfocusable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-slots.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-retargeting.tentative.html

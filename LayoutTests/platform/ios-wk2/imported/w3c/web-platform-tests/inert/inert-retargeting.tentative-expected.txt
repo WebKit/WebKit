@@ -1,0 +1,18 @@
+Click on "foreground".
+
+The blue square ("Non-inert ancestor container") should turn green.
+The yellow, semi-transparent square ("Non-inert, displaced container") should not turn red.
+"Non-inert button" should not turn red.
+(The full test suite checks a range of events.)
+
+Non-inert ancestor container
+backgroundNon-inert, displaced ancestor
+Inert container
+foreground
+
+PASS elementsFromPoint returns inert element
+FAIL Tests that any mouse event on a non-inert element is correctly targeted to that element promise_test: Unhandled rejection with value: "did not get mouseover on foreground"
+FAIL Tests that any mouse event on an inert element is targeted to the nearest non-inert ancestor at the same coordinates promise_test: Unhandled rejection with value: "did not get mouseover on ancestorContainer"
+FAIL Tests that any pointer event on a non-inert element is correctly targeted to that element promise_test: Unhandled rejection with value: "did not get pointerover on foreground"
+FAIL Tests that any pointer event on an inert element is targeted to the nearest non-inert ancestor at the same coordinates promise_test: Unhandled rejection with value: "did not get pointerover on ancestorContainer"
+

@@ -1,0 +1,5 @@
+Here is a text node you can't select.
+I'm selectable.
+
+FAIL Inert nodes cannot be selected. assert_equals: expected "I'm selectable." but got "Here is a text node you can't select.\nI'm selectable."
+

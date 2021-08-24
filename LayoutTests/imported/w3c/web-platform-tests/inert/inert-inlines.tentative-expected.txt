@@ -1,0 +1,6 @@
+Click me Click me
+Click me
+Click me
+
+FAIL Tests that inert inlines do not receive mouse events. To test manually, click on all the "Click me"s. The test fails if you see red. assert_false: no event should be fired on a expected false got true
+

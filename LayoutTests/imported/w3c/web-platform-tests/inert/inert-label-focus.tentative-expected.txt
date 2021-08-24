@@ -1,0 +1,7 @@
+Label for Submit     Label for input in inert subtree
+
+
+PASS Calling focus() on an inert label should still send focus to its target.
+PASS Clicking on an inert label should send focus to document.body.
+PASS Calling focus() on a label for a control which is in an inert subtree should have no effect.
+

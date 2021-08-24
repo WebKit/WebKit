@@ -1,3 +1,14 @@
+2021-08-24  Tim Nguyen  <ntim@apple.com>
+
+        Implement inert attribute behind feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=165279
+
+        Reviewed by Chris Dumez.
+
+        Add runtime InertAttributeEnabled feature flag disabled by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-08-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         overwriteCodePoint() in createAndFillGlyphPage() is wrong

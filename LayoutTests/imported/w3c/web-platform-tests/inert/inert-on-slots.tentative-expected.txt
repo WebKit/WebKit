@@ -1,0 +1,5 @@
+Button 1 should be inert, and Button 2 should not be inert.
+Button 1 (inert)Button 2 (not inert)
+
+PASS inert inside ShadowRoot affects slotted content
+

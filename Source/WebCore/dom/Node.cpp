@@ -2632,6 +2632,13 @@ bool Node::isInert() const
             return true;
     }
 
+    if (document().settings().inertAttributeEnabled()) {
+        for (RefPtr element = this; element; element = element->parentElementInComposedTree()) {
+            if (is<HTMLElement>(*element) && downcast<HTMLElement>(*element).hasAttribute(HTMLNames::inertAttr))
+                return true;
+        }
+    }
+
     if (!document().frame() || !document().frame()->ownerElement())
         return false;
 

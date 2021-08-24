@@ -47,6 +47,9 @@
     // FIXME: Implement 'attachInternals'.
     // ElementInternals attachInternals();
 
+    // Experimental: https://github.com/WICG/inert/blob/master/README.md
+    [CEReactions, Reflect, EnabledBySetting=InertAttribute] attribute boolean inert;
+
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;
 
