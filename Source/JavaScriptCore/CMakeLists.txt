@@ -912,6 +912,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     profiler/ProfilerProfiledBytecodes.h
     profiler/ProfilerUID.h
 
+    runtime/AggregateError.h
+
     runtime/AbstractModuleRecord.h
     runtime/ArgList.h
     runtime/ArityCheckMode.h

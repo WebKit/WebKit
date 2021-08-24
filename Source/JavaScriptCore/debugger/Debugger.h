@@ -151,7 +151,7 @@ public:
 
     void setClient(Client*);
 
-    // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify Debugger::Script to use SourceProvider
+    // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify     Script to use SourceProvider
     struct Script {
         String url;
         String source;

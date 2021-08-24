@@ -41,7 +41,7 @@ class SourceCode;
 class UnlinkedFunctionExecutable;
 class UnlinkedFunctionCodeBlock;
 
-    enum class SourceProviderSourceType : uint8_t {
+    enum class JS_EXPORT_PRIVATE SourceProviderSourceType : uint8_t {
         Program,
         Module,
         WebAssembly,
@@ -49,7 +49,7 @@ class UnlinkedFunctionCodeBlock;
 
     using BytecodeCacheGenerator = Function<RefPtr<CachedBytecode>()>;
 
-    class SourceProvider : public RefCounted<SourceProvider> {
+    class JS_EXPORT_PRIVATE SourceProvider : public RefCounted<SourceProvider> {
     public:
         static const intptr_t nullID = 1;
         
@@ -57,14 +57,14 @@ class UnlinkedFunctionCodeBlock;
 
         JS_EXPORT_PRIVATE virtual ~SourceProvider();
 
-        virtual unsigned hash() const = 0;
-        virtual StringView source() const = 0;
-        virtual RefPtr<CachedBytecode> cachedBytecode() const { return nullptr; }
-        virtual void cacheBytecode(const BytecodeCacheGenerator&) const { }
-        virtual void updateCache(const UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, const UnlinkedFunctionCodeBlock*) const { }
-        virtual void commitCachedBytecode() const { }
+        JS_EXPORT_PRIVATE virtual unsigned hash() const = 0;
+        JS_EXPORT_PRIVATE virtual StringView source() const = 0;
+        JS_EXPORT_PRIVATE virtual RefPtr<CachedBytecode> cachedBytecode() const { return nullptr; }
+        JS_EXPORT_PRIVATE virtual void cacheBytecode(const BytecodeCacheGenerator&) const { }
+        JS_EXPORT_PRIVATE virtual void updateCache(const UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, const UnlinkedFunctionCodeBlock*) const { }
+        JS_EXPORT_PRIVATE virtual void commitCachedBytecode() const { }
 
-        StringView getRange(int start, int end) const
+        JS_EXPORT_PRIVATE StringView getRange(int start, int end) const
         {
             return source().substring(start, end - start);
         }
@@ -72,12 +72,12 @@ class UnlinkedFunctionCodeBlock;
         const SourceOrigin& sourceOrigin() const { return m_sourceOrigin; }
 
         // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same...
-        const String& sourceURL() const { return m_sourceURL; }
-        const String& sourceURLDirective() const { return m_sourceURLDirective; }
-        const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
+        JS_EXPORT_PRIVATE const String& sourceURL() const { return m_sourceURL; }
+        JS_EXPORT_PRIVATE const String& sourceURLDirective() const { return m_sourceURLDirective; }
+        JS_EXPORT_PRIVATE const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
 
-        TextPosition startPosition() const { return m_startPosition; }
-        SourceProviderSourceType sourceType() const { return m_sourceType; }
+        JS_EXPORT_PRIVATE TextPosition startPosition() const { return m_startPosition; }
+        JS_EXPORT_PRIVATE SourceProviderSourceType sourceType() const { return m_sourceType; }
 
         intptr_t asID()
         {
@@ -86,8 +86,8 @@ class UnlinkedFunctionCodeBlock;
             return m_id;
         }
 
-        void setSourceURLDirective(const String& sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
-        void setSourceMappingURLDirective(const String& sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
+        JS_EXPORT_PRIVATE void setSourceURLDirective(const String& sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
+        JS_EXPORT_PRIVATE void setSourceMappingURLDirective(const String& sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
 
     private:
         JS_EXPORT_PRIVATE void getID();
@@ -102,26 +102,26 @@ class UnlinkedFunctionCodeBlock;
     };
 
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
-    class StringSourceProvider : public SourceProvider {
+    class JS_EXPORT_PRIVATE StringSourceProvider : public SourceProvider {
         WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringSourceProvider);
     public:
-        static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String sourceURL, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
+        JS_EXPORT_PRIVATE static Ref<StringSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, String sourceURL, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
         {
             return adoptRef(*new StringSourceProvider(source, sourceOrigin, WTFMove(sourceURL), startPosition, sourceType));
         }
         
-        unsigned hash() const override
+        JS_EXPORT_PRIVATE unsigned hash() const override
         {
             return m_source.get().hash();
         }
 
-        StringView source() const override
+        JS_EXPORT_PRIVATE StringView source() const override
         {
             return m_source.get();
         }
 
     protected:
-        StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+        JS_EXPORT_PRIVATE StringSourceProvider(const String& source, const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
             : SourceProvider(sourceOrigin, WTFMove(sourceURL), startPosition, sourceType)
             , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
         {
@@ -132,9 +132,9 @@ class UnlinkedFunctionCodeBlock;
     };
 
 #if ENABLE(WEBASSEMBLY)
-    class WebAssemblySourceProvider final : public SourceProvider {
+    class JS_EXPORT_PRIVATE WebAssemblySourceProvider final : public SourceProvider {
     public:
-        static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String sourceURL)
+        JS_EXPORT_PRIVATE static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String sourceURL)
         {
             return adoptRef(*new WebAssemblySourceProvider(WTFMove(data), sourceOrigin, WTFMove(sourceURL)));
         }
@@ -155,7 +155,7 @@ class UnlinkedFunctionCodeBlock;
         }
 
     private:
-        WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String&& sourceURL)
+        JS_EXPORT_PRIVATE WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String&& sourceURL)
             : SourceProvider(sourceOrigin, WTFMove(sourceURL), TextPosition(), SourceProviderSourceType::WebAssembly)
             , m_source("[WebAssembly source]")
             , m_data(WTFMove(data))
