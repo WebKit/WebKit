@@ -1,5 +1,22 @@
 2021-08-23  Saam Barati  <sbarati@apple.com>
 
+        Disable peephole optimizations in the byte code generator after rewriting instructions for for-in
+        https://bugs.webkit.org/show_bug.cgi?id=229420
+        <rdar://82020528>
+
+        Reviewed by Keith Miller.
+
+        The final instruction in a for-in loop might be the get by val that
+        we're rewriting because there was an escape. We won't ever actually
+        do peephole optimizations on this get_by_val today, but it breaks
+        some bookkeeping that the bytecode generator does. This patch makes
+        sure the bookkeeping is up to date.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ForInContext::finalize):
+
+2021-08-23  Saam Barati  <sbarati@apple.com>
+
         compileEnumeratorHasProperty uses flushRegisters incorrectly
         https://bugs.webkit.org/show_bug.cgi?id=229412
         <rdar://82020767>
