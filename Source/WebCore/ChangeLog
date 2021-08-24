@@ -1,3 +1,18 @@
+2021-08-23  Alex Christensen  <achristensen@webkit.org>
+
+        ThreadSanitizer: data race of WTF::StringImpl in WebCoreNSURLSessionDataTask._metrics instance variable
+        https://bugs.webkit.org/show_bug.cgi?id=229435
+
+        Reviewed by David Kilzer.
+
+        Move the isolated copy to the WebCoreNSURLSessionTaskMetrics instead of keeping a copy on the delegate thread
+        and a copy on whatever thread our media stack wants to use the WebCoreNSURLSessionTaskMetrics on.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionTaskTransactionMetrics _initWithMetrics:]):
+        (-[WebCoreNSURLSessionTaskMetrics _initWithMetrics:]):
+        (-[WebCoreNSURLSessionDataTask _resource:loadFinishedWithError:metrics:]):
+
 2021-08-23  John Wilander  <wilander@apple.com>
 
         PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement

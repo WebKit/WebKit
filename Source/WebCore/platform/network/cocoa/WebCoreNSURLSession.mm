@@ -54,7 +54,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 }
 
 @interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
-- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics;
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics;
 @property (nullable, copy, readonly) NSDate *fetchStartDate;
 @property (nullable, copy, readonly) NSDate *domainLookupStartDate;
 @property (nullable, copy, readonly) NSDate *domainLookupEndDate;
@@ -79,7 +79,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
     WebCore::NetworkLoadMetrics _metrics;
 }
 
-- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics
 {
     if (!(self = [super init]))
         return nil;
@@ -206,7 +206,7 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 @end
 
 @interface WebCoreNSURLSessionTaskMetrics : NSObject
-- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics;
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics;
 @property (copy, readonly) NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics;
 @end
 
@@ -214,11 +214,11 @@ static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
     RetainPtr<WebCoreNSURLSessionTaskTransactionMetrics> _transactionMetrics;
 }
 
-- (instancetype)_initWithMetrics:(const WebCore::NetworkLoadMetrics&)metrics
+- (instancetype)_initWithMetrics:(WebCore::NetworkLoadMetrics&&)metrics
 {
     if (!(self = [super init]))
         return nil;
-    _transactionMetrics = adoptNS([[WebCoreNSURLSessionTaskTransactionMetrics alloc] _initWithMetrics:metrics]);
+    _transactionMetrics = adoptNS([[WebCoreNSURLSessionTaskTransactionMetrics alloc] _initWithMetrics:WTFMove(metrics)]);
     return self;
 }
 
@@ -941,11 +941,11 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     RetainPtr<NSError> strongError { error };
-    [self.session addDelegateOperation:[strongSelf, strongSession, strongError, metrics = metrics.isolatedCopy()] {
+    [self.session addDelegateOperation:[strongSelf, strongSession, strongError, metrics = metrics.isolatedCopy()] () mutable {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didFinishCollectingMetrics:)])
-            [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:metrics]).get()];
+            [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:WTFMove(metrics)]).get()];
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didCompleteWithError:)])
             [delegate URLSession:(NSURLSession *)strongSession.get() task:(NSURLSessionDataTask *)strongSelf.get() didCompleteWithError:strongError.get()];
