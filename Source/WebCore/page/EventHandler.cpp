@@ -3801,7 +3801,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
         if (event.defaultHandled())
             return;
         if (event.key() == "Escape") {
-            if (auto* activeModalDialog = m_frame.document()->activeModalDialog())
+            if (RefPtr activeModalDialog = m_frame.document()->activeModalDialog())
                 activeModalDialog->queueCancelTask();
         } else if (event.keyIdentifier() == "U+0009")
             defaultTabEventHandler(event);

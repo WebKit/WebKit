@@ -1,3 +1,13 @@
+2021-08-24  Tim Nguyen  <ntim@apple.com>
+
+        Use RefPtr instead of auto* in EventHandler::defaultKeyboardEventHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=229475
+
+        Unreviewed.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         Geolocation API should callback with error if doc is not fully active
