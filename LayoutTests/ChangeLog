@@ -1,3 +1,12 @@
+2021-08-24  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur wk2 Debug x86] http/tests/inspector/network/resource-timing.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229454.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-24  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Removing test expectations for fixed bug [ Win EWS ] fast/forms/* tests are flaky crashing FAULTING_IP:  WebKit!WebCore::FontCache::lastResortFallbackFont+ec [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Source\WebCore\platform\graphics\win\FontCacheWin.cpp @ 424].
