@@ -1,5 +1,9 @@
 
 PASS Call getCurrentPosition with wrong type for enableHighAccuracy. No exception expected.
 PASS Call watchPosition with wrong type for enableHighAccuracy. No exception expected.
-FAIL PositionOptions tests promise_test: Unhandled rejection with value: object "Error: unimplemented"
+PASS PositionOptions tests
+PASS Set timeout and maximumAge to 0, check that timeout error raised (getCurrentPosition)
+PASS Set timeout and maximumAge to 0, check that timeout error raised (watchPosition)
+PASS Check that a negative timeout value is equivalent to a 0 timeout value (getCurrentLocation)
+PASS Check that a negative timeout value is equivalent to a 0 timeout value (watchPosition)
 

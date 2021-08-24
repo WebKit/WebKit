@@ -23,7 +23,7 @@ function onSecondIframeLoaded() {
         testFailed('Success callback invoked unexpectedly');
         finishJSTest();
     }, function(e) {
-        testFailed('Error callback invoked unexpectedly');
+        testPassed('Error callback invoked');
         finishJSTest();
     });
     setTimeout(finishTest, 1000);

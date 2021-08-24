@@ -21,7 +21,11 @@
                         shouldBeFalse('didFireOnError');
                         finishJSTest();
                     });
-                    iframe.contentWindow.eval('throw "error"');
+                    try {
+                        iframe.contentWindow.eval('throw "error"');
+                    } catch (e) {
+                        testPassed("Exception thrown");
+                    }
                 });
             };
             document.body.appendChild(iframe);

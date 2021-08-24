@@ -293,3 +293,16 @@ window.test_driver_internal.action_sequence = function(sources)
     if (pointerType === "mouse" || pointerType === "pen")
         return dispatchMouseActions(pointerSource.actions, pointerType);
 };
+
+window.test_driver_internal.set_permission = function(permission_params, context=null)
+{
+    if (window.testRunner && permission_params.descriptor.name == "geolocation") {
+        setInterval(() => {
+            window.testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
+        }, 100);
+        testRunner.setGeolocationPermission(permission_params.state == "granted");
+        return Promise.resolve();
+    }
+    return Promise.reject(new Error("unimplemented"));
+};
+

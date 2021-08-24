@@ -1,3 +1,25 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        Geolocation API should callback with error if doc is not fully active
+        https://bugs.webkit.org/show_bug.cgi?id=228319
+        <rdar://problem/81450315>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update / rebaseline existing layout tests to reflect behavior change.
+
+        * fast/dom/Geolocation/callback-to-deleted-context-expected.txt:
+        * fast/dom/Geolocation/callback-to-deleted-context.html:
+        * fast/dom/Geolocation/disconnected-frame-already-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-already.html:
+        * fast/dom/Geolocation/disconnected-frame-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-permission-denied-expected.txt:
+        * fast/dom/Geolocation/disconnected-frame-permission-denied.html:
+        * fast/dom/Geolocation/disconnected-frame.html:
+        * fast/dom/Geolocation/resources/callback-to-deleted-context-inner1.html:
+        * fast/events/detached-svg-parent-window-events-expected.txt:
+        * fast/events/detached-svg-parent-window-events.html:
+
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html is a flaky timeout.

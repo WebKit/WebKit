@@ -23,13 +23,13 @@ function onIframeUnloaded() {
         testFailed('Success callback invoked unexpectedly');
         finishJSTest();
     }, function(e) {
-        testFailed('Error callback invoked unexpectedly');
+        testPassed('Error callback invoked');
         finishJSTest();
     });
     setTimeout(function() {
-        testPassed('No callbacks invoked');
+        testFailed('No callbacks invoked');
         finishJSTest();
-    }, 100);
+    }, 1000);
 }
 
 var iframe = document.createElement('iframe');

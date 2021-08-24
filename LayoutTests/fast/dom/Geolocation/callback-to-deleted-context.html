@@ -13,7 +13,7 @@ function onFirstIframeLoaded() {
 
 function onSecondIframeLoaded() {
     window.setTimeout(function() {
-        testFailed('No callbacks invoked');
+        testPassed('No callbacks invoked');
         finishJSTest();
     }, 500);
 }

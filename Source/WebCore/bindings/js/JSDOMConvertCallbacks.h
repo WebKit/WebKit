@@ -44,8 +44,12 @@ template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter
             exceptionThrower(lexicalGlobalObject, scope);
             return nullptr;
         }
+
+        JSDOMGlobalObject* incumbentGlobalObject = &globalObject;
+        if (auto* globalObject = JSC::CallFrame::globalObjectOfClosestCodeBlock(vm, vm.topCallFrame))
+            incumbentGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
         
-        return T::create(JSC::asObject(value), &globalObject);
+        return T::create(JSC::asObject(value), incumbentGlobalObject);
     }
 };
 
@@ -79,7 +83,11 @@ template<typename T> struct Converter<IDLCallbackInterface<T>> : DefaultConverte
             return nullptr;
         }
 
-        return T::create(JSC::asObject(value), &globalObject);
+        JSDOMGlobalObject* incumbentGlobalObject = &globalObject;
+        if (auto* globalObject = JSC::CallFrame::globalObjectOfClosestCodeBlock(vm, vm.topCallFrame))
+            incumbentGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+
+        return T::create(JSC::asObject(value), incumbentGlobalObject);
     }
 };
 

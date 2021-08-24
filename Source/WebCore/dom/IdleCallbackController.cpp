@@ -109,7 +109,7 @@ void IdleCallbackController::queueTaskToInvokeIdleCallbacks(MonotonicTime deadli
 // https://w3c.github.io/requestidlecallback/#invoke-idle-callbacks-algorithm
 void IdleCallbackController::invokeIdleCallbacks(MonotonicTime deadline)
 {
-    if (!m_document)
+    if (!m_document || !m_document->frame())
         return;
 
     auto now = MonotonicTime::now();

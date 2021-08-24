@@ -1,5 +1,26 @@
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
+        Geolocation API should callback with error if doc is not fully active
+        https://bugs.webkit.org/show_bug.cgi?id=228319
+        <rdar://problem/81450315>
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/geolocation-API/PositionOptions.https-expected.txt:
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/geolocation-API/non-fully-active.https-expected.txt: Added.
+        * web-platform-tests/geolocation-API/non-fully-active.https.html: Added.
+        * web-platform-tests/geolocation-API/resources/iframe.html: Added.
+        Import test coverage from WPT https://github.com/web-platform-tests/wpt/pull/29799.
+
+        * web-platform-tests/resources/testdriver-vendor.js:
+        (window.test_driver_internal.set_permission):
+        Add support for test_driver.set_permission("geolocation", "granted") so that Geolocation
+        WPT tests can run with our infrastructure.
+
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
         [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header
         https://bugs.webkit.org/show_bug.cgi?id=229203
         <rdar://problem/82047686>
