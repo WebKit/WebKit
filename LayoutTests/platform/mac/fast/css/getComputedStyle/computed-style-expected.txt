@@ -195,7 +195,6 @@ writing-mode: horizontal-tb;
 z-index: auto;
 zoom: 1;
 -webkit-appearance: none;
--webkit-backface-visibility: visible;
 -webkit-background-clip: border-box;
 -webkit-background-composite: source-over;
 -webkit-background-origin: padding-box;

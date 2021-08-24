@@ -388,8 +388,6 @@ rect: style.getPropertyValue(zoom) : 1
 rect: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-appearance) : none
 rect: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-backface-visibility) : visible
-rect: style.getPropertyCSSValue(-webkit-backface-visibility) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-composite) : source-over
@@ -912,8 +910,6 @@ g: style.getPropertyValue(zoom) : 1
 g: style.getPropertyCSSValue(zoom) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-appearance) : none
 g: style.getPropertyCSSValue(-webkit-appearance) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-backface-visibility) : visible
-g: style.getPropertyCSSValue(-webkit-backface-visibility) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-background-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-composite) : source-over

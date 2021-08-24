@@ -753,7 +753,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueVisible || valueID == CSSValueHidden || valueID == CSSValueCollapse;
     case CSSPropertyWebkitAppearance:
         return (valueID >= CSSValueCheckbox && valueID <= CSSValueCapsLockIndicator) || valueID == CSSValueNone;
-    case CSSPropertyWebkitBackfaceVisibility:
+    case CSSPropertyBackfaceVisibility:
         return valueID == CSSValueVisible || valueID == CSSValueHidden;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
@@ -960,7 +960,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyUnicodeBidi:
     case CSSPropertyVisibility:
     case CSSPropertyWebkitAppearance:
-    case CSSPropertyWebkitBackfaceVisibility:
+    case CSSPropertyBackfaceVisibility:
     case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBoxAlign:
     case CSSPropertyWebkitBoxDirection:

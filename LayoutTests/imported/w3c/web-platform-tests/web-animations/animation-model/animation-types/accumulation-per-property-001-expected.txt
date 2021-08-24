@@ -9,6 +9,9 @@ PASS align-items: "flex-start" onto "flex-end"
 PASS align-self (type: discrete) has testAccumulation function
 PASS align-self: "flex-end" onto "flex-start"
 PASS align-self: "flex-start" onto "flex-end"
+PASS backface-visibility (type: discrete) has testAccumulation function
+PASS backface-visibility: "hidden" onto "visible"
+PASS backface-visibility: "visible" onto "hidden"
 PASS background-attachment (type: discrete) has testAccumulation function
 PASS background-attachment: "local" onto "fixed"
 PASS background-attachment: "fixed" onto "local"

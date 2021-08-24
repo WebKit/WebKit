@@ -17,6 +17,7 @@ PASS animation-name
 PASS animation-play-state
 PASS animation-timing-function
 PASS aspect-ratio
+PASS backface-visibility
 PASS background-attachment
 PASS background-blend-mode
 PASS background-clip
@@ -314,7 +315,6 @@ PASS -apple-pay-button-type
 PASS -apple-trailing-word
 PASS -webkit-appearance
 PASS -webkit-backdrop-filter
-PASS -webkit-backface-visibility
 PASS -webkit-background-clip
 PASS -webkit-background-composite
 PASS -webkit-background-origin
