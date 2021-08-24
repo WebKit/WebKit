@@ -34,6 +34,7 @@ from .checkout import Checkout
 from .find import Find, Info
 from .log import Log
 from .pull import Pull
+from .pull_request import PullRequest
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 
@@ -65,8 +66,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
-
-    programs = [Branch, Blame, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, Setup]
+    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Log, Pull, PullRequest, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 

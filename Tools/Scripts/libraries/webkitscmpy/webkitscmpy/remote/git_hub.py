@@ -29,7 +29,7 @@ import sys
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
 from webkitcorepy import credentials, decorators
-from webkitscmpy import Commit
+from webkitscmpy import Commit, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
 
@@ -37,6 +37,101 @@ from xml.dom import minidom
 class GitHub(Scm):
     URL_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
     EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
+
+    class PRGenerator(Scm.PRGenerator):
+        def find(self, state=None, head=None, base=None):
+            if not state:
+                state = 'all'
+            user, _ = self.repository.credentials()
+            data = self.repository.request('pulls', params=dict(
+                state=state,
+                base=base,
+                head='{}:{}'.format(user, head) if user and head else head,
+            ))
+            for datum in data or []:
+                if base and datum['base']['ref'] != base:
+                    continue
+                if head and not datum['head']['ref'].endswith(head):
+                    continue
+                yield PullRequest(
+                    number=datum['number'],
+                    title=datum.get('title'),
+                    body=datum.get('body'),
+                    author=self.repository.contributors.create(datum['user']['login']),
+                    head=datum['head']['ref'],
+                    base=datum['base']['ref'],
+                )
+
+        def create(self, head, title, body=None, commits=None, base=None):
+            for key, value in dict(head=head, title=title).items():
+                if not value:
+                    raise ValueError("Must define '{}' when creating pull-request".format(key))
+
+            user, _ = self.repository.credentials(required=True)
+            response = requests.post(
+                '{api_url}/repos/{owner}/{name}/pulls'.format(
+                    api_url=self.repository.api_url,
+                    owner=self.repository.owner,
+                    name=self.repository.name,
+                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(
+                    title=title,
+                    body=PullRequest.create_body(body, commits),
+                    base=base or self.repository.default_branch,
+                    head='{}:{}'.format(user, head),
+                ),
+            )
+            if response.status_code // 100 != 2:
+                return None
+            data = response.json()
+            return PullRequest(
+                number=data['number'],
+                title=data.get('title'),
+                body=data.get('body'),
+                author=self.repository.contributors.create(data['user']['login']),
+                head=data['head']['ref'],
+                base=data['base']['ref'],
+            )
+
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
+            if not isinstance(pull_request, PullRequest):
+                raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
+            if not any((head, title, body, commits, base)):
+                raise ValueError('No arguments to update pull-request provided')
+
+            user, _ = self.repository.credentials(required=True)
+            updates = dict(
+                title=title or pull_request.title,
+                base=base or pull_request.base,
+                head='{}:{}'.format(user, head) if head else pull_request.head,
+            )
+            if body or commits:
+                updates['body'] = PullRequest.create_body(body, commits)
+            response = requests.post(
+                '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
+                    api_url=self.repository.api_url,
+                    owner=self.repository.owner,
+                    name=self.repository.name,
+                    number=pull_request.number,
+                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=updates,
+            )
+            if response.status_code // 100 != 2:
+                return None
+            data = response.json()
+
+            pull_request.title = data.get('title', pull_request.title)
+            if data.get('body'):
+                pull_request.body, pull_request.commits = pull_request.parse_body(data.get('body'))
+            if data.get('user', {}).get('login'):
+                pull_request.author = self.repository.contributors.create(data['user']['login'])
+            pull_request.head = data.get('head', {}).get('displayId', pull_request.base)
+            pull_request.base = data.get('base', {}).get('displayId', pull_request.base)
+
+            return pull_request
+
 
     @classmethod
     def is_webserver(cls, url):
@@ -61,6 +156,8 @@ class GitHub(Scm):
             contributors=contributors,
             id=id or self.name.lower(),
         )
+
+        self.pull_requests = self.PRGenerator(self)
 
     def credentials(self, required=True):
         username, token = credentials(

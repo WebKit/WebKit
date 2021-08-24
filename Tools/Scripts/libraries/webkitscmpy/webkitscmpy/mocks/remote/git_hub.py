@@ -58,6 +58,7 @@ class GitHub(mocks.Requests):
 
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
+        self.pull_requests = []
         self._environment = None
 
     def __enter__(self):
@@ -280,7 +281,7 @@ class GitHub(mocks.Requests):
             ), url=url
         )
 
-    def request(self, method, url, data=None, params=None, **kwargs):
+    def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -331,9 +332,65 @@ class GitHub(mocks.Requests):
 
         # Add fork
         if stripped_url.startswith('{}/forks'.format(self.api_remote)) and method == 'POST':
-            username = kwargs.get('json', {}).get('owner', None)
+            username = (json or {}).get('owner', None)
             if username:
                 self.forks.append(username)
             return mocks.Response.fromJson({}) if username else mocks.Response.create404(url)
+
+        # All pull-requests
+        pr_base = '{}/pulls'.format(self.api_remote)
+        if method == 'GET' and stripped_url == pr_base:
+            prs = []
+            for candidate in self.pull_requests:
+                state = params.get('state', 'all')
+                if state != 'all' and candidate.get('state', 'closed') != state:
+                    continue
+                base = params.get('base')
+                if base and candidate.get('base', {}).get('ref') != base:
+                    continue
+                head = params.get('head')
+                if head and head not in [candidate.get('head', {}).get('ref'), candidate.get('head', {}).get('label')]:
+                    continue
+                prs.append(candidate)
+            return mocks.Response.fromJson(prs)
+
+        # Create/update pull-request
+        pr = dict()
+        if method == 'POST' and auth and stripped_url.startswith(pr_base):
+            if json.get('title'):
+                pr['title'] = json['title']
+            if json.get('body'):
+                pr['body'] = json['body']
+            if json.get('head'):
+                pr['head'] = dict(
+                    label=json['head'],
+                    ref=json['head'].split(':')[-1],
+                    user=dict(login=auth.username),
+                )
+            if json.get('base'):
+                pr['base'] = dict(
+                    label='{}:{}'.format(self.remote.split('/')[-2], json['base']),
+                    ref=json['base'],
+                    user=dict(login=self.remote.split('/')[-2]),
+                )
+
+        # Create specifically
+        if method == 'POST' and auth and stripped_url == pr_base:
+            pr['number'] = 1 + max([0] + [pr.get('number', 0) for pr in self.pull_requests])
+            pr['user'] = dict(login=auth.username)
+            self.pull_requests.append(pr)
+            return mocks.Response.fromJson(pr)
+
+        # Update specifically
+        if method == 'POST' and auth and stripped_url.startswith(pr_base):
+            number = int(stripped_url.split('/')[-1])
+            existing = None
+            for i in range(len(self.pull_requests)):
+                if self.pull_requests[i].get('number') == number:
+                    existing = i
+            if existing is None:
+                return mocks.Response.create404(url)
+            self.pull_requests[existing].update(pr)
+            return mocks.Response.fromJson(self.pull_requests[i])
 
         return mocks.Response.create404(url)
