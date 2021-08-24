@@ -40,20 +40,22 @@ private:
     bool canResizeVideoFrames() const final { return true; }
 };
 
-class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource {
+class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoSampleObserver {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, const MediaConstraints*);
 
-private:
-    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&& source, CaptureDevice::DeviceType type)
-        : RealtimeMediaSource(Type::Video, source->name().isolatedCopy())
-        , m_source(WTFMove(source))
-        , m_type(type) { }
+    void requestToEnd(Observer&) final;
 
-    friend class MockRealtimeVideoSourceGStreamer;
+protected:
+    // RealtimeMediaSource::VideoSampleObserver
+    void videoSampleAvailable(MediaSample&) final;
+
+private:
+    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&&, CaptureDevice::DeviceType);
+    ~MockDisplayCaptureSourceGStreamer();
 
     void startProducingData() final { m_source->start(); }
-    void stopProducingData() final { m_source->stop(); }
+    void stopProducingData() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final { m_currentSettings = { }; }
     bool isCaptureSource() const final { return true; }
     const RealtimeMediaSourceCapabilities& capabilities() final;

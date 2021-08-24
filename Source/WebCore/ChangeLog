@@ -1,3 +1,19 @@
+2021-08-24  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r281305) [GStreamer] fast/mediastream/getDisplayMedia-frame-rate.html timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=229343
+
+        Reviewed by Youenn Fablet.
+
+        Proxy the video samples from the wrapped mock source to its parent. The test was timing out
+        because the video samples were never notified to the top level observer in Internals.
+
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer):
+        (WebCore::MockDisplayCaptureSourceGStreamer::requestToEnd):
+        (WebCore::MockDisplayCaptureSourceGStreamer::videoSampleAvailable):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.h:
+
 2021-08-24  Tim Nguyen  <ntim@apple.com>
 
         Implement inert attribute behind feature flag

@@ -1,3 +1,13 @@
+2021-08-24  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r281305) [GStreamer] fast/mediastream/getDisplayMedia-frame-rate.html timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=229343
+
+        Reviewed by Youenn Fablet.
+
+        * platform/glib/TestExpectations: Test is now passing, in Release at least. Timing out in
+        Debug but that will be investigated next, there are other mediastream timeouts in Debug.
+
 2021-08-24  Tim Nguyen  <ntim@apple.com>
 
         Implement inert attribute behind feature flag
