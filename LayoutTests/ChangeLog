@@ -1,5 +1,14 @@
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
+        [BigSur wk2 Debug] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=229472.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-24  Eric Hutchison  <ehutchison@apple.com>
+
         4 webgl/2.0.0/deqp/functional/gles3/ tests are failing.
         https://bugs.webkit.org/show_bug.cgi?id=228703.
 
