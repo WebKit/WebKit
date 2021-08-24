@@ -28,6 +28,7 @@
 #include "FrameLoaderTypes.h"
 #include "ReferrerPolicy.h"
 #include "ResourceRequest.h"
+#include "ShouldTreatAsContinuingLoad.h"
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
 
@@ -61,8 +62,8 @@ public:
     void setShouldCheckNewWindowPolicy(bool checkPolicy) { m_shouldCheckNewWindowPolicy = checkPolicy; }
     bool shouldCheckNewWindowPolicy() const { return m_shouldCheckNewWindowPolicy; }
 
-    void setShouldTreatAsContinuingLoad(bool value) { m_shouldTreatAsContinuingLoad = value; }
-    bool shouldTreatAsContinuingLoad() const { return m_shouldTreatAsContinuingLoad; }
+    void setShouldTreatAsContinuingLoad(ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad) { m_shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad; }
+    ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad() const { return m_shouldTreatAsContinuingLoad; }
 
     const SubstituteData& substituteData() const { return m_substituteData; }
     void setSubstituteData(const SubstituteData& data) { m_substituteData = data; }
@@ -113,7 +114,7 @@ private:
     String m_clientRedirectSourceForHistory;
 
     bool m_shouldCheckNewWindowPolicy { false };
-    bool m_shouldTreatAsContinuingLoad { false };
+    ShouldTreatAsContinuingLoad m_shouldTreatAsContinuingLoad { ShouldTreatAsContinuingLoad::No };
     LockHistory m_lockHistory { LockHistory::No };
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };

@@ -353,8 +353,6 @@ imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worke
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw-from-coop.https.html [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/context.any.serviceworker.html [ Skip ]
@@ -371,10 +369,11 @@ imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-intercept
 imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Skip ]
 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Skip ]
 
-# No Cross-Origin-Embedder-Policy in WK1.
+# No Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy in WK1.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy [ Skip ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html [ Skip ]
-http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
+http/wpt/cross-origin-opener-policy [ Skip ]
+http/wpt/html/cross-origin-embedder-policy [ Skip ]
 
 # Quota check missing in WK1
 http/tests/IndexedDB/storage-limit.https.html [ Skip ]

@@ -1,3 +1,63 @@
+2021-08-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header
+        https://bugs.webkit.org/show_bug.cgi?id=229203
+        <rdar://problem/82047686>
+
+        Reviewed by Alex Christensen.
+
+        We recently added support for the Cross-Origin-Opener-Policy (COOP) HTTP header. However,
+        when switching browsing context group on HTTP response, we would keep using the same
+        WebProcess. This patch makes it so that we now swap WebProcess when switching browsing
+        context group on network response as this will be required to securely re-enable Web APIs
+        such as SharedArrayBuffer.
+
+        For process-swapping, we reuse most of the same logic as process-swap on navigation (PSON).
+        A few differences are that:
+        - We swap on response policy decision instead of navigation policy decision
+        - We used to have a ShouldTreatAsContinuingLoad Yes/No enum. It is now tri-state: No,
+          YesAfterNavigationPolicyDecision, YesAfterResponsePolicyDecision. We need this new state
+          to avoid duplicate response policy delegate calls after process-swapping and to avoid
+          sending duplicate didStartProvisionalLoad IPCs after proces-swapping.
+        - After process-swapping on navigation response, we close the previous page instead of trying
+          to put it into the back/forward cache. Per the specification, in a case of a browsing context
+          group switch, the previous browsing context needs to be discarded (which is Web-observable).
+
+        One important thing to note is that we currently send the HTTP request to the server AGAIN after
+        a process-swap. This is because the on-going load currently gets cancelled upon receiving the
+        network response and deciding to process-swap and a new fresh load gets issued by the new
+        WebProcess after swapping. I will address this in a follow-up to decrease patch size and
+        complexity. We will need to transition the load in the network process from the old WebProcess
+        to the new one in case of process-swap.
+
+        Covered by existing COOP/COEP layout tests that are still passing and new API tests
+        that validate that we are indeed process-swapping.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::doCrossOriginOpenerHandlingOfResponse):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        (WebCore::DocumentLoader::clearMainResource):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::isContinuingLoadAfterResponsePolicyCheck const):
+        (WebCore::DocumentLoader::setIsContinuingLoadAfterResponsePolicyCheck):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setShouldTreatAsContinuingLoad):
+        (WebCore::FrameLoadRequest::shouldTreatAsContinuingLoad const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.h:
+        * loader/ShouldTreatAsContinuingLoad.h:
+        * page/Page.h:
+
 2021-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Unprefix -webkit-backface-visibility

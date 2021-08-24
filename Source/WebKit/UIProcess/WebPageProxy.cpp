@@ -1390,7 +1390,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     auto transaction = m_pageLoadState.transaction();
 
     auto url = request.url();
-    if (shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::Yes)
+    if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
         m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), url.string() });
 
     LoadParameters loadParameters;
@@ -1398,7 +1398,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.request = WTFMove(request);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
     loadParameters.userData = UserData(process->transformObjectsToHandles(userData).get());
-    loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::Yes;
+    loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad;
     loadParameters.websitePolicies = WTFMove(websitePolicies);
     loadParameters.lockHistory = navigation.lockHistory();
     loadParameters.lockBackForwardList = navigation.lockBackForwardList();
@@ -1525,7 +1525,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.MIMEType = MIMEType;
     loadParameters.encodingName = encoding;
     loadParameters.baseURLString = baseURL;
-    loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::Yes;
+    loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad;
     loadParameters.userData = UserData(process->transformObjectsToHandles(userData).get());
     loadParameters.websitePolicies = WTFMove(websitePolicies);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
@@ -1578,7 +1578,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     loadParameters.encodingName = simulatedResponse.textEncodingName();
     loadParameters.baseURLString = baseURL;
     loadParameters.shouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
-    loadParameters.shouldTreatAsContinuingLoad = false;
+    loadParameters.shouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::No;
     loadParameters.lockHistory = navigation->lockHistory();
     loadParameters.lockBackForwardList = navigation->lockBackForwardList();
     loadParameters.clientRedirectSourceForHistory = navigation->clientRedirectSourceForHistory();
@@ -3518,7 +3518,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
-            continueNavigationInNewProcess(navigation, WTFMove(suspendedPage), WTFMove(processForNavigation), processSwapRequestedByClient, std::exchange(policies, nullptr));
+            continueNavigationInNewProcess(navigation, WTFMove(suspendedPage), WTFMove(processForNavigation), processSwapRequestedByClient, ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, std::exchange(policies, nullptr));
         } else {
             auto item = navigation->reloadItem() ? navigation->reloadItem() : navigation->targetItem();
             if (policyAction == PolicyAction::Use && item) {
@@ -3605,7 +3605,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
     auto* navigation = navigationState().navigation(m_provisionalPage->navigationID());
-    bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient(), shouldDelayClosingUntilFirstLayerFlush) : false;
+    bool didSuspendPreviousPage = navigation && !m_provisionalPage->shouldClosePreviousPageAfterCommit() ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient(), shouldDelayClosingUntilFirstLayerFlush) : false;
     m_process->removeWebPage(*this, m_websiteDataStore.ptr() == &m_provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);
 
     // There is no way we'll be able to return to the page in the previous page so close it.
@@ -3620,11 +3620,12 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     m_inspectorController->didCommitProvisionalPage(oldWebPageID, m_webPageID);
 }
 
-void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPage, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<API::WebsitePolicies>&& websitePolicies)
+void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, std::unique_ptr<SuspendedPageProxy>&& suspendedPage, Ref<WebProcessProxy>&& newProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "continueNavigationInNewProcess: newProcessPID=%i, hasSuspendedPage=%i", newProcess->processIdentifier(), !!suspendedPage);
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
     RELEASE_ASSERT(!newProcess->isInProcessCache());
+    ASSERT(shouldTreatAsContinuingLoad != ShouldTreatAsContinuingLoad::No);
 
     if (m_provisionalPage) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "continueNavigationInNewProcess: There is already a pending provisional load, cancelling it (provisonalNavigationID=%llu, navigationID=%llu)", m_provisionalPage->navigationID(), navigation.navigationID());
@@ -3633,9 +3634,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         m_provisionalPage = nullptr;
     }
 
-    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(newProcess), WTFMove(suspendedPage), navigation.navigationID(), navigation.currentRequestIsRedirect(), navigation.currentRequest(), processSwapRequestedByClient, websitePolicies.get());
-
-    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), websitePolicies = WTFMove(websitePolicies)]() mutable {
+    bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
+    bool shouldClosePreviousPageAfterCommit = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision;
+    m_provisionalPage = makeUnique<ProvisionalPageProxy>(*this, WTFMove(newProcess), WTFMove(suspendedPage), navigation.navigationID(), isServerSideRedirect, navigation.currentRequest(), processSwapRequestedByClient, shouldClosePreviousPageAfterCommit, websitePolicies.get());
+    auto continuation = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), shouldTreatAsContinuingLoad, websitePolicies = WTFMove(websitePolicies)]() mutable {
         if (auto* item = navigation->targetItem()) {
             LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
 
@@ -3659,9 +3661,9 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         // FIXME: Work out timing of responding with the last policy delegate, etc
         ASSERT(!navigation->currentRequest().isEmpty());
         if (auto& substituteData = navigation->substituteData())
-            m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData), substituteData->sessionHistoryVisibility);
+            m_provisionalPage->loadData(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData), substituteData->sessionHistoryVisibility);
         else
-            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, nullptr, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData));
+            m_provisionalPage->loadRequest(navigation, ResourceRequest { navigation->currentRequest() }, nullptr, shouldTreatAsContinuingLoad, isNavigatingToAppBoundDomain(), WTFMove(websitePoliciesData));
     };
     if (m_inspectorController->shouldPauseLoading(*m_provisionalPage))
         m_inspectorController->setContinueLoadingCallback(*m_provisionalPage, WTFMove(continuation));
@@ -5614,13 +5616,13 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
 }
 
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
-    uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
+    uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute,
+    bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData& userData)
 {
-    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID, userData);
+    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, needsBrowsingContextGroupSwitch, listenerID, userData);
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
-    uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData& userData)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
 
@@ -5633,7 +5635,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
     auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTFMove(frameInfo), this).get(), request, response, canShowMIMEType, downloadAttribute);
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, identifier, listenerID, navigation = WTFMove(navigation),
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, needsBrowsingContextGroupSwitch, identifier, listenerID, navigation = WTFMove(navigation),
         process, navigationResponse] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
@@ -5642,9 +5644,28 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process = WTFMove(process)] (const auto& policyDecision) {
             process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision, createNetworkExtensionsSandboxExtensions(process)), webPageID);
         });
+
+        auto willContinueLoadInNewProcess = WillContinueLoadInNewProcess::No;
+        if (policyAction == PolicyAction::Use && needsBrowsingContextGroupSwitch && navigation) {
+            RegistrableDomain responseDomain { navigationResponse->response().url() };
+            // Avoid process-swapping in cases where the process only contains a single page and is origin-clean.
+            if (this->process().pageCount() > 1 || (this->process().optionalRegistrableDomain() && *this->process().optionalRegistrableDomain() != responseDomain)) {
+                WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForResponseShared: Process-swapping due to Cross-Origin-Opener-Policy");
+                policyAction = PolicyAction::Ignore;
+                auto processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
+                continueNavigationInNewProcess(*navigation, nullptr, WTFMove(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr);
+                willContinueLoadInNewProcess = WillContinueLoadInNewProcess::Yes;
+            }
+        }
         
-        receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender));
+        receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), { }, willContinueLoadInNewProcess);
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No));
+
+    if (wasAllowedByInjectedBundle) {
+        listener->use();
+        return;
+    }
+
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener), process->transformHandlesToObjects(userData.object()).get());
     else

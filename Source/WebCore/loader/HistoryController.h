@@ -37,7 +37,7 @@ class Frame;
 class HistoryItem;
 class SerializedScriptValue;
 
-enum class ShouldTreatAsContinuingLoad : bool;
+enum class ShouldTreatAsContinuingLoad : uint8_t;
 
 struct StringWithDirection;
 
