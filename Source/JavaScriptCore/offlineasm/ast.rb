@@ -944,15 +944,7 @@ class Instruction < Node
         when "globalAnnotation"
             $asm.putGlobalAnnotation
         when "emit"
-            str = "";
-            for operand in operands do
-                if (operand.is_a? LocalLabelReference)
-                    str += operand.asmLabel
-                else
-                    str += "#{operand.dump}"
-                end
-            end
-            $asm.puts "#{str}"
+            $asm.puts "#{operands[0].dump}"
         when "tagCodePtr", "tagReturnAddress", "untagReturnAddress", "removeCodePtrTag", "untagArrayPtr", "removeArrayPtrTag"
         else
             raise "Unhandled opcode #{opcode} at #{codeOriginString}"
