@@ -1,3 +1,23 @@
+2021-08-23  John Wilander  <wilander@apple.com>
+
+        PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement
+        https://bugs.webkit.org/show_bug.cgi?id=228984
+        <rdar://problem/81778213>
+
+        Reviewed by Kate Cheney.
+
+        This patch adds support for ephemeral measurement with non-persistent
+        WebCore::PrivateClickMeasurement for direct response advertising.
+        Such advertising means there is only one pending click, held in memory,
+        and only stored right before the triggering event causes attribution
+        reports to be scheduled.
+
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral-expected.txt: Added.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral.html: Added.
+        * http/tests/privateClickMeasurement/resources/util.js:
+        (tearDownAndFinish):
+            Resets the new testRunner.setPrivateClickMeasurementEphemeralMeasurementForTesting().
+
 2021-08-23  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Catalina EWS ] http/tests/media/hls/range-request.html is a flaky failure.

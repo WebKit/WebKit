@@ -361,6 +361,11 @@ void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
     privateClickMeasurement().markAllUnattributedAsExpiredForTesting();
 }
 
+void NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value)
+{
+    privateClickMeasurement().setEphemeralMeasurementForTesting(value);
+}
+
 // FIXME: Switch to non-mocked test data once the right cryptography library is available in open source.
 void NetworkSession::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
 {

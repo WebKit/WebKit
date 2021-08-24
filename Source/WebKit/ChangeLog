@@ -1,3 +1,54 @@
+2021-08-23  John Wilander  <wilander@apple.com>
+
+        PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement
+        https://bugs.webkit.org/show_bug.cgi?id=228984
+        <rdar://problem/81778213>
+
+        Reviewed by Kate Cheney.
+
+        This patch adds support for ephemeral measurement with non-persistent
+        WebCore::PrivateClickMeasurement for direct response advertising.
+        Such advertising means there is only one pending click, held in memory,
+        and only stored right before the triggering event causes attribution
+        reports to be scheduled.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::attributePrivateClickMeasurement):
+            Now takes an optional ephemeral PrivateClickMeasurement parameter
+            and stores it right before moving on with attribution.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setPrivateClickMeasurementEphemeralMeasurementForTesting):
+            Test infrastructure.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting):
+            Test infrastructure.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::insertPrivateClickMeasurement):
+            New convenience function. Only stores in memory if the
+            PrivateClickMeasurement parameter is marked as ephemeral.
+        (WebKit::PrivateClickMeasurementManager::attribute):
+            Checks that the triggering event matches the ephemeral measurement if
+            it exists, and if so, forwards it.
+        (WebKit::PrivateClickMeasurementManager::clear):
+            Now clears the ephemeral state too.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        (WebKit::PrivateClickMeasurementManager::setEphemeralMeasurementForTesting):
+            Test infrastructure.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPrivateClickMeasurementEphemeralMeasurementForTesting):
+            Test infrastructure.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setPrivateClickMeasurementEphemeralMeasurementForTesting):
+            Test infrastructure.
+        * UIProcess/WebPageProxy.h:
+
 2021-08-23  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when getting current color in DisplayList::DrawGlyphsRecorder
