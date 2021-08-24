@@ -1,3 +1,14 @@
+2021-08-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Show TLS protocol version and ciphersuite name in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=229400
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::tlsProtocolVersionToString):
+        (WebKit::NetworkDataTaskSoup::didGetHeaders):
+
 2021-08-23  John Wilander  <wilander@apple.com>
 
         PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement

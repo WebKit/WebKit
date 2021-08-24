@@ -1184,6 +1184,32 @@ static AtomString soupHTTPVersionToString(SoupHTTPVersion version)
     return { };
 }
 
+#if !USE(SOUP2)
+static String tlsProtocolVersionToString(GTlsProtocolVersion version)
+{
+    switch (version) {
+    case G_TLS_PROTOCOL_VERSION_UNKNOWN:
+        return "Unknown"_s;
+    case G_TLS_PROTOCOL_VERSION_SSL_3_0:
+        return "SSL 3.0"_s;
+    case G_TLS_PROTOCOL_VERSION_TLS_1_0:
+        return "TLS 1.0"_s;
+    case G_TLS_PROTOCOL_VERSION_TLS_1_1:
+        return "TLS 1.1"_s;
+    case G_TLS_PROTOCOL_VERSION_TLS_1_2:
+        return "TLS 1.2"_s;
+    case G_TLS_PROTOCOL_VERSION_TLS_1_3:
+        return "TLS 1.3"_s;
+    case G_TLS_PROTOCOL_VERSION_DTLS_1_0:
+        return "DTLS 1.0"_s;
+    case G_TLS_PROTOCOL_VERSION_DTLS_1_2:
+        return "DTLS 1.2"_s;
+    }
+
+    return { };
+}
+#endif
+
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -1224,6 +1250,8 @@ void NetworkDataTaskSoup::didGetHeaders()
             GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
             m_networkLoadMetrics.remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address)));
         }
+        m_networkLoadMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
+        m_networkLoadMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
         m_networkLoadMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
 #endif
     }
