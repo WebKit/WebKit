@@ -1,3 +1,13 @@
+2021-08-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Use Python 3 (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=226658
+        <rdar://problem/78882016>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/run-webkit-tests: Change shebang to Python 3.
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header
