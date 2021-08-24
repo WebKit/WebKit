@@ -4658,20 +4658,6 @@ fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Crash ]
 
 webkit.org/b/229194 [ Release ] fast/forms/number/number-spinbutton-state.html [ Pass Crash ]
 
-webkit.org/b/228968 fast/forms/search/search-zoom-computed-style-height.html [ Pass Crash ]
-
-webkit.org/b/229009 fast/forms/input-baseline.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/form-element-geometry.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/focus-selection-input.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/select/listbox-in-multi-column.html [ Pass Crash ]
-webkit.org/b/229009 fast/events/mouse-cursor-image-set.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/input-button-sizes.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/input-placeholder-paint-order-2.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/select/select-painting.html [ Pass Crash ]
-webkit.org/b/229009 fast/forms/textarea/textarea-placeholder-paint-order-2.html [ Pass Crash ]
-
-webkit.org/b/229143 fast/forms/input-appearance-spinbutton-size.html [ Pass Crash ]
-
 webkit.org/b/229005 fast/events/dropzone-005.html [ Pass Crash ]
 
 webkit.org/b/229191 animations/shadow-host-child-change.html [ Pass Failure ]

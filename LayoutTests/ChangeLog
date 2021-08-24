@@ -1,3 +1,12 @@
+2021-08-24  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Removing test expectations for fixed bug [ Win EWS ] fast/forms/* tests are flaky crashing FAULTING_IP:  WebKit!WebCore::FontCache::lastResortFallbackFont+ec [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Source\WebCore\platform\graphics\win\FontCacheWin.cpp @ 424].
+        https://bugs.webkit.org/show_bug.cgi?id=229009
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-08-24  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update baselines after r281422
