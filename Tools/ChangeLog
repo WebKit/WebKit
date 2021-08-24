@@ -1,3 +1,14 @@
+2021-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r281473): [ iOS & MacOS ] TestWebKitAPI.ProcessSwap.NavigateToInvalidURL is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=229447
+
+        Reviewed by Chris Dumez.
+
+        Check that a JS error was thrown instead of checking that the navigation doesn't go through.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-08-23  John Wilander  <wilander@apple.com>
 
         PCM: Support ephemeral measurement with non-persistent WebCore::PrivateClickMeasurement

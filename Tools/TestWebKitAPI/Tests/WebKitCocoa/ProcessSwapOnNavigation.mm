@@ -4653,17 +4653,21 @@ TEST(ProcessSwap, NavigateToInvalidURL)
 
     EXPECT_EQ(1, numberOfDecidePolicyCalls);
 
-    [webView evaluateJavaScript:@"location.href = 'http://A=a%B=b'" completionHandler:nil];
+    __block bool evaluated = false;
+    [webView evaluateJavaScript:@"var err = 'no error'; try { location.href = 'http://A=a%B=b' } catch(e) { err=e; }; err.message" completionHandler:^(id result, NSError *error) {
+        EXPECT_WK_STREQ(result, "Invalid URL");
+        EXPECT_NULL(error);
+        evaluated = true;
+    }];
 
-    didRepondToPolicyDecisionCall = false;
-    TestWebKitAPI::Util::run(&didRepondToPolicyDecisionCall);
+    TestWebKitAPI::Util::run(&evaluated);
 
     TestWebKitAPI::Util::spinRunLoop(1);
 
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 
-    EXPECT_EQ(2, numberOfDecidePolicyCalls);
+    EXPECT_EQ(1, numberOfDecidePolicyCalls);
     EXPECT_EQ(pid1, pid2);
 }
 
