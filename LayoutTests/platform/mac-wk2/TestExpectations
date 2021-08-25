@@ -690,14 +690,11 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 
 # PiP tests are only enabled for Sierra WebKit2.
 # rdar://problem/27574303
-[ Catalina BigSur ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass ]
+[ Catalina BigSur Monterey ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass ]
 media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 webkit.org/b/173199 media/navigate-with-pip-should-not-crash.html [ Pass Failure ]
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
-
-# rdar://80346428 ([ Monterey wk2 Debug ] media/element-containing-pip-video-going-into-fullscreen.html is flaky crashing
-[ Monterey Debug ] media/element-containing-pip-video-going-into-fullscreen.html [ Pass Timeout Crash ]
 
 # RTL Scrollbars are enabled on Sierra WebKit2.
 webkit.org/b/179455 fast/scrolling/rtl-scrollbars.html [ Pass ImageOnlyFailure ]

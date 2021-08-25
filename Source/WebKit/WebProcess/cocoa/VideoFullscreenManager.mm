@@ -546,7 +546,7 @@ void VideoFullscreenManager::didCleanupFullscreen(PlaybackSessionContextIdentifi
     interface->setFullscreenStandby(false);
     removeClientForContext(contextId);
 
-    if (!videoElement || !targetIsFullscreen)
+    if (!videoElement || !targetIsFullscreen || mode == HTMLMediaElementEnums::VideoFullscreenModeNone)
         return;
 
     RunLoop::main().dispatch([protectedThis = makeRefPtr(this), videoElement, mode, standby] {

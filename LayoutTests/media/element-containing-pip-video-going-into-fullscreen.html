@@ -1,11 +1,14 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Test element containing pip video going into fullscreen should exit pip</title>
     <script src="media-file.js"></script>
     <script src="video-test.js"></script>
     <script>
-        if (window.internals)
+        if (window.internals) {
             window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+            internals.setMockVideoPresentationModeEnabled(true);
+        }
 
         var enteredFullscreen = false;
         var exitedPIP = false;

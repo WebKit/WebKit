@@ -1,3 +1,21 @@
+2021-08-25  Peng Liu  <peng.liu6@apple.com>
+
+        [Monterey] LayoutTest media/element-containing-pip-video-going-into-fullscreen.html is flaky timeout/crash
+        https://bugs.webkit.org/show_bug.cgi?id=229453
+        <rdar://80346428>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode):
+        When the mock video presentation mode is enabled, the UI process still needs to
+        notify the Web process that the mode change has been done.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+        Return immediately if the element is not in fullscreen to avoid
+        an assertion later in `enterVideoFullscreenForVideoElement()`.
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header

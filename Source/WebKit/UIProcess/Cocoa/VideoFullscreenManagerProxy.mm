@@ -654,8 +654,10 @@ void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifie
 
 void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
-    if (m_mockVideoPresentationModeEnabled)
+    if (m_mockVideoPresentationModeEnabled) {
+        fullscreenModeChanged(contextId, targetMode);
         return;
+    }
 
 #if PLATFORM(MAC)
     ensureInterface(contextId).exitFullscreenWithoutAnimationToMode(targetMode);
