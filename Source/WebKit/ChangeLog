@@ -1,3 +1,21 @@
+2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Visual Look Up animates from the wrong rect when the web view is scaled
+        https://bugs.webkit.org/show_bug.cgi?id=229518
+        rdar://82147473
+
+        Reviewed by Darin Adler.
+
+        When adopting QLPreviewControllerDelegate's animated transition methods for rdar://76020349, I mistakenly
+        thought that the `outContentRect` passed into `-previewController:transitionImageForPreviewItem:contentRect:`
+        would be in source view (WKContentView) coordinates; instead, QuickLook expects this `contentRect` to be in
+        window coordinates.
+
+        Fix this by first converting `_visualSearchPreviewImageBounds` to window coordinates.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewController:transitionImageForPreviewItem:contentRect:]):
+
 2021-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] RemoteAudioSession doesn't implement begin/endInterruption

@@ -10050,7 +10050,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)outContentRect
 {
-    *outContentRect = CGRect { CGPointZero, _visualSearchPreviewImageBounds.size };
+    *outContentRect = { CGPointZero, [self convertRect:_visualSearchPreviewImageBounds toView:nil].size };
     return _visualSearchPreviewImage.get();
 }
 
