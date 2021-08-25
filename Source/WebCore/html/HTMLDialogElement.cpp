@@ -95,6 +95,13 @@ void HTMLDialogElement::close(const String& result)
     });
 }
 
+void HTMLDialogElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+    if (isInTopLayer())
+        document().removeFromTopLayer(*this);
+}
+
 void HTMLDialogElement::queueCancelTask()
 {
     document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
