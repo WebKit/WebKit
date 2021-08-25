@@ -639,6 +639,8 @@ loader/go-back-to-different-window-size.html [ Failure ]
 # CSS transform tests that fail:
 transforms/2d/transform-fixed-container.html [ Failure ]
 
+webkit.org/b/228718 [ Release ] editing/inserting/insert-paragraph-separator-with-html-elements-crash.html [ Pass Failure ]
+
 # Editing tests that fail:
 editing/inserting/caret-position.html [ Failure ]
 editing/inserting/insert-3654864-fix.html [ Failure ]
