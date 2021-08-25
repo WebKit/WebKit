@@ -1,3 +1,13 @@
+2021-08-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        WebCrypto uses deprecated CCKeyDerivationHMac
+        https://bugs.webkit.org/show_bug.cgi?id=229443
+        <rdar://problem/48896021>
+
+        Reviewed by Brent Fulgham.
+
+        * pal/spi/cocoa/CommonCryptoSPI.h:
+
 2021-08-10  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix.

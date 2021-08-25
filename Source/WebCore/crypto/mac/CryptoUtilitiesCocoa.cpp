@@ -111,17 +111,28 @@ ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vecto
     return WTFMove(head);
 }
 
+CCStatus keyDerivationHMAC(CCDigestAlgorithm digest, const void *keyDerivationKey, size_t keyDerivationKeyLen, const void *context, size_t contextLen, const void *salt, size_t saltLen, void *derivedKey, size_t derivedKeyLen)
+{
+    CCKDFParametersRef params;
+    CCStatus rv = CCKDFParametersCreateHkdf(&params, salt, saltLen, context, contextLen);
+    if (rv != kCCSuccess)
+        return rv;
+
+    rv = CCDeriveKey(params, digest, keyDerivationKey, keyDerivationKeyLen, derivedKey, derivedKeyLen);
+    CCKDFParametersDestroy(params);
+
+    return rv;
+}
+
 ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm digestAlgorithm, const uint8_t* key, size_t keySize, const uint8_t* salt, size_t saltSize, const uint8_t* info, size_t infoSize, size_t length)
 {
     Vector<uint8_t> result(length / 8);
     Vector<uint8_t> infoVector;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // <rdar://problem/32439455> Currently, when key data is empty, CCKeyDerivationHMac will bail out.
-    // <rdar://problem/48896021> Reminder: Switch to CCDeriveKey now that CCKeyDerivationHMac is deprecated.
-    if (CCKeyDerivationHMac(kCCKDFAlgorithmHKDF, digestAlgorithm, 0, key, keySize, 0, 0, info, infoSize, 0, 0, salt, saltSize, result.data(), result.size()))
+    if (keyDerivationHMAC(digestAlgorithm, key, keySize, info, infoSize, salt, saltSize, result.data(), result.size()) != kCCSuccess)
         return Exception { OperationError };
-    ALLOW_DEPRECATED_DECLARATIONS_END
+
     return WTFMove(result);
 }
 

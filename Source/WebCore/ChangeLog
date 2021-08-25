@@ -1,3 +1,21 @@
+2021-08-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        WebCrypto uses deprecated CCKeyDerivationHMac
+        https://bugs.webkit.org/show_bug.cgi?id=229443
+        <rdar://problem/48896021>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests because no behavior change. This should be covered by
+        existing webrtc tests which use this functionality.
+
+        Replace deprecated CCKeyDerivationHMac with CCDeriveKey.
+
+        * crypto/mac/CryptoUtilitiesCocoa.cpp:
+        (WebCore::keyDerivationHMAC):
+        (WebCore::deriveHDKFBits):
+        * crypto/mac/CryptoUtilitiesCocoa.h:
+
 2021-08-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [LibWPE] Properly retrieve eglGetPlatformDisplayEXT entrypoint

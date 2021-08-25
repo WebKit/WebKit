@@ -59,6 +59,9 @@ enum {
     ccRSAPSSPadding = 1005
 };
 typedef uint32_t CCAsymmetricPadding;
+
+typedef struct CCKDFParameters *CCKDFParametersRef;
+
 #endif
 
 typedef struct _CCRSACryptor *CCRSACryptorRef;
@@ -111,6 +114,9 @@ typedef uint32_t CCKDFAlgorithm;
 
 extern "C" CCStatus CCKeyDerivationHMac(CCKDFAlgorithm algorithm, CCDigestAlgorithm digest, unsigned rounds, const void *keyDerivationKey, size_t keyDerivationKeyLen, const void *label, size_t labelLen, const void *context, size_t contextLen, const void *iv, size_t ivLen, const void *salt, size_t saltLen, void *derivedKey, size_t derivedKeyLen);
 
+extern "C" CCStatus CCDeriveKey(const CCKDFParametersRef params, CCDigestAlgorithm digest, const void *keyDerivationKey, size_t keyDerivationKeyLen, void *derivedKey, size_t derivedKeyLen);
+extern "C" CCStatus CCKDFParametersCreateHkdf(CCKDFParametersRef *params, const void *salt, size_t saltLen, const void *context, size_t contextLen);
+extern "C" void CCKDFParametersDestroy(CCKDFParametersRef params);
 extern "C" CCCryptorStatus CCCryptorGCM(CCOperation op, CCAlgorithm alg, const void* key, size_t keyLength, const void* iv, size_t ivLen, const void* aData, size_t aDataLen, const void* dataIn, size_t dataInLength, void* dataOut, void* tag, size_t* tagLength);
 extern "C" CCCryptorStatus CCRSACryptorCreateFromData(CCRSAKeyType keyType, const uint8_t *modulus, size_t modulusLength, const uint8_t *exponent, size_t exponentLength, const uint8_t *p, size_t pLength, const uint8_t *q, size_t qLength, CCRSACryptorRef *ref);
 
