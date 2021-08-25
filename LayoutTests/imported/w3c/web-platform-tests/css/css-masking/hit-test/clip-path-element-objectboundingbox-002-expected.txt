@@ -1,0 +1,5 @@
+
+FAIL Hit-test of clip-path nested objectBoundingBox <clipPath> assert_equals: 150,150 expected Element node <div class="box"></div> but got Element node <body><div class="box"></div>
+<svg height="0">
+  <clipPat...
+

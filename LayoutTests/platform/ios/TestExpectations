@@ -1552,6 +1552,9 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
 webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
 
+# Antialiasing differences
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change.html [ ImageOnlyFailure ]
+
 fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
 fast/flexbox/flex-hang.html [ Failure ]
 fast/flexbox/overhanging-floats-removed.html [ Failure ]

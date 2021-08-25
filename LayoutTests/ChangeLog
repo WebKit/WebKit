@@ -1,3 +1,23 @@
+2021-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Update css-masking WPT
+        https://bugs.webkit.org/show_bug.cgi?id=229373
+
+        Reviewed by Tim Horton.
+
+        Re-import css-masking tests from WPT fe104253de3197002a2600a4ed7e3b5e18fc9121.
+
+        * TestExpectations:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-001-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-002-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-003-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-004-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-005-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-nested-clip-path-010-expected.txt: Added.
+        * platform/ios-simulator/imported/w3c/web-platform-tests/css/css-masking/mask-svg-content/mask-text-001-expected.txt: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath-expected.txt: Removed.
+
 2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Crash when tapping <select> element and calling window.open()

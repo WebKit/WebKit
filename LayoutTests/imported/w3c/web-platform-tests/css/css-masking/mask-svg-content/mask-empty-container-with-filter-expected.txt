@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (50,50) size 100x100
+    RenderSVGResourceFilter {filter} [id="double"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+      [feMerge mergeNodes="2"]
+        [feOffset dx="0.00" dy="100.00"]
+          [SourceGraphic]
+        [SourceGraphic]
+    RenderSVGResourceFilter {filter} [id="f"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+      [feFlood flood-color="#FFFFFF" flood-opacity="1.00"]
+    RenderSVGResourceMasker {mask} [id="m"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+      RenderSVGContainer {g} at (0,0) size 200x200
+        [filter="f"] RenderSVGResourceFilter {filter} at (0,0) size 200x200
+    RenderSVGRect {rect} at (50,50) size 50x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=200.00]
+      [masker="m"] RenderSVGResourceMasker {mask} at (50,50) size 100x100
+    RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
+      [masker="m"] RenderSVGResourceMasker {mask} at (50,50) size 100x100
+      [filter="double"] RenderSVGResourceFilter {filter} at (0,0) size 200x200

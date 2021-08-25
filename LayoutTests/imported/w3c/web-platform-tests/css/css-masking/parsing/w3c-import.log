@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-path-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-path-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-path-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-rule-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-rule-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-rule-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/clip-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-position-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-position-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-type-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-type-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-type-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/parsing/mask-valid.sub.html

@@ -1,0 +1,4 @@
+
+PASS e.style['clip-rule'] = "auto" should not set the property value
+PASS e.style['clip-rule'] = "1" should not set the property value
+

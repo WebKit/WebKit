@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-blending-offset-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-blending-offset.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-circle-002-expected.html
@@ -76,6 +78,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inline-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-percent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-percent.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-002-expected.html
@@ -87,7 +91,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-interpolation-with-zoom-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-interpolation-with-zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom-hittest-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-path-with-zoom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-polygon-001-expected.html
@@ -132,6 +135,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-font-loading-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-font-loading.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-transform-mutated-002-expected.html

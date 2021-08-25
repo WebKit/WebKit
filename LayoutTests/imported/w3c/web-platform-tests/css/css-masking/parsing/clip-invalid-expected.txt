@@ -1,0 +1,6 @@
+
+PASS e.style['clip'] = "none" should not set the property value
+PASS e.style['clip'] = "rect(10px, 20px, 30px)" should not set the property value
+PASS e.style['clip'] = "rect(10%, -20%, auto, auto)" should not set the property value
+PASS e.style['clip'] = "rect(10px 20px, 30px 40px)" should not set the property value
+

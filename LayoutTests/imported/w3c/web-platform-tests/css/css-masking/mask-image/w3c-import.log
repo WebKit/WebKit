@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-clip-exclude.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-local-mask.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-remote-mask-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-remote-mask.html

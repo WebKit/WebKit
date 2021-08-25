@@ -1,23 +1,10 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>CSS Masking: Test clip-path property when the page is zoomed</title>
-  <link rel="author" title="Noam Rosenthal" href="mailto:noam@webkit.org">
-  <link rel="help" href="https://drafts.csswg.org/css-shapes-2/#funcdef-path">
-  <link rel="match" href="reference/clip-path-path-with-zoom-ref.html">
-  <meta name="assert" content="The path gets zoomed together with the content">
-  <script>
-    function onload() {
-      const nodes = [
-        document.elementFromPoint(20, 20),
-        document.elementFromPoint(150, 20),
-        document.elementFromPoint(180, 180)
-      ].map(node => node.id || node.tagName)
-      log.innerText = nodes.join(';')
-
-    }
-  </script>
-</head>
+<title>CSS Masking: Test clip-path property hit-testing when the page is zoomed</title>
+<link rel="author" title="Noam Rosenthal" href="mailto:noam@webkit.org">
+<link rel="help" href="https://drafts.csswg.org/css-shapes-2/#funcdef-path">
+<meta name="assert" content="The zoomed path is hit-tested correctly">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <style>
   #triangle {
     width: 100px;
@@ -27,8 +14,12 @@
     zoom: 2;
   }
 </style>
-<body onload="onload()">
-  <div id="triangle"></div>
-  <output id="log"></output>
-</body>
-</html>
+<div id="triangle"></div>
+<script>
+  test(() => {
+    assert_equals(document.elementFromPoint(20, 20).id, 'triangle')
+    assert_equals(document.elementFromPoint(150, 20).id, 'triangle')
+    assert_equals(document.elementFromPoint(180, 180).tagName, 'BODY')
+  }, 'clip-path: path() hit-test takes zoom into account');
+
+</script>
