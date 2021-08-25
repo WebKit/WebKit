@@ -309,7 +309,7 @@ PASS HTMLElement interface: attribute onratechange
 PASS HTMLElement interface: attribute onreset
 PASS HTMLElement interface: attribute onresize
 PASS HTMLElement interface: attribute onscroll
-FAIL HTMLElement interface: attribute onsecuritypolicyviolation assert_true: The prototype object must have a property "onsecuritypolicyviolation" expected true got false
+PASS HTMLElement interface: attribute onsecuritypolicyviolation
 PASS HTMLElement interface: attribute onseeked
 PASS HTMLElement interface: attribute onseeking
 PASS HTMLElement interface: attribute onselect
@@ -404,7 +404,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onreset" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onresize" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onscroll" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "onsecuritypolicyviolation" with the proper type assert_inherits: property "onsecuritypolicyviolation" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsecuritypolicyviolation" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeked" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onseeking" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onselect" with the proper type
@@ -4439,7 +4439,7 @@ PASS Window interface: attribute onratechange
 PASS Window interface: attribute onreset
 PASS Window interface: attribute onresize
 PASS Window interface: attribute onscroll
-FAIL Window interface: attribute onsecuritypolicyviolation assert_own_property: The global object must have a property "onsecuritypolicyviolation" expected property "onsecuritypolicyviolation" missing
+PASS Window interface: attribute onsecuritypolicyviolation
 PASS Window interface: attribute onseeked
 PASS Window interface: attribute onseeking
 PASS Window interface: attribute onselect
@@ -4589,7 +4589,7 @@ PASS Window interface: window must inherit property "onratechange" with the prop
 PASS Window interface: window must inherit property "onreset" with the proper type
 PASS Window interface: window must inherit property "onresize" with the proper type
 PASS Window interface: window must inherit property "onscroll" with the proper type
-FAIL Window interface: window must inherit property "onsecuritypolicyviolation" with the proper type assert_own_property: expected property "onsecuritypolicyviolation" missing
+PASS Window interface: window must inherit property "onsecuritypolicyviolation" with the proper type
 PASS Window interface: window must inherit property "onseeked" with the proper type
 PASS Window interface: window must inherit property "onseeking" with the proper type
 PASS Window interface: window must inherit property "onselect" with the proper type
@@ -5304,7 +5304,7 @@ PASS SVGElement interface: attribute onratechange
 PASS SVGElement interface: attribute onreset
 PASS SVGElement interface: attribute onresize
 PASS SVGElement interface: attribute onscroll
-FAIL SVGElement interface: attribute onsecuritypolicyviolation assert_true: The prototype object must have a property "onsecuritypolicyviolation" expected true got false
+PASS SVGElement interface: attribute onsecuritypolicyviolation
 PASS SVGElement interface: attribute onseeked
 PASS SVGElement interface: attribute onseeking
 PASS SVGElement interface: attribute onselect
@@ -5438,7 +5438,7 @@ PASS Document interface: attribute onratechange
 PASS Document interface: attribute onreset
 PASS Document interface: attribute onresize
 PASS Document interface: attribute onscroll
-FAIL Document interface: attribute onsecuritypolicyviolation assert_true: The prototype object must have a property "onsecuritypolicyviolation" expected true got false
+PASS Document interface: attribute onsecuritypolicyviolation
 PASS Document interface: attribute onseeked
 PASS Document interface: attribute onseeking
 PASS Document interface: attribute onselect
@@ -5563,7 +5563,7 @@ PASS Document interface: iframe.contentDocument must inherit property "onratecha
 PASS Document interface: iframe.contentDocument must inherit property "onreset" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onresize" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onscroll" with the proper type
-FAIL Document interface: iframe.contentDocument must inherit property "onsecuritypolicyviolation" with the proper type assert_inherits: property "onsecuritypolicyviolation" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onsecuritypolicyviolation" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type
 PASS Document interface: iframe.contentDocument must inherit property "onselect" with the proper type
@@ -5688,7 +5688,7 @@ PASS Document interface: new Document() must inherit property "onratechange" wit
 PASS Document interface: new Document() must inherit property "onreset" with the proper type
 PASS Document interface: new Document() must inherit property "onresize" with the proper type
 PASS Document interface: new Document() must inherit property "onscroll" with the proper type
-FAIL Document interface: new Document() must inherit property "onsecuritypolicyviolation" with the proper type assert_inherits: property "onsecuritypolicyviolation" not found in prototype chain
+PASS Document interface: new Document() must inherit property "onsecuritypolicyviolation" with the proper type
 PASS Document interface: new Document() must inherit property "onseeked" with the proper type
 PASS Document interface: new Document() must inherit property "onseeking" with the proper type
 PASS Document interface: new Document() must inherit property "onselect" with the proper type
@@ -5813,7 +5813,7 @@ PASS Document interface: documentWithHandlers must inherit property "onratechang
 PASS Document interface: documentWithHandlers must inherit property "onreset" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onresize" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onscroll" with the proper type
-FAIL Document interface: documentWithHandlers must inherit property "onsecuritypolicyviolation" with the proper type assert_inherits: property "onsecuritypolicyviolation" found on object expected in prototype chain
+PASS Document interface: documentWithHandlers must inherit property "onsecuritypolicyviolation" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onseeked" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onseeking" with the proper type
 PASS Document interface: documentWithHandlers must inherit property "onselect" with the proper type

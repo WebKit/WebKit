@@ -80,8 +80,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler onreset;
     attribute EventHandler onresize;
     attribute EventHandler onscroll;
-    // FIXME: Implement 'onsecuritypolicyviolation'.
-    // attribute EventHandler onsecuritypolicyviolation;
+    attribute EventHandler onsecuritypolicyviolation;
     attribute EventHandler onseeked;
     attribute EventHandler onseeking;
     attribute EventHandler onselect;

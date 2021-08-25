@@ -1,3 +1,25 @@
+2021-08-25  Sonia Singla  <ssingla@igalia.com>
+
+        Add onsecuritypolicyviolation on GlobalEventHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=229381
+
+        Reviewed by Frédéric Wang.
+
+        `onsecuritypolicyviolation` attribute has been added to
+        `GlobalEventHandlers` by https://github.com/whatwg/html/pull/2651
+
+        This patch supports it.
+
+        Tests: imported/w3c/web-platform-tests/dom/idlharness.window.html
+               imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-all-global-events.html
+               imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt
+               imported/w3c/web-platform-tests/mathml/relations/html5-tree/math-global-event-handlers.tentative.html
+
+        * dom/GlobalEventHandlers.idl:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap):
+
 2021-08-25  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Non-empty inline boxes may affect overflow scroll

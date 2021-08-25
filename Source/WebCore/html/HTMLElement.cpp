@@ -331,6 +331,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onresizeAttr.get(),
         &onscrollAttr.get(),
         &onsearchAttr.get(),
+        &onsecuritypolicyviolationAttr.get(),
         &onseekedAttr.get(),
         &onseekingAttr.get(),
         &onselectAttr.get(),

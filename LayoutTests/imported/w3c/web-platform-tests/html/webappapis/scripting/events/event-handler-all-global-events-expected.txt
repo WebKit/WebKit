@@ -239,10 +239,10 @@ PASS onscroll: the default value must be null
 PASS onscroll: the content attribute must be compiled into a function as the corresponding property
 PASS onscroll: the content attribute must execute when an event is dispatched
 PASS onscroll: dispatching an Event at a <meta> element must trigger element.onscroll
-FAIL onsecuritypolicyviolation: must be on the appropriate locations for GlobalEventHandlers assert_true: Window has an own property named "onsecuritypolicyviolation" expected true got false
-FAIL onsecuritypolicyviolation: the default value must be null assert_equals: The default value of the property is null for a Window instance expected (object) null but got (undefined) undefined
-FAIL onsecuritypolicyviolation: the content attribute must be compiled into a function as the corresponding property assert_equals: The onsecuritypolicyviolation property must be a function expected "function" but got "undefined"
-FAIL onsecuritypolicyviolation: the content attribute must execute when an event is dispatched assert_true: Dispatching an event must run the code expected true got undefined
+PASS onsecuritypolicyviolation: must be on the appropriate locations for GlobalEventHandlers
+PASS onsecuritypolicyviolation: the default value must be null
+PASS onsecuritypolicyviolation: the content attribute must be compiled into a function as the corresponding property
+PASS onsecuritypolicyviolation: the content attribute must execute when an event is dispatched
 PASS onsecuritypolicyviolation: dispatching an Event at a <meta> element must trigger element.onsecuritypolicyviolation
 PASS onseeked: must be on the appropriate locations for GlobalEventHandlers
 PASS onseeked: the default value must be null
