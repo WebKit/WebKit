@@ -200,6 +200,8 @@ def lex(str, file)
             result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         when /\A".*"/
             result << Token.new(CodeOrigin.new(file, lineNumber), $&)
+        when /\?/
+            result << Token.new(CodeOrigin.new(file, lineNumber), $&)
         else
             raise "Lexer error at #{CodeOrigin.new(file, lineNumber).to_s}, unexpected sequence #{str[0..20].inspect}"
         end
@@ -261,6 +263,9 @@ class Parser
         @tokens = lex(data, fileName)
         @idx = 0
         @annotation = nil
+        # FIXME: CMake does not currently set BUILT_PRODUCTS_DIR.
+        # https://bugs.webkit.org/show_bug.cgi?id=229340
+        @buildProductsDirectory = ENV['BUILT_PRODUCTS_DIR'];
     end
     
     def parseError(*comment)
@@ -817,11 +822,22 @@ class Parser
                 @idx += 1
             elsif @tokens[@idx] == "include"
                 @idx += 1
+                isOptional = false
+                if @tokens[@idx] == "?"
+                    isOptional = true
+                    @idx += 1
+                end
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
-                fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
                 @idx += 1
-                list << parse(fileName)
+                additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                fileName = IncludeFile.new(moduleName, additionsDirectoryName).fileName
+                if not File.exists?(fileName)
+                    fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
+                end
+                fileExists = File.exists?(fileName)
+                raise "File not found: #{fileName}" if not fileExists and not isOptional
+                list << parse(fileName) if fileExists
             else
                 parseError "Expecting terminal #{final} #{comment}"
             end
@@ -838,12 +854,22 @@ class Parser
                 break
             elsif @tokens[@idx] == "include"
                 @idx += 1
+                isOptional = false
+                if @tokens[@idx] == "?"
+                    isOptional = true
+                    @idx += 1
+                end
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
-                fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
                 @idx += 1
-                
-                fileList << fileName
+                additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                fileName = IncludeFile.new(moduleName, additionsDirectoryName).fileName
+                if not File.exists?(fileName)
+                    fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
+                end
+                fileExists = File.exists?(fileName)
+                raise "File not found: #{fileName}" if not fileExists and not isOptional
+                fileList << fileName if fileExists
             else
                 @idx += 1
             end
