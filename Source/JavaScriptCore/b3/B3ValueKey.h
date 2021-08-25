@@ -56,7 +56,7 @@ public:
     {
     }
 
-    ValueKey(Value* child, int64_t value);
+    ValueKey(Value* child, int32_t offset);
 
     ValueKey(Kind, Type, Value* child);
 

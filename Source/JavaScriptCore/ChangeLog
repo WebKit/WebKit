@@ -1,3 +1,77 @@
+2021-08-25  Yijia Huang  <yijia_huang@apple.com>
+
+        [ARM64] Fix pre-index address mode
+        https://bugs.webkit.org/show_bug.cgi?id=229175
+
+        Reviewed by Saam Barati.
+
+        This patch fixes the canonicalization phase for pre/post-increment address mode
+        due to the potential bugs commented on in the previous patch
+        https://bugs.webkit.org/show_bug.cgi?id=228538. And this patch removed the 
+        temporary fix in https://bugs.webkit.org/show_bug.cgi?id=229211.
+
+        Previously, the pre-index address mode for Load instruction convert the pattern 
+        to the canonical form like this:
+
+            address = Add(base, offset)       address = Add(base, offset)
+            ...                          -->  newMemory = Load(base, offset)
+            ...                               ...
+            memory = Load(base, offset)       memory = Identity(newMemory)
+
+        which is wrong. Assume "..." contains a store to a memory location that aliases for address:
+
+            address = Add(base, offset)       address = Add(base, offset)
+            ...                          -->  newMemory = Load(base, offset)
+            ...                               ...
+            Store(value1, address)            Store(value1, address)
+            memory = Load(base, offset)       memory = Identity(newMemory)
+
+        The loaded value should always be value1 which is not true after the conversion.
+        So, moving the load above the store is semantically incorrect because it's not identical to
+        the behavior of the original program. In this case, maybe we should apply alias analysis to
+        detect the violations of reference updating.
+
+        To solve this problem, we moves the address value to just before the memory value instead of
+        moving memory value upward.
+
+        Convert Pre-Index Load Pattern to the Canonical Form:
+
+            address = Add(base, offset)                    address = Nop
+            ...                                            ...
+            ...                                            newAddress = Add(base, offset)
+            memory = Load(base, offset)            -->     memory = Load(base, offset)
+            ...                                            ...
+            parent = B3Opcode(address, ...)                parent = B3Opcode(newAddress, ...)
+
+        Convert Pre-Index Store Pattern to the Canonical Form:
+
+            address = Add(base, offset)                    address = Nop
+            ...                                            ...
+            ...                                            newAddress = Add(base, offset)
+            memory = Store(value1, base, offset)   -->     memory = Store(value1, base, offset)
+            ...                                            ...
+            parent = B3Opcode(address, ...)                parent = B3Opcode(newAddress, ...)
+
+        To move the address value downward, we need to make sure that no use reference of address between
+        the address and memory values.
+
+        * b3/B3CanonicalizePrePostIncrements.cpp:
+        (JSC::B3::canonicalizePrePostIncrements):
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3ValueKey.h:
+        * b3/B3ValueKeyInlines.h:
+        (JSC::B3::ValueKey::ValueKey):
+        * b3/testb3.h:
+        * b3/testb3_3.cpp:
+        (testLoadWithStorePreIndex32):
+        (testStorePreIndex32):
+        (testStorePreIndex64):
+        (testStorePostIndex32):
+        (testStorePostIndex64):
+        (addShrTests):
+        * runtime/OptionsList.h:
+
 2021-08-25  Xan Lopez  <xan@igalia.com>
 
         [JSC] Infinite loop in for...in after r280760

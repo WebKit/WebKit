@@ -52,69 +52,57 @@ bool canonicalizePrePostIncrements(Procedure& proc)
 
     unsigned index { 0 };
     InsertionSet insertionSet { proc };
-    BlockInsertionSet blockInsertionSet { proc };
 
     Dominators& dominators = proc.dominators();
     BackwardsDominators& backwardsDominators = proc.backwardsDominators();
 
-    IndexSet<Value*> ignoredValues;
-    HashMap<Value*, Vector<MemoryValue*>> baseToLoads;
-    HashMap<MemoryValue*, Value*> preIndexLoadCandidates;
-    HashMap<MemoryValue*, Value*> postIndexLoadCandidates;
+    IndexSet<Value*> handledValues;
+    HashMap<Value*, unsigned> memoryToIndex;
+    HashMap<Value*, Vector<Value*>> addUses;
+    HashMap<Value*, Vector<MemoryValue*>> baseToMemories;
     HashMap<ValueKey, Vector<Value*>> baseOffsetToAddresses;
+    HashMap<MemoryValue*, Vector<Value*>> preIndexCandidates;
+    HashMap<MemoryValue*, Vector<Value*>> postIndexCandidates;
+    HashMap<BasicBlock*, HashSet<MemoryValue*>> blockToPrePostIndexCandidates;
 
-    HashMap<Value*, Vector<MemoryValue*>> baseToStores;
-    HashMap<MemoryValue*, Value*> postIndexStoreCandidates;
-
-    auto tryAddPrePostIndexCandidate = [&] (Value* value) {
+    // Strength Reduction will leave the IR in the form we're matching now. 
+    // It'll take an add(x, constant) that's an address and move the offset 
+    // into the load itself, and that's why we can match this redundancy.
+    auto tryAddCandidates = [&] (Value* value) {
         switch (value->opcode()) {
-        case Load: {
-            // Pre-Index Pattern:
-            //     address = Add(base, offset)
-            //     ...
-            //     memory = Load(base, offset)
-            // Post-Index Pattern:
-            //     memory = Load(base, 0)
-            //     ...
-            //     address = Add(base, offset)
-            auto tryAddpreIndexLoadCandidates = [&] () {
-                MemoryValue* memory = value->as<MemoryValue>();
-                if (memory->type() != Int32 && memory->type() != Int64)
-                    return;
-                if (memory->offset()) {
-                    if (!Arg::isValidIncrementIndexForm(memory->offset()))
-                        return;
-                    ValueKey baseOffsetkey = ValueKey(memory->child(0), static_cast<int64_t>(memory->offset()));
-                    if (!baseOffsetToAddresses.contains(baseOffsetkey))
-                        return;
-                    for (Value* address : baseOffsetToAddresses.get(baseOffsetkey))
-                        preIndexLoadCandidates.add(memory, address);
-                } else
-                    baseToLoads.add(memory->child(0), Vector<MemoryValue*>()).iterator->value.append(memory);
-            };
-
-            tryAddpreIndexLoadCandidates();
-            break;
-        }
-
+        case Load:
         case Store: {
-            // Pre-Index Pattern:
-            //     address = Add(base, offset)
-            //     memory = Store(value, base, offset)
-            // Post-Index Pattern:
-            //     memory = Store(value, base, 0)
-            //     ...
-            //     address = Add(base, offset)
-            auto tryUpdateBaseToStores = [&] () {
-                MemoryValue* memory = value->as<MemoryValue>();
-                if (memory->child(0)->type() != Int32 && memory->child(0)->type() != Int64)
-                    return;
-                if (memory->child(0)->hasInt() || memory->offset())
-                    return;
-                baseToStores.add(memory->child(1), Vector<MemoryValue*>()).iterator->value.append(memory);
-            };
-
-            tryUpdateBaseToStores();
+            MemoryValue* memory = value->as<MemoryValue>();
+            Value* type = value->opcode() == Load ? memory : memory->child(0);
+            if (type->type() != Int32 && type->type() != Int64)
+                break;
+            if (memory->offset()) {
+                // Pre-Index Load/Store Pattern:
+                //     address = Add(base, offset)
+                //     ...
+                //     memory = MemoryValue(base, offset)
+                ValueKey baseOffsetKey = ValueKey(memory->lastChild(), memory->offset());
+                auto iter = baseOffsetToAddresses.find(baseOffsetKey);
+                if (iter == baseOffsetToAddresses.end())
+                    break;
+                for (Value* address : iter->value) {
+                    // The goal is to move the Add to this Load/Store. We only move the Add to this Memory value
+                    // if we guarantee it dominates all uses. If there are already other uses of the Add, it guarantees
+                    // this Memory value doesn't dominate those uses. This is because we're visiting the program in pre-order
+                    // traversal, so we visit this Memory value before all the things it dominates. So if the Add has other
+                    // users, we must not dominate those users. Therefore, this MemoryValue won't be a candidate.
+                    auto addUsesIter = addUses.find(address);
+                    if (addUsesIter != addUses.end() && addUsesIter->value.size() > 0)
+                        continue;
+                    // double check offsets to avoid ValueKey collisions
+                    if (memory->offset() != static_cast<Value::OffsetType>(address->child(1)->asIntPtr()))
+                        continue;
+                    preIndexCandidates.add(memory, Vector<Value*>()).iterator->value.append(address);
+                    blockToPrePostIndexCandidates.add(memory->owner, HashSet<MemoryValue*>()).iterator->value.add(memory);
+                }
+            } else
+                baseToMemories.add(memory->lastChild(), Vector<MemoryValue*>()).iterator->value.append(memory);
+            memoryToIndex.add(memory, index);
             break;
         }
 
@@ -122,38 +110,46 @@ bool canonicalizePrePostIncrements(Procedure& proc)
             Value* left = value->child(0);
             Value* right = value->child(1);
 
-            auto tryAddpostIndexCandidates = [&] () {
-                if (!right->hasIntPtr() || value->type() != Int64)
-                    return;
-                intptr_t offset = right->asIntPtr();
-                Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
-                if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
-                    return;
-                // so far this Add value is a valid address candidate for both prefix and postfix pattern
-                ValueKey baseOffsetkey = ValueKey(left, static_cast<int64_t>(smallOffset));
-                baseOffsetToAddresses.add(baseOffsetkey, Vector<Value*>()).iterator->value.append(value);
-                if (baseToLoads.contains(left)) {
-                    for (MemoryValue* memory : baseToLoads.get(left))
-                        postIndexLoadCandidates.add(memory, value);
-                }
-                if (baseToStores.contains(left)) {
-                    for (MemoryValue* memory : baseToStores.get(left))
-                        postIndexStoreCandidates.add(memory, value);
-                }
-            };
+            if (!right->hasIntPtr() || value->type() != Int64)
+                break;
+            intptr_t offset = right->asIntPtr();
+            Value::OffsetType smallOffset = static_cast<Value::OffsetType>(offset);
+            if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
+                break;
 
-            tryAddpostIndexCandidates();
+            // so far this Add value is a valid address candidate for both prefix and postfix pattern
+            addUses.add(value, Vector<Value*>());
+            ValueKey baseOffsetKey = ValueKey(left, smallOffset);
+            baseOffsetToAddresses.add(baseOffsetKey, Vector<Value*>()).iterator->value.append(value);
+
+            // Post-Index Load/Store Pattern:
+            //     memory = MemoryValue(base, 0)
+            //     ...
+            //     address = Add(base, offset)
+            auto iter = baseToMemories.find(left);
+            if (iter == baseToMemories.end())
+                break;
+            for (MemoryValue* memory : iter->value) {
+                postIndexCandidates.add(memory, Vector<Value*>()).iterator->value.append(value);
+                blockToPrePostIndexCandidates.add(memory->owner, HashSet<MemoryValue*>()).iterator->value.add(memory);
+            }
             break;
         }
 
         default:
             break;
         }
+
+        for (Value* child : value->children()) {
+            auto iter = addUses.find(child);
+            if (iter != addUses.end())
+                iter->value.append(value);
+        }
     };
 
     for (BasicBlock* basicBlock : proc.blocksInPreOrder()) {
         for (index = 0; index < basicBlock->size(); ++index)
-            tryAddPrePostIndexCandidate(basicBlock->at(index));
+            tryAddCandidates(basicBlock->at(index));
     }
 
     auto controlEquivalent = [&] (Value* v1, Value* v2) -> bool {
@@ -161,68 +157,75 @@ bool canonicalizePrePostIncrements(Procedure& proc)
             || (dominators.dominates(v2->owner, v1->owner) && backwardsDominators.dominates(v1->owner, v2->owner));
     };
 
-    // This search is expensive. However, due to the greedy pattern
-    // matching, no better method can be proposed at present.
-    auto valueIndexInBasicBlock = [&] (Value* value) -> unsigned {
-        unsigned index = 0;
-        BasicBlock* block = value->owner;
-        for (index = 0; index < block->size(); ++index) {
-            if (block->at(index) == value)
-                return index;
-        }
-        return index;
-    };
-
-    for (auto pair : preIndexLoadCandidates) {
-        MemoryValue* memory = pair.key;
-        Value* address = pair.value;
-        if (ignoredValues.contains(memory) || ignoredValues.contains(address) || !controlEquivalent(memory, address))
-            continue;
-        // address = Add(base, offset)       address = Add(base, offset)
-        // ...                          -->  newMemory = Load(base, offset)
-        // ...                               ...
-        // memory = Load(base, offset)       memory = Identity(newMemory)
-        unsigned insertionIndex = valueIndexInBasicBlock(address) + 1;
-        MemoryValue* newMemory = insertionSet.insert<MemoryValue>(insertionIndex, Load, memory->type(), address->origin(), memory->lastChild());
-        newMemory->setOffset(memory->offset());
-        memory->replaceWithIdentity(newMemory);
-        insertionSet.execute(address->owner);
-
-        ignoredValues.add(memory);
-        ignoredValues.add(address);
-    }
-
-    auto detectPostIndex = [&] (const HashMap<MemoryValue*, Value*>& candidates) {
-        for (auto pair : candidates) {
-            MemoryValue* memory = pair.key;
-            Value* address = pair.value;
-            if (ignoredValues.contains(memory) || ignoredValues.contains(address) || !controlEquivalent(memory, address))
+    for (const auto& pair : blockToPrePostIndexCandidates) {
+        BasicBlock* basicBlock = pair.key;
+        for (MemoryValue* memory : pair.value) {
+            if (handledValues.contains(memory))
                 continue;
 
-            unsigned insertionIndex = valueIndexInBasicBlock(memory);
-            Value* newOffset = insertionSet.insert<Const64Value>(insertionIndex, memory->origin(), address->child(1)->asInt());
-            Value* newAddress = insertionSet.insert<Value>(insertionIndex, Add, memory->origin(), address->child(0), newOffset);
-            address->replaceWithIdentity(newAddress);
-            insertionSet.execute(memory->owner);
+            // Convert Pre-Index Load/Store Pattern to the Canonical Form:
+            //     address = Add(base, offset)                    address = Nop
+            //     ...                                            ...
+            //     ...                                            newAddress = Add(base, offset)
+            //     memory = MemoryValue(base, offset)     -->     memory = MemoryValue(base, offset)
+            //     ...                                            ...
+            //     parent = B3Opcode(address, ...)                parent = B3Opcode(newAddress, ...)
+            for (Value* address : preIndexCandidates.get(memory)) {
+                if (handledValues.contains(address) || !controlEquivalent(memory, address))
+                    continue;
 
-            ignoredValues.add(memory);
-            ignoredValues.add(address);
+                auto dominatesAllAddUses = [&] () -> bool {
+                    auto iter = addUses.find(address);
+                    ASSERT(iter != addUses.end() && iter->value.size());
+                    for (Value* parent : iter->value) {
+                        if (!dominators.dominates(memory->owner, parent->owner))
+                            return false;
+                    }
+                    return true;
+                };
+
+                if (!dominatesAllAddUses())
+                    continue;
+
+                unsigned insertionIndex = memoryToIndex.get(memory);
+                Value* newAddress = insertionSet.insert<Value>(insertionIndex, Add, memory->origin(), address->child(0), address->child(1));
+                for (Value* parent : addUses.get(address)) {
+                    for (unsigned i = 0; i < parent->numChildren(); ++i) {
+                        Value*& child = parent->child(i);
+                        if (child == address)
+                            child = newAddress;
+                    }
+                }
+                address->replaceWithNopIgnoringType();
+
+                handledValues.add(memory);
+                handledValues.add(address);
+            }
+
+            // Convert Post-Index Load/Store Pattern to the Canonical Form:
+            //     ...                                  newOffset = Constant
+            //     ...                                  newAddress = Add(base, newOffset)
+            //     memory = MemoryValue(base, 0)        memory = MemoryValue(base, 0)
+            //     ...                            -->   ...
+            //     address = Add(base, offset)          address = Identity(newAddress)
+            for (Value* address : postIndexCandidates.get(memory)) {
+                if (handledValues.contains(address) || !controlEquivalent(memory, address))
+                    continue;
+
+                unsigned insertionIndex = memoryToIndex.get(memory);
+                Value* newOffset = insertionSet.insert<Const64Value>(insertionIndex, memory->origin(), address->child(1)->asInt());
+                Value* newAddress = insertionSet.insert<Value>(insertionIndex, Add, memory->origin(), address->child(0), newOffset);
+                address->replaceWithIdentity(newAddress);
+
+                handledValues.add(memory);
+                handledValues.add(address);
+            }
         }
-    };
+        // After this executes, memoryToIndex no longer contains up to date information for this block.
+        // But that's ok because we never touch this block again.
+        insertionSet.execute(basicBlock);
+    }
 
-    // ...                                  newOffset = Constant
-    // ...                                  newAddress = Add(base, newOffset)
-    // memory = Load(base, 0)               memory = Load(base, 0)
-    // ...                            -->   ...
-    // address = Add(base, offset)          address = Identity(newAddress)
-    detectPostIndex(postIndexLoadCandidates);
-
-    // ...                                  newOffset = Constant
-    // ...                                  newAddress = Add(base, newOffset)
-    // memory = Store(value, base, 0)       memory = Store(value, base, 0)
-    // ...                            -->   ...
-    // address = Add(base, offset)          address = Identity(newAddress)
-    detectPostIndex(postIndexStoreCandidates);
     return true;
 }
 

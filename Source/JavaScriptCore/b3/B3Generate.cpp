@@ -118,7 +118,7 @@ void generateToAir(Procedure& procedure)
     lowerMacrosAfterOptimizations(procedure);
     legalizeMemoryOffsets(procedure);
     moveConstants(procedure);
-    if (Options::useB3CanonicalizePrePostIncrements() && procedure.optLevel() >= 2)
+    if (procedure.optLevel() >= 2)
         canonicalizePrePostIncrements(procedure);
     eliminateDeadCode(procedure);
 
