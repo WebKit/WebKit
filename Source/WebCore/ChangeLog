@@ -1,3 +1,38 @@
+2021-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] RemoteAudioSession doesn't implement begin/endInterruption
+        https://bugs.webkit.org/show_bug.cgi?id=229514
+        rdar://80896732
+
+        Reviewed by Jer Noble.
+
+        Move the code necessary to deal with interruptions from AudioSessionIOS to the
+        base class so it can be shared with RemoteAudioSession.
+
+        Tested manually.
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::AudioSession::addInterruptionObserver): Move implementation from AudioSessionIOS
+        so it can be shared.
+        (WebCore::AudioSession::removeInterruptionObserver): Ditto.
+        (WebCore::AudioSession::beginInterruption): Ditto.
+        (WebCore::AudioSession::endInterruption): Ditto.
+        (WebCore::AudioSession::setCategoryOverride): Ditto.
+        (WebCore::AudioSession::categoryOverride const): Ditto.
+        * platform/audio/AudioSession.h:
+
+        * platform/audio/ios/AudioSessionIOS.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSessionIOS::setCategoryOverride): Deleted.
+        (WebCore::AudioSessionIOS::categoryOverride const): Deleted.
+        (WebCore::AudioSessionIOS::addInterruptionObserver): Deleted.
+        (WebCore::AudioSessionIOS::removeInterruptionObserver): Deleted.
+        (WebCore::AudioSessionIOS::beginInterruption): Deleted.
+        (WebCore::AudioSessionIOS::endInterruption): Deleted.
+        * platform/audio/mac/AudioSessionMac.h:
+        * platform/audio/mac/AudioSessionMac.mm:
+        (WebCore::AudioSessionMac::setCategoryOverride): Deleted.
+
 2021-08-25  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line spanning inline boxes should also be in the run list

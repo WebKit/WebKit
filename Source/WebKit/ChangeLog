@@ -1,3 +1,17 @@
+2021-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] RemoteAudioSession doesn't implement begin/endInterruption
+        https://bugs.webkit.org/show_bug.cgi?id=229514
+        rdar://80896732
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setIsPlayingToBluetoothOverride): Remove 
+        ENABLE_ROUTING_ARBITRATION guard because it isn't used in the base class.
+        * WebProcess/GPU/media/RemoteAudioSession.h: Change the order virtual methods are declared
+        so they match the base class, to make it easier to spot differences.
+
 2021-08-25  Per Arne Vollan  <pvollan@apple.com>
 
         Build error preprocessing sandbox
