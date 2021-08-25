@@ -1264,7 +1264,7 @@ class ShowIdentifier(shell.ShellCommand):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         revision = self.getProperty('got_revision')
-        self.setCommand(['python', 'Tools/Scripts/git-webkit', 'find', 'r{}'.format(revision)])
+        self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', 'r{}'.format(revision)])
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
