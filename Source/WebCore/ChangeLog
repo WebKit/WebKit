@@ -1,3 +1,20 @@
+2021-08-24  Mark Lam  <mark.lam@apple.com>
+
+        Refactor ENABLE(JIT_OPERATION_VALIDATION) code to emit no code when disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=229482
+        rdar://82318317
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/WebCoreJITOperations.cpp:
+        (WebCore::populateJITOperations):
+        * bindings/js/WebCoreJITOperations.h:
+        (WebCore::populateJITOperations):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::populateJITOperations):
+        * testing/js/WebCoreTestSupport.h:
+        (WebCoreTestSupport::populateJITOperations):
+
 2021-08-24  Jean-Yves Avenard  <jya@apple.com>
 
         [Cocoa] Should video stop being live, time scrubber will not show

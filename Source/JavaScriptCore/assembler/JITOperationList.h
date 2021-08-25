@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
+
 class JITOperationList {
 public:
     static JITOperationList& instance();
@@ -39,11 +41,7 @@ public:
 
     void* map(void* pointer) const
     {
-#if ENABLE(JIT_OPERATION_VALIDATION)
         return m_validatedOperations.get(removeCodePtrTag(pointer));
-#else
-        return pointer;
-#endif
     }
 
     static void populatePointersInJavaScriptCore();
@@ -54,9 +52,7 @@ public:
     template<typename T> static void assertIsJITOperation(T function)
     {
         UNUSED_PARAM(function);
-#if ENABLE(JIT_OPERATION_VALIDATION)
         ASSERT(!Options::useJIT() || JITOperationList::instance().map(bitwise_cast<void*>(function)));
-#endif
     }
 
 private:
@@ -69,5 +65,19 @@ inline JITOperationList& JITOperationList::instance()
 {
     return jitOperationList.get();
 }
+
+#else // not ENABLE(JIT_OPERATION_VALIDATION)
+
+class JITOperationList {
+public:
+    static void initialize() { }
+
+    static void populatePointersInJavaScriptCore() { }
+    static void populatePointersInJavaScriptCoreForLLInt() { }
+
+    template<typename T> static void assertIsJITOperation(T) { }
+};
+
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
 
 } // namespace JSC
