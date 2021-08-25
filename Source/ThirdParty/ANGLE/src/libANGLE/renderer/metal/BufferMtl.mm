@@ -401,7 +401,7 @@ void BufferMtl::markConversionBuffersDirty()
         buffer.convertedBuffer = nullptr;
         buffer.convertedOffset = 0;
     }
-    mRestartIndicesDirty = true;
+    mRestartRangeCache = std::nullopt;
 }
 
 void BufferMtl::clearConversionBuffers()
@@ -409,6 +409,7 @@ void BufferMtl::clearConversionBuffers()
     mVertexConversionBuffers.clear();
     mIndexConversionBuffers.clear();
     mUniformConversionBuffers.clear();
+    mRestartRangeCache = std::nullopt;
 }
 
 template<typename T>
@@ -437,26 +438,27 @@ static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::Buff
 
 const std::vector<IndexRange> & BufferMtl::getRestartIndices(ContextMtl * ctx, gl::DrawElementsType indexType)
 {
-    if(mRestartIndicesDirty)
+    if (!mRestartRangeCache || mRestartRangeCache->indexType != indexType)
     {
-        std::vector<IndexRange>().swap(mRestartIndices);
+        mRestartRangeCache = std::nullopt;
+        std::vector<IndexRange> ranges;
         switch(indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
-                mRestartIndices = calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer());
+                ranges = calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer());
                 break;
             case gl::DrawElementsType::UnsignedShort:
-                mRestartIndices = calculateRestartRanges<uint16_t>(ctx, getCurrentBuffer());
+                ranges = calculateRestartRanges<uint16_t>(ctx, getCurrentBuffer());
                 break;
             case gl::DrawElementsType::UnsignedInt:
-                mRestartIndices = calculateRestartRanges<uint32_t>(ctx, getCurrentBuffer());
+                ranges = calculateRestartRanges<uint32_t>(ctx, getCurrentBuffer());
                 break;
             default:
                 ASSERT(false);
         }
-        mRestartIndicesDirty = false;
+        mRestartRangeCache.emplace(std::move(ranges), indexType);
     }
-    return mRestartIndices;
+    return mRestartRangeCache->ranges;
 }
 angle::Result BufferMtl::setDataImpl(const gl::Context *context,
                                      gl::BufferBinding target,

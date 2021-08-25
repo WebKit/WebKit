@@ -1,3 +1,29 @@
+2021-08-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal index buffer restart range cache is could be maintained more consistently
+        https://bugs.webkit.org/show_bug.cgi?id=227451
+
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/BufferMtl.h:
+        (rx::BufferMtl::RestartRangeCache::RestartRangeCache):
+        Add optional<RestartRangeCache> which contains the ranges and
+        the index type used to build the ranges.
+
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::BufferMtl::markConversionBuffersDirty):
+        (rx::BufferMtl::clearConversionBuffers):
+        Invalidate the range cache when clearing conversion buffers.
+        Otherwise the cache would be left in inconsistent state vs.
+        the contents of the index buffer in cases of code like:
+        BufferMtl::setDataImpl() ...
+           if (...) {
+               markConversionBufferDirty();
+           } else {
+               clearConversionBuffers();
+           }
+        (rx::BufferMtl::getRestartIndices):
+
 2021-08-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal infinities and NaNs generated with incorrect syntax

@@ -12,6 +12,7 @@
 
 #import <Metal/Metal.h>
 
+#include <optional>
 #include <utility>
 
 #include "libANGLE/Buffer.h"
@@ -210,10 +211,16 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     std::vector<IndexConversionBufferMtl> mIndexConversionBuffers;
     
     std::vector<UniformConversionBufferMtl> mUniformConversionBuffers;
-    
-    bool mRestartIndicesDirty;
-    std::vector<IndexRange> mRestartIndices;
-    
+
+    struct RestartRangeCache
+    {
+        RestartRangeCache(std::vector<IndexRange>&& ranges_,  gl::DrawElementsType indexType_)
+            : ranges(ranges_), indexType(indexType_)
+        {}
+        const std::vector<IndexRange> ranges;
+        const gl::DrawElementsType indexType;
+    };
+    std::optional<RestartRangeCache> mRestartRangeCache;
 };
 
 class SimpleWeakBufferHolderMtl : public BufferHolderMtl
