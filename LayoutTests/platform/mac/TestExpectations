@@ -2351,4 +2351,6 @@ webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-chang
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Crash Timeout ]
 
+webkit.org/b/229509 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Pass Failure ]
+
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
