@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body" role="group">
+    
+<p>Shape</p>
+<div>
+  <input type="radio" id="circle" name="shape" value="circle">
+  <label for="circle">Circle</label>
+</div>
+
+<div>
+  <input type="radio" id="square" name="shape" value="square">
+  <label for="square">Square</label>
+</div>
+
+<div>
+  <input type="radio" id="triangle" name="shape" value="triangle">
+  <label for="triangle">Triangle</label>
+</div>
+
+<p>Color</p>
+<div>
+  <input type="radio" id="red" name="color" value="red">
+  <label for="red">Red</label>
+</div>
+
+<div>
+  <input type="radio" id="blue" name="color" value="blue">
+  <label for="blue">Blue</label>
+</div>
+
+<div>
+  <input type="radio" id="green" name="color" value="green">
+  <label for="green">Green</label>
+</div>
+
+<p>Size</p>
+<div>
+  <input type="radio" id="small" name="size" value="small">
+  <label for="small">Small</label>
+</div>
+
+<p>
+  Unrelated content separating ad-hoc radio group items
+</p>
+
+<div>
+  <input type="radio" id="medium" name="size" value="medium">
+  <label for="medium">Medium</label>
+</div>
+
+<p>
+  Unrelated content separating ad-hoc radio group items
+</p>
+
+<div>
+  <input type="radio" id="large" name="size" value="large">
+  <label for="large">Large</label>
+</div>
+
+<script>
+    description("This test ensures WebKit can search for ad-hoc radiogroups. An ad-hoc radiogroup is a set of radiobuttons connected by `name` attribute alone, without an appropriate `role=\"radiogroup\"` container.")
+
+    if (window.accessibilityController) {
+        window.containerElement = accessibilityController.accessibleElementById("body");
+        
+        startElement = containerElement.childAtIndex(0);
+        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
+        shouldBe("resultElement.domIdentifier", "'circle'");
+        
+        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
+        shouldBe("resultElement.domIdentifier", "'red'");
+        
+        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
+        shouldBe("resultElement.domIdentifier", "'small'");
+        
+        // Now search backwards up the ad-hoc radiogroups.
+        
+        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
+        shouldBe("resultElement.domIdentifier", "'green'");
+        
+        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
+        shouldBe("resultElement.domIdentifier", "'triangle'");
+        
+        // And finally search forward once more.
+        
+        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false, false);
+        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
+        shouldBe("resultElement.domIdentifier", "'red'");
+    }
+</script>
+</body>
+</html>

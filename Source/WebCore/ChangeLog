@@ -1,3 +1,23 @@
+2021-08-25  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Return radiobuttons part of ad-hoc radiogroups from AX search queries
+        https://bugs.webkit.org/show_bug.cgi?id=229415
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/mac/search-predicate-for-adhoc-radio-groups.html
+
+        Enable the ability for WebKit UI element accessibility searches to find
+        ad-hoc radiogroups. An ad-hoc radiogroup is a group of radiobuttons
+        connected only by `name` attribute, missing an appropriate role="radiogroup"
+        container.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::Accessibility::isRadioButtonInDifferentAdhocGroup): Added.
+        (WebCore::Accessibility::isAccessibilityObjectSearchMatchAtIndex):
+        When searching for radiogroups, also return radiobuttons in different
+        ad-hoc radiogroups.
+
 2021-08-25  Kate Cheney  <katherine_cheney@apple.com>
 
         WebCrypto uses deprecated CCKeyDerivationHMac

@@ -566,6 +566,9 @@ editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 editing/spelling/spellcheck-async.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
+# Skip due to lack of DumpRenderTree `AccessibilityUIElement::domIdentifer` implementation.
+accessibility/mac/search-predicate-for-adhoc-radio-groups.html [ Skip ]
+
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way
 # to have platform specific results that are different between WK1 and WK2.
 accessibility/mac/document-attributes.html [ Failure ]
