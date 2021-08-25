@@ -2347,4 +2347,6 @@ webkit.org/b/229473 media/modern-media-controls/seek-backward-support/seek-backw
 
 webkit.org/b/228364 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Pass Timeout ]
 
+webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Crash Timeout ]
+
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]

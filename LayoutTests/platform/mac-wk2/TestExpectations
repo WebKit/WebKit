@@ -1072,8 +1072,6 @@ webkit.org/b/209624 tiled-drawing/scrolling/fixed/four-bars-zoomed.html [ Pass F
 
 webkit.org/b/209769 [ Catalina ] tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 
-webkit.org/b/209878  [ Debug ] webrtc/datachannel/multiple-connections.html [ Slow ]
-
 webkit.org/b/210433 swipe/basic-cached-back-swipe.html [ Pass Crash Timeout ]
 
 webkit.org/b/207518 tiled-drawing/simple-document-with-margin-tiles.html [ Pass Failure ]
