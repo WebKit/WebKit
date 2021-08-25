@@ -37,26 +37,26 @@ static constexpr PropertyOffset knownPolyProtoOffset = 0;
 static_assert(knownPolyProtoOffset < firstOutOfLineOffset, "We assume in all the JITs that the poly proto offset is an inline offset");
 
 // Declare all of the functions because they tend to do forward calls.
-constexpr inline void checkOffset(PropertyOffset);
-constexpr inline void checkOffset(PropertyOffset, int inlineCapacity);
-constexpr inline void validateOffset(PropertyOffset);
-constexpr inline void validateOffset(PropertyOffset, int inlineCapacity);
-constexpr inline bool isValidOffset(PropertyOffset);
-constexpr inline bool isInlineOffset(PropertyOffset);
-constexpr inline bool isOutOfLineOffset(PropertyOffset);
-constexpr inline intptr_t offsetInInlineStorage(PropertyOffset);
-constexpr inline intptr_t offsetInOutOfLineStorage(PropertyOffset);
-constexpr inline intptr_t offsetInRespectiveStorage(PropertyOffset);
-constexpr inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset);
-constexpr inline size_t numberOfSlotsForMaxOffset(PropertyOffset, int inlineCapacity);
+inline void checkOffset(PropertyOffset);
+inline void checkOffset(PropertyOffset, int inlineCapacity);
+inline void validateOffset(PropertyOffset);
+inline void validateOffset(PropertyOffset, int inlineCapacity);
+inline bool isValidOffset(PropertyOffset);
+inline bool isInlineOffset(PropertyOffset);
+inline bool isOutOfLineOffset(PropertyOffset);
+inline size_t offsetInInlineStorage(PropertyOffset);
+inline size_t offsetInOutOfLineStorage(PropertyOffset);
+inline size_t offsetInRespectiveStorage(PropertyOffset);
+inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset);
+inline size_t numberOfSlotsForMaxOffset(PropertyOffset, int inlineCapacity);
 
-constexpr inline void checkOffset(PropertyOffset offset)
+inline void checkOffset(PropertyOffset offset)
 {
     UNUSED_PARAM(offset);
     ASSERT(offset >= invalidOffset);
 }
 
-constexpr inline void checkOffset(PropertyOffset offset, int inlineCapacity)
+inline void checkOffset(PropertyOffset offset, int inlineCapacity)
 {
     UNUSED_PARAM(offset);
     UNUSED_PARAM(inlineCapacity);
@@ -66,58 +66,58 @@ constexpr inline void checkOffset(PropertyOffset offset, int inlineCapacity)
         || isOutOfLineOffset(offset));
 }
 
-constexpr inline void validateOffset(PropertyOffset offset)
+inline void validateOffset(PropertyOffset offset)
 {
     checkOffset(offset);
     ASSERT(isValidOffset(offset));
 }
 
-constexpr inline void validateOffset(PropertyOffset offset, int inlineCapacity)
+inline void validateOffset(PropertyOffset offset, int inlineCapacity)
 {
     checkOffset(offset, inlineCapacity);
     ASSERT(isValidOffset(offset));
 }
 
-constexpr inline bool isValidOffset(PropertyOffset offset)
+inline bool isValidOffset(PropertyOffset offset)
 {
     checkOffset(offset);
     return offset != invalidOffset;
 }
 
-constexpr inline bool isInlineOffset(PropertyOffset offset)
+inline bool isInlineOffset(PropertyOffset offset)
 {
     checkOffset(offset);
     return offset < firstOutOfLineOffset;
 }
 
-constexpr inline bool isOutOfLineOffset(PropertyOffset offset)
+inline bool isOutOfLineOffset(PropertyOffset offset)
 {
     checkOffset(offset);
     return !isInlineOffset(offset);
 }
 
-constexpr inline intptr_t offsetInInlineStorage(PropertyOffset offset)
+inline size_t offsetInInlineStorage(PropertyOffset offset)
 {
     validateOffset(offset);
     ASSERT(isInlineOffset(offset));
     return offset;
 }
 
-constexpr inline intptr_t offsetInOutOfLineStorage(PropertyOffset offset)
+inline size_t offsetInOutOfLineStorage(PropertyOffset offset)
 {
     validateOffset(offset);
     ASSERT(isOutOfLineOffset(offset));
     return -static_cast<ptrdiff_t>(offset - firstOutOfLineOffset) - 1;
 }
 
-constexpr inline intptr_t offsetInRespectiveStorage(PropertyOffset offset)
+inline size_t offsetInRespectiveStorage(PropertyOffset offset)
 {
     if (isInlineOffset(offset))
         return offsetInInlineStorage(offset);
     return offsetInOutOfLineStorage(offset);
 }
 
-constexpr inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset offset)
+inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset offset)
 {
     checkOffset(offset);
     if (offset < firstOutOfLineOffset)
@@ -125,7 +125,7 @@ constexpr inline size_t numberOfOutOfLineSlotsForMaxOffset(PropertyOffset offset
     return offset - firstOutOfLineOffset + 1;
 }
 
-constexpr inline size_t numberOfSlotsForMaxOffset(PropertyOffset offset, int inlineCapacity)
+inline size_t numberOfSlotsForMaxOffset(PropertyOffset offset, int inlineCapacity)
 {
     checkOffset(offset, inlineCapacity);
     if (offset < inlineCapacity)
@@ -133,7 +133,7 @@ constexpr inline size_t numberOfSlotsForMaxOffset(PropertyOffset offset, int inl
     return inlineCapacity + numberOfOutOfLineSlotsForMaxOffset(offset);
 }
 
-constexpr inline PropertyOffset offsetForPropertyNumber(int propertyNumber, int inlineCapacity)
+inline PropertyOffset offsetForPropertyNumber(int propertyNumber, int inlineCapacity)
 {
     PropertyOffset offset = propertyNumber;
     if (offset >= inlineCapacity) {

@@ -3079,7 +3079,3 @@ llintOpWithMetadata(op_set_private_brand, OpSetPrivateBrand, macro (size, get, d
     dispatch()
 end)
 
-slowPathOp(enumerator_next)
-slowPathOp(enumerator_get_by_val)
-slowPathOp(enumerator_in_by_val)
-slowPathOp(enumerator_has_own_property)

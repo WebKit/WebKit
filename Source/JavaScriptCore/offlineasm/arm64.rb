@@ -884,7 +884,7 @@ class Instruction
         when "move"
             if operands[0].immediate?
                 emitARM64MoveImmediate(operands[0].value, operands[1])
-            elsif operands[0] != operands[1]
+            else
                 emitARM64("mov", operands, :quad)
             end
         when "moved"

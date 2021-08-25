@@ -209,7 +209,7 @@ public:
     }
     
     static ptrdiff_t offsetOfPropertyStorage() { return -static_cast<ptrdiff_t>(sizeof(IndexingHeader)); }
-    constexpr static int indexOfPropertyStorage()
+    static int indexOfPropertyStorage()
     {
         ASSERT(sizeof(IndexingHeader) == sizeof(EncodedJSValue));
         return -1;

@@ -1564,7 +1564,7 @@ inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot);
 }
 
-constexpr inline intptr_t offsetInButterfly(PropertyOffset offset)
+inline size_t offsetInButterfly(PropertyOffset offset)
 {
     return offsetInOutOfLineStorage(offset) + Butterfly::indexOfPropertyStorage();
 }
