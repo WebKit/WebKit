@@ -59,8 +59,26 @@ struct LineRun {
         String m_contentString;
     };
 
+    enum class Type {
+        Text,
+        LineBreak,
+        AtomicInlineLevelBox,
+        InlineBox,
+        RootInlineBox,
+        GenericInlineLevelBox
+    };
     struct Expansion;
-    LineRun(size_t lineIndex, const Box&, const InlineRect&, Expansion, std::optional<Text> = std::nullopt);
+    LineRun(size_t lineIndex, Type, const Box&, const InlineRect&, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
+
+    bool isText() const { return m_type == Type::Text; }
+    bool isLineBreak() const { return m_type == Type::LineBreak; }
+    bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
+    bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox(); }
+    bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
+    Type type() const { return m_type; }
+
+    bool hasContent() const { return m_hasContent; }
+    bool isLineSpanning() const { return m_isLineSpanning; }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 
@@ -87,16 +105,23 @@ struct LineRun {
 
 private:
     const size_t m_lineIndex;
+    const Type m_type;
     WeakPtr<const Layout::Box> m_layoutBox;
     InlineRect m_logicalRect;
+    bool m_hasContent { true };
+    // FIXME: This is temporary until after iterators can skip over line spanning/root inline boxes.
+    bool m_isLineSpanning { false };
     Expansion m_expansion;
     std::optional<Text> m_text;
 };
 
-inline LineRun::LineRun(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, Expansion expansion, std::optional<Text> text)
+inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, Expansion expansion, std::optional<Text> text, bool hasContent, bool isLineSpanning)
     : m_lineIndex(lineIndex)
+    , m_type(type)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)
+    , m_hasContent(hasContent)
+    , m_isLineSpanning(isLineSpanning)
     , m_expansion(expansion)
     , m_text(text)
 {

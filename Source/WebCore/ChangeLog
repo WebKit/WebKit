@@ -1,3 +1,44 @@
+2021-08-25  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line spanning inline boxes should also be in the run list
+        https://bugs.webkit.org/show_bug.cgi?id=228059
+        <rdar://problem/81077420>
+
+        Reviewed by Antti Koivisto.
+
+        Consider the following case:
+          <div><span>first line text<br>second line text<br>third line text</span></div>
+
+        Here is the list of runs we generate for the content above:
+
+          [inline box][first line text][hard linebreak][second line text][hard linebreak][third line text]
+
+        This list does not include the spanning inline boxes, i.e. the missing inline box on the second and the third line.
+        The integration code then looks inside the LineBox to find these spanning inline boxes (see createDisplayNonRootInlineBoxes)
+
+        In this patch we start including such spanning inline boxes in the run list.
+          [inline box][first line text][hard linebreak][inline box][second line text][hard linebreak][inline box][third line text]
+
+        This is also in preparation for making LineBox completely internal to the layout code. 
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::LineRun::isText const):
+        (WebCore::Layout::LineRun::isLineBreak const):
+        (WebCore::Layout::LineRun::isAtomicInlineLevelBox const):
+        (WebCore::Layout::LineRun::isInlineBox const):
+        (WebCore::Layout::LineRun::isRootInlineBox const):
+        (WebCore::Layout::LineRun::type const):
+        (WebCore::Layout::LineRun::hasContent const):
+        (WebCore::Layout::LineRun::isLineSpanning const):
+        (WebCore::Layout::LineRun::LineRun):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayNonRootInlineBoxes const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+
 2021-08-25  Sonia Singla  <ssingla@igalia.com>
 
         Add onsecuritypolicyviolation on GlobalEventHandlers

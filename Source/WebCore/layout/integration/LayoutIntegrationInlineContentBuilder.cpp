@@ -166,7 +166,6 @@ void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineForm
 {
     auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
     createDisplayLineRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns(), inlineContent, lineLevelVisualAdjustmentsForRuns);
-    createDisplayNonRootInlineBoxes(inlineFormattingState, inlineContent);
     createDisplayLines(inlineFormattingState.lines(), inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
@@ -245,7 +244,20 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             runRect.setY(roundToInt(runRect.y()));
         // FIXME: Add support for non-text ink overflow.
         // FIXME: Add support for cases when the run is after ellipsis.
-        inlineContent.runs.append({ lineIndex, layoutBox, runRect, runRect, { }, { } });
+        if (lineRun.isInlineBox()) {
+            auto lineRunRect = lineRun.logicalRect();
+            lineRunRect.moveBy(lineBoxLogicalRect.topLeft());
+            auto hasScrollableContent = [&] {
+                // In standards mode, inline boxes always start with an imaginary strut.
+                return m_layoutState.inStandardsMode() || lineRun.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
+            };
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, lineRunRect, hasScrollableContent() });
+            if (!lineRun.isLineSpanning()) {
+                // FIXME: Run iterators with (text)runs spanning over multiple lines expect no "in-between" runs (e.g. line spanning or root inline boxes).
+                inlineContent.runs.append({ lineIndex, layoutBox, runRect, runRect, { }, { } });
+            }
+        } else
+            inlineContent.runs.append({ lineIndex, layoutBox, runRect, runRect, { }, { } });
     };
 
     auto createDisplayTextRunForRange = [&](auto& lineRun, auto startOffset, auto endOffset) {
@@ -365,31 +377,6 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
         }
         auto runCount = runIndex - firstRunIndex;
         inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
-    }
-}
-
-void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
-{
-    for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
-        auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
-        if (!lineBox.hasInlineBox())
-            continue;
-
-        auto lineBoxLogicalRect = inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect();
-        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!inlineLevelBox.isInlineBox())
-                continue;
-            auto& layoutBox = inlineLevelBox.layoutBox();
-            auto& boxGeometry = m_layoutState.geometryForBox(layoutBox);
-            auto inlineBoxRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-            inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
-
-            auto hasScrollableContent = [&] {
-                // In standards mode, inline boxes always start with an imaginary strut.
-                return m_layoutState.inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
-            };
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, hasScrollableContent() });
-        }
     }
 }
 
