@@ -825,6 +825,8 @@ public:
         HighPerformance
     };
     RequestedGPU requestedGPU(WebGLRenderingContext&);
+    bool requestedMetal(WebGLRenderingContext&);
+    bool platformSupportsMetal(bool isWebGL2);
 #endif
 
     void setPageVisibility(bool isVisible);
