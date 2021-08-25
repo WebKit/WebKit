@@ -1,3 +1,50 @@
+2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Crash when tapping <select> element and calling window.open()
+        https://bugs.webkit.org/show_bug.cgi?id=229468
+        rdar://82122972
+
+        Reviewed by Wenson Hsieh.
+
+        UIKit throws an exception when attempting to present a context menu
+        for a view that is not in a window.
+
+        One instance where this can occur in Safari is when a call to
+        window.open() is made in response to a touch on a select element.
+        In this scenario, the call to window.open() opens a new tab, unparenting
+        the current webview. However, the touch also focuses the element, and
+        WebKit attempts to present a context menu in an unparented view.
+
+        To fix, guard against the case where the view is not parented, and do
+        not attempt to present a context menu.
+
+        Test: fast/forms/ios/show-select-menu-in-unparented-view-crash.html
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+
+        Note that the helper method used in other classes is not used in
+        WKActionSheetAssistant, since the hosting view is not always a
+        WKContentView.
+
+        (-[WKActionSheetAssistant showDataDetectorsUIForPositionInformation:]):
+        (-[WKActionSheetAssistant showMediaControlsContextMenu:items:completionHandler:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView presentContextMenu:atLocation:]):
+
+        Added a helper method to ensure the view is parented prior to presenting
+        a context menu.
+
+        (-[WKContentView imageAnalysisGestureDidTimeOut:]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsDropdown _showSuggestions]):
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker showDateTimePicker]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel showDocumentPickerMenu]):
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker showSelectPicker]):
+
 2021-08-25  Per Arne Vollan  <pvollan@apple.com>
 
         Build error preprocessing sandbox

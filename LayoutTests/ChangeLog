@@ -1,3 +1,17 @@
+2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Crash when tapping <select> element and calling window.open()
+        https://bugs.webkit.org/show_bug.cgi?id=229468
+        rdar://82122972
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test to verify a crash does not occur when tapping a <select>
+        element and unparenting the webview.
+
+        * fast/forms/ios/show-select-menu-in-unparented-view-crash-expected.txt: Added.
+        * fast/forms/ios/show-select-menu-in-unparented-view-crash.html: Added.
+
 2021-08-25  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed test gardening after r228617.

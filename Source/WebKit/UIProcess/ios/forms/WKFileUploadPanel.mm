@@ -531,7 +531,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 #if HAVE(UICONTEXTMENU_LOCATION)
     if (_allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video })) {
         [self ensureContextMenuInteraction];
-        [_documentContextMenuInteraction _presentMenuAtLocation:_interactionPoint];
+        [_view presentContextMenu:_documentContextMenuInteraction.get() atLocation:_interactionPoint];
     } else // Image and Video types are not accepted so bypass the menu and open the file picker directly.
 #endif
         [self showFilePickerMenu];

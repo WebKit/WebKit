@@ -1,0 +1,9 @@
+This test verifies that tapping on a select element and then unparenting the webview does not result in a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
