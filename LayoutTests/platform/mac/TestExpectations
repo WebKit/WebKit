@@ -2357,4 +2357,6 @@ webkit.org/b/229509 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
 
+webkit.org/b/189672 [ Catalina ] webgl/2.0.0/conformance2/rendering/uniform-block-buffer-size.html  [ Pass Failure ]
+
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]

@@ -1,5 +1,14 @@
 2021-08-25  Eric Hutchison  <ehutchison@apple.com>
 
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance2.
+        https://bugs.webkit.org/show_bug.cgi?id=189672.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-08-25  Eric Hutchison  <ehutchison@apple.com>
+
         [BigSur wk1] pointerevents/mouse/compatibility-mouse-events-prevention-mouse-released.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=229522.
 
