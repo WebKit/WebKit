@@ -1,3 +1,18 @@
+2021-08-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [LibWPE] Properly retrieve eglGetPlatformDisplayEXT entrypoint
+        https://bugs.webkit.org/show_bug.cgi?id=229234
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/libwpe/PlatformDisplayLibWPE.cpp:
+        (WebCore::PlatformDisplayLibWPE::initialize): Along with testing for the
+        EGL_EXT_platform_base extension, the eglGetPlatformDisplayEXT entrypoint
+        should be specifically looked up when that extension is present.
+        EGL_KHR_platform_base check-and-lookup should be done separately, but
+        should be removed in the near future since the KHR-type variant of this
+        extension doesn't actually exist.
+
 2021-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add missing null check in AccessibilitySVGElement::inheritsPresentationalRole

@@ -84,9 +84,14 @@ bool PlatformDisplayLibWPE::initialize(int hostFd)
         GetPlatformDisplayType getPlatformDisplay =
             [] {
                 const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-                if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")
-                    || GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-                    return reinterpret_cast<GetPlatformDisplayType>(eglGetProcAddress("eglGetPlatformDisplay"));
+                if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")) {
+                    if (auto extension = reinterpret_cast<GetPlatformDisplayType>(eglGetProcAddress("eglGetPlatformDisplayEXT")))
+                        return extension;
+                }
+                if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
+                    if (auto extension = reinterpret_cast<GetPlatformDisplayType>(eglGetProcAddress("eglGetPlatformDisplay")))
+                        return extension;
+                }
                 return GetPlatformDisplayType(nullptr);
             }();
 
