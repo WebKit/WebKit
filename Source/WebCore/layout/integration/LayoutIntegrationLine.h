@@ -88,11 +88,11 @@ private:
 
 class NonRootInlineBox {
 public:
-    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, bool canContributeToLineOverflow)
+    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, bool hasScrollableContent)
         : m_lineIndex(lineIndex)
         , m_layoutBox(makeWeakPtr(layoutBox))
         , m_rect(rect)
-        , m_canContributeToLineOverflow(canContributeToLineOverflow)
+        , m_hasScrollableContent(hasScrollableContent)
     {
     }
 
@@ -103,13 +103,13 @@ public:
 
     FloatRect rect() const { return m_rect; }
 
-    bool canContributeToLineOverflow() const { return m_canContributeToLineOverflow; }
+    bool hasScrollableContent() const { return m_hasScrollableContent; }
 
 private:
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
     FloatRect m_rect;
-    bool m_canContributeToLineOverflow { false };
+    bool m_hasScrollableContent { false };
 };
 
 }

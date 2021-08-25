@@ -29,8 +29,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "BidiResolver.h"
-#include "InlineFormattingContext.h"
-#include "InlineFormattingGeometry.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
@@ -353,7 +351,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
         // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
         while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex) {
             auto& inlineBox = nonRootInlineBoxes[inlineBoxIndex++];
-            if (inlineBox.canContributeToLineOverflow())
+            if (inlineBox.hasScrollableContent())
                 scrollableOverflowRect.unite(inlineBox.rect());
         }
 
@@ -372,8 +370,6 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
 
 void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    auto inlineFormattingContext = Layout::InlineFormattingContext { m_boxTree.rootLayoutBox(), const_cast<Layout::InlineFormattingState&>(inlineFormattingState) };
-    auto& inlineFormattingGeometry = inlineFormattingContext.formattingGeometry();
     for (size_t lineIndex = 0; lineIndex < inlineFormattingState.lineBoxes().size(); ++lineIndex) {
         auto& lineBox = inlineFormattingState.lineBoxes()[lineIndex];
         if (!lineBox.hasInlineBox())
@@ -388,7 +384,11 @@ void InlineContentBuilder::createDisplayNonRootInlineBoxes(const Layout::InlineF
             auto inlineBoxRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             inlineBoxRect.moveBy(lineBoxLogicalRect.topLeft());
 
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, inlineFormattingGeometry.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox) });
+            auto hasScrollableContent = [&] {
+                // In standards mode, inline boxes always start with an imaginary strut.
+                return m_layoutState.inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+            };
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxRect, hasScrollableContent() });
         }
     }
 }
