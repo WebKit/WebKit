@@ -1,5 +1,14 @@
 2021-08-25  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ Win EWS ] storage/indexeddb/getdatabases.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229457
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2021-08-25  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ MacOs iOS EWS ] imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=229501
 
