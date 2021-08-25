@@ -1,3 +1,17 @@
+2021-08-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update baselines after r281419
+        https://bugs.webkit.org/show_bug.cgi?id=229503
+
+        Unreviewed test gardening.
+
+        * platform/gtk/fast/text/fixed-pitch-control-characters-expected.png:
+        * platform/gtk/fast/text/fixed-pitch-control-characters-expected.txt: Added.
+        * platform/gtk/fast/text/wide-zero-width-space-expected.png:
+        * platform/gtk/fast/text/wide-zero-width-space-expected.txt:
+        * platform/wpe/fast/text/fixed-pitch-control-characters-expected.txt: Added.
+        * platform/wpe/fast/text/wide-zero-width-space-expected.txt:
+
 2021-08-25  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html is a flaky failure.
