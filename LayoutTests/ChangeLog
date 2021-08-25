@@ -1,3 +1,12 @@
+2021-08-25  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Added expectations for ios-wk2: security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html and security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=155196
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-08-25  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug] http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html is a flaky failure.

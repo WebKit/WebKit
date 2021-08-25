@@ -1975,6 +1975,9 @@ webkit.org/b/214955 fast/parser/xml-colon-entity.html [ Failure ]
 
 webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Pass Crash ]
 
+webkit.org/b/155196 [ Release ] security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html [ ImageOnlyFailure ]
 webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html [ ImageOnlyFailure ]
 
