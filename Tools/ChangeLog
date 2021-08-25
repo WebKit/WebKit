@@ -1,3 +1,16 @@
+2021-08-24  Alan Bujtas  <zalan@apple.com>
+
+        [ iOS ] TestWebKitAPI.DocumentEditingContext.Request* tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=229446
+        <rdar://problem/82295496>
+
+        Unreviewed.
+
+        Adjusting the test case after r281463 to match the new wrapping behavior.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+
 2021-08-24  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Use Python 3 (Part 1)
