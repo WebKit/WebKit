@@ -1,3 +1,19 @@
+2021-08-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal infinities and NaNs generated with incorrect syntax
+        https://bugs.webkit.org/show_bug.cgi?id=229439
+        <rdar://81033366>
+
+        Reviewed by Dean Jackson.
+
+        Add tests that test some aspects of NaN and -+inf that the GLSL ES 3.00 spec
+        talks about.
+
+        * webgl/pending/conformance2/glsl3/float-constant-expressions-expected.txt: Added.
+        * webgl/pending/conformance2/glsl3/float-constant-expressions.html: Added.
+        * webgl/pending/resources/webgl_test_files/conformance2/glsl3/float-constant-expressions.html: Added.
+        * webgl/pending/resources/webgl_test_files/js/glsl-conformance-test.js: Added.
+
 2021-08-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

@@ -1,3 +1,19 @@
+2021-08-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal infinities and NaNs generated with incorrect syntax
+        https://bugs.webkit.org/show_bug.cgi?id=229439
+        <rdar://81033366>
+
+        Reviewed by Dean Jackson.
+
+        Generate NaN and infinity constant values correctly.
+        An else was missing from if-block, causing double processing.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::emitSingleConstant):
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::CreateShaderLibrary):
+
 2021-08-17  David Kilzer  <ddkilzer@apple.com>
 
         [Metal ANGLE] Fix over-autorelease of rx::DisplayMtl::getMetalDeviceMatchingAttribute() and various Objective-C leaks
