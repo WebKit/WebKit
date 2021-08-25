@@ -1,3 +1,12 @@
+2021-08-25  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur wk2 Debug] http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229502.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-25  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] storage/indexeddb/getdatabases.html is a flaky failure.
