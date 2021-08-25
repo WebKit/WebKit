@@ -10,7 +10,7 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
 export WebKit2="${SRCROOT}"
 
 
-if [ $1 != "sandbox-profiles-ios" ]; then
+if [ -z $1 ] || [ $1 != "sandbox-profiles-ios" ]; then
     /bin/ln -sfh "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" JavaScriptCorePrivateHeaders
     export JavaScriptCore_SCRIPTS_DIR="JavaScriptCorePrivateHeaders"
 fi

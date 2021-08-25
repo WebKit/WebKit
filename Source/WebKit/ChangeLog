@@ -1,3 +1,14 @@
+2021-08-25  Per Arne Vollan  <pvollan@apple.com>
+
+        Build error preprocessing sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=229418
+
+        Reviewed by Alexey Proskuryakov.
+
+        Build fix after https://commits.webkit.org/240941@main.
+
+        * Scripts/generate-derived-sources.sh:
+
 2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Crash when tapping <select> element and calling window.open()
