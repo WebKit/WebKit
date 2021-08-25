@@ -1,3 +1,17 @@
+2021-08-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css2.1/t100801-c544-valgn-00-a-ag-expected.txt:
+        * platform/wincairo/editing/selection/3690703-2-expected.txt:
+        * platform/wincairo/editing/selection/3690703-expected.txt:
+        * platform/wincairo/editing/selection/3690719-expected.txt:
+        * platform/wincairo/fast/dom/52776-expected.txt:
+        * platform/wincairo/fast/text/capitalize-boundaries-expected.txt:
+        * platform/wincairo/fast/text/whitespace/020-expected.txt:
+        * platform/wincairo/fast/text/wide-zero-width-space-expected.txt:
+
 2021-08-24  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur+ wk1 Release] media/video-poster-background.html is flakily failing.

@@ -15,15 +15,12 @@ layer at (0,0) size 800x600
             text run at (360,0) width 299: "Helvetica zero-width space has non-zero width"
         RenderText {#text} at (659,0) size 4x19
           text run at (659,0) width 4: "."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 247x19
-          text run at (0,0) width 247: "The following lines should all be identical."
-      RenderBlock {DIV} at (0,72) size 784x42
-        RenderText {#text} at (0,0) size 384x41
-          text run at (0,0) width 384: "Lor\x{E9}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
-      RenderBlock {DIV} at (0,114) size 784x42
+      RenderBlock {DIV} at (0,36) size 784x42
+        RenderText {#text} at (0,0) size 411x41
+          text run at (0,0) width 411: "Lor\x{E9}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
+      RenderBlock {DIV} at (0,78) size 784x42
         RenderText {#text} at (0,0) size 386x41
           text run at (0,0) width 386: "Lore\x{301}m\x{200B}ipsum\x{200E}dolor\x{1F}sit"
-      RenderBlock {DIV} at (0,156) size 784x42
+      RenderBlock {DIV} at (0,120) size 784x42
         RenderText {#text} at (0,0) size 384x41
           text run at (0,0) width 384: "Lor\x{E9}mipsumdolorsit"
