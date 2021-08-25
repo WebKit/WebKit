@@ -13440,6 +13440,7 @@ void SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode(Node* node)
         m_jit.or64(scratch.gpr(), resultRegs.payloadGPR());
 #else
         m_jit.move(TrustedImm32(JSPropertyNameEnumerator::IndexedMode), resultRegs.tagGPR());
+        m_jit.move(scratch.gpr(), resultRegs.payloadGPR());
 #endif
 
         jsValueResult(resultRegs, node);

@@ -1,3 +1,17 @@
+2021-08-25  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Infinite loop in for...in after r280760
+        https://bugs.webkit.org/show_bug.cgi?id=229493
+
+        Reviewed by Yusuke Suzuki.
+
+        A missing instruction in the 32bit branch can potentially cause
+        infinite loops when using for-in. No new test, this is already
+        covered by (among others) LayoutTests/js/reserved-words.html.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdateIndexAndMode):
+
 2021-08-25  Keith Miller  <keith_miller@apple.com>
 
         Add for-in OwnStructureMode optimizations to LLInt
