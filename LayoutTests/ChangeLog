@@ -1,3 +1,13 @@
+2021-08-25  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Mark wide gamut canvas tests as unsupported
+        https://bugs.webkit.org/show_bug.cgi?id=229483
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb-expected.txt: Removed.
+
 2021-08-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal infinities and NaNs generated with incorrect syntax

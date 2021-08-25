@@ -2352,11 +2352,7 @@ webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 # Non-sRGB color spaces are not currently supported by the glib ports.
 fast/canvas/canvas-color-space-display-p3.html [ Skip ]
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Skip ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/ [ Skip ]
 
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
