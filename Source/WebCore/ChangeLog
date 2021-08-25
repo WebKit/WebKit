@@ -1,3 +1,22 @@
+2021-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Improve diagnostics for missing files in DerivedSources.make
+        https://bugs.webkit.org/show_bug.cgi?id=229348
+
+        Reviewed by Alexey Proskuryakov.
+
+        Patch by Alexei Kolomiets.
+
+        We are seeing flaky build failures in certain scenarios (rdar://81042866), which
+        look like this:
+
+        make: *** No rule to make target `UserAgentScripts.h', needed by `all'.  Stop.
+
+        The theory is that some files that should be present in the file system aren't,
+        but the error is not clear enough. Let's add better diagnostics to isolate the issue.
+
+        * DerivedSources.make:
+
 2021-08-24  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSession artwork URL is showing in logs.

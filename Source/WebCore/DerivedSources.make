@@ -1640,6 +1640,9 @@ USER_AGENT_SCRIPTS_FILES_PATTERNS = $(subst .,%,$(USER_AGENT_SCRIPTS_FILES))
 
 all : $(USER_AGENT_SCRIPTS_FILES)
 
+$(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py :
+	$(error $@ is not found, expected to exist in $(realpath $(dir $@)))
+
 $(USER_AGENT_SCRIPTS_FILES_PATTERNS) : $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py -n WebCore --fail-if-non-ascii $(USER_AGENT_SCRIPTS_FILES) $(USER_AGENT_SCRIPTS)
 
@@ -1972,6 +1975,12 @@ WebCore_BUILTINS_WRAPPERS_PATTERNS = $(subst .,%,$(WebCore_BUILTINS_WRAPPERS))
 
 # Adding/removing scripts should trigger regeneration, but changing which builtins are
 # generated should not affect other builtins when not passing '--combined' to the generator.
+
+$(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py :
+	$(error $@ is not found, expected to exist in $(realpath $(dir $@)))
+
+$(BUILTINS_GENERATOR_SCRIPTS) :
+	$(error $@ is not found, expected to exist in $(realpath $(dir $@)))
 
 WebCore_BUILTINS_SOURCES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py $(WebCore)/DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WebCore_BUILTINS_SOURCES)' $@
