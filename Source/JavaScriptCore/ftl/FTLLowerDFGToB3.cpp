@@ -13258,7 +13258,7 @@ private:
 
         LValue realIndex = m_out.signExt32To64(
             m_out.neg(m_out.sub(index, inlineCapacity)));
-        int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
+        constexpr intptr_t offsetOfFirstProperty = offsetInButterfly(firstOutOfLineOffset) * static_cast<intptr_t>(sizeof(EncodedJSValue));
         results.append(m_out.anchor(
             m_out.load64(m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty))));
         m_out.jump(continuation);

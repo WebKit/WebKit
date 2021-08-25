@@ -1,3 +1,48 @@
+2021-08-25  Keith Miller  <keith_miller@apple.com>
+
+        Add for-in OwnStructureMode optimizations to LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=229038
+
+        Reviewed by Saam Barati.
+
+        This patch adds the optimizations we have for OwnStructureMode in
+        the Baseline to the LLInt. The patch also adds redundant self move
+        (i.e. move a, a) elimination to arm64. Finally, a bunch of the
+        property offset functions are now marked constexpr and return
+        intptr_t rather than size_t as the values can be negative.
+
+        There's also a minor fix to disable MSVC's signed to unsigned
+        cast warning for LLIntOffsetsExtractor as we don't care about
+        signedness for extracting constants.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::indexOfPropertyStorage):
+        * runtime/JSObject.h:
+        (JSC::offsetInButterfly):
+        * runtime/PropertyOffset.h:
+        (JSC::checkOffset):
+        (JSC::validateOffset):
+        (JSC::isValidOffset):
+        (JSC::isInlineOffset):
+        (JSC::isOutOfLineOffset):
+        (JSC::offsetInInlineStorage):
+        (JSC::offsetInOutOfLineStorage):
+        (JSC::offsetInRespectiveStorage):
+        (JSC::numberOfOutOfLineSlotsForMaxOffset):
+        (JSC::numberOfSlotsForMaxOffset):
+        (JSC::offsetForPropertyNumber):
+
 2021-08-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281523.
