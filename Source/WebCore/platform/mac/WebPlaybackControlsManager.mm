@@ -52,7 +52,6 @@ using WebCore::PlaybackSessionInterfaceMac;
 @synthesize allowsPictureInPicturePlayback;
 @synthesize pictureInPictureActive;
 @synthesize canTogglePictureInPicture;
-@synthesize canSeek = _canSeek;
 
 - (void)dealloc
 {
@@ -61,9 +60,14 @@ using WebCore::PlaybackSessionInterfaceMac;
     [super dealloc];
 }
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingCanSeek
+- (BOOL)canSeek
 {
-    return [NSSet setWithObject:@"seekableTimeRanges"];
+    return _canSeek;
+}
+
+- (void)setCanSeek:(BOOL)canSeek
+{
+    _canSeek = canSeek;
 }
 
 + (NSSet<NSString *> *)keyPathsForValuesAffectingContentDuration
@@ -78,7 +82,15 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 - (void)setContentDuration:(NSTimeInterval)duration
 {
+    bool needCanSeekUpdate = std::isfinite(_contentDuration) != std::isfinite(duration);
     _contentDuration = duration;
+    // Workaround rdar://82275552. We do so by toggling the canSeek property to force
+    // a content refresh that will make the scrubber appear/disappear accordingly.
+    if (needCanSeekUpdate) {
+        bool canSeek = _canSeek;
+        self.canSeek = !canSeek;
+        self.canSeek = canSeek;
+    }
 }
 
 - (AVValueTiming *)timing
@@ -99,7 +111,7 @@ using WebCore::PlaybackSessionInterfaceMac;
 - (void)setSeekableTimeRanges:(NSArray *)timeRanges
 {
     _seekableTimeRanges = timeRanges;
-    _canSeek = timeRanges.count;
+    self.canSeek = timeRanges.count;
 }
 
 - (BOOL)isSeeking

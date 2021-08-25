@@ -1,3 +1,29 @@
+2021-08-24  Jean-Yves Avenard  <jya@apple.com>
+
+        [Cocoa] Should video stop being live, time scrubber will not show
+        https://bugs.webkit.org/show_bug.cgi?id=229286
+        rdar://82114447
+
+        Reviewed by Eric Carlson.
+
+        Work around an issue with AVKit AVTouchBarPlaybackControlsProvider SPI which will
+        not properly make the time scrubber to be displayed when only the content duration
+        change.
+        We do so by toggling the canSeek property to force a relayout of the touch bar
+        content.
+
+        While we can reproduce the issue programatically, at this stage we can only
+        visually confirm that it's been fixed as we have no infrastructure to check
+        the content of the touch bar and that the issue itself is in AVKit.
+        Test: ManualTests/video-livechange-touchbar.html
+
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager canSeek]): Add code as property is otherwise read-only.
+        (-[WebPlaybackControlsManager setCanSeek:]): Add code as property is otherwise read-only.
+        (-[WebPlaybackControlsManager setContentDuration:]):
+        (-[WebPlaybackControlsManager setSeekableTimeRanges:]): Explictly set canSeek propery to
+        ensure property watchers will be called.
+
 2021-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         Improve diagnostics for missing files in DerivedSources.make
@@ -1143,7 +1169,7 @@
 
         Reviewed by Antti Koivisto.
 
-        This is in preparation for removing content scanning completely. 
+        This is in preparation for removing content scanning completely.
 
         * layout/integration/LayoutIntegrationCoverage.cpp:
         (WebCore::LayoutIntegration::printReason):
