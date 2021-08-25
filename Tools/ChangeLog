@@ -1,3 +1,28 @@
+2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] editing/input/cocoa/autocorrect-on.html times out when run after editing/input/cocoa/autocorrect-off.html
+        https://bugs.webkit.org/show_bug.cgi?id=229486
+        rdar://82191308
+
+        Reviewed by Tim Horton.
+
+        The layout test (autocorrect-on.html) fails when run immediately after autocorrect-off.html, in the same
+        directory. This occurs because autocorrect-on.html attempts to verify that typing a period after "Tset" will
+        autocorrect to "Test"; however, the previous test disables autocorrection and types "Tset.", which causes UIKit
+        keyboard autocorrection code to add "Tset" to its lexicon. This means that we end up not autocorrecting to
+        "Test" in `autocorrect-on.html`.
+
+        In the past (r265376), to mitigate this, we set `-[UIKeyboardImpl correctionLearningAllowed]` to `NO`. However,
+        after what appears to be a recent TextInput change, this fails to prevent the test runner from learning "Tset"
+        while running autocorrect-off.html.
+
+        We take a more heavy-handed approach in this mitigation, and instead use swizzling to prevent UIKeyboardImpl
+        from notifying kbd when text candidates are "accepted".
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (overrideSyncInputManagerToAcceptedAutocorrection):
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2021-08-24  Alan Bujtas  <zalan@apple.com>
 
         [ iOS ] TestWebKitAPI.DocumentEditingContext.Request* tests are failing

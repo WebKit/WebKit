@@ -1,3 +1,16 @@
+2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] editing/input/cocoa/autocorrect-on.html times out when run after editing/input/cocoa/autocorrect-off.html
+        https://bugs.webkit.org/show_bug.cgi?id=229486
+        rdar://82191308
+
+        Reviewed by Tim Horton.
+
+        See changes in Tools for more details.
+
+        * Platform/spi/ios/TextInputSPI.h:
+        * Platform/spi/ios/UIKitSPI.h:
+
 2021-08-25  Peng Liu  <peng.liu6@apple.com>
 
         [Monterey] LayoutTest media/element-containing-pip-video-going-into-fullscreen.html is flaky timeout/crash

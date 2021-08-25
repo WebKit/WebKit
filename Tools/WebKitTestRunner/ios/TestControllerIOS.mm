@@ -48,6 +48,11 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/MainThread.h>
 
+static void overrideSyncInputManagerToAcceptedAutocorrection(id, SEL, TIKeyboardCandidate *candidate, TIKeyboardInput *input)
+{
+    // Intentionally unimplemented. See usage below for more information.
+}
+
 static BOOL overrideIsInHardwareKeyboardMode()
 {
     return NO;
@@ -181,6 +186,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     }
 
     GSEventSetHardwareKeyboardAttached(true, 0);
+
+    // Ignore calls to inform the keyboard daemon that we accepted autocorrection candidates.
+    // This prevents the device from learning misspelled words in between layout tests.
+    method_setImplementation(class_getInstanceMethod(UIKeyboardImpl.class, @selector(syncInputManagerToAcceptedAutocorrection:forInput:)), reinterpret_cast<IMP>(overrideSyncInputManagerToAcceptedAutocorrection));
 
     // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
     // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.

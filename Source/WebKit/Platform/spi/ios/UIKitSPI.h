@@ -1407,6 +1407,9 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
 
+@class TIKeyboardCandidate;
+@class TIKeyboardInput;
+
 @interface UIKeyboardImpl (IPI)
 - (void)setInitialDirection;
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
@@ -1415,6 +1418,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 - (BOOL)handleKeyInputMethodCommandForCurrentEvent;
 - (BOOL)isCallingInputDelegate;
 - (BOOL)delegateSupportsImagePaste;
+- (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 
