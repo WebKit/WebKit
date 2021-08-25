@@ -1,3 +1,16 @@
+2021-08-24  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSession artwork URL is showing in logs.
+        https://bugs.webkit.org/show_bug.cgi?id=229320
+        rdar://82156288
+
+        Reviewed by Eric Carlson.
+
+        Only enable artwork logging in debug builds.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::updateNowPlayingInfo):
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         change event is dispatched when .files property is set at <input type="file"> element

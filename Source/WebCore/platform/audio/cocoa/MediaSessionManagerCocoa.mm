@@ -392,9 +392,16 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     m_haveEverRegisteredAsNowPlayingApplication = true;
 
-    if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo))
-        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", nowPlayingInfo->title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String(), "\"");
-
+    if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo)) {
+#ifdef LOG_DISABLED
+        String src = "src";
+        String title = "title";
+#else
+        String src = nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String();
+        String title = nowPlayingInfo->title;
+#endif
+        ALWAYS_LOG(LOGIDENTIFIER, "title = \"", title, "\", isPlaying = ", nowPlayingInfo->isPlaying, ", duration = ", nowPlayingInfo->duration, ", now = ", nowPlayingInfo->currentTime, ", id = ", nowPlayingInfo->uniqueIdentifier.toUInt64(), ", registered = ", m_registeredAsNowPlayingApplication, ", src = \"", src, "\"");
+    }
     if (!m_registeredAsNowPlayingApplication) {
         m_registeredAsNowPlayingApplication = true;
         providePresentingApplicationPIDIfNecessary();
