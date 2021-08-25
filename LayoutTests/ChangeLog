@@ -1,5 +1,14 @@
 2021-08-25  Eric Hutchison  <ehutchison@apple.com>
 
+        [Mac] pointer-lock/lock-already-locked.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229521.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-08-25  Eric Hutchison  <ehutchison@apple.com>
+
         [Mac wk1] media/media-session/actionHandlerInternalMappings.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=229519.
 
