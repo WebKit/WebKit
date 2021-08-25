@@ -252,7 +252,7 @@ bool AccessibilitySVGElement::inheritsPresentationalRole() const
         return false;
 
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
-        if (is<AccessibilityRenderObject>(*parent) && parent->element()->hasTagName(SVGNames::textTag))
+        if (is<AccessibilityRenderObject>(*parent) && parent->hasTagName(SVGNames::textTag))
             return parent->roleValue() == AccessibilityRole::Presentational;
     }
 
