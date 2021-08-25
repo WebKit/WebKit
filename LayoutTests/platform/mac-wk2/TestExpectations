@@ -1619,5 +1619,7 @@ webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/g
 #webkit.org/b/229474
 media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Timeout ] media/modern-media-controls/tracks-support/auto-text-track.html [ Pass Timeout ] media/modern-media-controls/tracks-support/hidden-tracks.html [ Pass Timeout ] media/modern-media-controls/tracks-support/off-text-track.html [ Pass Timeout ]
 
+webkit.org/b/229478 [ Catalina BigSur ] media/track/track-in-band.html [ Pass Timeout ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
