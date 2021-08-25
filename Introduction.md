@@ -1427,12 +1427,14 @@ WEBKIT_DEBUG=Scrolling Tools/Scripts/run-minibrowser --gtk --debug
 
 ### macOS
 
-On macOS, you can supply these strings with these terminal commands:
+On macOS, you can, for example, enable the `Language` log channel with these terminal commands:
 
 ```
-% defaults write com.apple.WebKit.WebContent WTFLogging "Threading"
-% defaults write com.apple.WebKit.WebContent WebCoreLogging "WebGL"
-% defaults write com.apple.WebKit.WebContent WebKit2Logging "ResourceLoadStatistics"
+for identifier in com.apple.WebKit.WebContent.Development com.apple.WebKit.WebContent org.webkit.MiniBrowser com.apple.WebKit.WebKitTestRunner org.webkit.DumpRenderTree -g /Users/$USER/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari.plist; do
+    for key in WTFLogging WebCoreLogging WebKitLogging WebKit2Logging; do
+        defaults write ${identifier} "${key}" "Language"
+    done
+done
 ```
 
 You may also need to specify these strings to `com.apple.WebKit.WebContent.Development`, the global domain, or the Safari container, depending on what you're running.
