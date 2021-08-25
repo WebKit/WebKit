@@ -92,6 +92,8 @@ applicationmanifest/ [ Pass ]
 
 webkit.org/b/223750 [ BigSur+ Debug arm64 ] security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Pass Crash ]
 
+webkit.org/b/229505 [ BigSur Debug arm64 ] security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Pass Crash ]
+
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
 
 fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
