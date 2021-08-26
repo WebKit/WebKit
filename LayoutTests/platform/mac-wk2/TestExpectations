@@ -1605,20 +1605,20 @@ webkit.org/b/229458 http/tests/inspector/network/har/har-page.html [ Pass Failur
 
 webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html [ Pass Failure ]
 
-#Multiple WebGL tests failing
-#webkit.org/b/228703 [ BigSur ] webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Failure ]
-webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Failure ] 
-webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples.html [ Failure ]
-webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad.html [ Failure ]
+
+#webkit.org/b/228703 
+webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Pass Failure Timeout ]
+webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Pass Failure Timeout ]
+webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples.html [ Pass Failure Timeout ]
+webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad.html [ Pass Failure Timeout ]
 
 webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
 
-#Multiple Media tests failing
 #webkit.org/b/229474
 media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Timeout ]
 media/modern-media-controls/tracks-support/auto-text-track.html [ Pass Timeout ]
 media/modern-media-controls/tracks-support/hidden-tracks.html [ Pass Timeout ]
-media/modern-media-controls/tracks-support/off-text-track.html [ Pass Timeout ]
+media/modern-media-controls/tracks-support/off-text-track.html [ Pass Failure Timeout ]
 
 webkit.org/b/229478 [ Catalina BigSur ] media/track/track-in-band.html [ Pass Timeout ]
 
