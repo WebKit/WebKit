@@ -1,3 +1,20 @@
+2021-08-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GLIB][Media] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html fails after r281617
+        https://bugs.webkit.org/show_bug.cgi?id=229548
+
+        Unreviewed test gardening.
+
+        The patch from https://bugs.webkit.org/show_bug.cgi?id=210341 caused a regression in
+        mediasource-changetype-play-without-codecs-parameter.html. The test tries to change the
+        media type and codecs of a SourceBuffer on the fly. That operation is unsupported in glib
+        ports, so there is a custom expectation file that expects failures on the transitions
+        between supported types. Bug 210341 adds audio/mpeg (without container) as a new supported
+        format, so new "failures" appear in the test. This patch adds expectations for those new
+        failures.
+
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter-expected.txt:
+
 2021-08-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update baselines after r281512
