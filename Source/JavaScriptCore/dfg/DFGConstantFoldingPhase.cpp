@@ -38,7 +38,7 @@
 #include "DFGPhase.h"
 #include "GetByStatus.h"
 #include "JSCInlines.h"
-#include "PutByIdStatus.h"
+#include "PutByStatus.h"
 #include "StructureCache.h"
 
 namespace JSC { namespace DFG {
@@ -501,7 +501,7 @@ private:
                 
 
                 for (unsigned i = 0; i < data.variants.size(); ++i) {
-                    PutByIdVariant& variant = data.variants[i];
+                    PutByVariant& variant = data.variants[i];
                     variant.oldStructure().genericFilter([&] (Structure* structure) -> bool {
                         return baseValue.contains(m_graph.registerStructure(structure));
                     });
@@ -513,11 +513,9 @@ private:
                         continue;
                     }
                     
-                    if (variant.kind() == PutByIdVariant::Transition
+                    if (variant.kind() == PutByVariant::Transition
                         && variant.oldStructure().onlyStructure() == variant.newStructure()) {
-                        variant = PutByIdVariant::replace(
-                            variant.oldStructure(),
-                            variant.offset());
+                        variant = PutByVariant::replace(variant.identifier(), variant.oldStructure(), variant.offset());
                         changed = true;
                     }
                 }
@@ -1213,7 +1211,7 @@ private:
         node->convertToGetByOffset(data, propertyStorage, childEdge);
     }
 
-    void emitPutByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const PutByIdVariant& variant, unsigned identifierNumber)
+    void emitPutByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const PutByVariant& variant, unsigned identifierNumber)
     {
         NodeOrigin origin = node->origin;
         Edge childEdge = node->child1();
@@ -1224,7 +1222,7 @@ private:
         childEdge.setUseKind(KnownCellUse);
 
         Transition* transition = nullptr;
-        if (variant.kind() == PutByIdVariant::Transition) {
+        if (variant.kind() == PutByVariant::Transition) {
             transition = m_graph.m_transitions.add(
                 m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
         }
@@ -1269,7 +1267,7 @@ private:
         node->convertToPutByOffset(data, propertyStorage, childEdge);
         node->origin.exitOK = canExit;
 
-        if (variant.kind() == PutByIdVariant::Transition) {
+        if (variant.kind() == PutByVariant::Transition) {
             if (didAllocateStorage) {
                 m_insertionSet.insertNode(
                     indexInBlock + 1, SpecNone, NukeStructureAndSetButterfly,
@@ -1406,10 +1404,10 @@ private:
         if (!baseValue.m_structure.isFinite())
             return;
 
-        PutByIdStatus status = PutByIdStatus::computeFor(
+        PutByStatus status = PutByStatus::computeFor(
             m_graph.globalObjectFor(origin.semantic),
             baseValue.m_structure.toStructureSet(),
-            node->cacheableIdentifier().uid(),
+            node->cacheableIdentifier(),
             isDirect, privateFieldPutKind);
 
         if (!status.isSimple())
@@ -1424,8 +1422,8 @@ private:
 
         RegisteredStructureSet newSet;
         TransitionVector transitions;
-        for (const PutByIdVariant& variant : status.variants()) {
-            if (variant.kind() == PutByIdVariant::Transition) {
+        for (const PutByVariant& variant : status.variants()) {
+            if (variant.kind() == PutByVariant::Transition) {
                 for (const ObjectPropertyCondition& condition : variant.conditionSet()) {
                     if (m_graph.watchCondition(condition))
                         continue;
@@ -1448,7 +1446,7 @@ private:
                         m_graph.registerStructure(variant.oldStructureForTransition()), newStructure));
                 newSet.add(newStructure);
             } else {
-                ASSERT(variant.kind() == PutByIdVariant::Replace);
+                ASSERT(variant.kind() == PutByVariant::Replace);
                 ASSERT(privateFieldPutKind.isNone() || privateFieldPutKind.isSet());
                 DFG_ASSERT(m_graph, node, variant.conditionSet().isEmpty());
                 newSet.merge(*m_graph.addStructureSet(variant.oldStructure()));
@@ -1464,8 +1462,8 @@ private:
         alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
         m_insertionSet.insertNode(
-            indexInBlock, SpecNone, FilterPutByIdStatus, node->origin,
-            OpInfo(m_graph.m_plan.recordedStatuses().addPutByIdStatus(node->origin.semantic, status)),
+            indexInBlock, SpecNone, FilterPutByStatus, node->origin,
+            OpInfo(m_graph.m_plan.recordedStatuses().addPutByStatus(node->origin.semantic, status)),
             Edge(baseNode));
 
         unsigned identifierNumber = m_graph.identifiers().ensure(uid);

@@ -141,6 +141,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     allocator.lock(valueRegs);
     if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
         allocator.lock(stubInfo.m_stubInfoGPR);
+    ASSERT(stubInfo.m_arrayProfileGPR == InvalidGPRReg);
     allocator.lock(scratchGPR);
 
     GPRReg paramBaseGPR = InvalidGPRReg;

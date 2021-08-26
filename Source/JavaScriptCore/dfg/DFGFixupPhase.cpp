@@ -1236,6 +1236,10 @@ private:
                         fixEdge<SymbolUse>(child2);
                         break;
                     }
+                    if (!m_graph.m_slowPutByVal.contains(node)) {
+                        fixEdge<CellUse>(child1);
+                        break;
+                    }
                 }
 #if USE(JSVALUE32_64)
                 // Due to register pressure on 32-bit, we speculate cell and
@@ -2865,7 +2869,7 @@ private:
         case CPUIntrinsic:
         case FilterCallLinkStatus:
         case FilterGetByStatus:
-        case FilterPutByIdStatus:
+        case FilterPutByStatus:
         case FilterInByStatus:
         case FilterDeleteByStatus:
         case FilterCheckPrivateBrandStatus:

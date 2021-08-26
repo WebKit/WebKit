@@ -47,7 +47,7 @@
 #include "JSPromiseConstructor.h"
 #include "MathCommon.h"
 #include "NumberConstructor.h"
-#include "PutByIdStatus.h"
+#include "PutByStatus.h"
 #include "RegExpObject.h"
 #include "SetPrivateBrandStatus.h"
 #include "StringObject.h"
@@ -3973,7 +3973,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             didFoldClobberStructures();
             
         for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
-            const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
+            const PutByVariant& variant = node->multiPutByOffsetData().variants[i];
             RegisteredStructureSet thisSet = *m_graph.addStructureSet(variant.oldStructure());
             thisSet.filter(base);
             if (thisSet.isEmpty())
@@ -3982,7 +3982,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             AbstractValue thisValue = originalValue;
             resultingValue.merge(thisValue);
             
-            if (variant.kind() == PutByIdVariant::Transition) {
+            if (variant.kind() == PutByVariant::Transition) {
                 RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
                 if (thisSet.onlyStructure() != newStructure) {
                     transitions.append(
@@ -3990,7 +3990,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 } // else this is really a replace.
                 newSet.add(newStructure);
             } else {
-                ASSERT(variant.kind() == PutByIdVariant::Replace);
+                ASSERT(variant.kind() == PutByVariant::Replace);
                 newSet.merge(thisSet);
             }
         }
@@ -4140,10 +4140,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (Options::useAccessInlining() && value.m_structure.isFinite()) {
             bool isDirect = node->op() == PutByIdDirect || node->op() == PutPrivateNameById;
             auto privateFieldPutKind = node->op() == PutPrivateNameById ? node->privateFieldPutKind() : PrivateFieldPutKind::none();
-            PutByIdStatus status = PutByIdStatus::computeFor(
+            PutByStatus status = PutByStatus::computeFor(
                 m_graph.globalObjectFor(node->origin.semantic),
                 value.m_structure.toStructureSet(),
-                node->cacheableIdentifier().uid(),
+                node->cacheableIdentifier(),
                 isDirect, privateFieldPutKind);
 
             bool allGood = true;
@@ -4151,7 +4151,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 RegisteredStructureSet newSet;
                 TransitionVector transitions;
                 
-                for (const PutByIdVariant& variant : status.variants()) {
+                for (const PutByVariant& variant : status.variants()) {
                     for (const ObjectPropertyCondition& condition : variant.conditionSet()) {
                         if (!m_graph.watchCondition(condition)) {
                             allGood = false;
@@ -4162,14 +4162,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (!allGood)
                         break;
 
-                    if (variant.kind() == PutByIdVariant::Transition) {
+                    if (variant.kind() == PutByVariant::Transition) {
                         RegisteredStructure newStructure = m_graph.registerStructure(variant.newStructure());
                         transitions.append(
                             Transition(
                                 m_graph.registerStructure(variant.oldStructureForTransition()), newStructure));
                         newSet.add(newStructure);
                     } else {
-                        ASSERT(variant.kind() == PutByIdVariant::Replace);
+                        ASSERT(variant.kind() == PutByVariant::Replace);
                         newSet.merge(*m_graph.addStructureSet(variant.oldStructure()));
                     }
                 }
@@ -4473,7 +4473,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ExitOK:
     case FilterCallLinkStatus:
     case FilterGetByStatus:
-    case FilterPutByIdStatus:
+    case FilterPutByStatus:
     case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:
@@ -4652,10 +4652,10 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
         break;
     }
         
-    case FilterPutByIdStatus: {
+    case FilterPutByStatus: {
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite())
-            node->putByIdStatus()->filter(value.m_structure.toStructureSet());
+            node->putByStatus()->filter(value.m_structure.toStructureSet());
         break;
     }
 

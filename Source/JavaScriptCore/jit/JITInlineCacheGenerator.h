@@ -129,9 +129,7 @@ public:
 
 class JITPutByIdGenerator final : public JITByIdGenerator {
 public:
-    JITPutByIdGenerator()
-        : m_ecmaMode(ECMAMode::strict())
-    { }
+    JITPutByIdGenerator() = default;
 
     JITPutByIdGenerator(
         CodeBlock*, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier, JSValueRegs base,
@@ -142,8 +140,35 @@ public:
     V_JITOperation_GSsiJJC slowPathFunction();
 
 private:
-    ECMAMode m_ecmaMode;
+    ECMAMode m_ecmaMode { ECMAMode::strict() };
     PutKind m_putKind;
+};
+
+class JITPutByValGenerator final : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITPutByValGenerator() = default;
+
+    JITPutByValGenerator(
+        CodeBlock*, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR);
+
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+
+    void generateFastPath(MacroAssembler&);
+
+private:
+    JSValueRegs m_base;
+    JSValueRegs m_value;
+
+    MacroAssembler::Label m_start;
+    MacroAssembler::PatchableJump m_slowPathJump;
 };
 
 class JITDelByValGenerator final : public JITInlineCacheGenerator {

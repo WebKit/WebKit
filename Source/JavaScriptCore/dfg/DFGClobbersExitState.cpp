@@ -81,7 +81,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     case ReallocatePropertyStorage:
     case FilterCallLinkStatus:
     case FilterGetByStatus:
-    case FilterPutByIdStatus:
+    case FilterPutByStatus:
     case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:

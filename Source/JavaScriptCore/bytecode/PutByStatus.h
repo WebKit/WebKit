@@ -29,7 +29,7 @@
 #include "ExitFlag.h"
 #include "ICStatusMap.h"
 #include "PrivateFieldPutKind.h"
-#include "PutByIdVariant.h"
+#include "PutByVariant.h"
 #include "StubInfoSummary.h"
 
 namespace JSC {
@@ -43,7 +43,7 @@ class StructureStubInfo;
 
 typedef HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash> StubInfoMap;
 
-class PutByIdStatus final {
+class PutByStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {
@@ -51,56 +51,54 @@ public:
         NoInformation,
         // It's cached as a simple store of some kind.
         Simple,
-        // It's known to often take slow path.
-        TakesSlowPath,
-        // It's known to take paths that make calls.
-        MakesCalls
+        // It will likely take the slow path.
+        LikelyTakesSlowPath,
+        // It's known to take slow path. We also observed that the slow path was taken on StructureStubInfo.
+        ObservedTakesSlowPath,
+        // It will likely take the slow path and will make calls.
+        MakesCalls,
+        // It known to take paths that make calls. We also observed that the slow path was taken on StructureStubInfo.
+        ObservedSlowPathAndMakesCalls,
     };
     
-    PutByIdStatus()
+    PutByStatus()
         : m_state(NoInformation)
     {
     }
     
-    explicit PutByIdStatus(State state)
+    explicit PutByStatus(State state)
         : m_state(state)
     {
-        ASSERT(m_state == NoInformation || m_state == TakesSlowPath || m_state == MakesCalls);
-    }
-    
-    explicit PutByIdStatus(StubInfoSummary summary)
-    {
-        switch (summary) {
-        case StubInfoSummary::NoInformation:
-            m_state = NoInformation;
-            return;
-        case StubInfoSummary::Simple:
-        case StubInfoSummary::MakesCalls:
+#if ASSERT_ENABLED
+        switch (m_state) {
+        case NoInformation:
+        case LikelyTakesSlowPath:
+        case ObservedTakesSlowPath:
+        case MakesCalls:
+        case ObservedSlowPathAndMakesCalls:
+            break;
+        default:
             RELEASE_ASSERT_NOT_REACHED();
-            return;
-        case StubInfoSummary::TakesSlowPath:
-            m_state = TakesSlowPath;
-            return;
-        case StubInfoSummary::TakesSlowPathAndMakesCalls:
-            m_state = MakesCalls;
-            return;
+            break;
         }
-        RELEASE_ASSERT_NOT_REACHED();
+#endif
     }
     
-    PutByIdStatus(const PutByIdVariant& variant)
+    explicit PutByStatus(StubInfoSummary, StructureStubInfo&);
+    
+    PutByStatus(const PutByVariant& variant)
         : m_state(Simple)
     {
         m_variants.append(variant);
     }
     
-    static PutByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid, ExitFlag, CallLinkStatus::ExitSiteData);
-    static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, UniquedStringImpl* uid, bool isDirect, PrivateFieldPutKind);
+    static PutByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData);
+    static PutByStatus computeFor(JSGlobalObject*, const StructureSet&, CacheableIdentifier, bool isDirect, PrivateFieldPutKind);
     
-    static PutByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
+    static PutByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack&, CodeOrigin);
 
 #if ENABLE(JIT)
-    static PutByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
+    static PutByStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin);
 #endif
     
     State state() const { return m_state; }
@@ -108,19 +106,31 @@ public:
     bool isSet() const { return m_state != NoInformation; }
     bool operator!() const { return m_state == NoInformation; }
     bool isSimple() const { return m_state == Simple; }
-    bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
+    bool takesSlowPath() const
+    {
+        switch (m_state) {
+        case LikelyTakesSlowPath:
+        case ObservedTakesSlowPath:
+            return true;
+        default:
+            return false;
+        }
+    }
     bool makesCalls() const;
-    PutByIdStatus slowVersion() const;
+    PutByStatus slowVersion() const;
+    bool observedStructureStubInfoSlowPath() const { return m_state == ObservedTakesSlowPath || m_state == ObservedSlowPathAndMakesCalls; }
     
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<PutByIdVariant, 1>& variants() const { return m_variants; }
-    const PutByIdVariant& at(size_t index) const { return m_variants[index]; }
-    const PutByIdVariant& operator[](size_t index) const { return at(index); }
+    const Vector<PutByVariant, 1>& variants() const { return m_variants; }
+    const PutByVariant& at(size_t index) const { return m_variants[index]; }
+    const PutByVariant& operator[](size_t index) const { return at(index); }
+    CacheableIdentifier singleIdentifier() const;
     
+    DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
     
-    void merge(const PutByIdStatus&);
+    void merge(const PutByStatus&);
     
     void filter(const StructureSet&);
     
@@ -128,17 +138,15 @@ public:
     
 private:
 #if ENABLE(JIT)
-    static PutByIdStatus computeForStubInfo(
-        const ConcurrentJSLocker&, CodeBlock*, StructureStubInfo*, UniquedStringImpl* uid,
-        CallLinkStatus::ExitSiteData);
+    static PutByStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock*, StructureStubInfo*, CallLinkStatus::ExitSiteData);
 #endif
-    static PutByIdStatus computeFromLLInt(CodeBlock*, BytecodeIndex, UniquedStringImpl* uid);
+    static PutByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);
     
-    bool appendVariant(const PutByIdVariant&);
+    bool appendVariant(const PutByVariant&);
     void shrinkToFit();
     
     State m_state;
-    Vector<PutByIdVariant, 1> m_variants;
+    Vector<PutByVariant, 1> m_variants;
 };
 
 } // namespace JSC

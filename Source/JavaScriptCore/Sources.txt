@@ -269,8 +269,8 @@ bytecode/ProgramCodeBlock.cpp
 bytecode/PropertyCondition.cpp
 bytecode/ProxyableAccessCase.cpp
 bytecode/PutByIdFlags.cpp
-bytecode/PutByIdStatus.cpp
-bytecode/PutByIdVariant.cpp
+bytecode/PutByStatus.cpp
+bytecode/PutByVariant.cpp
 bytecode/RecordedStatuses.cpp
 bytecode/ReduceWhitespace.cpp
 bytecode/SetPrivateBrandStatus.cpp

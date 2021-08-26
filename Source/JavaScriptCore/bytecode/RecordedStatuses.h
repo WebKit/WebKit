@@ -30,7 +30,7 @@
 #include "DeleteByStatus.h"
 #include "GetByStatus.h"
 #include "InByStatus.h"
-#include "PutByIdStatus.h"
+#include "PutByStatus.h"
 #include "SetPrivateBrandStatus.h"
 
 namespace JSC {
@@ -48,7 +48,7 @@ struct RecordedStatuses {
     
     CallLinkStatus* addCallLinkStatus(const CodeOrigin&, const CallLinkStatus&);
     GetByStatus* addGetByStatus(const CodeOrigin&, const GetByStatus&);
-    PutByIdStatus* addPutByIdStatus(const CodeOrigin&, const PutByIdStatus&);
+    PutByStatus* addPutByStatus(const CodeOrigin&, const PutByStatus&);
     InByStatus* addInByStatus(const CodeOrigin&, const InByStatus&);
     DeleteByStatus* addDeleteByStatus(const CodeOrigin&, const DeleteByStatus&);
     CheckPrivateBrandStatus* addCheckPrivateBrandStatus(const CodeOrigin&, const CheckPrivateBrandStatus&);
@@ -76,7 +76,7 @@ struct RecordedStatuses {
     
     Vector<std::pair<CodeOrigin, std::unique_ptr<CallLinkStatus>>> calls;
     Vector<std::pair<CodeOrigin, std::unique_ptr<GetByStatus>>> gets;
-    Vector<std::pair<CodeOrigin, std::unique_ptr<PutByIdStatus>>> puts;
+    Vector<std::pair<CodeOrigin, std::unique_ptr<PutByStatus>>> puts;
     Vector<std::pair<CodeOrigin, std::unique_ptr<InByStatus>>> ins;
     Vector<std::pair<CodeOrigin, std::unique_ptr<DeleteByStatus>>> deletes;
     Vector<std::pair<CodeOrigin, std::unique_ptr<CheckPrivateBrandStatus>>> checkPrivateBrands;

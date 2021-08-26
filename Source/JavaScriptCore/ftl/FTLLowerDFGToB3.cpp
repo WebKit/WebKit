@@ -1649,7 +1649,7 @@ private:
             break;
         case FilterCallLinkStatus:
         case FilterGetByStatus:
-        case FilterPutByIdStatus:
+        case FilterPutByStatus:
         case FilterInByStatus:
         case FilterDeleteByStatus:
         case FilterCheckPrivateBrandStatus:
@@ -5556,57 +5556,155 @@ private:
         case Array::BigInt64Array:
         case Array::BigUint64Array:
         case Array::Generic: {
-            if (child1.useKind() == CellUse) {
-                V_JITOperation_GCCJ operation = nullptr;
-                if (child2.useKind() == StringUse) {
-                    if (m_node->op() == PutByValDirect) {
-                        if (m_node->ecmaMode().isStrict())
-                            operation = operationPutByValDirectCellStringStrict;
-                        else
-                            operation = operationPutByValDirectCellStringNonStrict;
-                    } else {
-                        if (m_node->ecmaMode().isStrict())
-                            operation = operationPutByValCellStringStrict;
-                        else
-                            operation = operationPutByValCellStringNonStrict;
+            if (m_graph.m_slowPutByVal.contains(m_node) || (child1.useKind() != CellUse && child1.useKind() != KnownCellUse)) {
+                if (child1.useKind() == CellUse) {
+                    V_JITOperation_GCCJ operation = nullptr;
+                    if (child2.useKind() == StringUse) {
+                        if (m_node->op() == PutByValDirect) {
+                            if (m_node->ecmaMode().isStrict())
+                                operation = operationPutByValDirectCellStringStrict;
+                            else
+                                operation = operationPutByValDirectCellStringNonStrict;
+                        } else {
+                            if (m_node->ecmaMode().isStrict())
+                                operation = operationPutByValCellStringStrict;
+                            else
+                                operation = operationPutByValCellStringNonStrict;
+                        }
+                        vmCall(Void, operation, weakPointer(globalObject), lowCell(child1), lowString(child2), lowJSValue(child3));
+                        return;
                     }
-                    vmCall(Void, operation, weakPointer(globalObject), lowCell(child1), lowString(child2), lowJSValue(child3));
-                    return;
+
+                    if (child2.useKind() == SymbolUse) {
+                        if (m_node->op() == PutByValDirect) {
+                            if (m_node->ecmaMode().isStrict())
+                                operation = operationPutByValDirectCellSymbolStrict;
+                            else
+                                operation = operationPutByValDirectCellSymbolNonStrict;
+                        } else {
+                            if (m_node->ecmaMode().isStrict())
+                                operation = operationPutByValCellSymbolStrict;
+                            else
+                                operation = operationPutByValCellSymbolNonStrict;
+                        }
+                        vmCall(Void, operation, weakPointer(globalObject), lowCell(child1), lowSymbol(child2), lowJSValue(child3));
+                        return;
+                    }
                 }
 
-                if (child2.useKind() == SymbolUse) {
-                    if (m_node->op() == PutByValDirect) {
-                        if (m_node->ecmaMode().isStrict())
-                            operation = operationPutByValDirectCellSymbolStrict;
-                        else
-                            operation = operationPutByValDirectCellSymbolNonStrict;
-                    } else {
-                        if (m_node->ecmaMode().isStrict())
-                            operation = operationPutByValCellSymbolStrict;
-                        else
-                            operation = operationPutByValCellSymbolNonStrict;
-                    }
-                    vmCall(Void, operation, weakPointer(globalObject), lowCell(child1), lowSymbol(child2), lowJSValue(child3));
-                    return;
+                V_JITOperation_GJJJ operation;
+                if (m_node->op() == PutByValDirect) {
+                    if (m_node->ecmaMode().isStrict())
+                        operation = operationPutByValDirectStrict;
+                    else
+                        operation = operationPutByValDirectNonStrict;
+                } else {
+                    if (m_node->ecmaMode().isStrict())
+                        operation = operationPutByValStrict;
+                    else
+                        operation = operationPutByValNonStrict;
                 }
+
+                vmCall(
+                    Void, operation, weakPointer(globalObject),
+                    lowJSValue(child1), lowJSValue(child2), lowJSValue(child3));
+                return;
             }
 
-            V_JITOperation_GJJJ operation;
-            if (m_node->op() == PutByValDirect) {
-                if (m_node->ecmaMode().isStrict())
-                    operation = operationPutByValDirectStrict;
-                else
-                    operation = operationPutByValDirectNonStrict;
-            } else {
-                if (m_node->ecmaMode().isStrict())
-                    operation = operationPutByValStrict;
-                else
-                    operation = operationPutByValNonStrict;
-            }
-                
-            vmCall(
-                Void, operation, weakPointer(globalObject),
-                lowJSValue(child1), lowJSValue(child2), lowJSValue(child3));
+            Node* node = m_node;
+
+            LValue base = lowCell(child1);
+            LValue property = lowJSValue(child2, ManualOperandSpeculation);
+            LValue value = lowJSValue(child3, ManualOperandSpeculation);
+
+            speculate(child2);
+            speculate(child3);
+            bool propertyIsString = false;
+            bool propertyIsInt32 = false;
+            bool propertyIsSymbol = false;
+            if (abstractValue(child2).isType(SpecString))
+                propertyIsString = true;
+            else if (abstractValue(child2).isType(SpecInt32Only))
+                propertyIsInt32 = true;
+            else if (abstractValue(child2).isType(SpecSymbol))
+                propertyIsSymbol = true;
+
+            PatchpointValue* patchpoint = m_out.patchpoint(Void);
+            patchpoint->appendSomeRegister(base);
+            patchpoint->appendSomeRegister(property);
+            patchpoint->appendSomeRegister(value);
+            patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+            patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+            patchpoint->numGPScratchRegisters = JITCode::useDataIC(JITType::FTLJIT) ? 1 : 0;
+
+            RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+            State* state = &m_ftlState;
+            CodeOrigin nodeSemanticOrigin = node->origin.semantic;
+            ECMAMode ecmaMode = m_node->ecmaMode();
+            bool isDirect = m_node->op() == PutByValDirect;
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
+
+                // This is the direct exit target for operation calls.
+                Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                // This is the exit for call IC's created by the IC for getters. We don't have
+                // to do anything weird other than call this, since it will associate the exit with
+                // the callsite index.
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+                GPRReg baseGPR = params[0].gpr();
+                GPRReg propertyGPR = params[1].gpr();
+                GPRReg valueGPR = params[2].gpr();
+                GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
+
+                auto generator = Box<JITPutByValGenerator>::create(
+                    jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutByVal,
+                    params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
+
+                generator->stubInfo()->propertyIsString = propertyIsString;
+                generator->stubInfo()->propertyIsInt32 = propertyIsInt32;
+                generator->stubInfo()->propertyIsSymbol = propertyIsSymbol;
+
+                generator->generateFastPath(jit);
+                CCallHelpers::Label done = jit.label();
+
+                params.addLatePath([=] (CCallHelpers& jit) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                    if (!JITCode::useDataIC(JITType::FTLJIT))
+                        generator->slowPathJump().link(&jit);
+                    CCallHelpers::Label slowPathBegin = jit.label();
+                    CCallHelpers::Call slowPathCall;
+                    auto operation = isDirect ? (ecmaMode.isStrict() ? operationDirectPutByValStrictOptimize : operationDirectPutByValNonStrictOptimize) : (ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValNonStrictOptimize);
+                    if (JITCode::useDataIC(JITType::FTLJIT)) {
+                        jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
+                        generator->stubInfo()->m_slowOperation = operation;
+                        slowPathCall = callOperation(
+                            *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
+                            exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
+                            jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
+                            baseGPR, propertyGPR, valueGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                    } else {
+                        slowPathCall = callOperation(
+                            *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
+                            exceptions.get(), operation, InvalidGPRReg,
+                            jit.codeBlock()->globalObjectFor(nodeSemanticOrigin),
+                            baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                    }
+                    jit.jump().linkTo(done, &jit);
+
+                    generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                        generator->finalize(linkBuffer, linkBuffer);
+                    });
+                });
+            });
             return;
         }
             
@@ -8951,7 +9049,7 @@ private:
         Vector<SwitchCase, 2> cases;
         RegisteredStructureSet baseSet;
         for (unsigned i = data.variants.size(); i--;) {
-            PutByIdVariant variant = data.variants[i];
+            PutByVariant variant = data.variants[i];
             for (unsigned j = variant.oldStructure().size(); j--;) {
                 RegisteredStructure structure = m_graph.registerStructure(variant.oldStructure()[j]);
                 baseSet.add(structure);
@@ -8966,16 +9064,16 @@ private:
         for (unsigned i = data.variants.size(); i--;) {
             m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
             
-            PutByIdVariant variant = data.variants[i];
+            PutByVariant variant = data.variants[i];
 
             LValue storage;
-            if (variant.kind() == PutByIdVariant::Replace) {
+            if (variant.kind() == PutByVariant::Replace) {
                 if (isInlineOffset(variant.offset()))
                     storage = base;
                 else
                     storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
             } else {
-                DFG_ASSERT(m_graph, m_node, variant.kind() == PutByIdVariant::Transition, variant.kind());
+                DFG_ASSERT(m_graph, m_node, variant.kind() == PutByVariant::Transition, variant.kind());
                 m_graph.m_plan.transitions().addLazily(
                     m_origin.semantic.codeOriginOwner(),
                     variant.oldStructureForTransition(), variant.newStructure());
@@ -8987,7 +9085,7 @@ private:
             
             storeProperty(value, storage, data.identifierNumber, variant.offset());
             
-            if (variant.kind() == PutByIdVariant::Transition) {
+            if (variant.kind() == PutByVariant::Transition) {
                 ASSERT(variant.oldStructureForTransition()->indexingType() == variant.newStructure()->indexingType());
                 ASSERT(variant.oldStructureForTransition()->typeInfo().inlineTypeFlags() == variant.newStructure()->typeInfo().inlineTypeFlags());
                 ASSERT(variant.oldStructureForTransition()->typeInfo().type() == variant.newStructure()->typeInfo().type());

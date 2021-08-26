@@ -385,8 +385,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, *node->getByStatus());
     if (node->hasInByStatus())
         out.print(comma, *node->inByStatus());
-    if (node->hasPutByIdStatus())
-        out.print(comma, *node->putByIdStatus());
+    if (node->hasPutByStatus())
+        out.print(comma, *node->putByStatus());
     if (node->hasEnumeratorMetadata())
         out.print(comma, "enumeratorModes = ", node->enumeratorMetadata().toRaw());
     if (node->isJump())

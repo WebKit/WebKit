@@ -54,7 +54,8 @@ enum class AccessType : int8_t {
     GetByIdDirect,
     TryGetById,
     GetByVal,
-    Put,
+    PutById,
+    PutByVal,
     InById,
     InByVal,
     HasPrivateName,
@@ -365,6 +366,7 @@ public:
         GPRReg brandGPR;
     } regs;
     GPRReg m_stubInfoGPR { InvalidGPRReg };
+    GPRReg m_arrayProfileGPR { InvalidGPRReg };
 #if USE(JSVALUE32_64)
     GPRReg valueTagGPR;
     // FIXME: [32-bits] Check if StructureStubInfo::baseTagGPR is used somewhere.

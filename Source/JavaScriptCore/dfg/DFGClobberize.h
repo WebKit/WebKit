@@ -569,7 +569,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case InitializeEntrypointArguments:
     case FilterCallLinkStatus:
     case FilterGetByStatus:
-    case FilterPutByIdStatus:
+    case FilterPutByStatus:
     case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:

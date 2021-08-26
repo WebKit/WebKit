@@ -464,9 +464,9 @@
 		0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A014CA7DCD0085F3C6 /* GetByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329614CA7DC10085F3C6 /* GetByStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9332A414CA7DD90085F3C6 /* PutByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329B14CA7DC10085F3C6 /* StructureSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F93B4AA18B92C4D00178A3F /* PutByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F93B4AA18B92C4D00178A3F /* PutByVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93B4A818B92C4D00178A3F /* PutByVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F952AA11DF7860900E06FBD /* VisitRaceKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F952AA01DF7860700E06FBD /* VisitRaceKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F952ABD1B487A7700C367C5 /* TrackedReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F952ABB1B487A7700C367C5 /* TrackedReferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F96303A1D4192C8005609D9 /* CellAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9630361D4192C3005609D9 /* CellAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2866,11 +2866,11 @@
 		0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkStatus.h; sourceTree = "<group>"; };
 		0F93329514CA7DC10085F3C6 /* GetByStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByStatus.cpp; sourceTree = "<group>"; };
 		0F93329614CA7DC10085F3C6 /* GetByStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetByStatus.h; sourceTree = "<group>"; };
-		0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByIdStatus.cpp; sourceTree = "<group>"; };
-		0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdStatus.h; sourceTree = "<group>"; };
+		0F93329914CA7DC10085F3C6 /* PutByStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByStatus.cpp; sourceTree = "<group>"; };
+		0F93329A14CA7DC10085F3C6 /* PutByStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByStatus.h; sourceTree = "<group>"; };
 		0F93329B14CA7DC10085F3C6 /* StructureSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureSet.h; sourceTree = "<group>"; };
-		0F93B4A718B92C4D00178A3F /* PutByIdVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByIdVariant.cpp; sourceTree = "<group>"; };
-		0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdVariant.h; sourceTree = "<group>"; };
+		0F93B4A718B92C4D00178A3F /* PutByVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByVariant.cpp; sourceTree = "<group>"; };
+		0F93B4A818B92C4D00178A3F /* PutByVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByVariant.h; sourceTree = "<group>"; };
 		0F952A9F1DF7860700E06FBD /* VisitRaceKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitRaceKey.cpp; sourceTree = "<group>"; };
 		0F952AA01DF7860700E06FBD /* VisitRaceKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitRaceKey.h; sourceTree = "<group>"; };
 		0F952ABA1B487A7700C367C5 /* TrackedReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackedReferences.cpp; sourceTree = "<group>"; };
@@ -8695,10 +8695,10 @@
 				0FD3E4081B618B6600C80E1E /* PropertyCondition.h */,
 				0F15CD201BA5F9860031FFD3 /* PutByIdFlags.cpp */,
 				0F15CD211BA5F9860031FFD3 /* PutByIdFlags.h */,
-				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
-				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
-				0F93B4A718B92C4D00178A3F /* PutByIdVariant.cpp */,
-				0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */,
+				0F93329914CA7DC10085F3C6 /* PutByStatus.cpp */,
+				0F93329A14CA7DC10085F3C6 /* PutByStatus.h */,
+				0F93B4A718B92C4D00178A3F /* PutByVariant.cpp */,
+				0F93B4A818B92C4D00178A3F /* PutByVariant.h */,
 				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
 				0F44A7AD20BF685F0022B171 /* RecordedStatuses.cpp */,
 				0F44A7AA20BF685E0022B171 /* RecordedStatuses.h */,
@@ -10506,8 +10506,8 @@
 				79160DBE1C8E3EC8008C085A /* ProxyRevoke.h in Headers */,
 				0F5780A218FE1E98001E72D9 /* PureNaN.h in Headers */,
 				0F15CD231BA5F9860031FFD3 /* PutByIdFlags.h in Headers */,
-				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
-				0F93B4AA18B92C4D00178A3F /* PutByIdVariant.h in Headers */,
+				0F9332A414CA7DD90085F3C6 /* PutByStatus.h in Headers */,
+				0F93B4AA18B92C4D00178A3F /* PutByVariant.h in Headers */,
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,

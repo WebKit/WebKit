@@ -466,151 +466,26 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
+    VirtualRegister value = bytecode.m_value;
     ArrayProfile* profile = &metadata.m_arrayProfile;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo(m_bytecodeIndex);
-    
+
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
-    
+    emitLoad(value, regT5, regT4);
+    move(TrustedImmPtr(profile), regT6);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
-    PatchableJump notIndex = patchableBranch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag));
-    addSlowCase(notIndex);
-    emitArrayProfilingSiteWithCell(regT0, profile, regT1);
-    
-    PatchableJump badType;
-    JumpList slowCases;
+    emitArrayProfilingSiteWithCell(regT0, regT6, regT7);
 
-    // FIXME: Maybe we should do this inline?
-    load8(Address(regT0, JSCell::indexingTypeAndMiscOffset()), regT1);
-    addSlowCase(branchTest32(NonZero, regT1, TrustedImm32(CopyOnWrite)));
-    and32(TrustedImm32(IndexingShapeMask), regT1);
-    
-    JITArrayMode mode = chooseArrayMode(profile);
-    switch (mode) {
-    case JITInt32:
-        slowCases = emitInt32PutByVal(bytecode, badType, byValInfo);
-        break;
-    case JITDouble:
-        slowCases = emitDoublePutByVal(bytecode, badType, byValInfo);
-        break;
-    case JITContiguous:
-        slowCases = emitContiguousPutByVal(bytecode, badType, byValInfo);
-        break;
-    case JITArrayStorage:
-        slowCases = emitArrayStoragePutByVal(bytecode, badType, byValInfo);
-        break;
-    default:
-        CRASH();
-        break;
-    }
-    
-    addSlowCase(badType);
-    addSlowCase(slowCases);
-    
-    Label done = label();
-    
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, notIndex, badType, mode, profile, done, done));
-}
+    JITPutByValGenerator gen(
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT1, regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT5, regT4), regT6, InvalidGPRReg);
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_putByVals.append(gen);
 
-template <typename Op>
-JIT::JumpList JIT::emitGenericContiguousPutByVal(Op bytecode, PatchableJump& badType, ByValInfo* byValInfo, IndexingType indexingShape)
-{
-    auto& metadata = bytecode.metadata(m_codeBlock);
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister value = bytecode.m_value;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
-
-    JumpList slowCases;
-    
-    UNUSED_PARAM(byValInfo);
-    badType = patchableBranch32(NotEqual, regT1, TrustedImm32(ContiguousShape));
-    
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
-    Jump outOfBounds = branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength()));
-    
-    Label storeResult = label();
-    emitLoad(value, regT1, regT0);
-    switch (indexingShape) {
-    case Int32Shape:
-        slowCases.append(branchIfNotInt32(regT1));
-        store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-        store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        break;
-    case ContiguousShape:
-        store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-        store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        emitLoad(base, regT2, regT3);
-        emitWriteBarrier(base, value, ShouldFilterValue);
-        break;
-    case DoubleShape: {
-        Jump notInt = branchIfNotInt32(regT1);
-        convertInt32ToDouble(regT0, fpRegT0);
-        Jump ready = jump();
-        notInt.link(this);
-        moveIntsToDouble(regT0, regT1, fpRegT0);
-        slowCases.append(branchIfNaN(fpRegT0));
-        ready.link(this);
-        storeDouble(fpRegT0, BaseIndex(regT3, regT2, TimesEight));
-        break;
-    }
-    default:
-        CRASH();
-        break;
-    }
-        
-    Jump done = jump();
-    
-    outOfBounds.link(this);
-    slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfVectorLength())));
-    
-    emitArrayProfileStoreToHoleSpecialCase(profile);
-    
-    add32(TrustedImm32(1), regT2, regT1);
-    store32(regT1, Address(regT3, Butterfly::offsetOfPublicLength()));
-    jump().linkTo(storeResult, this);
-    
-    done.link(this);
-    
-    return slowCases;
-}
-
-template <typename Op>
-JIT::JumpList JIT::emitArrayStoragePutByVal(Op bytecode, PatchableJump& badType, ByValInfo* byValInfo)
-{
-    auto& metadata = bytecode.metadata(m_codeBlock);
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister value = bytecode.m_value;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
-
-    JumpList slowCases;
-    
-    UNUSED_PARAM(byValInfo);
-    badType = patchableBranch32(NotEqual, regT1, TrustedImm32(ArrayStorageShape));
-    
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
-    slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, ArrayStorage::vectorLengthOffset())));
-
-    Jump empty = branch32(Equal, BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
-    
-    Label storeResult(this);
-    emitLoad(value, regT1, regT0);
-    store32(regT0, BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload))); // payload
-    store32(regT1, BaseIndex(regT3, regT2, TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag))); // tag
-    Jump end = jump();
-    
-    empty.link(this);
-    emitArrayProfileStoreToHoleSpecialCase(profile);
-    add32(TrustedImm32(1), Address(regT3, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
-    branch32(Below, regT2, Address(regT3, ArrayStorage::lengthOffset())).linkTo(storeResult, this);
-    
-    add32(TrustedImm32(1), regT2, regT0);
-    store32(regT0, Address(regT3, ArrayStorage::lengthOffset()));
-    jump().linkTo(storeResult, this);
-    
-    end.link(this);
-    
-    emitWriteBarrier(base, value, ShouldFilterValue);
-    
-    return slowCases;
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -620,12 +495,15 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
     VirtualRegister property;
     VirtualRegister value;
     ECMAMode ecmaMode = ECMAMode::strict();
+    ArrayProfile* profile = nullptr;
 
     auto load = [&](auto bytecode) {
         base = bytecode.m_base;
         property = bytecode.m_property;
         value = bytecode.m_value;
         ecmaMode = JIT::ecmaMode(bytecode);
+        auto& metadata = bytecode.metadata(m_codeBlock);
+        profile = &metadata.m_arrayProfile;
     };
 
     if (isDirect)
@@ -633,21 +511,20 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
     else
         load(currentInstruction->as<OpPutByVal>());
 
-    ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
-    
+    JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
+
     linkAllSlowCases(iter);
-    Label slowPath = label();
-    
+
+    Label coldPathBegin = label();
+
     // The register selection below is chosen to reduce register swapping on ARM.
     // Swapping shouldn't happen on other platforms.
-    emitLoad(base, regT2, regT1);
-    emitLoad(property, regT3, regT0);
+    emitLoad2(base, regT2, regT1, property, regT3, regT0);
     emitLoad(value, regT5, regT4);
-    Call call = callOperation(isDirect ? operationDirectPutByValOptimize : operationPutByValOptimize, m_codeBlock->globalObject(), JSValueRegs(regT2, regT1), JSValueRegs(regT3, regT0), JSValueRegs(regT5, regT4), byValInfo, TrustedImm32(ecmaMode.value()));
 
-    m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
-    m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
-    m_byValInstructionIndex++;
+    Call call = callOperation(isDirect ? (ecmaMode.isStrict() ? operationDirectPutByValStrictOptimize : operationDirectPutByValNonStrictOptimize) : (ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValNonStrictOptimize), TrustedImmPtr(m_codeBlock->globalObject()), JSValueRegs(regT2, regT1), JSValueRegs(regT3, regT0), JSValueRegs(regT5, regT4), gen.stubInfo(), profile);
+
+    gen.reportSlowPathCall(coldPathBegin, call);
 }
 
 void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)

@@ -203,10 +203,15 @@ JSC_DECLARE_JIT_OPERATION(operationCheckPrivateBrandGeneric, void, (JSGlobalObje
 
 JSC_DECLARE_JIT_OPERATION(operationPutPrivateNameOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, PrivateFieldPutKind));
 JSC_DECLARE_JIT_OPERATION(operationPutPrivateNameGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, PrivateFieldPutKind));
-JSC_DECLARE_JIT_OPERATION(operationPutByValOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode));
-JSC_DECLARE_JIT_OPERATION(operationDirectPutByValOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode));
-JSC_DECLARE_JIT_OPERATION(operationPutByValGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode));
-JSC_DECLARE_JIT_OPERATION(operationDirectPutByValGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, ByValInfo*, ECMAMode));
+
+JSC_DECLARE_JIT_OPERATION(operationPutByValNonStrictOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValStrictOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValNonStrictOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValStrictOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValNonStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationPutByValStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationDirectPutByValNonStrictGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
 
 JSC_DECLARE_JIT_OPERATION(operationCallEval, EncodedJSValue, (JSGlobalObject*, CallFrame*, ECMAMode));
 JSC_DECLARE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));

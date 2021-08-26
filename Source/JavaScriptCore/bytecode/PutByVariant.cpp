@@ -24,20 +24,21 @@
  */
 
 #include "config.h"
-#include "PutByIdVariant.h"
+#include "PutByVariant.h"
 
+#include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
 #include "HeapInlines.h"
 
 namespace JSC {
 
-PutByIdVariant::PutByIdVariant(const PutByIdVariant& other)
-    : PutByIdVariant()
+PutByVariant::PutByVariant(const PutByVariant& other)
+    : PutByVariant(other.m_identifier)
 {
     *this = other;
 }
 
-PutByIdVariant& PutByIdVariant::operator=(const PutByIdVariant& other)
+PutByVariant& PutByVariant::operator=(const PutByVariant& other)
 {
     m_kind = other.m_kind;
     m_oldStructure = other.m_oldStructure;
@@ -48,24 +49,22 @@ PutByIdVariant& PutByIdVariant::operator=(const PutByIdVariant& other)
         m_callLinkStatus = makeUnique<CallLinkStatus>(*other.m_callLinkStatus);
     else
         m_callLinkStatus = nullptr;
+    m_identifier = other.m_identifier;
     return *this;
 }
 
-PutByIdVariant PutByIdVariant::replace(
-    const StructureSet& structure, PropertyOffset offset)
+PutByVariant PutByVariant::replace(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset)
 {
-    PutByIdVariant result;
+    PutByVariant result(WTFMove(identifier));
     result.m_kind = Replace;
     result.m_oldStructure = structure;
     result.m_offset = offset;
     return result;
 }
 
-PutByIdVariant PutByIdVariant::transition(
-    const StructureSet& oldStructure, Structure* newStructure,
-    const ObjectPropertyConditionSet& conditionSet, PropertyOffset offset)
+PutByVariant PutByVariant::transition(CacheableIdentifier identifier, const StructureSet& oldStructure, Structure* newStructure, const ObjectPropertyConditionSet& conditionSet, PropertyOffset offset)
 {
-    PutByIdVariant result;
+    PutByVariant result(WTFMove(identifier));
     result.m_kind = Transition;
     result.m_oldStructure = oldStructure;
     result.m_newStructure = newStructure;
@@ -74,12 +73,9 @@ PutByIdVariant PutByIdVariant::transition(
     return result;
 }
 
-PutByIdVariant PutByIdVariant::setter(
-    const StructureSet& structure, PropertyOffset offset,
-    const ObjectPropertyConditionSet& conditionSet,
-    std::unique_ptr<CallLinkStatus> callLinkStatus)
+PutByVariant PutByVariant::setter(CacheableIdentifier identifier, const StructureSet& structure, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus)
 {
-    PutByIdVariant result;
+    PutByVariant result(WTFMove(identifier));
     result.m_kind = Setter;
     result.m_oldStructure = structure;
     result.m_conditionSet = conditionSet;
@@ -88,7 +84,7 @@ PutByIdVariant PutByIdVariant::setter(
     return result;
 }
 
-Structure* PutByIdVariant::oldStructureForTransition() const
+Structure* PutByVariant::oldStructureForTransition() const
 {
     RELEASE_ASSERT(kind() == Transition);
     RELEASE_ASSERT(m_oldStructure.size() <= 2);
@@ -102,7 +98,7 @@ Structure* PutByIdVariant::oldStructureForTransition() const
     return nullptr;
 }
 
-void PutByIdVariant::fixTransitionToReplaceIfNecessary()
+void PutByVariant::fixTransitionToReplaceIfNecessary()
 {
     if (kind() != Transition)
         return;
@@ -120,7 +116,7 @@ void PutByIdVariant::fixTransitionToReplaceIfNecessary()
     RELEASE_ASSERT(!m_callLinkStatus);
 }
 
-bool PutByIdVariant::writesStructures() const
+bool PutByVariant::writesStructures() const
 {
     switch (kind()) {
     case Transition:
@@ -131,7 +127,7 @@ bool PutByIdVariant::writesStructures() const
     }
 }
 
-bool PutByIdVariant::reallocatesStorage() const
+bool PutByVariant::reallocatesStorage() const
 {
     switch (kind()) {
     case Transition:
@@ -143,13 +139,19 @@ bool PutByIdVariant::reallocatesStorage() const
     }
 }
 
-bool PutByIdVariant::makesCalls() const
+bool PutByVariant::makesCalls() const
 {
     return kind() == Setter;
 }
 
-bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
+bool PutByVariant::attemptToMerge(const PutByVariant& other)
 {
+    if (!!m_identifier != !!other.m_identifier)
+        return false;
+
+    if (m_identifier && (m_identifier != other.m_identifier))
+        return false;
+
     if (m_offset != other.m_offset)
         return false;
 
@@ -169,7 +171,7 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
         }
             
         case Transition: {
-            PutByIdVariant newVariant = other;
+            PutByVariant newVariant = other;
             if (newVariant.attemptToMergeTransitionWithReplace(*this)) {
                 *this = newVariant;
                 return true;
@@ -239,7 +241,7 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
     return false;
 }
 
-bool PutByIdVariant::attemptToMergeTransitionWithReplace(const PutByIdVariant& replace)
+bool PutByVariant::attemptToMergeTransitionWithReplace(const PutByVariant& replace)
 {
     ASSERT(m_kind == Transition);
     ASSERT(replace.m_kind == Replace);
@@ -263,17 +265,25 @@ bool PutByIdVariant::attemptToMergeTransitionWithReplace(const PutByIdVariant& r
 }
 
 template<typename Visitor>
-void PutByIdVariant::markIfCheap(Visitor& visitor)
+void PutByVariant::visitAggregateImpl(Visitor& visitor)
+{
+    m_identifier.visitAggregate(visitor);
+}
+
+DEFINE_VISIT_AGGREGATE(PutByVariant);
+
+template<typename Visitor>
+void PutByVariant::markIfCheap(Visitor& visitor)
 {
     m_oldStructure.markIfCheap(visitor);
     if (m_newStructure)
         m_newStructure->markIfCheap(visitor);
 }
 
-template void PutByIdVariant::markIfCheap(AbstractSlotVisitor&);
-template void PutByIdVariant::markIfCheap(SlotVisitor&);
+template void PutByVariant::markIfCheap(AbstractSlotVisitor&);
+template void PutByVariant::markIfCheap(SlotVisitor&);
 
-bool PutByIdVariant::finalize(VM& vm)
+bool PutByVariant::finalize(VM& vm)
 {
     if (!m_oldStructure.isStillAlive(vm))
         return false;
@@ -286,33 +296,35 @@ bool PutByIdVariant::finalize(VM& vm)
     return true;
 }
 
-void PutByIdVariant::dump(PrintStream& out) const
+void PutByVariant::dump(PrintStream& out) const
 {
     dumpInContext(out, nullptr);
 }
 
-void PutByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
+void PutByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
+    out.print("<");
+    out.print("id='", m_identifier, "', ");
     switch (kind()) {
     case NotSet:
-        out.print("<empty>");
+        out.print("empty>");
         return;
         
     case Replace:
         out.print(
-            "<Replace: ", inContext(structure(), context), ", offset = ", offset(), ", ", ">");
+            "Replace: ", inContext(structure(), context), ", offset = ", offset(), ", ", ">");
         return;
         
     case Transition:
         out.print(
-            "<Transition: ", inContext(oldStructure(), context), " to ",
+            "Transition: ", inContext(oldStructure(), context), " to ",
             pointerDumpInContext(newStructure(), context), ", [",
             inContext(m_conditionSet, context), "], offset = ", offset(), ", ", ">");
         return;
         
     case Setter:
         out.print(
-            "<Setter: ", inContext(structure(), context), ", [",
+            "Setter: ", inContext(structure(), context), ", [",
             inContext(m_conditionSet, context), "]");
         out.print(", offset = ", m_offset);
         out.print(", call = ", *m_callLinkStatus);
