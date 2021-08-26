@@ -20,3 +20,8 @@ webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [
 # Incorrect tests
 webgl/2.0.0/deqp/functional/gles3/builtinprecision/ [ Skip ]
 webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Skip ]
+
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Failure ]
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Failure ]
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples.html [ Failure ]
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad.html [ Failure ]

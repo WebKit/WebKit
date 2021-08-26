@@ -1605,13 +1605,6 @@ webkit.org/b/229458 http/tests/inspector/network/har/har-page.html [ Pass Failur
 
 webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html [ Pass Failure ]
 
-
-#webkit.org/b/228703 
-webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Pass Failure Timeout ]
-webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Pass Failure Timeout ]
-webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples.html [ Pass Failure Timeout ]
-webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad.html [ Pass Failure Timeout ]
-
 webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
 
 #webkit.org/b/229474
