@@ -258,7 +258,7 @@ def parse_args(args):
                  "'ignore' == Run them anyway, "
                  "'only' == only run the SKIP tests, "
                  "'always' == always skip, even if listed on the command line.")),
-        optparse.make_option("--force", action="store_true", default=False,
+        optparse.make_option("--expect-pass", "--force", action="store_true", default=False, dest="force",
             help="Run all tests with PASS as expected result, even those marked SKIP in the test list or " + \
                  "those which are device-specific (implies --skipped=ignore)"),
         optparse.make_option("--time-out-ms", "--timeout",

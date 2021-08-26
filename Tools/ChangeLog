@@ -1,3 +1,16 @@
+2021-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Add to run-webkit-tests a --expect-pass argument as a synonym for --force
+        https://bugs.webkit.org/show_bug.cgi?id=229581
+
+        Reviewed by Wenson Hsieh.
+
+        I am eternally confused that -f and --force are different things. Add --expect-pass
+        as a synonym for --force to reduce my confusion.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2021-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         TestWebKitAPI._WKActivatedElementInfo.InfoForRotatedImage is failing on iOS 15
