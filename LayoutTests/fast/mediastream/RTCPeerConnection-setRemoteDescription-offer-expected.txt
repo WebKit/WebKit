@@ -20,8 +20,8 @@ PASS remoteOffer1 set as remote description (again)
 FAIL pc.signalingState should be have-remote-offer. Was stable.
 
 *** Try setting local descriptions with bad types for the current state
-PASS promise pc.setRemoteDescription({type:'answer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: The object is in an invalid state.
-PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: The object is in an invalid state.
+PASS promise pc.setRemoteDescription({type:'answer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: Remote description type 2 is incompatible with current signaling state 0
+PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: Remote description type 1 is incompatible with current signaling state 0
 
 *** Create (remote) offer with video (remoteOffer2)
 *** Done, start testing with remoteOffer2

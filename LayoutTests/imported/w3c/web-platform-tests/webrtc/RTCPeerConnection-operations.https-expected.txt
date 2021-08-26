@@ -5,7 +5,7 @@ PASS promiseState helper works
 PASS promiseStateFinal helper works
 FAIL createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite) assert_equals: expected "InvalidStateError" but got "Error"
 PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite)
-FAIL SLD(rollback) must detect InvalidStateError synchronously when chain is empty assert_equals: promise rejected on same task expected "rejected" but got "pending"
+PASS SLD(rollback) must detect InvalidStateError synchronously when chain is empty
 FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "TypeError"
 PASS replaceTrack must detect InvalidStateError synchronously when chain is empty and transceiver is stopped
 PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped
@@ -26,7 +26,7 @@ PASS pc.getStats does NOT use the operations chain
 PASS sender.getStats does NOT use the operations chain
 PASS receiver.getStats does NOT use the operations chain
 FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "Error"
-FAIL Operations queue not vulnerable to recursion by chained negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+FAIL Operations queue not vulnerable to recursion by chained negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
 FAIL Pack operations queue with implicit offer and answer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
 TIMEOUT Negotiate solely by operations queue and signaling state Test timed out
 

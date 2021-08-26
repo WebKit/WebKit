@@ -1,3 +1,17 @@
+2021-08-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r281616.
+        https://bugs.webkit.org/show_bug.cgi?id=229570
+
+        It is crashing in iOS Debug
+
+        Reverted changeset:
+
+        "Signaling state check when applying a local or remote
+        description is no longer aligned with the WebRTC spec"
+        https://bugs.webkit.org/show_bug.cgi?id=229138
+        https://commits.webkit.org/r281616
+
 2021-08-26  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] Implement the "sequence" mode in SourceBuffer for the GStreamer ports

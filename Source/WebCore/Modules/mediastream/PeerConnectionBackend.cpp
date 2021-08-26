@@ -160,9 +160,33 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     });
 }
 
+static inline bool isLocalDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
+{
+    switch (state) {
+    case RTCSignalingState::Stable:
+        return type == RTCSdpType::Offer;
+    case RTCSignalingState::HaveLocalOffer:
+        return type == RTCSdpType::Offer;
+    case RTCSignalingState::HaveRemoteOffer:
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
+    case RTCSignalingState::HaveLocalPranswer:
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
+    default:
+        return false;
+    };
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void PeerConnectionBackend::setLocalDescription(const RTCSessionDescription* sessionDescription, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
+
+    if (sessionDescription && !isLocalDescriptionTypeValidForState(sessionDescription->type(), m_peerConnection.signalingState())) {
+        promise.reject(InvalidStateError, makeString("Local description type ", sessionDescription->type(), " is incompatible with current signaling state ", m_peerConnection.signalingState()));
+        return;
+    }
 
     m_setDescriptionPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     doSetLocalDescription(sessionDescription);
@@ -196,9 +220,33 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     });
 }
 
+static inline bool isRemoteDescriptionTypeValidForState(RTCSdpType type, RTCSignalingState state)
+{
+    switch (state) {
+    case RTCSignalingState::Stable:
+        return type == RTCSdpType::Offer;
+    case RTCSignalingState::HaveLocalOffer:
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
+    case RTCSignalingState::HaveRemoteOffer:
+        return type == RTCSdpType::Offer;
+    case RTCSignalingState::HaveRemotePranswer:
+        return type == RTCSdpType::Answer || type == RTCSdpType::Pranswer;
+    default:
+        return false;
+    };
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_peerConnection.isClosed());
+
+    if (!isRemoteDescriptionTypeValidForState(sessionDescription.type(), m_peerConnection.signalingState())) {
+        promise.reject(InvalidStateError, makeString("Remote description type ", sessionDescription.type(), " is incompatible with current signaling state ", m_peerConnection.signalingState()));
+        return;
+    }
 
     m_setDescriptionPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
     doSetRemoteDescription(sessionDescription);

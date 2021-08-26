@@ -1,10 +1,10 @@
 
 PASS setLocalDescription with valid offer should succeed
 FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
-FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for m= section with mid='0': Local fingerprint does not match identity. Expected: sha-256 CB:DD:6C:16:C3:EB:2B:91:4B:45:55:4F:C1:45:DC:BF:53:7C:F4:4B:F5:07:80:18:31:8A:51:3A:35:0E:36:4C Got: sha-256 DD:D9:E2:F3:33:68:9A:4C:1D:FD:BE:CA:4E:0F:35:78:FC:B5:2A:0A:C8:E5:CD:E2:93:7B:C7:7A:99:C2:31:63" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for m= section with mid='0': Local fingerprint does not match identity. Expected: sha-256 AC:89:BE:E6:A4:DB:0A:BB:A7:A5:85:7E:53:F6:60:11:D8:97:44:6D:D0:A1:4C:32:80:B3:03:94:C8:83:AD:A8 Got: sha-256 34:AF:27:F0:FE:EF:83:BC:1D:76:C6:89:C7:D9:81:7C:C3:FB:DA:F0:04:CF:D3:81:FC:62:FA:9A:84:B5:3B:E8" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
 FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Creating and setting offer multiple times should succeed
-PASS Setting previously generated offer after a call to createAnswer should work
+FAIL Setting previously generated offer after a call to createAnswer should work promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
 FAIL Negotiation works when there has been a repeated setLocalDescription(offer) assert_equals: expected 1 but got 0
 FAIL setLocalDescription(offer) should update internal state with a queued task, in the right order assert_equals: pendingRemoteDescription should never be set due to sLD expected null but got object "[object RTCSessionDescription]"
 

@@ -27,7 +27,6 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCMacros.h"
-#include "RTCSignalingState.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -326,7 +325,6 @@ protected:
     bool m_isReceivingAudio { false };
     bool m_isReceivingVideo { false };
     std::string m_streamLabel;
-    RTCSignalingState m_signalingState { RTCSignalingState::Stable };
 };
 
 class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
