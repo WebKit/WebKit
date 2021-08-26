@@ -29,6 +29,7 @@ addEventListener("load", async () => {
     description("Tests that the accept attribute for file inputs is mapped to the correct set of type identifiers on iOS.");
 
     await runTest("", '[]');
+    await runTest("*/*", '[]');
     await runTest("image/*", '["public.image"]');
     await runTest("video/*", '["public.movie"]');
     await runTest("image/*, video/*", '["public.image", "public.movie"]');

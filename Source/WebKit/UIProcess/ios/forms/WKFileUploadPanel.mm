@@ -355,6 +355,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     NSMutableSet *mediaTypes = [NSMutableSet set];
     for (NSString *mimeType in mimeTypes) {
+        if ([mimeType isEqualToString:@"*/*"])
+            return [NSSet set];
+
         if ([mimeType caseInsensitiveCompare:@"image/*"] == NSOrderedSame)
             [mediaTypes addObject:UTTypeImage.identifier];
         else if ([mimeType caseInsensitiveCompare:@"video/*"] == NSOrderedSame)
@@ -368,7 +371,6 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
             if (uti)
                 [mediaTypes addObject:uti.identifier];
         }
-
     }
     return mediaTypes;
 }

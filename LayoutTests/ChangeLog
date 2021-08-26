@@ -1,3 +1,20 @@
+2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Unable to select files when the accept attribute is set to "*/*"
+        https://bugs.webkit.org/show_bug.cgi?id=229456
+        rdar://82346315
+
+        Reviewed by Chris Dumez.
+
+        Updated tests to verify that setting the accept attribute to "*/*" does
+        not impose any restrictions on the types of files that can be selected,
+        and gives the user access to all menu options.
+
+        * fast/forms/ios/file-upload-panel-accept-expected.txt:
+        * fast/forms/ios/file-upload-panel-accept.html:
+        * fast/forms/ios/file-upload-panel-expected.txt:
+        * fast/forms/ios/file-upload-panel.html:
+
 2021-08-25  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out

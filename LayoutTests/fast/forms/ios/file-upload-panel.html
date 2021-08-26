@@ -62,6 +62,7 @@ async function runTests()
     document.getElementById("console").style = "display: none";
 
     await runAcceptTest("", '["Photo Library", "Take Photo or Video", "Choose File"]');
+    await runAcceptTest("*/*", '["Photo Library", "Take Photo or Video", "Choose File"]');
     await runAcceptTest("image/*", '["Photo Library", "Take Photo", "Choose File"]');
     await runAcceptTest("video/*", '["Photo Library", "Take Video", "Choose File"]');
     await runAcceptTest("image/*, video/*", '["Photo Library", "Take Photo or Video", "Choose File"]');

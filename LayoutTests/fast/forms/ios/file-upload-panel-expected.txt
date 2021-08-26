@@ -6,6 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 * accept =
 PASS areArraysEqual(items, ["Photo Library", "Take Photo or Video", "Choose File"]) is true
 
+* accept = */*
+PASS areArraysEqual(items, ["Photo Library", "Take Photo or Video", "Choose File"]) is true
+
 * accept = image/*
 PASS areArraysEqual(items, ["Photo Library", "Take Photo", "Choose File"]) is true
 

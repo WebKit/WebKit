@@ -1,3 +1,34 @@
+2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Unable to select files when the accept attribute is set to "*/*"
+        https://bugs.webkit.org/show_bug.cgi?id=229456
+        rdar://82346315
+
+        Reviewed by Chris Dumez.
+
+        "*/*" is a valid MIME type string representing all media types. However,
+        the UniformTypeIdentifiers framework (as well as the now deprecated
+        CoreServices type identifiers API) does not map wildcard MIME types.
+
+        In order to restrict `UIDocumentPickerViewController` to the types of
+        files specified in the accept attribute, all MIME type strings are
+        converted into `UTType`s. However, when attempting to retrieve a UTType
+        for "*/*", the system dynamically generates a type, since the string is
+        unregistered. Then, since no files conform to the dynamic type, all
+        files in the document picker are greyed out, and the user is unable
+        to access the "Photo Library" and "Take Photo or Video" items.
+
+        To fix, return an empty set of type identifiers whenever "*/*" is
+        present in the list of MIME types, ensuring there are no restrictions
+        on the types of files that can be selected.
+
+        Note that the same issue does not occur on macOS, since all MIME types
+        are mapped to a set of file extensions, rather than UTTypes. Furthermore,
+        on macOS, the embedding app, not WebKit, is responsible for displaying
+        the file picker.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+
 2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove some iOS-specific compile-time guards that are no longer needed
