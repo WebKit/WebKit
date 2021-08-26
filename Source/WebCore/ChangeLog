@@ -1,3 +1,19 @@
+2021-08-26  Alan Bujtas  <zalan@apple.com>
+
+        [IFC] Use the inline run list in showRenderTree to print inline level box information
+        https://bugs.webkit.org/show_bug.cgi?id=228070
+
+        Reviewed by Antti Koivisto.
+
+        showInlineTreeAndRuns is the last client of the InlineFormattingState::lineBoxes.
+        Let's use the inline run list instead to print the inline level box geometry information. It provides slightly less
+        information than before but it is sufficient for now.
+
+        This is in preparation for keeping the inline box structure private to the layout code.
+
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::showInlineTreeAndRuns):
+
 2021-08-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [FreeType] Avoid yucky strong alias computations in font fallback code
