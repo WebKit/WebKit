@@ -1,3 +1,13 @@
+2021-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Crash in GraphicsContextGLOpenGL::reshapeDisplayBufferBacking
+        https://bugs.webkit.org/show_bug.cgi?id=229309
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/canvas/xr-compatible-crash.html: Added.
+        * fast/canvas/xr-compatible-crash-expected.txt: Added.
+
 2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Unable to select files when the accept attribute is set to "*/*"
