@@ -1,5 +1,17 @@
 2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Segfault in stress/typedarray-every.js (32bit)
+        https://bugs.webkit.org/show_bug.cgi?id=229546
+
+        Reviewed by Saam Barati.
+
+        ARMv7 does not have enough registers. Adding workaround by using getEffectiveAddress.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+
+2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DataIC should not embed StructureStubInfo pointer
         https://bugs.webkit.org/show_bug.cgi?id=229541
 
