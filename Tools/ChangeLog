@@ -1,3 +1,20 @@
+2021-08-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] compile-webkit-without-patch failed, but bot ran layout tests anyway and blamed the patch for a pre-existing failure
+        https://bugs.webkit.org/show_bug.cgi?id=229533
+
+        Reviewed by Jonathan Bedard.
+
+        When the compile-webkit-without-patch step fails, instead of running further layout-tests, retry the build and email
+        bot watcher's. The retried build will hopefully be picked up by other bot eventually. This is similar to what we do
+        in case of other infrastructure issues like kill-old-processes step failure.
+        * CISupport/ews-build/steps.py:
+        (CompileWebKitWithoutPatch.__init__): Added retry_build_on_failure parameter.
+        (CompileWebKitWithoutPatch.evaluateCommand): If build failed unexpectedly, retry it and email bot watchers.
+        (CompileWebKitWithoutPatch.send_email_for_unexpected_build_failure):
+        (ReRunWebKitTests.evaluateCommand):
+        (ReRunAPITests.evaluateCommand):
+
 2021-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Add to run-webkit-tests a --expect-pass argument as a synonym for --force

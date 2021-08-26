@@ -1632,6 +1632,10 @@ class CompileWebKitWithoutPatch(CompileWebKit):
     name = 'compile-webkit-without-patch'
     haltOnFailure = False
 
+    def __init__(self, retry_build_on_failure=False, **kwargs):
+        self.retry_build_on_failure = retry_build_on_failure
+        super(CompileWebKitWithoutPatch, self).__init__(**kwargs)
+
     def doStepIf(self, step):
         return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedTests')
 
@@ -1639,7 +1643,26 @@ class CompileWebKitWithoutPatch(CompileWebKit):
         return not self.doStepIf(step)
 
     def evaluateCommand(self, cmd):
-        return shell.Compile.evaluateCommand(self, cmd)
+        rc = shell.Compile.evaluateCommand(self, cmd)
+        if rc == FAILURE and self.retry_build_on_failure:
+            message = 'Unable to build WebKit without patch, retrying build'
+            self.descriptionDone = message
+            self.send_email_for_unexpected_build_failure()
+            self.build.buildFinished([message], RETRY)
+        return rc
+
+    def send_email_for_unexpected_build_failure(self):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            email_subject = '{} might be in bad state, unable to build WebKit'.format(worker_name)
+            email_text = '{} might be in bad state. It is unable to build WebKit.'.format(worker_name)
+            email_text += ' Same patch was built successfuly on builder queue previously.\n\nBuild: {}\n\nBuilder: {}'.format(build_url, builder_name)
+            reference = 'build-failure-{}'.format(worker_name)
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, reference)
+        except Exception as e:
+            print('Error in sending email for unexpected build failure: {}'.format(e))
 
 
 class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
@@ -2388,7 +2411,7 @@ class ReRunWebKitTests(RunWebKitTests):
                                                 ExtractTestResults(identifier='rerun'),
                                                 UnApplyPatchIfRequired(),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
-                                                CompileWebKitWithoutPatch(),
+                                                CompileWebKitWithoutPatch(retry_build_on_failure=True),
                                                 ValidatePatch(verifyBugClosed=False, addURLs=False),
                                                 KillOldProcesses(),
                                                 RunWebKitTestsWithoutPatch()])
@@ -2856,7 +2879,7 @@ class ReRunAPITests(RunAPITests):
                 steps_to_add.append(InstallWpeDependencies())
             elif platform == 'gtk':
                 steps_to_add.append(InstallGtkDependencies())
-            steps_to_add.append(CompileWebKitWithoutPatch())
+            steps_to_add.append(CompileWebKitWithoutPatch(retry_build_on_failure=True))
             steps_to_add.append(ValidatePatch(verifyBugClosed=False, addURLs=False))
             steps_to_add.append(KillOldProcesses())
             steps_to_add.append(RunAPITestsWithoutPatch())
