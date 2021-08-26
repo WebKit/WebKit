@@ -218,14 +218,14 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier
     return policyListenerID;
 }
 
-uint64_t WebFrame::setUpWillSubmitFormListener(CompletionHandler<void()>&& completionHandler)
+FormSubmitListenerIdentifier WebFrame::setUpWillSubmitFormListener(CompletionHandler<void()>&& completionHandler)
 {
-    uint64_t identifier = generateListenerID();
+    auto identifier = FormSubmitListenerIdentifier::generate();
     m_willSubmitFormCompletionHandlers.set(identifier, WTFMove(completionHandler));
     return identifier;
 }
 
-void WebFrame::continueWillSubmitForm(uint64_t listenerID)
+void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
 {
     Ref<WebFrame> protectedThis(*this);
     if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))

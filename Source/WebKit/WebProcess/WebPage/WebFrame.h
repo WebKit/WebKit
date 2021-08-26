@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "DownloadID.h"
+#include "IdentifierTypes.h"
 #include "PolicyDecision.h"
 #include "ShareableBitmap.h"
 #include "TransactionID.h"
@@ -89,8 +90,8 @@ public:
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
-    uint64_t setUpWillSubmitFormListener(CompletionHandler<void()>&&);
-    void continueWillSubmitForm(uint64_t);
+    FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
+    void continueWillSubmitForm(FormSubmitListenerIdentifier);
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
@@ -207,7 +208,7 @@ private:
     };
     HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
 
-    HashMap<uint64_t, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
+    HashMap<FormSubmitListenerIdentifier, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
     std::optional<DownloadID> m_policyDownloadID;
 
     WeakPtr<LoadListener> m_loadListener;

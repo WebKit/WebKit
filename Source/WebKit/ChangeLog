@@ -1,3 +1,31 @@
+2021-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Replace the uint64_t used to identify form submits with a strongly typed identifier
+        https://bugs.webkit.org/show_bug.cgi?id=229513
+
+        Reviewed by Alex Christensen.
+
+        Introduce FormSubmitListenerIdentifier and use it in place of a uint64_t.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/IdentifierTypes.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willSubmitForm):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::setUpWillSubmitFormListener):
+        (WebKit::WebFrame::continueWillSubmitForm):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::continueWillSubmitForm):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Visual Look Up animates from the wrong rect when the web view is scaled

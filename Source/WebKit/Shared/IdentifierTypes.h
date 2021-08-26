@@ -29,6 +29,9 @@
 
 namespace WebKit {
 
+enum FormSubmitListenerIdentifierType { };
+using FormSubmitListenerIdentifier = ObjectIdentifier<FormSubmitListenerIdentifierType>;
+
 enum PageGroupIdentifierType { };
 using PageGroupIdentifier = ObjectIdentifier<PageGroupIdentifierType>;
 
