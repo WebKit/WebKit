@@ -1,3 +1,40 @@
+2021-08-25  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281500. rdar://problem/82350929
+
+    (r281473) stress/for-in-has-own-property-shouldnt-flush-registers.js failing on Debug
+    https://bugs.webkit.org/show_bug.cgi?id=229448
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    Fix typo in test name.
+    
+    * stress/for-in-in-by-val-should-flush-registers.js: Renamed from JSTests/stress/for-in-in-by-val-shouldnt-flush-registers.js.
+    
+    Source/JavaScriptCore:
+    
+    Add missing exception checks.
+    
+    * dfg/DFGOperations.cpp:
+    (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281500 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-24  Keith Miller  <keith_miller@apple.com>
+
+            (r281473) stress/for-in-has-own-property-shouldnt-flush-registers.js failing on Debug
+            https://bugs.webkit.org/show_bug.cgi?id=229448
+
+            Reviewed by Mark Lam.
+
+            Add missing exception checks.
+
+            * dfg/DFGOperations.cpp:
+            (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+
 2021-08-23  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r281473. rdar://problem/82262986
