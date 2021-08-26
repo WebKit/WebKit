@@ -2089,7 +2089,7 @@ class KillOldProcesses(shell.Compile):
     name = 'kill-old-processes'
     description = ['killing old processes']
     descriptionDone = ['Killed old processes']
-    command = ['python', 'Tools/CISupport/kill-old-processes', 'buildbot']
+    command = ['python3', 'Tools/CISupport/kill-old-processes', 'buildbot']
 
     def __init__(self, **kwargs):
         super(KillOldProcesses, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)

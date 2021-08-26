@@ -237,7 +237,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/CISupport/kill-old-processes', 'buildbot'],
+                command=['python3', './Tools/CISupport/kill-old-processes', 'buildbot'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='killed old processes')
@@ -250,7 +250,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/CISupport/kill-old-processes', 'buildbot'],
+                command=['python3', './Tools/CISupport/kill-old-processes', 'buildbot'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )

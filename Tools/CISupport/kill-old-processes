@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (C) 2010 Apple Inc.  All rights reserved.
 # Copyright (C) 2011 Google Inc.  All rights reserved.
 #
@@ -51,6 +51,8 @@ def removeOrphanShmSegments():
 def orphanedShmSegmentsByUser(username):
     ret = []
     output = subprocess.check_output(["ipcs", "-m"])
+    if type(output) == bytes:
+        output = output.decode('utf-8', errors='strict')
     lines = output.split('\n')
     if len(lines) < 3:
         return []

@@ -171,7 +171,7 @@ class KillOldProcesses(shell.Compile):
     name = "kill-old-processes"
     description = ["killing old processes"]
     descriptionDone = ["killed old processes"]
-    command = ["python", "./Tools/CISupport/kill-old-processes", "buildbot"]
+    command = ["python3", "./Tools/CISupport/kill-old-processes", "buildbot"]
 
 
 class TriggerCrashLogSubmission(shell.Compile):

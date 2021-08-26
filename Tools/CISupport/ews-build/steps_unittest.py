@@ -816,7 +816,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(KillOldProcesses())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/CISupport/kill-old-processes', 'buildbot'],
+                        command=['python3', 'Tools/CISupport/kill-old-processes', 'buildbot'],
                         logEnviron=False,
                         timeout=120,
                         )
@@ -829,7 +829,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(KillOldProcesses())
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python', 'Tools/CISupport/kill-old-processes', 'buildbot'],
+                        command=['python3', 'Tools/CISupport/kill-old-processes', 'buildbot'],
                         logEnviron=False,
                         timeout=120,
                         )
