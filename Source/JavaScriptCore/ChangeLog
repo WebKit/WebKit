@@ -1,3 +1,14 @@
+2021-08-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [AppleWin] JSC build failure
+        https://bugs.webkit.org/show_bug.cgi?id=229578
+
+        Reviewed by Don Olmstead.
+
+        Add new build dependency between LLIntOffsetsExtractor and JSCBuiltins targets.
+
+        * CMakeLists.txt:
+
 2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Segfault in stress/typedarray-every.js (32bit)
