@@ -634,11 +634,6 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
     if (!injectedBundle.isTestRunning())
         return;
 
-    // When process swapping on resource response, the previous process's load gets interrupted by policy decision
-    // but we don't want to interrupt the test.
-    if (WKErrorGetErrorCode(error) == kWKErrorCodeFrameLoadInterruptedByPolicyChange && WKBundleFrameIsMainFrame(frame) && !m_didCommitLoadForMainFrame)
-        return;
-
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks()) {
         dumpLoadEvent(frame, "didFailProvisionalLoadWithError");
         auto code = WKErrorGetErrorCode(error);
@@ -656,9 +651,6 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
-
-    if (WKBundleFrameIsMainFrame(frame))
-        m_didCommitLoadForMainFrame = true;
 
     if (!injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
         return;

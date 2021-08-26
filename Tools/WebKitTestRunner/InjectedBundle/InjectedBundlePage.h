@@ -180,7 +180,6 @@ private:
 
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
-    bool m_didCommitLoadForMainFrame { false };
 };
 
 } // namespace WTR

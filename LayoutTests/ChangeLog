@@ -1,3 +1,13 @@
+2021-08-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=229532
+        <rdar://problem/82370692>
+
+        Unreviewed, unskip test that should not longer be timing out.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281616.

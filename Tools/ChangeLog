@@ -1,3 +1,17 @@
+2021-08-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=229532
+        <rdar://problem/82370692>
+
+        Unreviewed, partial revert of r281516 to drop the changes to WebKitTestRunner's injected bundle
+        as I suspect this is what caused this regression. The WKTR changes were made to try and address
+        the flakiness of imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html
+        but it turns out that the test is still flaky with the WKTR change.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame):
+
 2021-08-26  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Use Python 3 (Part 2)
