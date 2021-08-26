@@ -1,3 +1,12 @@
+2021-08-26  Eric Hutchison  <ehutchison@apple.com>
+
+        [iOS] 3 service worker tests failing.
+        https://bugs.webkit.org/show_bug.cgi?id=229573.
+
+        Unreviewed test gardening.
+
+        * platform/ios-14/TestExpectations:
+
 2021-08-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out
