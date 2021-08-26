@@ -912,7 +912,7 @@ void UserMediaPermissionRequestManagerProxy::watchdogTimerFired()
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& UserMediaPermissionRequestManagerProxy::logChannel() const
 {
-    return WebKit2LogWebRTC;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, WebRTC);
 }
 
 const Logger& UserMediaPermissionRequestManagerProxy::logger() const

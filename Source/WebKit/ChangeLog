@@ -1,3 +1,42 @@
+2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up logging #includes
+        https://bugs.webkit.org/show_bug.cgi?id=229547
+
+        Reviewed by Eric Carlson.
+
+        It's actually harmful to include the wrong framework's Logging.h file,
+        because they conflict with each other. You'll end up with errors like
+        Unknown symbol "WebCore::WebKit2LogLayout".
+
+        No new tests because there is no behavior change.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::logChannel const):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::logChannel):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::logChannel const):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::logChannel const):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::logChannel const):
+        * UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp:
+        (WebKit::logChannel):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::logChannel const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::logChannel const):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::logChannel const):
+        * WebProcess/GPU/media/RemoteAudioSourceProvider.cpp:
+        (WebKit::RemoteAudioSourceProvider::logChannel const):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::logChannel const):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::logChannel const):
+
 2021-08-26  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGL refers to GraphicsContextGLOpenGL::SimulatedEventForTesting

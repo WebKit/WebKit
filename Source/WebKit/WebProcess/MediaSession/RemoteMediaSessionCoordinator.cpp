@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include "Logging.h"
 #include "RemoteMediaSessionCoordinatorMessages.h"
 #include "RemoteMediaSessionCoordinatorProxyMessages.h"
 #include "WebPage.h"
@@ -226,7 +227,7 @@ void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessio
 
 WTFLogChannel& RemoteMediaSessionCoordinator::logChannel() const
 {
-    return LogMedia;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 
 

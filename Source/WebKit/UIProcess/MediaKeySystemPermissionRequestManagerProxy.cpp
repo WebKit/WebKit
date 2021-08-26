@@ -51,7 +51,7 @@ static const char* logClassName()
 
 static WTFLogChannel& logChannel()
 {
-    return WebKit2LogEME;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, EME);
 }
 
 const Logger& MediaKeySystemPermissionRequestManagerProxy::logger() const

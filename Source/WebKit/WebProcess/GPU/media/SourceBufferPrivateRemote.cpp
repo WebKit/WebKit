@@ -474,7 +474,7 @@ uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBufferPrivateRemote::logChannel() const
 {
-    return LogMedia;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 #endif
 

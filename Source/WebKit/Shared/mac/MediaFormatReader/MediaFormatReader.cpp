@@ -28,12 +28,12 @@
 
 #if ENABLE(WEBM_FORMAT_READER)
 
+#include "Logging.h"
 #include "MediaTrackReader.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/ContentType.h>
 #include <WebCore/Document.h>
 #include <WebCore/InbandTextTrackPrivate.h>
-#include <WebCore/Logging.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/VideoTrackPrivate.h>
@@ -55,7 +55,11 @@ static const void* nextLogIdentifier()
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
-static WTFLogChannel& logChannel() { return WebCore::LogMedia; }
+static WTFLogChannel& logChannel()
+{
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
+}
+
 static const char* logClassName() { return "MediaFormatReader"; }
 
 class AbortAction {

@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBM_FORMAT_READER)
 
+#include "Logging.h"
 #include "MediaTrackReader.h"
-#include <WebCore/Logging.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
@@ -399,7 +399,7 @@ OSStatus MediaSampleCursor::getPlayableHorizon(CMTime* playableHorizon) const
 
 WTFLogChannel& MediaSampleCursor::logChannel() const
 {
-    return LogMedia;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 
 } // namespace WebKit

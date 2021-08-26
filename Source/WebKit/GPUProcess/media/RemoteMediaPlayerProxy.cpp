@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "LayerHostingContext.h"
+#include "Logging.h"
 #include "MediaPlayerPrivateRemoteMessages.h"
 #include "RemoteAudioSourceProviderProxy.h"
 #include "RemoteAudioTrackProxy.h"
@@ -48,7 +49,6 @@
 #include "TrackPrivateRemoteConfiguration.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LayoutRect.h>
-#include <WebCore/Logging.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
@@ -1090,7 +1090,7 @@ void RemoteMediaPlayerProxy::pauseAtHostTime(MonotonicTime time)
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 {
-    return WebCore::LogMedia;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 #endif
 

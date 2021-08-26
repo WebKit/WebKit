@@ -1396,7 +1396,7 @@ void MediaPlayerPrivateRemote::getRawCookies(const URL& url, WebCore::MediaPlaye
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 {
-    return LogMedia;
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 #endif
 
