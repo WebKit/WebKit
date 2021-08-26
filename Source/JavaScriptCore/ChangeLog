@@ -1,3 +1,19 @@
+2021-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r281513?): [ JSC Catalina+ Debug ] 16 stress/intl-enumeration.js (JSC Tests) are flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=229526
+
+        Reviewed by Mark Lam.
+
+        Fix debug JSC test failures by using RELEASE_AND_RETURN.
+
+        * runtime/IntlObject.cpp:
+        (JSC::availableCalendars):
+        (JSC::availableCollations):
+        (JSC::availableCurrencies):
+        (JSC::availableNumberingSystems):
+        (JSC::availableTimeZones):
+
 2021-08-25  Yijia Huang  <yijia_huang@apple.com>
 
         [ARM64] Fix pre-index address mode

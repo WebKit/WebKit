@@ -1616,7 +1616,7 @@ static JSArray* availableCalendars(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
 
-    return createArrayFromStringVector(globalObject, WTFMove(elements));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availablecollations
@@ -1663,7 +1663,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
 
-    return createArrayFromStringVector(globalObject, WTFMove(elements));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availablecurrencies
@@ -1704,7 +1704,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
 
-    return createArrayFromStringVector(globalObject, WTFMove(elements));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availablenumberingsystems
@@ -1745,7 +1745,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
 
-    return createArrayFromStringVector(globalObject, WTFMove(elements));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-canonicalizetimezonename
@@ -1804,7 +1804,7 @@ static JSArray* availableTimeZones(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
 
-    return createArrayFromStringVector(globalObject, WTFMove(elements));
+    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availableunits
