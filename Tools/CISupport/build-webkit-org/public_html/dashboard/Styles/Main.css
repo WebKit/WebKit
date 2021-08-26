@@ -233,7 +233,7 @@ table.queue-grid tr.platform.tvos-15 img.logo {
 
 table.queue-grid tr.platform.watchos-simulator-7 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: url(../Images/WatchOS7Simulator.png);
+    content: url(../Images/WatchOSSimulator7.png);
 }
 
 table.queue-grid tr.platform.watchos-7 img.logo {

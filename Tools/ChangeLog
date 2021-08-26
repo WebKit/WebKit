@@ -1,3 +1,13 @@
+2021-08-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        watchOS simulator image missing on bot watchers dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=229587
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.watchos-simulator-7 img.logo):
+
 2021-08-26  Aakash Jain  <aakash_jain@apple.com>
 
         [EWS] compile-webkit-without-patch failed, but bot ran layout tests anyway and blamed the patch for a pre-existing failure
