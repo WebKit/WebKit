@@ -9503,8 +9503,12 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     if (!event)
         return;
 
-    if (event->type() == WebKit::WebEvent::MouseDown)
+    if (event->type() == WebKit::WebEvent::MouseDown) {
         _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+
+        if (auto lastMouseLocation = gestureRecognizer.lastMouseLocation)
+            _lastInteractionLocation = *lastMouseLocation;
+    }
 
     if (event->type() == WebKit::WebEvent::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
         [self.window makeKeyWindow];

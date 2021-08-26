@@ -1,3 +1,25 @@
+2021-08-26  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Photo picker appears at incorrect locations when opened using a trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=229568
+        rdar://80268735
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS, file inputs that accept photos give the user the option to
+        select from a photo picker rather than a standard document picker.
+        The photo picker is presented as a popover, and uses the content
+        view's `lastInteractionLocation` to determine the source rect.
+        However, `lastInteractionLocation` is not updated when mouse events
+        are recognized, leading to the popover being presented at the location
+        of the most recent tap / long press / touch event.
+
+        To fix, ensure `lastInteractionLocation` is updated when a mouse down
+        event is recognized.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView mouseGestureRecognizerChanged:]):
+
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clean up logging #includes
