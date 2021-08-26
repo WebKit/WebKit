@@ -146,57 +146,55 @@ TEST(_WKActivatedElementInfo, InfoForLinkAroundImage)
 TEST(_WKActivatedElementInfo, InfoForRotatedImage)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"img-with-rotated-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
+    auto imagePixels = [](CGImageRef image) -> Vector<unsigned> {
+        static const size_t bytesPerPixel = 4;
+        static const size_t bitsPerComponent = 8;
+        size_t width = CGImageGetWidth(image);
+        size_t height = CGImageGetHeight(image);
+        size_t bytesPerRow = bytesPerPixel * width;
 
-    __block bool finished = false;
-    [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
-        static const unsigned yellow = 0xFFFFFF00;
-        static const unsigned red = 0xFFF51900;
-        static const unsigned green = 0xFF278000;
-        static const unsigned blue = 0xFF0000FF;
+        static_assert(bytesPerPixel == sizeof(unsigned));
+        Vector<unsigned> pixels(height * width);
 
-        auto imagePixels = [](CGImageRef image) -> Vector<unsigned> {
-            static const size_t bytesPerPixel = 4;
-            static const size_t bitsPerComponent = 8;
-            size_t width = CGImageGetWidth(image);
-            size_t height = CGImageGetHeight(image);
-            size_t bytesPerRow = bytesPerPixel * width;
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+        RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(pixels.data(), width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little));
 
-            static_assert(bytesPerPixel == sizeof(unsigned));
-            Vector<unsigned> pixels(height * width);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, width, height), image);
+        return pixels;
+    };
 
-            RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-            RetainPtr<CGContextRef> context = adoptCF(CGBitmapContextCreate(pixels.data(), width, height, bitsPerComponent, bytesPerRow, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGImageByteOrder32Little));
+    auto indexOf = [&](UIImage *image, unsigned x, unsigned y) -> unsigned {
+        return y * image.size.width + x;
+    };
 
-            CGContextDrawImage(context.get(), CGRectMake(0, 0, width, height), image);
-            return pixels;
-        };
+    [webView synchronouslyLoadHTMLString:@"<body><img src='test.jpg'></body>"];
+    RetainPtr originalImageInfo = [webView activatedElementAtPosition:CGPointMake(50, 50)];
+    RetainPtr originalImage = [originalImageInfo image];
+    auto originalImagePixels = imagePixels([originalImage CGImage]);
 
-        auto indexOf = [&](unsigned x, unsigned y) -> unsigned {
-            return y * elementInfo.image.size.width + x;
-        };
+    unsigned green = originalImagePixels[indexOf(originalImage.get(), 0, 0)];
+    unsigned yellow = originalImagePixels[indexOf(originalImage.get(), [originalImage size].width - 1, 0)];
+    unsigned blue = originalImagePixels[indexOf(originalImage.get(), 0, [originalImage size].height - 1)];
+    unsigned red = originalImagePixels[indexOf(originalImage.get(), [originalImage size].width - 1, [originalImage size].height - 1)];
 
-        auto pixels = imagePixels(elementInfo.image.CGImage);
+    [webView synchronouslyLoadHTMLString:@"<body><img src='exif-orientation-8-llo.jpg'></body>"];
+    RetainPtr rotatedImageInfo = [webView activatedElementAtPosition:CGPointMake(50, 50)];
+    RetainPtr rotatedImage = [rotatedImageInfo image];
 
-        EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeImage);
-        EXPECT_WK_STREQ(elementInfo.imageURL.lastPathComponent, "exif-orientation-8-llo.jpg");
-        EXPECT_NOT_NULL(elementInfo.image);
-        EXPECT_EQ(elementInfo.boundingRect.size.width, 50);
-        EXPECT_EQ(elementInfo.boundingRect.size.height, 100);
-        EXPECT_EQ(elementInfo.image.size.width, 50);
-        EXPECT_EQ(elementInfo.image.size.height, 100);
+    auto rotatedImagePixels = imagePixels([rotatedImage CGImage]);
 
-        EXPECT_EQ(pixels[indexOf(0, 0)], yellow);
-        EXPECT_EQ(pixels[indexOf(elementInfo.image.size.width - 1, 0)], red);
-        EXPECT_EQ(pixels[indexOf(0, elementInfo.image.size.height - 1)], green);
-        EXPECT_EQ(pixels[indexOf(elementInfo.image.size.width - 1, elementInfo.image.size.height - 1)], blue);
+    EXPECT_TRUE([rotatedImageInfo type] == _WKActivatedElementTypeImage);
+    EXPECT_WK_STREQ([rotatedImageInfo imageURL].lastPathComponent, "exif-orientation-8-llo.jpg");
+    EXPECT_NOT_NULL(rotatedImage.get());
+    EXPECT_EQ([rotatedImageInfo boundingRect].size.width, 50);
+    EXPECT_EQ([rotatedImageInfo boundingRect].size.height, 100);
+    EXPECT_EQ([rotatedImage size].width, 50);
+    EXPECT_EQ([rotatedImage size].height, 100);
 
-        finished = true;
-    }];
-
-    TestWebKitAPI::Util::run(&finished);
+    EXPECT_EQ(rotatedImagePixels[indexOf(rotatedImage.get(), 0, 0)], yellow);
+    EXPECT_EQ(rotatedImagePixels[indexOf(rotatedImage.get(), [rotatedImage size].width - 1, 0)], red);
+    EXPECT_EQ(rotatedImagePixels[indexOf(rotatedImage.get(), 0, [rotatedImage size].height - 1)], green);
+    EXPECT_EQ(rotatedImagePixels[indexOf(rotatedImage.get(), [rotatedImage size].width - 1, [rotatedImage size].height - 1)], blue);
 }
 
 TEST(_WKActivatedElementInfo, InfoForBlank)

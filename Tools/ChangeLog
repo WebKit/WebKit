@@ -1,3 +1,25 @@
+2021-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        TestWebKitAPI._WKActivatedElementInfo.InfoForRotatedImage is failing on iOS 15
+        https://bugs.webkit.org/show_bug.cgi?id=229531
+        rdar://82100466
+
+        Reviewed by Said Abou-Hallawa.
+
+        Due to changes in underlying system frameworks in iOS 15, the red "corner" of the rotated image in this test now
+        ends up with a color of 0xFFF51800 instead of 0xFFF51900. Resolve this by refactoring the test so that it's
+        robust against these kinds of minute differences.
+
+        To achieve this, we first run the test over a version of the test image without EXIF rotation data (test.jpg) to
+        measure the expected values of the red, green, yellow and blue corners; we then verify that these color values
+        are present in the corresponding rotated corners of the image with EXIF rotation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/img-with-rotated-image.html: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/test.jpg: Added.
+
 2021-08-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r281516): [AppleSilicon WK2] fast/loader/reload-zero-byte-plugin.html is timing out

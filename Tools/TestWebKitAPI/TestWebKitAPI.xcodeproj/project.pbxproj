@@ -559,7 +559,6 @@
 		71E88C4124B5299C00665160 /* ShareSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 71E88C4024B5299C00665160 /* ShareSheetTests.mm */; };
 		71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 71E88C4324B533EC00665160 /* img-with-base64-url.html */; };
 		725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */; };
-		7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */; };
 		7283A9D222FB1E0600B21C7D /* exif-orientation-8-llo.jpg in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */; };
 		73BD731823A846500020F450 /* DisplayName.mm in Sources */ = {isa = PBXBuildFile; fileRef = 73BD731723A846500020F450 /* DisplayName.mm */; };
 		751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */; };
@@ -1238,6 +1237,7 @@
 		F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30EB1ED28619000482E1 /* apple.gif */; };
 		F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */; };
 		F46BD56924870643008282D6 /* dragstart-data.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46BD5682487062D008282D6 /* dragstart-data.html */; };
+		F46D43AB26D7092800969E5E /* test.jpg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46D43AA26D7090300969E5E /* test.jpg */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
 		F47DFB2621A878DF00021FB6 /* data-detectors.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47DFB2421A8704A00021FB6 /* data-detectors.html */; };
 		F4811E5921940BDE00A5E0FD /* WKWebViewEditActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */; };
@@ -1541,7 +1541,6 @@
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
 				3128A8152376413300D90D40 /* image.html in Copy Resources */,
 				71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */,
-				7283A9D022FA754900B21C7D /* img-with-rotated-image.html in Copy Resources */,
 				49897D6C241FE9E400ECF153 /* in-app-browser-privacy-local-file.html in Copy Resources */,
 				4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */,
 				935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */,
@@ -1724,6 +1723,7 @@
 				313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */,
 				CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */,
 				C95984F71E36BCEF002C0D45 /* test-without-audio-track.mp4 in Copy Resources */,
+				F46D43AB26D7092800969E5E /* test.jpg in Copy Resources */,
 				524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */,
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
 				5C7101C725DD98B600686200 /* test_print.pdf in Copy Resources */,
@@ -2436,7 +2436,6 @@
 		71E88C4024B5299C00665160 /* ShareSheetTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareSheetTests.mm; sourceTree = "<group>"; };
 		71E88C4324B533EC00665160 /* img-with-base64-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "img-with-base64-url.html"; sourceTree = "<group>"; };
 		725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AdditionalSupportedImageTypes.html; sourceTree = "<group>"; };
-		7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "img-with-rotated-image.html"; sourceTree = "<group>"; };
 		7283A9D122FB1D9700B21C7D /* exif-orientation-8-llo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "exif-orientation-8-llo.jpg"; sourceTree = "<group>"; };
 		73BD731723A846500020F450 /* DisplayName.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayName.mm; sourceTree = "<group>"; };
 		751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseTrackerTest.mm; sourceTree = "<group>"; };
@@ -3100,6 +3099,7 @@
 		F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "rich-and-plain-text.html"; sourceTree = "<group>"; };
 		F469FB231F01803500401539 /* contenteditable-and-target.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-and-target.html"; sourceTree = "<group>"; };
 		F46BD5682487062D008282D6 /* dragstart-data.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dragstart-data.html"; sourceTree = "<group>"; };
+		F46D43AA26D7090300969E5E /* test.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = test.jpg; sourceTree = "<group>"; };
 		F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-page-contenteditable.html"; sourceTree = "<group>"; };
 		F47D30EB1ED28619000482E1 /* apple.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = apple.gif; sourceTree = "<group>"; };
 		F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gif-and-file-input.html"; sourceTree = "<group>"; };
@@ -4070,7 +4070,6 @@
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
 				3128A814237640FD00D90D40 /* image.html */,
-				7283A9CE22FA6BBE00B21C7D /* img-with-rotated-image.html */,
 				49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */,
 				4971B1172451F2780096994D /* incorrectCreateTableSchema.db */,
 				934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */,
@@ -4181,6 +4180,7 @@
 				9BD6D39E1F7B201E00BD4962 /* sunset-in-cupertino-600px.jpg */,
 				31B76E4423299BA3007FED2C /* system-preview-trigger.html */,
 				313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */,
+				F46D43AA26D7090300969E5E /* test.jpg */,
 				2E9896141D8F092B00739892 /* text-and-password-inputs.html */,
 				F4CD74C520FDACF500DE3794 /* text-with-async-script.html */,
 				F44C7A0420FAAE320014478C /* text-with-deferred-script.html */,
