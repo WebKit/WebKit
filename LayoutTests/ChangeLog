@@ -1,3 +1,12 @@
+2021-08-26  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout().
+        https://bugs.webkit.org/show_bug.cgi?id=229580.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-26  Eric Hutchison  <ehutchison@apple.com>
 
         REGRESSION (281486?):[BigSur wk2 Debug] http/tests/loading/preload-img-test.html is flaky failing.

@@ -942,6 +942,9 @@ webkit.org/b/209479 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer
 
 webkit.org/b/209480 [ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Pass Timeout ]
 
+webkit.org/b/229580 [ Debug ] webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Pass Crash ]
+webkit.org/b/229580 [ Debug ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Pass Crash ]
+
 webkit.org/b/208825 [ Debug ] inspector/script-profiler/event-type-Microtask.html [ Pass Failure ]
 
 webkit.org/b/209180 inspector/script-profiler/event-type-Other.html [ Pass Failure ]
