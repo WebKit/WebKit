@@ -335,7 +335,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     background-image: url(../Images/GoToArrow.svg#selected-active);
 }
 
-.contextual-documentation-button {
+.css-documentation-button {
     -webkit-appearance: none;
     padding: 0;
     margin: 0;
@@ -350,7 +350,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     vertical-align: -2px;
 }
 
-.contextual-documentation-button:active {
+.css-documentation-button:active {
     background-image: url(../Images/InfoIcon.svg#active);
 }
 
@@ -615,7 +615,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
         filter: unset;
     }
 
-    .contextual-documentation-button {
+    .css-documentation-button {
         filter: invert();
     }
 

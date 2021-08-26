@@ -43,7 +43,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._contentElement = null;
         this._nameElement = null;
         this._valueElement = null;
-        this._contextualDocumentationButton = null;
+        this._cssDocumentationButton = null;
         this._jumpToEffectivePropertyButton = null;
 
         this._nameTextField = null;
@@ -51,7 +51,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._selected = false;
         this._hasInvalidVariableValue = false;
-        this._contextualDocumentationPopover = null;
+        this._cssDocumentationPopover = null;
 
         this.update();
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
@@ -217,7 +217,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         } else
             this._contentElement.append(" */");
 
-        this._addContextualDocumentationButton();
+        this._addCSSDocumentationButton();
 
         if (!this._property.implicit && this._property.ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed && !this._property.isShorthand) {
             let effectiveProperty = this._property.ownerStyle.nodeStyles.effectivePropertyForName(this._property.name);
@@ -389,7 +389,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!isEditingName && !willRemoveProperty)
             this._renderValue(this._property.rawValue);
 
-        this._contextualDocumentationPopover?.dismiss();
+        this._cssDocumentationPopover?.dismiss();
 
         if (direction === "forward") {
             if (isEditingName && !willRemoveProperty) {
@@ -416,7 +416,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     spreadsheetTextFieldDidBlur(textField, event, changed)
     {
-        this._addContextualDocumentationButton();
+        this._addCSSDocumentationButton();
 
         let focusedOutsideThisProperty = event.relatedTarget !== this._nameElement && event.relatedTarget !== this._valueElement;
         if (focusedOutsideThisProperty && (!this._nameTextField.value.trim() || !this._valueTextField.value.trim())) {
@@ -459,7 +459,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     willDismissPopover()
     {
         this._valueElement.classList.remove(WI.Popover.IgnoreAutoDismissClassName);
-        this._contextualDocumentationPopover = null;
+        this._cssDocumentationPopover = null;
     }
 
     // Private
@@ -526,14 +526,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._valueElement.append(...tokens);
     }
 
-    _addContextualDocumentationButton()
+    _addCSSDocumentationButton()
     {
         if (this._hideDocumentation)
             return;
 
-        if (this._contextualDocumentationButton) {
-            this._contextualDocumentationButton.remove();
-            this._contextualDocumentationButton = null;
+        if (this._cssDocumentationButton) {
+            this._cssDocumentationButton.remove();
+            this._cssDocumentationButton = null;
         }
 
         if (this.property.isVariable)
@@ -542,16 +542,16 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!WI.CSSCompletions.cssNameCompletions.isValidPropertyName(this._property.name))
             return;
 
-        if (!ContextualDocumentationDatabase.hasOwnProperty(this._property.name) && !ContextualDocumentationDatabase.hasOwnProperty(this._property.canonicalName))
+        if (!CSSDocumentation.hasOwnProperty(this._property.name) && !CSSDocumentation.hasOwnProperty(this._property.canonicalName))
             return;
 
-        this._contextualDocumentationButton = this._contentElement.appendChild(document.createElement("button"));
-        this._contextualDocumentationButton.className = "contextual-documentation-button";
-        this._contextualDocumentationButton.title = WI.UIString("Click to show documentation", "Click to show documentation @ Contextual Documentation Button", "Tooltip to show purpose of the contextual documentation button");
-        this._contextualDocumentationButton.addEventListener("mousedown", this._handleContextualDocumentationButtonClicked.bind(this));
+        this._cssDocumentationButton = this._contentElement.appendChild(document.createElement("button"));
+        this._cssDocumentationButton.className = "css-documentation-button";
+        this._cssDocumentationButton.title = WI.UIString("Click to show documentation", "Click to show documentation @ CSS Documentation Button", "Tooltip to show purpose of the CSS documentation button");
+        this._cssDocumentationButton.addEventListener("mousedown", this._handleCSSDocumentationButtonClicked.bind(this));
     }
 
-    _handleContextualDocumentationButtonClicked(event)
+    _handleCSSDocumentationButtonClicked(event)
     {
         if (event.button !== 0)
             return;
@@ -562,13 +562,13 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._valueTextField.discardCompletion();
         }
 
-        this._presentContextualDocumentation();
+        this._presentCSSDocumentation();
     }
 
-    _presentContextualDocumentation()
+    _presentCSSDocumentation()
     {
-        this._contextualDocumentationPopover ??= new WI.ContextualDocumentationPopover(this._property, this);
-        this._contextualDocumentationPopover.show(this._nameElement);
+        this._cssDocumentationPopover ??= new WI.CSSDocumentationPopover(this._property, this);
+        this._cssDocumentationPopover.show(this._nameElement);
         if (this._isEditable())
             this._valueElement.classList.add(WI.Popover.IgnoreAutoDismissClassName);
     }

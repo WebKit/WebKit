@@ -1,3 +1,102 @@
+2021-08-26  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r281663. rdar://problem/82411437
+
+    Web Inspector: Rename `ContextualDocumentation*` to `CSSDocumentation` to reduce path length and improve code readability
+    https://bugs.webkit.org/show_bug.cgi?id=229525
+    
+    Reviewed by Devin Rousso.
+    
+    Reduce the length and complexity of naming around the documentation that was added for CSS properties by
+    using `CSSDocumentation` to refer to the feature instead of `ContextualDocumentation`.
+    
+    * Localizations/en.lproj/localizedStrings.js:
+    * Scripts/copy-user-interface-resources.pl:
+    * UserInterface/External/CSSDocumentation/CSSDocumentation.js: Renamed from Source/WebInspectorUI/UserInterface/External/ContextualDocumentationDatabase/ContextualDocumentationDatabase.js.
+    * UserInterface/External/CSSDocumentation/LICENSE: Renamed from Source/WebInspectorUI/UserInterface/External/ContextualDocumentationDatabase/LICENSE.
+    * UserInterface/Main.html:
+    * UserInterface/Views/CSSDocumentationPopover.css: Renamed from Source/WebInspectorUI/UserInterface/Views/ContextualDocumentationPopover.css.
+    * UserInterface/Views/CSSDocumentationPopover.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ContextualDocumentationPopover.js.
+    (WI.CSSDocumentationPopover.prototype._getDocumentationDetails):
+    * UserInterface/Views/ComputedStyleSection.css:
+    (.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .css-documentation-button)):
+    (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .css-documentation-button):
+    (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .css-documentation-button):
+    (.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .contextual-documentation-button)): Deleted.
+    (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .contextual-documentation-button): Deleted.
+    (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .contextual-documentation-button): Deleted.
+    * UserInterface/Views/Main.css:
+    (.css-documentation-button):
+    (.css-documentation-button:active):
+    (@media (prefers-color-scheme: dark) .css-documentation-button):
+    (.contextual-documentation-button): Deleted.
+    (.contextual-documentation-button:active): Deleted.
+    (@media (prefers-color-scheme: dark) .contextual-documentation-button): Deleted.
+    * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+    (.spreadsheet-style-declaration-editor > .property:not(:hover) > .content > .css-documentation-button,):
+    (.spreadsheet-style-declaration-editor > .property:not(:hover) > .content > .contextual-documentation-button,): Deleted.
+    * UserInterface/Views/SpreadsheetStyleProperty.js:
+    (WI.SpreadsheetStyleProperty.prototype.update):
+    (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+    (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+    (WI.SpreadsheetStyleProperty.prototype.willDismissPopover):
+    (WI.SpreadsheetStyleProperty.prototype._addCSSDocumentationButton):
+    (WI.SpreadsheetStyleProperty.prototype._handleCSSDocumentationButtonClicked):
+    (WI.SpreadsheetStyleProperty.prototype._presentCSSDocumentation):
+    (WI.SpreadsheetStyleProperty.prototype._addContextualDocumentationButton): Deleted.
+    (WI.SpreadsheetStyleProperty.prototype._handleContextualDocumentationButtonClicked): Deleted.
+    (WI.SpreadsheetStyleProperty.prototype._presentContextualDocumentation): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281663 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: Rename `ContextualDocumentation*` to `CSSDocumentation` to reduce path length and improve code readability
+            https://bugs.webkit.org/show_bug.cgi?id=229525
+
+            Reviewed by Devin Rousso.
+
+            Reduce the length and complexity of naming around the documentation that was added for CSS properties by
+            using `CSSDocumentation` to refer to the feature instead of `ContextualDocumentation`.
+
+            * Localizations/en.lproj/localizedStrings.js:
+            * Scripts/copy-user-interface-resources.pl:
+            * UserInterface/External/CSSDocumentation/CSSDocumentation.js: Renamed from Source/WebInspectorUI/UserInterface/External/ContextualDocumentationDatabase/ContextualDocumentationDatabase.js.
+            * UserInterface/External/CSSDocumentation/LICENSE: Renamed from Source/WebInspectorUI/UserInterface/External/ContextualDocumentationDatabase/LICENSE.
+            * UserInterface/Main.html:
+            * UserInterface/Views/CSSDocumentationPopover.css: Renamed from Source/WebInspectorUI/UserInterface/Views/ContextualDocumentationPopover.css.
+            * UserInterface/Views/CSSDocumentationPopover.js: Renamed from Source/WebInspectorUI/UserInterface/Views/ContextualDocumentationPopover.js.
+            (WI.CSSDocumentationPopover.prototype._getDocumentationDetails):
+            * UserInterface/Views/ComputedStyleSection.css:
+            (.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .css-documentation-button)):
+            (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .css-documentation-button):
+            (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .css-documentation-button):
+            (.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .contextual-documentation-button)): Deleted.
+            (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .contextual-documentation-button): Deleted.
+            (.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .contextual-documentation-button): Deleted.
+            * UserInterface/Views/Main.css:
+            (.css-documentation-button):
+            (.css-documentation-button:active):
+            (@media (prefers-color-scheme: dark) .css-documentation-button):
+            (.contextual-documentation-button): Deleted.
+            (.contextual-documentation-button:active): Deleted.
+            (@media (prefers-color-scheme: dark) .contextual-documentation-button): Deleted.
+            * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+            (.spreadsheet-style-declaration-editor > .property:not(:hover) > .content > .css-documentation-button,):
+            (.spreadsheet-style-declaration-editor > .property:not(:hover) > .content > .contextual-documentation-button,): Deleted.
+            * UserInterface/Views/SpreadsheetStyleProperty.js:
+            (WI.SpreadsheetStyleProperty.prototype.update):
+            (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+            (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidBlur):
+            (WI.SpreadsheetStyleProperty.prototype.willDismissPopover):
+            (WI.SpreadsheetStyleProperty.prototype._addCSSDocumentationButton):
+            (WI.SpreadsheetStyleProperty.prototype._handleCSSDocumentationButtonClicked):
+            (WI.SpreadsheetStyleProperty.prototype._presentCSSDocumentation):
+            (WI.SpreadsheetStyleProperty.prototype._addContextualDocumentationButton): Deleted.
+            (WI.SpreadsheetStyleProperty.prototype._handleContextualDocumentationButtonClicked): Deleted.
+            (WI.SpreadsheetStyleProperty.prototype._presentContextualDocumentation): Deleted.
+
 2021-08-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: match the undocked tab bar style when docked bottom/side

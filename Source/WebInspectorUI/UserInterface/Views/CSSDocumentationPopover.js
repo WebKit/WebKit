@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ContextualDocumentationPopover = class ContextualDocumentationPopover extends WI.Popover
+WI.CSSDocumentationPopover = class CSSDocumentationPopover extends WI.Popover
 {
     constructor(cssProperty, delegate)
     {
@@ -65,13 +65,13 @@ WI.ContextualDocumentationPopover = class ContextualDocumentationPopover extends
     {
         let propertyName = "";
 
-        if (property.canonicalName in ContextualDocumentationDatabase)
+        if (property.canonicalName in CSSDocumentation)
             propertyName = property.canonicalName;
-        else if (property.name in ContextualDocumentationDatabase)
+        else if (property.name in CSSDocumentation)
             propertyName = property.name;
 
-        let propertyDocumentation = ContextualDocumentationDatabase[propertyName];
-        console.assert(propertyDocumentation, propertyName, ContextualDocumentationDatabase);
+        let propertyDocumentation = CSSDocumentation[propertyName];
+        console.assert(propertyDocumentation, propertyName, CSSDocumentation);
 
         return {
             name: propertyName,
