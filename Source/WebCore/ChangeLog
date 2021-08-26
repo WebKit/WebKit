@@ -1,3 +1,40 @@
+2021-08-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL calls into static GraphicsContextGLOpenGL functions needlessly
+        https://bugs.webkit.org/show_bug.cgi?id=229402
+
+        Reviewed by Kenneth Russell.
+
+        The calls are problematic:
+        - No other call sites than WebGL layer
+        - The functionality is not needed for ANGLE, but present
+        - GraphicsContextGL is now an interface with multiple implementations,
+          GraphicsContextGLOpenGL is just one implementation
+
+        Move the functions into WebGL, inside #if !USE(ANGLE) blocks.
+        From there, they're simpler to move into !ANGLE specific files,
+        if possible.
+
+        This is work towards making it possible to remove ANGLE specific #if
+        blocks from WebGL implementation.
+
+        No new tests, refactor.
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::getClearBitsByAttachmentType):
+        (WebCore::getClearBitsByFormat):
+        (WebCore::isAttachmentComplete):
+        (WebCore::WebGLFramebuffer::initializeAttachments):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::getChannelBitsByFormat):
+        (WebCore::possibleFormatAndTypeForInternalFormat):
+        (WebCore::WebGLRenderingContextBase::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::isTexInternalFormatColorBufferCombinationValid):
+        * platform/graphics/GraphicsContextGL.cpp:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2021-08-26  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] Implement the "sequence" mode in SourceBuffer for the GStreamer ports

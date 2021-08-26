@@ -526,6 +526,127 @@ static bool clip2D(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height,
 
     return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
 }
+
+static uint8_t getChannelBitsByFormat(GCGLenum format)
+{
+    enum class ChannelBits : uint8_t {
+        Red = 1,
+        Green = 2,
+        Blue = 4,
+        Alpha = 8,
+        Depth = 16,
+        Stencil = 32,
+        RGB = Red | Green | Blue,
+        RGBA = RGB | Alpha,
+        DepthStencil = Depth | Stencil,
+    };
+    switch (format) {
+    case GraphicsContextGL::ALPHA:
+        return static_cast<uint8_t>(ChannelBits::Alpha);
+    case GraphicsContextGL::LUMINANCE:
+        return static_cast<uint8_t>(ChannelBits::RGB);
+    case GraphicsContextGL::LUMINANCE_ALPHA:
+        return static_cast<uint8_t>(ChannelBits::RGBA);
+    case GraphicsContextGL::RGB:
+    case GraphicsContextGL::RGB565:
+    case ExtensionsGL::SRGB_EXT:
+        return static_cast<uint8_t>(ChannelBits::RGB);
+    case GraphicsContextGL::RGBA:
+    case GraphicsContextGL::RGBA4:
+    case GraphicsContextGL::RGB5_A1:
+    case ExtensionsGL::SRGB_ALPHA_EXT:
+        return static_cast<uint8_t>(ChannelBits::RGBA);
+    case GraphicsContextGL::DEPTH_COMPONENT16:
+    case GraphicsContextGL::DEPTH_COMPONENT:
+        return static_cast<uint8_t>(ChannelBits::Depth);
+    case GraphicsContextGL::STENCIL_INDEX8:
+        return static_cast<uint8_t>(ChannelBits::Stencil);
+    case GraphicsContextGL::DEPTH_STENCIL:
+        return static_cast<uint8_t>(ChannelBits::DepthStencil);
+    default:
+        return 0;
+    }
+}
+
+static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type)
+{
+#define POSSIBLE_FORMAT_TYPE_CASE(internalFormatMacro, formatMacro, typeMacro) case internalFormatMacro: \
+        format = formatMacro; \
+        type = typeMacro; \
+        break;
+
+    switch (internalFormat) {
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB, GraphicsContextGL::RGB, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::LUMINANCE_ALPHA, GraphicsContextGL::LUMINANCE_ALPHA, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::LUMINANCE, GraphicsContextGL::LUMINANCE, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::ALPHA, GraphicsContextGL::ALPHA, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R8, GraphicsContextGL::RED, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R8_SNORM, GraphicsContextGL::RED, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R16F, GraphicsContextGL::RED, GraphicsContextGL::HALF_FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R32F, GraphicsContextGL::RED, GraphicsContextGL::FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R8UI, GraphicsContextGL::RED_INTEGER, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R8I, GraphicsContextGL::RED_INTEGER, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R16UI, GraphicsContextGL::RED_INTEGER, GraphicsContextGL::UNSIGNED_SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R16I, GraphicsContextGL::RED_INTEGER, GraphicsContextGL::SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R32UI, GraphicsContextGL::RED_INTEGER, GraphicsContextGL::UNSIGNED_INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R32I, GraphicsContextGL::RED_INTEGER, GraphicsContextGL::INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG8, GraphicsContextGL::RG, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG8_SNORM, GraphicsContextGL::RG, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG16F, GraphicsContextGL::RG, GraphicsContextGL::HALF_FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG32F, GraphicsContextGL::RG, GraphicsContextGL::FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG8UI, GraphicsContextGL::RG_INTEGER, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG8I, GraphicsContextGL::RG_INTEGER, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG16UI, GraphicsContextGL::RG_INTEGER, GraphicsContextGL::UNSIGNED_SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG16I, GraphicsContextGL::RG_INTEGER, GraphicsContextGL::SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG32UI, GraphicsContextGL::RG_INTEGER, GraphicsContextGL::UNSIGNED_INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RG32I, GraphicsContextGL::RG_INTEGER, GraphicsContextGL::INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB8, GraphicsContextGL::RGB, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::SRGB8, GraphicsContextGL::RGB, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB565, GraphicsContextGL::RGB, GraphicsContextGL::UNSIGNED_SHORT_5_6_5);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB8_SNORM, GraphicsContextGL::RGB, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::R11F_G11F_B10F, GraphicsContextGL::RGB, GraphicsContextGL::UNSIGNED_INT_10F_11F_11F_REV);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB9_E5, GraphicsContextGL::RGB, GraphicsContextGL::UNSIGNED_INT_5_9_9_9_REV);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB16F, GraphicsContextGL::RGB, GraphicsContextGL::HALF_FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB32F, GraphicsContextGL::RGB, GraphicsContextGL::FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB8UI, GraphicsContextGL::RGB_INTEGER, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB8I, GraphicsContextGL::RGB_INTEGER, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB16UI, GraphicsContextGL::RGB_INTEGER, GraphicsContextGL::UNSIGNED_SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB16I, GraphicsContextGL::RGB_INTEGER, GraphicsContextGL::SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB32UI, GraphicsContextGL::RGB_INTEGER, GraphicsContextGL::UNSIGNED_INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB32I, GraphicsContextGL::RGB_INTEGER, GraphicsContextGL::INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA8, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::SRGB8_ALPHA8, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA8_SNORM, GraphicsContextGL::RGBA, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB5_A1, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_SHORT_5_5_5_1);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA4, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_SHORT_4_4_4_4);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB10_A2, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA16F, GraphicsContextGL::RGBA, GraphicsContextGL::HALF_FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA32F, GraphicsContextGL::RGBA, GraphicsContextGL::FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA8UI, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA8I, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGB10_A2UI, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA16UI, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::UNSIGNED_SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA16I, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA32I, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::RGBA32UI, GraphicsContextGL::RGBA_INTEGER, GraphicsContextGL::UNSIGNED_INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH_COMPONENT16, GraphicsContextGL::DEPTH_COMPONENT, GraphicsContextGL::UNSIGNED_SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH_COMPONENT, GraphicsContextGL::DEPTH_COMPONENT, GraphicsContextGL::UNSIGNED_SHORT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH_COMPONENT24, GraphicsContextGL::DEPTH_COMPONENT, GraphicsContextGL::UNSIGNED_INT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH_COMPONENT32F, GraphicsContextGL::DEPTH_COMPONENT, GraphicsContextGL::FLOAT);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH_STENCIL, GraphicsContextGL::DEPTH_STENCIL, GraphicsContextGL::UNSIGNED_INT_24_8);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH24_STENCIL8, GraphicsContextGL::DEPTH_STENCIL, GraphicsContextGL::UNSIGNED_INT_24_8);
+        POSSIBLE_FORMAT_TYPE_CASE(GraphicsContextGL::DEPTH32F_STENCIL8, GraphicsContextGL::DEPTH_STENCIL, GraphicsContextGL::FLOAT_32_UNSIGNED_INT_24_8_REV);
+        POSSIBLE_FORMAT_TYPE_CASE(ExtensionsGL::SRGB_EXT, ExtensionsGL::SRGB_EXT, GraphicsContextGL::UNSIGNED_BYTE);
+        POSSIBLE_FORMAT_TYPE_CASE(ExtensionsGL::SRGB_ALPHA_EXT, ExtensionsGL::SRGB_ALPHA_EXT, GraphicsContextGL::UNSIGNED_BYTE);
+    default:
+        return false;
+    }
+#undef POSSIBLE_FORMAT_TYPE_CASE
+
+    return true;
+}
+
 #endif
 
 class InspectorScopedShaderProgramHighlight {
@@ -1923,7 +2044,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
     if (clip2D(x, y, width, height, getBoundReadFramebufferWidth(), getBoundReadFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
         GCGLenum format;
         GCGLenum type;
-        if (!GraphicsContextGLOpenGL::possibleFormatAndTypeForInternalFormat(tex->getInternalFormat(target, level), format, type)) {
+        if (!possibleFormatAndTypeForInternalFormat(tex->getInternalFormat(target, level), format, type)) {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "copyTexSubImage2D", "Texture has unknown internal format");
             return;
         }
@@ -6545,8 +6666,8 @@ void WebGLRenderingContextBase::createFallbackBlackTextures1x1()
 
 bool WebGLRenderingContextBase::isTexInternalFormatColorBufferCombinationValid(GCGLenum texInternalFormat, GCGLenum colorBufferFormat)
 {
-    auto need = GraphicsContextGL::getChannelBitsByFormat(texInternalFormat);
-    auto have = GraphicsContextGL::getChannelBitsByFormat(colorBufferFormat);
+    auto need = getChannelBitsByFormat(texInternalFormat);
+    auto have = getChannelBitsByFormat(colorBufferFormat);
     return (need & have) == need;
 }
 

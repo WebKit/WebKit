@@ -1318,11 +1318,6 @@ public:
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 
-    static unsigned getClearBitsByAttachmentType(GCGLenum);
-    static unsigned getClearBitsByFormat(GCGLenum);
-
-    static uint8_t getChannelBitsByFormat(GCGLenum);
-
     struct PixelStoreParams final {
         GCGLint alignment { 4 };
         GCGLint rowLength { 0 };

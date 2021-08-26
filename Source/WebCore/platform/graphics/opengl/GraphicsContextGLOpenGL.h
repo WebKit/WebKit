@@ -524,10 +524,6 @@ public:
     GraphicsContextGLCV* asCV() final;
 #endif
 
-#if !USE(ANGLE)
-    static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGLenum& format, GCGLenum& type);
-#endif // !USE(ANGLE)
-
     static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 
 #if PLATFORM(COCOA)

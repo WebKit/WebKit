@@ -272,34 +272,141 @@ namespace {
         visitor.addOpaqueRoot(m_texture.get());
     }
 
-#if !USE(ANGLE)
-    bool isAttachmentComplete(WebGLFramebuffer::WebGLAttachment* attachedObject, GCGLenum attachment, const char** reason)
-    {
-        ASSERT(attachedObject && attachedObject->isValid());
-        ASSERT(reason);
-        GCGLenum format = attachedObject->getFormat();
-        unsigned need = GraphicsContextGLOpenGL::getClearBitsByAttachmentType(attachment);
-        unsigned have = GraphicsContextGLOpenGL::getClearBitsByFormat(format);
-
-        if ((need & have) != need) {
-            *reason = "attachment type is not correct for attachment";
-            return false;
-        }
-        if (!attachedObject->getWidth() || !attachedObject->getHeight()) {
-            *reason = "attachment has a 0 dimension";
-            return false;
-        }
-        if ((attachment == GraphicsContextGL::DEPTH_ATTACHMENT || attachment == GraphicsContextGL::STENCIL_ATTACHMENT)
-            && format == GraphicsContextGL::DEPTH_STENCIL) {
-          *reason = "attachment DEPTH_STENCIL not allowed on DEPTH or STENCIL attachment";
-          return false;
-        }
-        return true;
-    }
-#endif
-
 } // anonymous namespace
 
+#if !USE(ANGLE)
+static unsigned getClearBitsByAttachmentType(GCGLenum attachment)
+{
+    switch (attachment) {
+    case GraphicsContextGL::COLOR_ATTACHMENT0:
+    case ExtensionsGL::COLOR_ATTACHMENT1_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT2_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT3_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT4_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT5_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT6_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT7_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT8_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT9_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT10_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT11_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT12_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT13_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT14_EXT:
+    case ExtensionsGL::COLOR_ATTACHMENT15_EXT:
+        return GraphicsContextGL::COLOR_BUFFER_BIT;
+    case GraphicsContextGL::DEPTH_ATTACHMENT:
+        return GraphicsContextGL::DEPTH_BUFFER_BIT;
+    case GraphicsContextGL::STENCIL_ATTACHMENT:
+        return GraphicsContextGL::STENCIL_BUFFER_BIT;
+    case GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT:
+        return GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT;
+    default:
+        return 0;
+    }
+}
+
+static unsigned getClearBitsByFormat(GCGLenum format)
+{
+    switch (format) {
+    case GraphicsContextGL::RGB:
+    case GraphicsContextGL::RGBA:
+    case GraphicsContextGL::LUMINANCE_ALPHA:
+    case GraphicsContextGL::LUMINANCE:
+    case GraphicsContextGL::ALPHA:
+    case GraphicsContextGL::R8:
+    case GraphicsContextGL::R8_SNORM:
+    case GraphicsContextGL::R16F:
+    case GraphicsContextGL::R32F:
+    case GraphicsContextGL::R8UI:
+    case GraphicsContextGL::R8I:
+    case GraphicsContextGL::R16UI:
+    case GraphicsContextGL::R16I:
+    case GraphicsContextGL::R32UI:
+    case GraphicsContextGL::R32I:
+    case GraphicsContextGL::RG8:
+    case GraphicsContextGL::RG8_SNORM:
+    case GraphicsContextGL::RG16F:
+    case GraphicsContextGL::RG32F:
+    case GraphicsContextGL::RG8UI:
+    case GraphicsContextGL::RG8I:
+    case GraphicsContextGL::RG16UI:
+    case GraphicsContextGL::RG16I:
+    case GraphicsContextGL::RG32UI:
+    case GraphicsContextGL::RG32I:
+    case GraphicsContextGL::RGB8:
+    case GraphicsContextGL::SRGB8:
+    case GraphicsContextGL::RGB565:
+    case GraphicsContextGL::RGB8_SNORM:
+    case GraphicsContextGL::R11F_G11F_B10F:
+    case GraphicsContextGL::RGB9_E5:
+    case GraphicsContextGL::RGB16F:
+    case GraphicsContextGL::RGB32F:
+    case GraphicsContextGL::RGB8UI:
+    case GraphicsContextGL::RGB8I:
+    case GraphicsContextGL::RGB16UI:
+    case GraphicsContextGL::RGB16I:
+    case GraphicsContextGL::RGB32UI:
+    case GraphicsContextGL::RGB32I:
+    case GraphicsContextGL::RGBA8:
+    case GraphicsContextGL::SRGB8_ALPHA8:
+    case GraphicsContextGL::RGBA8_SNORM:
+    case GraphicsContextGL::RGB5_A1:
+    case GraphicsContextGL::RGBA4:
+    case GraphicsContextGL::RGB10_A2:
+    case GraphicsContextGL::RGBA16F:
+    case GraphicsContextGL::RGBA32F:
+    case GraphicsContextGL::RGBA8UI:
+    case GraphicsContextGL::RGBA8I:
+    case GraphicsContextGL::RGB10_A2UI:
+    case GraphicsContextGL::RGBA16UI:
+    case GraphicsContextGL::RGBA16I:
+    case GraphicsContextGL::RGBA32I:
+    case GraphicsContextGL::RGBA32UI:
+    case ExtensionsGL::SRGB_EXT:
+    case ExtensionsGL::SRGB_ALPHA_EXT:
+        return GraphicsContextGL::COLOR_BUFFER_BIT;
+    case GraphicsContextGL::DEPTH_COMPONENT16:
+    case GraphicsContextGL::DEPTH_COMPONENT24:
+    case GraphicsContextGL::DEPTH_COMPONENT32F:
+    case GraphicsContextGL::DEPTH_COMPONENT:
+        return GraphicsContextGL::DEPTH_BUFFER_BIT;
+    case GraphicsContextGL::STENCIL_INDEX8:
+        return GraphicsContextGL::STENCIL_BUFFER_BIT;
+    case GraphicsContextGL::DEPTH_STENCIL:
+    case GraphicsContextGL::DEPTH24_STENCIL8:
+    case GraphicsContextGL::DEPTH32F_STENCIL8:
+        return GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT;
+    default:
+        return 0;
+    }
+}
+
+static bool isAttachmentComplete(WebGLFramebuffer::WebGLAttachment* attachedObject, GCGLenum attachment, const char** reason)
+{
+    ASSERT(attachedObject && attachedObject->isValid());
+    ASSERT(reason);
+    GCGLenum format = attachedObject->getFormat();
+    unsigned need = getClearBitsByAttachmentType(attachment);
+    unsigned have = getClearBitsByFormat(format);
+
+    if ((need & have) != need) {
+        *reason = "attachment type is not correct for attachment";
+        return false;
+    }
+    if (!attachedObject->getWidth() || !attachedObject->getHeight()) {
+        *reason = "attachment has a 0 dimension";
+        return false;
+    }
+    if ((attachment == GraphicsContextGL::DEPTH_ATTACHMENT || attachment == GraphicsContextGL::STENCIL_ATTACHMENT)
+        && format == GraphicsContextGL::DEPTH_STENCIL) {
+        *reason = "attachment DEPTH_STENCIL not allowed on DEPTH or STENCIL attachment";
+        return false;
+    }
+    return true;
+}
+
+#endif
 WebGLFramebuffer::WebGLAttachment::WebGLAttachment() = default;
 
 WebGLFramebuffer::WebGLAttachment::~WebGLAttachment() = default;
@@ -611,7 +718,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContextGL* g3d, const char*
         GCGLenum attachmentType = entry.key;
         RefPtr<WebGLAttachment> attachment = entry.value.get();
         if (!attachment->isInitialized())
-            mask |= GraphicsContextGLOpenGL::getClearBitsByAttachmentType(attachmentType);
+            mask |= getClearBitsByAttachmentType(attachmentType);
     }
     if (!mask)
         return true;
@@ -682,7 +789,7 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContextGL* g3d, const char*
     for (AttachmentMap::iterator it = m_attachments.begin(); it != m_attachments.end(); ++it) {
         GCGLenum attachmentType = it->key;
         auto attachment = it->value;
-        GCGLbitfield bits = GraphicsContextGLOpenGL::getClearBitsByAttachmentType(attachmentType);
+        GCGLbitfield bits = getClearBitsByAttachmentType(attachmentType);
         if (bits & mask)
             attachment->setInitialized();
     }
