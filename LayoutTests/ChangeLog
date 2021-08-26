@@ -1,3 +1,18 @@
+2021-08-26  Patrick Angle  <pangle@apple.com>
+
+        [ EWS Catalina ] http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html is flaky timing out / failing
+        https://bugs.webkit.org/show_bug.cgi?id=229459
+
+        Reviewed by Devin Rousso.
+
+        Increase timings slightly to widen the window during which we receive messages while paused in the debugger and
+        also delay the echo server's response further.
+
+        * http/tests/websocket/tests/hybi/inspector/echo-delayed_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html:
+        * platform/mac/TestExpectations:
+
 2021-08-26  Robert Jenner  <Jenner@apple.com>
 
         [ Catalina+ wk1 ] css2.1/20110323/replaced-intrinsic-003.htm is a flaky text failure

@@ -50,12 +50,12 @@ function test()
                         InspectorTest.log("Pausing script execution with `debugger` statement.");
                         InspectorTest.evaluateInPage(`debugger`);
 
-                        // The WebSocket echos with a 100ms delay, so wait a bit longer than that before resuming to
+                        // The WebSocket echos with a 250ms delay, so wait a bit longer than that before resuming to
                         // ensure we receive the message while still paused.
                         setTimeout(() => {
                         	InspectorTest.log("Resuming script execution.")
                         	WI.debuggerManager.resume().catch(reject);
-                        }, 200);
+                        }, 500);
                     } else if (frameAddedCount === 2) {
 
                         InspectorTest.expectEqual(frame.data, "Hello World! Привет Мир!", "Frame data should be 'Hello World! Привет Мир!'");

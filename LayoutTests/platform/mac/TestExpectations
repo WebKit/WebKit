@@ -656,8 +656,6 @@ webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
 
 webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
-webkit.org/b/229459 [ Debug ] http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html [ Pass Failure Timeout ]
-
 # <rdar://problem/16696298>
 webkit.org/b/131886 webgl/1.0.3/conformance/textures/texture-size-limit.html [ Pass Failure ]
 webkit.org/b/131886 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure Timeout ]
