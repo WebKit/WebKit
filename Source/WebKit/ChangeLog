@@ -1,5 +1,32 @@
 2021-08-25  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281595. rdar://problem/82365117
+
+    Build error preprocessing sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=229418
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Build fix after https://commits.webkit.org/240941@main.
+    
+    * Scripts/generate-derived-sources.sh:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281595 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-25  Per Arne Vollan  <pvollan@apple.com>
+
+            Build error preprocessing sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=229418
+
+            Reviewed by Alexey Proskuryakov.
+
+            Build fix after https://commits.webkit.org/240941@main.
+
+            * Scripts/generate-derived-sources.sh:
+
+2021-08-25  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281577. rdar://problem/82365117
 
     Build error preprocessing sandbox
