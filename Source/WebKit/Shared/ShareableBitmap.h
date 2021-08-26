@@ -176,6 +176,10 @@ private:
     COMPtr<ID2D1Bitmap> m_bitmap;
 #endif
 
+#if USE(CG)
+    bool m_releaseBitmapContextDataCalled { false };
+#endif
+
     // If the shareable bitmap is backed by shared memory, this points to the shared memory object.
     RefPtr<SharedMemory> m_sharedMemory;
 
