@@ -81,9 +81,10 @@ private:
         GRefPtr<GstCaps> caps;
         FloatSize presentationSize;
 
-        GRefPtr<GstPad> entryPad; // Sink pad of the parser (if any) or the appsink.
-        GRefPtr<GstElement> parser; // Optional (needed by some formats).
+        // Needed by some formats. To simplify the code, parser can be a GstIdentity when not needed.
+        GRefPtr<GstElement> parser;
         GRefPtr<GstElement> appsink;
+        GRefPtr<GstPad> entryPad; // Sink pad of the parser/GstIdentity.
         GRefPtr<GstPad> appsinkPad;
 
         RefPtr<WebCore::TrackPrivateBase> webKitTrack;
@@ -149,9 +150,11 @@ private:
     MediaPlayerPrivateGStreamerMSE* m_playerPrivate;
 
     MediaTime m_initialDuration;
-    GRefPtr<GstElement> m_appsrc;
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstBus> m_bus;
+    GRefPtr<GstElement> m_appsrc;
+    // To simplify the code, mtypefind and m_demux can be a GstIdentity when not needed.
+    GRefPtr<GstElement> m_typefind;
     GRefPtr<GstElement> m_demux;
 
     Vector<std::unique_ptr<Track>> m_tracks;

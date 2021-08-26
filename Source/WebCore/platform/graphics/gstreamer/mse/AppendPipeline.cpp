@@ -78,10 +78,9 @@ static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad*, GstPadP
 #if ENABLE(ENCRYPTED_MEDIA)
 static GstPadProbeReturn appendPipelineAppsinkPadEventProbe(GstPad*, GstPadProbeInfo*, struct PadProbeInformation*);
 #endif
-
 static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadProbeInfo*, gpointer);
-
 static GstPadProbeReturn matroskademuxForceSegmentStartToEqualZero(GstPad*, GstPadProbeInfo*, void*);
+static GRefPtr<GstElement> createOptionalParserForFormat(const AtomString&, const GstCaps*);
 
 // Wrapper for gst_element_set_state() that emits a critical if the state change fails or is not synchronous.
 static void assertedElementSetState(GstElement* element, GstState desiredState)
@@ -143,11 +142,18 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
 
     const String& type = m_sourceBufferPrivate.type().containerType();
     GST_DEBUG("SourceBuffer containerType: %s", type.utf8().data());
-    if (type.endsWith("mp4") || type.endsWith("aac"))
+    bool hasDemuxer = true;
+    if (type.endsWith("mp4") || type.endsWith("aac")) {
         m_demux = makeGStreamerElement("qtdemux", nullptr);
-    else if (type.endsWith("webm"))
+        m_typefind = makeGStreamerElement("identity", nullptr);
+    } else if (type.endsWith("webm")) {
         m_demux = makeGStreamerElement("matroskademux", nullptr);
-    else
+        m_typefind = makeGStreamerElement("identity", nullptr);
+    } else if (type == "audio/mpeg") {
+        m_demux = makeGStreamerElement("identity", nullptr);
+        m_typefind = makeGStreamerElement("typefind", nullptr);
+        hasDemuxer = false;
+    } else
         ASSERT_NOT_REACHED();
 
 #if !LOG_DISABLED
@@ -157,19 +163,35 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     m_demuxerDataEnteringPadProbeInformation.probeId = gst_pad_add_probe(demuxerPad.get(), GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(appendPipelinePadProbeDebugInformation), &m_demuxerDataEnteringPadProbeInformation, nullptr);
 #endif
 
-    // These signals won't outlive the lifetime of `this`.
-    g_signal_connect(m_demux.get(), "no-more-pads", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
-        ASSERT(!isMainThread());
-        GST_DEBUG("Posting no-more-pads task to main thread");
-        appendPipeline->m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([appendPipeline]() {
-            appendPipeline->didReceiveInitializationSegment();
-            return AbortableTaskQueue::Void();
-        });
-    }), this);
+    if (hasDemuxer) {
+        // These signals won't outlive the lifetime of `this`.
+        g_signal_connect(m_demux.get(), "no-more-pads", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
+            ASSERT(!isMainThread());
+            GST_DEBUG("Posting no-more-pads task to main thread");
+            appendPipeline->m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([appendPipeline]() {
+                appendPipeline->didReceiveInitializationSegment();
+                return AbortableTaskQueue::Void();
+            });
+        }), this);
+    } else {
+        GRefPtr<GstPad> identitySrcPad = adoptGRef(gst_element_get_static_pad(m_demux.get(), "src"));
+        gst_pad_add_probe(identitySrcPad.get(), GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(
+            +[](GstPad *pad, GstPadProbeInfo*, AppendPipeline* appendPipeline) {
+                GRefPtr<GstCaps> caps = gst_pad_get_current_caps(pad);
+                if (!caps)
+                    return GST_PAD_PROBE_DROP;
+                appendPipeline->m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([appendPipeline]() {
+                    appendPipeline->didReceiveInitializationSegment();
+                    return AbortableTaskQueue::Void();
+                });
+                return GST_PAD_PROBE_REMOVE;
+            }
+        ), this, nullptr);
+    }
 
     // Add_many will take ownership of a reference. That's why we used an assignment before.
-    gst_bin_add_many(GST_BIN(m_pipeline.get()), m_appsrc.get(), m_demux.get(), nullptr);
-    gst_element_link(m_appsrc.get(), m_demux.get());
+    gst_bin_add_many(GST_BIN(m_pipeline.get()), m_appsrc.get(), m_typefind.get(), m_demux.get(), nullptr);
+    gst_element_link_many(m_appsrc.get(), m_typefind.get(), m_demux.get(), nullptr);
 
     assertedElementSetState(m_pipeline.get(), GST_STATE_PLAYING);
 }
@@ -605,19 +627,31 @@ createOptionalParserForFormat(const AtomString& trackId, const GstCaps* caps)
 {
     GstStructure* structure = gst_caps_get_structure(caps, 0);
     const char* mediaType = gst_structure_get_name(structure);
-
     GUniquePtr<char> parserName(g_strdup_printf("%s_parser", trackId.string().utf8().data()));
+    const gchar* elementClass = "identity";
 
-    if (!g_strcmp0(mediaType, "audio/x-opus")) {
-        GstElement* opusparse = makeGStreamerElement("opusparse", parserName.get());
-        return GRefPtr<GstElement>(opusparse);
+    if (!g_strcmp0(mediaType, "audio/x-opus"))
+        elementClass = "opusparse";
+    else if (!g_strcmp0(mediaType, "video/x-h264"))
+        elementClass = "h264parse";
+    else if (!g_strcmp0(mediaType, "audio/mpeg")) {
+        int mpegversion = 0;
+        gst_structure_get_int(structure, "mpegversion", &mpegversion);
+        switch (mpegversion) {
+        case 1:
+            elementClass = "mpegaudioparse";
+            break;
+        case 2:
+        case 4:
+            elementClass = "aacparse";
+            break;
+        default: {
+            GUniquePtr<char> capsString(gst_caps_to_string(caps));
+            GST_WARNING("Unsupported audio mpeg caps: %s", capsString.get());
+        }
+        }
     }
-    if (!g_strcmp0(mediaType, "video/x-h264")) {
-        GstElement* h264parse = makeGStreamerElement("h264parse", parserName.get());
-        return GRefPtr<GstElement>(h264parse);
-    }
-
-    return nullptr;
+    return GRefPtr<GstElement>(makeGStreamerElement(elementClass, parserName.get()));
 }
 
 AtomString AppendPipeline::generateTrackId(StreamType streamType, int padIndex)
@@ -757,7 +791,7 @@ void AppendPipeline::Track::initializeElements(AppendPipeline* appendPipeline, G
 
     gst_bin_add(GST_BIN(appendPipeline->pipeline()), appsink.get());
     gst_element_sync_state_with_parent(appsink.get());
-    entryPad = appsinkPad = adoptGRef(gst_element_get_static_pad(appsink.get(), "sink"));
+    appsinkPad = adoptGRef(gst_element_get_static_pad(appsink.get(), "sink"));
 
 #if !LOG_DISABLED
     appsinkDataEnteringPadProbeInformation.appendPipeline = appendPipeline;
@@ -774,13 +808,13 @@ void AppendPipeline::Track::initializeElements(AppendPipeline* appendPipeline, G
     // Some audio files unhelpfully omit the duration of frames in the container. We need to parse
     // the contained audio streams in order to know the duration of the frames.
     // This is known to be an issue with YouTube WebM files containing Opus audio as of YTTV2018.
-    if ((parser = createOptionalParserForFormat(trackId, caps.get()))) {
-        gst_bin_add(bin, parser.get());
-        gst_element_sync_state_with_parent(parser.get());
-        gst_element_link(parser.get(), appsink.get());
-        ASSERT(GST_PAD_IS_LINKED(appsinkPad.get()));
-        entryPad = adoptGRef(gst_element_get_static_pad(parser.get(), "sink"));
-    }
+    // If no parser is needed, a GstIdentity element will be created instead.
+    parser = createOptionalParserForFormat(trackId, caps.get());
+    gst_bin_add(bin, parser.get());
+    gst_element_sync_state_with_parent(parser.get());
+    gst_element_link(parser.get(), appsink.get());
+    ASSERT(GST_PAD_IS_LINKED(appsinkPad.get()));
+    entryPad = adoptGRef(gst_element_get_static_pad(parser.get(), "sink"));
 }
 
 void AppendPipeline::hookTrackEvents(Track& track)
@@ -841,6 +875,8 @@ const char* AppendPipeline::streamTypeToString(StreamType streamType)
         return "Invalid";
     case StreamType::Unknown:
         return "Unknown";
+    default:
+        return "(Unsupported stream type)";
     }
 }
 #endif

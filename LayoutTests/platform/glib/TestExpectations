@@ -666,7 +666,6 @@ webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
-webkit.org/b/210341 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
 webkit.org/b/210341 media/media-source/media-mp4-h264-sequence-mode.html [ Failure ]
 webkit.org/b/210342 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]

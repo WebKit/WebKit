@@ -1237,7 +1237,7 @@ ExceptionOr<void> SourceBuffer::setMode(AppendMode newMode)
     // 1. Let new mode equal the new value being assigned to this attribute.
     // 2. If generate timestamps flag equals true and new mode equals "segments", then throw an InvalidAccessError exception and abort these steps.
     if (m_shouldGenerateTimestamps && newMode == AppendMode::Segments)
-        return Exception { InvalidAccessError };
+        return Exception { TypeError };
 
     // 3. If this object has been removed from the sourceBuffers attribute of the parent media source, then throw an InvalidStateError exception and abort these steps.
     // 4. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.

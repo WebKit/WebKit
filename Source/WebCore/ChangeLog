@@ -1,3 +1,52 @@
+2021-08-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] Implement the "sequence" mode in SourceBuffer for the GStreamer ports
+        https://bugs.webkit.org/show_bug.cgi?id=210341
+
+        Reviewed by Alicia Boya Garcia.
+
+        Declare audio/mpeg support and handle it properly in AppendPipeline. This media type
+        doesn't have any container format, so an identity element is used in place of the
+        demuxer (dummy demuxer). As this element isn't an actual demuxer, the standard
+        no-more-pads signal isn't present, so its behaviour is simulated when the first buffer
+        is emitted by the element (detected by a probe).
+
+        A parser element is needed to process the data (mpegaudioparse for mpeg audio v1,
+        aacparse for mpeg audio v2 & v4). The existing createOptionalParserForFormat()
+        infrastructure is used for that after analyzing the caps, and an identity element is
+        now also used instead in the cases when a parser isn't needed. This simplifies the code
+        that links the pipeline elements, as now there aren't any optional (non existing)
+        elements in place, just GstIdentity instances there.
+
+        Still, the selection of the proper mpeg/aac parser requires precise caps. A new typefind
+        element is now used after the appsrc (when needed, and another identity element when
+        not).
+
+        Return TypeError in SourceBuffer::setMode(), instead of InvalidAccessError. The MSE spec
+        changed this behaviour at some point before June 2016 and the WebKit code never reflected
+        the change, still returning the deprecated InvalidAccessError when generate timestamps
+        flag equals true and new mode equals "segments".
+
+        Finally, the MediaSample::setTimestamps() method has been implemented for the GStreamer
+        port. It had an empty implementation and no problem had been detected before because
+        the "sequence" SourceBuffer mode had never been used until now.
+
+        Covered by existing tests.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::setMode): Return TypeError.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::initializeDecoders): Declare audio/mpeg support.
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::setTimestamps): Implement method.
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h: Removed setTimestamps() empty implementation.
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline): Support audio/mpeg by instancing a typefind element when needed (or identity when not), using an identity element instead of a demuxer and simulating what would be done in the no-more-pads signal handlers, but using a probe to detect the first buffer traversing the parser.
+        (WebCore::createOptionalParserForFormat): Use the mpegversion caps field to instance the right kind of parser when detecting the audio/mpeg media type in the caps. An identity element is now returned in case no parser is needed.
+        (WebCore::AppendPipeline::Track::initializeElements): Simplify element linking now that the parser (or identity) is always guaranteed to exist.
+        (WebCore::AppendPipeline::streamTypeToString): Added default branch to switch to fix build warning.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h: Added m_typefind. Reordered some attributes and added comments to improve readability.
+
 2021-08-26  Youenn Fablet  <youenn@apple.com>
 
         Signaling state check when applying a local or remote description is no longer aligned with the WebRTC spec

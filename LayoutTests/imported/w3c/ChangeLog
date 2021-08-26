@@ -1,3 +1,12 @@
+2021-08-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] Implement the "sequence" mode in SourceBuffer for the GStreamer ports
+        https://bugs.webkit.org/show_bug.cgi?id=210341
+
+        Reviewed by Alicia Boya Garcia.
+
+        * web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps-expected.txt: Added extra blank line in expectations, like in many other expectations files.
+
 2021-08-26  Youenn Fablet  <youenn@apple.com>
 
         Signaling state check when applying a local or remote description is no longer aligned with the WebRTC spec

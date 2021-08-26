@@ -192,6 +192,16 @@ void MediaSampleGStreamer::extendToTheBeginning()
     m_pts = MediaTime::zeroTime();
 }
 
+void MediaSampleGStreamer::setTimestamps(const MediaTime& presentationTime, const MediaTime& decodeTime)
+{
+    m_pts = presentationTime;
+    m_dts = decodeTime;
+    if (auto* buffer = gst_sample_get_buffer(m_sample.get())) {
+        GST_BUFFER_PTS(buffer) = toGstClockTime(m_pts);
+        GST_BUFFER_DTS(buffer) = toGstClockTime(m_dts);
+    }
+}
+
 void MediaSampleGStreamer::offsetTimestampsBy(const MediaTime& timestampOffset)
 {
     if (!timestampOffset)

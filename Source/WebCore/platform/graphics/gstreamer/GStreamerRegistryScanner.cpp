@@ -255,6 +255,8 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         m_decoderMimeTypeSet.add(AtomString("audio/aac"));
         m_decoderMimeTypeSet.add(AtomString("audio/mp4"));
         m_decoderMimeTypeSet.add(AtomString("audio/x-m4a"));
+        m_decoderMimeTypeSet.add(AtomString("audio/mpeg"));
+        m_decoderMimeTypeSet.add(AtomString("audio/x-mpeg"));
         m_decoderCodecMap.add(AtomString("mpeg"), false);
         m_decoderCodecMap.add(AtomString("mp4a*"), false);
     }
