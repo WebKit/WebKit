@@ -148,7 +148,7 @@
     color: var(--text-color-secondary);
 }
 
-.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .contextual-documentation-button) {
+.computed-style-section .property-trace-item .property :is(.name, .colon, .semicolon, .css-documentation-button) {
     display: none;
 }
 
@@ -167,13 +167,13 @@
     display: none;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .contextual-documentation-button {
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item > .property > .content > .css-documentation-button {
     vertical-align: bottom;
     width: var(--disclosure-button-size);
     height: var(--disclosure-button-size);
     margin-left: 1px;
 }
 
-.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .contextual-documentation-button {
+.sidebar > .panel.details.css-style > .content > .computed .computed-property-item:not(:hover) > .property > .content > .css-documentation-button {
     display: none;
 }

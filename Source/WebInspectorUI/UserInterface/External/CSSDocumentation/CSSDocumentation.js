@@ -1,4 +1,4 @@
-ContextualDocumentationDatabase = {
+CSSDocumentation = {
     "-webkit-animation": {
         "description": "Shorthand property combines six of the animation properties into a single property."
     },

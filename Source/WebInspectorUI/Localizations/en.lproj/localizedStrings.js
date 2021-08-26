@@ -323,8 +323,8 @@ localizedStrings["Click to show %d error in the Console"] = "Click to show %d er
 localizedStrings["Click to show %d errors in the Console"] = "Click to show %d errors in the Console";
 localizedStrings["Click to show %d warning in the Console"] = "Click to show %d warning in the Console";
 localizedStrings["Click to show %d warnings in the Console"] = "Click to show %d warnings in the Console";
-/* Tooltip to show purpose of the contextual documentation button */
-localizedStrings["Click to show documentation @ Contextual Documentation Button"] = "Click to show documentation";
+/* Tooltip to show purpose of the CSS documentation button */
+localizedStrings["Click to show documentation @ CSS Documentation Button"] = "Click to show documentation";
 localizedStrings["Click to view variable value\nShift-click to replace variable with value"] = "Click to view variable value\nShift-click to replace variable with value";
 localizedStrings["Clickable"] = "Clickable";
 localizedStrings["Clients"] = "Clients";
@@ -1323,9 +1323,9 @@ localizedStrings["Shadow Content (%s)"] = "Shadow Content (%s)";
 localizedStrings["Shared Focus"] = "Shared Focus";
 localizedStrings["Shortest property path to %s"] = "Shortest property path to %s";
 localizedStrings["Show %d More"] = "Show %d More";
-/* Text label for button to reveal multiple unused CSS variables */
-localizedStrings["Show %d unused CSS variable (singular) @ Styles Sidebar Panel"] = "Show %d unused CSS variable";
 /* Text label for button to reveal one unused CSS variable */
+localizedStrings["Show %d unused CSS variable (singular) @ Styles Sidebar Panel"] = "Show %d unused CSS variable";
+/* Text label for button to reveal multiple unused CSS variables */
 localizedStrings["Show %d unused CSS variables (plural) @ Styles Sidebar Panel"] = "Show %d unused CSS variables";
 localizedStrings["Show All"] = "Show All";
 localizedStrings["Show All (%d More)"] = "Show All (%d More)";
