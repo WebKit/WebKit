@@ -9,8 +9,11 @@ cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
 
 export WebKit2="${SRCROOT}"
 
-/bin/ln -sfh "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" JavaScriptCorePrivateHeaders
-export JavaScriptCore_SCRIPTS_DIR="JavaScriptCorePrivateHeaders"
+
+if [ $1 != "sandbox-profiles-ios" ]; then
+    /bin/ln -sfh "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" JavaScriptCorePrivateHeaders
+    export JavaScriptCore_SCRIPTS_DIR="JavaScriptCorePrivateHeaders"
+fi
 
 if [ ! "$CC" ]; then
     export CC="`xcrun -find clang`"
