@@ -1,3 +1,12 @@
+2021-08-26  Truitt Savell  <tsavell@apple.com>
+
+        Rebase fast/text/capitalize-boundaries.html after changes in r281422
+        https://bugs.webkit.org/show_bug.cgi?id=228217
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt:
+
 2021-08-26  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug] http/tests/misc/acid3.html is a flaky failure.
