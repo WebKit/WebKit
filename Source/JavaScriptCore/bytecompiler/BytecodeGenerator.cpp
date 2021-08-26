@@ -5386,6 +5386,7 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGener
         auto end = branchInstIndex + instruction->size();
 
         generator.m_writer.seek(branchInstIndex);
+        generator.disablePeepholeOptimization();
 
         OpJmp::emit(&generator, BoundLabel(static_cast<int>(newBranchTarget) - static_cast<int>(branchInstIndex)));
 
@@ -5393,9 +5394,8 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGener
             OpNop::emit<OpcodeSize::Narrow>(&generator);
     }
 
-    generator.disablePeepholeOptimization(); // We might've just changed the last bytecode that was emitted.
-
     generator.m_writer.seek(generator.m_writer.size());
+    generator.disablePeepholeOptimization(); // We might've just changed the last bytecode that was emitted.
 }
 
 void StaticPropertyAnalysis::record()

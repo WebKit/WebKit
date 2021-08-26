@@ -1,3 +1,18 @@
+2021-08-26  Saam Barati  <sbarati@apple.com>
+
+        r281485 was not sufficient in where it called disablePeepholeOptimization
+        https://bugs.webkit.org/show_bug.cgi?id=229582
+        <rdar://82346980>
+
+        Reviewed by Yusuke Suzuki.
+
+        r281485 accidentally deleted a place where we called disablePeepholeOptimization
+        that was necessary. Basically, after we seek where the current instruction
+        in BytecodeGenerator is, we need to disablePeepholeOptimization.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ForInContext::finalize):
+
 2021-08-26  Per Arne Vollan  <pvollan@apple.com>
 
         [AppleWin] JSC build failure

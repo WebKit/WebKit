@@ -1,3 +1,14 @@
+2021-08-26  Saam Barati  <sbarati@apple.com>
+
+        r281485 was not sufficient in where it called disablePeepholeOptimization
+        https://bugs.webkit.org/show_bug.cgi?id=229582
+        <rdar://82346980>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/for-in-disable-bytecode-generator-peephole-optimizations-after-rewrite-2.js: Added.
+        (foo):
+
 2021-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Update Intl tests to support ICU 68
