@@ -1,3 +1,13 @@
+2021-08-26  Eric Hutchison  <ehutchison@apple.com>
+
+        REGRESSION: [BigSur wk2 Release, iOS15] animations/fill-mode-forwards.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=229584.
+
+        Unreviewed test gardening.
+
+        * platform/ios-15/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Drawing small caps web fonts into canvas causes the GPU process to hang
