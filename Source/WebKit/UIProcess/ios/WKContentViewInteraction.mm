@@ -6684,9 +6684,9 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 - (void)updateCurrentFocusedElementInformation:(Function<void(bool didUpdate)>&&)callback
 {
     WeakObjCPtr<WKContentView> weakSelf { self };
-    auto identifierBeforeUpdate = _focusedElementInformation.focusedElementIdentifier;
+    auto identifierBeforeUpdate = _focusedElementInformation.identifier;
     _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info) {
-        if (!weakSelf || !info || info->focusedElementIdentifier != identifierBeforeUpdate) {
+        if (!weakSelf || !info || info->identifier != identifierBeforeUpdate) {
             // If the focused element may have changed in the meantime, don't overwrite focused element information.
             callback(false);
             return;

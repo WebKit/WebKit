@@ -2243,7 +2243,7 @@ private:
     WebCore::FloatRect m_previousExposedContentRect;
     OptionSet<WebKit::WebEvent::Modifier> m_pendingSyntheticClickModifiers;
     WebCore::PointerID m_pendingSyntheticClickPointerId { 0 };
-    FocusedElementIdentifier m_currentFocusedElementIdentifier { 0 };
+    FocusedElementInformationIdentifier m_lastFocusedElementInformationIdentifier;
     std::optional<DynamicViewportSizeUpdateID> m_pendingDynamicViewportSizeUpdateID;
     double m_lastTransactionPageScaleFactor { 0 };
     TransactionID m_lastTransactionIDWithScaleChange;
@@ -2282,7 +2282,7 @@ private:
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };
     mutable EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
-    mutable TransactionID m_lastEditorStateTransactionID;
+    mutable EditorStateIdentifier m_lastEditorStateIdentifier;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<InputMethodState> m_inputMethodState;

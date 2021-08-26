@@ -1225,7 +1225,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     const VisibleSelection& selection = frame->selection().selection();
     auto& editor = frame->editor();
 
-    result.transactionID = m_lastEditorStateTransactionID.increment();
+    result.identifier = m_lastEditorStateIdentifier.increment();
     result.selectionIsNone = selection.isNone();
     result.selectionIsRange = selection.isRange();
     result.isContentEditable = selection.isContentEditable();
@@ -6031,7 +6031,6 @@ void WebPage::elementDidFocus(WebCore::Element& element)
             element.document().fullscreenManager().cancelFullscreen();
 #endif
 
-        ++m_currentFocusedElementIdentifier;
         auto information = focusedElementInformation();
         if (!information)
             return;

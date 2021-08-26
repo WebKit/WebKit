@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include "IdentifierTypes.h"
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
 #include <WebCore/Color.h>
@@ -87,8 +88,6 @@ struct OptionItem {
     static std::optional<OptionItem> decode(IPC::Decoder&);
 };
 
-using FocusedElementIdentifier = uint64_t;
-
 struct FocusedElementInformation {
     WebCore::IntRect interactionRect;
     WebCore::ElementContext elementContext;
@@ -140,7 +139,7 @@ struct FocusedElementInformation {
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation { false };
     bool isFocusingWithValidationMessage { false };
 
-    FocusedElementIdentifier focusedElementIdentifier { 0 };
+    FocusedElementInformationIdentifier identifier;
     WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
 
     void encode(IPC::Encoder&) const;

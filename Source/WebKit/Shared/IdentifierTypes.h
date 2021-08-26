@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "MonotonicObjectIdentifier.h"
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
@@ -40,5 +41,11 @@ using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
 
 enum TextCheckerRequestType { };
 using TextCheckerRequestID = ObjectIdentifier<TextCheckerRequestType>;
+
+enum EditorStateIdentifierType { };
+using EditorStateIdentifier = MonotonicObjectIdentifier<EditorStateIdentifierType>;
+
+enum FocusedElementInformationIdentifierType { };
+using FocusedElementInformationIdentifier = MonotonicObjectIdentifier<FocusedElementInformationIdentifierType>;
 
 } // namespace WebKit

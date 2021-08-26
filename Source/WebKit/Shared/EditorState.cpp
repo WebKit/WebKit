@@ -34,7 +34,7 @@ using namespace WebCore;
 
 void EditorState::encode(IPC::Encoder& encoder) const
 {
-    encoder << transactionID;
+    encoder << identifier;
     encoder << originIdentifierForPasteboard;
     encoder << shouldIgnoreSelectionChanges;
     encoder << selectionIsNone;
@@ -53,7 +53,7 @@ void EditorState::encode(IPC::Encoder& encoder) const
 
 bool EditorState::decode(IPC::Decoder& decoder, EditorState& result)
 {
-    if (!decoder.decode(result.transactionID))
+    if (!decoder.decode(result.identifier))
         return false;
 
     if (!decoder.decode(result.originIdentifierForPasteboard))

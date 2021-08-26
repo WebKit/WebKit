@@ -1,3 +1,43 @@
+2021-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add type-safe transaction identifiers for EditorState and FocusedElementInformation
+        https://bugs.webkit.org/show_bug.cgi?id=229571
+
+        Reviewed by Tim Horton.
+
+        Make `transactionID` a monotonic object identifier instead of a generic `TransactionID`, and replace
+        `FocusedElementIdentifier` (which is currently type-defined to `uint64_t`) with its own monotonic object
+        identifier type.
+
+        In a future patch, I plan to implement a mechanism to synchronize `EditorState` and `FocusedElementInformation`
+        updates, which would require one or both of these objects to hold both types of transactional identifiers; in
+        order to do this, we need to ensure that these two identifiers are distinct types, so that they can't be easily
+        mixed up.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode const):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+        * Shared/IdentifierTypes.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateEditorState):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView updateCurrentFocusedElementInformation:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+        (WebKit::WebPage::elementDidFocus):
+        * WebProcess/WebPage/WebPage.h:
+
+        Additionally rename `m_currentFocusedElementIdentifier` to `m_lastFocusedElementInformationIdentifier`, for
+        consistency with `m_lastEditorStateIdentifier`.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::focusedElementInformation):
+
 2021-08-26  Cameron McCormack  <heycam@apple.com>
 
         Manually release SharedBitmap if CGBitmapContextCreateWithData fails and doesn't do it

@@ -3226,7 +3226,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.previousNodeRect = rootViewBounds(*previousElement);
         information.hasPreviousNode = true;
     }
-    information.focusedElementIdentifier = m_currentFocusedElementIdentifier;
+    information.identifier = m_lastFocusedElementInformationIdentifier.increment();
 
     if (is<LabelableElement>(*focusedElement)) {
         if (auto labels = downcast<LabelableElement>(*focusedElement).labels()) {

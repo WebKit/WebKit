@@ -7459,7 +7459,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 
 bool WebPageProxy::updateEditorState(const EditorState& newEditorState)
 {
-    if (newEditorState.transactionID < m_editorState.transactionID)
+    if (newEditorState.identifier < m_editorState.identifier)
         return false;
 
     auto oldEditorState = std::exchange(m_editorState, newEditorState);

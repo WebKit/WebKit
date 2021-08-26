@@ -98,7 +98,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << placeholder;
     encoder << label;
     encoder << ariaLabel;
-    encoder << focusedElementIdentifier;
+    encoder << identifier;
     encoder << containerScrollingNodeID;
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
@@ -223,7 +223,7 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
     if (!decoder.decode(result.ariaLabel))
         return false;
 
-    if (!decoder.decode(result.focusedElementIdentifier))
+    if (!decoder.decode(result.identifier))
         return false;
 
     if (!decoder.decode(result.containerScrollingNodeID))
