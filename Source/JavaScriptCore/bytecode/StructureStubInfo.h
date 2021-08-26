@@ -354,6 +354,7 @@ public:
     static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
     static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
     static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
+    static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
 
     RegisterSet usedRegisters;
 

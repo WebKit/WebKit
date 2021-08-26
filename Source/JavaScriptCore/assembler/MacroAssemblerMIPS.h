@@ -1327,6 +1327,23 @@ public:
         return dataLabel;
     }
 
+    void store8(RegisterID src, ImplicitAddress address)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767
+            && !m_fixedWidth)
+            m_assembler.sb(src, address.base, address.offset);
+        else {
+            /*
+                lui     addrTemp, (offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, base
+                sb      src, (offset & 0xffff)(addrTemp)
+              */
+            m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.sb(src, addrTempRegister, address.offset);
+        }
+    }
+
     void store8(RegisterID src, BaseIndex address)
     {
         if (!m_fixedWidth) {
