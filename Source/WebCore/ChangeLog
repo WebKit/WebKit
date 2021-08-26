@@ -1,3 +1,18 @@
+2021-08-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [FreeType] Avoid yucky strong alias computations in font fallback code
+        https://bugs.webkit.org/show_bug.cgi?id=228927
+
+        Reviewed by Myles C. Maxfield.
+
+        If built against the upcoming Fontconfig 2.13.95, we can avoid compiling a bunch of arcane
+        font matching code. It will be a while before we can require Fontconfig 2.13.95, so use
+        preprocessor guards for now.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::areStronglyAliased):
+        (WebCore::FontCache::createFontPlatformData):
+
 2021-08-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281616.

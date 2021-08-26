@@ -355,9 +355,9 @@ static String getFamilyNameStringFromFamily(const String& family)
     return "";
 }
 
-// This is based on Chromium BSD code from Skia (src/ports/SkFontMgr_fontconfig.cpp). It is a
-// hack for lack of API in Fontconfig: https://bugs.freedesktop.org/show_bug.cgi?id=19375
-// FIXME: This is horrible. It should be deleted once Fontconfig can do this itself.
+#if FC_VERSION < 21395
+// This is based on BSD-licensed code from Skia (src/ports/SkFontMgr_fontconfig.cpp).
+// It is obsoleted by newer Fontconfig, see https://gitlab.freedesktop.org/fontconfig/fontconfig/-/issues/294.
 enum class AliasStrength {
     Weak,
     Strong,
@@ -482,6 +482,7 @@ static bool areStronglyAliased(const String& familyA, const String& familyB)
     }
     return false;
 }
+#endif // FC_VERSION < 21395
 
 static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
 {
@@ -515,8 +516,6 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!configurePatternForFontDescription(pattern.get(), fontDescription))
         return nullptr;
 
-    // The strategy is originally from Skia (src/ports/SkFontHost_fontconfig.cpp):
-    //
     // We do not normally allow fontconfig to substitute one font family for another, since this
     // would break CSS font family fallback: the website should be in control of fallback. During
     // normal font matching, the only font family substitution permitted is for generic families
@@ -540,20 +539,33 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!resultPattern) // No match.
         return nullptr;
 
-    // Loop through each font family of the result to see if it fits the one we requested.
+#if FC_VERSION < 21395
     bool matchedFontFamily = false;
     FcChar8* fontConfigFamilyNameAfterMatching;
     for (int i = 0; FcPatternGetString(resultPattern.get(), FC_FAMILY, i, &fontConfigFamilyNameAfterMatching) == FcResultMatch; ++i) {
-        // If Fontconfig gave us a different font family than the one we requested, we should ignore it
-        // and allow WebCore to give us the next font on the CSS fallback list. The exceptions are if
-        // this family name is a commonly-used generic family, or if the families are strongly-aliased.
-        // Checking for a strong alias comes last, since it is slow.
         String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterMatching));
         if (equalIgnoringASCIICase(familyNameAfterConfiguration, familyNameAfterMatching) || isCommonlyUsedGenericFamily(familyNameString) || areStronglyAliased(familyNameAfterConfiguration, familyNameAfterMatching)) {
             matchedFontFamily = true;
             break;
         }
     }
+#else
+    // Loop through each font family of the result to see if it fits the one we requested.
+    bool matchedFontFamily = false;
+    FcValue value;
+    FcValueBinding binding;
+    for (int i = 0; FcPatternGetWithBinding(resultPattern.get(), FC_FAMILY, i, &value, &binding) == FcResultMatch; ++i) {
+        ASSERT(value.type == FcTypeString);
+        String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<const char*>(value.u.s));
+        // If Fontconfig gave us a different font family than the one we requested, we should ignore it
+        // and allow WebCore to give us the next font on the CSS fallback list. The exceptions are if
+        // this family name is a commonly-used generic family, or if the families are strongly-aliased.
+        if (binding == FcValueBindingStrong || equalIgnoringASCIICase(familyNameAfterConfiguration, familyNameAfterMatching) || isCommonlyUsedGenericFamily(familyNameString)) {
+            matchedFontFamily = true;
+            break;
+        }
+    }
+#endif
 
     if (!matchedFontFamily)
         return nullptr;
