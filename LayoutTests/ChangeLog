@@ -1,3 +1,12 @@
+2021-08-25  Truitt Savell  <tsavell@apple.com>
+
+        25 webkit imported/w3c/web-platform-tests/css/ layout tests failing with black bars
+        rdar://82132196
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-08-25  Eric Hutchison  <ehutchison@apple.com>
 
         [Catalina GPU] fast/canvas/webgl/lose-context-on-timeout.html is a flaky timeout.

@@ -2355,6 +2355,32 @@ webkit.org/b/229509 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 #webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Pass Failure ] imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Pass Failure ]
 
+# rdar://82132196 (20 webkit imported/w3c/web-platform-tests/css/ layout tests failing)
+[ Monterey ] imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-016.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-006.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-012.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-005.xht [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-005.xht [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-010.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-016.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/image-items-flake-001.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-img-item-percent-max-height-001.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-006.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-minimum-size-grid-items-008.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-002.xht [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-016.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-027.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-028.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-029.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-030.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-031.html [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ Pass ImageOnlyFailure ]
+[ Monterey ] svg/custom/image-width-height-auto-dynamic.svg [ Pass ImageOnlyFailure ]
+[ Monterey ] svg/custom/image-width-height-auto-initial.svg [ Pass ImageOnlyFailure ]
+[ Monterey ] svg/custom/image-width-height-length-initial.svg [ Pass ImageOnlyFailure ]
+[ Monterey ] imported/w3c/web-platform-tests/density-size-correction/density-corrected-image-svg.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
 
 webkit.org/b/189672 [ Catalina ] webgl/2.0.0/conformance2/rendering/uniform-block-buffer-size.html  [ Pass Failure ]
