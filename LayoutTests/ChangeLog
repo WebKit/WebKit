@@ -7,6 +7,12 @@
 
         * platform/mac-wk2/TestExpectations:
 
+2021-08-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Remove an expectation that was added to the wrong file.
+
 2021-08-26  Eric Hutchison  <ehutchison@apple.com>
 
         [Mac] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html is a flaky fail/crash/timeout.

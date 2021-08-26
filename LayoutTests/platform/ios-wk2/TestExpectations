@@ -2023,8 +2023,6 @@ editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 
-webkit.org/b/168961 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
-
 #rdar://80386061 (REGRESSION (iOS15 19A163?): fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ]) [ iOS15 ]  fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ]
 
 #rdar://80386523 (REGRESSION (iOS15 19A224?): fast/events/touch/ios/long-press-then-drag-to-select-text.html is failing) [ iOS15 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html [ Failure ]
