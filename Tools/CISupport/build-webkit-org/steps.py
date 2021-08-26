@@ -531,7 +531,7 @@ class RunWebKitTests(shell.Test):
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
     resultDirectory = "layout-test-results"
-    command = ["python", "./Tools/Scripts/run-webkit-tests",
+    command = ["python3", "./Tools/Scripts/run-webkit-tests",
                "--no-build",
                "--no-show-results",
                "--no-new-test-results",

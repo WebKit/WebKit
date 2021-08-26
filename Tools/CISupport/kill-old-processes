@@ -171,7 +171,7 @@ def main(user=None):
         else:
             os.system("xcrun simctl shutdown booted")
         # Kill all instances of python executing run-webkit-tests
-        os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
+        os.system("ps aux | grep -E '.+/Python3? .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
         # FIXME: <rdar://problem/81476546> Remove stale simulator temp files
         # Hard-code path because when run with 'sudo,' this script doesn't get the right tempfile location
         os.system('find /var/folders -name "Deleting-*" -maxdepth 4 -exec sudo rm -rf {} +')
@@ -183,7 +183,7 @@ def main(user=None):
         builddir_bin = "WebKitBuild/Release/bin" if os.path.isdir("WebKitBuild/Release/bin") else "WebKitBuild/Debug/bin"
         for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
             os.system("killall -9 -v " + task)
-        os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs -r kill")
+        os.system("ps aux | grep -P '.+/python3? .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs -r kill")
         removeOrphanShmSegments()
     else:
         sys.exit()
