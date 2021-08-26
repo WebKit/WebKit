@@ -1,3 +1,15 @@
+2021-08-26  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r275754): Using MarkOnlyThis to make the preferred width dirty introduces unexpected state
+        https://bugs.webkit.org/show_bug.cgi?id=229586
+        <rdar://82141454>
+
+        Unreviewed revert.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::recomputeLogicalWidth):
+        (WebCore::shouldRecalculateMinMaxWidthsAffectedByAncestor): Deleted.
+
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Drawing small caps web fonts into canvas causes the GPU process to hang
