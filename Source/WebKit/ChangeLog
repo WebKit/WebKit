@@ -1,3 +1,13 @@
+2021-08-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] REGRESSION(r281158): fetch('http://localhost/') from about:blank doesn't emit the console error message
+        https://bugs.webkit.org/show_bug.cgi?id=229515
+
+        Unreviewed, reverting r281158.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::invokeDidReceiveResponse):
+
 2021-08-25  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Unable to select files when the accept attribute is set to "*/*"
