@@ -8,14 +8,14 @@ PASS insertedText became true
 PASS insertedText became true
 PASS insertedText became true
 PASS insertedReplacementText became true
-PASS contenteditable.textContent is "Test."
+PASS contenteditable.textContent is not stringToType
 PASS insertedText became true
 PASS insertedText became true
 PASS insertedText became true
 PASS insertedText became true
 PASS insertedText became true
 PASS insertedReplacementText became true
-PASS textarea.value is "Test."
+PASS textarea.value is not stringToType
 PASS successfullyParsed is true
 
 TEST COMPLETE

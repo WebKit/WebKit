@@ -1,3 +1,17 @@
+2021-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] editing/input/cocoa/autocorrect-on.html occasionally fails with a text diff
+        https://bugs.webkit.org/show_bug.cgi?id=229560
+        rdar://82191308
+
+        Reviewed by Andy Estes.
+
+        Adjust the test so that it doesn't require "Tset" to be autocorrected to "Test". Instead, just check that it was
+        changed from "Tset" to anything else.
+
+        * editing/input/cocoa/autocorrect-on-expected.txt:
+        * editing/input/cocoa/autocorrect-on.html:
+
 2021-08-26  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur arm64 EWS ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData) on security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html (flaky crash).

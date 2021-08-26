@@ -20,11 +20,10 @@
     <pre id="description"></pre>
     <pre id="console"></pre>
     <script>
-    const stringToType = "Tset.";
-    const autocorrectedString = "Test.";
-    window.jsTestIsAsync = true;
-    window.insertedText = false;
-    window.insertedReplacementText = false;
+    stringToType = "Tset.";
+    jsTestIsAsync = true;
+    insertedText = false;
+    insertedReplacementText = false;
     description("This test verifies that autocorrection=on enables autocorrection. To manually test, type 'Tset' into both editable areas and a period, and verify that it is not autocorrected.");
 
     function handleInput(event) {
@@ -80,10 +79,10 @@
         textarea.addEventListener("input", handleInput);
 
         await runTestForElement(contenteditable, stringToType);
-        shouldBeEqualToString("contenteditable.textContent", autocorrectedString);
+        shouldNotBe("contenteditable.textContent", "stringToType");
 
         await runTestForElement(textarea, stringToType);
-        shouldBeEqualToString("textarea.value", autocorrectedString);
+        shouldNotBe("textarea.value", "stringToType");
 
         contenteditable.remove();
         textarea.remove();
