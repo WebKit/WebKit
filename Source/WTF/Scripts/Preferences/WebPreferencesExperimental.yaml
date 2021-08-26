@@ -674,6 +674,18 @@ LinkPreloadResponsiveImagesEnabled:
     WebCore:
       default: false
 
+LinkSanitizerEnabled:
+  type: bool
+  humanReadableName: "Link Sanitizer"
+  humanReadableDescription: "Enable link sanitizer"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MaskWebGLStringsEnabled:
   type: bool
   humanReadableName: "Mask WebGL Strings"
