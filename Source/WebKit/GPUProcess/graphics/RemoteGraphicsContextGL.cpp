@@ -283,11 +283,11 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
 #endif
 }
 
-void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting event)
+void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
 {
     assertIsCurrent(m_streamThread);
     // FIXME: only run this in testing mode. https://bugs.webkit.org/show_bug.cgi?id=222544
-    if (event == WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting::Timeout) {
+    if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout) {
         // Simulate the timeout by just discarding the context. The subsequent messages act like
         // unauthorized or old messages from Web process, they are skipped.
         callOnMainRunLoop([gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier = m_graphicsContextGLIdentifier]() {
@@ -296,7 +296,7 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
         });
         return;
     }
-    if (event == WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting::ContextChange) {
+    if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange) {
 #if PLATFORM(MAC)
         callOnMainRunLoop([weakConnection = m_gpuConnectionToWebProcess]() {
             if (auto connection = weakConnection.get())

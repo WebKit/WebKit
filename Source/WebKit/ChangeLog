@@ -1,3 +1,21 @@
+2021-08-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteGraphicsContextGL refers to GraphicsContextGLOpenGL::SimulatedEventForTesting
+        https://bugs.webkit.org/show_bug.cgi?id=229405
+
+        Reviewed by Kenneth Russell.
+
+        Instead, refer via the defining base class, i.e. use
+        GraphicsContextGL::SimulatedEventForTesting.
+        Fixes problems if we try to move ANGLE implementation out of
+        GraphicsContextGLOpenGL.
+
+        No new tests, refactor.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::simulateEventForTesting):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+
 2021-08-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] REGRESSION(r281158): fetch('http://localhost/') from about:blank doesn't emit the console error message

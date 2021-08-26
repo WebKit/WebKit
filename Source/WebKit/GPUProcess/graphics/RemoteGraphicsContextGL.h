@@ -101,7 +101,7 @@ protected:
     void paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
     void copyTextureFromMedia(WebCore::MediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
-    void simulateEventForTesting(WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting);
+    void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
