@@ -1,3 +1,17 @@
+2021-08-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] mark fast/text/trak-optimizeLegibility.html as a skip
+        https://bugs.webkit.org/show_bug.cgi?id=229572
+
+        optimizeLegibility doesn't affect text rendering on GLIB platforms,
+        effectively being always enabled.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/fast/text/trak-optimizeLegibility-expected.txt: Removed.
+        * platform/wpe/fast/text/trak-optimizeLegibility-expected.txt: Removed.
+
 2021-08-26  Eric Hutchison  <ehutchison@apple.com>
 
         REGRESSION: [BigSur wk2 Release, iOS15] animations/fill-mode-forwards.html is a flaky failure.
