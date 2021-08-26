@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, CreationData* creationData)
+FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const CreationData* creationData)
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, creationData)
 {
     ASSERT_ARG(font, font);

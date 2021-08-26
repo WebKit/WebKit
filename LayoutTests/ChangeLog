@@ -1,3 +1,14 @@
+2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Drawing small caps web fonts into canvas causes the GPU process to hang
+        https://bugs.webkit.org/show_bug.cgi?id=229401
+        <rdar://problem/82282054>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/text/small-caps-canvas-expected.txt: Added.
+        * fast/text/small-caps-canvas.html: Added.
+
 2021-08-26  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for webgl tests.

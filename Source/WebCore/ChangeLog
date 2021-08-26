@@ -1,5 +1,37 @@
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Drawing small caps web fonts into canvas causes the GPU process to hang
+        https://bugs.webkit.org/show_bug.cgi?id=229401
+        <rdar://problem/82282054>
+
+        Reviewed by Wenson Hsieh.
+
+        Web fonts retain their downloaded data in case they need to send that data to the GPU process
+        to render into canvas. Small caps fonts are implemented by creating a "derivative" variant font.
+        When we were creating these derivative fonts, we weren't forwarding this downloaded data to
+        those new fonts. Without it, the font fails to transfer across IPC.
+
+        Test: fast/text/small-caps-canvas.html
+
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::makeOptionalFromPointer):
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/HEVCUtilities.cpp:
+        (WebCore::makeOptionalFromPointer):
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::createDerivativeFont):
+        (WebCore::Font::createFontWithoutSynthesizableFeatures const):
+        (WebCore::Font::platformCreateScaledFont const):
+        * platform/graphics/coretext/FontPlatformDataCoreText.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
+2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
         REGRESSION(r256659): We try to remove fonts from the CSSFontFace which were never added
         https://bugs.webkit.org/show_bug.cgi?id=229535
         <rdar://problem/78857440>
