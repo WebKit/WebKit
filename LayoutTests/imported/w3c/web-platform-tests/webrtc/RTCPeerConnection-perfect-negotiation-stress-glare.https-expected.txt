@@ -1,4 +1,4 @@
 
-FAIL Perfect negotiation stress glare Remote description type 0 is incompatible with current signaling state 1
-FAIL Perfect negotiation stress glare with roles reversed assert_unreached: Error in iframe: InvalidStateError: Remote description type 0 is incompatible with current signaling state 1 Reached unreachable code
+FAIL Perfect negotiation stress glare Failed to set remote offer sdp: Called in wrong state: have-local-offer
+FAIL Perfect negotiation stress glare with roles reversed assert_unreached: Error in iframe: InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer Reached unreachable code
 
