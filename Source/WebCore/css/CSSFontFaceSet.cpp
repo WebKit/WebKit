@@ -162,8 +162,11 @@ String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
 
 void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
 {
-    if (!face.families())
+    if (!face.families()) {
+        // If the font has failed, there's no point in actually adding it to m_facesLookupTable,
+        // because no font requests can actually use it for anything. So, let's just ... not add it.
         return;
+    }
     auto families = face.families().value();
 
     for (auto& item : *families) {
@@ -220,7 +223,12 @@ void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const C
             continue;
 
         auto iterator = m_facesLookupTable.find(familyName);
-        ASSERT(iterator != m_facesLookupTable.end());
+        if (iterator == m_facesLookupTable.end()) {
+            // The font may have failed even before addToFacesLookupTable() was called on it,
+            // which means we never added it (because there's no point in adding a failed font).
+            // So, if it was never added, removing it is free! Woohoo!
+            return;
+        }
         bool found = false;
         for (size_t i = 0; i < iterator->value.size(); ++i) {
             if (iterator->value[i].ptr() == &face) {
