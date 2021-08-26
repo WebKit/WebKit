@@ -354,6 +354,10 @@ typedef enum {
 + (UIKeyboardImpl *)activeInstance;
 + (UIKeyboardImpl *)sharedInstance;
 + (CGSize)defaultSizeForInterfaceOrientation:(UIInterfaceOrientation)orientation;
+- (BOOL)handleKeyTextCommandForCurrentEvent;
+- (BOOL)handleKeyAppCommandForCurrentEvent;
+- (BOOL)handleKeyInputMethodCommandForCurrentEvent;
+- (BOOL)isCallingInputDelegate;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags;
 - (void)addInputString:(NSString *)string withFlags:(NSUInteger)flags withInputManagerHint:(NSString *)hint;
 - (BOOL)autocorrectSpellingEnabled;
@@ -540,9 +544,7 @@ typedef enum {
 - (void)insertDictationResult:(NSArray *)dictationResult withCorrectionIdentifier:(id)correctionIdentifier;
 - (void)replaceRangeWithTextWithoutClosingTyping:(UITextRange *)range replacementText:(NSString *)text;
 - (void)setBottomBufferHeight:(CGFloat)bottomBuffer;
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
 - (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags;
-#endif
 @property (nonatomic) UITextGranularity selectionGranularity;
 @required
 - (BOOL)hasContent;
@@ -1413,11 +1415,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface UIKeyboardImpl (IPI)
 - (void)setInitialDirection;
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
-- (BOOL)handleKeyTextCommandForCurrentEvent;
-- (BOOL)handleKeyAppCommandForCurrentEvent;
-- (BOOL)handleKeyInputMethodCommandForCurrentEvent;
-- (BOOL)isCallingInputDelegate;
-- (BOOL)delegateSupportsImagePaste;
 - (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end

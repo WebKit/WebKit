@@ -1,3 +1,61 @@
+2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove some iOS-specific compile-time guards that are no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=229500
+
+        Reviewed by Tim Horton.
+
+        Remove two compile-time flags that were no longer necessary after WebKit's minimum supported iOS version became
+        iOS 14: `USE(UIKIT_KEYBOARD_ADDITIONS)` and `HAVE(NONDESTRUCTIVE_IMAGE_PASTE_SUPPORT_QUERY)`.
+
+        `HAVE(NONDESTRUCTIVE_IMAGE_PASTE_SUPPORT_QUERY)` was only needed for a workaround in our test infrastructure,
+        while `USE(UIKIT_KEYBOARD_ADDITIONS)` was only introduced to maintain basic hardware keyboard functionality in
+        iOS 12, while supporting improvements to hardware keyboard support in iOS 13.
+
+        The latter now only guards `PLATFORM(IOS) || PLATFORM(MACCATALYST)`. However, there's no reason the codepaths
+        for hardware keyboard support can't exist on watchOS as well (especially since most of hardware keyboard
+        support is already implemented there -- just unreachable because it's not possible to attach a hardware keyboard
+        to an Apple watch). We can remove this feature flag, and simply delete code that was formerly guarded by
+        `!USE(UIKIT_KEYBOARD_ADDITIONS)`.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        (WebKit::WebKeyboardEvent::encode const):
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/WebKeyboardEvent.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _disableAutomaticKeyboardUI]):
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView _setMarkedText:highlights:selectedRange:]):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView _handleKeyUIEvent:]):
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]):
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView _hardwareKeyboardAvailabilityChanged]):
+        (-[WKContentView _selectionChanged]):
+        (-[WKContentView keyCommands]): Deleted.
+        (-[WKContentView handleKeyEvent:]): Deleted.
+        * UIProcess/ios/WKSyntheticFlagsChangedWebEvent.h:
+        * UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm:
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]):
+        (-[WKSelectTableViewController hasText]): Deleted.
+        (-[WKSelectTableViewController insertText:]): Deleted.
+        (-[WKSelectTableViewController deleteBackward]): Deleted.
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+
 2021-08-25  Simon Fraser  <simon.fraser@apple.com>
 
         Replace the uint64_t used to identify form submits with a strongly typed identifier

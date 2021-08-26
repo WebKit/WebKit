@@ -383,9 +383,6 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     WebKit::InteractionInformationAtPosition _positionInformation;
     WebKit::FocusedElementInformation _focusedElementInformation;
     RetainPtr<NSObject<WKFormPeripheral>> _inputPeripheral;
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-    RetainPtr<UIEvent> _uiEventBeingResent;
-#endif
     BlockPtr<void(::WebEvent *, BOOL)> _keyWebEventHandler;
 
     CGPoint _lastInteractionLocation;
@@ -436,10 +433,8 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 
     BOOL _keyboardDidRequestDismissal;
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     BOOL _candidateViewNeedsUpdate;
     BOOL _seenHardwareKeyDownInNonEditableElement;
-#endif
 
     BOOL _becomingFirstResponder;
     BOOL _resigningFirstResponder;

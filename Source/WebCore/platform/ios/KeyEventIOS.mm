@@ -274,14 +274,6 @@ int windowsKeyCodeForCharCode(unichar charCode)
 static bool isFunctionKey(UChar charCode)
 {
     switch (charCode) {
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-    case 1: // Home
-    case 4: // End
-    case 5: // FIXME: For some reason WebKitTestRunner generates this code for F14 (why?).
-    case 0x7F: // Forward Delete
-    case 0x10: // Function key (e.g. F1, F2, ...)
-#endif
-
     // WebKit uses Unicode PUA codes in the OpenStep reserve range for some special keys.
     case NSUpArrowFunctionKey:
     case NSDownArrowFunctionKey:
@@ -290,18 +282,14 @@ static bool isFunctionKey(UChar charCode)
     case NSPageUpFunctionKey:
     case NSPageDownFunctionKey:
     case NSClearLineFunctionKey: // Num Lock / Clear
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     case NSDeleteFunctionKey: // Forward delete
     case NSEndFunctionKey:
     case NSInsertFunctionKey:
     case NSHomeFunctionKey:
-#endif
         return true;
     }
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if (charCode >= NSF1FunctionKey && charCode <= NSF24FunctionKey)
         return true;
-#endif
     return false;
 }
 

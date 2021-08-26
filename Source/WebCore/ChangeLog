@@ -1,3 +1,18 @@
+2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove some iOS-specific compile-time guards that are no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=229500
+
+        Reviewed by Tim Horton.
+
+        See WebKit/ChangeLog for more details.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * platform/PlatformKeyboardEvent.h:
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::isFunctionKey):
+
 2021-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] RemoteAudioSession doesn't implement begin/endInterruption

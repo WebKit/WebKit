@@ -152,8 +152,6 @@
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
 }
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
-
 // Evernote expects to swizzle -keyCommands on WKContentView or they crash. Remove this hack
 // as soon as reasonably possible. See <rdar://problem/51759247>.
 static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
@@ -162,8 +160,6 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     using SuperKeyCommandsFunction = NSArray *(*)(struct objc_super*, SEL);
     return reinterpret_cast<SuperKeyCommandsFunction>(&objc_msgSendSuper)(&super, @selector(keyCommands));
 }
-
-#endif
 
 - (instancetype)_commonInitializationWithProcessPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
 {
@@ -226,10 +222,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_screenCapturedDidChange:) name:UIScreenCapturedDidChangeNotification object:[UIScreen mainScreen]];
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(WebCore::SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
         class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
-#endif
 
     return self;
 }

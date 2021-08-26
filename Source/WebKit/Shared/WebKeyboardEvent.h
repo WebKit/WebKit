@@ -61,7 +61,7 @@ public:
     int32_t windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
     int32_t nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
     int32_t macCharCode() const { return m_macCharCode; }
-#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
     bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE)
@@ -91,7 +91,7 @@ private:
     int32_t m_windowsVirtualKeyCode { 0 };
     int32_t m_nativeVirtualKeyCode { 0 };
     int32_t m_macCharCode { 0 };
-#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS) || PLATFORM(GTK) || USE(LIBWPE)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || USE(LIBWPE)
     bool m_handledByInputMethod { false };
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE)

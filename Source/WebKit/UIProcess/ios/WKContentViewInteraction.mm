@@ -172,10 +172,6 @@
 #import "WKFormColorControl.h"
 #endif
 
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-#import "WKWebEvent.h"
-#endif
-
 #if HAVE(PEPPER_UI_CORE)
 #import "PepperUICoreSPI.h"
 #endif
@@ -1084,10 +1080,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _lastAutocorrectionContext = { };
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     _candidateViewNeedsUpdate = NO;
     _seenHardwareKeyDownInNonEditableElement = NO;
-#endif
 
     _textInteractionDidChangeFocusedElement = NO;
     _activeTextInteractionCount = 0;
@@ -2271,23 +2265,17 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return NO;
 }
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
 - (BOOL)_disableAutomaticKeyboardUI
 {
     // Always enable automatic keyboard UI if we are not the first responder to avoid
     // interfering with other focused views (e.g. Find-in-page).
     return [self isFirstResponder] && ![self shouldShowAutomaticKeyboardUI];
 }
-#endif
 
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
-    return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode]
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
-        || _seenHardwareKeyDownInNonEditableElement
-#endif
-        ;
+    return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode] || _seenHardwareKeyDownInNonEditableElement;
 }
 
 - (BOOL)_requiresKeyboardResetOnReload
@@ -4625,13 +4613,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 // The completion handler should pass the rect of the correction text after replacing the input text, or nil if the replacement could not be performed.
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
 {
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if ([self _disableAutomaticKeyboardUI]) {
         if (completionHandler)
             completionHandler(nil);
         return;
     }
-#endif
 
     // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
@@ -4666,12 +4652,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if ([self _disableAutomaticKeyboardUI]) {
         completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
         return;
     }
-#endif
 
     if (!_page->hasRunningProcess()) {
         completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
@@ -4769,9 +4753,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)_didCommitLoadForMainFrame
 {
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     _seenHardwareKeyDownInNonEditableElement = NO;
-#endif
+
     [self _elementDidBlur];
     [self _cancelLongPressGestureRecognizer];
     [self _removeContainerForContextMenuHintPreviews];
@@ -4788,20 +4771,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [_hoverPlatter dismissPlatterWithAnimation:NO];
 #endif
 }
-
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-- (NSArray *)keyCommands
-{
-    if (!_page->editorState().isContentEditable)
-        return nil;
-
-    static NeverDestroyed<RetainPtr<NSArray>> editableKeyCommands = @[
-        [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
-        [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_previousAccessoryTab:)]
-    ];
-    return editableKeyCommands.get().get();
-}
-#endif
 
 - (void)_nextAccessoryTabForWebView:(id)sender
 {
@@ -5210,9 +5179,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (void)_setMarkedText:(NSString *)markedText highlights:(const Vector<WebCore::CompositionHighlight>&)highlights selectedRange:(NSRange)selectedRange
 {
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     _candidateViewNeedsUpdate = !self.hasMarkedText;
-#endif
     _markedText = markedText;
     _page->setCompositionAsync(markedText, { }, highlights, selectedRange, { });
 }
@@ -5494,11 +5461,9 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!_traits)
         _traits = adoptNS([[UITextInputTraits alloc] init]);
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     // Do not change traits when dismissing the keyboard.
     if (_isBlurringFocusedElement)
         return _traits.get();
-#endif
 
     [self _updateTextInputTraits:_traits.get()];
     return _traits.get();
@@ -5793,8 +5758,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     _page->setShouldRevealCurrentSelectionAfterInsertion(true);
 }
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
-
 - (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags
 {
     auto dispatchSyntheticFlagsChangedEvents = [&] (UIKeyModifierFlags flags, bool keyDown) {
@@ -5817,8 +5780,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _candidateViewNeedsUpdate;
 }
 
-#endif
-
 // Web events.
 - (BOOL)requiresKeyEvents
 {
@@ -5835,15 +5796,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
             if ([_inputPeripheral handleKeyEvent:event])
                 return;
         }
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
         if (!_seenHardwareKeyDownInNonEditableElement) {
             _seenHardwareKeyDownInNonEditableElement = YES;
             [self reloadInputViews];
         }
         [super _handleKeyUIEvent:event];
-#else
-        [self handleKeyEvent:event];
-#endif
         return;
     }
 
@@ -5854,19 +5811,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 {
     _page->generateSyntheticEditingCommand(command);
 }
-
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-- (void)handleKeyEvent:(::UIEvent *)event
-{
-    // WebCore has already seen the event, no need for custom processing.
-    if (event == _uiEventBeingResent)
-        return;
-
-    auto webEvent = adoptNS([[WKWebEvent alloc] initWithEvent:event]);
-    
-    [self handleKeyWebEvent:webEvent.get()];
-}
-#endif
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent
 {
@@ -5884,14 +5828,13 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     auto* keyboard = [UIKeyboardImpl sharedInstance];
     if ((_page->editorState().isContentEditable || _treatAsContentEditableUntilNextEditorStateUpdate) && [keyboard handleKeyInputMethodCommandForCurrentEvent]) {
         completionHandler(theEvent, YES);
         _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::Yes));
         return;
     }
-#endif
+
     if (_page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, HandledByInputMethod::No)))
         _keyWebEventHandler = makeBlockPtr(completionHandler);
     else
@@ -5900,10 +5843,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_didHandleKeyEvent:(::WebEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if ([event isKindOfClass:[WKSyntheticFlagsChangedWebEvent class]])
         return;
-#endif
 
     if (!(event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged))
         [_keyboardScrollingAnimator handleKeyEvent:event];
@@ -5912,27 +5853,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         handler(event, eventWasHandled);
         return;
     }
-
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-    // If we aren't interacting with editable content, we still need to call [super _handleKeyUIEvent:]
-    // so that keyboard repeat will work correctly. If we are interacting with editable content,
-    // we already did so in _handleKeyUIEvent.
-    if (eventWasHandled && _page->editorState().isContentEditable)
-        return;
-
-    if (![event isKindOfClass:[WKWebEvent class]])
-        return;
-
-    // Resending the event may destroy this WKContentView.
-    RetainPtr<WKContentView> protector(self);
-
-    // We keep here the event when resending it to the application to distinguish
-    // the case of a new event from one that has been already sent to WebCore.
-    ASSERT(!_uiEventBeingResent);
-    _uiEventBeingResent = [(WKWebEvent *)event uiEvent];
-    [super _handleKeyUIEvent:_uiEventBeingResent.get()];
-    _uiEventBeingResent = nil;
-#endif
 }
 
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
@@ -6579,9 +6499,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 {
     SetForScope<BOOL> isBlurringFocusedElementForScope { _isBlurringFocusedElement, YES };
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     [self _endEditing];
-#endif
 
     [_formInputSession invalidate];
     _formInputSession = nil;
@@ -6603,12 +6521,10 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusRequiresStrongPasswordAssistance = NO;
     _additionalContextForStrongPasswordAssistance = nil;
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     // When defocusing an editable element reset a seen keydown before calling -_hideKeyboard so that we
     // re-evaluate whether we still need a keyboard when UIKit calls us back in -_requiresKeyboardWhenFirstResponder.
     if (editableChanged)
         _seenHardwareKeyDownInNonEditableElement = NO;
-#endif
 
     [self _hideKeyboard];
 
@@ -6658,9 +6574,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
 - (void)_hardwareKeyboardAvailabilityChanged
 {
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     _seenHardwareKeyDownInNonEditableElement = NO;
-#endif
     [self reloadInputViews];
 }
 
@@ -7229,13 +7143,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     if (_usingGestureForSelection)
         [self _updateChangedSelection];
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if (_candidateViewNeedsUpdate) {
         _candidateViewNeedsUpdate = NO;
         if ([self.inputDelegate respondsToSelector:@selector(layoutHasChanged)])
             [(id <UITextInputDelegatePrivate>)self.inputDelegate layoutHasChanged];
     }
-#endif
     
     [_webView _didChangeEditorState];
 

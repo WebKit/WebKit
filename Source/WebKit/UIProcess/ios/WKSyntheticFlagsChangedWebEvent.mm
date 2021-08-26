@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -51,4 +51,4 @@
 
 @end
 
-#endif // USE(UIKIT_KEYBOARD_ADDITIONS) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

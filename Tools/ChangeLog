@@ -1,3 +1,17 @@
+2021-08-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove some iOS-specific compile-time guards that are no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=229500
+
+        Reviewed by Tim Horton.
+
+        Remove this workaround, which was only required to keep an API test passing on iOS 13.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (overrideKeyboardDelegateSupportsImagePaste): Deleted.
+
 2021-08-25  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Use Python 3 in CI

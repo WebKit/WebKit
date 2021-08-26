@@ -112,7 +112,7 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
     , m_isComposing(view && is<DOMWindow>(view->window()) && downcast<DOMWindow>(*view->window()).frame() && downcast<DOMWindow>(*view->window()).frame()->editor().hasComposition())
-#if USE(APPKIT) || USE(UIKIT_KEYBOARD_ADDITIONS)
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY)
     , m_handledByInputMethod(key.handledByInputMethod())
 #endif
 #if USE(APPKIT)

@@ -79,11 +79,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @class WKSelectPopover;
 
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
 @interface WKSelectTableViewController : UITableViewController
-#else
-@interface WKSelectTableViewController : UITableViewController <UIKeyInput>
-#endif
 {
     NSUInteger _singleSelectionIndex;
     NSUInteger _singleSelectionSection;
@@ -369,24 +365,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _contentView._shouldUseLegacySelectPopoverDismissalBehavior;
 }
 
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-#pragma mark UIKeyInput delegate methods
-
-- (BOOL)hasText
-{
-    return NO;
-}
-
-- (void)insertText:(NSString *)text
-{
-}
-
-- (void)deleteBackward
-{
-}
-
-#endif
-
 @end
 
 @implementation WKSelectPopover {
@@ -415,10 +393,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self.popoverController = adoptNS([[UIPopoverController alloc] initWithContentViewController:popoverViewController.get()]).get();
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
-    [[UIKeyboardImpl sharedInstance] setDelegate:_tableViewController.get()];
-#endif
-    
     return self;
 }
 

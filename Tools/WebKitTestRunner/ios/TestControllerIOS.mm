@@ -62,15 +62,6 @@ static void overridePresentMenuOrPopoverOrViewController()
 {
 }
 
-#if !HAVE(NONDESTRUCTIVE_IMAGE_PASTE_SUPPORT_QUERY)
-
-static BOOL overrideKeyboardDelegateSupportsImagePaste(id, SEL)
-{
-    return NO;
-}
-
-#endif
-
 namespace WTR {
 
 static bool isDoneWaitingForKeyboardToDismiss = true;
@@ -196,12 +187,6 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     //
     // FIXME: Investigate whether this can be removed. The swizzled return value is inconsistent with GSEventSetHardwareKeyboardAttached.
     method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
-
-#if !HAVE(NONDESTRUCTIVE_IMAGE_PASTE_SUPPORT_QUERY)
-    // FIXME: Remove this workaround once -[UIKeyboardImpl delegateSupportsImagePaste] no longer increments the general pasteboard's changeCount.
-    if (!m_keyboardDelegateSupportsImagePasteSwizzler)
-        m_keyboardDelegateSupportsImagePasteSwizzler = makeUnique<InstanceMethodSwizzler>(UIKeyboardImpl.class, @selector(delegateSupportsImagePaste), reinterpret_cast<IMP>(overrideKeyboardDelegateSupportsImagePaste));
-#endif
 
     if (m_overriddenKeyboardInputMode) {
         m_overriddenKeyboardInputMode = nil;
