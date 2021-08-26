@@ -1,5 +1,14 @@
 2021-08-26  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ BigSur arm64 EWS ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData) on security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html (flaky crash).
+        https://bugs.webkit.org/show_bug.cgi?id=229505
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-26  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout().
         https://bugs.webkit.org/show_bug.cgi?id=229580.
 
