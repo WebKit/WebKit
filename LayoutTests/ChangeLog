@@ -1,3 +1,22 @@
+2021-08-26  Joone Hur  <joone@webkit.org>
+
+        Caret should respect text background color
+        https://bugs.webkit.org/show_bug.cgi?id=117493
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaselined caret rendering tests.
+
+        * editing/caret/caret-color.html:
+        * editing/caret/color-span-inside-editable-background-expected.html:
+        * editing/caret/color-span-inside-editable-expected.html:
+        * fast/css/caret-color-auto-expected.html:
+        * platform/ios-wk2/editing/caret/caret-color-expected.png:
+        * platform/ios/editing/caret/caret-color-expected.txt:
+        * platform/mac/editing/caret/caret-color-expected.png:
+        * platform/mac/editing/caret/caret-color-expected.txt:
+        * platform/win/editing/caret/caret-color-expected.txt:
+
 2021-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         CSS keyframed animations don't respect edges in 4 value background-position

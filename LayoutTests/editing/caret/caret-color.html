@@ -16,10 +16,10 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
-<p>This tests to make sure that the caret is visible in the black background by getting the caret color from the color of the element(span) containing the text, not the parent element(div) that has the contentEditable attribute.
+<p>This tests to make sure that the caret is visible in the black background by getting the caret color from the color of the element(span) containing the text, not the root editable element(div) that has the contentEditable attribute.
 </p>
-<div contenteditable id="root" class="editing">
-<span id="test" style="color: white; background-color: black">Where is my caret?</span>
+<div contenteditable id="root" class="editing" style="background-color: black" >
+<span id="test" style="color: white">Where is my caret?</span>
 </div>
 
 <script>

@@ -1,3 +1,20 @@
+2021-08-26  Joone Hur  <joone@webkit.org>
+
+        Caret should respect text background color
+        https://bugs.webkit.org/show_bug.cgi?id=117493
+
+        Reviewed by Ryosuke Niwa.
+
+        An earlier fix for caret color, which we are now improving, was this commit:
+        https://trac.webkit.org/changeset/152612/webkit
+
+        This patch allows the caret to become visible in the black background
+        by getting the caret color from the element containing
+        the text, not the root editable element that has the contentEditable attribute.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::CaretBase::computeCaretColor):
+
 2021-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         CSS keyframed animations don't respect edges in 4 value background-position

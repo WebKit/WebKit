@@ -1790,15 +1790,15 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     UNUSED_PARAM(node);
     return elementStyle.caretColor();
 #else
-    auto* rootEditableElement = node ? node->rootEditableElement() : nullptr;
-    auto* rootEditableStyle = rootEditableElement && rootEditableElement->renderer() ? &rootEditableElement->renderer()->style() : nullptr;
+    RefPtr parentElement = node ? node->parentElement() : nullptr;
+    auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
     // CSS value "auto" is treated as an invalid color.
-    if (!elementStyle.caretColor().isValid() && rootEditableStyle) {
-        auto rootEditableBackgroundColor = rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    if (!elementStyle.caretColor().isValid() && parentStyle) {
+        auto parentBackgroundColor = parentStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-        auto disappearsIntoBackground = blendSourceOver(rootEditableBackgroundColor, elementBackgroundColor) == rootEditableBackgroundColor;
+        auto disappearsIntoBackground = blendSourceOver(parentBackgroundColor, elementBackgroundColor) == parentBackgroundColor;
         if (disappearsIntoBackground)
-            return rootEditableStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
+            return parentStyle->visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
     }
     return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
 #endif
