@@ -855,6 +855,8 @@ enum AutoplayPolicy {
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
     [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
     [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);
+    [Conditional=WEBGL] boolean requestedMetal(WebGLRenderingContext context);
+    [Conditional=WEBGL] boolean platformSupportsMetal(boolean isWebGL2);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocusedAndActive(boolean isFocused);

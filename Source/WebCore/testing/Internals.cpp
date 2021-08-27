@@ -5289,6 +5289,20 @@ Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
 
     return RequestedGPU::Default;
 }
+
+bool Internals::requestedMetal(WebGLRenderingContext& context)
+{
+    UNUSED_PARAM(context);
+#if PLATFORM(COCOA)
+    if (auto optionalAttributes = context.getContextAttributes()) {
+        auto attributes = *optionalAttributes;
+
+        return attributes.useMetal;
+    }
+#endif
+
+    return false;
+}
 #endif
 
 void Internals::setPageVisibility(bool isVisible)
@@ -6507,5 +6521,12 @@ ExceptionOr<void> Internals::setDocumentAutoplayPolicy(Document& document, Inter
 
     return { };
 }
+
+#if ENABLE(WEBGL) && !PLATFORM(COCOA)
+bool Internals::platformSupportsMetal(bool)
+{
+    return false;
+}
+#endif
 
 } // namespace WebCore
