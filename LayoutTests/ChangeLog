@@ -1,3 +1,12 @@
+2021-08-27  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur EWS] webrtc/video-mediastreamtrack-stats.html is a flaky crash / failing.
+        https://bugs.webkit.org/show_bug.cgi?id=229614
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-08-27  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Reuse the same network load when process-swapping on resource response due to COOP
