@@ -1152,16 +1152,16 @@ std::optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decode(Decoder& decoder)
     if (!isTextOrientationFallback)
         return std::nullopt;
 
-    std::optional<RenderingResourceIdentifier> renderingRersouceIdentifier;
-    decoder >> renderingRersouceIdentifier;
-    if (!renderingRersouceIdentifier)
+    std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+    decoder >> renderingResourceIdentifier;
+    if (!renderingResourceIdentifier)
         return std::nullopt;
 
     auto platformData = decodePlatformData(decoder);
     if (!platformData)
         return std::nullopt;
 
-    return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingRersouceIdentifier);
+    return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingResourceIdentifier);
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
