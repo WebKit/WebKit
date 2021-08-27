@@ -1,3 +1,15 @@
+2021-08-27  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-position-sticky] createIndicatorForStickyElements testing function races with font loading
+        https://bugs.webkit.org/show_bug.cgi?id=229602
+
+        Reviewed by Žan Doberšek.
+
+        * web-platform-tests/css/css-position/resources/ref-rectangle.js:
+        (createIndicatorForStickyElements): Wait to read the size of the target div until
+        all web fonts have loaded. This ensures that this executes after Ahem has loaded
+        for the failing test.
+
 2021-08-27  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Don't forget about the outer selector when matching ::slotted().
