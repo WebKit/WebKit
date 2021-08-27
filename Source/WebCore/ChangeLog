@@ -1,3 +1,25 @@
+2021-08-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r276882): Shadow trees may use stale style information after inline stylesheet is mutated via CSSOM
+        https://bugs.webkit.org/show_bug.cgi?id=228917
+        rdar://81483998
+
+        Reviewed by Alan Bujtas.
+
+        If a stylesheet in a shadow tree is mutated via CSSOM we fail to remove cached style resolver for the mutated sheet
+        and may end up with stale style.
+
+        Test: fast/shadow-dom/shadow-stylesheet-mutation.html
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::unshareShadowTreeResolverBeforeMutation):
+
+        Remove an assert relevant to the previous call site only.
+
+        (WebCore::Style::Scope::scheduleUpdate):
+
+        Unshare shadow tree resolver immeditaly when stylesheet contents or interpretation changes.
+
 2021-08-27  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Don't forget about the outer selector when matching ::slotted().
