@@ -53,6 +53,7 @@ class BitBucket(mocks.Requests):
 
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
+        self.pull_requests = []
 
     def commit(self, ref):
         if ref in self.commits:
@@ -157,7 +158,7 @@ class BitBucket(mocks.Requests):
             ],
         ), url=url)
 
-    def request(self, method, url, data=None, params=None, **kwargs):
+    def request(self, method, url, data=None, params=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -193,5 +194,48 @@ class BitBucket(mocks.Requests):
 
         if stripped_url.startswith('{}/rest/branch-utils/latest/{}/branches/info/'.format(self.hosts[0], self.project)):
             return self._branches_for(stripped_url.split('/')[-1], url, params or {})
+
+        # All pull-requests
+        pr_base = '{}/rest/api/1.0/{}/pull-requests'.format(self.hosts[0], self.project)
+        if method == 'GET' and stripped_url == pr_base:
+            prs = []
+            for candidate in self.pull_requests:
+                states = (params or {}).get('state', [])
+                states = states if isinstance(states, list) else [states]
+                if states and candidate.get('state') not in states:
+                    continue
+                at = (params or {}).get('at', None)
+                if at and candidate.get('fromRef', {}).get('id') != at:
+                    continue
+                prs.append(candidate)
+
+            return mocks.Response.fromJson(dict(
+                size=len(prs),
+                isLastPage=True,
+                values=prs,
+            ))
+
+        # Create pull-request
+        if method == 'POST' and stripped_url == pr_base:
+            json['author'] = dict(user=dict(displayName='Tim Committer', emailAddress='committer@webkit.org'))
+            json['participants'] = [json['author']]
+            json['id'] = 1 + max([0] + [pr.get('id', 0) for pr in self.pull_requests])
+            json['fromRef']['displayId'] = json['fromRef']['id'].split('/')[-2:]
+            json['toRef']['displayId'] = json['toRef']['id'].split('/')[-2:]
+            self.pull_requests.append(json)
+            return mocks.Response.fromJson(json)
+
+        # Update or access pull-request
+        if stripped_url.startswith(pr_base):
+            number = int(stripped_url.split('/')[-1])
+            existing = None
+            for i in range(len(self.pull_requests)):
+                if self.pull_requests[i].get('id') == number:
+                    existing = i
+            if existing is None:
+                return mocks.Response.create404(url)
+            if method == 'PUT':
+                self.pull_requests[existing].update(json)
+            return mocks.Response.fromJson(self.pull_requests[existing])
 
         return mocks.Response.create404(url)

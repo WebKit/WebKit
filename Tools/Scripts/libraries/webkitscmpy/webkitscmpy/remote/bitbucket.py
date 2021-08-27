@@ -25,13 +25,159 @@ import requests
 import six
 import sys
 
+import json
+
 from webkitcorepy import decorators
-from webkitscmpy import Commit
+from webkitscmpy import Commit, PullRequest
 from webkitscmpy.remote.scm import Scm
 
 
 class BitBucket(Scm):
     URL_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)/projects/(?P<project>\S+)/repos/(?P<repository>\S+)\Z')
+
+    class PRGenerator(Scm.PRGenerator):
+        TITLE_CHAR_LIMIT = 254
+        BODY_CHAR_LIMIT = 32766
+
+        def find(self, state=None, head=None, base=None):
+            params = dict(
+                limit=100,
+                withProperties='false',
+                withAttributes='false',
+            )
+            if state == PullRequest.State.OPENED:
+                params['state'] = 'OPEN'
+            if state == PullRequest.State.CLOSED:
+                params['state'] = ['DECLINED', 'MERGED', 'SUPERSEDED']
+            if head:
+                params['direction'] = 'OUTGOING'
+                params['at'] = 'refs/heads/{}'.format(head)
+            data = self.repository.request('pull-requests', params=params)
+            for datum in data or []:
+                if base and not datum['toRef']['id'].endswith(base):
+                    continue
+                yield PullRequest(
+                    number=datum['id'],
+                    title=datum.get('title'),
+                    body=datum.get('description'),
+                    author=self.repository.contributors.create(
+                        datum['author']['user']['displayName'],
+                        datum['author']['user']['emailAddress'],
+                    ), head=datum['fromRef']['displayId'],
+                    base=datum['toRef']['displayId'],
+                )
+
+        def create(self, head, title, body=None, commits=None, base=None):
+            for key, value in dict(head=head, title=title).items():
+                if not value:
+                    raise ValueError("Must define '{}' when creating pull-request".format(key))
+
+            if len(title) > self.TITLE_CHAR_LIMIT:
+                raise ValueError('Title length too long. Limit is: {}'.format(self.TITLE_CHAR_LIMIT))
+            description = PullRequest.create_body(body, commits)
+            if description and len(description) > self.BODY_CHAR_LIMIT:
+                raise ValueError('Body length too long. Limit is: {}'.format(self.BODY_CHAR_LIMIT))
+            response = requests.post(
+                'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests'.format(
+                    domain=self.repository.domain,
+                    project=self.repository.project,
+                    name=self.repository.name,
+                ), json=dict(
+                    title=title,
+                    description=PullRequest.create_body(body, commits),
+                    fromRef=dict(
+                        id='refs/heads/{}'.format(head),
+                        repository=dict(
+                            slug=self.repository.name,
+                            project=dict(key=self.repository.project),
+                        ),
+                    ), toRef=dict(
+                        id='refs/heads/{}'.format(base or self.repository.default_branch),
+                        repository=dict(
+                            slug=self.repository.name,
+                            project=dict(key=self.repository.project),
+                        ),
+                    ),
+                ),
+            )
+            if response.status_code // 100 != 2:
+                return None
+            data = response.json()
+            return PullRequest(
+                number=data['id'],
+                title=data.get('title'),
+                body=data.get('description'),
+                author=self.repository.contributors.create(
+                    data['author']['user']['displayName'],
+                    data['author']['user']['emailAddress'],
+                ), head=data['fromRef']['displayId'],
+                base=data['toRef']['displayId'],
+            )
+
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
+            if not isinstance(pull_request, PullRequest):
+                raise ValueError(
+                    "Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
+            if not any((head, title, body, commits, base)):
+                raise ValueError('No arguments to update pull-request provided')
+
+            to_change = dict()
+            if title:
+                to_change['title'] = title
+            if body or commits:
+                to_change['description'] = PullRequest.create_body(body, commits)
+            if head:
+                to_change['fromRef'] = dict(
+                    id='refs/heads/{}'.format(head),
+                    repository=dict(
+                        slug=self.repository.name,
+                        project=dict(key=self.repository.project),
+                    ),
+                )
+            if commits:
+                if to_change.get('fromRef'):
+                    to_change['fromRef']['latestCommit'] = commits[0].hash
+                else:
+                    to_change['fromRef'] = dict(latestCommit=commits[0].hash)
+            if base:
+                to_change['toRef'] = dict(
+                    id='refs/heads/{}'.format(base or self.repository.default_branch),
+                    repository=dict(
+                        slug=self.repository.name,
+                        project=dict(key=self.repository.project),
+                    ),
+                )
+
+            pr_url = 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}'.format(
+                domain=self.repository.domain,
+                project=self.repository.project,
+                name=self.repository.name,
+                id=pull_request.number,
+            )
+            response = requests.get(pr_url)
+            if response.status_code // 100 != 2:
+                return None
+            data = response.json()
+            del data['author']
+            del data['participants']
+            data.update(to_change)
+
+            response = requests.put(pr_url, json=data)
+            if response.status_code // 100 != 2:
+                return None
+            data = response.json()
+
+            pull_request.title = data.get('title', pull_request.title)
+            if data.get('description'):
+                pull_request.body, pull_request.commits = pull_request.parse_body(data.get('description'))
+            user = data.get('author', {}).get('user', {})
+            if user.get('displayName') and user.get('emailAddress'):
+                pull_request.author = self.repository.contributors.create(user['displayName'], user['emailAddress'])
+            pull_request.head = data.get('fromRef', {}).get('displayId', pull_request.base)
+            pull_request.base = data.get('toRef', {}).get('displayId', pull_request.base)
+
+            return pull_request
+
 
     @classmethod
     def is_webserver(cls, url):
@@ -51,6 +197,8 @@ class BitBucket(Scm):
             contributors=contributors,
             id=id or self.name.lower(),
         )
+
+        self.pull_requests = self.PRGenerator(self)
 
     @property
     def is_git(self):

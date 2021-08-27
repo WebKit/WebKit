@@ -26,6 +26,20 @@ from webkitscmpy.scm_base import ScmBase
 
 
 class Scm(ScmBase):
+    class PRGenerator(object):
+        def __init__(self, repository):
+            self.repository = repository
+
+        def find(self, state=None, head=None, base=None):
+            raise NotImplementedError()
+
+        def create(self, head, title, body=None, commits=None, base=None):
+            raise NotImplementedError()
+
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None):
+            raise NotImplementedError()
+
+
     @classmethod
     def from_url(cls, url, contributors=None):
         from webkitscmpy import remote
@@ -42,3 +56,4 @@ class Scm(ScmBase):
         if not isinstance(url, six.string_types):
             raise ValueError("Expected 'url' to be a string type, not '{}'".format(type(url)))
         self.url = url
+        self.pull_requests = None

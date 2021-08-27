@@ -20,9 +20,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import sys
 import unittest
 
-from webkitscmpy import Commit, PullRequest
+from webkitcorepy import OutputCapture, testing
+from webkitscmpy import Commit, PullRequest, program, mocks
 
 
 class TestPullRequest(unittest.TestCase):
@@ -150,3 +153,169 @@ Reviewed by Tim Contributor.
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
+
+
+class TestDoPullRequest(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super(TestDoPullRequest, self).setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, '.svn'))
+
+    def test_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path):
+            self.assertEqual(1, program.main(
+                args=('pull-request',),
+                path=self.path,
+            ))
+        self.assertEqual(captured.root.log.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
+
+    def test_no_modified(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n")
+        self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
+
+    def test_staged(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+            self.assertDictEqual(repo.staged, {})
+            self.assertEqual(repo.head.hash, 'e4390abc95a2026370b8c9813b7e55c61c5d6ebb')
+
+        self.assertEqual(captured.root.log.getvalue(), '''Creating the local development branch 'eng/pr-branch'...
+Creating commit...
+    Found 1 commit...
+''')
+        self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
+
+    def test_modified(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+            repo.modified['modified.txt'] = 'diff'
+            self.assertEqual(1, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+            self.assertDictEqual(repo.modified, dict())
+            self.assertDictEqual(repo.staged, dict())
+            self.assertEqual(repo.head.hash, 'd05082bf6707252aef3472692598a587ed3fb213')
+
+        self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
+        self.assertEqual(captured.root.log.getvalue(), '''Creating the local development branch 'eng/pr-branch'...
+    Adding modified.txt...
+Creating commit...
+    Found 1 commit...
+''')
+
+    def test_github(self):
+        with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
+                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            log[:4] + log[7 if sys.version_info > (3, 0) else 5:], [
+                "Creating the local development branch 'eng/pr-branch'...",
+                'Creating commit...',
+                '    Found 1 commit...',
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+                "Created 'PR 1 | Created commit'!",
+            ],
+        )
+
+    def test_github_update(self):
+        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with OutputCapture() as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request',),
+                    path=self.path,
+                ))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            log[:3] + log[6 if sys.version_info > (3, 0) else 4:], [
+                "Amending commit...",
+                '    Found 1 commit...',
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+                "Updated 'PR 1 | Amended commit'!",
+            ],
+        )
+
+    def test_stash(self):
+        with OutputCapture() as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )) as repo, mocks.local.Svn():
+
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'pr-branch'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            log[:4] + log[7 if sys.version_info > (3, 0) else 5:], [
+                "Creating the local development branch 'eng/pr-branch'...",
+                'Creating commit...',
+                '    Found 1 commit...',
+                "Pushing 'eng/pr-branch' to 'origin'...",
+                "Creating pull-request for 'eng/pr-branch'...",
+                "Created 'PR 1 | Created commit'!",
+            ],
+        )
+
+    def test_stash_update(self):
+        with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
+            remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
+        )) as repo, mocks.local.Svn():
+            with OutputCapture():
+                repo.staged['added.txt'] = 'added'
+                self.assertEqual(0, program.main(
+                    args=('pull-request', '-i', 'pr-branch'),
+                    path=self.path,
+                ))
+
+            with OutputCapture() as captured:
+                repo.staged['added.txt'] = 'diff'
+                self.assertEqual(0, program.main(
+                    args=('pull-request',),
+                    path=self.path,
+                ))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            log[:3] + log[6 if sys.version_info > (3, 0) else 4:], [
+                "Amending commit...",
+                '    Found 1 commit...',
+                "Pushing 'eng/pr-branch' to 'origin'...",
+                "Updating pull-request for 'eng/pr-branch'...",
+                "Updated 'PR 1 | Amended commit'!",
+            ],
+        )

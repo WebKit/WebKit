@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import hashlib
 import json
 import os
 import re
@@ -28,7 +29,7 @@ import time
 from datetime import datetime
 from mock import patch
 
-from webkitcorepy import decorators, mocks, OutputCapture, StringIO
+from webkitcorepy import decorators, mocks, string_utils, OutputCapture, StringIO
 from webkitscmpy import local, Commit, Contributor
 from webkitscmpy.program.canonicalize.committer import main as committer_main
 from webkitscmpy.program.canonicalize.message import main as message_main
@@ -412,6 +413,22 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if re.match(r'^[A-Za-z0-9-]+/[A-Za-z0-9/-]+$', args[2]) else mocks.ProcessCompletion(),
             ), mocks.Subprocess.Route(
+                self.executable, 'commit',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(amend=False),
+            ), mocks.Subprocess.Route(
+                self.executable, 'commit', '--amend',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.commit(amend=True),
+            ), mocks.Subprocess.Route(
+                self.executable, 'add', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.add(args[2]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'push', '-f',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(returncode=0),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
@@ -519,6 +536,9 @@ nothing to commit, working tree clean
             self.commits[something][-1] = Commit.from_json(Commit.Encoder().default(self.head))
             self.head = self.commits[something][-1]
             self.head.branch = something
+            if not self.head.branch_point:
+                self.head.branch_point = self.head.identifier
+                self.head.identifier = 0
             return True
 
         if commit:
@@ -708,4 +728,36 @@ nothing to commit, working tree clean
                 configfile.write('[{}]\n'.format(key_a))
                 configfile.write('\t{}={}\n'.format(key_b, value))
 
+        return mocks.ProcessCompletion(returncode=0)
+
+    def commit(self, amend=False):
+        if not self.head:
+            return mocks.ProcessCompletion(returncode=1, stdout='Allowed in git, but disallowed by reasonable workflows')
+        if not self.staged and not amend:
+            return mocks.ProcessCompletion(returncode=1, stdout='no changes added to commit (use "git add" and/or "git commit -a")\n')
+
+        if not amend:
+            self.head = Commit(
+                branch=self.branch, repository_id=self.head.repository_id,
+                timestamp=int(time.time()),
+                identifier=self.head.identifier + 1 if self.head.branch_point else 1,
+                branch_point=self.head.branch_point or self.head.identifier,
+            )
+            self.commits[self.branch].append(self.head)
+
+        self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
+        self.head.message = '{} commit\nReviewed by Jonathan Bedard\n\n * {}\n'.format(
+            'Amended' if amend else 'Created',
+            '\n * '.join(self.staged.keys()),
+        )
+        self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
+        self.staged = {}
+        return mocks.ProcessCompletion(returncode=0)
+
+    def add(self, file):
+        if file not in self.modified:
+            return mocks.ProcessCompletion(returncode=128, stdout="fatal: pathspec '{}' did not match any files\n".format(file))
+        for key, value in self.modified.items():
+            self.staged[key] = value
+        self.modified = {}
         return mocks.ProcessCompletion(returncode=0)

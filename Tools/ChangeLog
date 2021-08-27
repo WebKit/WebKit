@@ -1,5 +1,60 @@
 2021-08-27  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Add pull-request command (Part 6)
+        https://bugs.webkit.org/show_bug.cgi?id=229089
+        <rdar://problem/81908751>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Add commit, add and push commands.
+        (Git.commit): Create new commit from staged files.
+        (Git.add): Stage modified files.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/bitbucket.py:
+        (BitBucket.__init__): Add pull_requests.
+        (BitBucket.request): Add ability to list and edit pull requets.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.__init__): Add pull_requests.
+        (GitHub.request): Add ability to list and edit pull requets.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py: Add PullRequest.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.parser): Add '--add' and '--no-add' to allow user to specify how modified files
+        are incorperated into the pull-request.
+        (PullRequest.create_commit): Based on currently modified files, either create a new commit or
+        add those files to an existing commit.
+        (PullRequest.branch_point): Determine when this branch diverged from a production branch.
+        (PullRequest.main): Create branch, create commit on branch, push branch and either create or
+        update a pull-request.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.find):
+        (BitBucket.PRGenerator.create):
+        (BitBucket.PRGenerator.update):
+        (BitBucket.__init__): Add pull_request generator.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.find):
+        (GitHub.PRGenerator.create):
+        (GitHub.PRGenerator.update):
+        (GitHub.__init__): Add pull_request generator.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.PRGenerator.__init__):
+        (Scm.PRGenerator.find):
+        (Scm.PRGenerator.create):
+        (Scm.PRGenerator.update):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        (TestDoPullRequest.setUp):
+        (TestDoPullRequest.test_svn):
+        (TestDoPullRequest.test_no_modified):
+        (TestDoPullRequest.test_staged):
+        (TestDoPullRequest.test_modified):
+        (TestDoPullRequest.test_github):
+        (TestDoPullRequest.test_github_update):
+        (TestDoPullRequest.test_stash):
+        (TestDoPullRequest.test_stash_update):
+
+2021-08-27  Jonathan Bedard  <jbedard@apple.com>
+
         [run-webkit-tests] Use Python 3 (Part 3)
         https://bugs.webkit.org/show_bug.cgi?id=226658
         <rdar://problem/78882016>
