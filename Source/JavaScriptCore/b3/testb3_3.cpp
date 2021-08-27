@@ -102,83 +102,6 @@ void testLoadPreIndex32()
     CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
 }
 
-void testLoadWithStorePreIndex32()
-{
-    if (Options::defaultB3OptLevel() < 2)
-        return;
-
-    int32_t nums[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    int32_t* ptr = nums;
-
-    Procedure proc;
-    BasicBlock* root = proc.addBlock();
-    BasicBlock* loopTest = proc.addBlock();
-    BasicBlock* loopBody = proc.addBlock();
-    BasicBlock* done = proc.addBlock();
-
-    Variable* r = proc.addVariable(Int32);
-    Variable* p = proc.addVariable(Int64);
-
-    // ---------------------- Root_Block
-    // r1 = 0
-    // Upsilon(r1, ^r2)
-    // p1 = addr
-    // Upsilon(p1, ^p2)
-    Value* r1 = root->appendIntConstant(proc, Origin(), Int32, 0);
-    root->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r1);
-    Value* p1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-    root->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p1);
-    root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
-
-    // ---------------------- Loop_Test_Block
-    // loop:
-    // p2 = Phi()
-    // r2 = Phi()
-    // if r2 >= 10 goto done
-    Value* r2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), r);
-    Value* p2 = loopTest->appendNew<VariableValue>(proc, B3::Get, Origin(), p);
-    Value* cond = loopTest->appendNew<Value>(proc, AboveEqual, Origin(), r2, loopTest->appendNew<Const32Value>(proc, Origin(), 10));
-    loopTest->appendNewControlValue(proc, Branch, Origin(), cond, FrequentedBlock(done), FrequentedBlock(loopBody));
-
-    // ---------------------- Loop_Body_Block
-    // p3 = p2 + 1
-    // Upsilon(p3, ^p2)
-    // p3' = &p3
-    // store(5, p3')
-    // r3 = r2 + load(p3)
-    // Upsilon(r3, ^r2)
-    // goto loop
-    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 4));
-    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
-    Value* p3Prime = loopBody->appendNew<Value>(proc, Opaque, Origin(), p3);
-    loopBody->appendNew<MemoryValue>(proc, Store, Origin(), loopBody->appendNew<Const32Value>(proc, Origin(), 5), p3Prime);
-    Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int32, Origin(), p3));
-    loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
-    loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
-
-    // ---------------------- Done_Block
-    // done:
-    // return r2
-    done->appendNewControlValue(proc, Return, Origin(), r2);
-
-    proc.resetReachability();
-    validate(proc);
-    fixSSA(proc);
-
-    auto code = compileProc(proc);
-
-    auto test = [&] () -> int32_t {
-        int32_t r = 0;
-        while (r < 10) {
-            *++ptr = 5;
-            r += *ptr;
-        }
-        return r;
-    };
-
-    CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), test());
-}
-
 void testLoadPreIndex64()
 {
     if (Options::defaultB3OptLevel() < 2)
@@ -421,7 +344,6 @@ void testStorePreIndex32()
     auto code = compileProc(proc);
     if (isARM64())
         checkUsesInstruction(*code, "#4]!");
-
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int32_t*>(res);
     CHECK_EQ(nums[2], *ptr);
@@ -446,9 +368,6 @@ void testStorePreIndex64()
     root->appendNewControlValue(proc, Return, Origin(), preIncrement);
 
     auto code = compileProc(proc);
-    if (isARM64())
-        checkUsesInstruction(*code, "#8]!");
-
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int64_t*>(res);
     CHECK_EQ(nums[2], *ptr);
@@ -477,7 +396,6 @@ void testStorePostIndex32()
     auto code = compileProc(proc);
     if (isARM64())
         checkUsesInstruction(*code, "], #4");
-
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int32_t*>(res);
     CHECK_EQ(nums[1], 4);
@@ -505,7 +423,6 @@ void testStorePostIndex64()
     auto code = compileProc(proc);
     if (isARM64())
         checkUsesInstruction(*code, "], #8");
-
     intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
     ptr = bitwise_cast<int64_t*>(res);
     CHECK_EQ(nums[1], 4);
@@ -4180,15 +4097,17 @@ void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testZShrArgImm32(0xffffffff, 1));
     RUN(testZShrArgImm32(0xffffffff, 63));
 
-    RUN(testLoadPreIndex32());
-    RUN(testLoadPreIndex64());
-    RUN(testLoadPostIndex32());
-    RUN(testLoadPostIndex64());
+    if (Options::useB3CanonicalizePrePostIncrements()) {
+        RUN(testLoadPreIndex32());
+        RUN(testLoadPreIndex64());
+        RUN(testLoadPostIndex32());
+        RUN(testLoadPostIndex64());
 
-    RUN(testStorePreIndex32());
-    RUN(testStorePreIndex64());
-    RUN(testStorePostIndex32());
-    RUN(testStorePostIndex64());
+        RUN(testStorePreIndex32());
+        RUN(testStorePreIndex64());
+        RUN(testStorePostIndex32());
+        RUN(testStorePostIndex64());
+    }
 }
 
 #endif // ENABLE(B3_JIT)

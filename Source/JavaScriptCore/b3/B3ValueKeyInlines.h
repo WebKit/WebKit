@@ -33,14 +33,12 @@
 
 namespace JSC { namespace B3 {
 
-inline ValueKey::ValueKey(Value* child, int32_t offset)
+inline ValueKey::ValueKey(Value* child, int64_t value)
 {
     m_kind = Oops;
     m_type = Void;
-    // The observation is that when both child->index() and offset are 0's,
-    // HashMap would not accept the ValueKey.
-    u.indices[0] = child->index() + 1;
-    u.indices[1] = offset + 1;
+    u.indices[0] = child->index();
+    u.value = value;
 }
 
 inline ValueKey::ValueKey(Kind kind, Type type, Value* child)
