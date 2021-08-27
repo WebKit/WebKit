@@ -32,6 +32,7 @@
 #include "NetworkConnectionToWebProcessMessagesReplies.h"
 #include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadMap.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
@@ -186,6 +187,7 @@ public:
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
     void broadcastConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
+    RefPtr<NetworkResourceLoader> takeNetworkResourceLoader(uint64_t resourceLoadIdentifier);
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);
@@ -203,7 +205,7 @@ private:
     void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&);
     bool didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
-    void scheduleResourceLoad(NetworkResourceLoadParameters&&);
+    void scheduleResourceLoad(NetworkResourceLoadParameters&&, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume);
     void performSynchronousLoad(NetworkResourceLoadParameters&&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&&);
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkConnectionToWebProcess::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void loadPing(NetworkResourceLoadParameters&&);

@@ -43,6 +43,7 @@
 #include "MediaKeySystemPermissionRequestManagerProxy.h"
 #include "MediaPlaybackState.h"
 #include "MessageSender.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "PDFPluginIdentifier.h"
 #include "PageLoadState.h"
 #include "PasteboardAccessIntent.h"
@@ -1741,10 +1742,10 @@ public:
     void didNavigateWithNavigationDataShared(Ref<WebProcessProxy>&&, const WebNavigationDataStore&, WebCore::FrameIdentifier);
     void didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, uint64_t navigationID, URL&&);
     void decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
-    void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData&);
+    void decidePolicyForResponseShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData&);
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::ShouldOpenExternalURLsPolicy, WebCore::SubstituteData::SessionHistoryVisibility);
-    void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt);
+    void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
     void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
     void decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&&, WebCore::FrameIdentifier, bool isMainFrame, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSyncDelayedReply&&);
 #if USE(QUICK_LOOK)
@@ -2060,7 +2061,7 @@ private:
     void decidePolicyForNewWindowAction(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, NavigationActionData&&,
         WebCore::ResourceRequest&&, const String& frameName, uint64_t listenerID, const UserData&);
     void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID,
-        const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData&);
+        const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData&);
     void unableToImplementPolicy(WebCore::FrameIdentifier, const WebCore::ResourceError&, const UserData&);
     void beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy&);
 
@@ -2462,7 +2463,7 @@ private:
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });
 
-    void continueNavigationInNewProcess(API::Navigation&, std::unique_ptr<SuspendedPageProxy>&&, Ref<WebProcessProxy>&&, ProcessSwapRequestedByClient, WebCore::ShouldTreatAsContinuingLoad, RefPtr<API::WebsitePolicies>&&);
+    void continueNavigationInNewProcess(API::Navigation&, std::unique_ptr<SuspendedPageProxy>&&, Ref<WebProcessProxy>&&, ProcessSwapRequestedByClient, WebCore::ShouldTreatAsContinuingLoad, RefPtr<API::WebsitePolicies>&&, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
 
     void setNeedsFontAttributes(bool);
     void updateFontAttributesAfterEditorStateChange();

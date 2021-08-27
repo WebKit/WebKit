@@ -22,7 +22,7 @@
 
 messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
-    ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
+    ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
     LoadPing(WebKit::NetworkResourceLoadParameters resourceLoadParameters)

@@ -1,3 +1,99 @@
+2021-08-27  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Reuse the same network load when process-swapping on resource response due to COOP
+        https://bugs.webkit.org/show_bug.cgi?id=229465
+        <rdar://problem/82307611>
+
+        Reviewed by Alex Christensen.
+
+        r281516 added support for process-swapping based on Cross-Origin-Opener-Policy header
+        in HTTP responses. However, on process-swap, we would abort the existing network load
+        that was started by the original WebProcess and start a fresh network load in the new
+        WebProcess. This was suboptimal and could lead to issues with resources that provide
+        one-time behaviors. This patch addresses the issue by transferring the network load
+        in the network process from the old WebProcess to the new WebProcess when process
+        swapping.
+
+        When the UIProcess decides to process-swap on response policy decision, it first
+        sends IPC to the network process to ask it to prepare the NetworkResourceLoader
+        for ownership transfer. The network process takes the NetworkResourceLoader
+        from its NetworkConnectionToWebProcess and stores it in a temporary cache, then
+        responds to the UIProcess with the NetworkResourceLoadIdentifier of the loader.
+        Upon receiving the response, the UIProcess proceeds with the process-swap, it
+        rejects response processing in the old process and does a loadRequest in a new
+        WebProcess. When starting sending the LoadRequest IPC to the new WebProcess, it
+        passes along the NetworkResourceLoadIdentifier of the cached loader in the network
+        process. When the WebProcess ends up scheduling the load with the network process,
+        it passes again the NetworkResourceLoadIdentifier. Upon receiving the load request,
+        the network process checks if a NetworkResourceLoadIdentifier is provided for
+        continuing a load. If none is provided, we use the regular code path and actually
+        construct a new NetworkResourceLoader. However, if a NetworkResourceLoadIdentifier
+        is provided, we take the corresponding NetworkResourceLoader from the cache,
+        transfer it to the new NetworkConnectionToWebProcess and have it send the
+        DidReceiveResponse IPC to the WebProcess to continue the load with the new
+        WebProcess.
+
+        Test: http/wpt/cross-origin-opener-policy/single-request-to-server.html
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didCleanupResourceLoader):
+        (WebKit::NetworkConnectionToWebProcess::transferKeptAliveLoad):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkResourceLoader):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::CachedNetworkResourceLoader::CachedNetworkResourceLoader):
+        (WebKit::NetworkProcess::CachedNetworkResourceLoader::takeLoader):
+        (WebKit::NetworkProcess::CachedNetworkResourceLoader::expirationTimerFired):
+        (WebKit::NetworkProcess::takeLoaderAwaitingWebProcessTransfer):
+        (WebKit::NetworkProcess::prepareLoadForWebProcessTransfer):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::transferToNewWebProcess):
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForXFrameOptions):
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions):
+        (WebKit::NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolicy):
+        (WebKit::NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::logCookieInformation const):
+        (WebKit::NetworkResourceLoader::addConsoleMessage):
+        (WebKit::NetworkResourceLoader::serviceWorkerDidNotHandle):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::sendToClient):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::prepareLoadForWebProcessTransfer):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix a typo in `ArgumentCoder<Ref<Font>>::decode()`

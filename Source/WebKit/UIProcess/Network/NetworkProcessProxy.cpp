@@ -475,6 +475,17 @@ void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::P
     }
 }
 
+void NetworkProcessProxy::prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, uint64_t resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&& completionHandler)
+{
+    RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::prepareLoadForWebProcessTransfer: sourceProcessIdentifier: %" PRIu64 ", resourceLoadIdentifier: %" PRIu64, this, sourceProcessIdentifier.toUInt64(), resourceLoadIdentifier);
+    if (!resourceLoadIdentifier) {
+        completionHandler({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::PrepareLoadForWebProcessTransfer(sourceProcessIdentifier, resourceLoadIdentifier), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::logDiagnosticMessageWithResult(WebPageProxyIdentifier pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);

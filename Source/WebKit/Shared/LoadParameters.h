@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DataReference.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "PolicyDecision.h"
 #include "SandboxExtension.h"
 #include "UserData.h"
@@ -74,6 +75,7 @@ struct LoadParameters {
     WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Visible };
     String clientRedirectSourceForHistory;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
+    std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSDictionary> dataDetectionContext;

@@ -27,6 +27,7 @@
 
 #include "AppPrivacyReport.h"
 #include "NavigatingToAppBoundDomain.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "PrefetchCache.h"
 #include "PrivateClickMeasurementNetworkLoader.h"
 #include "SandboxExtension.h"
@@ -140,6 +141,9 @@ public:
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
+    void addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&&);
+    RefPtr<NetworkResourceLoader> takeLoaderAwaitingWebProcessTransfer(NetworkResourceLoadIdentifier);
+
     NetworkCache::Cache* cache() { return m_cache.get(); }
 
     PrefetchCache& prefetchCache() { return m_prefetchCache; }
@@ -209,6 +213,18 @@ protected:
     std::unique_ptr<PrivateClickMeasurementManager> m_privateClickMeasurement;
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
+
+    class CachedNetworkResourceLoader {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        explicit CachedNetworkResourceLoader(Ref<NetworkResourceLoader>&&);
+        RefPtr<NetworkResourceLoader> takeLoader();
+    private:
+        void expirationTimerFired();
+        WebCore::Timer m_expirationTimer;
+        RefPtr<NetworkResourceLoader> m_loader;
+    };
+    HashMap<NetworkResourceLoadIdentifier, std::unique_ptr<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
 
     PrefetchCache m_prefetchCache;
 

@@ -412,8 +412,11 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     ASSERT((loadParameters.webPageID && loadParameters.webFrameID) || loadParameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
 
-    WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d)", static_cast<int>(resourceLoader.request().priority()));
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), 0)) {
+    std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
+    if (loadParameters.isMainFrameNavigation)
+        existingNetworkResourceLoadIdentifierToResume = std::exchange(m_existingNetworkResourceLoadIdentifierToResume, std::nullopt);
+    WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: Resource is being scheduled with the NetworkProcess (priority=%d, existingNetworkResourceLoadIdentifierToResume=%" PRIu64 ")", static_cast<int>(resourceLoader.request().priority()), existingNetworkResourceLoadIdentifierToResume.value_or(NetworkResourceLoadIdentifier { }).toUInt64());
+    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters, existingNetworkResourceLoadIdentifierToResume), 0)) {
         WEBLOADERSTRATEGY_RELEASE_LOG_ERROR("scheduleLoad: Unable to schedule resource with the NetworkProcess (priority=%d)", static_cast<int>(resourceLoader.request().priority()));
         // We probably failed to schedule this load with the NetworkProcess because it had crashed.
         // This load will never succeed so we will schedule it to fail asynchronously.

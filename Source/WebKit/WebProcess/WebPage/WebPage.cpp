@@ -262,6 +262,7 @@
 #include <pal/SessionID.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
@@ -1688,6 +1689,11 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
 #if ENABLE(APP_BOUND_DOMAINS)
     setIsNavigatingToAppBoundDomain(loadParameters.isNavigatingToAppBoundDomain, &m_mainFrame.get());
 #endif
+
+    WebProcess::singleton().webLoaderStrategy().setExistingNetworkResourceLoadIdentifierToResume(loadParameters.existingNetworkResourceLoadIdentifierToResume);
+    auto resumingLoadScope = makeScopeExit([] {
+        WebProcess::singleton().webLoaderStrategy().setExistingNetworkResourceLoadIdentifierToResume(std::nullopt);
+    });
 
     SendStopResponsivenessTimer stopper;
 

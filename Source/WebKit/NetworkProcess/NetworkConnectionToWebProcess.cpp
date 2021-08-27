@@ -85,6 +85,7 @@
 #endif
 
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
+#define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
 #define NETWORK_PROCESS_MESSAGE_CHECK(assertion) NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, (void)0)
 #define NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
@@ -166,7 +167,7 @@ void NetworkConnectionToWebProcess::hasUploadStateChanged(bool hasUpload)
 
 void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoader& loader)
 {
-    RELEASE_ASSERT(loader.identifier());
+    RELEASE_ASSERT(loader.coreIdentifier());
     RELEASE_ASSERT(RunLoop::isMain());
 
     if (loader.isKeptAlive()) {
@@ -174,16 +175,16 @@ void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoad
         return;
     }
 
-    ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
-    m_networkResourceLoaders.remove(loader.identifier());
+    ASSERT(m_networkResourceLoaders.get(loader.coreIdentifier()) == &loader);
+    m_networkResourceLoaders.remove(loader.coreIdentifier());
 }
 
 void NetworkConnectionToWebProcess::transferKeptAliveLoad(NetworkResourceLoader& loader)
 {
     RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(loader.isKeptAlive());
-    ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
-    if (auto takenLoader = m_networkResourceLoaders.take(loader.identifier()))
+    ASSERT(m_networkResourceLoaders.get(loader.coreIdentifier()) == &loader);
+    if (auto takenLoader = m_networkResourceLoaders.take(loader.coreIdentifier()))
         m_networkProcess->addKeptAliveLoad(takenLoader.releaseNonNull());
 }
 
@@ -486,26 +487,40 @@ std::unique_ptr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFet
 }
 #endif
 
-void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
+void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
 {
-    CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier);
+    CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.toUInt64(), loadParameters.identifier, existingLoaderToResume.value_or(NetworkResourceLoadIdentifier { }).toUInt64());
 
 #if ENABLE(SERVICE_WORKER)
     auto& server = m_networkProcess->swServerForSession(m_sessionID);
     if (!server.isImportCompleted()) {
-        server.whenImportIsCompleted([this, protectedThis = makeRef(*this), loadParameters = WTFMove(loadParameters)]() mutable {
+        server.whenImportIsCompleted([this, protectedThis = makeRef(*this), loadParameters = WTFMove(loadParameters), existingLoaderToResume]() mutable {
             if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
                 return;
             ASSERT(m_networkProcess->swServerForSession(m_sessionID).isImportCompleted());
-            scheduleResourceLoad(WTFMove(loadParameters));
+            scheduleResourceLoad(WTFMove(loadParameters), existingLoaderToResume);
         });
         return;
     }
 #endif
+
     auto identifier = loadParameters.identifier;
     RELEASE_ASSERT(identifier);
     RELEASE_ASSERT(RunLoop::isMain());
     ASSERT(!m_networkResourceLoaders.contains(identifier));
+
+    if (existingLoaderToResume) {
+        if (auto session = networkSession()) {
+            if (auto existingLoader = session->takeLoaderAwaitingWebProcessTransfer(*existingLoaderToResume)) {
+                CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: Resuming existing NetworkResourceLoader");
+                m_networkResourceLoaders.add(identifier, *existingLoader);
+                existingLoader->transferToNewWebProcess(*this, identifier);
+                return;
+            }
+            CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find existing NetworkResourceLoader to resume, will do a fresh load");
+        } else
+            CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find network session of existing NetworkResourceLoader to resume, will do a fresh load");
+    }
 
     auto& loader = m_networkResourceLoaders.add(identifier, NetworkResourceLoader::create(WTFMove(loadParameters), *this)).iterator->value;
 
@@ -1267,6 +1282,13 @@ void NetworkConnectionToWebProcess::prioritizeResourceLoads(Vector<ResourceLoadI
     }
 
     session->networkLoadScheduler().prioritizeLoads(loads);
+}
+
+RefPtr<NetworkResourceLoader> NetworkConnectionToWebProcess::takeNetworkResourceLoader(uint64_t resourceLoadIdentifier)
+{
+    if (!NetworkResourceLoadMap::MapType::isValidKey(resourceLoadIdentifier))
+        return nullptr;
+    return m_networkResourceLoaders.take(resourceLoadIdentifier);
 }
 
 } // namespace WebKit

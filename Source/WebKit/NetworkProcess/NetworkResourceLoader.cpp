@@ -522,6 +522,16 @@ void NetworkResourceLoader::abort()
     cleanup(LoadResult::Cancel);
 }
 
+void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProcess& newConnection, ResourceLoadIdentifier newCoreIdentifier)
+{
+    m_connection = newConnection;
+    m_parameters.identifier = newCoreIdentifier;
+
+    ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse || m_serviceWorkerFetchTask);
+    bool willWaitForContinueDidReceiveResponse = true;
+    send(Messages::WebResourceLoader::DidReceiveResponse { m_response, willWaitForContinueDidReceiveResponse });
+}
+
 bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xFrameOptions, const URL& url)
 {
     if (isMainFrameLoad())
@@ -546,12 +556,12 @@ bool NetworkResourceLoader::shouldInterruptLoadForXFrameOptions(const String& xF
     }
     case XFrameOptionsDisposition::Conflict: {
         String errorMessage = "Multiple 'X-Frame-Options' headers with conflicting values ('" + xFrameOptions + "') encountered when loading '" + url.stringCenterEllipsizedToLength() + "'. Falling back to 'DENY'.";
-        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
         return true;
     }
     case XFrameOptionsDisposition::Invalid: {
         String errorMessage = "Invalid 'X-Frame-Options' header encountered when loading '" + url.stringCenterEllipsizedToLength() + "': '" + xFrameOptions + "' is not a recognized directive. The header will be ignored.";
-        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+        send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::JS, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
         return false;
     }
     }
@@ -578,7 +588,7 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
         String xFrameOptions = m_response.httpHeaderField(HTTPHeaderName::XFrameOptions);
         if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(xFrameOptions, response.url())) {
             String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '", xFrameOptions, "'.");
-            send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+            send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
             return true;
         }
     }
@@ -595,7 +605,7 @@ bool NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolic
         auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, m_parameters.sourceOrigin->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No);
         if (responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
             String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because of Cross-Origin-Embedder-Policy.");
-            send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+            send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
             return true;
         }
     }
@@ -611,7 +621,7 @@ bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolic
         auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, m_parameters.sourceOrigin->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No);
         if (responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
             String errorMessage = makeString("Refused to load '", response.url().stringCenterEllipsizedToLength(), "' worker because of Cross-Origin-Embedder-Policy.");
-            send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, identifier() }, m_parameters.webPageID);
+            send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
             return true;
         }
     }
@@ -630,7 +640,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (shouldCaptureExtraNetworkLoadMetrics() && m_networkLoadChecker) {
         auto information = m_networkLoadChecker->takeNetworkLoadInformation();
         information.response = m_response;
-        m_connection->addNetworkLoadInformation(identifier(), WTFMove(information));
+        m_connection->addNetworkLoadInformation(coreIdentifier(), WTFMove(information));
     }
 
     // For multipart/x-mixed-replace didReceiveResponseAsync gets called multiple times and buffering would require special handling.
@@ -758,7 +768,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
     LOADER_RELEASE_LOG("didFinishLoading: (numBytesReceived=%zd, hasCacheEntryForValidation=%d)", m_numBytesReceived, !!m_cacheEntryForValidation);
 
     if (shouldCaptureExtraNetworkLoadMetrics())
-        m_connection->addNetworkLoadInformationMetrics(identifier(), networkLoadMetrics);
+        m_connection->addNetworkLoadInformationMetrics(coreIdentifier(), networkLoadMetrics);
 
     if (m_cacheEntryForValidation) {
         // 304 Not Modified
@@ -801,7 +811,7 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     UNUSED_VARIABLE(wasServiceWorkerLoad);
 
     if (shouldCaptureExtraNetworkLoadMetrics())
-        m_connection->removeNetworkLoadInformation(identifier());
+        m_connection->removeNetworkLoadInformation(coreIdentifier());
 
     ASSERT(!error.isNull());
 
@@ -1202,9 +1212,10 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
     LOADER_RELEASE_LOG("didRetrieveCacheEntry: Sending WebResourceLoader::DidReceiveResponse IPC (needsContinueDidReceiveResponseMessage=%d)", needsContinueDidReceiveResponseMessage);
     send(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
 
-    if (needsContinueDidReceiveResponseMessage)
+    if (needsContinueDidReceiveResponseMessage) {
+        m_response = WTFMove(response);
         m_cacheEntryWaitingForContinueDidReceiveResponse = WTFMove(entry);
-    else {
+    } else {
         sendResultForCacheEntry(WTFMove(entry));
         cleanup(LoadResult::Success);
     }
@@ -1359,7 +1370,7 @@ void NetworkResourceLoader::logCookieInformation() const
     auto* networkStorageSession = m_connection->networkProcess().storageSession(sessionID());
     ASSERT(networkStorageSession);
 
-    logCookieInformation(m_connection, "NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), identifier());
+    logCookieInformation(m_connection, "NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, originalRequest().firstPartyForCookies(), SameSiteInfo::create(originalRequest()), originalRequest().url(), originalRequest().httpReferrer(), frameID(), pageID(), coreIdentifier());
 }
 
 static void logBlockedCookieInformation(NetworkConnectionToWebProcess& connection, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, std::optional<uint64_t> identifier)
@@ -1463,7 +1474,7 @@ void NetworkResourceLoader::logCookieInformation(NetworkConnectionToWebProcess& 
 
 void NetworkResourceLoader::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, unsigned long)
 {
-    send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  messageSource, messageLevel, message, identifier() }, m_parameters.webPageID);
+    send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  messageSource, messageLevel, message, coreIdentifier() }, m_parameters.webPageID);
 }
 
 void NetworkResourceLoader::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&& report)
@@ -1534,7 +1545,7 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
     RELEASE_ASSERT(m_serviceWorkerFetchTask.get() == fetchTask);
     if (m_parameters.serviceWorkersMode == ServiceWorkersMode::Only) {
         LOADER_RELEASE_LOG_ERROR("serviceWorkerDidNotHandle: Aborting load because the service worker did not handle the load and serviceWorkerMode only allows service workers");
-        send(Messages::WebResourceLoader::ServiceWorkerDidNotHandle { }, identifier());
+        send(Messages::WebResourceLoader::ServiceWorkerDidNotHandle { }, coreIdentifier());
         abort();
         return;
     }

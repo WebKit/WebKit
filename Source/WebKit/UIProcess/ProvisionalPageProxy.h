@@ -28,6 +28,7 @@
 #include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "NetworkResourceLoadIdentifier.h"
 #include "PolicyDecision.h"
 #include "ProcessThrottler.h"
 #include "SandboxExtension.h"
@@ -105,7 +106,7 @@ public:
 #endif
 
     void loadData(API::Navigation&, const IPC::DataReference&, const String& mimeType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&&, WebCore::SubstituteData::SessionHistoryVisibility);
-    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt);
+    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, std::optional<NavigatingToAppBoundDomain>, std::optional<WebsitePoliciesData>&& = std::nullopt, std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume = std::nullopt);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&);
     void cancel();
 
@@ -124,7 +125,7 @@ private:
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&&) final;
 
     void decidePolicyForNavigationActionAsync(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData&, uint64_t listenerID);
-    void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, const UserData&);
+    void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t listenerID, uint64_t mainResourceLoadIdentifier, const UserData&);
     void didChangeProvisionalURLForFrame(WebCore::FrameIdentifier, uint64_t navigationID, URL&&);
     void didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, WebCore::FrameIdentifier);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebCore::FrameIdentifier, uint64_t navigationID, WebCore::ResourceRequest&&, const UserData&);
