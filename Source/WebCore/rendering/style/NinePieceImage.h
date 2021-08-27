@@ -161,11 +161,11 @@ public:
         m_data.access().verticalRule = other.m_data->verticalRule;
     }
 
-    static LayoutUnit computeOutset(const Length& outsetSide, LayoutUnit borderSide)
+    static LayoutUnit computeOutset(const Length& outset, LayoutUnit borderWidth)
     {
-        if (outsetSide.isRelative())
-            return LayoutUnit(outsetSide.value() * borderSide);
-        return LayoutUnit(outsetSide.value());
+        if (outset.isRelative())
+            return LayoutUnit(outset.value() * borderWidth);
+        return LayoutUnit(outset.value());
     }
 
     static LayoutUnit computeSlice(Length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent);

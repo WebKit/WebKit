@@ -1,3 +1,105 @@
+2021-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [CSS3 Backgrounds and Borders] The border image area should be empty if border-style is none and border-image-width is not set
+        https://bugs.webkit.org/show_bug.cgi?id=99922
+
+        Reviewed by Alan Bujtas.
+
+        Rebaselines for "solid" in output, and border-image no longer affecting layout.
+
+        Fix tests to add "border-style: solid" when the old behavior was expected.
+
+        * fast/borders/border-image-01.html:
+        * fast/borders/border-image-border-radius.html:
+        * fast/borders/border-image-fill-no-intrinsic-size.html:
+        * fast/borders/border-image-longhand.html:
+        * fast/borders/border-image-massive-scale.html:
+        * fast/borders/border-image-omit-right-slice.html:
+        * fast/borders/border-image-outset-in-shorthand.html:
+        * fast/borders/border-image-outset-split-inline-vertical-lr.html:
+        * fast/borders/border-image-outset-split-inline.html:
+        * fast/borders/border-image-outset.html:
+        * fast/borders/border-image-repeat.html:
+        * fast/borders/border-image-rotate-transform.html:
+        * fast/borders/border-image-scale-transform.html:
+        * fast/borders/border-image-scaled.html:
+        * fast/borders/border-image-scrambled.html:
+        * fast/borders/border-image-should-not-display-expected.html: Added.
+        * fast/borders/border-image-should-not-display.html: Added.
+        * fast/borders/border-image-side-reduction.html:
+        * fast/borders/border-image-slice-constrained.html:
+        * fast/borders/border-image-slice-missing-right.html:
+        * fast/borders/border-image-slices.html:
+        * fast/borders/border-image-source.html:
+        * fast/borders/border-image-trumps-radius-expected.txt:
+        * fast/borders/border-image-trumps-radius.html:
+        * fast/borders/hidpi-border-image-gradient-on-subpixels.html:
+        * fast/borders/scaled-border-image.html:
+        * fast/gradients/border-image-gradient-expected.txt:
+        * fast/gradients/border-image-gradient.html:
+        * fast/hidpi/image-set-border-image-comparison.html:
+        * fast/hidpi/image-set-border-image-dynamic.html:
+        * fast/hidpi/image-set-border-image-simple.html:
+        * fast/writing-mode/border-image-horizontal-bt.html:
+        * fast/writing-mode/border-image-vertical-lr.html:
+        * fast/writing-mode/border-image-vertical-rl.html:
+        * platform/ios/fast/borders/border-image-01-expected.txt:
+        * platform/ios/fast/borders/border-image-border-radius-expected.txt:
+        * platform/ios/fast/borders/border-image-longhand-expected.txt:
+        * platform/ios/fast/borders/border-image-massive-scale-expected.txt:
+        * platform/ios/fast/borders/border-image-omit-right-slice-expected.txt:
+        * platform/ios/fast/borders/border-image-outset-expected.txt:
+        * platform/ios/fast/borders/border-image-outset-in-shorthand-expected.txt:
+        * platform/ios/fast/borders/border-image-outset-split-inline-expected.txt:
+        * platform/ios/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt:
+        * platform/ios/fast/borders/border-image-repeat-expected.txt:
+        * platform/ios/fast/borders/border-image-rotate-transform-expected.txt:
+        * platform/ios/fast/borders/border-image-scale-transform-expected.txt:
+        * platform/ios/fast/borders/border-image-scaled-expected.txt:
+        * platform/ios/fast/borders/border-image-scrambled-expected.txt:
+        * platform/ios/fast/borders/border-image-side-reduction-expected.txt:
+        * platform/ios/fast/borders/border-image-slice-constrained-expected.txt:
+        * platform/ios/fast/borders/border-image-slices-expected.txt:
+        * platform/ios/fast/borders/border-image-source-expected.txt:
+        * platform/ios/fast/borders/scaled-border-image-expected.txt:
+        * platform/ios/fast/hidpi/image-set-border-image-comparison-expected.txt:
+        * platform/ios/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+        * platform/ios/fast/hidpi/image-set-border-image-simple-expected.txt:
+        * platform/ios/fast/writing-mode/border-image-horizontal-bt-expected.txt:
+        * platform/ios/fast/writing-mode/border-image-vertical-lr-expected.txt:
+        * platform/ios/fast/writing-mode/border-image-vertical-rl-expected.txt:
+        * platform/ios/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/ios/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/mac/fast/borders/border-image-01-expected.txt:
+        * platform/mac/fast/borders/border-image-border-radius-expected.txt:
+        * platform/mac/fast/borders/border-image-longhand-expected.txt:
+        * platform/mac/fast/borders/border-image-massive-scale-expected.txt:
+        * platform/mac/fast/borders/border-image-omit-right-slice-expected.txt:
+        * platform/mac/fast/borders/border-image-outset-expected.txt:
+        * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.txt:
+        * platform/mac/fast/borders/border-image-outset-split-inline-expected.txt:
+        * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt:
+        * platform/mac/fast/borders/border-image-repeat-expected.txt:
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.txt:
+        * platform/mac/fast/borders/border-image-scale-transform-expected.txt:
+        * platform/mac/fast/borders/border-image-scaled-expected.txt:
+        * platform/mac/fast/borders/border-image-scrambled-expected.txt:
+        * platform/mac/fast/borders/border-image-side-reduction-expected.txt:
+        * platform/mac/fast/borders/border-image-slice-constrained-expected.txt:
+        * platform/mac/fast/borders/border-image-slices-expected.txt:
+        * platform/mac/fast/borders/border-image-source-expected.txt:
+        * platform/mac/fast/borders/scaled-border-image-expected.txt:
+        * platform/mac/fast/hidpi/image-set-border-image-comparison-expected.txt:
+        * platform/mac/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+        * platform/mac/fast/hidpi/image-set-border-image-simple-expected.txt:
+        * platform/mac/fast/writing-mode/border-image-horizontal-bt-expected.txt:
+        * platform/mac/fast/writing-mode/border-image-vertical-lr-expected.txt:
+        * platform/mac/fast/writing-mode/border-image-vertical-rl-expected.txt:
+        * platform/mac/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/mac/svg/as-border-image/svg-as-border-image-expected.txt:
+        * svg/as-border-image/svg-as-border-image-2.html:
+        * svg/as-border-image/svg-as-border-image.html:
+
 2021-08-27  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Win EWS ] 2 js/dfg-* tests are flaky crashing.

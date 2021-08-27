@@ -45,21 +45,19 @@ public:
 
     bool hasBorder() const
     {
-        bool haveImage = m_image.hasImage();
-        return m_left.nonZero(!haveImage) || m_right.nonZero(!haveImage) || m_top.nonZero(!haveImage) || m_bottom.nonZero(!haveImage);
-    }
-    
-    bool hasVisibleBorder() const
-    {
-        bool haveImage = m_image.hasImage();
-        return m_left.isVisible(!haveImage) || m_right.isVisible(!haveImage) || m_top.isVisible(!haveImage) || m_bottom.isVisible(!haveImage);
+        return m_left.nonZero() || m_right.nonZero() || m_top.nonZero() || m_bottom.nonZero();
     }
 
-    bool hasFill() const
+    bool hasVisibleBorder() const
     {
-        return m_image.hasImage() && m_image.fill();
+        return m_left.isVisible() || m_right.isVisible() || m_top.isVisible() || m_bottom.isVisible();
     }
-    
+
+    bool hasBorderImage() const
+    {
+        return m_image.hasImage();
+    }
+
     bool hasBorderRadius() const
     {
         return !m_topLeftRadius.width.isZero()
@@ -67,31 +65,31 @@ public:
             || !m_bottomLeftRadius.width.isZero()
             || !m_bottomRightRadius.width.isZero();
     }
-    
+
     float borderLeftWidth() const
     {
-        if (!m_image.hasImage() && (m_left.style() == BorderStyle::None || m_left.style() == BorderStyle::Hidden))
+        if (m_left.style() == BorderStyle::None || m_left.style() == BorderStyle::Hidden)
             return 0; 
         return m_left.width();
     }
-    
+
     float borderRightWidth() const
     {
-        if (!m_image.hasImage() && (m_right.style() == BorderStyle::None || m_right.style() == BorderStyle::Hidden))
+        if (m_right.style() == BorderStyle::None || m_right.style() == BorderStyle::Hidden)
             return 0;
         return m_right.width();
     }
-    
+
     float borderTopWidth() const
     {
-        if (!m_image.hasImage() && (m_top.style() == BorderStyle::None || m_top.style() == BorderStyle::Hidden))
+        if (m_top.style() == BorderStyle::None || m_top.style() == BorderStyle::Hidden)
             return 0;
         return m_top.width();
     }
-    
+
     float borderBottomWidth() const
     {
-        if (!m_image.hasImage() && (m_bottom.style() == BorderStyle::None || m_bottom.style() == BorderStyle::Hidden))
+        if (m_bottom.style() == BorderStyle::None || m_bottom.style() == BorderStyle::Hidden)
             return 0;
         return m_bottom.width();
     }
@@ -100,25 +98,25 @@ public:
     {
         return FloatBoxExtent(borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth());
     }
-    
+
     bool operator==(const BorderData& o) const
     {
         return m_left == o.m_left && m_right == o.m_right && m_top == o.m_top && m_bottom == o.m_bottom && m_image == o.m_image
             && m_topLeftRadius == o.m_topLeftRadius && m_topRightRadius == o.m_topRightRadius && m_bottomLeftRadius == o.m_bottomLeftRadius && m_bottomRightRadius == o.m_bottomRightRadius;
     }
-    
+
     bool operator!=(const BorderData& o) const
     {
         return !(*this == o);
     }
-    
+
     const BorderValue& left() const { return m_left; }
     const BorderValue& right() const { return m_right; }
     const BorderValue& top() const { return m_top; }
     const BorderValue& bottom() const { return m_bottom; }
-    
+
     const NinePieceImage& image() const { return m_image; }
-    
+
     const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
     const LengthSize& topRightRadius() const { return m_topRightRadius; }
     const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }

@@ -1,3 +1,48 @@
+2021-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        [CSS3 Backgrounds and Borders] The border image area should be empty if border-style is none and border-image-width is not set
+        https://bugs.webkit.org/show_bug.cgi?id=99922
+
+        Reviewed by Alan Bujtas.
+        
+        Per CSS WG discussion[1] and https://drafts.csswg.org/css-backgrounds/#border-image-area
+        border images do not affect layout; border-width does, and only then if border-style is not
+        "none".
+
+        Even with zero-width borders, border-image can paint (thus triggering visual overflow) if
+        border-image-width is specified.
+
+        Patch based on Adenilson Cavalcanti's patch, with a fix to not bail early from
+        RenderBoxModelObject::paintBorder().
+
+        Replace RenderStyle::hasBorderFill() with hasBorderImage(); there is no border-fill
+        property; this was referring to the "fill" keyword for border-image
+
+        [1] https://lists.w3.org/Archives/Public/www-style/2015Nov/0258.html
+
+        Test: fast/borders/border-image-should-not-display.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBorder):
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::hasBorder const): Remove special-casing for border-image.
+        (WebCore::BorderData::hasVisibleBorder const): Ditto.
+        (WebCore::BorderData::hasBorderImage const):
+        (WebCore::BorderData::borderLeftWidth const):
+        (WebCore::BorderData::borderRightWidth const):
+        (WebCore::BorderData::borderTopWidth const):
+        (WebCore::BorderData::borderBottomWidth const):
+        (WebCore::BorderData::hasFill const): Deleted.
+        * rendering/style/BorderValue.h:
+        (WebCore::BorderValue::nonZero const):
+        (WebCore::BorderValue::isVisible const):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::computeOutset): Rename parameters for clarity.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasBorderImage const):
+        (WebCore::RenderStyle::hasVisibleBorderDecoration const):
+        (WebCore::RenderStyle::hasBorderFill const): Deleted.
+
 2021-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Separate PrivateClickMeasurement database from ResourceLoadStatistics database and add SPI to set its location

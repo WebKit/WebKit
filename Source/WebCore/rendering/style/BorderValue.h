@@ -38,9 +38,9 @@ public:
     {
     }
 
-    bool nonZero(bool checkStyle = true) const
+    bool nonZero() const
     {
-        return width() && (!checkStyle || style() != BorderStyle::None);
+        return width() && style() != BorderStyle::None;
     }
 
     bool isTransparent() const
@@ -48,9 +48,9 @@ public:
         return m_color.isValid() && !m_color.isVisible();
     }
 
-    bool isVisible(bool checkStyle = true) const
+    bool isVisible() const
     {
-        return nonZero(checkStyle) && !isTransparent() && (!checkStyle || style() != BorderStyle::Hidden);
+        return nonZero() && !isTransparent() && style() != BorderStyle::Hidden;
     }
 
     bool operator==(const BorderValue& o) const

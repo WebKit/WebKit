@@ -1864,7 +1864,23 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     if (graphicsContext.paintingDisabled())
         return;
 
-    if (rect.isEmpty())
+    auto paintsBorderImage = [&](LayoutRect rect, const NinePieceImage& ninePieceImage) {
+        auto* styleImage = ninePieceImage.image();
+        if (!styleImage)
+            return false;
+
+        if (!styleImage->isLoaded())
+            return false;
+
+        if (!styleImage->canRender(this, style.effectiveZoom()))
+            return false;
+
+        auto rectWithOutsets = rect;
+        rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
+        return !rectWithOutsets.isEmpty();
+    };
+
+    if (rect.isEmpty() && !paintsBorderImage(rect, style.borderImage()))
         return;
 
     auto rectToClipOut = paintRectToClipOutFromBorder(rect);

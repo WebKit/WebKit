@@ -201,8 +201,8 @@ public:
     bool isFloating() const { return static_cast<Float>(m_nonInheritedFlags.floating) != Float::None; }
     bool hasMargin() const { return !m_surroundData->margin.isZero(); }
     bool hasBorder() const { return m_surroundData->border.hasBorder(); }
-    bool hasBorderFill() const { return m_surroundData->border.hasFill(); }
-    bool hasVisibleBorderDecoration() const { return hasVisibleBorder() || hasBorderFill(); }
+    bool hasBorderImage() const { return m_surroundData->border.hasBorderImage(); }
+    bool hasVisibleBorderDecoration() const { return hasVisibleBorder() || hasBorderImage(); }
     bool hasVisibleBorder() const { return m_surroundData->border.hasVisibleBorder(); }
     bool hasPadding() const { return !m_surroundData->padding.isZero(); }
     bool hasOffset() const { return !m_surroundData->offset.isZero(); }
