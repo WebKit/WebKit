@@ -500,7 +500,7 @@ asm (
     // returns. So, the ARM64 probe implementation will allow the probe handler to
     // either modify lr or pc, but not both in the same probe invocation. The probe
     // mechanism ensures that we never try to modify both lr and pc with a RELEASE_ASSERT
-    // in Probe::().
+    // in Probe::executeJSCJITProbe().
 
     // Determine if the probe handler changed the pc.
     "ldr       x30, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // preload the target sp.
@@ -521,10 +521,12 @@ asm (
 #if CPU(ARM64E)
     "movz      x28, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
     "autib     x27, x28" "\n"
-    "lsr       x28, x27, #8" "\n"
-    "and       x28, x28, #0xff000000000000" "\n"
-    "orr       x28, x28, x27" "\n"
-    "ldrb      w28, [x28]" "\n"
+    "mov       x28, x27" "\n"
+    "xpaci     x28" "\n"
+    "cmp       x28, x27" "\n"
+    "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone) "\n"
+    "brk       #0xc471" "\n"
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone) ":" "\n"
 #endif
     "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
 #if CPU(ARM64E)
@@ -546,10 +548,14 @@ asm (
 #if CPU(ARM64E)
     "movz      x27, #" STRINGIZE_VALUE_OF(JIT_PROBE_PC_PTR_TAG) "\n"
     "autib     x28, x27" "\n"
-    "lsr       x27, x28, #8" "\n"
-    "and       x27, x27, #0xff000000000000" "\n"
-    "orr       x27, x27, x28" "\n"
-    "ldrb      w27, [x27]" "\n"
+    "mov       x27, x28" "\n"
+    "xpaci     x27" "\n"
+    "cmp       x27, x28" "\n"
+    "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2) "\n"
+    "brk       #0xc471" "\n"
+    LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2) ":" "\n"
+    "add       x27, x30, #48" "\n" // Compute sp at return point.
+    "pacib     x28, x27" "\n"
 #endif
     "ldr       x27, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_FP_OFFSET) "]" "\n"
     "stp       x27, x28, [x30, #" STRINGIZE_VALUE_OF(OUT_FP_OFFSET) "]" "\n"

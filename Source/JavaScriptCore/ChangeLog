@@ -1,5 +1,17 @@
 2021-08-27  Mark Lam  <mark.lam@apple.com>
 
+        Changed ARM64 probe trampoline to do ptr auth the standard way.
+        https://bugs.webkit.org/show_bug.cgi?id=229629
+        rdar://problem/82453220
+
+        Reviewed by Saam Barati.
+
+        Also fix a comment, and add back 2 lines that I accidentally deleted in r281718.
+
+        * assembler/MacroAssemblerARM64.cpp:
+
+2021-08-27  Mark Lam  <mark.lam@apple.com>
+
         Make ARM64 and X86_64 probe code a little bit more efficient.
         https://bugs.webkit.org/show_bug.cgi?id=229618
         rdar://82445743
