@@ -406,6 +406,8 @@ void InjectedBundlePage::resetAfterTest()
     uninstallFakeHelvetica();
 
     InjectedBundle::singleton().resetUserScriptInjectedCount();
+
+    m_didCommitMainFrameLoad = false;
 }
 
 // Loader Client Callbacks
@@ -634,6 +636,11 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
     if (!injectedBundle.isTestRunning())
         return;
 
+    // In case of a COOP process-swap, the old process gets a didFailProvisionalLoadWithErrorForFrame delegate call. We want to ignore
+    // this call since it causes the test to dump its output too eagerly, before the test has had a chance to run in the new process.
+    if (WKErrorGetErrorCode(error) == kWKErrorCodeFrameLoadInterruptedByPolicyChange && WKBundleFrameIsMainFrame(frame) && !m_didCommitMainFrameLoad && injectedBundle.page() == this)
+        return;
+
     if (injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks()) {
         dumpLoadEvent(frame, "didFailProvisionalLoadWithError");
         auto code = WKErrorGetErrorCode(error);
@@ -651,6 +658,9 @@ void InjectedBundlePage::didCommitLoadForFrame(WKBundleFrameRef frame)
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
+
+    if (WKBundleFrameIsMainFrame(frame))
+        m_didCommitMainFrameLoad = true;
 
     if (!injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
         return;

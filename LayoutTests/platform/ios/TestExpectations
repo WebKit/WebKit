@@ -3161,10 +3161,6 @@ webkit.org/b/207651 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_obj
 
 webkit.org/b/207652 imported/w3c/IndexedDB-private-browsing/idbcursor_delete_objectstore5.html [ Pass Timeout ]
 
-webkit.org/b/229565 imported/w3c/web-platform-tests/encoding/sharedarraybuffer.https.html [ Pass Failure ]
-
-webkit.org/b/229501 imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html [ Pass Failure ]
-
 webkit.org/b/207702 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes.any.serviceworker.html [ Pass Failure ]
 
 webkit.org/b/207703 imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html [ Pass Failure ]
