@@ -1679,18 +1679,17 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
     }
 }
 
-- (AXTextMarkerRangeRef)textMarkerRangeForSelection
+- (AXTextMarkerRangeRef)selectedTextMarkerRange
 {
     return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRangeRef> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
             return nil;
 
-        VisibleSelection selection = backingObject->selection();
-        if (selection.isNone())
+        auto selectedVisiblePositionRange = backingObject->selectedVisiblePositionRange();
+        if (selectedVisiblePositionRange.isNull())
             return nil;
-
-        return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), selection.visibleStart(), selection.visibleEnd());
+        return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), selectedVisiblePositionRange.start, selectedVisiblePositionRange.end);
     });
 }
 
@@ -2610,7 +2609,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return NSAccessibilityVerticalOrientationValue;
 
     if ([attributeName isEqualToString:@"AXSelectedTextMarkerRange"])
-        return (id)[self textMarkerRangeForSelection];
+        return (id)[self selectedTextMarkerRange];
 
     if ([attributeName isEqualToString:@"AXStartTextMarker"]) {
         return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {

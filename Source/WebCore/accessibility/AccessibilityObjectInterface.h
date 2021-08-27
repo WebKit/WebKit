@@ -1274,6 +1274,7 @@ public:
     virtual VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
+    virtual VisiblePositionRange selectedVisiblePositionRange() const = 0;
 
     virtual std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const = 0;
 #if PLATFORM(MAC)

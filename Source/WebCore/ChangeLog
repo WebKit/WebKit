@@ -1,3 +1,31 @@
+2021-08-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make AXCoreObject::setSelectedVisiblePositionRange work in native text controls on MacOS.
+        https://bugs.webkit.org/show_bug.cgi?id=229529
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/mac/native-text-control-set-selected-textmarker-range.html
+
+        Trying to set the selection in native text controls using the atribute
+        AXSelectedTextMarkerRange didn't work for MacOS AX clients. This patch
+        implements this functionality by properly handling native text controls
+        in AccessibilityRenderObject::setSelectedVisiblePositionRange.
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentBasedSelectedTextRange const):
+        (WebCore::AccessibilityRenderObject::selectedVisiblePositionRange const): Added.
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::selectedVisiblePositionRange const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForSelection]): Renamed selectedTextMarkerRange for consistency.
+
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Synthetic bold additional advances need to be applied after shaping
