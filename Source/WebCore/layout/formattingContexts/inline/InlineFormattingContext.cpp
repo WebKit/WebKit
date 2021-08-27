@@ -32,6 +32,7 @@
 #include "FontCascade.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
+#include "InlineLineBoxBuilder.h"
 #include "InlineLineRun.h"
 #include "InlineTextItem.h"
 #include "InvalidationState.h"
@@ -572,7 +573,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     auto& formattingGeometry = this->formattingGeometry();
     auto lineIndex = formattingState.lines().size();
 
-    auto lineBoxAndGeometry = formattingGeometry.lineBoxForLineContent(lineContent);
+    auto lineBoxAndGeometry = LineBoxBuilder(*this).build(lineContent);
     formattingState.addLineBox(WTFMove(lineBoxAndGeometry.lineBox));
     formattingState.addLine(lineBoxAndGeometry.lineGeometry);
 

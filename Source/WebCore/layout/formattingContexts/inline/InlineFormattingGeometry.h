@@ -28,23 +28,18 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingGeometry.h"
-#include "InlineLineBox.h"
 #include "InlineLineBuilder.h"
 
 namespace WebCore {
 namespace Layout {
 
+class FloatingContext;
 class InlineFormattingContext;
 
 class InlineFormattingGeometry : public FormattingGeometry {
 public:
     InlineFormattingGeometry(const InlineFormattingContext&);
 
-    struct LineBoxAndGeometry {
-        LineBox lineBox;
-        LineGeometry lineGeometry;
-    };
-    LineBoxAndGeometry lineBoxForLineContent(const LineBuilder::LineContent&) const;
     InlineLayoutUnit logicalTopForNextLine(const LineBuilder::LineContent&, InlineLayoutUnit previousLineLogicalBottom, const FloatingContext&) const;
 
     ContentHeightAndMargin inlineBlockContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;

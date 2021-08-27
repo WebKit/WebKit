@@ -1,5 +1,32 @@
 2021-08-27  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Move LineBoxBuilder to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=229616
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting incremental line layout.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::formattingContext const): Deleted.
+        (WebCore::Layout::LineBoxBuilder::rootBox const): Deleted.
+        (WebCore::Layout::LineBoxBuilder::layoutState const): Deleted.
+        (WebCore::Layout::LineBoxBuilder::isRootLayoutBox const): Deleted.
+        (WebCore::Layout::hangingGlyphWidth): Deleted.
+        (WebCore::Layout::horizontalAlignmentOffset): Deleted.
+        (WebCore::Layout::LineBoxBuilder::LineBoxBuilder): Deleted.
+        (WebCore::Layout::LineBoxBuilder::build): Deleted.
+        (WebCore::Layout::LineBoxBuilder::setVerticalGeometryForInlineBox const): Deleted.
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes): Deleted.
+        (WebCore::Layout::InlineFormattingGeometry::lineBoxForLineContent const): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingGeometry.h:
+
+2021-08-27  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Generate runs for the root inlinebox
         https://bugs.webkit.org/show_bug.cgi?id=229599
 
