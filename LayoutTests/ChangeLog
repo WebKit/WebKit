@@ -1,3 +1,16 @@
+2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Enforce the policy against WebKit causing Core Text font download prompts in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=229391
+
+        Reviewed by Alan Bujtas.
+
+        Make sure content which uses these fonts doesn't cause a blocking prompt.
+
+        * fast/text/mobileasset-font-expected-mismatch.html: Added.
+        * fast/text/mobileasset-font.html: Added.
+        * platform/mac/TestExpectations: Skip the test on Catalina, because apparently the prompts can't be skipped?
+
 2021-08-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Skip the webgl/pending/conformance2 tests, as WebGL2 is not yet supported

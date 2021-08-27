@@ -1278,8 +1278,8 @@ static bool shouldAutoActivateFontIfNeeded(const AtomString& family)
 static void autoActivateFont(const String& name, CGFloat size)
 {
     auto fontName = name.createCFString();
-    CFTypeRef keys[] = { kCTFontNameAttribute };
-    CFTypeRef values[] = { fontName.get() };
+    CFTypeRef keys[] = { kCTFontNameAttribute, kCTFontEnabledAttribute };
+    CFTypeRef values[] = { fontName.get(), kCFBooleanTrue };
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     auto newFont = adoptCF(CTFontCreateWithFontDescriptor(descriptor.get(), size, nullptr));

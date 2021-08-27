@@ -2383,3 +2383,6 @@ webkit.org/b/189672 [ Catalina ] webgl/2.0.0/conformance2/rendering/uniform-bloc
 webkit.org/b/229588 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Pass Crash Failure Timeout ]
 
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
+
+# This test opens apparently unskippable prompts on Catalina.
+webkit.org/b/229391 [ Mojave Catalina ] fast/text/mobileasset-font.html [ Skip ]
