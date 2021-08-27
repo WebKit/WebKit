@@ -2146,7 +2146,7 @@ class RunWebKitTests(shell.Test):
     test_failures_log_name = 'test-failures'
     ENABLE_GUARD_MALLOC = False
     EXIT_AFTER_FAILURES = '30'
-    command = ['python', 'Tools/Scripts/run-webkit-tests',
+    command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-show-results',
                '--no-new-test-results',
