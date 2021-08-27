@@ -1,3 +1,53 @@
+2021-08-27  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-position-sticky] Update WPT position:sticky tests
+        https://bugs.webkit.org/show_bug.cgi?id=229555
+
+        Reviewed by Sergio Villar Senin.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-position/sticky/position-sticky-change-top-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-change-top.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-flexbox-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-flexbox.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-grid-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-grid.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-hyperlink-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-hyperlink.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-inline-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-inline.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-inline-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-inline.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-table-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-table.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-nested-thead-th.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-rendering-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-rendering.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-stacking-context-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-stacking-context.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-parts-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-parts.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tfoot-bottom-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tfoot-bottom.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-bottom.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-left-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-left.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-right-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-right.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-top-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-th-top.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-thead-top-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-thead-top.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-bottom-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-bottom.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-top-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-table-tr-top.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-writing-modes-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html:
+        * web-platform-tests/css/css-position/sticky/w3c-import.log:
+
 2021-08-26  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r275754): Using MarkOnlyThis to make the preferred width dirty introduces unexpected state

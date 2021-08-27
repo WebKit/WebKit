@@ -24,6 +24,7 @@
     "custom-elements": "import", 
     "density-size-correction": "import", 
     "encrypted-media": "import", 
+    "imported/w3c/web-platform-tests/css/css-position/sticky": "import", 
     "paint-timing/": "import", 
     "paint-timing/fcp-only": "import", 
     "paint-timing/resources": "import", 
