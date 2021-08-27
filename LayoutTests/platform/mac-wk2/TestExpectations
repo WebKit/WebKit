@@ -1635,3 +1635,5 @@ webkit.org/b/229595 [ Debug ] imported/w3c/web-platform-tests/fetch/http-cache/i
 
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Slow ]
