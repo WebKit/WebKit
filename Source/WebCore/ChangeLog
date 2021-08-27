@@ -1,3 +1,27 @@
+2021-08-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [ Catalina EWS ] media/track/track-disabled-addcue.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=229462
+        <rdar://problem/82302915>
+
+        Reviewed by Darin Adler.
+
+        Use `queueTaskKeepingObjectAlive` instead of a timer when scheduling text track
+        loading.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement):
+        (WebCore::HTMLTrackElement::scheduleLoad):
+        (WebCore::HTMLTrackElement::scheduleTask):
+        (WebCore::HTMLTrackElement::loadTimerFired): Deleted.
+        * html/HTMLTrackElement.h:
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack):
+        (WebCore::LoadableTextTrack::scheduleLoad):
+        (WebCore::LoadableTextTrack::element):
+        (WebCore::LoadableTextTrack::loadTimerFired): Deleted.
+        * html/track/LoadableTextTrack.h:
+
 2021-08-27  Russell Epstein  <repstein@apple.com>
 
         Land Windows build fixes from safari-612.1.29.14-branch.

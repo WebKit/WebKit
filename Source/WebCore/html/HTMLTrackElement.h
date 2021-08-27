@@ -62,6 +62,8 @@ public:
     RefPtr<HTMLMediaElement> mediaElement() const;
     const AtomString& mediaElementCrossOriginAttribute() const;
 
+    void scheduleTask(Function<void()>&&);
+
 private:
     HTMLTrackElement(const QualifiedName&, Document&);
     virtual ~HTMLTrackElement();
@@ -80,8 +82,6 @@ private:
     // EventTarget.
     void eventListenersDidChange() final;
 
-    void loadTimerFired();
-
     // TextTrackClient
     void textTrackModeChanged(TextTrack&) final;
     void textTrackKindChanged(TextTrack&) final;
@@ -93,7 +93,7 @@ private:
     bool canLoadURL(const URL&);
 
     RefPtr<LoadableTextTrack> m_track;
-    Timer m_loadTimer;
+    bool m_loadPending { false };
     bool m_hasRelevantLoadEventsListener { false };
 };
 

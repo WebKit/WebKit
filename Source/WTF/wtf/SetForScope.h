@@ -47,9 +47,10 @@ class SetForScope {
 public:
     SetForScope(T& scopedVariable)
         : m_scopedVariable(scopedVariable)
-        , m_originalValue(scopedVariable)
+        , m_valueToRestore(scopedVariable)
     {
     }
+
     template<typename U>
     SetForScope(T& scopedVariable, U&& newValue)
         : SetForScope(scopedVariable)
@@ -57,14 +58,22 @@ public:
         m_scopedVariable = std::forward<U>(newValue);
     }
 
+    template<typename U, typename V>
+    SetForScope(T& scopedVariable, U&& newValue, V&& restoreValue)
+        : m_scopedVariable(scopedVariable)
+        , m_valueToRestore(std::forward<V>(restoreValue))
+    {
+        m_scopedVariable = std::forward<U>(newValue);
+    }
+
     ~SetForScope()
     {
-        m_scopedVariable = WTFMove(m_originalValue);
+        m_scopedVariable = WTFMove(m_valueToRestore);
     }
 
 private:
     T& m_scopedVariable;
-    T m_originalValue;
+    T m_valueToRestore;
 };
 
 }

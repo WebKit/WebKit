@@ -1,3 +1,13 @@
+2021-08-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [ Catalina EWS ] media/track/track-disabled-addcue.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=229462
+        <rdar://problem/82302915>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         [CSS3 Backgrounds and Borders] The border image area should be empty if border-style is none and border-image-width is not set

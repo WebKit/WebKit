@@ -65,9 +65,9 @@ private:
 #endif
 
     HTMLTrackElement* m_trackElement;
-    Timer m_loadTimer;
     std::unique_ptr<TextTrackLoader> m_loader;
     URL m_url;
+    bool m_loadPending { false };
 };
 
 } // namespace WebCore

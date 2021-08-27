@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,6 @@ static String urlForLoggingTrack(const URL& url)
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document)
-    , m_loadTimer(*this, &HTMLTrackElement::loadTimerFired)
 {
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
     ASSERT(hasTagName(trackTag));
@@ -168,7 +167,7 @@ void HTMLTrackElement::scheduleLoad()
 {
     // 1. If another occurrence of this algorithm is already running for this text track and its track element,
     // abort these steps, letting that other algorithm take care of this element.
-    if (m_loadTimer.isActive())
+    if (m_loadPending)
         return;
 
     // 2. If the text track's text track mode is not set to one of hidden or showing, abort these steps.
@@ -180,33 +179,41 @@ void HTMLTrackElement::scheduleLoad()
         return;
 
     // 4. Run the remainder of these steps asynchronously, allowing whatever caused these steps to run to continue.
-    m_loadTimer.startOneShot(0_s);
+    m_loadPending = true;
+    scheduleTask([this]() mutable {
+
+        SetForScope<bool> loadPending { m_loadPending, true, false };
+
+        if (!hasAttributeWithoutSynchronization(srcAttr)) {
+            track().removeAllCues();
+            return;
+        }
+
+        // 6. Set the text track readiness state to loading.
+        setReadyState(HTMLTrackElement::LOADING);
+
+        // 7. Let URL be the track URL of the track element.
+        URL trackURL = getNonEmptyURLAttribute(srcAttr);
+
+        // ... if URL is the empty string, then queue a task to first change the text track readiness state
+        // to failed to load and then fire an event named error at the track element.
+        // 8. If the track element's parent is a media element then let CORS mode be the state of the parent media
+        // element's crossorigin content attribute. Otherwise, let CORS mode be No CORS.
+        if (!canLoadURL(trackURL)) {
+            track().removeAllCues();
+            didCompleteLoad(HTMLTrackElement::Failure);
+            return;
+        }
+
+        track().scheduleLoad(trackURL);
+    });
 }
 
-void HTMLTrackElement::loadTimerFired()
+void HTMLTrackElement::scheduleTask(Function<void()>&& task)
 {
-    if (!hasAttributeWithoutSynchronization(srcAttr)) {
-        track().removeAllCues();
-        return;
-    }
-
-    // 6. Set the text track readiness state to loading.
-    setReadyState(HTMLTrackElement::LOADING);
-
-    // 7. Let URL be the track URL of the track element.
-    URL url = getNonEmptyURLAttribute(srcAttr);
-
-    // ... if URL is the empty string, then queue a task to first change the text track readiness state
-    // to failed to load and then fire an event named error at the track element.
-    // 8. If the track element's parent is a media element then let CORS mode be the state of the parent media
-    // element's crossorigin content attribute. Otherwise, let CORS mode be No CORS.
-    if (url.isEmpty() || !canLoadURL(url)) {
-        track().removeAllCues();
-        didCompleteLoad(HTMLTrackElement::Failure);
-        return;
-    }
-
-    track().scheduleLoad(url);
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [task = WTFMove(task)]() mutable {
+        task();
+    });
 }
 
 bool HTMLTrackElement::canLoadURL(const URL& url)

@@ -42,7 +42,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
     : TextTrack(&track.document(), &track, kind, emptyString(), label, language, TrackElement)
     , m_trackElement(&track)
-    , m_loadTimer(*this, &LoadableTextTrack::loadTimerFired)
 {
 }
 
@@ -55,44 +54,50 @@ Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const 
 
 void LoadableTextTrack::scheduleLoad(const URL& url)
 {
+    ASSERT(!url.isEmpty());
+
     if (url == m_url)
         return;
 
     // When src attribute is changed we need to flush all collected track data
     removeAllCues();
 
-    // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
-
-    // 2. Let URL be the track URL of the track element.
-    m_url = url;
-    
-    // 3. Asynchronously run the remaining steps, while continuing with whatever task 
-    // was responsible for creating the text track or changing the text track mode.
-    if (!m_loadTimer.isActive())
-        m_loadTimer.startOneShot(0_s);
-}
-
-Element* LoadableTextTrack::element()
-{
-    return m_trackElement;
-}
-
-void LoadableTextTrack::loadTimerFired()
-{
-    if (m_loader)
-        m_loader->cancelLoad();
-
     if (!m_trackElement)
         return;
 
     // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
 
-    // 4. Download: If URL is not the empty string, perform a potentially CORS-enabled fetch of URL, with the
-    // mode being the state of the media element's crossorigin content attribute, the origin being the
-    // origin of the media element's Document, and the default origin behaviour set to fail.
-    m_loader = makeUnique<TextTrackLoader>(static_cast<TextTrackLoaderClient&>(*this), m_trackElement->document());
-    if (!m_loader->load(m_url, *m_trackElement))
-        m_trackElement->didCompleteLoad(HTMLTrackElement::Failure);
+    // 2. Let URL be the track URL of the track element.
+    m_url = url;
+    
+    if (m_loadPending)
+        return;
+    
+    // 3. Asynchronously run the remaining steps, while continuing with whatever task
+    // was responsible for creating the text track or changing the text track mode.
+    m_trackElement->scheduleTask([this]() mutable {
+        SetForScope<bool> loadPending { m_loadPending, true, false };
+
+        if (m_loader)
+            m_loader->cancelLoad();
+
+        if (!m_trackElement)
+            return;
+
+        // 4.8.10.12.3 Sourcing out-of-band text tracks (continued)
+
+        // 4. Download: If URL is not the empty string, perform a potentially CORS-enabled fetch of URL, with the
+        // mode being the state of the media element's crossorigin content attribute, the origin being the
+        // origin of the media element's Document, and the default origin behaviour set to fail.
+        m_loader = makeUnique<TextTrackLoader>(static_cast<TextTrackLoaderClient&>(*this), m_trackElement->document());
+        if (!m_loader->load(m_url, *m_trackElement))
+            m_trackElement->didCompleteLoad(HTMLTrackElement::Failure);
+    });
+}
+
+Element* LoadableTextTrack::element()
+{
+    return m_trackElement;
 }
 
 void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
