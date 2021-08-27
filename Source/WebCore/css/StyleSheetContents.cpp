@@ -423,8 +423,10 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
         if (handler(*rule))
             return true;
         switch (rule->type()) {
-        case StyleRuleType::Media: {
-            auto* childRules = downcast<StyleRuleMedia>(*rule).childRulesWithoutDeferredParsing();
+        case StyleRuleType::Media:
+        case StyleRuleType::Supports:
+        case StyleRuleType::Layer: {
+            auto* childRules = downcast<StyleRuleGroup>(*rule).childRulesWithoutDeferredParsing();
             if (childRules && traverseRulesInVector(*childRules, handler))
                 return true;
             break;
@@ -441,7 +443,6 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
         case StyleRuleType::Charset:
         case StyleRuleType::CounterStyle:
         case StyleRuleType::Keyframe:
-        case StyleRuleType::Supports:
             break;
         }
     }
@@ -484,6 +485,7 @@ bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const Ca
         case StyleRuleType::Charset:
         case StyleRuleType::Keyframe:
         case StyleRuleType::Supports:
+        case StyleRuleType::Layer:
             return false;
         };
         ASSERT_NOT_REACHED();

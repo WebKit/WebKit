@@ -62,6 +62,7 @@ struct MatchedRule {
     const RuleData* ruleData;
     unsigned specificity;
     ScopeOrdinal styleScopeOrdinal;
+    unsigned cascadeLayerOrder;
 };
 
 struct MatchedProperties {
@@ -146,7 +147,7 @@ private:
     void sortAndTransferMatchedRules(DeclarationOrigin);
     void transferMatchedRules(DeclarationOrigin, std::optional<ScopeOrdinal> forScope = { });
 
-    void addMatchedRule(const RuleData&, unsigned specificity, ScopeOrdinal);
+    void addMatchedRule(const RuleData&, unsigned specificity, const MatchRequest&);
     void addMatchedProperties(MatchedProperties&&, DeclarationOrigin);
 
     const Element& element() const { return m_element.get(); }

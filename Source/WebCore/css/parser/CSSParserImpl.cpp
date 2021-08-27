@@ -420,6 +420,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
             return consumeImportRule(prelude);
         if (allowedRules <= AllowNamespaceRules && id == CSSAtRuleNamespace)
             return consumeNamespaceRule(prelude);
+        if (allowedRules <= RegularRules && id == CSSAtRuleLayer)
+            return consumeLayerRule(prelude, { });
         // FIXME-NEWPARSER: Support "apply"
         /*if (allowedRules == ApplyRules && id == CSSAtRuleApply) {
             consumeApplyRule(prelude);
@@ -451,6 +453,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumePageRule(prelude, block);
     case CSSAtRuleCounterStyle:
         return consumeCounterStyleRule(prelude, block);
+    case CSSAtRuleLayer:
+        return consumeLayerRule(prelude, block);
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -674,6 +678,92 @@ RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTo
 
     consumeDeclarationList(block, StyleRuleType::CounterStyle);
     return StyleRuleCounterStyle::create(name, createStyleProperties(m_parsedProperties, m_context.mode));
+}
+
+RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)
+{
+    if (!m_context.cascadeLayersEnabled)
+        return nullptr;
+
+    auto preludeCopy = prelude;
+
+    auto consumeName = [&]() -> std::optional<CascadeLayerName> {
+        CascadeLayerName name;
+        // Anonymous case.
+        if (prelude.atEnd())
+            return name;
+
+        while (true) {
+            auto nameToken = prelude.consume();
+            if (nameToken.type() != IdentToken)
+                return { };
+
+            name.append(nameToken.value().toAtomString());
+
+            if (prelude.peek().type() != DelimiterToken || prelude.peek().delimiter() != '.')
+                break;
+            prelude.consume();
+        }
+
+        prelude.consumeWhitespace();
+        return name;
+    };
+
+    if (!block) {
+        // List syntax.
+        Vector<CascadeLayerName> nameList;
+        while (true) {
+            auto name = consumeName();
+            if (!name)
+                return nullptr;
+            nameList.append(*name);
+
+            if (prelude.atEnd())
+                break;
+
+            auto commaToken = prelude.consumeIncludingWhitespace();
+            if (commaToken.type() != CommaToken)
+                return { };
+        }
+
+        if (m_observerWrapper) {
+            unsigned endOffset = m_observerWrapper->endOffset(preludeCopy);
+            m_observerWrapper->observer().startRuleHeader(StyleRuleType::Layer, m_observerWrapper->startOffset(preludeCopy));
+            m_observerWrapper->observer().endRuleHeader(endOffset);
+            m_observerWrapper->observer().startRuleBody(endOffset);
+            m_observerWrapper->observer().endRuleBody(endOffset);
+        }
+
+        return StyleRuleLayer::create(WTFMove(nameList));
+    }
+
+    auto name = consumeName();
+    if (!name)
+        return nullptr;
+
+    // No comma separated list when using the block syntax.
+    if (!prelude.atEnd())
+        return nullptr;
+
+    if (m_deferredParser)
+        return StyleRuleLayer::create(WTFMove(*name), makeUnique<DeferredStyleGroupRuleList>(*block, *m_deferredParser));
+
+    if (m_observerWrapper) {
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::Layer, m_observerWrapper->startOffset(preludeCopy));
+        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(preludeCopy));
+        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(*block));
+    }
+
+    Vector<RefPtr<StyleRuleBase>> rules;
+    consumeRuleList(*block, RegularRuleList, [&](RefPtr<StyleRuleBase> rule) {
+        rules.append(rule);
+    });
+    rules.shrinkToFit();
+
+    if (m_observerWrapper)
+        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(*block));
+
+    return StyleRuleLayer::create(WTFMove(*name), WTFMove(rules));
 }
 
 // FIXME-NEWPARSER: Support "apply"

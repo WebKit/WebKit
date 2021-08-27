@@ -58,6 +58,8 @@ CSSAtRuleID cssAtRuleID(StringView name)
         return CSSAtRuleApply;
     if (equalIgnoringASCIICase(name, "counter-style"))
         return CSSAtRuleCounterStyle;
+    if (equalIgnoringASCIICase(name, "layer"))
+        return CSSAtRuleLayer;
     return CSSAtRuleInvalid;
 }
 

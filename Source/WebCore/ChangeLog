@@ -1,5 +1,85 @@
 2021-08-27  Antti Koivisto  <antti@apple.com>
 
+        [CSS Cascade Layers] Initial support
+        https://bugs.webkit.org/show_bug.cgi?id=229542
+
+        Reviewed by Simon Fraser.
+
+        https://www.w3.org/TR/css-cascade-5/#cascade-layers
+
+        This patch adds initial support for @layer rules, including both the block and the statement syntax.
+        No support for @import or CSSOM yet but basic functionality mostly works.
+
+        The feature is disabled by default.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy const):
+        (WebCore::StyleRuleBase::createCSSOMWrapper const):
+        (WebCore::StyleRuleLayer::StyleRuleLayer):
+        (WebCore::m_nameVariant):
+        (WebCore::StyleRuleLayer::create):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::isGroupRule const):
+
+        Add support for casting to StyleRuleGroup.
+
+        (WebCore::StyleRuleBase::isLayerRule const):
+        (isType):
+        * css/StyleRuleType.h:
+
+        Add subclass for layer.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::traverseRulesInVector):
+        (WebCore::StyleSheetContents::traverseSubresources const):
+
+        Traversal support. Also cover other missing group rules.
+
+        * css/parser/CSSAtRuleID.cpp:
+        (WebCore::cssAtRuleID):
+        * css/parser/CSSAtRuleID.h:
+        * css/parser/CSSParserContext.cpp:
+
+        Enable bit.
+
+        (WebCore::operator==):
+        (WebCore::add):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeAtRule):
+        (WebCore::CSSParserImpl::consumeLayerRule):
+
+        Parsing support.
+
+        * css/parser/CSSParserImpl.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::addMatchedRule):
+        (WebCore::Style::ElementRuleCollector::collectMatchingRulesForList):
+
+        Save the layer order to MatchResult.
+
+        (WebCore::Style::compareRules):
+
+        Layer order has higher priority than specificity but lower than scope.
+
+        * style/ElementRuleCollector.h:
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+        (WebCore::Style::RuleSet::addChildRules):
+        (WebCore::Style::RuleSet::pushCascadeLayer):
+        (WebCore::Style::RuleSet::popCascadeLayer):
+
+        Compute layer order when adding the rules to RuleSet.
+
+        * style/RuleSet.h:
+        (WebCore::Style::RuleSet::cascadeLayerOrderFor const):
+
+        Resolved order is kept in a side vector to avoid bloating RuleSet. The vector is initialized
+        only if cascade layers are being used.
+
+2021-08-27  Antti Koivisto  <antti@apple.com>
+
         REGRESSION (r276882): Shadow trees may use stale style information after inline stylesheet is mutated via CSSOM
         https://bugs.webkit.org/show_bug.cgi?id=228917
         rdar://81483998

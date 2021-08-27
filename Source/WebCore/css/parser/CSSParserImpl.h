@@ -53,6 +53,7 @@ class StyleRuleCharset;
 class StyleRuleFontFace;
 class StyleRuleImport;
 class StyleRuleKeyframes;
+class StyleRuleLayer;
 class StyleRuleMedia;
 class StyleRuleNamespace;
 class StyleRulePage;
@@ -135,7 +136,8 @@ private:
     RefPtr<StyleRuleKeyframes> consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRulePage> consumePageRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleCounterStyle> consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    
+    RefPtr<StyleRuleLayer> consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block);
+
     // FIXME-NEWPARSER: Support "apply"
     // void consumeApplyRule(CSSParserTokenRange prelude);
 

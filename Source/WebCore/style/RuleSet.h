@@ -145,6 +145,8 @@ public:
     bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
+    unsigned cascadeLayerOrderFor(const RuleData&) const;
+
 private:
     RuleSet();
 
@@ -157,6 +159,9 @@ private:
         Vector<RuleFeatureVector*> ruleFeatures { };
     };
     CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&, size_t startIndex);
+
+    void pushCascadeLayer(const CascadeLayerName&);
+    void popCascadeLayer(const CascadeLayerName&);
 
     template<typename Function> void traverseRuleDatas(Function&&);
 
@@ -179,9 +184,18 @@ private:
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;
     HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
     unsigned m_ruleCount { 0 };
+
+    HashMap<CascadeLayerName, unsigned> m_cascadeLayerOrderMap;
+    // This is a side vector to hold layer order without bloating RuleData.
+    Vector<unsigned> m_cascadeLayerOrderForPosition;
+
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_autoShrinkToFitEnabled { true };
     bool m_hasViewportDependentMediaQueries { false };
+
+    // FIXME: These should be in stack.
+    CascadeLayerName m_resolvedCascadeLayerName;
+    unsigned m_cascadeLayerOrder { 0 };
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const
@@ -193,6 +207,14 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, b
         tagRules = &m_tagLocalNameRules;
     return tagRules->get(key);
 }
+
+inline unsigned RuleSet::cascadeLayerOrderFor(const RuleData& ruleData) const
+{
+    if (m_cascadeLayerOrderForPosition.size() > ruleData.position())
+        return m_cascadeLayerOrderForPosition[ruleData.position()];
+    return 0;
+}
+
 
 } // namespace Style
 } // namespace WebCore

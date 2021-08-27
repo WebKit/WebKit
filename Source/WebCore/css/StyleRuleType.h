@@ -40,6 +40,7 @@ enum class StyleRuleType : uint8_t {
     Namespace = 10,
     CounterStyle = 11,
     Supports = 12,
+    Layer = 13,
 };
 
 } // namespace WebCore

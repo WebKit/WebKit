@@ -28,6 +28,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueArray.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -39,6 +40,8 @@ class MutableStyleProperties;
 class StyleRuleKeyframe;
 class StyleProperties;
 class StyleRuleKeyframes;
+
+using CascadeLayerName = Vector<AtomString>;
     
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 class StyleRuleBase : public WTF::RefCountedBase {
@@ -55,8 +58,10 @@ public:
     bool isMediaRule() const { return type() == StyleRuleType::Media; }
     bool isPageRule() const { return type() == StyleRuleType::Page; }
     bool isStyleRule() const { return type() == StyleRuleType::Style; }
+    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::Layer; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
     bool isImportRule() const { return type() == StyleRuleType::Import; }
+    bool isLayerRule() const { return type() == StyleRuleType::Layer; }
 
     Ref<StyleRuleBase> copy() const;
 
@@ -239,6 +244,27 @@ private:
     bool m_conditionIsSupported;
 };
 
+class StyleRuleLayer final : public StyleRuleGroup {
+public:
+    static Ref<StyleRuleLayer> create(Vector<CascadeLayerName>&&);
+    static Ref<StyleRuleLayer> create(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleLayer> create(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    Ref<StyleRuleLayer> copy() const { return adoptRef(*new StyleRuleLayer(*this)); }
+
+    bool isList() const { return WTF::holds_alternative<Vector<CascadeLayerName>>(m_nameVariant); }
+
+    auto& name() const { return WTF::get<CascadeLayerName>(m_nameVariant); }
+    auto& nameList() const { return WTF::get<Vector<CascadeLayerName>>(m_nameVariant); }
+
+private:
+    StyleRuleLayer(Vector<CascadeLayerName>&&);
+    StyleRuleLayer(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleLayer(CascadeLayerName&&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
+    StyleRuleLayer(const StyleRuleLayer&);
+
+    Variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
+};
+
 // This is only used by the CSS parser.
 class StyleRuleCharset final : public StyleRuleBase {
 public:
@@ -323,6 +349,10 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRule)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isStyleRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleGroup)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isGroupRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleFontFace)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isFontFaceRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
@@ -349,4 +379,8 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleCharset)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isCharsetRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleLayer)
+    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isLayerRule(); }
 SPECIALIZE_TYPE_TRAITS_END()

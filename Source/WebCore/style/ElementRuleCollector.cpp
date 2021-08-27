@@ -111,9 +111,10 @@ const Vector<RefPtr<const StyleRule>>& ElementRuleCollector::matchedRuleList() c
     return m_matchedRuleList;
 }
 
-inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, ScopeOrdinal styleScopeOrdinal)
+inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, const MatchRequest& matchRequest)
 {
-    m_matchedRules.append({ &ruleData, specificity, styleScopeOrdinal });
+    auto cascadeLayerOrder = matchRequest.ruleSet ? matchRequest.ruleSet->cascadeLayerOrderFor(ruleData) : 0;
+    m_matchedRules.append({ &ruleData, specificity, matchRequest.styleScopeOrdinal, cascadeLayerOrder });
 }
 
 void ElementRuleCollector::clearMatchedRules()
@@ -535,7 +536,7 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
 
         unsigned specificity;
         if (ruleMatches(ruleData, specificity))
-            addMatchedRule(ruleData, specificity, matchRequest.styleScopeOrdinal);
+            addMatchedRule(ruleData, specificity, matchRequest);
     }
 }
 
@@ -544,6 +545,9 @@ static inline bool compareRules(MatchedRule r1, MatchedRule r2)
     // For normal properties the earlier scope wins. This may be reversed by !important which is handled when resolving cascade.
     if (r1.styleScopeOrdinal != r2.styleScopeOrdinal)
         return r1.styleScopeOrdinal > r2.styleScopeOrdinal;
+
+    if (r1.cascadeLayerOrder != r2.cascadeLayerOrder)
+        return r1.cascadeLayerOrder < r2.cascadeLayerOrder;
 
     if (r1.specificity != r2.specificity)
         return r1.specificity < r2.specificity;

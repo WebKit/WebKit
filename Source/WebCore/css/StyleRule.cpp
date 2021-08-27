@@ -94,6 +94,9 @@ void StyleRuleBase::destroy()
     case StyleRuleType::CounterStyle:
         delete downcast<StyleRuleCounterStyle>(this);
         return;
+    case StyleRuleType::Layer:
+        delete downcast<StyleRuleLayer>(this);
+        return;
     case StyleRuleType::Unknown:
         ASSERT_NOT_REACHED();
         return;
@@ -118,6 +121,8 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
         return downcast<StyleRuleKeyframes>(*this).copy();
     case StyleRuleType::CounterStyle:
         return downcast<StyleRuleCounterStyle>(*this).copy();
+    case StyleRuleType::Layer:
+        return downcast<StyleRuleLayer>(*this).copy();
     case StyleRuleType::Import:
     case StyleRuleType::Namespace:
         // FIXME: Copy import and namespace rules.
@@ -162,6 +167,8 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
     case StyleRuleType::CounterStyle:
         rule = CSSCounterStyleRule::create(downcast<StyleRuleCounterStyle>(self), parentSheet);
         break;
+    case StyleRuleType::Layer:
+        // FIXME: Implement.
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Keyframe:
@@ -431,6 +438,7 @@ StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
 {
 }
 
+
 Ref<StyleRuleSupports> StyleRuleSupports::create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleSupports(conditionText, conditionIsSupported, WTFMove(rules)));
@@ -439,6 +447,45 @@ Ref<StyleRuleSupports> StyleRuleSupports::create(const String& conditionText, bo
 Ref<StyleRuleSupports> StyleRuleSupports::create(const String& conditionText, bool conditionIsSupported, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
 {
     return adoptRef(*new StyleRuleSupports(conditionText, conditionIsSupported, WTFMove(rules)));
+}
+
+StyleRuleLayer::StyleRuleLayer(Vector<CascadeLayerName>&& nameList)
+    : StyleRuleGroup(StyleRuleType::Layer, Vector<RefPtr<StyleRuleBase>> { })
+    , m_nameVariant(WTFMove(nameList))
+{
+}
+
+StyleRuleLayer::StyleRuleLayer(CascadeLayerName&& name, Vector<RefPtr<StyleRuleBase>>&& rules)
+    : StyleRuleGroup(StyleRuleType::Layer, WTFMove(rules))
+    , m_nameVariant(WTFMove(name))
+{
+}
+
+StyleRuleLayer::StyleRuleLayer(CascadeLayerName&& name, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+    : StyleRuleGroup(StyleRuleType::Layer, WTFMove(rules))
+    , m_nameVariant(WTFMove(name))
+{
+}
+
+StyleRuleLayer::StyleRuleLayer(const StyleRuleLayer& other)
+    : StyleRuleGroup(other)
+    , m_nameVariant(other.m_nameVariant)
+{
+}
+
+Ref<StyleRuleLayer> StyleRuleLayer::create(Vector<CascadeLayerName>&& nameList)
+{
+    return adoptRef(*new StyleRuleLayer(WTFMove(nameList)));
+}
+
+Ref<StyleRuleLayer> StyleRuleLayer::create(CascadeLayerName&& name, Vector<RefPtr<StyleRuleBase>>&& rules)
+{
+    return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
+}
+
+Ref<StyleRuleLayer> StyleRuleLayer::create(CascadeLayerName&& name, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+{
+    return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
 }
 
 StyleRuleCharset::StyleRuleCharset()

@@ -95,6 +95,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , useLegacyBackgroundSizeShorthandBehavior { document.settings().useLegacyBackgroundSizeShorthandBehavior() }
     , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
     , hasPseudoClassEnabled { document.settings().hasPseudoClassEnabled() }
+    , cascadeLayersEnabled { document.settings().cssCascadeLayersEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -139,6 +140,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
         && a.focusVisibleEnabled == b.focusVisibleEnabled
         && a.hasPseudoClassEnabled == b.hasPseudoClassEnabled
+        && a.cascadeLayersEnabled == b.cascadeLayersEnabled
 #if ENABLE(ATTACHMENT_ELEMENT)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
@@ -177,11 +179,12 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.useLegacyBackgroundSizeShorthandBehavior  << 20
         | context.focusVisibleEnabled                       << 21
         | context.hasPseudoClassEnabled                     << 22
+        | context.cascadeLayersEnabled                      << 23
 #if ENABLE(ATTACHMENT_ELEMENT)
-        | context.attachmentEnabled                         << 23
+        | context.attachmentEnabled                         << 24
 #endif
-        | context.overflowClipEnabled                       << 24
-        | context.mode                                      << 25; // This is multiple bits, so keep it last.
+        | context.overflowClipEnabled                       << 25
+        | context.mode                                      << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, bits);
 }
 

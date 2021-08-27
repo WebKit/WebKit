@@ -87,6 +87,13 @@ void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned se
 {
     RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount++);
 
+    if (m_cascadeLayerOrder) {
+        auto oldSize = m_cascadeLayerOrderForPosition.size();
+        m_cascadeLayerOrderForPosition.grow(m_ruleCount);
+        std::fill(m_cascadeLayerOrderForPosition.begin() + oldSize, m_cascadeLayerOrderForPosition.end(), 0);
+        m_cascadeLayerOrderForPosition.last() = m_cascadeLayerOrder;
+    }
+
     m_features.collectFeatures(ruleData);
 
     if (mediaQueryCollector)
@@ -287,6 +294,22 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, MediaQue
             mediaQueryCollector.pop(&mediaRule.mediaQueries());
             continue;
         }
+        if (is<StyleRuleLayer>(*rule)) {
+            auto& layerRule = downcast<StyleRuleLayer>(*rule);
+            if (layerRule.isList()) {
+                // List syntax that just registers the layers.
+                for (auto& name : layerRule.nameList()) {
+                    pushCascadeLayer(name);
+                    popCascadeLayer(name);
+                }
+                continue;
+            }
+            // Block syntax.
+            pushCascadeLayer(layerRule.name());
+            addChildRules(layerRule.childRules(), mediaQueryCollector, resolver, mode);
+            popCascadeLayer(layerRule.name());
+            continue;
+        }
         if (is<StyleRuleFontFace>(*rule)) {
             // Add this font face to our set.
             if (resolver) {
@@ -469,6 +492,34 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(cons
     return collectedChanges;
 }
 
+void RuleSet::pushCascadeLayer(const CascadeLayerName& name)
+{
+    auto nameResolvingAnonymous = [&] {
+        if (name.isEmpty()) {
+            // Make unique name for an anonymous layer.
+            unsigned long long random = randomNumber() * std::numeric_limits<unsigned long long>::max();
+            return CascadeLayerName { "anon_"_s + String::number(random) };
+        }
+        return name;
+    };
+
+    // For hierarchical names we register the containing layers individually first.
+    for (auto& nameSegment : nameResolvingAnonymous()) {
+        m_resolvedCascadeLayerName.append(nameSegment);
+        m_cascadeLayerOrder = m_cascadeLayerOrderMap.ensure(m_resolvedCascadeLayerName, [&] {
+            // FIXME: This is not correct when adding a sublayer to an already registered layer after it has gained siblings.
+            return m_cascadeLayerOrderMap.size() + 1;
+        }).iterator->value;
+    }
+}
+
+void RuleSet::popCascadeLayer(const CascadeLayerName& name)
+{
+    auto size = name.isEmpty() ? 1 : name.size();
+    m_resolvedCascadeLayerName.shrink(m_resolvedCascadeLayerName.size() - size);
+    m_cascadeLayerOrder = m_resolvedCascadeLayerName.isEmpty() ? 0 : m_cascadeLayerOrderMap.get(m_resolvedCascadeLayerName);
+}
+
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
 {
     for (auto& vector : map.values())
@@ -505,6 +556,8 @@ void RuleSet::shrinkToFit()
     m_features.shrinkToFit();
 
     shrinkDynamicRules(m_dynamicMediaQueryRules);
+
+    m_cascadeLayerOrderForPosition.shrinkToFit();
 }
 
 RuleSet::MediaQueryCollector::~MediaQueryCollector() = default;
@@ -568,7 +621,6 @@ void RuleSet::MediaQueryCollector::addRuleIfNeeded(const RuleData& ruleData)
     context.affectedRulePositions.append(ruleData.position());
     context.ruleFeatures.append({ ruleData });
 }
-
 
 } // namespace Style
 } // namespace WebCore
