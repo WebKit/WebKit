@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -304,7 +304,7 @@ asm (
     // Incoming register values:
     //     a0: probe function
     //     a1: probe arg
-    //     a2: Probe::executeProbe
+    //     a2: Probe::executeJSCJITProbe
     //     s0: scratch, was ctiMasmProbeTrampoline
     //     s1: scratch
     //     ra: return address
@@ -394,7 +394,7 @@ asm (
 
     "move      $a0, $sp" "\n" // Set the Probe::State* arg.
     "addiu     $sp, $sp, -16" "\n" // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
-    "move      $t9, $a2" "\n" // Probe::executeProbe()
+    "move      $t9, $a2" "\n" // Probe::executeJSCJITProbe()
     "jalr      $t9" "\n" // Call the probe handler.
     "nop" "\n"
 
@@ -508,7 +508,7 @@ asm (
     // returns. So, the MIPS probe implementation will allow the probe handler to
     // either modify ra or pc, but not both in the same probe invocation. The probe
     // mechanism ensures that we never try to modify both ra and pc with a RELEASE_ASSERT
-    // in Probe::executeProbe().
+    // in Probe::executeJSCJITProbe().
 
     // Determine if the probe handler changed the pc.
     "lw        $ra, " STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "($sp)" "\n" // preload the target sp.
@@ -563,7 +563,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     store32(ra, Address(sp, offsetof(IncomingRecord, ra)));
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), a0);
     move(TrustedImmPtr(arg), a1);
-    move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeProbe)), a2);
+    move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeJSCJITProbe)), a2);
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), s0);
     m_assembler.jalr(s0);
     m_assembler.nop();

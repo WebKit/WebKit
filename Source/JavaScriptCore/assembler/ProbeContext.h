@@ -243,7 +243,7 @@ private:
     friend JS_EXPORT_PRIVATE void* probeStateForContext(Context&); // Not for general use. This should only be for writing tests.
 };
 
-void executeProbe(State*);
+extern "C" void executeJSCJITProbe(State*);
 
 } // namespace Probe
 } // namespace JSC

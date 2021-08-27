@@ -1,3 +1,42 @@
+2021-08-27  Mark Lam  <mark.lam@apple.com>
+
+        Make ARM64 and X86_64 probe code a little bit more efficient.
+        https://bugs.webkit.org/show_bug.cgi?id=229618
+        rdar://82445743
+
+        Reviewed by Yusuke Suzuki.
+
+        We were using an unnecessary indirect call to call Probe::executeProbe() when we
+        can be using a direct call, which emits less JIT code.  This patch changes the
+        ARM64 and X86_64 ports to use a direct call now.
+
+        Also rename executeProbe to executeJSCJITProbe to make it more unique since we're
+        switching to extern "C" linkage for this function now.
+
+        For MacroAssemblerX86Common.cpp, we left the X86 and MSVC implementations unchanged.
+        For X86, I don't know the stack alignment requirements (if any) plus we might want
+        to delete this code eventually since we're not supporting the X86 JIT anymore.
+        For MSVC, I don't know the way to express a direct call in MSVC assembly, and have
+        no way to test it.  Will leave that as an exercise for folks working on the Windows
+        ports if they are interested.
+
+        Also remove JITProbeExecutorPtrTag since it's no longer needed.
+
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerMIPS.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerX86Common.cpp:
+        (JSC::ctiMasmProbeTrampoline):
+        (JSC::MacroAssembler::probe):
+        * assembler/ProbeContext.cpp:
+        (JSC::Probe::executeJSCJITProbe):
+        (JSC::Probe::executeProbe): Deleted.
+        * assembler/ProbeContext.h:
+        * runtime/JSCPtrTag.h:
+
 2021-08-27  Saam Barati  <sbarati@apple.com>
 
         Update ARM64EHash

@@ -33,7 +33,7 @@ namespace Probe {
 
 static void flushDirtyStackPages(State*);
 
-void executeProbe(State* state)
+void executeJSCJITProbe(State* state)
 {
     Context context(state);
 #if CPU(ARM64)

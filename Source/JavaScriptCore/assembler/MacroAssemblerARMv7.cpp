@@ -228,12 +228,12 @@ asm (
     // Incoming register values:
     //     r0: probe function
     //     r1: probe arg
-    //     r2: Probe::executeProbe
+    //     r2: Probe::executeJSCJITProbe
     //     ip: scratch, was ctiMasmProbeTrampoline
     //     lr: return address
 
     "mov       ip, sp" "\n"
-    "str       r2, [ip, #-" STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n" // Stash Probe::executeProbe.
+    "str       r2, [ip, #-" STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n" // Stash Probe::executeJSCJITProbe.
 
     "mov       r2, sp" "\n"
     "sub       r2, r2, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n"
@@ -241,7 +241,7 @@ asm (
     // The ARM EABI specifies that the stack needs to be 16 byte aligned.
     "bic       r2, r2, #0xf" "\n"
     "mov       sp, r2" "\n" // Set the sp to protect the Probe::State from interrupts before we initialize it.
-    "ldr       r2, [ip, #-" STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n" // Reload Probe::executeProbe.
+    "ldr       r2, [ip, #-" STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n" // Reload Probe::executeJSCJITProbe.
 
     "str       r0, [sp, #" STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "]" "\n"
     "str       r1, [sp, #" STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "]" "\n"
@@ -280,7 +280,7 @@ asm (
     "mov       r5, sp" "\n"
 
     "mov       r0, sp" "\n" // the Probe::State* arg.
-    "blx       r2" "\n" // Call Probe::executeProbe.
+    "blx       r2" "\n" // Call Probe::executeJSCJITProbe.
 
     // Make sure the Probe::State is entirely below the result stack pointer so
     // that register values are still preserved when we call the initializeStack
@@ -380,7 +380,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     // This means we must first preserve the apsr flags above first.
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), r0);
     move(TrustedImmPtr(arg), r1);
-    move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeProbe)), r2);
+    move(TrustedImmPtr(reinterpret_cast<void*>(Probe::executeJSCJITProbe)), r2);
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), ip);
     m_assembler.blx(ip);
 }

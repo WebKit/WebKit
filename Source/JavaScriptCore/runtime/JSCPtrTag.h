@@ -56,7 +56,6 @@ using PtrTag = WTF::PtrTag;
     v(CustomAccessorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(HostFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbePtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
-    v(JITProbeExecutorPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbePCPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(JITProbeStackInitializationFunctionPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
     v(ReturnAddressPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::Native) \
