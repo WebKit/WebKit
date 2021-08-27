@@ -1350,6 +1350,7 @@ webkit.org/b/208188 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 webkit.org/b/208188 webgl/2.0.y [ Skip ]
+webkit.org/b/208188 webgl/pending/conformance2 [ Skip ]
 
 webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]

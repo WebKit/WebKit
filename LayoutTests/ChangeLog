@@ -1,3 +1,13 @@
+2021-08-26  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Skip the webgl/pending/conformance2 tests, as WebGL2 is not yet supported
+        https://bugs.webkit.org/show_bug.cgi?id=229598
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-08-26  Robert Jenner  <Jenner@apple.com>
 
         [ Catalina+ Debug wk2 ] fast/speechrecognition/start-recognition-after-gum.html is a flaky timeout
