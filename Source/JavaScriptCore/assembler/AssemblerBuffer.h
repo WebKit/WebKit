@@ -203,6 +203,27 @@ namespace JSC {
     };
 
 #if CPU(ARM64E)
+#if PLATFORM(MAC)
+    class ARM64EHash {
+    public:
+        ARM64EHash(void* initialHash)
+            : m_hash(static_cast<uint32_t>(bitwise_cast<uintptr_t>(initialHash)))
+        {
+        }
+
+        ALWAYS_INLINE uint32_t update(uint32_t value, uint32_t, void*)
+        {
+            uint64_t input = value ^ m_hash;
+            uint64_t a = static_cast<uint32_t>(tagInt(input, static_cast<PtrTag>(0)) >> 39);
+            uint64_t b = tagInt(input, static_cast<PtrTag>(0xb7e151628aed2a6a)) >> 23;
+            m_hash = a ^ b;
+            return m_hash;
+        }
+
+    private:
+        uint32_t m_hash;
+    };
+#else
     class ARM64EHash {
     public:
         ARM64EHash(void* diversifier)
@@ -259,7 +280,8 @@ namespace JSC {
 
         uint64_t m_hash;
     };
-#endif
+#endif // PLATFORM(MAC)
+#endif // CPU(ARM64E)
 
     class AssemblerBuffer {
     public:
