@@ -146,6 +146,10 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
     case CSSSelector::Tag:
         return (simpleSelector.tagQName().localName() != starAtom()) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
     case CSSSelector::PseudoElement:
+        // Slotted only competes with other slotted selectors for specificity,
+        // so whether we add the ClassC specificity shouldn't be observable.
+        if (simpleSelector.pseudoElementType() == CSSSelector::PseudoElementSlotted)
+            return maxSpecificity(*simpleSelector.selectorList());
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
     case CSSSelector::Unknown:
         return 0;

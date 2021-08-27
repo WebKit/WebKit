@@ -484,14 +484,15 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {
         auto* selector = ruleData.selector();
+        auto* selectorForMatching = selector;
         if (m_isMatchingSlottedPseudoElements) {
-            selector = findSlottedPseudoElementSelector(ruleData.selector());
-            if (!selector)
+            selectorForMatching = findSlottedPseudoElementSelector(ruleData.selector());
+            if (!selectorForMatching)
                 return false;
         }
         // Slow path.
         SelectorChecker selectorChecker(element().document());
-        selectorMatches = selectorChecker.match(*selector, element(), context);
+        selectorMatches = selectorChecker.match(*selectorForMatching, element(), context);
         if (selectorMatches)
             specificity = selector->computeSpecificity();
     }

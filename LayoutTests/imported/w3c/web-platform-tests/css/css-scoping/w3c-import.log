@@ -134,6 +134,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-placeholder-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-placeholder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-slot.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-specificity-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-specificity-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-specificity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-specificity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scoping/slotted-with-pseudo-element-expected.html
