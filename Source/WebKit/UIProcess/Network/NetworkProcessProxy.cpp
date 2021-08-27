@@ -1262,15 +1262,15 @@ void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
         sendSync(Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync(), Messages::NetworkProcess::ProcessWillSuspendImminentlyForTestingSync::Reply(), 0);
 }
 
-static bool s_suspensionPreventedForTesting { false };
-void NetworkProcessProxy::preventSuspensionForTesting()
+static bool s_suspensionAllowedForTesting { true };
+void NetworkProcessProxy::setSuspensionAllowedForTesting(bool allowed)
 {
-    s_suspensionPreventedForTesting = true;
+    s_suspensionAllowedForTesting = allowed;
 }
 
 void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    if (s_suspensionPreventedForTesting)
+    if (!s_suspensionAllowedForTesting)
         return completionHandler();
     sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }

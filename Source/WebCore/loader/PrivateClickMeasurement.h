@@ -354,6 +354,8 @@ public:
     struct EphemeralSourceNonce {
         String nonce;
 
+        EphemeralSourceNonce isolatedCopy() const;
+
         WEBCORE_EXPORT bool isValid() const;
 
         template<class Encoder> void encode(Encoder&) const;
@@ -369,6 +371,7 @@ public:
         String signatureBase64URL;
         String keyIDBase64URL;
 
+        SourceSecretToken isolatedCopy() const;
         bool isValid() const;
     };
 
@@ -383,6 +386,8 @@ public:
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PrivateClickMeasurement> decode(Decoder&);
+
+    WEBCORE_EXPORT PrivateClickMeasurement isolatedCopy() const;
 
 private:
     bool isValid() const;
@@ -405,6 +410,8 @@ private:
         RetainPtr<RSABSSATokenReady> readyToken;
 #endif
         String valueBase64URL;
+
+        SourceUnlinkableToken isolatedCopy() const;
     };
 
     std::optional<EphemeralSourceNonce> m_ephemeralSourceNonce;

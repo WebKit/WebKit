@@ -28,10 +28,12 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 
 #if HAVE(RSA_BSSA)
 
@@ -78,9 +80,9 @@ static NSURL *exampleURL()
     return [NSURL URLWithString:@"https://example.com/"];
 }
 
-void runBasicEventAttributionTest(Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
+void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView)
 {
-    [WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting];
+    [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
     HTTPServer server([&done, connectionCount = 0] (Connection connection) mutable {
         switch (++connectionCount) {
@@ -113,7 +115,7 @@ void runBasicEventAttributionTest(Function<void(WKWebView *, const HTTPServer&)>
     }, HTTPServer::Protocol::Https);
     NSURL *serverURL = server.request().URL;
 
-    auto webView = adoptNS([WKWebView new]);
+    auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]) : adoptNS([WKWebView new]);
     addAttributionToWebView(webView.get(), server);
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
@@ -129,7 +131,7 @@ void runBasicEventAttributionTest(Function<void(WKWebView *, const HTTPServer&)>
 #if HAVE(RSA_BSSA)
 TEST(EventAttribution, FraudPrevention)
 {
-    [WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting];
+    [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
 
     // Generate the server key pair.
@@ -282,16 +284,61 @@ TEST(EventAttribution, FraudPrevention)
 
 TEST(EventAttribution, Basic)
 {
-    runBasicEventAttributionTest([](WKWebView *webView, const HTTPServer& server) {
+    runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
     });
 }
+
+TEST(EventAttribution, DatabaseLocation)
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"EventAttributionDatabaseLocationTest"] isDirectory:YES];
+    if ([fileManager fileExistsAtPath:tempDir.path])
+        [fileManager removeItemAtURL:tempDir error:nil];
+
+    auto webViewToKeepNetworkProcessAlive = adoptNS([TestWKWebView new]);
+    [webViewToKeepNetworkProcessAlive synchronouslyLoadHTMLString:@"start network process"];
+
+    pid_t originalNetworkProcessPid = 0;
+    @autoreleasepool {
+        auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+        dataStoreConfiguration.get().privateClickMeasurementStorageDirectory = tempDir;
+        auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+        viewConfiguration.get().websiteDataStore = dataStore.get();
+        runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
+            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
+        });
+        originalNetworkProcessPid = [dataStore _networkProcessIdentifier];
+        EXPECT_GT(originalNetworkProcessPid, 0);
+
+        __block bool suspended = false;
+        [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:YES];
+        [dataStore _sendNetworkProcessPrepareToSuspend:^{
+            suspended = true;
+            [dataStore _sendNetworkProcessDidResume];
+        }];
+        Util::run(&suspended);
+        Util::spinRunLoop(10);
+    }
+    Util::spinRunLoop(10);
+    usleep(100000);
+    Util::spinRunLoop(10);
+
+    EXPECT_TRUE([fileManager fileExistsAtPath:tempDir.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:[tempDir.path stringByAppendingPathComponent:@"pcm.db"]]);
+
+    [webViewToKeepNetworkProcessAlive synchronouslyLoadHTMLString:@"start network process again if it crashed during teardown"];
+    EXPECT_EQ(webViewToKeepNetworkProcessAlive.get().configuration.websiteDataStore._networkProcessIdentifier, originalNetworkProcessPid);
+}
+
+// FIXME: Write a test that verifies that data is migrated from old ResourceLoadStatistics databases to the new PCM database.
 
 #if HAVE(UI_EVENT_ATTRIBUTION)
 
 TEST(EventAttribution, BasicWithIOSSPI)
 {
-    runBasicEventAttributionTest([](WKWebView *webView, const HTTPServer& server) {
+    runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL()]);
         webView._uiEventAttribution = (UIEventAttribution *)attribution.get();
     });

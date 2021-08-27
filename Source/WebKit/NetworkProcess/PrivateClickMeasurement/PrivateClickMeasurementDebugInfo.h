@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,27 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
-
-#include "LibWebRTCResolverIdentifier.h"
-#include "RTCNetwork.h"
-#include <WebCore/DNS.h>
-#include <wtf/CompletionHandler.h>
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class NetworkRTCResolver {
-public:
-    static std::unique_ptr<NetworkRTCResolver> create(LibWebRTCResolverIdentifier, WebCore::DNSCompletionHandler&&);
+namespace PCM {
 
-    NetworkRTCResolver(LibWebRTCResolverIdentifier, WebCore::DNSCompletionHandler&&);
-    virtual ~NetworkRTCResolver();
+struct DebugInfo {
 
-    virtual void start(const String& address);
-    virtual void stop();
+    struct Message {
+        JSC::MessageLevel messageLevel;
+        String message;
 
-protected:
-    LibWebRTCResolverIdentifier m_identifier;
-    WebCore::DNSCompletionHandler m_completionHandler;
+        Message isolatedCopy() const;
+    };
+
+    Vector<Message> messages;
+
+    DebugInfo isolatedCopy() const;
 };
 
-} // namespace WebKit
+} // namespace PCM
 
-#endif // USE(LIBWEBRTC)
+} // namespace WebKit

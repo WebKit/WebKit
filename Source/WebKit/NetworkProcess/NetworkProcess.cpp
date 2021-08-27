@@ -48,6 +48,7 @@
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PreconnectTask.h"
+#include "PrivateClickMeasurementStore.h"
 #include "RemoteNetworkingContext.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
@@ -1614,11 +1615,11 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         networkSession->removeNetworkWebsiteData(modifiedSince, std::nullopt, [clearTasksHandler] { });
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
-        clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+        clearDiskCache(modifiedSince, [clearTasksHandler] { });
 
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements)) {
         if (auto* networkSession = this->networkSession(sessionID))
-            networkSession->clearPrivateClickMeasurement();
+            networkSession->clearPrivateClickMeasurement([clearTasksHandler] { });
     }
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
@@ -1677,14 +1678,14 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 #endif
 
+    auto clearTasksHandler = WTF::CallbackAggregator::create(WTFMove(completionHandler));
+
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements)) {
         if (auto* networkSession = this->networkSession(sessionID)) {
             for (auto& originData : originDatas)
-                networkSession->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host));
+                networkSession->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host), [clearTasksHandler] { });
         }
     }
-    
-    auto clearTasksHandler = WTF::CallbackAggregator::create(WTFMove(completionHandler));
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
         for (auto& originData : originDatas)
@@ -2245,6 +2246,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
 #endif
+    PCM::Store::prepareForProcessToSuspend([callbackAggregator] { });
 
     forEachNetworkSession([&] (auto& networkSession) {
         platformFlushCookies(networkSession.sessionID(), [callbackAggregator] { });
@@ -2287,7 +2289,8 @@ void NetworkProcess::resume()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebResourceLoadStatisticsStore::resume();
 #endif
-    
+    PCM::Store::processDidResume();
+
 #if ENABLE(SERVICE_WORKER)
     for (auto& server : m_swServers.values())
         server->endSuspension();
@@ -2569,9 +2572,9 @@ void NetworkProcess::dumpPrivateClickMeasurement(PAL::SessionID sessionID, Compl
 void NetworkProcess::clearPrivateClickMeasurement(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID))
-        session->clearPrivateClickMeasurement();
-    
-    completionHandler();
+        session->clearPrivateClickMeasurement(WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 void NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)

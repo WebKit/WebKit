@@ -1,3 +1,223 @@
+2021-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Separate PrivateClickMeasurement database from ResourceLoadStatistics database and add SPI to set its location
+        https://bugs.webkit.org/show_bug.cgi?id=229527
+
+        Reviewed by Kate Cheney.
+
+        This will be used by rdar://80806283
+
+        In order to do this, I moved common code to DatabaseUtilities and moved the PCM logic from ResourceLoadStatisticsDatabaseStore
+        to a new class.  It puts the data in a different file in the same directory unless SPI tells it to put it in a different directory.
+
+        The biggest functional change I needed to do was to make a PCMObservedDomains table in the new DB instead of an ObservedDomains table,
+        which contained more information than I needed.  I need just an index and a list of domains.
+
+        Another slight implementation change is that instead of checking isEphemeral in WebResourceLoadStatisticsStore, I just pass an empty
+        String to the Store if it's ephemeral, which causes no DB to be created, which causes equivalent behavior.
+
+        I also moved the debug message broadcasting to PrivateClickMeasurementManager::attribute in order to make the Database object not
+        need to know about the NetworkProcess and not need to keep state of whether debug mode is enabled.  Database::attributePrivateClickMeasurement
+        now returns a DebugInfo object and PrivateClickMeasurementManager::attribute checks whether debug mode is enabled and broadcasts the messages.
+
+        I added a few calls to PrivateClickMeasurement::isolatedCopy when moving an PrivateClickMeasurement object to another thread.
+
+        I added a CompletionHandler to clearPrivateClickMeasurement and clearPrivateClickMeasurementForRegistrableDomain
+        so that clearing website data doesn't say it's done until it's done.
+
+        An even smaller change is I added a "ForTesting" suffix on some function names of functions that are only used in tests.
+
+        The rest of this patch just moves code from one location to another.
+
+        I still need to implement migrating data from the old DB to the new DB.  I'll do that in another patch soon.
+
+        * CMakeLists.txt:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::expectedTableAndIndexQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema):
+        (WebKit::insertDistinctValuesInTableStatement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::interruptAllDatabases):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearDatabaseContents):
+        (WebKit::expectedUnattributedColumns): Deleted.
+        (WebKit::expectedAttributedColumns): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::close): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::enableForeignKeys): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsIfNecessary): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnInTable): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnsIfNecessary): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::scopedStatement const): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::interrupt): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::buildPrivateClickMeasurementFromDatabase): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeUnattributed): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributePrivateClickMeasurement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::allAttributedPrivateClickMeasurement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearExpiredPrivateClickMeasurement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::attributionToString): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::earliestTimesToSend): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markReportAsSentToSource): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markReportAsSentToDestination): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::beginTransactionIfNecessary): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::pcmStoreDirectory):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::create):
+        (WebKit::WebResourceLoadStatisticsStore::didDestroyNetworkSession):
+        (WebKit::WebResourceLoadStatisticsStore::suspend):
+        (WebKit::WebResourceLoadStatisticsStore::insertPrivateClickMeasurement): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::attributePrivateClickMeasurement): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::allAttributedPrivateClickMeasurement): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::clearPrivateClickMeasurement): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::clearPrivateClickMeasurementForRegistrableDomain): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::clearExpiredPrivateClickMeasurement): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::privateClickMeasurementToString): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::clearSentAttribution): Deleted.
+        (WebKit::WebResourceLoadStatisticsStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/DatabaseUtilities.cpp: Added.
+        (WebKit::DatabaseUtilities::DatabaseUtilities):
+        (WebKit::DatabaseUtilities::~DatabaseUtilities):
+        (WebKit::DatabaseUtilities::scopedStatement const):
+        (WebKit::DatabaseUtilities::beginTransactionIfNecessary):
+        (WebKit::DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary):
+        (WebKit::DatabaseUtilities::enableForeignKeys):
+        (WebKit::DatabaseUtilities::close):
+        (WebKit::DatabaseUtilities::interrupt):
+        * NetworkProcess/DatabaseUtilities.h: Copied from Source/WebKit/NetworkProcess/webrtc/NetworkRTCResolver.h.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::clearPrivateClickMeasurement):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+        (WebKit::NetworkSession::dumpPrivateClickMeasurement):
+        (WebKit::NetworkSession::clearPrivateClickMeasurement):
+        (WebKit::NetworkSession::clearPrivateClickMeasurementForRegistrableDomain):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp: Added.
+        (WebKit::PCM::Database::Database):
+        (WebKit::PCM::Database::~Database):
+        (WebKit::PCM::Database::interruptAllDatabases):
+        (WebKit::PCM::Database::createSchema):
+        (WebKit::PCM::Database::insertPrivateClickMeasurement):
+        (WebKit::PCM::Database::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting):
+        (WebKit::PCM::Database::findPrivateClickMeasurement):
+        (WebKit::PCM::Database::attributePrivateClickMeasurement):
+        (WebKit::PCM::Database::buildPrivateClickMeasurementFromDatabase):
+        (WebKit::PCM::Database::removeUnattributed):
+        (WebKit::PCM::Database::allAttributedPrivateClickMeasurement):
+        (WebKit::PCM::Database::privateClickMeasurementToStringForTesting):
+        (WebKit::PCM::Database::attributionToStringForTesting):
+        (WebKit::PCM::Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::PCM::Database::clearPrivateClickMeasurement):
+        (WebKit::PCM::Database::clearExpiredPrivateClickMeasurement):
+        (WebKit::PCM::Database::clearSentAttribution):
+        (WebKit::PCM::Database::markReportAsSentToDestination):
+        (WebKit::PCM::Database::markReportAsSentToSource):
+        (WebKit::PCM::Database::earliestTimesToSend):
+        (WebKit::PCM::Database::domainID):
+        (WebKit::PCM::Database::getDomainStringFromDomainID):
+        (WebKit::PCM::Database::ensureDomainID):
+        (WebKit::PCM::Database::destroyStatements):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h: Added.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp: Copied from Source/WebKit/NetworkProcess/webrtc/NetworkRTCResolver.h.
+        (WebKit::PCM::DebugInfo::isolatedCopy const):
+        (WebKit::PCM::DebugInfo::Message::isolatedCopy const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.h: Copied from Source/WebKit/NetworkProcess/webrtc/NetworkRTCResolver.h.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp: Added.
+        (WebKit::PCM::sharedWorkQueue):
+        (WebKit::PCM::Store::prepareForProcessToSuspend):
+        (WebKit::PCM::Store::processDidResume):
+        (WebKit::PCM::Store::Store):
+        (WebKit::PCM::Store::postTask):
+        (WebKit::PCM::Store::postTaskReply):
+        (WebKit::PCM::Store::insertPrivateClickMeasurement):
+        (WebKit::PCM::Store::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting):
+        (WebKit::PCM::Store::attributePrivateClickMeasurement):
+        (WebKit::PCM::Store::privateClickMeasurementToStringForTesting):
+        (WebKit::PCM::Store::allAttributedPrivateClickMeasurement):
+        (WebKit::PCM::Store::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::PCM::Store::clearPrivateClickMeasurement):
+        (WebKit::PCM::Store::clearPrivateClickMeasurementForRegistrableDomain):
+        (WebKit::PCM::Store::clearExpiredPrivateClickMeasurement):
+        (WebKit::PCM::Store::clearSentAttribution):
+        (WebKit::PCM::Store::close):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h: Added.
+        (WebKit::PCM::Store::create):
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::insertPrivateClickMeasurement):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::clearSentAttribution):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        (WebKit::PrivateClickMeasurementManager::clearExpired):
+        (WebKit::PrivateClickMeasurementManager::toStringForTesting const):
+        (WebKit::PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::toString const): Deleted.
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurementNetworkLoader.cpp:
+        (WebKit::PrivateClickMeasurementNetworkLoader::~PrivateClickMeasurementNetworkLoader):
+        (WebKit::PrivateClickMeasurementNetworkLoader::cancel):
+        (WebKit::PrivateClickMeasurementNetworkLoader::willSendRedirectedRequest):
+        * NetworkProcess/PrivateClickMeasurementNetworkLoader.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        * NetworkProcess/webrtc/NetworkRTCResolver.h:
+        * NetworkProcess/webrtc/NetworkRTCResolverCocoa.cpp:
+        (WebKit::resolvedName):
+        * Shared/ResourceLoadStatisticsParameters.h:
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * Sources.txt:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:]):
+        (+[WKWebsiteDataStore _preventNetworkProcessSuspensionForTesting]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration privateClickMeasurementStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setPrivateClickMeasurementStorageDirectory:]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setSuspensionAllowedForTesting):
+        (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+        (WebKit::NetworkProcessProxy::preventSuspensionForTesting): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::privateClickMeasurementStorageDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setPrivateClickMeasurementStorageDirectory):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-08-27  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Reuse the same network load when process-swapping on resource response due to COOP

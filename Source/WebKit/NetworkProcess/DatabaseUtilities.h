@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,34 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SQLiteTransaction.h>
+#include <wtf/Scope.h>
 
-#include "LibWebRTCResolverIdentifier.h"
-#include "RTCNetwork.h"
-#include <WebCore/DNS.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/text/WTFString.h>
+namespace WebCore {
+class SQLiteStatementAutoResetScope;
+}
 
 namespace WebKit {
 
-class NetworkRTCResolver {
-public:
-    static std::unique_ptr<NetworkRTCResolver> create(LibWebRTCResolverIdentifier, WebCore::DNSCompletionHandler&&);
-
-    NetworkRTCResolver(LibWebRTCResolverIdentifier, WebCore::DNSCompletionHandler&&);
-    virtual ~NetworkRTCResolver();
-
-    virtual void start(const String& address);
-    virtual void stop();
-
+class DatabaseUtilities {
 protected:
-    LibWebRTCResolverIdentifier m_identifier;
-    WebCore::DNSCompletionHandler m_completionHandler;
+    DatabaseUtilities(String&& storageFilePath);
+    ~DatabaseUtilities();
+
+    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query, ASCIILiteral logString) const;
+    ScopeExit<Function<void()>> WARN_UNUSED_RETURN beginTransactionIfNecessary();
+    enum class CreatedNewFile : bool { No, Yes };
+    CreatedNewFile openDatabaseAndCreateSchemaIfNecessary();
+    void enableForeignKeys();
+    void close();
+    void interrupt();
+    virtual bool createSchema() = 0;
+    virtual void destroyStatements() = 0;
+
+    const String m_storageFilePath;
+    mutable WebCore::SQLiteDatabase m_database;
+    mutable WebCore::SQLiteTransaction m_transaction;
 };
 
 } // namespace WebKit
-
-#endif // USE(LIBWEBRTC)

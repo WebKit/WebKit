@@ -261,6 +261,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setNetworkCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->networkCacheDirectory()));
     if (!m_configuration->resourceLoadStatisticsDirectory().isEmpty())
         m_resolvedConfiguration->setResourceLoadStatisticsDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->resourceLoadStatisticsDirectory()));
+    if (!m_configuration->privateClickMeasurementStorageDirectory().isEmpty())
+        m_resolvedConfiguration->setPrivateClickMeasurementStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->privateClickMeasurementStorageDirectory()));
     if (!m_configuration->serviceWorkerRegistrationDirectory().isEmpty() && m_resolvedConfiguration->serviceWorkerRegistrationDirectory().isEmpty())
         m_resolvedConfiguration->setServiceWorkerRegistrationDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->serviceWorkerRegistrationDirectory()));
     if (!m_configuration->javaScriptConfigurationDirectory().isEmpty())
@@ -1964,11 +1966,18 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     resolveDirectoriesIfNecessary();
 
-    auto resourceLoadStatisticsDirectory = m_configuration->resourceLoadStatisticsDirectory();
+    auto resourceLoadStatisticsDirectory = m_resolvedConfiguration->resourceLoadStatisticsDirectory();
     SandboxExtension::Handle resourceLoadStatisticsDirectoryHandle;
     if (!resourceLoadStatisticsDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory))
             resourceLoadStatisticsDirectoryHandle = WTFMove(*handle);
+    }
+
+    auto privateClickMeasurementStorageDirectory = m_resolvedConfiguration->privateClickMeasurementStorageDirectory();
+    SandboxExtension::Handle privateClickMeasurementStorageDirectoryHandle;
+    if (!privateClickMeasurementStorageDirectory.isEmpty()) {
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(privateClickMeasurementStorageDirectory))
+            privateClickMeasurementStorageDirectoryHandle = WTFMove(*handle);
     }
 
     auto networkCacheDirectory = resolvedNetworkCacheDirectory();
@@ -2000,6 +2009,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
+        WTFMove(privateClickMeasurementStorageDirectory),
+        WTFMove(privateClickMeasurementStorageDirectoryHandle),
         resourceLoadStatisticsEnabled(),
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         isItpStateExplicitlySet(),

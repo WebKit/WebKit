@@ -1,3 +1,17 @@
+2021-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Separate PrivateClickMeasurement database from ResourceLoadStatistics database and add SPI to set its location
+        https://bugs.webkit.org/show_bug.cgi?id=229527
+
+        Reviewed by Kate Cheney.
+
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::SourceSecretToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::EphemeralSourceNonce::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::SourceUnlinkableToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::isolatedCopy const):
+        * loader/PrivateClickMeasurement.h:
+
 2021-08-27  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move LineBoxBuilder to its own file

@@ -1,3 +1,16 @@
+2021-08-27  Alex Christensen  <achristensen@webkit.org>
+
+        Separate PrivateClickMeasurement database from ResourceLoadStatistics database and add SPI to set its location
+        https://bugs.webkit.org/show_bug.cgi?id=229527
+
+        Reviewed by Kate Cheney.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::runBasicEventAttributionTest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (TEST):
+
 2021-08-27  Chris Dumez  <cdumez@apple.com>
 
         Extend API test coverage to make sure didFailProvisionalLoad is not called upon COOP process swap
