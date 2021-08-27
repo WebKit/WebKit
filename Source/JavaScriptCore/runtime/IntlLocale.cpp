@@ -27,6 +27,7 @@
 #include "config.h"
 #include "IntlLocale.h"
 
+#include "IntlDateTimeFormat.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include <unicode/ucal.h>
@@ -40,6 +41,10 @@
 namespace JSC {
 
 const ClassInfo IntlLocale::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlLocale) };
+
+namespace IntlLocaleInternal {
+static constexpr bool verbose = false;
+}
 
 IntlLocale* IntlLocale::create(VM& vm, Structure* structure)
 {
@@ -643,34 +648,27 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
         return nullptr;
     }
 
-    for (unsigned i = 0; i < pattern.size(); ++i) {
-        UChar currentCharacter = pattern[i];
-        if (!isASCIIAlpha(currentCharacter))
-            continue;
+    dataLogLnIf(IntlLocaleInternal::verbose, "pattern:(", StringView(pattern.data(), pattern.size()), ")");
 
-        while (i + 1 < pattern.size() && pattern[i + 1] == currentCharacter)
-            ++i;
-
-        switch (currentCharacter) {
-        case 'h': {
-            elements.append("h12"_s);
-            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
-        }
-        case 'H': {
-            elements.append("h23"_s);
-            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
-        }
-        case 'k': {
-            elements.append("h24"_s);
-            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
-        }
-        case 'K': {
-            elements.append("h11"_s);
-            RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
-        }
-        default:
-            break;
-        }
+    switch (IntlDateTimeFormat::hourCycleFromPattern(pattern)) {
+    case IntlDateTimeFormat::HourCycle::None:
+        break;
+    case IntlDateTimeFormat::HourCycle::H11: {
+        elements.append("h11"_s);
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+    case IntlDateTimeFormat::HourCycle::H12: {
+        elements.append("h12"_s);
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+    case IntlDateTimeFormat::HourCycle::H23: {
+        elements.append("h23"_s);
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
+    case IntlDateTimeFormat::HourCycle::H24: {
+        elements.append("h24"_s);
+        RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    }
     }
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
