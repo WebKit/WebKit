@@ -579,7 +579,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
             CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
         }
     }
-    return advance.width + m_syntheticBoldOffset;
+    return advance.width;
 }
 
 #endif
@@ -711,8 +711,7 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
     CGRect ignoredRect = { };
     boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, &glyph, &ignoredRect, 1);
     boundingBox.setY(-boundingBox.maxY());
-    if (m_syntheticBoldOffset)
-        boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
+    boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
 
     return boundingBox;
 }

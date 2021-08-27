@@ -556,6 +556,16 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
     return true;
 }
 
+void WidthIterator::adjustForSyntheticBold(GlyphBuffer& glyphBuffer, unsigned index)
+{
+    auto glyph = glyphBuffer.glyphAt(index);
+    static constexpr const GlyphBufferGlyph deletedGlyph = 0xFFFF;
+    auto syntheticBoldOffset = glyph == deletedGlyph ? 0 : glyphBuffer.fontAt(index).syntheticBoldOffset();
+    m_runWidthSoFar += syntheticBoldOffset;
+    auto& advance = glyphBuffer.advances(index)[0];
+    setWidth(advance, width(advance) + syntheticBoldOffset);
+}
+
 void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex)
 {
     // This function needs to be kept in sync with characterCanUseSimplifiedTextMeasuring().
@@ -577,6 +587,7 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
             ASSERT(glyphBuffer.fonts(i)[0]);
             // FIXME: Is this actually necessary? If the font specifically has a glyph for NBSP, I don't see a reason not to use it.
             glyphBuffer.glyphs(i)[0] = glyphBuffer.fonts(i)[0]->spaceGlyph();
+            adjustForSyntheticBold(glyphBuffer, i);
             continue;
         }
 
@@ -593,6 +604,8 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
             glyphBuffer.origins(i)[0] = makeGlyphBufferOrigin(0, -yPosition);
             continue;
         }
+
+        adjustForSyntheticBold(glyphBuffer, i);
 
         if ((characterResponsibleForThisGlyph >= nullCharacter && characterResponsibleForThisGlyph < space)
             || (characterResponsibleForThisGlyph >= deleteCharacter && characterResponsibleForThisGlyph < noBreakSpace)) {
@@ -623,8 +636,6 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
             continue;
         }
     }
-
-    
 }
 
 void WidthIterator::finalize(GlyphBuffer& buffer)

@@ -1,3 +1,27 @@
+2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Synthetic bold additional advances need to be applied after shaping
+        https://bugs.webkit.org/show_bug.cgi?id=189448
+        <rdar://problem/40994395>
+
+        Reviewed by Alan Bujtas.
+
+        These tests are progressions.
+
+        * fast/text/osaka-synthetic-bold-expected.txt: Added.
+        * fast/text/osaka-synthetic-bold.html: Added.
+        * platform/ios/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac-mojave/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.png: Added.
+        * platform/mac/fast/text/atsui-multiple-renderers-expected.txt:
+        * platform/mac/fonts/cursive-expected.png: Added.
+        * platform/mac/fonts/cursive-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/win/fast/text-indicator/text-indicator-estimated-color-with-implicit-newline-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+
 2021-08-26  Joone Hur  <joone@webkit.org>
 
         Caret should respect text background color

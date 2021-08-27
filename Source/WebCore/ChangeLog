@@ -1,3 +1,36 @@
+2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Synthetic bold additional advances need to be applied after shaping
+        https://bugs.webkit.org/show_bug.cgi?id=189448
+        <rdar://problem/40994395>
+
+        Reviewed by Alan Bujtas.
+
+        We implement synthetic bold by drawing every glyph twice, the second time 1px to the right of the
+        first time. This effectively means that the advance of such glyphs needs to be increased by 1px.
+        Previously, we were doing this before shaping, which is a problem for some fonts which clobber the
+        input advances during shaping, and emit totally new advances. Osaka is one such font. In order to
+        make sure that these fonts have their synthetic bold advances correctly increased, we need to do
+        the increasing after text shaping, rather than before it.
+
+        This patch temporarily disables LFC when synthetic bold is in effect. I will teach LFC how to handle
+        synthetic bold in a follow-up patch.
+
+        Test: fast/text/osaka-synthetic-bold.html
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForText):
+        * platform/graphics/Font.h:
+        (WebCore::Font::syntheticBoldOffset const):
+        (WebCore::Font::widthForGlyph const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::adjustForSyntheticBold):
+        (WebCore::WidthIterator::applyCSSVisibilityRules):
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::Font::platformWidthForGlyph const):
+        (WebCore::Font::platformBoundsForGlyph const):
+
 2021-08-26  Joone Hur  <joone@webkit.org>
 
         Caret should respect text background color

@@ -303,9 +303,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,25) size 21x25
               text run at (0,25) width 21: "!!!!"
             RenderBR {BR} at (20,25) size 1x25
-            RenderText {#text} at (0,50) size 25x25
-              text run at (0,50) width 25: "\"\"\"\""
-            RenderBR {BR} at (24,50) size 1x25
+            RenderText {#text} at (0,50) size 29x25
+              text run at (0,50) width 29: "\"\"\"\""
+            RenderBR {BR} at (28,50) size 1x25
             RenderText {#text} at (0,75) size 40x25
               text run at (0,75) width 40: "####"
             RenderBR {BR} at (39,75) size 1x25
@@ -318,9 +318,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,150) size 61x25
               text run at (0,150) width 61: "&&&&"
             RenderBR {BR} at (60,150) size 1x25
-            RenderText {#text} at (0,175) size 14x25
-              text run at (0,175) width 14: "''''"
-            RenderBR {BR} at (13,175) size 1x25
+            RenderText {#text} at (0,175) size 18x25
+              text run at (0,175) width 18: "''''"
+            RenderBR {BR} at (17,175) size 1x25
             RenderText {#text} at (0,200) size 26x25
               text run at (0,200) width 26: "(((("
             RenderBR {BR} at (25,200) size 1x25
@@ -507,12 +507,12 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,1725) size 28x25
               text run at (0,1725) width 28: "eeee"
             RenderBR {BR} at (27,1725) size 1x25
-            RenderText {#text} at (0,1750) size 20x25
-              text run at (0,1750) width 20: "ffff"
-            RenderBR {BR} at (19,1750) size 1x25
-            RenderText {#text} at (0,1775) size 30x25
-              text run at (0,1775) width 30: "gggg"
-            RenderBR {BR} at (29,1775) size 1x25
+            RenderText {#text} at (0,1750) size 22x25
+              text run at (0,1750) width 22: "ffff"
+            RenderBR {BR} at (21,1750) size 1x25
+            RenderText {#text} at (0,1775) size 32x25
+              text run at (0,1775) width 32: "gggg"
+            RenderBR {BR} at (31,1775) size 1x25
             RenderText {#text} at (0,1800) size 39x25
               text run at (0,1800) width 39: "hhhh"
             RenderBR {BR} at (38,1800) size 1x25
@@ -525,9 +525,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,1875) size 34x25
               text run at (0,1875) width 34: "kkkk"
             RenderBR {BR} at (33,1875) size 1x25
-            RenderText {#text} at (0,1900) size 18x25
-              text run at (0,1900) width 18: "llll"
-            RenderBR {BR} at (17,1900) size 1x25
+            RenderText {#text} at (0,1900) size 20x25
+              text run at (0,1900) width 20: "llll"
+            RenderBR {BR} at (19,1900) size 1x25
             RenderText {#text} at (0,1925) size 55x25
               text run at (0,1925) width 55: "mmmm"
             RenderBR {BR} at (54,1925) size 1x25
@@ -549,9 +549,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,2075) size 27x25
               text run at (0,2075) width 27: "ssss"
             RenderBR {BR} at (26,2075) size 1x25
-            RenderText {#text} at (0,2100) size 21x25
-              text run at (0,2100) width 21: "tttt"
-            RenderBR {BR} at (20,2100) size 1x25
+            RenderText {#text} at (0,2100) size 23x25
+              text run at (0,2100) width 23: "tttt"
+            RenderBR {BR} at (22,2100) size 1x25
             RenderText {#text} at (0,2125) size 40x25
               text run at (0,2125) width 40: "uuuu"
             RenderBR {BR} at (39,2125) size 1x25

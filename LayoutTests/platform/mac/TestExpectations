@@ -2387,5 +2387,6 @@ webkit.org/b/229588 http/tests/media/user-gesture-preserved-across-xmlhttpreques
 
 webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
 
-# This test opens apparently unskippable prompts on Catalina.
+# These tests open apparently unskippable prompts on Catalina.
 webkit.org/b/229391 [ Mojave Catalina ] fast/text/mobileasset-font.html [ Skip ]
+webkit.org/b/189448 [ Mojave Catalina ] fast/text/osaka-synthetic-bold.html [ Skip ]
