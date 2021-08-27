@@ -164,52 +164,70 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 
 void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState);
+    auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns());
     createDisplayLineRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns(), inlineContent, lineLevelVisualAdjustmentsForRuns);
     createDisplayLines(inlineFormattingState.lines(), inlineContent, lineLevelVisualAdjustmentsForRuns);
 }
 
-InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState& inlineFormattingState) const
+InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineLines& lines, const Layout::InlineLineRuns& lineRuns) const
 {
-    auto& lines = inlineFormattingState.lines();
-    auto& rootStyle = m_layoutState.root().style();
-    auto shouldCheckHorizontalOverflowForContentReplacement = rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() != TextOverflow::Clip;
-
     auto lineLevelVisualAdjustmentsForRuns = LineLevelVisualAdjustmentsForRunsList { lines.size() };
-    for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
-        auto lineNeedsLegacyIntegralVerticalPosition = [&] {
-            // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
-            auto& nonRootInlineLevelBoxList = inlineFormattingState.lineBoxes()[lineIndex].nonRootInlineLevelBoxes();
-            if (nonRootInlineLevelBoxList.isEmpty()) {
-                // This is text content only with root inline box.
-                return true;
-            }
-            for (auto& inlineLevelBox : nonRootInlineLevelBoxList) {
-                // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
-                auto contentPreventsIntegralSnapping = inlineLevelBox.isAtomicInlineLevelBox() || (inlineLevelBox.isLineBreakBox() && !m_layoutState.inStandardsMode());
-                if (contentPreventsIntegralSnapping)
-                    return false;
+    auto& rootStyle = m_layoutState.root().style();
 
-                auto& inlineLevelBoxStyle = inlineLevelBox.style();
-                auto stylePreventsIntegralSnapping = rootStyle.lineHeight() != inlineLevelBoxStyle.lineHeight() || inlineLevelBoxStyle.verticalAlign() != VerticalAlign::Baseline;
-                if (stylePreventsIntegralSnapping)
-                    return false;
+    auto inlineLevelBoxPreventsIntegralPosition = std::optional<bool> { };
+    size_t lineIndexToCheck = 0;
+    for (auto& lineRun : lineRuns) {
+        auto lineIndex = lineRun.lineIndex();
+        auto& layoutBox = lineRun.layoutBox();
 
-                auto& rootFontMetrics = rootStyle.fontCascade().fontMetrics();
-                auto& inlineLevelBoxFontMetrics = inlineLevelBoxStyle.fontCascade().fontMetrics();
-                auto fontPreventsIntegralSnapping = !rootFontMetrics.hasIdenticalAscentDescentAndLineGap(inlineLevelBoxFontMetrics);
-                if (fontPreventsIntegralSnapping)
-                    return false;
-            }
-            return true;
-        };
-        lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition = lineNeedsLegacyIntegralVerticalPosition();
-        if (shouldCheckHorizontalOverflowForContentReplacement) {
-            auto& line = lines[lineIndex];
-            auto lineBoxLogicalWidth = line.lineBoxLogicalRect().width();
-            auto overflowWidth = lineOverflowWidth(m_blockFlow, lineBoxLogicalWidth, line.contentLogicalWidth());
-            lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > lineBoxLogicalWidth;
+        if (lineIndexToCheck != lineIndex) {
+            auto lineNeedsIntegralPositioning = [&] {
+                if (!inlineLevelBoxPreventsIntegralPosition.has_value()) {
+                    // This line does not have any non-root inline boxes.
+                    // Lines like this with root inline box only force integral positioning.
+                    return true;
+                }
+                return !*inlineLevelBoxPreventsIntegralPosition;
+            };
+            lineLevelVisualAdjustmentsForRuns[lineIndexToCheck].needsIntegralPosition = lineNeedsIntegralPositioning();
+            lineIndexToCheck = lineIndex;
+            inlineLevelBoxPreventsIntegralPosition = { };
         }
+
+        if (!lineRun.isNonRootInlineLevelBox() || (inlineLevelBoxPreventsIntegralPosition.has_value() && *inlineLevelBoxPreventsIntegralPosition))
+            continue;
+
+        auto inlineLevelBoxPreventsLegacyIntegralVerticalPosition = [&] {
+            ASSERT(lineRun.isNonRootInlineLevelBox());
+            // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
+            // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
+            auto contentPreventsIntegralSnapping = lineRun.isAtomicInlineLevelBox() || (lineRun.isLineBreakBox() && !m_layoutState.inStandardsMode());
+            if (contentPreventsIntegralSnapping)
+                return true;
+
+            auto& inlineLevelBoxStyle = layoutBox.style();
+            auto stylePreventsIntegralSnapping = rootStyle.lineHeight() != inlineLevelBoxStyle.lineHeight() || inlineLevelBoxStyle.verticalAlign() != VerticalAlign::Baseline;
+            if (stylePreventsIntegralSnapping)
+                return true;
+
+            auto& rootFontMetrics = rootStyle.fontCascade().fontMetrics();
+            auto& inlineLevelBoxFontMetrics = inlineLevelBoxStyle.fontCascade().fontMetrics();
+            auto fontPreventsIntegralSnapping = !rootFontMetrics.hasIdenticalAscentDescentAndLineGap(inlineLevelBoxFontMetrics);
+            return fontPreventsIntegralSnapping;
+        };
+        inlineLevelBoxPreventsIntegralPosition = inlineLevelBoxPreventsLegacyIntegralVerticalPosition();
+    }
+    lineLevelVisualAdjustmentsForRuns[lineIndexToCheck].needsIntegralPosition = !inlineLevelBoxPreventsIntegralPosition.has_value() || !*inlineLevelBoxPreventsIntegralPosition;
+
+    auto shouldCheckHorizontalOverflowForContentReplacement = rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() != TextOverflow::Clip;
+    if (!shouldCheckHorizontalOverflowForContentReplacement)
+        return lineLevelVisualAdjustmentsForRuns;
+
+    for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
+        auto& line = lines[lineIndex];
+        auto lineBoxLogicalWidth = line.lineBoxLogicalRect().width();
+        auto overflowWidth = lineOverflowWidth(m_blockFlow, lineBoxLogicalWidth, line.contentLogicalWidth());
+        lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > lineBoxLogicalWidth;
     }
     return lineLevelVisualAdjustmentsForRuns;
 }

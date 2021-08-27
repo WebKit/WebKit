@@ -49,7 +49,7 @@ public:
 private:
     using LineLevelVisualAdjustmentsForRunsList = Vector<LineLevelVisualAdjustmentsForRuns>;
 
-    LineLevelVisualAdjustmentsForRunsList computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineFormattingState&) const;
+    LineLevelVisualAdjustmentsForRunsList computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineLines&, const Layout::InlineLineRuns&) const;
     void createDisplayLineRuns(const Layout::InlineLines&, const Layout::InlineLineRuns&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
     void createDisplayLines(const Layout::InlineLines&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
 

@@ -61,9 +61,10 @@ struct LineRun {
 
     enum class Type {
         Text,
-        LineBreak,
+        SoftLineBreak,
+        LineBreakBox,
         AtomicInlineLevelBox,
-        InlineBox,
+        NonRootInlineBox,
         RootInlineBox,
         GenericInlineLevelBox
     };
@@ -71,10 +72,16 @@ struct LineRun {
     LineRun(size_t lineIndex, Type, const Box&, const InlineRect&, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
 
     bool isText() const { return m_type == Type::Text; }
-    bool isLineBreak() const { return m_type == Type::LineBreak; }
+    bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
+    bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
+    bool isLineBreak() const { return isSoftLineBreak() || isLineBreakBox(); }
     bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
-    bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox(); }
+    bool isInlineBox() const { return isNonRootInlineBox() || isRootInlineBox(); }
+    bool isNonRootInlineBox() const { return m_type == Type::NonRootInlineBox; }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
+    bool isGenericInlineLevelBox() const { return m_type == Type::GenericInlineLevelBox; }
+    bool isInlineLevelBox() const { return isAtomicInlineLevelBox() || isLineBreakBox() || isInlineBox() || isGenericInlineLevelBox(); }
+    bool isNonRootInlineLevelBox() const { return isInlineLevelBox() && !isRootInlineBox(); }
     Type type() const { return m_type; }
 
     bool hasContent() const { return m_hasContent; }

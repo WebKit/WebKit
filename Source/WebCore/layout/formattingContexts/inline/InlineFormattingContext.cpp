@@ -622,14 +622,14 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 if (layoutBox.isLineBreakBox()) {
                     // Only hard linebreaks have associated layout boxes.
                     auto lineBreakBoxRect = lineBox.logicalRectForLineBreakBox(layoutBox);
-                    formattingState.addLineRun({ lineIndex, LineRun::Type::LineBreak, layoutBox, lineBreakBoxRect, lineRun.expansion(), { } });
+                    formattingState.addLineRun({ lineIndex, LineRun::Type::LineBreakBox, layoutBox, lineBreakBoxRect, lineRun.expansion(), { } });
 
                     auto& boxGeometry = formattingState.boxGeometry(layoutBox);
                     lineBreakBoxRect.moveBy(lineBoxLogicalRect.topLeft());
                     boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
                     boxGeometry.setContentBoxHeight(toLayoutUnit(lineBreakBoxRect.height()));
                 } else 
-                    formattingState.addLineRun({ lineIndex, LineRun::Type::LineBreak, layoutBox, lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
+                    formattingState.addLineRun({ lineIndex, LineRun::Type::SoftLineBreak, layoutBox, lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
                 continue;
             }
             if (lineRun.isBox()) {
@@ -650,7 +650,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             if (lineRun.isInlineBoxStart()) {
                 auto& boxGeometry = formattingState.boxGeometry(layoutBox);
                 auto inlineBoxLogicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-                formattingState.addLineRun({ lineIndex, LineRun::Type::InlineBox, layoutBox, inlineBoxLogicalRect, lineRun.expansion(), { }, lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent() });
+                formattingState.addLineRun({ lineIndex, LineRun::Type::NonRootInlineBox, layoutBox, inlineBoxLogicalRect, lineRun.expansion(), { }, lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent() });
                 inlineBoxStartSet.add(&layoutBox);
                 continue;
             }
@@ -685,7 +685,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
                 continue;
             }
             // Middle or end of the inline box. Let's stretch the box as needed.
-            formattingState.lineRuns().insert(lineSpanningInlineBoxIndex++, { lineIndex, LineRun::Type::InlineBox, layoutBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
+            formattingState.lineRuns().insert(lineSpanningInlineBoxIndex++, { lineIndex, LineRun::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
 
             auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
             enclosingBorderBoxRect.expandToContain(logicalRect);
