@@ -1,5 +1,17 @@
 2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Float32Arrays.sort() return undefined when length < 2
+        https://bugs.webkit.org/show_bug.cgi?id=229575
+
+        Reviewed by Saam Barati.
+
+        TypedArray#sort should return |this| even when we don't perform sorting.
+
+        * builtins/TypedArrayPrototype.js:
+        (sort):
+
+2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] op_put_private_name should use modern IC and remove ByValInfo
         https://bugs.webkit.org/show_bug.cgi?id=229544
 

@@ -235,7 +235,7 @@ function sort(comparator)
 
     var length = @typedArrayLength(this);
     if (length < 2)
-        return;
+        return this;
 
     // typedArraySort is not safe when the other thread is modifying content. So if |this| is SharedArrayBuffer,
     // use JS-implemented sorting.
