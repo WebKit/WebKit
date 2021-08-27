@@ -1945,6 +1945,9 @@ webkit.org/b/229424 [ Catalina ] http/tests/media/hls/range-request.html [ Pass 
 [ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 [ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
 
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ ImageOnlyFailure ]
+
 # rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
 [ arm64 ] compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
 [ arm64 ] compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]

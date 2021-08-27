@@ -1,3 +1,18 @@
+2021-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some historical iOS CGContext flipping
+        https://bugs.webkit.org/show_bug.cgi?id=229589
+
+        Reviewed by Tim Horton.
+
+        Mark some iOS tests as passing now. A couple of tests that were skipped everywhere now
+        only fail on macOS.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Enforce the policy against WebKit causing Core Text font download prompts in WebKit1

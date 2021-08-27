@@ -1,3 +1,18 @@
+2021-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some historical iOS CGContext flipping
+        https://bugs.webkit.org/show_bug.cgi?id=229589
+
+        Reviewed by Tim Horton.
+
+        Remove some iOS-only code that flipped the CGContext CTM for pattern drawing. Back
+        in the mists of time there were some iOS-only differences in image flipping, but those
+        have long since disappeared.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::drawPatternCallback):
+        (WebCore::GraphicsContextCG::drawPattern):
+
 2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Enforce the policy against WebKit causing Core Text font download prompts in WebKit1

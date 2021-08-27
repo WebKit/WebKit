@@ -1822,8 +1822,6 @@ webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mim
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]
 
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-position-subpixel-at-border.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-7.html [ ImageOnlyFailure ]
-webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-stretch.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-8.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/simple-bg-color.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
