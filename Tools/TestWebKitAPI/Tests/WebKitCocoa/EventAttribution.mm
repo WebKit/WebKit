@@ -344,6 +344,14 @@ TEST(EventAttribution, BasicWithIOSSPI)
     });
 }
 
+TEST(EventAttribution, BasicWithEphemeralIOSSPI)
+{
+    runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
+        auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL()]);
+        webView._ephemeralUIEventAttribution = (UIEventAttribution *)attribution.get();
+    });
+}
+
 #endif // HAVE(UI_EVENT_ATTRIBUTION)
 
 } // namespace TestWebKitAPI
