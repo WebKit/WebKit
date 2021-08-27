@@ -1,5 +1,14 @@
 2021-08-27  Chris Dumez  <cdumez@apple.com>
 
+        Extend API test coverage to make sure didFailProvisionalLoad is not called upon COOP process swap
+        https://bugs.webkit.org/show_bug.cgi?id=229610
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2021-08-27  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r281516): imported/w3c/web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=229501
         <rdar://problem/82346152>

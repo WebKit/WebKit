@@ -7236,6 +7236,7 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* destinati
     auto uiDelegate = adoptNS([[PSONUIDelegate alloc] initWithNavigationDelegate:navigationDelegate.get()]);
     [webView setUIDelegate:uiDelegate.get()];
 
+    failed = false;
     serverRedirected = false;
     numberOfDecidePolicyCalls = 0;
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
@@ -7257,6 +7258,7 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* destinati
         EXPECT_FALSE(serverRedirected);
     }
     EXPECT_EQ(2U, numberOfProvisionalLoads); // One in each view.
+    EXPECT_FALSE(failed); // There should be no didFailProvisionalLoad call.
 
     auto pid1 = [webView _webProcessIdentifier];
     EXPECT_TRUE(!!pid1);
