@@ -1643,16 +1643,18 @@ private:
         Edge fromEdge = (from->*m_originGetter)();
         Edge toEdge = (to->*m_originGetter)();
         
+        Edge destinationEdge = toEdge;
         if (fromEdge != toEdge) {
             // Convert the right/bottom into a calc expression,
             if (fromEdge == m_farEdge)
                 fromLength = convertTo100PercentMinusLength(fromLength);
             else if (toEdge == m_farEdge) {
                 toLength = convertTo100PercentMinusLength(toLength);
-                (destination->*m_originSetter)(fromEdge); // Now we have a calc(100% - l), it's relative to the left/top edge.
+                destinationEdge = fromEdge; // Now we have a calc(100% - l), it's relative to the left/top edge.
             }
         }
 
+        (destination->*m_originSetter)(destinationEdge);
         (destination->*m_lengthSetter)(blendFunc(fromLength, toLength, context));
     }
 

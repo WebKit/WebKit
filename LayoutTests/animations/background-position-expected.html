@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    @keyframes play {
+        from {
+            background-position: left 250px top 250px;
+        }
+        to {
+            background-position: top 0px top 0px;
+        }
+    }
+
+    div {
+        background-image: linear-gradient(blue, blue);
+        background-size: 50px 50px;
+        background-repeat: no-repeat;
+        height: 300px;
+        width: 300px;
+        border: 1px solid black;
+        animation: play 1000000s -10000s linear;
+    }        
+    </style>
+</head>
+<body>
+    <div></div>
+</body>
+</html>

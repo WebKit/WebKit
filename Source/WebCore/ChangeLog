@@ -1,5 +1,21 @@
 2021-08-26  Simon Fraser  <simon.fraser@apple.com>
 
+        CSS keyframed animations don't respect edges in 4 value background-position
+        https://bugs.webkit.org/show_bug.cgi?id=228995
+
+        Reviewed by Darin Adler.
+
+        For some background-position animations we'd fail to set backgroundOriginX/Y in the
+        destination style's FillLayer, because this is not set in the destination style initially.
+        
+        So have FillLayerPositionPropertyWrapper::blend() always set it.
+
+        Test: animations/background-position.html
+
+        * animation/CSSPropertyAnimation.cpp:
+
+2021-08-26  Simon Fraser  <simon.fraser@apple.com>
+
         Remove some historical iOS CGContext flipping
         https://bugs.webkit.org/show_bug.cgi?id=229589
 
