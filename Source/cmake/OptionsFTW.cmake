@@ -202,7 +202,7 @@ else ()
 endif ()
 
 find_package(CURL 7.60.0 REQUIRED)
-find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
+find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG 1.5.2 REQUIRED)
 find_package(OpenSSL 2.0.0 REQUIRED)
 find_package(PNG 1.6.34 REQUIRED)

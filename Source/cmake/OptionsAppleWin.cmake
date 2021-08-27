@@ -32,7 +32,7 @@ SET_AND_EXPOSE_TO_BUILD(USE_CFURLCONNECTION ON)
 
 set(SQLite3_NAMES SQLite3${DEBUG_SUFFIX})
 
-find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
+find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(LibXml2 REQUIRED)
 find_package(LibXslt REQUIRED)
 find_package(SQLite3 REQUIRED)

@@ -1,3 +1,21 @@
+2021-08-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] ICU 61.2 is required to build WebKit since r281375
+        https://bugs.webkit.org/show_bug.cgi?id=229608
+
+        Reviewed by Yusuke Suzuki.
+
+        Raise the minimum version required for ICU.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2021-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add command to enable logging in the docs
