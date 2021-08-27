@@ -249,6 +249,10 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
     Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
 
     auto createDisplayBoxRun = [&](auto& lineRun) {
+        if (lineRun.isRootInlineBox()) {
+            // FIXME: Teach the run iterators to ignore the root inline box runs.
+            return;
+        }
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
         auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();

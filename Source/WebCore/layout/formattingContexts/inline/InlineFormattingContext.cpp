@@ -579,6 +579,9 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     const auto& lineBox = formattingState.lineBoxes().last();
     auto lineBoxLogicalRect = lineBoxAndGeometry.lineGeometry.lineBoxLogicalRect();
 
+    // Every line starts with a root run, even the empty ones.
+    formattingState.addLineRun({ lineIndex, LineRun::Type::RootInlineBox, root(), lineBox.logicalRectForRootInlineBox(), { }, { },  lineBox.rootInlineBox().hasContent()});
+
     if (!lineBox.hasContent()) {
         // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
         ASSERT(!lineBox.rootInlineBox().hasContent() && !lineBoxLogicalRect.height());
@@ -606,7 +609,6 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     }
 
     // Spanning inline boxes start at the very beginning of the line.
-    // FIXME: Offset it with the run for the root inline box, when we start constructing runs for them.
     auto lineSpanningInlineBoxIndex = formattingState.lineRuns().size();
     HashSet<const Box*> inlineBoxStartSet;
     auto constructLineRunsAndUpdateBoxGeometry = [&] {
