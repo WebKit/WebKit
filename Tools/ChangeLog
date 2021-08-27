@@ -1,3 +1,13 @@
+2021-08-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [EWS] Do not notify Apple bot watchers about failures seen on Igalia bots
+        https://bugs.webkit.org/show_bug.cgi?id=229630
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/send_email.py:
+        (send_email_to_bot_watchers):
+
 2021-08-27  Alex Christensen  <achristensen@webkit.org>
 
         Add UIEventAttribution SPI that uses PrivateClickMeasurementAttributionEphemeral::Yes
