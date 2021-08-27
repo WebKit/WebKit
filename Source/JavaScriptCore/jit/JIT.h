@@ -37,7 +37,6 @@
 
 #define ASSERT_JIT_OFFSET(actual, expected) ASSERT_WITH_MESSAGE(actual == expected, "JIT Offset \"%s\" should be %d, not %d.\n", #expected, static_cast<int>(expected), static_cast<int>(actual));
 
-#include "ByValInfo.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
 #include "JITDisassembler.h"
@@ -149,42 +148,6 @@ namespace JSC {
         }
     };
 
-    struct ByValCompilationInfo {
-        ByValCompilationInfo() { }
-        
-        ByValCompilationInfo(ByValInfo* byValInfo, BytecodeIndex bytecodeIndex, MacroAssembler::PatchableJump notIndexJump, MacroAssembler::PatchableJump badTypeJump, JITArrayMode arrayMode, ArrayProfile* arrayProfile, MacroAssembler::Label doneTarget, MacroAssembler::Label nextHotPathTarget)
-            : byValInfo(byValInfo)
-            , bytecodeIndex(bytecodeIndex)
-            , notIndexJump(notIndexJump)
-            , badTypeJump(badTypeJump)
-            , arrayMode(arrayMode)
-            , arrayProfile(arrayProfile)
-            , doneTarget(doneTarget)
-            , nextHotPathTarget(nextHotPathTarget)
-        {
-        }
-
-        ByValCompilationInfo(ByValInfo* byValInfo, BytecodeIndex bytecodeIndex, MacroAssembler::PatchableJump notIndexJump, MacroAssembler::Label doneTarget, MacroAssembler::Label nextHotPathTarget)
-            : byValInfo(byValInfo)
-            , bytecodeIndex(bytecodeIndex)
-            , notIndexJump(notIndexJump)
-            , doneTarget(doneTarget)
-            , nextHotPathTarget(nextHotPathTarget)
-        {
-        }
-
-        ByValInfo* byValInfo;
-        BytecodeIndex bytecodeIndex;
-        MacroAssembler::PatchableJump notIndexJump;
-        MacroAssembler::PatchableJump badTypeJump;
-        JITArrayMode arrayMode;
-        ArrayProfile* arrayProfile;
-        MacroAssembler::Label doneTarget;
-        MacroAssembler::Label nextHotPathTarget;
-        MacroAssembler::Label slowPathTarget;
-        MacroAssembler::Call returnAddress;
-    };
-
     struct CallCompilationInfo {
         MacroAssembler::Label slowPathStart;
         MacroAssembler::Label doneLocation;
@@ -224,13 +187,6 @@ namespace JSC {
         {
             return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
         }
-        
-        static void compilePutPrivateNameWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, CacheableIdentifier propertyName)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompilePutPrivateNameWithCachedId(byValInfo, returnAddress, propertyName);
-        }
 
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
@@ -244,8 +200,6 @@ namespace JSC {
         void privateCompileSlowCases();
         void link();
         CompilationResult privateCompile(JITCompilationEffort);
-        
-        void privateCompilePutPrivateNameWithCachedId(ByValInfo*, ReturnAddressPtr, CacheableIdentifier);
 
         // Add a call out from JIT code, without an exception check.
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
@@ -353,8 +307,6 @@ namespace JSC {
 
         void emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile*, RegisterID scratchGPR);
         void emitArrayProfilingSiteWithCell(RegisterID cellGPR, RegisterID arrayProfileGPR, RegisterID scratchGPR);
-        void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
-        void emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile*);
 
         template<typename Op>
         ECMAMode ecmaMode(Op);
@@ -362,14 +314,6 @@ namespace JSC {
         // Determines the type of private field access for a bytecode.
         template<typename Op>
         PrivateFieldPutKind privateFieldPutKind(Op);
-
-        // Identifier check helper for GetByVal and PutByVal.
-        void emitByValIdentifierCheck(RegisterID cell, RegisterID scratch, CacheableIdentifier, JumpList& slowCases);
-
-        JITPutByIdGenerator emitPutPrivateNameWithCachedId(OpPutPrivateName, CacheableIdentifier, JumpList& doneCases, JumpList& slowCases);
-
-        template<typename Op>
-        JITPutByIdGenerator emitPutByValWithCachedId(Op, PutKind, CacheableIdentifier, JumpList& doneCases, JumpList& slowCases);
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
@@ -1012,7 +956,6 @@ namespace JSC {
         Vector<JITDelByValGenerator> m_delByVals;
         Vector<JITInstanceOfGenerator> m_instanceOfs;
         Vector<JITPrivateBrandAccessGenerator> m_privateBrandAccesses;
-        Vector<ByValCompilationInfo> m_byValCompilationInfo;
         Vector<CallCompilationInfo> m_callCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
@@ -1040,7 +983,6 @@ namespace JSC {
         unsigned m_delByIdIndex { UINT_MAX };
         unsigned m_instanceOfIndex { UINT_MAX };
         unsigned m_privateBrandAccessIndex { UINT_MAX };
-        unsigned m_byValInstructionIndex { UINT_MAX };
         unsigned m_callLinkInfoIndex { UINT_MAX };
         unsigned m_bytecodeCountHavingSlowCase { 0 };
         

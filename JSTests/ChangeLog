@@ -1,3 +1,33 @@
+2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] op_put_private_name should use modern IC and remove ByValInfo
+        https://bugs.webkit.org/show_bug.cgi?id=229544
+
+        Reviewed by Saam Barati.
+
+        Move class-fields-private benchmarks into microbenchmarks.
+        Added several microbenchmarks and stress tests.
+
+        * microbenchmarks/class-private-field-polymorphic.js: Added.
+        (shouldBe):
+        (test.A.prototype.put):
+        * microbenchmarks/get-private-name.js: Renamed from JSTests/microbenchmarks/class-fields-private/get-private-name.js.
+        * microbenchmarks/monomorphic-get-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/monomorphic-get-private-field.js.
+        * microbenchmarks/polymorphic-get-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/polymorphic-get-private-field.js.
+        * microbenchmarks/polymorphic-put-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/polymorphic-put-private-field.js.
+        * microbenchmarks/put-by-val-polymorphic-properties.js: Added.
+        (shouldBe):
+        (test):
+        * microbenchmarks/put-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/put-private-field.js.
+        * stress/class-private-field-megamorphic.js: Added.
+        (shouldBe):
+        * stress/class-private-field-polymorphic.js: Added.
+        (shouldBe):
+        (test.A.prototype.put):
+        * stress/put-by-val-polymorphic-properties.js: Added.
+        (shouldBe):
+        (test):
+
 2021-08-26  Saam Barati  <sbarati@apple.com>
 
         r281485 was not sufficient in where it called disablePeepholeOptimization

@@ -467,49 +467,6 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     emitWriteBarrier(base, ShouldFilterBase);
 }
 
-template<typename Op>
-JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, CacheableIdentifier propertyName, JumpList& doneCases, JumpList& slowCases)
-{
-    // base: regT0
-    // property: regT1
-    // scratch: regT2
-
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister value = bytecode.m_value;
-
-    slowCases.append(branchIfNotCell(regT1));
-    emitByValIdentifierCheck(regT1, regT1, propertyName, slowCases);
-
-    // Write barrier breaks the registers. So after issuing the write barrier,
-    // reload the registers.
-    emitGetVirtualRegisters(base, regT0, value, regT1);
-
-    JITPutByIdGenerator gen(
-        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(), propertyName,
-        JSValueRegs(regT0), JSValueRegs(regT1), regT3, regT2, ecmaMode(bytecode), putKind);
-    gen.generateFastPath(*this);
-    // IC can write new Structure without write-barrier if a base is cell.
-    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
-    // https://bugs.webkit.org/show_bug.cgi?id=209395
-    emitWriteBarrier(base, ShouldFilterBase);
-    doneCases.append(jump());
-
-    Label coldPathBegin = label();
-    gen.slowPathJump().link(this);
-
-    Call call;
-    if (JITCode::useDataIC(JITType::BaselineJIT)) {
-        gen.stubInfo()->m_slowOperation = gen.slowPathFunction();
-        move(TrustedImmPtr(gen.stubInfo()), GPRInfo::nonArgGPR0);
-        callOperation<decltype(gen.slowPathFunction())>(Address(GPRInfo::nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), TrustedImmPtr(m_codeBlock->globalObject()), GPRInfo::nonArgGPR0, regT1, regT0, propertyName.rawBits());
-    } else
-        call = callOperation(gen.slowPathFunction(), TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT1, regT0, propertyName.rawBits());
-    gen.reportSlowPathCall(coldPathBegin, call);
-    doneCases.append(jump());
-
-    return gen;
-}
-
 void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     bool isDirect = currentInstruction->opcodeID() == op_put_by_val_direct;
@@ -611,76 +568,72 @@ void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpPutPrivateName>();
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
-    ByValInfo* byValInfo = m_codeBlock->addByValInfo(m_bytecodeIndex);
+    VirtualRegister value = bytecode.m_value;
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
+    emitGetVirtualRegister(value, regT2);
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
 
-    PatchableJump fastPathJmp;
-    if (JITCode::useDataIC(JITType::BaselineJIT))
-        farJump(AbsoluteAddress(&byValInfo->m_notIndexJumpTarget), JITStubRoutinePtrTag);
-    else {
-        fastPathJmp = patchableJump();
-        addSlowCase(fastPathJmp);
-    }
-    
-    Label done = label();
-    
-    m_byValCompilationInfo.append(ByValCompilationInfo(byValInfo, m_bytecodeIndex, fastPathJmp, done, done));
+    JITPutByValGenerator gen(
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT2), InvalidGPRReg, regT4);
+    gen.generateFastPath(*this);
+    if (!JITCode::useDataIC(JITType::BaselineJIT))
+        addSlowCase(gen.slowPathJump());
+    else
+        addSlowCase();
+    m_putByVals.append(gen);
+
+    // IC can write new Structure without write-barrier if a base is cell.
+    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
+    // https://bugs.webkit.org/show_bug.cgi?id=209395
+    emitWriteBarrier(base, ShouldFilterBase);
 }
 
 void JIT::emitSlow_op_put_private_name(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpPutPrivateName>();
-    ByValInfo* byValInfo = m_byValCompilationInfo[m_byValInstructionIndex].byValInfo;
     PrivateFieldPutKind putKind = bytecode.m_putKind;
 
-    linkAllSlowCases(iter);
-    Label slowPath = label();
+    JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
 
+    linkAllSlowCases(iter);
+
+    Label coldPathBegin = label();
+
+    auto operation = putKind.isDefine() ? operationPutByValDefinePrivateFieldOptimize : operationPutByValSetPrivateFieldOptimize;
 #if !ENABLE(EXTRA_CTI_THUNKS)
+    // They are configured in the fast path and not clobbered.
     constexpr GPRReg baseGPR = regT0;
     constexpr GPRReg propertyGPR = regT1;
     constexpr GPRReg valueGPR = regT2;
-
-    emitGetVirtualRegister(bytecode.m_base, baseGPR);
-    emitGetVirtualRegister(bytecode.m_property, propertyGPR);
-    emitGetVirtualRegister(bytecode.m_value, valueGPR);
-    Call call = callOperation(operationPutPrivateNameOptimize, TrustedImmPtr(m_codeBlock->globalObject()), baseGPR, propertyGPR, valueGPR, byValInfo, TrustedImm32(putKind.value()));
+    Call call = callOperation(operation, TrustedImmPtr(m_codeBlock->globalObject()), baseGPR, propertyGPR, valueGPR, gen.stubInfo(), TrustedImmPtr(nullptr));
 #else
     VM& vm = this->vm();
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
 
-    constexpr GPRReg bytecodeOffsetGPR = argumentGPR0;
+    // constexpr GPRReg baseGPR = regT0;
+    // constexpr GPRReg propertyGPR = regT1;
+    // constexpr GPRReg valueGPR = regT2;
+    constexpr GPRReg stubInfoGPR = regT3;
+    constexpr GPRReg bytecodeOffsetGPR = regT4;
+
     move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-
-    constexpr GPRReg baseGPR = argumentGPR1;
-    constexpr GPRReg propertyGPR = argumentGPR2;
-    constexpr GPRReg valueGPR = argumentGPR3;
-    constexpr GPRReg byValInfoGPR = argumentGPR4;
-    constexpr GPRReg putKindGPR = argumentGPR5;
-
-    emitGetVirtualRegister(bytecode.m_base, baseGPR);
-    emitGetVirtualRegister(bytecode.m_property, propertyGPR);
-    emitGetVirtualRegister(bytecode.m_value, valueGPR);
-    move(TrustedImmPtr(byValInfo), byValInfoGPR);
-    move(TrustedImm32(putKind.value()), putKindGPR);
+    move(TrustedImmPtr(gen.stubInfo()), stubInfoGPR);
     emitNakedNearCall(vm.getCTIStub(slow_op_put_private_name_prepareCallGenerator).retaggedCode<NoPtrTag>());
 
     Call call;
     if (JITCode::useDataIC(JITType::BaselineJIT))
-        byValInfo->m_slowOperation = operationPutPrivateNameOptimize;
+        gen.stubInfo()->m_slowOperation = operation;
     else
-        call = appendCall(operationPutPrivateNameOptimize);
+        call = appendCall(operation);
     emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
-    m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
-    m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
-    m_byValInstructionIndex++;
+    gen.reportSlowPathCall(coldPathBegin, call);
 }
 
 #if ENABLE(EXTRA_CTI_THUNKS)
@@ -695,24 +648,24 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_private_name_prepareCallG
     if (!JITCode::useDataIC(JITType::BaselineJIT))
         jit.tagReturnAddress();
 
-    constexpr GPRReg bytecodeOffsetGPR = argumentGPR0;
+    constexpr GPRReg baseGPR = regT0;
+    constexpr GPRReg propertyGPR = regT1;
+    constexpr GPRReg valueGPR = regT2;
+    constexpr GPRReg stubInfoGPR = regT3;
+    constexpr GPRReg bytecodeOffsetGPR = regT4;
+
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
 
-    constexpr GPRReg globalObjectGPR = argumentGPR0;
-    constexpr GPRReg baseGPR = argumentGPR1;
-    constexpr GPRReg propertyGPR = argumentGPR2;
-    constexpr GPRReg valueGPR = argumentGPR3;
-    constexpr GPRReg byValInfoGPR = argumentGPR4;
-    constexpr GPRReg putKindGPR = argumentGPR5;
+    constexpr GPRReg globalObjectGPR = regT4;
 
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
     jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
 
-    jit.setupArguments<decltype(operationPutPrivateNameOptimize)>(globalObjectGPR, baseGPR, propertyGPR, valueGPR, byValInfoGPR, putKindGPR);
+    jit.setupArguments<decltype(operationPutByValDefinePrivateFieldOptimize)>(globalObjectGPR, baseGPR, propertyGPR, valueGPR, stubInfoGPR, TrustedImmPtr(nullptr));
     jit.prepareCallOperation(vm);
 
     if (JITCode::useDataIC(JITType::BaselineJIT))
-        jit.farJump(Address(argumentGPR4, ByValInfo::offsetOfSlowOperation()), OperationPtrTag);
+        jit.farJump(Address(argumentGPR4, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
     else
         jit.ret();
 
@@ -3060,61 +3013,7 @@ void JIT::emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMod
         valueNotCell.link(this);
 }
 
-template <typename Op>
-JITPutByIdGenerator JIT::emitPutByValWithCachedId(Op bytecode, PutKind putKind, CacheableIdentifier propertyName, JumpList& doneCases, JumpList& slowCases)
-{
-    // base: tag(regT1), payload(regT0)
-    // property: tag(regT3), payload(regT2)
-
-    VirtualRegister base = bytecode.m_base;
-    VirtualRegister value = bytecode.m_value;
-
-    slowCases.append(branchIfNotCell(regT3));
-    emitByValIdentifierCheck(regT2, regT2, propertyName, slowCases);
-
-    // Write barrier breaks the registers. So after issuing the write barrier,
-    // reload the registers.
-    //
-    // IC can write new Structure without write-barrier if a base is cell.
-    // We are emitting write-barrier before writing here but this is OK since 32bit JSC does not have concurrent GC.
-    // FIXME: Use UnconditionalWriteBarrier in Baseline effectively to reduce code size.
-    // https://bugs.webkit.org/show_bug.cgi?id=209395
-    emitWriteBarrier(base, ShouldFilterBase);
-    emitLoadPayload(base, regT0);
-    emitLoad(value, regT3, regT2);
-
-    JITPutByIdGenerator gen(
-        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(), propertyName,
-        JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), InvalidGPRReg, regT1, ecmaMode(bytecode), putKind);
-    gen.generateFastPath(*this);
-    doneCases.append(jump());
-
-    Label coldPathBegin = label();
-    gen.slowPathJump().link(this);
-
-    // JITPutByIdGenerator only preserve the value and the base's payload, we have to reload the tag.
-    emitLoadTag(base, regT1);
-
-    Call call;
-    if (JITCode::useDataIC(JITType::BaselineJIT)) {
-        gen.stubInfo()->m_slowOperation = gen.slowPathFunction();
-        move(TrustedImmPtr(gen.stubInfo()), GPRInfo::nonArgGPR0);
-        callOperation<decltype(gen.slowPathFunction())>(Address(GPRInfo::nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), m_codeBlock->globalObject(), GPRInfo::nonArgGPR0, JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), propertyName.rawBits());
-    } else
-        call = callOperation(gen.slowPathFunction(), m_codeBlock->globalObject(), gen.stubInfo(), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0), propertyName.rawBits());
-    gen.reportSlowPathCall(coldPathBegin, call);
-    doneCases.append(jump());
-
-    return gen;
-}
-
 #endif // USE(JSVALUE64)
-
-JITPutByIdGenerator JIT::emitPutPrivateNameWithCachedId(OpPutPrivateName bytecode, CacheableIdentifier propertyName, JumpList& doneCases, JumpList& slowCases)
-{
-    auto putKind = bytecode.m_putKind.isDefine() ? PutKind::DirectPrivateFieldDefine : PutKind::DirectPrivateFieldSet;
-    return emitPutByValWithCachedId(bytecode, putKind, propertyName, doneCases, slowCases);
-}
 
 void JIT::emitWriteBarrier(VirtualRegister owner, WriteBarrierMode mode)
 {
@@ -3127,58 +3026,6 @@ void JIT::emitWriteBarrier(JSCell* owner)
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), owner, regT0);
     callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), owner);
     ownerIsRememberedOrInEden.link(this);
-}
-
-void JIT::emitByValIdentifierCheck(RegisterID cell, RegisterID scratch, CacheableIdentifier propertyName, JumpList& slowCases)
-{
-    if (propertyName.isSymbolCell())
-        slowCases.append(branchPtr(NotEqual, cell, TrustedImmPtr(propertyName.cell())));
-    else {
-        slowCases.append(branchIfNotString(cell));
-        loadPtr(Address(cell, JSString::offsetOfValue()), scratch);
-        slowCases.append(branchPtr(NotEqual, scratch, TrustedImmPtr(propertyName.uid())));
-    }
-}
-
-void JIT::privateCompilePutPrivateNameWithCachedId(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, CacheableIdentifier propertyName)
-{
-    const Instruction* currentInstruction = m_codeBlock->instructions().at(byValInfo->bytecodeIndex).ptr();
-    auto bytecode = currentInstruction->as<OpPutPrivateName>();
-
-    JumpList doneCases;
-    JumpList slowCases;
-
-    JITPutByIdGenerator gen = emitPutPrivateNameWithCachedId(bytecode, propertyName, doneCases, slowCases);
-
-    ConcurrentJSLocker locker(m_codeBlock->m_lock);
-    LinkBuffer patchBuffer(*this, m_codeBlock, LinkBuffer::Profile::InlineCache);
-    patchBuffer.link(slowCases, byValInfo->slowPathTarget);
-    patchBuffer.link(doneCases, byValInfo->doneTarget);
-    if (!m_exceptionChecks.empty())
-        patchBuffer.link(m_exceptionChecks, byValInfo->exceptionHandler);
-
-    for (const auto& callSite : m_nearCalls) {
-        if (callSite.callee)
-            patchBuffer.link(callSite.from, callSite.callee);
-    }
-    for (const auto& callSite : m_farCalls) {
-        if (callSite.callee)
-            patchBuffer.link(callSite.from, callSite.callee);
-    }
-    gen.finalize(patchBuffer, patchBuffer);
-
-    byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
-        m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
-        "Baseline put_private_name with cached property name '%s' stub for %s, return point %p", propertyName.uid()->utf8().data(), toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
-    byValInfo->stubInfo = gen.stubInfo();
-
-    if (JITCode::useDataIC(JITType::BaselineJIT)) {
-        byValInfo->m_notIndexJumpTarget = CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code());
-        byValInfo->m_slowOperation = operationPutPrivateNameGeneric;
-    } else {
-        MacroAssembler::repatchJump(byValInfo->m_notIndexJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-        MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationPutPrivateNameGeneric));
-    }
 }
 
 } // namespace JSC

@@ -1952,8 +1952,16 @@ private:
             break;
         }
 
-        case CheckPrivateBrand:
+        case CheckPrivateBrand: {
+            fixEdge<SymbolUse>(node->child2());
+            break;
+        }
+
         case PutPrivateName: {
+            if (!m_graph.m_slowPutByVal.contains(node)) {
+                if (node->child1()->shouldSpeculateCell())
+                    fixEdge<CellUse>(node->child1());
+            }
             fixEdge<SymbolUse>(node->child2());
             break;
         }

@@ -600,9 +600,12 @@ static FunctionPtr<CFunctionPtrTag> appropriateGenericPutByFunction(const PutPro
             if (slot.isStrictMode())
                 return operationDirectPutByValStrictGeneric;
             return operationDirectPutByValNonStrictGeneric;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
+        case PutKind::DirectPrivateFieldDefine:
+            ASSERT(slot.isStrictMode());
+            return operationPutByValDefinePrivateFieldGeneric;
+        case PutKind::DirectPrivateFieldSet:
+            ASSERT(slot.isStrictMode());
+            return operationPutByValSetPrivateFieldGeneric;
         }
         break;
     }
@@ -633,7 +636,7 @@ static FunctionPtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(const Put
             return operationPutByIdSetPrivateFieldStrictOptimize;
         }
         break;
-    case PutByKind::ByVal: {
+    case PutByKind::ByVal:
         switch (putKind) {
         case PutKind::NotDirect:
             if (slot.isStrictMode())
@@ -643,12 +646,14 @@ static FunctionPtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(const Put
             if (slot.isStrictMode())
                 return operationDirectPutByValStrictOptimize;
             return operationDirectPutByValNonStrictOptimize;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
+        case PutKind::DirectPrivateFieldDefine:
+            ASSERT(slot.isStrictMode());
+            return operationPutByValDefinePrivateFieldOptimize;
+        case PutKind::DirectPrivateFieldSet:
+            ASSERT(slot.isStrictMode());
+            return operationPutByValSetPrivateFieldOptimize;
         }
         break;
-    }
     }
     // Make win port compiler happy
     RELEASE_ASSERT_NOT_REACHED();
@@ -1922,6 +1927,10 @@ void resetPutBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kin
             optimizedFunction = operationPutByValNonStrictOptimize;
         else if (unoptimizedFunction == operationDirectPutByValStrictGeneric || unoptimizedFunction == operationDirectPutByValStrictOptimize)
             optimizedFunction = operationDirectPutByValStrictOptimize;
+        else if (unoptimizedFunction == operationPutByValDefinePrivateFieldGeneric || unoptimizedFunction == operationPutByValDefinePrivateFieldOptimize)
+            optimizedFunction = operationPutByValDefinePrivateFieldOptimize;
+        else if (unoptimizedFunction == operationPutByValSetPrivateFieldGeneric || unoptimizedFunction == operationPutByValSetPrivateFieldOptimize)
+            optimizedFunction = operationPutByValSetPrivateFieldOptimize;
         else {
             ASSERT(unoptimizedFunction == operationDirectPutByValNonStrictGeneric || unoptimizedFunction == operationDirectPutByValNonStrictOptimize);
             optimizedFunction = operationDirectPutByValNonStrictOptimize;
