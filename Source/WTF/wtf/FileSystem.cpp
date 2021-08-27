@@ -482,8 +482,8 @@ static Salt makeSalt()
 {
     Salt salt;
     static_assert(salt.size() == 8, "Salt size");
-    *reinterpret_cast<uint32_t*>(&salt[0]) = cryptographicallyRandomNumber();
-    *reinterpret_cast<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
+    *reinterpret_cast_ptr<uint32_t*>(&salt[0]) = cryptographicallyRandomNumber();
+    *reinterpret_cast_ptr<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
     return salt;
 }
 

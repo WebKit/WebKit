@@ -1,3 +1,21 @@
+2021-08-27  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Avoid increasing required alignment of target type warning on ARM 32 bits
+        https://bugs.webkit.org/show_bug.cgi?id=229151
+
+        Reviewed by Mark Lam.
+
+        Same approach as https://bugs.webkit.org/show_bug.cgi?id=38045
+        cast pointers to void* to bypass warning about increasing pointer
+        alingment. reinterpret_cast_ptr has custom behaviour only on ARM and
+        MIPS 32 bits, and doesn't change the behaviour in 64 bits archs
+        (reinterpret_cast_ptr is preprocessed to reinterpret_cast in 64 bits
+        archs)
+
+        * bytecode/Instruction.h:
+        (JSC::BaseInstruction::asKnownWidth const):
+        * llint/LLIntCommon.h:
+
 2021-08-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r281587.

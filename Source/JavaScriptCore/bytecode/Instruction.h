@@ -169,7 +169,7 @@ public:
     T asKnownWidth() const
     {
         ASSERT((is<T, Traits>()));
-        return T(reinterpret_cast<const typename TypeBySize<width>::unsignedType*>(this + (width == OpcodeSize::Narrow ? 1 : 2)));
+        return T(reinterpret_cast_ptr<const typename TypeBySize<width>::unsignedType*>(this + (width == OpcodeSize::Narrow ? 1 : 2)));
     }
 
     template<class T, typename Traits = JSOpcodeTraits>
