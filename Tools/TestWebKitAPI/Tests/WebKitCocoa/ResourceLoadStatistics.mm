@@ -1460,4 +1460,7 @@ TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
     }];
 
     TestWebKitAPI::Util::run(&doneFlag);
+    
+    // Clear pre-filled database.
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
 }
