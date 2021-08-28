@@ -1125,6 +1125,7 @@ inline void StringImpl::deref()
 template<typename SourceCharacterType, typename DestinationCharacterType>
 inline void StringImpl::copyCharacters(DestinationCharacterType* destination, const SourceCharacterType* source, unsigned numCharacters)
 {
+    ASSERT(destination || !numCharacters); // Workaround for clang static analyzer (<rdar://problem/82475719>).
     static_assert(std::is_same_v<SourceCharacterType, LChar> || std::is_same_v<SourceCharacterType, UChar>);
     static_assert(std::is_same_v<DestinationCharacterType, LChar> || std::is_same_v<DestinationCharacterType, UChar>);
     if constexpr (std::is_same_v<SourceCharacterType, DestinationCharacterType>) {

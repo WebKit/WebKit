@@ -442,7 +442,8 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
         if (!resultImpl)
             return String();
 
-        stringTypeAdapterAccumulator(buffer, adapter, adapters...);
+        if (buffer)
+            stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
         return resultImpl;
     }
@@ -452,7 +453,8 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
     if (!resultImpl)
         return String();
 
-    stringTypeAdapterAccumulator(buffer, adapter, adapters...);
+    if (buffer)
+        stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
     return resultImpl;
 }

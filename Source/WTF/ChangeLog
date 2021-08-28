@@ -1,3 +1,24 @@
+2021-08-28  David Kilzer  <ddkilzer@apple.com>
+
+        [WTF] Fix static analyzer warnings about nullptr derefs in StringImpl::copyCharacters() and tryMakeStringFromAdapters()
+        <https://webkit.org/b/229461>
+        <rdar://problem/82303279>
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeStringFromAdapters):
+        - Add nullptr checks for `buffer` since it makes no sense to
+          call stringTypeAdapterAccumulator() with a nullptr argument,
+          and it fixes static analyzer warnings about dereferencing
+          nullptr.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::copyCharacters):
+        - Add `ASSERT(destination || !numCharacters)` statement to
+          describe an invariant when calling this method.  This stops
+          the static analyzer from emitting false positive warnings
+          about `destination` being nullptr.
+
 2021-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Define ENABLE_CONTENT_CHANGE_OBSERVER for IOS_FAMILY and use it to wrap content observation code
