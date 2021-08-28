@@ -18,7 +18,6 @@
 # Boston, MA 02110-1301, USA.
 
 import logging
-import subprocess
 import os
 import sys
 import optparse
@@ -39,66 +38,22 @@ class GtkTestRunner(TestRunner):
     def __init__(self, options, tests=[]):
         super(GtkTestRunner, self).__init__("gtk", options, tests)
 
-        # These SPI daemons need to be active for the accessibility tests to work.
-        self._spi_registryd = None
-        self._spi_bus_launcher = None
-
-    def _lookup_atspi2_binary(self, filename):
-        prefix = common.pkg_config_file_variable('atspi-2', 'prefix')
-        if not prefix:
-            return None
-        for path in ['libexec', 'lib/at-spi2-core', 'lib32/at-spi2-core', 'lib64/at-spi2-core']:
-            filepath = os.path.join(prefix, path, filename)
-            if os.path.isfile(filepath):
-                return filepath
-
-        return None
-
-    def _wait_for_accessibility_bus(self):
-        def timeout_accessibility_bus():
-            self._accessibility_bus_found = False
-            sys.stderr.write("Timeout waiting for the accesibility bus.\n")
-            sys.stderr.flush()
-            loop.quit()
-        # Backup current environment, and temporally set the test one.
-        oldenv = dict(os.environ)
-        os.environ.clear()
-        os.environ.update(self._test_env)
-        # We spin a main loop until the bus name appears on DBus.
-        self._accessibility_bus_found = True
-        loop = GLib.MainLoop()
-        Gio.bus_watch_name(Gio.BusType.SESSION, 'org.a11y.Bus', Gio.BusNameWatcherFlags.NONE,
-                           lambda *args: loop.quit(), None)
-        GLib.timeout_add_seconds(5, timeout_accessibility_bus)
-        loop.run()
-        # Restore previous environment.
-        os.environ.clear()
-        os.environ.update(oldenv)
-        return self._accessibility_bus_found
-
-    def _start_accessibility_daemons(self):
-        spi_bus_launcher_path = self._lookup_atspi2_binary('at-spi-bus-launcher')
-        spi_registryd_path = self._lookup_atspi2_binary('at-spi2-registryd')
-        if not spi_bus_launcher_path or not spi_registryd_path:
-            return False
-
+    def _ensure_accessibility_service_is_running(self):
+        # The a11y service is DBus activatable so we simply need to call it to ensure it
+        # has been started.
         try:
-            self._spi_bus_launcher = subprocess.Popen([spi_bus_launcher_path], env=self._test_env)
-        except:
-            sys.stderr.write("Failed to launch the accessibility bus\n")
-            sys.stderr.flush()
-            return False
+            proxy = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                                   Gio.DBusProxyFlags.NONE,
+                                                   None,
+                                                   'org.a11y.Bus',
+                                                   '/org/a11y/bus',
+                                                   'org.a11y.Bus',
+                                                   None)
 
-        # We need to wait until the SPI bus is launched before trying to start the SPI registry.
-        if not self._wait_for_accessibility_bus():
-            sys.stderr.write("Failed checking the accessibility bus within D-Bus\n")
-            sys.stderr.flush()
-            return False
-
-        try:
-            self._spi_registryd = subprocess.Popen([spi_registryd_path], env=self._test_env)
-        except:
-            sys.stderr.write("Failed to launch the accessibility registry\n")
+            # After this returns we know the bus is setup, the return value doesn't matter.
+            proxy.GetAddress()
+        except GLib.Error as e:
+            sys.stderr.write("Failed to talk to the accessibility service: {}\n".format(e.message))
             sys.stderr.flush()
             return False
 
@@ -108,15 +63,11 @@ class GtkTestRunner(TestRunner):
         super(GtkTestRunner, self)._setup_testing_environment()
 
         # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
-        if not self._start_accessibility_daemons():
+        if not self._ensure_accessibility_service_is_running():
             print("Could not start accessibility bus, so disabling TestWebKitAccessibility")
             self._disabled_tests.append("WebKit2Gtk/TestWebKitAccessibility")
 
     def _tear_down_testing_environment(self):
-        if self._spi_registryd:
-            self._spi_registryd.terminate()
-        if self._spi_bus_launcher:
-            self._spi_bus_launcher.terminate()
         super(GtkTestRunner, self)._tear_down_testing_environment()
 
     def is_glib_test(self, test_program):

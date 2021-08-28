@@ -1,3 +1,22 @@
+2021-08-27  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK] Simplify run-gtk-tests handling of the a11y service
+        https://bugs.webkit.org/show_bug.cgi?id=229620
+
+        Reviewed by Carlos Garcia Campos.
+
+        The service is DBusActivatable so it doesn't make sense to manually
+        find and start every binary ourselves and then wait for the
+        service to appear. We can simply call it and let the system
+        manage the service as it normally would in the environment it
+        normally would.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner.__init__):
+        (GtkTestRunner):
+        (GtkTestRunner._ensure_accessibility_service_is_running):
+        (GtkTestRunner._setup_testing_environment):
+
 2021-08-27  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation][CMake] Add control over whether JavaScriptCore should be shared
