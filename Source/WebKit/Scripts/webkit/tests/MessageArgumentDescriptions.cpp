@@ -639,7 +639,7 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
         };
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return Vector<ArgumentDescription> {
-            {"optionalReply", "onal<WebKit::TestClassName", nullptr, true},
+            {"optionalReply", "WebKit::TestClassName", nullptr, true},
         };
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:

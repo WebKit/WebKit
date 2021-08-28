@@ -1,3 +1,16 @@
+2021-08-27  Cameron McCormack  <heycam@apple.com>
+
+        Fix std::optional<> stripping in MessageArgumentDescriptions.cpp generator
+        https://bugs.webkit.org/show_bug.cgi?id=229636
+        <rdar://problem/82461615>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit/messages.py:
+        (generate_js_argument_descriptions):
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::messageReplyArgumentDescriptions):
+
 2021-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Address post-landing feedback on r281728.

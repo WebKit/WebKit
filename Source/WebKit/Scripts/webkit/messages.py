@@ -1212,7 +1212,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
                     enum_type = '"%s"' % argument_type
                     argument_type = argument.kind[5:]
                 if argument_type.startswith('std::optional<') and argument_type.endswith('>'):
-                    argument_type = argument_type[9:-1]
+                    argument_type = argument_type[14:-1]
                     is_optional = True
                 result.append('            {"%s", "%s", %s, %s},\n' % (argument.name, argument_type, enum_type or 'nullptr', 'true' if is_optional else 'false'))
             result.append('        };\n')
