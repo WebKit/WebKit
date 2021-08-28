@@ -5023,6 +5023,10 @@ fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ 
 [ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html [ Skip ]
 
+# Missing painting support for in-flow positioning
+fast/layoutformattingcontext/replaced-box-with-margin-on-baseline.html [ ImageOnlyFailure ]
+fast/layoutformattingcontext/table-cell-vertical-alignment-simple.html [ ImageOnlyFailure ]
+
 # This webstorage test has crashed since it was imported.
 imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
 # This webstorage test has timed out since it was imported.

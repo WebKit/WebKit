@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+namespace Layout {
+
 #define USE_FLOAT_AS_INLINE_LAYOUT_UNIT 1
 
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
@@ -49,8 +51,6 @@ using InlineLayoutPoint = LayoutPoint;
 using InlineLayoutSize = LayoutSize;
 using InlineLayoutRect = LayoutRect;
 #endif
-
-namespace Layout {
 
 struct Position {
     operator LayoutUnit() const { return value; }

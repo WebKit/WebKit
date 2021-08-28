@@ -55,7 +55,7 @@ inline Layout::LineGeometry::EnclosingTopAndBottom operator+(const Layout::LineG
     return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
 }
 
-inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutUnit lineBoxLogicalWidth, InlineLayoutUnit lineContentLogicalWidth)
+inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineBoxLogicalWidth, Layout::InlineLayoutUnit lineContentLogicalWidth)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
     auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;

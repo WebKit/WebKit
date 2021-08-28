@@ -1452,6 +1452,7 @@ layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/FloatingState.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
+layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
 layout/formattingContexts/inline/InlineFormattingGeometry.cpp
 layout/formattingContexts/inline/InlineFormattingQuirks.cpp

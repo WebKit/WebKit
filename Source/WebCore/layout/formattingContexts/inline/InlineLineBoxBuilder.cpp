@@ -26,7 +26,10 @@
 #include "config.h"
 #include "InlineLineBoxBuilder.h"
 
+#include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
+#include "LayoutBoxGeometry.h"
+#include "LayoutReplacedBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
@@ -191,7 +194,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
         canUseSimplifiedAlignment = LineBoxVerticalAligner::canUseSimplifiedAlignmentForInlineLevelBox(rootInlineBox, inlineLevelBox, boxGeometry);
     };
 
-    auto createWrappedInlineBoxes = [&] {
+    auto createLineSpanningInlineBoxes = [&] {
         if (runs.isEmpty())
             return;
         // An inline box may not necessarily start on the current line:
@@ -220,13 +223,13 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
         }
         // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
-            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth());
+            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
         }
     };
-    createWrappedInlineBoxes();
+    createLineSpanningInlineBoxes();
 
     auto lineHasContent = false;
     for (auto& run : runs) {

@@ -68,6 +68,7 @@ public:
         bool isWordBreakOpportunity() const { return m_type == InlineItem::Type::WordBreakOpportunity; }
         bool isInlineBoxStart() const { return m_type == InlineItem::Type::InlineBoxStart; }
         bool isInlineBoxEnd() const { return m_type == InlineItem::Type::InlineBoxEnd; }
+        auto type() const { return m_type; }
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }

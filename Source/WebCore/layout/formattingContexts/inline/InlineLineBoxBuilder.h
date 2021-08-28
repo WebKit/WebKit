@@ -27,7 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingContext.h"
 #include "InlineLineBox.h"
+#include "InlineLineBuilder.h"
 #include "InlineLineGeometry.h"
 
 namespace WebCore {
@@ -35,7 +37,6 @@ namespace Layout {
 
 class Box;
 class ContainerBox;
-class InlineFormattingContext;
 class LayoutState;
 
 class LineBoxBuilder {

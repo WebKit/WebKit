@@ -30,6 +30,7 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
+#include "InlineDisplayContentBuilder.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
 #include "InlineLineBoxBuilder.h"
@@ -205,7 +206,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         }();
         auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, initialLineHeight };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, leadingLogicalWidth, initialLineConstraints, isFirstLine);
-        auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal());
+        auto lineLogicalRect = computeGeometryForLineContent(lineContent);
 
         auto lineContentRange = lineContent.inlineItemRange;
         if (!lineContentRange.isEmpty()) {
@@ -567,139 +568,18 @@ void InlineFormattingContext::collectContentIfNeeded()
     }
 }
 
-InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
+InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent)
 {
     auto& formattingState = this->formattingState();
-    auto& formattingGeometry = this->formattingGeometry();
-    auto lineIndex = formattingState.lines().size();
+    auto currentLineIndex = formattingState.lines().size();
 
     auto lineBoxAndGeometry = LineBoxBuilder(*this).build(lineContent);
     formattingState.addLineBox(WTFMove(lineBoxAndGeometry.lineBox));
     formattingState.addLine(lineBoxAndGeometry.lineGeometry);
 
-    const auto& lineBox = formattingState.lineBoxes().last();
     auto lineBoxLogicalRect = lineBoxAndGeometry.lineGeometry.lineBoxLogicalRect();
 
-    // Every line starts with a root run, even the empty ones.
-    formattingState.addLineRun({ lineIndex, LineRun::Type::RootInlineBox, root(), lineBox.logicalRectForRootInlineBox(), { }, { },  lineBox.rootInlineBox().hasContent()});
-
-    if (!lineBox.hasContent()) {
-        // Fast path for lines with no content e.g. <div><span></span><span></span></div> or <span><div></div></span> where we construct empty pre and post blocks.
-        ASSERT(!lineBox.rootInlineBox().hasContent() && !lineBoxLogicalRect.height());
-        auto updateInlineBoxesGeometryIfApplicable = [&] {
-            if (!lineBox.hasInlineBox())
-                return;
-            Vector<const Box*> layoutBoxList;
-            // Collect the empty inline boxes that showed up first on this line.
-            // Note that an inline box end on an empty line does not make the inline box taller.
-            // (e.g. <div>text<span><br></span></div>) <- the <span> inline box is as tall as the line even though the </span> is after a <br> so technically is on the following (empty)line.
-            for (auto& lineRun : lineContent.runs) {
-                if (lineRun.isInlineBoxStart())
-                    layoutBoxList.append(&lineRun.layoutBox());
-            }
-            for (auto* layoutBox : layoutBoxList) {
-                auto& boxGeometry = formattingState.boxGeometry(*layoutBox);
-                auto inlineBoxLogicalHeight = LayoutUnit::fromFloatCeil(lineBox.logicalBorderBoxForInlineBox(*layoutBox, boxGeometry).height());
-                boxGeometry.setContentBoxHeight(inlineBoxLogicalHeight);
-                boxGeometry.setContentBoxWidth({ });
-                boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBoxLogicalRect.topLeft()));
-            }
-        };
-        updateInlineBoxesGeometryIfApplicable();
-        return lineBoxLogicalRect;
-    }
-
-    // Spanning inline boxes start at the very beginning of the line.
-    auto lineSpanningInlineBoxIndex = formattingState.lineRuns().size();
-    HashSet<const Box*> inlineBoxStartSet;
-    auto constructLineRunsAndUpdateBoxGeometry = [&] {
-        // Create the inline runs on the current line. This is mostly text and atomic inline runs.
-        for (auto& lineRun : lineContent.runs) {
-            // FIXME: We should not need to construct a line run for <br>.
-            auto& layoutBox = lineRun.layoutBox();
-            if (lineRun.isText()) {
-                formattingState.addLineRun({ lineIndex, LineRun::Type::Text, layoutBox, lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
-                continue;
-            }
-            if (lineRun.isLineBreak()) {
-                if (layoutBox.isLineBreakBox()) {
-                    // Only hard linebreaks have associated layout boxes.
-                    auto lineBreakBoxRect = lineBox.logicalRectForLineBreakBox(layoutBox);
-                    formattingState.addLineRun({ lineIndex, LineRun::Type::LineBreakBox, layoutBox, lineBreakBoxRect, lineRun.expansion(), { } });
-
-                    auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                    lineBreakBoxRect.moveBy(lineBoxLogicalRect.topLeft());
-                    boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
-                    boxGeometry.setContentBoxHeight(toLayoutUnit(lineBreakBoxRect.height()));
-                } else 
-                    formattingState.addLineRun({ lineIndex, LineRun::Type::SoftLineBreak, layoutBox, lineBox.logicalRectForTextRun(lineRun), lineRun.expansion(), lineRun.textContent() });
-                continue;
-            }
-            if (lineRun.isBox()) {
-                ASSERT(layoutBox.isAtomicInlineLevelBox());
-                auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                auto logicalBorderBox = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
-                formattingState.addLineRun({ lineIndex, LineRun::Type::AtomicInlineLevelBox, layoutBox, logicalBorderBox, lineRun.expansion(), { } });
-
-                auto borderBoxLogicalTopLeft = logicalBorderBox.topLeft();
-                // Note that inline boxes are relative to the line and their top position can be negative.
-                borderBoxLogicalTopLeft.moveBy(lineBoxLogicalRect.topLeft());
-                if (layoutBox.isInFlowPositioned())
-                    borderBoxLogicalTopLeft += formattingGeometry.inFlowPositionedPositionOffset(layoutBox, horizontalConstraints);
-                // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
-                boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
-                continue;
-            }
-            if (lineRun.isInlineBoxStart()) {
-                auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-                auto inlineBoxLogicalRect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-                formattingState.addLineRun({ lineIndex, LineRun::Type::NonRootInlineBox, layoutBox, inlineBoxLogicalRect, lineRun.expansion(), { }, lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent() });
-                inlineBoxStartSet.add(&layoutBox);
-                continue;
-            }
-            ASSERT(lineRun.isInlineBoxEnd() || lineRun.isWordBreakOpportunity());
-        }
-    };
-    constructLineRunsAndUpdateBoxGeometry();
-
-    auto updateBoxGeometryForInlineBoxes = [&] {
-        // FIXME: We may want to keep around an inline box only set.
-        if (!lineBox.hasInlineBox())
-            return;
-        // Grab the inline boxes (even those that don't have associated layout boxes on the current line due to line wrapping)
-        // and update their geometries.
-        for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!inlineLevelBox.isInlineBox())
-                continue;
-            auto& layoutBox = inlineLevelBox.layoutBox();
-            auto& boxGeometry = formattingState.boxGeometry(layoutBox);
-            // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
-            auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-            auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
-            auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };
-            logicalRect.moveBy(LayoutPoint { lineBoxLogicalRect.topLeft() });
-            if (inlineBoxStartSet.contains(&layoutBox)) {
-                // This inline box showed up first on this line.
-                boxGeometry.setLogicalTopLeft(logicalRect.topLeft());
-                auto contentBoxHeight = logicalRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu));
-                boxGeometry.setContentBoxHeight(contentBoxHeight);
-                auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
-                boxGeometry.setContentBoxWidth(contentBoxWidth);
-                continue;
-            }
-            // Middle or end of the inline box. Let's stretch the box as needed.
-            formattingState.lineRuns().insert(lineSpanningInlineBoxIndex++, { lineIndex, LineRun::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
-
-            auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
-            enclosingBorderBoxRect.expandToContain(logicalRect);
-            boxGeometry.setLogicalLeft(enclosingBorderBoxRect.left());
-
-            boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu)));
-            boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu)));
-        }
-    };
-    updateBoxGeometryForInlineBoxes();
-    
+    InlineDisplayContentBuilder(root(), formattingState).build(lineContent, formattingState.lineBoxes().last(), lineBoxLogicalRect.topLeft(), currentLineIndex);
     return lineBoxLogicalRect;
 }
 

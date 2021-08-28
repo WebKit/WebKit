@@ -1,3 +1,41 @@
+2021-08-28  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move content builder functionality to a dedicated class
+        https://bugs.webkit.org/show_bug.cgi?id=229631
+
+        Reviewed by Antti Koivisto.
+
+        Let's use a dedicated class for constructing the final line runs. This is also going to be used
+        for computing overflow and other "display" type of value once it's merged with LayoutIntegration::InlineContentBuilder.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutUnits.h:
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp: Added.
+        (WebCore::Layout::InlineDisplayContentBuilder::InlineDisplayContentBuilder):
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.h: Copied from Source/WebCore/layout/formattingContexts/inline/InlineLineBoxBuilder.h.
+        (WebCore::Layout::InlineDisplayContentBuilder::root const):
+        (WebCore::Layout::InlineDisplayContentBuilder::formattingState const):
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/inline/InlineLevelBox.h:
+        (WebCore::Layout::InlineLevelBox::isInlineBox const):
+        (WebCore::Layout::InlineLevelBox::isLineSpanningInlineBox const):
+        (WebCore::Layout::InlineLevelBox::createInlineBox):
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::type const):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::lineOverflowWidth):
+        * layout/integration/LayoutIntegrationRun.h:
+
 2021-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The simple text codepath does not handle unpaired surrogates

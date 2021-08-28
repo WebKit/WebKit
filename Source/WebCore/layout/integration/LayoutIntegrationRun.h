@@ -73,7 +73,7 @@ struct Run {
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
-        InlineLayoutUnit horizontalExpansion { 0 };
+        Layout::InlineLayoutUnit horizontalExpansion { 0 };
     };
     Expansion expansion() const { return m_expansion; }
 
