@@ -86,7 +86,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
 #endif
 
@@ -2485,11 +2485,13 @@ void Node::defaultEventHandler(Event& event)
     } else if (is<TouchEvent>(event) && eventNames().isTouchRelatedEventType(eventType, *this)) {
         // Capture the target node's visibility state before dispatching touchStart.
         if (is<Element>(*this) && eventType == eventNames().touchstartEvent) {
-            auto& contentChangeObserver = document().contentChangeObserver(); 
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+            auto& contentChangeObserver = document().contentChangeObserver();
             if (ContentChangeObserver::isVisuallyHidden(*this))
                 contentChangeObserver.setHiddenTouchTarget(downcast<Element>(*this));
             else
                 contentChangeObserver.resetHiddenTouchTarget();
+#endif
         }
 
         RenderObject* renderer = this->renderer();

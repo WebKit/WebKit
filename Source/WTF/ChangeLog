@@ -1,3 +1,16 @@
+2021-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Define ENABLE_CONTENT_CHANGE_OBSERVER for IOS_FAMILY and use it to wrap content observation code
+        https://bugs.webkit.org/show_bug.cgi?id=229624
+
+        Reviewed by Alan Bujtas.
+
+        Deploy ENABLE(CONTENT_CHANGE_OBSERVER).
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-08-27  Eric Carlson  <eric.carlson@apple.com>
 
         [ Catalina EWS ] media/track/track-disabled-addcue.html is flaky crashing

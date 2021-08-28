@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
@@ -244,4 +244,4 @@ inline void ContentChangeObserver::setShouldObserveDOMTimerSchedulingAndTransiti
 }
 
 }
-#endif
+#endif // ENABLE(CONTENT_CHANGE_OBSERVER)

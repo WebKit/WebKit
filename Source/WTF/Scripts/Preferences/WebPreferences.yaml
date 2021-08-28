@@ -460,7 +460,7 @@ ConstantPropertiesEnabled:
 
 ContentChangeObserverEnabled:
   type: bool
-  condition: PLATFORM(IOS_FAMILY)
+  condition: ENABLE(CONTENT_CHANGE_OBSERVER)
   defaultValue:
     WebKitLegacy:
       default: true

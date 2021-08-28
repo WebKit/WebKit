@@ -25,7 +25,7 @@
 #include "config.h"
 #include "ContentChangeObserver.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTimer.h"
@@ -725,4 +725,4 @@ ContentChangeObserver::DOMTimerScope::~DOMTimerScope()
 
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // ENABLE(CONTENT_CHANGE_OBSERVER)

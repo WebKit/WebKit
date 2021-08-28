@@ -352,10 +352,12 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 void WebPage::platformWillPerformEditingCommand()
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (auto* document = frame.document()) {
         if (auto* holdingTank = document->domTimerHoldingTankIfExists())
             holdingTank->removeAll();
     }
+#endif
 }
 
 FloatSize WebPage::screenSize() const

@@ -32,7 +32,6 @@
 #import "AutoscrollController.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
-#import "ContentChangeObserver.h"
 #import "DataTransfer.h"
 #import "DragState.h"
 #import "EventNames.h"
@@ -53,6 +52,10 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/SetForScope.h>
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+#import "ContentChangeObserver.h"
+#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #import <WebKitAdditions/EventHandlerIOSTouch.cpp>
@@ -510,15 +513,19 @@ void EventHandler::mouseMoved(WebEvent *event)
     document.updateStyleIfNeeded();
     CurrentEventScope scope(event);
     {
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
         ContentChangeObserver::MouseMovedScope observingScope(document);
+#endif
         event.wasHandled = mouseMoved(currentPlatformMouseEvent());
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document.updateStyleIfNeeded();
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
         callOnMainThread([protectedFrame = makeRef(m_frame)] {
             // This is called by WebKitLegacy only.
             if (auto* document = protectedFrame->document())
                 document->contentChangeObserver().willNotProceedWithFixedObservationTimeWindow();
         });
+#endif
     }
 
     END_BLOCK_OBJC_EXCEPTIONS

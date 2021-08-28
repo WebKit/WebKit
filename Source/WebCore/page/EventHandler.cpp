@@ -120,6 +120,10 @@
 #include "PlatformTouchEventIOS.h"
 #endif
 
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+#include "DOMTimerHoldingTank.h"
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
 #include "TouchList.h"
@@ -135,10 +139,6 @@
 
 #if ENABLE(POINTER_LOCK)
 #include "PointerLockController.h"
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-#include "DOMTimerHoldingTank.h"
 #endif
 
 namespace WebCore {
@@ -3621,7 +3621,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     if (accessibilityPreventsEventPropagation(keydown))
         keydown->stopPropagation();
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     DeferDOMTimersForScope deferralScope { m_frame.document()->quirks().needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() };
 #endif
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 
 #include "Timer.h"
 #include <wtf/Forward.h>
@@ -72,4 +72,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // ENABLE(CONTENT_CHANGE_OBSERVER)

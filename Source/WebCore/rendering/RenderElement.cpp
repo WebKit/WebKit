@@ -27,9 +27,6 @@
 
 #include "AXObjectCache.h"
 #include "CachedResourceLoader.h"
-#if PLATFORM(IOS_FAMILY)
-#include "ContentChangeObserver.h"
-#endif
 #include "ContentData.h"
 #include "CursorList.h"
 #include "DocumentTimeline.h"
@@ -88,6 +85,10 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+#include "ContentChangeObserver.h"
+#endif
 
 namespace WebCore {
 
@@ -1057,7 +1058,7 @@ inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
 
 void RenderElement::willBeDestroyed()
 {
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (!renderTreeBeingDestroyed() && element())
         document().contentChangeObserver().rendererWillBeDestroyed(*element());
 #endif

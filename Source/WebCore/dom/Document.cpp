@@ -289,10 +289,12 @@
 #include "RenderFullScreen.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
-#include "CSSFontSelector.h"
 #include "DOMTimerHoldingTank.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
 #include "DeviceMotionClientIOS.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationClientIOS.h"
@@ -2194,7 +2196,7 @@ bool Document::updateStyleIfNeeded()
             return false;
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     ContentChangeObserver::StyleRecalcScope observingScope(*this);
 #endif
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
@@ -2517,7 +2519,7 @@ void Document::frameDestroyed()
 void Document::willDetachPage()
 {
     FrameDestructionObserver::willDetachPage();
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     contentChangeObserver().willDetachPage();
 #endif
     if (domWindow() && frame())
@@ -2758,7 +2760,7 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     contentChangeObserver().didSuspendActiveDOMObjects();
 #endif
 }
@@ -8774,7 +8776,7 @@ void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWo
 }
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 
 ContentChangeObserver& Document::contentChangeObserver()
 {

@@ -41,7 +41,7 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
 #include "ContentChangeObserver.h"
 #include "DOMTimerHoldingTank.h"
 #endif
@@ -187,7 +187,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     // Keep track of nested timer installs.
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->add(timer->m_timeoutId, timer.get());
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
         document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, singleShot);
@@ -206,7 +206,7 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
     if (timeoutId <= 0)
         return;
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
         if (auto* timer = document.findTimeout(timeoutId)) {
@@ -331,7 +331,7 @@ void DOMTimer::fired()
     if (nestedTimers)
         nestedTimers->startTracking();
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
     ContentChangeObserver::DOMTimerScope observingScope(is<Document>(context) ? &downcast<Document>(context) : nullptr, *this);
 #endif
     m_action->execute(context);
