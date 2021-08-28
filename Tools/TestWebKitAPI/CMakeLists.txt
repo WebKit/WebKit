@@ -148,6 +148,9 @@ if (ENABLE_JAVASCRIPTCORE)
         JavaScriptCore
         WTF
     )
+    if (NOT USE_SYSTEM_MALLOC)
+        list(APPEND TestJavaScriptCore_FRAMEWORKS bmalloc)
+    endif ()
 
     set(TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}
@@ -197,9 +200,14 @@ if (ENABLE_WEBCORE)
         WebKit::gtest
     )
     set(TestWebCore_FRAMEWORKS
+        JavaScriptCore
         PAL
+        WTF
         WebCore
     )
+    if (NOT USE_SYSTEM_MALLOC)
+        list(APPEND TestWebCore_FRAMEWORKS bmalloc)
+    endif ()
 
     set(TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_BINARY_DIR}

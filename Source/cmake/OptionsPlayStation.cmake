@@ -28,6 +28,9 @@ endif ()
 
 WEBKIT_OPTION_BEGIN()
 
+# PlayStation Specific Options
+WEBKIT_OPTION_DEFINE(ENABLE_STATIC_JSC "Control whether to build a non-shared JSC" PUBLIC ON)
+
 # Turn off JIT
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JIT PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_FTL_JIT PRIVATE OFF)
@@ -174,7 +177,12 @@ SET_AND_EXPOSE_TO_BUILD(USE_TILED_BACKING_STORE ON)
 # not be exposed.
 set(bmalloc_LIBRARY_TYPE OBJECT)
 set(WTF_LIBRARY_TYPE OBJECT)
-set(JavaScriptCore_LIBRARY_TYPE SHARED)
+
+if (ENABLE_STATIC_JSC)
+    set(JavaScriptCore_LIBRARY_TYPE OBJECT)
+else ()
+    set(JavaScriptCore_LIBRARY_TYPE SHARED)
+endif ()
 
 # Create a shared WebKit
 #

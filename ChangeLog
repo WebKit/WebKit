@@ -1,3 +1,15 @@
+2021-08-27  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation][CMake] Add control over whether JavaScriptCore should be shared
+        https://bugs.webkit.org/show_bug.cgi?id=229591
+
+        Add option for controlling whether to build a shared JavaScriptCore and
+        set build type for that appropriately.
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2021-08-27  Russell Epstein  <repstein@apple.com>
 
         Land Windows build fixes from safari-612.1.29.14-branch.
