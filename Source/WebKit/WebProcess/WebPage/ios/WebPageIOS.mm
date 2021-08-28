@@ -351,8 +351,8 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
 void WebPage::platformWillPerformEditingCommand()
 {
-    auto& frame = m_page->focusController().focusedOrMainFrame();
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
+    auto& frame = m_page->focusController().focusedOrMainFrame();
     if (auto* document = frame.document()) {
         if (auto* holdingTank = document->domTimerHoldingTankIfExists())
             holdingTank->removeAll();

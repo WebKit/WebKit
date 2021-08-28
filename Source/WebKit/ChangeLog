@@ -1,5 +1,14 @@
 2021-08-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Address post-landing feedback on r281728.
+
+        Move a line inside the #ifdef.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformWillPerformEditingCommand):
+
+2021-08-27  Simon Fraser  <simon.fraser@apple.com>
+
         Define ENABLE_CONTENT_CHANGE_OBSERVER for IOS_FAMILY and use it to wrap content observation code
         https://bugs.webkit.org/show_bug.cgi?id=229624
 
