@@ -1069,13 +1069,19 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
         bool betweenWords = true;
         unsigned j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == Hyphens::None)) {
+            UChar previousCharacter = c;
             j++;
             if (j == length)
                 break;
             c = string[j];
+            if (U_IS_LEAD(previousCharacter) && U_IS_TRAIL(c))
+                continue;
             if (isBreakable(breakIterator, j, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere) && characterAt(j - 1) != softHyphen)
                 break;
             if (breakAll) {
+                // FIXME: This code is ultra wrong.
+                // The spec says "word-break: break-all: Any typographic letter units are treated as ID(“ideographic characters”) for the purpose of line-breaking."
+                // The spec describes how a "typographic letter unit" is a cluster, not a code point: https://drafts.csswg.org/css-text-3/#typographic-character-unit
                 betweenWords = false;
                 break;
             }

@@ -1,3 +1,43 @@
+2021-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        The simple text codepath does not handle unpaired surrogates
+        https://bugs.webkit.org/show_bug.cgi?id=229392
+
+        Reviewed by Alan Bujtas.
+
+        The simple text codepath was taking an early return if it encountered an unpaired surrogate.
+        This essentially ends up being data loss, because everything after that surrogate is just gone.
+        The other browsers render the unpaired surrogate, and the text after it too.
+
+        Removing the early return uncovered a preexisting bug, where word-break: break-all would cause
+        both RenderText::computePreferredLogicalWidths() and BreakingContext::handleText() to try to
+        break in between two adjacent joining surrogates.
+
+        Because both fixes depend on each other to be observable, this patch does both together.
+
+        Test: fast/text/unpaired-surrogate.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.xcodeproj/xcshareddata/xcschemes/WebCore.xcscheme:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::getEmphasisMarkGlyphData const):
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp: Removed.
+        * platform/graphics/SurrogatePairAwareTextIterator.h:
+        (WebCore::SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator):
+        (WebCore::SurrogatePairAwareTextIterator::consume):
+        (WebCore::SurrogatePairAwareTextIterator::currentIndex const):
+        (WebCore::SurrogatePairAwareTextIterator::characters const): Deleted.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::incrementByCodePointInTextNode):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2021-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Define ENABLE_CONTENT_CHANGE_OBSERVER for IOS_FAMILY and use it to wrap content observation code

@@ -92,6 +92,7 @@ public:
     void setRefersToEndOfPreviousNode();
 
     void fastIncrementInTextNode();
+    void incrementByCodePointInTextNode();
     void increment(InlineBidiResolver* = nullptr);
     void fastDecrement();
     bool atEnd() const;
@@ -344,6 +345,19 @@ inline void InlineIterator::fastIncrementInTextNode()
     ASSERT(m_renderer);
     ASSERT(m_pos <= downcast<RenderText>(*m_renderer).text().length());
     ++m_pos;
+}
+
+inline void InlineIterator::incrementByCodePointInTextNode()
+{
+    ASSERT(m_renderer);
+    const auto& text = downcast<RenderText>(*m_renderer).text();
+    ASSERT(m_pos < text.length());
+    if (text.is8Bit()) {
+        ++m_pos;
+        return;
+    }
+    UChar32 character;
+    U16_NEXT(text.characters16(), m_pos, text.length(), character);
 }
 
 inline void InlineIterator::setOffset(unsigned position)

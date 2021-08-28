@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "InMemoryDisplayList.h"
 #include "LayoutRect.h"
-#include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
 #include <wtf/MainThread.h>
@@ -1194,10 +1193,9 @@ std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString&
 
     UChar32 character;
     if (!mark.is8Bit()) {
-        SurrogatePairAwareTextIterator iterator(mark.characters16(), 0, mark.length(), mark.length());
-        unsigned clusterLength;
-        if (!iterator.consume(character, clusterLength))
-            return std::nullopt;
+        size_t i = 0;
+        U16_NEXT(mark.characters16(), i, mark.length(), character);
+        ASSERT(U16_IS_SINGLE(character)); // The CSS parser replaces unpaired surrogates with the object replacement character.
     } else
         character = mark[0];
 

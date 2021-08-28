@@ -1,3 +1,13 @@
+2021-08-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        The simple text codepath does not handle unpaired surrogates
+        https://bugs.webkit.org/show_bug.cgi?id=229392
+
+        Reviewed by Alan Bujtas.
+
+        * fast/text/unpaired-surrogate-expected-mismatch.html: Added.
+        * fast/text/unpaired-surrogate.html: Added.
+
 2021-08-27  Eric Carlson  <eric.carlson@apple.com>
 
         [ Catalina EWS ] media/track/track-disabled-addcue.html is flaky crashing

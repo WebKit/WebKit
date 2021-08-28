@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 - 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2003 - 2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -278,6 +278,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     float widthOfCurrentFontRange = 0;
     // We are iterating in string order, not glyph order. Compare this to ComplexTextController::adjustGlyphsAndAdvances()
     while (textIterator.consume(character, clusterLength)) {
+        // FIXME: Should we replace unpaired surrogates with the object replacement character?
+        // Should we do this before or after shaping? What does a shaper do with an unpaired surrogate?
         m_containsTabs |= character == tabCharacter;
         currentCharacterIndex = textIterator.currentIndex();
         unsigned advanceLength = clusterLength;

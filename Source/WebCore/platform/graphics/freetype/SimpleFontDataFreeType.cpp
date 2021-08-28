@@ -42,7 +42,6 @@
 #include "GlyphBuffer.h"
 #include "OpenTypeTypes.h"
 #include "RefPtrCairo.h"
-#include "SurrogatePairAwareTextIterator.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>

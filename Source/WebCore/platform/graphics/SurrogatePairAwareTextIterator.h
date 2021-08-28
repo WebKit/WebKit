@@ -18,32 +18,33 @@
  *
  */
 
-#ifndef SurrogatePairAwareTextIterator_h
-#define SurrogatePairAwareTextIterator_h
+#pragma once
 
-#include <wtf/unicode/CharacterNames.h>
+#include <unicode/utf16.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class SurrogatePairAwareTextIterator {
 public:
-    // The passed in UChar pointer starts at 'currentIndex'. The iterator operatoes on the range [currentIndex, lastIndex].
+    // The passed in UChar pointer starts at 'currentIndex'. The iterator operates on the range [currentIndex, lastIndex].
     // 'endIndex' denotes the maximum length of the UChar array, which might exceed 'lastIndex'.
-    SurrogatePairAwareTextIterator(const UChar*, unsigned currentIndex, unsigned lastIndex, unsigned endIndex);
+    SurrogatePairAwareTextIterator(const UChar* characters, unsigned currentIndex, unsigned lastIndex, unsigned endIndex)
+        : m_characters(characters)
+        , m_currentIndex(currentIndex)
+        , m_lastIndex(lastIndex)
+        , m_endIndex(endIndex)
+    {
+    }
 
-    inline bool consume(UChar32& character, unsigned& clusterLength)
+    bool consume(UChar32& character, unsigned& clusterLength)
     {
         if (m_currentIndex >= m_lastIndex)
             return false;
 
-        character = *m_characters;
-        clusterLength = 1;
-
-        if (!U16_IS_SURROGATE(character))
-            return true;
-
-        return consumeSlowCase(character, clusterLength);
+        clusterLength = 0;
+        U16_NEXT(m_characters, clusterLength, m_endIndex - m_currentIndex, character);
+        return true;
     }
 
     void advance(unsigned advanceLength)
@@ -53,18 +54,12 @@ public:
     }
 
     unsigned currentIndex() const { return m_currentIndex; }
-    const UChar* characters() const { return m_characters; }
 
 private:
-    bool consumeSlowCase(UChar32&, unsigned&);
-    UChar32 normalizeVoicingMarks();
-
-    const UChar* m_characters;
-    unsigned m_currentIndex;
-    unsigned m_lastIndex;
-    unsigned m_endIndex;
+    const UChar* m_characters { nullptr };
+    unsigned m_currentIndex { 0 };
+    unsigned m_lastIndex { 0 };
+    unsigned m_endIndex { 0 };
 };
 
 }
-
-#endif
