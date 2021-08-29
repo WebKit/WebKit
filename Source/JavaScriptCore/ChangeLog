@@ -1,3 +1,25 @@
+2021-08-29  Keith Miller  <keith_miller@apple.com>
+
+        Add openFile function to jsc.cpp that links to file backed memory
+        https://bugs.webkit.org/show_bug.cgi?id=229621
+
+        Reviewed by Saam Barati.
+
+        This patch uses fopen directly rather than use WTF::MappedFileData so there were less changes to
+        readline.
+
+        * jsc.cpp:
+        (computeFilePath):
+        (JSC_DEFINE_HOST_FUNCTION):
+        (JSFileDescriptor::subspaceFor):
+        (JSFileDescriptor::createStructure):
+        (JSFileDescriptor::create):
+        (JSFileDescriptor::finishCreation):
+        (JSFileDescriptor::destroy):
+        (JSFileDescriptor::descriptor const):
+        (JSFileDescriptor::JSFileDescriptor):
+        (JSFileDescriptor::~JSFileDescriptor):
+
 2021-08-29  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r281615.

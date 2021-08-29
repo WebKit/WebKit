@@ -295,6 +295,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionLoad);
 static JSC_DECLARE_HOST_FUNCTION(functionLoadString);
 static JSC_DECLARE_HOST_FUNCTION(functionReadFile);
 static JSC_DECLARE_HOST_FUNCTION(functionCheckSyntax);
+static JSC_DECLARE_HOST_FUNCTION(functionOpenFile);
 static JSC_DECLARE_HOST_FUNCTION(functionReadline);
 static JSC_DECLARE_HOST_FUNCTION(functionPreciseTime);
 static JSC_DECLARE_HOST_FUNCTION(functionNeverInlineFunction);
@@ -540,6 +541,7 @@ private:
         addFunction(vm, "checkSyntax", functionCheckSyntax, 1);
         addFunction(vm, "sleepSeconds", functionSleepSeconds, 1);
         addFunction(vm, "jscStack", functionJSCStack, 1);
+        addFunction(vm, "openFile", functionOpenFile, 1);
         addFunction(vm, "readline", functionReadline, 0);
         addFunction(vm, "preciseTime", functionPreciseTime, 0);
         addFunction(vm, "neverInlineFunction", functionNeverInlineFunction, 1);
@@ -1559,30 +1561,42 @@ JSC_DEFINE_HOST_FUNCTION(functionRunString, (JSGlobalObject* globalObject, CallF
     return JSValue::encode(realm);
 }
 
+static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool callerRelative = callFrame->argument(1).getString(globalObject) == "caller relative"_s;
+    RETURN_IF_EXCEPTION(scope, URL());
+
+    String fileName = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, URL());
+
+    URL path;
+    if (callerRelative) {
+        path = URL(callFrame->callerSourceOrigin(vm).url(), fileName);
+        if (!path.isLocalFile()) {
+            throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: ", path.string())));
+            return URL();
+        }
+    } else
+        path = absolutePath(fileName);
+    return path;
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionLoad, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool callerRelative = callFrame->argument(1).getString(globalObject) == "caller relative"_s;
+    URL path = computeFilePath(vm, globalObject, callFrame);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    String fileName = callFrame->argument(0).toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    URL path;
-    if (callerRelative) {
-        path = URL(callFrame->callerSourceOrigin(vm).url(), fileName);
-        if (!path.isLocalFile())
-            return throwVMException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: ", path.string())));
-    } else
-        path = absolutePath(fileName);
     Vector<char> script;
     if (!fetchScriptFromLocalFileSystem(path.fileSystemPath(), script))
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Could not open file."_s)));
 
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(globalObject, jscSource(script, SourceOrigin { path }, fileName), JSValue(), evaluationException);
+    JSValue result = evaluate(globalObject, jscSource(script, SourceOrigin { path }, path.fileSystemPath()), JSValue(), evaluationException);
     if (evaluationException) {
         if (vm.isTerminationException(evaluationException.get()))
             vm.setExecutionForbidden();
@@ -1719,11 +1733,88 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerSourceOrigin, (JSGlobalObject* globalObje
     return JSValue::encode(jsString(vm, sourceOrigin.string()));
 }
 
-JSC_DEFINE_HOST_FUNCTION(functionReadline, (JSGlobalObject* globalObject, CallFrame*))
+// This class doesn't use WTF::File because we don't want to map the entire file into dirty memory
+class JSFileDescriptor : public JSDestructibleObject {
+    using Base = JSDestructibleObject;
+public:
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace;
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static JSFileDescriptor* create(VM& vm, JSGlobalObject* globalObject, FILE*&& descriptor)
+    {
+        Structure* structure = createStructure(vm, globalObject, jsNull());
+        auto* file = new (NotNull, allocateCell<JSFileDescriptor>(vm.heap)) JSFileDescriptor(vm, structure);
+        file->finishCreation(vm, descriptor);
+        return file;
+    }
+
+    void finishCreation(VM& vm, FILE* descriptor)
+    {
+        ASSERT(descriptor);
+        m_descriptor = descriptor;
+
+        Base::finishCreation(vm);
+    }
+
+    static void destroy(JSCell* thisObject)
+    {
+        static_cast<JSFileDescriptor*>(thisObject)->~JSFileDescriptor();
+    }
+
+    FILE* descriptor() const { return m_descriptor; }
+
+    DECLARE_INFO;
+
+private:
+    JSFileDescriptor(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    { }
+
+    ~JSFileDescriptor()
+    {
+        fclose(m_descriptor);
+    }
+
+    FILE* m_descriptor;
+};
+
+const ClassInfo JSFileDescriptor::s_info = { "FileDescriptor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileDescriptor) };
+
+JSC_DEFINE_HOST_FUNCTION(functionOpenFile, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    URL filePath = computeFilePath(vm, globalObject, callFrame);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    FILE* descriptor = fopen(filePath.fileSystemPath().ascii().data(), "r");
+    if (!descriptor)
+        return throwVMException(globalObject, scope, createURIError(globalObject, makeString("Could not open file at "_s, filePath.string(), " fopen had error: "_s, strerror(errno))));
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSFileDescriptor::create(vm, globalObject, WTFMove(descriptor))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionReadline, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+
     Vector<char, 256> line;
     int c;
-    while ((c = getchar()) != EOF) {
+    FILE* descriptor = stdin;
+
+    if (auto* file = jsDynamicCast<JSFileDescriptor*>(vm, callFrame->argument(0)))
+        descriptor = file->descriptor();
+
+    while ((c = getc(descriptor)) != EOF) {
         // FIXME: Should we also break on \r? 
         if (c == '\n')
             break;
