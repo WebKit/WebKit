@@ -11,4 +11,4 @@ description: >
 var a = [];
 a[4294967295] = "not an array element";
 
-assert.sameValue(a[4294967295], "not an array element", 'a[4294967295]');
+assert.sameValue(a[4294967295], "not an array element", 'The value of a[4294967295] is expected to be "not an array element"');

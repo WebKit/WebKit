@@ -16,14 +16,14 @@ info: |
 
 assert.throws(RangeError, function() {
   Object.defineProperty([], "length", {value: -1, configurable: true});
-});
+}, 'Object.defineProperty([], "length", {value: -1, configurable: true}) throws a RangeError exception');
 
 assert.throws(RangeError, function() {
   Object.defineProperty([], "length", {value: NaN, enumerable: true});
-});
+}, 'Object.defineProperty([], "length", {value: NaN, enumerable: true}) throws a RangeError exception');
 
 var array = [];
 Object.defineProperty(array, "length", {writable: false});
 assert.throws(RangeError, function() {
   Object.defineProperty(array, "length", {value: Number.MAX_SAFE_INTEGER, writable: true});
-});
+}, 'Object.defineProperty(array, "length", {value: Number.MAX_SAFE_INTEGER, writable: true}) throws a RangeError exception');

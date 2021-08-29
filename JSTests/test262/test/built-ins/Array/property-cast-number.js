@@ -11,8 +11,8 @@ description: Checking for number primitive
 
 var x = [];
 x[4294967296] = 1;
-assert.sameValue(x[0], undefined, "x[0]");
-assert.sameValue(x["4294967296"], 1, "x['4294967296'] !== 1");
+assert.sameValue(x[0], undefined, 'The value of x[0] is expected to equal undefined');
+assert.sameValue(x["4294967296"], 1, 'The value of x["4294967296"] is expected to be 1');
 
 var y = [];
 y[4294967297] = 1;

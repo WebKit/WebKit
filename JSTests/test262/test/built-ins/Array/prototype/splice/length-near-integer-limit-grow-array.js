@@ -36,27 +36,27 @@ var arrayLike = {
 
 var result = Array.prototype.splice.call(arrayLike, 9007199254740986, 0, "new-value");
 
-assert.compareArray(result, [], "No elements are removed");
+assert.compareArray(result, [], 'The value of result is expected to be []');
 
-assert.sameValue(arrayLike.length, 2 ** 53 - 1, "New length is 2**53 - 1");
+assert.sameValue(arrayLike.length, 2 ** 53 - 1, 'The value of arrayLike.length is expected to be 2 ** 53 - 1');
 
 assert.sameValue(arrayLike["9007199254740985"], "9007199254740985",
-  "arrayLike['9007199254740985'] is unchanged");
+  'The value of arrayLike["9007199254740985"] is expected to be "9007199254740985"');
 
 assert.sameValue(arrayLike["9007199254740986"], "new-value",
-  "arrayLike['9007199254740986'] contains the inserted value");
+  'The value of arrayLike["9007199254740986"] is expected to be "new-value"');
 
 assert.sameValue(arrayLike["9007199254740987"], "9007199254740986",
-  "arrayLike['9007199254740986'] is moved to arrayLike['9007199254740987']");
+  'The value of arrayLike["9007199254740987"] is expected to be "9007199254740986"');
 
 assert.sameValue(arrayLike["9007199254740988"], "9007199254740987",
-  "arrayLike['9007199254740987'] is moved to arrayLike['9007199254740988']");
+  'The value of arrayLike["9007199254740988"] is expected to be "9007199254740987"');
 
 assert.sameValue("9007199254740989" in arrayLike, false,
-  "arrayLike['9007199254740989'] is removed");
+  'The result of evaluating ("9007199254740989" in arrayLike) is expected to be false');
 
 assert.sameValue(arrayLike["9007199254740990"], "9007199254740989",
-  "arrayLike['9007199254740989'] is moved to arrayLike['9007199254740990']");
+  'The value of arrayLike["9007199254740990"] is expected to be "9007199254740989"');
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-  "arrayLike['9007199254740991'] is unchanged");
+  'The value of arrayLike["9007199254740991"] is expected to be "9007199254740991"');

@@ -20,18 +20,18 @@ var coop = Array.of.call(Coop, 'Mike', 'Rick', 'Leo');
 
 assert.sameValue(
   coop.length, 3,
-  'Sets a length property with the number of arguments'
+  'The value of coop.length is expected to be 3'
 );
 assert.sameValue(
   coop[0], 'Mike',
-  'Sets each argument in order as integer properties - #1 argument'
+  'The value of coop[0] is expected to be "Mike"'
 );
 assert.sameValue(
   coop[1], 'Rick',
-  'Sets each argument in order as integer properties - #2 argument'
+  'The value of coop[1] is expected to be "Rick"'
 );
 assert.sameValue(
   coop[2], 'Leo',
-  'Sets each argument in order as integer properties - #3 argument'
+  'The value of coop[2] is expected to be "Leo"'
 );
-assert(coop instanceof Coop, 'Returns an instance from a custom constructor');
+assert(coop instanceof Coop, 'The result of evaluating (coop instanceof Coop) is expected to be true');

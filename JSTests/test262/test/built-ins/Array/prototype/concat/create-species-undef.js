@@ -30,5 +30,9 @@ a.constructor[Symbol.species] = undefined;
 
 result = a.concat();
 
-assert.sameValue(Object.getPrototypeOf(result), Array.prototype);
-assert(Array.isArray(result), 'result is an Array exotic object');
+assert.sameValue(
+  Object.getPrototypeOf(result),
+  Array.prototype,
+  'Object.getPrototypeOf(a.concat()) returns Array.prototype'
+);
+assert(Array.isArray(result), 'Array.isArray(result) must return true');

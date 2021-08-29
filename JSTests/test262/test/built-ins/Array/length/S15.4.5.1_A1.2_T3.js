@@ -12,16 +12,10 @@ es5id: 15.4.5.1_A1.2_T3
 description: Checking an inherited property
 ---*/
 
-//CHECK#1
 Array.prototype[2] = 2;
 var x = [0, 1];
 x.length = 3;
-if (x.hasOwnProperty('2') !== false) {
-  throw new Test262Error('#1: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.hasOwnProperty(\'2\') === false. Actual: ' + (x.hasOwnProperty('2')));
-}
+assert.sameValue(x.hasOwnProperty('2'), false, 'x.hasOwnProperty("2") must return false');
 
-//CHECK#2
 x.length = 2;
-if (x[2] !== 2) {
-  throw new Test262Error('#2: Array.prototype[2] = 2; x = [0,1]; x.length = 3; x.length = 2; x[2] === 2. Actual: ' + (x[2]));
-}
+assert.sameValue(x[2], 2, 'The value of x[2] is expected to be 2');

@@ -35,8 +35,12 @@ a.constructor[Symbol.species] = Ctor;
 
 result = a.concat();
 
-assert.sameValue(callCount, 1, 'Constructor invoked exactly once');
-assert.sameValue(Object.getPrototypeOf(thisValue), Ctor.prototype);
-assert.sameValue(args.length, 1, 'Constructor invoked with a single argument');
-assert.sameValue(args[0], 0);
-assert.sameValue(result, instance);
+assert.sameValue(callCount, 1, 'The value of callCount is expected to be 1');
+assert.sameValue(
+  Object.getPrototypeOf(thisValue),
+  Ctor.prototype,
+  'Object.getPrototypeOf(this) returns Ctor.prototype'
+);
+assert.sameValue(args.length, 1, 'The value of args.length is expected to be 1');
+assert.sameValue(args[0], 0, 'The value of args[0] is expected to be 0');
+assert.sameValue(result, instance, 'The value of result is expected to equal the value of instance');

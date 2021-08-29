@@ -13,4 +13,4 @@ var arg;
   arg = arguments;
 }(1, 2, 3));
 
-assert.sameValue(Array.isArray(arg), false, 'Array.isArray(arg)');
+assert.sameValue(Array.isArray(arg), false, 'Array.isArray(arguments) must return false');

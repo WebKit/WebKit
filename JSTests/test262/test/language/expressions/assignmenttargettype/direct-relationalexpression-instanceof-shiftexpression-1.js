@@ -17,7 +17,4 @@ info: |
 
 $DONOTEVALUATE();
 
-function _() {
-  1 instanceof 2 = 1;
-}
-
+1 instanceof 2 = 1;

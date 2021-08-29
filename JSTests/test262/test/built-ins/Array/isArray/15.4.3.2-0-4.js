@@ -6,17 +6,9 @@ esid: sec-array.isarray
 description: Array.isArray return false if its argument is not an Array
 ---*/
 
-var b_num = Array.isArray(42);
-var b_undef = Array.isArray(undefined);
-var b_bool = Array.isArray(true);
-var b_str = Array.isArray("abc");
-var b_obj = Array.isArray({});
-var b_null = Array.isArray(null);
-
-
-assert.sameValue(b_num, false, 'b_num');
-assert.sameValue(b_undef, false, 'b_undef');
-assert.sameValue(b_bool, false, 'b_bool');
-assert.sameValue(b_str, false, 'b_str');
-assert.sameValue(b_obj, false, 'b_obj');
-assert.sameValue(b_null, false, 'b_null');
+assert.sameValue(Array.isArray(42), false, 'Array.isArray(42) must return false');
+assert.sameValue(Array.isArray(undefined), false, 'Array.isArray(undefined) must return false');
+assert.sameValue(Array.isArray(true), false, 'Array.isArray(true) must return false');
+assert.sameValue(Array.isArray("abc"), false, 'Array.isArray("abc") must return false');
+assert.sameValue(Array.isArray({}), false, 'Array.isArray({}) must return false');
+assert.sameValue(Array.isArray(null), false, 'Array.isArray(null) must return false');

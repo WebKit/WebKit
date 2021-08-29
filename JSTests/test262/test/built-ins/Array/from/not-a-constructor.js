@@ -25,5 +25,5 @@ assert.sameValue(isConstructor(Array.from), false, 'isConstructor(Array.from) mu
 
 assert.throws(TypeError, () => {
   new Array.from([]);
-}, '`new Array.from([])` throws TypeError');
+}, 'new Array.from([]) throws a TypeError exception');
 

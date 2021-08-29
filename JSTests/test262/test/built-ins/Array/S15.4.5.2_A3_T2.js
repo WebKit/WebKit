@@ -11,40 +11,20 @@ description: >
     is an array index
 ---*/
 
-//CHECK#1
 var x = [];
 x[1] = 1;
 x[3] = 3;
 x[5] = 5;
 x.length = 4;
-if (x.length !== 4) {
-  throw new Test262Error('#1: x = []; x[1] = 1; x[3] = 3; x[5] = 5; x.length = 4; x.length === 4. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 4, 'The value of x.length is expected to be 4');
+assert.sameValue(x[5], undefined, 'The value of x[5] is expected to equal undefined');
+assert.sameValue(x[3], 3, 'The value of x[3] is expected to be 3');
 
-//CHECK#2
-if (x[5] !== undefined) {
-  throw new Test262Error('#2: x = []; x[1] = 1; x[3] = 3; x[5] = 5; x.length = 4; x[5] === undefined. Actual: ' + (x[5]));
-}
-
-//CHECK#3
-if (x[3] !== 3) {
-  throw new Test262Error('#3: x = []; x[1] = 1; x[3] = 3; x[5] = 5; x.length = 4; x[3] === 3. Actual: ' + (x[3]));
-}
-
-//CHECK#4
 x.length = new Number(6);
-if (x[5] !== undefined) {
-  throw new Test262Error('#4: x = []; x[1] = 1; x[3] = 3; x[5] = 5; x.length = 4; x.length = new Number(6); x[5] === undefined. Actual: ' + (x[5]));
-}
+assert.sameValue(x[5], undefined, 'The value of x[5] is expected to equal undefined');
 
-//CHECK#5
 x.length = 0;
-if (x[0] !== undefined) {
-  throw new Test262Error('#5: x = []; x[1] = 1; x[3] = 3; x[5] = 5; x.length = 4; x.length = new Number(6); x.length = 0; x[0] === undefined. Actual: ' + (x[0]));
-}
+assert.sameValue(x[0], undefined, 'The value of x[0] is expected to equal undefined');
 
-//CHECK#6
 x.length = 1;
-if (x[1] !== undefined) {
-  throw new Test262Error('#6: x = []; x[1] = 1; x[3] = 3; x[5] = 5; x.length = 4; x.length = new Number(6); x.length = 0; x.length = 1; x[1] === undefined. Actual: ' + (x[1]));
-}
+assert.sameValue(x[1], undefined, 'The value of x[1] is expected to equal undefined');

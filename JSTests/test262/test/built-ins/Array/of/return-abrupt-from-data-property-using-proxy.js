@@ -35,4 +35,4 @@ function T() {
 
 assert.throws(Test262Error, function() {
   Array.of.call(T, 'Bob');
-});
+}, 'Array.of.call(T, "Bob") throws a Test262Error exception');

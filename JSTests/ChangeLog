@@ -1,3 +1,16 @@
+2021-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=229645
+
+        Reviewed by Keith Miller.
+
+        Upgrade test262 to the latest one.
+
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test262-Revision.txt:
+
 2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Intl.DateTimeFormat incorrectly parses patterns with 'h' literal

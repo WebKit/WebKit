@@ -9,4 +9,4 @@ features: [Temporal]
 var instant1 = Temporal.Now.instant();
 var instant2 = Temporal.Now.instant();
 
-assert.notSameValue(instant1, instant2);
+assert.notSameValue(instant1, instant2, 'The value of instant1 is expected to not equal the value of `instant2`');

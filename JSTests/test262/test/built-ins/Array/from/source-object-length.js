@@ -21,5 +21,5 @@ var obj = {
 delete obj[2];
 var a = Array.from(obj);
 for (var j = 0; j < expectedArray.length; j++) {
-  assert.sameValue(a[j], expectedArray[j], "Elements mismatch at " + j + ".");
+  assert.sameValue(a[j], expectedArray[j], 'The value of a[j] is expected to equal the value of expectedArray[j]');
 }

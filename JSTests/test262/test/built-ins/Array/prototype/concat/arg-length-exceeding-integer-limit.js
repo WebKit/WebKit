@@ -19,15 +19,15 @@ info: |
 features: [Symbol.isConcatSpreadable, Proxy]
 ---*/
 
-var spreadable = {};
-spreadable.length = Number.MAX_SAFE_INTEGER;
-spreadable[Symbol.isConcatSpreadable] = true;
+var spreadableLengthOutOfRange = {};
+spreadableLengthOutOfRange.length = Number.MAX_SAFE_INTEGER;
+spreadableLengthOutOfRange[Symbol.isConcatSpreadable] = true;
 
 assert.throws(TypeError, function() {
-  [1].concat(spreadable);
-});
+  [1].concat(spreadableLengthOutOfRange);
+}, '[1].concat(spreadableLengthOutOfRange) throws a TypeError exception');
 
-var proxy = new Proxy([], {
+var proxyForArrayWithLengthOutOfRange = new Proxy([], {
   get: function(_target, key) {
     if (key === "length") {
       return Number.MAX_SAFE_INTEGER;
@@ -36,5 +36,5 @@ var proxy = new Proxy([], {
 });
 
 assert.throws(TypeError, function() {
-  [].concat(1, proxy);
-});
+  [].concat(1, proxyForArrayWithLengthOutOfRange);
+}, '[].concat(1, proxyForArrayWithLengthOutOfRange) throws a TypeError exception');

@@ -15,34 +15,28 @@ obj.join = Array.prototype.join;
 if (obj.length !== undefined) {
   throw new Test262Error('#0: var obj = {}; obj.length === undefined. Actual: ' + (obj.length));
 } else {
-  //CHECK#1
   if (obj.join() !== "") {
     throw new Test262Error('#1: var obj = {}; obj.join = Array.prototype.join; obj.join() === "". Actual: ' + (obj.join()));
   }
-  //CHECK#2
   if (obj.length !== undefined) {
     throw new Test262Error('#2: var obj = {}; obj.join = Array.prototype.join; obj.join(); obj.length === undefined. Actual: ' + (obj.length));
   }
 }
 
-//CHECK#3
 obj.length = undefined;
 if (obj.join() !== "") {
   throw new Test262Error('#3: var obj = {}; obj.length = undefined; obj.join = Array.prototype.join; obj.join() === ". Actual: ' + (obj.join()));
 }
 
-//CHECK#4
 if (obj.length !== undefined) {
   throw new Test262Error('#4: var obj = {}; obj.length = undefined; obj.join = Array.prototype.join; obj.join(); obj.length === undefined. Actual: ' + (obj.length));
 }
 
-//CHECK#5
 obj.length = null
 if (obj.join() !== "") {
   throw new Test262Error('#5: var obj = {}; obj.length = null; obj.join = Array.prototype.join; obj.join() === "". Actual: ' + (obj.join()));
 }
 
-//CHECK#6
 if (obj.length !== null) {
   throw new Test262Error('#6: var obj = {}; obj.length = null; obj.join = Array.prototype.join; obj.join(); obj.length === null. Actual: ' + (obj.length));
 }

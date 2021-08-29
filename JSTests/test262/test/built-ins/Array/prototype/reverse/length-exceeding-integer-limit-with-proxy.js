@@ -61,7 +61,7 @@ var proxy = new Proxy(arrayLike, allowProxyTraps({
 // are properly propagated.
 assert.throws(StopReverse, function() {
   Array.prototype.reverse.call(proxy);
-});
+}, 'Array.prototype.reverse.call(proxy) throws a StopReverse exception');
 
 assert.compareArray(traps, [
   // Initial get length operation.
@@ -104,16 +104,16 @@ assert.compareArray(traps, [
   // Stop exception.
   "Has:4",
   "Get:4",
-]);
+], 'The value of traps is expected to be [\n  // Initial get length operation.\n  "Get:length",\n\n  // Lower and upper index are both present.\n  "Has:0",\n  "Get:0",\n  "Has:9007199254740990",\n  "Get:9007199254740990",\n  "Set:0",\n  "GetOwnPropertyDescriptor:0",\n  "DefineProperty:0",\n  "Set:9007199254740990",\n  "GetOwnPropertyDescriptor:9007199254740990",\n  "DefineProperty:9007199254740990",\n\n  // Lower and upper index are both absent.\n  "Has:1",\n  "Has:9007199254740989",\n\n  // Lower index is present, upper index is absent.\n  "Has:2",\n  "Get:2",\n  "Has:9007199254740988",\n  "Delete:2",\n  "Set:9007199254740988",\n  "GetOwnPropertyDescriptor:9007199254740988",\n  "DefineProperty:9007199254740988",\n\n  // Lower index is absent, upper index is present.\n  "Has:3",\n  "Has:9007199254740987",\n  "Get:9007199254740987",\n  "Set:3",\n  "GetOwnPropertyDescriptor:3",\n  "DefineProperty:3",\n  "Delete:9007199254740987",\n\n  // Stop exception.\n  "Has:4",\n  "Get:4",\n]');
 
-assert.sameValue(arrayLike.length, 2 ** 53 + 2, "Length property is not modified");
+assert.sameValue(arrayLike.length, 2 ** 53 + 2, 'The value of arrayLike.length is expected to be 2 ** 53 + 2');
 
-assert.sameValue(arrayLike[0], "2**53-2", "Property at index 0");
-assert.sameValue(1 in arrayLike, false, "Property at index 1");
-assert.sameValue(2 in arrayLike, false, "Property at index 2");
-assert.sameValue(arrayLike[3], "2**53-5", "Property at index 3");
+assert.sameValue(arrayLike[0], "2**53-2", 'The value of arrayLike[0] is expected to be "2**53-2"');
+assert.sameValue(1 in arrayLike, false, 'The result of evaluating (1 in arrayLike) is expected to be false');
+assert.sameValue(2 in arrayLike, false, 'The result of evaluating (2 in arrayLike) is expected to be false');
+assert.sameValue(arrayLike[3], "2**53-5", 'The value of arrayLike[3] is expected to be "2**53-5"');
 
-assert.sameValue(9007199254740987 in arrayLike, false, "Property at index 2**53-5");
-assert.sameValue(arrayLike[9007199254740988], "two", "Property at index 2**53-4");
-assert.sameValue(9007199254740989 in arrayLike, false, "Property at index 2**53-3");
-assert.sameValue(arrayLike[9007199254740990], "zero", "Property at index 2**53-2");
+assert.sameValue(9007199254740987 in arrayLike, false, 'The result of evaluating (9007199254740987 in arrayLike) is expected to be false');
+assert.sameValue(arrayLike[9007199254740988], "two", 'The value of arrayLike[9007199254740988] is expected to be "two"');
+assert.sameValue(9007199254740989 in arrayLike, false, 'The result of evaluating (9007199254740989 in arrayLike) is expected to be false');
+assert.sameValue(arrayLike[9007199254740990], "zero", 'The value of arrayLike[9007199254740990] is expected to be "zero"');

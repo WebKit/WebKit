@@ -31,6 +31,9 @@ result = Array.from.call(MyCollection, {
   length: 42
 });
 
-assert.sameValue(result.args.length, 1);
-assert.sameValue(result.args[0], 42);
-assert(result instanceof MyCollection);
+assert.sameValue(result.args.length, 1, 'The value of result.args.length is expected to be 1');
+assert.sameValue(result.args[0], 42, 'The value of result.args[0] is expected to be 42');
+assert(
+  result instanceof MyCollection,
+  'The result of evaluating (result instanceof MyCollection) is expected to be true'
+);

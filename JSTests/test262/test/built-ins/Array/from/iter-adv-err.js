@@ -25,4 +25,4 @@ items[Symbol.iterator] = function() {
 
 assert.throws(Test262Error, function() {
   Array.from(items);
-});
+}, 'Array.from(items) throws a Test262Error exception');

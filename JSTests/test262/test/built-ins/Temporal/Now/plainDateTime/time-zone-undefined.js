@@ -19,11 +19,17 @@ Object.defineProperty(Temporal.TimeZone, "from", {
 });
 
 const resultExplicit = Temporal.Now.plainDateTime("iso8601", undefined);
-assert(resultExplicit instanceof Temporal.PlainDateTime);
+assert(
+  resultExplicit instanceof Temporal.PlainDateTime,
+  'The result of evaluating (resultExplicit instanceof Temporal.PlainDateTime) is expected to be true'
+);
 
-assert.compareArray(actual, expected, "Temporal.TimeZone.from should not be called");
+assert.compareArray(actual, expected, 'The value of actual is expected to equal the value of expected');
 
 const resultImplicit = Temporal.Now.plainDateTime("iso8601");
-assert(resultImplicit instanceof Temporal.PlainDateTime);
+assert(
+  resultImplicit instanceof Temporal.PlainDateTime,
+  'The result of evaluating (resultImplicit instanceof Temporal.PlainDateTime) is expected to be true'
+);
 
-assert.compareArray(actual, expected, "Temporal.TimeZone.from should not be called");
+assert.compareArray(actual, expected, 'The value of actual is expected to equal the value of expected');

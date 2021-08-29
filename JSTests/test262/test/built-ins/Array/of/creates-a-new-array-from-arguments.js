@@ -25,21 +25,21 @@ info: |
 var a1 = Array.of('Mike', 'Rick', 'Leo');
 assert.sameValue(
   a1.length, 3,
-  'The new array length is the same as the arguments size'
+  'The value of a1.length is expected to be 3'
 );
-assert.sameValue(a1[0], 'Mike', 'set each property in order - #1');
-assert.sameValue(a1[1], 'Rick', 'set each property in order - #2');
-assert.sameValue(a1[2], 'Leo', 'set each property in order - #3');
+assert.sameValue(a1[0], 'Mike', 'The value of a1[0] is expected to be "Mike"');
+assert.sameValue(a1[1], 'Rick', 'The value of a1[1] is expected to be "Rick"');
+assert.sameValue(a1[2], 'Leo', 'The value of a1[2] is expected to be "Leo"');
 
 var a2 = Array.of(undefined, false, null, undefined);
 assert.sameValue(
   a2.length, 4,
-  'Creates an array from the arguments, regarless of their type values'
+  'The value of a2.length is expected to be 4'
 );
-assert.sameValue(a2[0], undefined, 'set each property in order - #1');
-assert.sameValue(a2[1], false, 'set each property in order - #2');
-assert.sameValue(a2[2], null, 'set each property in order - #3');
-assert.sameValue(a2[3], undefined, 'set each property in order - #4');
+assert.sameValue(a2[0], undefined, 'The value of a2[0] is expected to equal undefined');
+assert.sameValue(a2[1], false, 'The value of a2[1] is expected to be false');
+assert.sameValue(a2[2], null, 'The value of a2[2] is expected to be null');
+assert.sameValue(a2[3], undefined, 'The value of a2[3] is expected to equal undefined');
 
 var a3 = Array.of();
-assert.sameValue(a3.length, 0, 'Array.of() returns an empty array');
+assert.sameValue(a3.length, 0, 'The value of a3.length is expected to be 0');

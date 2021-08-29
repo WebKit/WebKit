@@ -12,18 +12,15 @@ description: abs(end) > length > start > 0, end < 0
 var x = [0, 1, 2, 3, 4];
 var arr = x.slice(4, -9);
 
-//CHECK#1
 arr.getClass = Object.prototype.toString;
 if (arr.getClass() !== "[object " + "Array" + "]") {
   throw new Test262Error('#1: var x = [0,1,2,3,4]; var arr = x.slice(4,-9); arr is Array object. Actual: ' + (arr.getClass()));
 }
 
-//CHECK#2
 if (arr.length !== 0) {
   throw new Test262Error('#2: var x = [0,1,2,3,4]; var arr = x.slice(4,-9); arr.length === 0. Actual: ' + (arr.length));
 }
 
-//CHECK#3
 if (arr[0] !== undefined) {
   throw new Test262Error('#3: var x = [0,1,2,3,4]; var arr = x.slice(4,-9); arr[0] === undefined. Actual: ' + (arr[0]));
 }

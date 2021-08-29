@@ -43,7 +43,15 @@ try {
   Array.prototype.reduceRight.call(arrayLike, accumulator, []);
   throw new Test262Error("should not be called");
 } catch (acc) {
-  assert.sameValue(acc.length, 2);
-  assert.compareArray(acc[0], [1, Number.MAX_SAFE_INTEGER - 1]);
-  assert.compareArray(acc[1], [3, Number.MAX_SAFE_INTEGER - 3]);
+  assert.sameValue(acc.length, 2, 'The value of acc.length is expected to be 2');
+  assert.compareArray(
+    acc[0],
+    [1, Number.MAX_SAFE_INTEGER - 1],
+    'The value of acc[0] is expected to be [1, Number.MAX_SAFE_INTEGER - 1]'
+  );
+  assert.compareArray(
+    acc[1],
+    [3, Number.MAX_SAFE_INTEGER - 3],
+    'The value of acc[1] is expected to be [3, Number.MAX_SAFE_INTEGER - 3]'
+  );
 }

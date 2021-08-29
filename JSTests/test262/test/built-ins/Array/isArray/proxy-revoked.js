@@ -25,4 +25,4 @@ handle.revoke();
 
 assert.throws(TypeError, function() {
   Array.isArray(handle.proxy);
-});
+}, 'Array.isArray(handle.proxy) throws a TypeError exception');

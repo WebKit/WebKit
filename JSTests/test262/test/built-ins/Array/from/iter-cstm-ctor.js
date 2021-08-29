@@ -36,13 +36,13 @@ items[Symbol.iterator] = function() {
 result = Array.from.call(C, items);
 
 assert(
-  result instanceof C, 'Constructed value is an instance of the constructor'
+  result instanceof C, 'The result of evaluating (result instanceof C) is expected to be true'
 );
 assert.sameValue(
   result.constructor,
   C,
-  'Constructed value correctly defines a `constructor` property'
+  'The value of result.constructor is expected to equal the value of C'
 );
-assert.sameValue(callCount, 1, 'Constructor invoked exactly once');
-assert.sameValue(thisVal, result, 'Constructed value is returned');
-assert.sameValue(args.length, 0, 'Constructor invoked without arguments');
+assert.sameValue(callCount, 1, 'The value of callCount is expected to be 1');
+assert.sameValue(thisVal, result, 'The value of thisVal is expected to equal the value of result');
+assert.sameValue(args.length, 0, 'The value of args.length is expected to be 0');

@@ -9,7 +9,6 @@ es5id: 15.4_A1.1_T10
 description: Array index is power of two
 ---*/
 
-//CHECK#
 var x = [];
 var k = 1;
 for (var i = 0; i < 32; i++) {
@@ -20,7 +19,5 @@ for (var i = 0; i < 32; i++) {
 k = 1;
 for (i = 0; i < 32; i++) {
   k = k * 2;
-  if (x[k - 2] !== k) {
-    throw new Test262Error('#' + (k - 2) + ': ');
-  }
+  assert.sameValue(x[k - 2], k, 'The value of x[k - 2] is expected to equal the value of k');
 }

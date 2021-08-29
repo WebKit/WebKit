@@ -18,29 +18,27 @@ includes: [compareArray.js]
 
 // make a long integer Array
 function longDenseArray(){
-	var a = [0];
-	for(var i = 0; i < 1024; i++){
-		a[i] = i;
-	}
-	return a;
+    var a = [0];
+    for(var i = 0; i < 1024; i++){
+        a[i] = i;
+    }
+    return a;
 }
 
 function shorten(){
-	currArray.length = 20;
-	return 1;
+    currArray.length = 20;
+    return 1;
 }
 
 var array = longDenseArray();
 array.length = 20;
 for(var i = 0; i < 19; i++){
-	array[i+1000] = array[i+1];
+    array[i+1000] = array[i+1];
 }
 
 var currArray = longDenseArray();
 
-assert(
-  compareArray(
-    currArray.copyWithin(1000, {valueOf: shorten}), array
-  ),
-  'coercion side-effect makes target out of bounds'
+assert.compareArray(
+  currArray.copyWithin(1000, {valueOf: shorten}), array,
+  'currArray.copyWithin(1000, {valueOf: shorten}) returns array'
 );

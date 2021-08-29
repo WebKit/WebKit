@@ -36,19 +36,19 @@ var arrayLike = {
 var result = Array.prototype.splice.call(arrayLike, 9007199254740989, 2 ** 53 + 4);
 
 assert.compareArray(result, ["9007199254740989", "9007199254740990"],
-  "arrayLike['9007199254740989'] and arrayLike['9007199254740990'] are removed");
+  'The value of result is expected to be ["9007199254740989", "9007199254740990"]');
 
 assert.sameValue(arrayLike.length, 2 ** 53 - 3,
-  "New length is 2**53 - 3");
+  'The value of arrayLike.length is expected to be 2 ** 53 - 3');
 
 assert.sameValue(arrayLike["9007199254740988"], "9007199254740988",
-  "arrayLike['9007199254740988'] is unchanged");
+  'The value of arrayLike["9007199254740988"] is expected to be "9007199254740988"');
 
 assert.sameValue("9007199254740989" in arrayLike, false,
-  "arrayLike['9007199254740989'] is removed");
+  'The result of evaluating ("9007199254740989" in arrayLike) is expected to be false');
 
 assert.sameValue("9007199254740990" in arrayLike, false,
-  "arrayLike['9007199254740990'] is removed");
+  'The result of evaluating ("9007199254740990" in arrayLike) is expected to be false');
 
 assert.sameValue(arrayLike["9007199254740991"], "9007199254740991",
-  "arrayLike['9007199254740991'] is unchanged");
+  'The value of arrayLike["9007199254740991"] is expected to be "9007199254740991"');

@@ -13,4 +13,4 @@ Con.prototype = proto;
 
 var child = new Con();
 
-assert.sameValue(Array.isArray(child), false, 'Array.isArray(child)');
+assert.sameValue(Array.isArray(child), false, 'Array.isArray(new Con()) must return false');

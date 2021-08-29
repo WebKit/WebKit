@@ -14,4 +14,6 @@ var args = (function(a) {
 })(1, 2, 3);
 delete args[1];
 args[Symbol.isConcatSpreadable] = true;
-assert(compareArray([1, void 0, 3, 1, void 0, 3], [].concat(args, args)));
+assert.compareArray([1, void 0, 3, 1, void 0, 3], [].concat(args, args),
+  '[1, void 0, 3, 1, void 0, 3] must return the same value returned by [].concat(args, args)'
+);

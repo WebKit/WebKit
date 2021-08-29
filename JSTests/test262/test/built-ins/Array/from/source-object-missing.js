@@ -16,7 +16,7 @@ var obj = {
 };
 
 var a = Array.from.call(Object, obj);
-assert.sameValue(typeof a, "object", "The returned type is expected to be object.");
+assert.sameValue(typeof a, "object", 'The value of `typeof a` is expected to be "object"');
 for (var j = 0; j < a.length; j++) {
-  assert.sameValue(a[j], array[j], "Elements mismatch at " + j + ".");
+  assert.sameValue(a[j], array[j], 'The value of a[j] is expected to equal the value of array[j]');
 }

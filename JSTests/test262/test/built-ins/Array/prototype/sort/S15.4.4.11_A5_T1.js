@@ -7,16 +7,10 @@ esid: sec-array.prototype.sort
 description: comparefn function throw "error"
 ---*/
 
-//CHECK#1
-var myComparefn = function(x, y) {
-  throw "error";
-}
-var x = [1, 0];
-try {
-  x.sort(myComparefn)
-  throw new Test262Error('#1.1: Array.sort should not eat exceptions');
-} catch (e) {
-  if (e !== "error") {
-    throw new Test262Error('#1.2: Array.sort should not eat exceptions');
+assert.throws(Test262Error, () => {
+  var myComparefn = function(x, y) {
+    throw new Test262Error();
   }
-}
+  var x = [1, 0];
+  x.sort(myComparefn);
+});

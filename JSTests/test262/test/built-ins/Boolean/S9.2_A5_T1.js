@@ -8,8 +8,4 @@ info: |
 esid: sec-toboolean
 description: "\"\" is converted to Boolean by explicit transformation"
 ---*/
-
-// CHECK#1
-if (Boolean("") !== false) {
-  throw new Test262Error('#1: Boolean("") === false. Actual: ' + (Boolean("")));
-}
+assert.sameValue(Boolean(""), false, 'Boolean("") must return false');

@@ -10,7 +10,6 @@ es5id: 15.4.4.2_A1_T3
 description: Operator use ToString from array arguments
 ---*/
 
-//CHECK#0
 var x = new Array("", "", "");
 if (x.toString() !== x.join()) {
   throw new Test262Error('#0.1: var x = new Array("","",""); x.toString() === x.join(). Actual: ' + (x.toString()));
@@ -20,7 +19,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#1
 var x = new Array("\\", "\\", "\\");
 if (x.toString() !== x.join()) {
   throw new Test262Error('#1.1: var x = new Array("\\","\\","\\"); x.toString() === x.join(). Actual: ' + (x.toString()));
@@ -30,7 +28,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#2
 var x = new Array("&", "&", "&");
 if (x.toString() !== x.join()) {
   throw new Test262Error('#2.1: var x = new Array("&", "&", "&"); x.toString() === x.join(). Actual: ' + (x.toString()));
@@ -40,7 +37,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#3
 var x = new Array(true, true, true);
 if (x.toString() !== x.join()) {
   throw new Test262Error('#3.1: var x = new Array(true,true,true); x.toString(true,true,true) === x.join(). Actual: ' + (x.toString(true, true, true)));
@@ -50,7 +46,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#4
 var x = new Array(null, null, null);
 if (x.toString() !== x.join()) {
   throw new Test262Error('#4.1: var x = new Array(null,null,null); x.toString(null,null,null) === x.join(). Actual: ' + (x.toString(null, null, null)));
@@ -60,7 +55,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#5
 var x = new Array(undefined, undefined, undefined);
 if (x.toString() !== x.join()) {
   throw new Test262Error('#5.1: var x = new Array(undefined,undefined,undefined); x.toString(undefined,undefined,undefined) === x.join(). Actual: ' + (x.toString(undefined, undefined, undefined)));
@@ -70,7 +64,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#6
 var x = new Array(Infinity, Infinity, Infinity);
 if (x.toString() !== x.join()) {
   throw new Test262Error('#6.1: var x = new Array(Infinity,Infinity,Infinity); x.toString(Infinity,Infinity,Infinity) === x.join(). Actual: ' + (x.toString(Infinity, Infinity, Infinity)));
@@ -80,7 +73,6 @@ if (x.toString() !== x.join()) {
   }
 }
 
-//CHECK#7
 var x = new Array(NaN, NaN, NaN);
 if (x.toString() !== x.join()) {
   throw new Test262Error('#7.1: var x = new Array(NaN,NaN,NaN); x.toString(NaN,NaN,NaN) === x.join(). Actual: ' + (x.toString(NaN, NaN, NaN)));

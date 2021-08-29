@@ -32,5 +32,5 @@ const tier1 = new Proxy([2, [3, [4, 2], 2], 5, tier2, 6], handler);
 
 Array.prototype.flat.call(tier1, 3);
 
-assert.compareArray(getCalls, ["length", "constructor", "0", "1", "2", "3", "length", "0", "1", "4"], 'getProperty by .flat should occur exactly once per property and once for length and constructor');
-assert.compareArray(hasCalls, ["0", "1", "2", "3", "0", "1", "4"], 'hasProperty by .flat should occur exactly once per property');
+assert.compareArray(getCalls, ["length", "constructor", "0", "1", "2", "3", "length", "0", "1", "4"], 'The value of getCalls is expected to be ["length", "constructor", "0", "1", "2", "3", "length", "0", "1", "4"]');
+assert.compareArray(hasCalls, ["0", "1", "2", "3", "0", "1", "4"], 'The value of hasCalls is expected to be ["0", "1", "2", "3", "0", "1", "4"]');

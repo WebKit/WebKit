@@ -9,4 +9,4 @@ features: [Array.prototype.flat]
 ---*/
 
 var a = [1, [2, [3, [4]]]]
-assert(compareArray(a.flat(Number.POSITIVE_INFINITY), [1, 2, 3, 4]), 'positive infinity depthNum');
+assert.compareArray(a.flat(Number.POSITIVE_INFINITY), [1, 2, 3, 4], 'a.flat(Number.POSITIVE_INFINITY) must return [1, 2, 3, 4]');

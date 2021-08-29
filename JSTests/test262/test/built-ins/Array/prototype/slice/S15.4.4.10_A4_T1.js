@@ -12,17 +12,14 @@ var x = [0];
 x.length = 2;
 var arr = x.slice();
 
-//CHECK#1
 if (arr[0] !== 0) {
   throw new Test262Error('#1: Array.prototype[1] = 1; x = [0]; x.length = 2; var arr = x.slice(); arr[0] === 0. Actual: ' + (arr[0]));
 }
 
-//CHECK#2
 if (arr[1] !== 1) {
   throw new Test262Error('#2: Array.prototype[1] = 1; x = [0]; x.length = 2; var arr = x.slice(); arr[1] === 1. Actual: ' + (arr[1]));
 }
 
-//CHECK#3
 if (arr.hasOwnProperty('1') !== true) {
   throw new Test262Error('#3: Array.prototype[1] = 1; x = [0]; x.length = 2; var arr = x.slice(); arr.hasOwnProperty(\'1\') === true. Actual: ' + (arr.hasOwnProperty('1')));
 }

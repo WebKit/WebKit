@@ -15,20 +15,9 @@ var x = [0];
 x.length = 2;
 var arr = x.concat();
 
-//CHECK#1
-if (arr[0] !== 0) {
-  throw new Test262Error('#1: Array.prototype[1] = 1; x = [0]; x.length = 2; var arr = x.concat(); arr[0] === 0. Actual: ' + (arr[0]));
-}
-
-//CHECK#2
-if (arr[1] !== 1) {
-  throw new Test262Error('#2: Array.prototype[1] = 1; x = [0]; x.length = 2; var arr = x.concat(); arr[1] === 1. Actual: ' + (arr[1]));
-}
-
-//CHECK#3
-if (arr.hasOwnProperty('1') !== true) {
-  throw new Test262Error('#3: Array.prototype[1] = 1; x = [0]; x.length = 2; var arr = x.concat(); arr.hasOwnProperty(\'1\') === true. Actual: ' + (arr.hasOwnProperty('1')));
-}
+assert.sameValue(arr[0], 0, 'The value of arr[0] is expected to be 0');
+assert.sameValue(arr[1], 1, 'The value of arr[1] is expected to be 1');
+assert.sameValue(arr.hasOwnProperty('1'), true, 'arr.hasOwnProperty("1") must return true');
 
 Object.prototype[1] = 1;
 Object.prototype.length = 2;
@@ -38,17 +27,6 @@ x = {
 };
 var arr = x.concat();
 
-//CHECK#4
-if (arr[0] !== x) {
-  throw new Test262Error('#4: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.concat = Array.prototype.concat; x = {0:0}; var arr = x.concat(); arr[0] === x. Actual: ' + (arr[0]));
-}
-
-//CHECK#5
-if (arr[1] !== 1) {
-  throw new Test262Error('#5: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.concat = Array.prototype.concat; x = {0:0}; var arr = x.concat(); arr[1] === 1. Actual: ' + (arr[1]));
-}
-
-//CHECK#6
-if (arr.hasOwnProperty('1') !== false) {
-  throw new Test262Error('#6: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.concat = Array.prototype.concat; x = {0:0}; var arr = x.concat(); arr.hasOwnProperty(\'1\') === false. Actual: ' + (arr.hasOwnProperty('1')));
-}
+assert.sameValue(arr[0], x, 'The value of arr[0] is expected to equal the value of x');
+assert.sameValue(arr[1], 1, 'The value of arr[1] is expected to be 1');
+assert.sameValue(arr.hasOwnProperty('1'), false, 'arr.hasOwnProperty("1") must return false');

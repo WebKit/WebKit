@@ -9,7 +9,4 @@ description: Checking if Math.floor(x) is -Infinity, where x is -Infinity
 
 // CHECK#1
 var x = -Infinity;
-if (Math.floor(x) !== -Infinity)
-{
-  throw new Test262Error("#1: 'var x = -Infinity; Math.floor(x) !== -Infinity'");
-}
+assert.sameValue(Math.floor(x), -Infinity, 'Math.floor(-Infinity) must return -Infinity');

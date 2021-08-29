@@ -11,21 +11,11 @@ description: >
     is an array index
 ---*/
 
-//CHECK#1
 var x = [];
 x.length = 1;
-if (x.length !== 1) {
-  throw new Test262Error('#1: x = []; x.length = 1; x.length === 1. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
 
-//CHECK#2
 x[5] = 1;
 x.length = 10;
-if (x.length !== 10) {
-  throw new Test262Error('#2: x = []; x.length = 1; x[5] = 1; x.length = 10; x.length === 10. Actual: ' + (x.length));
-}
-
-//CHECK#3
-if (x[5] !== 1) {
-  throw new Test262Error('#3: x = []; x.length = 1; x[5] = 1; x.length = 10; x[5] = 1');
-}
+assert.sameValue(x.length, 10, 'The value of x.length is expected to be 10');
+assert.sameValue(x[5], 1, 'The value of x[5] is expected to be 1');

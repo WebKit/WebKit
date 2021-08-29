@@ -50,8 +50,8 @@ var obj3 = {
 
 var arr = [obj1, obj2, obj3];
 var actual = arr.flatMap(fn);
-assert.compareArray(actual, arr, 'returns a similar array');
-assert.notSameValue(actual, arr, 'not the same array');
+assert.compareArray(actual, arr, 'The value of actual is expected to equal the value of arr');
+assert.notSameValue(actual, arr, 'The value of actual is expected to not equal the value of `arr`');
 
 var arrLike = {
   length: 4,
@@ -63,6 +63,10 @@ var arrLike = {
 };
 
 actual = [].flatMap.call(arrLike, fn);
-assert.compareArray(actual, [obj1, obj2, obj3, arrLike], 'returns a similar array');
-assert.notSameValue(actual, arrLike, 'not the same object');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype);
+assert.compareArray(actual, [obj1, obj2, obj3, arrLike], 'The value of actual is expected to be [obj1, obj2, obj3, arrLike]');
+assert.notSameValue(actual, arrLike, 'The value of actual is expected to not equal the value of `arrLike`');
+assert.sameValue(
+  Object.getPrototypeOf(actual),
+  Array.prototype,
+  'Object.getPrototypeOf([].flatMap.call(arrLike, fn)") returns Array.prototype'
+);

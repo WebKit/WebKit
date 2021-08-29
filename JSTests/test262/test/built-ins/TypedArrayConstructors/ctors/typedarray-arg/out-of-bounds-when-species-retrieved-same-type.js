@@ -57,13 +57,22 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(compareArray(new TA(source), expected), 'following shrink (within bounds)');
 
+  onGetSpecies = function() {
+    try {
+      ab.resize(BPE);
+      expected = [];
+    } catch (_) {}
+  };
+
+  assert(compareArray(new TA(source), expected), 'following shrink (on boundary)');
+
   // `assert.throws` cannot be used in this case because the expected error
   // is derived only after the constructor is invoked.
   var expectedError;
   var actualError;
   onGetSpecies = function() {
     try {
-      ab.resize(BPE);
+      ab.resize(0);
       expectedError = TypeError;
     } catch (_) {
       expectedError = Test262Error;

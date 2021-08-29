@@ -6,13 +6,5 @@ info: Result of boolean conversion from boolean value is no conversion
 esid: sec-toboolean
 description: true and false convert to Boolean by explicit transformation
 ---*/
-
-// CHECK#1
-if (Boolean(true) !== true) {
-  throw new Test262Error('#1: Boolean(true) === true. Actual: ' + (Boolean(true)));
-}
-
-// CHECK#2
-if (Boolean(false) !== false) {
-  throw new Test262Error('#2: Boolean(false) === false. Actual: ' + (Boolean(false)));
-}
+assert.sameValue(Boolean(true), true, 'Boolean(true) must return true');
+assert.sameValue(Boolean(false), false, 'Boolean(false) must return false');

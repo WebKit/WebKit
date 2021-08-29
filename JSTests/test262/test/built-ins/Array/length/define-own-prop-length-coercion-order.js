@@ -47,12 +47,15 @@ var length = {
 
 assert.throws(TypeError, function() {
   Object.defineProperty(array, "length", {value: length, writable: true});
-});
-assert.sameValue(valueOfCalls, 2);
+}, 'Object.defineProperty(array, "length", {value: length, writable: true}) throws a TypeError exception');
+assert.sameValue(valueOfCalls, 2, 'The value of valueOfCalls is expected to be 2');
 
 
 array = [1, 2];
 valueOfCalls = 0;
 
-assert(!Reflect.defineProperty(array, "length", {value: length, writable: true}));
-assert.sameValue(valueOfCalls, 2);
+assert(
+  !Reflect.defineProperty(array, "length", {value: length, writable: true}),
+  'The value of !Reflect.defineProperty(array, "length", {value: length, writable: true}) is expected to be true'
+);
+assert.sameValue(valueOfCalls, 2, 'The value of valueOfCalls is expected to be 2');

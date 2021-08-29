@@ -61,6 +61,10 @@ items[Symbol.iterator] = function() {
 
 result = Array.from(items, mapFn);
 
-assert.sameValue(result.length, 2);
-assert.sameValue(result[0], firstReturnVal);
-assert.sameValue(result[1], secondReturnVal);
+assert.sameValue(result.length, 2, 'The value of result.length is expected to be 2');
+assert.sameValue(result[0], firstReturnVal, 'The value of result[0] is expected to equal the value of firstReturnVal');
+assert.sameValue(
+  result[1],
+  secondReturnVal,
+  'The value of result[1] is expected to equal the value of secondReturnVal'
+);

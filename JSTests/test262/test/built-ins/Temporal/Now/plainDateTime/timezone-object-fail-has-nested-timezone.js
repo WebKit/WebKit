@@ -3,7 +3,7 @@
 /*---
 esid: sec-temporal.now.plaindatetime
 description: Forwards error thrown by checking presence of nested "timeZone" property
-features: [Temporal]
+features: [Proxy, Temporal]
 ---*/
 
 var timeZone = {
@@ -18,4 +18,4 @@ var timeZone = {
 
 assert.throws(Test262Error, function() {
   Temporal.Now.plainDateTime("iso8601", timeZone);
-});
+}, 'Temporal.Now.plainDateTime("iso8601", timeZone) throws a Test262Error exception');

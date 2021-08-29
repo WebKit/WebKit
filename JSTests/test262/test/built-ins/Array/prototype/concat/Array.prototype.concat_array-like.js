@@ -31,4 +31,4 @@ var expected = [
 ];
 var actual = Array.prototype.concat.call(obj, obj2, arr);
 
-assert(compareArray(actual, expected));
+assert.compareArray(actual, expected, 'The value of actual is expected to equal the value of expected');

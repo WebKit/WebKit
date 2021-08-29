@@ -22,7 +22,7 @@ includes: [propertyHelper.js]
 assert.sameValue(
   Array.from.name,
   'from',
-  'The value of `Array.from.name` is `"from"`'
+  'The value of Array.from.name is expected to be "from"'
 );
 
 verifyNotEnumerable(Array.from, 'name');

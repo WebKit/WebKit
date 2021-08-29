@@ -13,12 +13,10 @@ obj[4294967294] = "x";
 obj.length = -1;
 var arr = obj.slice(4294967294, 4294967295);
 
-//CHECK#1
 if (arr.length !== 0) {
   throw new Test262Error('#1: var obj = {}; obj.slice = Array.prototype.slice; obj[4294967294] = "x"; obj.length = 4294967295; var arr = obj.slice(4294967294,4294967295); arr.length === 0. Actual: ' + (arr.length));
 }
 
-//CHECK#3
 if (arr[0] !== undefined) {
   throw new Test262Error('#3: var obj = {}; obj.slice = Array.prototype.slice; obj[4294967294] = "x"; obj.length = 4294967295; var arr = obj.slice(4294967294,4294967295); arr[0] === undefined. Actual: ' + (arr[0]));
 }

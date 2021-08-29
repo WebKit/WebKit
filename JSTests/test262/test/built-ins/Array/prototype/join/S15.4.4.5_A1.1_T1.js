@@ -7,13 +7,11 @@ esid: sec-array.prototype.join
 description: Checking this use new Array() and []
 ---*/
 
-//CHECK#1
 var x = new Array();
 if (x.join() !== "") {
   throw new Test262Error('#1: x = new Array(); x.join() === "". Actual: ' + (x.join()));
 }
 
-//CHECK#2
 x = [];
 x[0] = 1;
 x.length = 0;

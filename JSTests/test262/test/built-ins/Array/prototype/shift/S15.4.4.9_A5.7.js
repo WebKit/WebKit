@@ -9,13 +9,6 @@ description: >
     throw a TypeError exception
 ---*/
 
-//CHECK#1
-
-try {
+assert.throws(TypeError, () => {
   new Array.prototype.shift();
-  throw new Test262Error('#1.1: new Array.prototype.shift() throw TypeError. Actual: ' + (new Array.prototype.shift()));
-} catch (e) {
-  if ((e instanceof TypeError) !== true) {
-    throw new Test262Error('#1.2: new Array.prototype.shift() throw TypeError. Actual: ' + (e));
-  }
-}
+});

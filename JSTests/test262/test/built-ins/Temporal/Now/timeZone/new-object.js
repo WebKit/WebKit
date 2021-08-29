@@ -10,4 +10,4 @@ features: [Temporal]
 const tz = Temporal.Now.timeZone;
 const tz1 = tz();
 const tz2 = tz();
-assert.notSameValue(tz1, tz2);
+assert.notSameValue(tz1, tz2, 'The value of tz1 is expected to not equal the value of `tz2`');

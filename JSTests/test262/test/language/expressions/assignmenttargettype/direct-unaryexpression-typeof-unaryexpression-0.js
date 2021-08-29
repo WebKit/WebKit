@@ -17,7 +17,4 @@ info: |
 
 $DONOTEVALUATE();
 
-function _() {
-  typeof x = 1;
-}
-
+typeof x = 1;

@@ -9,21 +9,12 @@ es5id: 15.4.5.1_A2.2_T1
 description: length === 100, P in [0, 98, 99]
 ---*/
 
-//CHECK#1
 var x = Array(100);
 x[0] = 1;
-if (x.length !== 100) {
-  throw new Test262Error('#1: x = Array(100); x[0] = 1; x.length === 100. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 100, 'The value of x.length is expected to be 100');
 
-//CHECK#2
 x[98] = 1;
-if (x.length !== 100) {
-  throw new Test262Error('#2: x = Array(100); x[0] = 1; x[98] = 1; x.length === 100. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 100, 'The value of x.length is expected to be 100');
 
-//CHECK#3
 x[99] = 1;
-if (x.length !== 100) {
-  throw new Test262Error('#3: x = Array(100); x[0] = 1; x[98] = 1; x[99] = 1; x.length === 100. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 100, 'The value of x.length is expected to be 100');

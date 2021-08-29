@@ -21,7 +21,6 @@ var obj = {
 var alphabetR = [undefined, 2, 1, "X", -1, "a", true, obj, NaN, Infinity];
 var alphabet = [-1, obj, 1, 2, Infinity, NaN, "X", "a", true, undefined];
 
-//CHECK#1
 alphabetR.sort();
 var result = true;
 for (var i = 0; i < 10; i++) {

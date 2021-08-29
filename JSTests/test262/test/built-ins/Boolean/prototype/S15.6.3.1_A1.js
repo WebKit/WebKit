@@ -9,18 +9,18 @@ esid: sec-boolean.prototype
 description: Checking Boolean.prototype property
 ---*/
 
-//CHECK#1
-if (typeof Boolean.prototype !== "object") {
-  throw new Test262Error('#1: typeof Boolean.prototype === "object"');
-}
+assert.sameValue(
+  typeof Boolean.prototype,
+  "object",
+  'The value of `typeof Boolean.prototype` is expected to be "object"'
+);
 
-//CHECK#2
-if (Boolean.prototype != false) {
-  throw new Test262Error('#2: Boolean.prototype == false');
-}
+assert(Boolean.prototype == false, 'The value of Boolean.prototype is expected to be false');
 
 delete Boolean.prototype.toString;
 
-if (Boolean.prototype.toString() !== "[object Boolean]") {
-  throw new Test262Error('#3: The [[Class]] property of the Boolean prototype object is set to "Boolean"');
-}
+assert.sameValue(
+  Boolean.prototype.toString(),
+  "[object Boolean]",
+  'Boolean.prototype.toString() must return "[object Boolean]"'
+);

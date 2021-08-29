@@ -11,6 +11,4 @@ includes: [propertyHelper.js]
 // CHECK#1
 var x = Boolean.prototype;
 verifyNotWritable(Boolean, "prototype", null, 1);
-if (Boolean.prototype !== x) {
-  throw new Test262Error('#1: Boolean.prototype has the attribute ReadOnly');
-}
+assert.sameValue(Boolean.prototype, x, 'The value of Boolean.prototype is expected to equal the value of x');

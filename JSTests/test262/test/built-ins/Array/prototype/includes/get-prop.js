@@ -32,12 +32,15 @@ var p = new Proxy(obj, {
 });
 
 calls = [];
-assert.sameValue([].includes.call(p, 42), false);
-assert(
-  compareArray(calls, ["length", "0", "1", "2", "3"]),
-  "loops through all indexes"
+assert.sameValue(
+  [].includes.call(p, 42),
+  false,
+  '[].includes.call("new Proxy(obj, {get: function(_, key) {calls.push(key); if (key === "length") {return 4;} return key * 10;}})", 42) must return false'
+);
+assert.compareArray(calls, ["length", "0", "1", "2", "3"],
+  'The value of calls is expected to be ["length", "0", "1", "2", "3"]'
 );
 
 calls = [];
-assert.sameValue([].includes.call(p, 10), true, "uses the returned value");
-assert(compareArray(calls, ["length", "0", "1"]), "loops until value is found");
+assert.sameValue([].includes.call(p, 10), true, '[].includes.call("new Proxy(obj, {get: function(_, key) {calls.push(key); if (key === "length") {return 4;} return key * 10;}})", 10) must return true');
+assert.compareArray(calls, ["length", "0", "1"], 'The value of calls is expected to be ["length", "0", "1"]');

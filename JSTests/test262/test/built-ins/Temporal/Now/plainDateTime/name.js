@@ -7,7 +7,11 @@ includes: [propertyHelper.js]
 features: [Temporal]
 ---*/
 
-assert.sameValue(Temporal.Now.plainDateTime.name, 'plainDateTime');
+assert.sameValue(
+  Temporal.Now.plainDateTime.name,
+  'plainDateTime',
+  'The value of Temporal.Now.plainDateTime.name is expected to be "plainDateTime"'
+);
 
 verifyProperty(Temporal.Now.plainDateTime, 'name', {
   enumerable: false,

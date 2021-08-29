@@ -8,13 +8,5 @@ info: |
 esid: sec-toboolean
 description: Any nonempty string convert to Boolean by explicit transformation
 ---*/
-
-// CHECK#1
-if (Boolean(" ") !== true) {
-  throw new Test262Error('#1: Boolean(" ") === true. Actual: ' + (Boolean(" ")));
-}
-
-// CHECK#2
-if (Boolean("Nonempty String") !== true) {
-  throw new Test262Error('#2: Boolean("Nonempty String") === true. Actual: ' + (Boolean("Nonempty String")));
-}
+assert.sameValue(Boolean(" "), true, 'Boolean(" ") must return true');
+assert.sameValue(Boolean("Nonempty String"), true, 'Boolean("Nonempty String") must return true');

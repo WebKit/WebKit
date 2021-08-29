@@ -12,18 +12,15 @@ obj.pop = Array.prototype.pop;
 obj[4294967294] = "x";
 obj.length = -1;
 
-//CHECK#1
 var pop = obj.pop();
 if (pop !== undefined) {
   throw new Test262Error('#1: var obj = {}; obj.pop = Array.prototype.pop; obj[4294967294] = "x"; obj.length = -1; obj.pop() === undefined. Actual: ' + (pop));
 }
 
-//CHECK#2
 if (obj.length !== 0) {
   throw new Test262Error('#2: var obj = {}; obj.pop = Array.prototype.pop; obj[4294967294] = "x"; obj.length = -1; obj.pop(); obj.length === 0. Actual: ' + (obj.length));
 }
 
-//CHECK#3
 if (obj[4294967294] !== "x") {
   throw new Test262Error('#3: var obj = {}; obj.pop = Array.prototype.pop; obj[4294967294] = "x"; obj.length = -1; obj.pop(); obj[4294967294] === "x". Actual: ' + (obj[4294967294]));
 }

@@ -8,18 +8,14 @@ es5id: 15.4.5.1_A1.3_T2
 description: Uint32 use ToNumber and ToPrimitve
 ---*/
 
-//CHECK#1
 var x = [];
 x.length = {
   valueOf: function() {
     return 2
   }
 };
-if (x.length !== 2) {
-  throw new Test262Error('#1: x = []; x.length = {valueOf: function() {return 2}};  x.length === 2. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 2, 'The value of x.length is expected to be 2');
 
-//CHECK#2
 x = [];
 x.length = {
   valueOf: function() {
@@ -29,11 +25,8 @@ x.length = {
     return 1
   }
 };
-if (x.length !== 2) {
-  throw new Test262Error('#0: x = []; x.length = {valueOf: function() {return 2}, toString: function() {return 1}};  x.length === 2. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 2, 'The value of x.length is expected to be 2');
 
-//CHECK#3
 x = [];
 x.length = {
   valueOf: function() {
@@ -43,11 +36,8 @@ x.length = {
     return {}
   }
 };
-if (x.length !== 2) {
-  throw new Test262Error('#3: x = []; x.length = {valueOf: function() {return 2}, toString: function() {return {}}};  x.length === 2. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 2, 'The value of x.length is expected to be 2');
 
-//CHECK#4
 try {
   x = [];
   x.length = {
@@ -58,30 +48,20 @@ try {
       throw "error"
     }
   };
-  if (x.length !== 2) {
-    throw new Test262Error('#4.1: x = []; x.length = {valueOf: function() {return 2}, toString: function() {throw "error"}}; x.length === ",". Actual: ' + (x.length));
-  }
+  assert.sameValue(x.length, 2, 'The value of x.length is expected to be 2');
 }
 catch (e) {
-  if (e === "error") {
-    throw new Test262Error('#4.2: x = []; x.length = {valueOf: function() {return 2}, toString: function() {throw "error"}}; x.length not throw "error"');
-  } else {
-    throw new Test262Error('#4.3: x = []; x.length = {valueOf: function() {return 2}, toString: function() {throw "error"}}; x.length not throw Error. Actual: ' + (e));
-  }
+  assert.notSameValue(e, "error", 'The value of e is not "error"');
 }
 
-//CHECK#5
 x = [];
 x.length = {
   toString: function() {
     return 1
   }
 };
-if (x.length !== 1) {
-  throw new Test262Error('#5: x = []; x.length = {toString: function() {return 1}};  x.length === 1. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
 
-//CHECK#6
 x = [];
 x.length = {
   valueOf: function() {
@@ -91,11 +71,8 @@ x.length = {
     return 1
   }
 }
-if (x.length !== 1) {
-  throw new Test262Error('#6: x = []; x.length = {valueOf: function() {return {}}, toString: function() {return 1}};  x.length === 1. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
 
-//CHECK#7
 try {
   x = [];
   x.length = {
@@ -110,12 +87,9 @@ try {
   throw new Test262Error('#7.1: x = []; x.length = {valueOf: function() {throw "error"}, toString: function() {return 1}}; x.length throw "error". Actual: ' + (x.length));
 }
 catch (e) {
-  if (e !== "error") {
-    throw new Test262Error('#7.2: x = []; x.length = {valueOf: function() {throw "error"}, toString: function() {return 1}}; x.length throw "error". Actual: ' + (e));
-  }
+  assert.sameValue(e, "error", 'The value of e is expected to be "error"');
 }
 
-//CHECK#8
 try {
   x = [];
   x.length = {
@@ -130,7 +104,9 @@ try {
   throw new Test262Error('#8.1: x = []; x.length = {valueOf: function() {return {}}, toString: function() {return {}}}  x.length throw TypeError. Actual: ' + (x.length));
 }
 catch (e) {
-  if ((e instanceof TypeError) !== true) {
-    throw new Test262Error('#8.2: x = []; x.length = {valueOf: function() {return {}}, toString: function() {return {}}}  x.length throw TypeError. Actual: ' + (e));
-  }
+  assert.sameValue(
+    e instanceof TypeError,
+    true,
+    'The result of evaluating (e instanceof TypeError) is expected to be true'
+  );
 }

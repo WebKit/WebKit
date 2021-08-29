@@ -28,4 +28,4 @@ Object.defineProperty(a.constructor, Symbol.species, {
 
 assert.throws(Test262Error, function() {
   a.concat();
-});
+}, 'a.concat() throws a Test262Error exception');

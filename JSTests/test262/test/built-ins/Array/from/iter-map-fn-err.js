@@ -36,6 +36,6 @@ items[Symbol.iterator] = function() {
 
 assert.throws(Test262Error, function() {
   Array.from(items, mapFn);
-});
+}, 'Array.from(items, mapFn) throws a Test262Error exception');
 
-assert.sameValue(closeCount, 1);
+assert.sameValue(closeCount, 1, 'The value of closeCount is expected to be 1');

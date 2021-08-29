@@ -42,4 +42,4 @@ arr.constructor[Symbol.species] = A;
 
 assert.throws(TypeError, function() {
   arr.concat([1]);
-});
+}, 'arr.concat([1]) throws a TypeError exception');

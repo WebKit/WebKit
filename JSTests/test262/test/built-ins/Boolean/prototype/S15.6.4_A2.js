@@ -9,7 +9,7 @@ esid: sec-properties-of-the-boolean-prototype-object
 description: Checking Object.prototype.isPrototypeOf(Boolean.prototype)
 ---*/
 
-//CHECK#1
-if (!Object.prototype.isPrototypeOf(Boolean.prototype)) {
-  throw new Test262Error('#1: Object prototype object is the prototype of Boolean prototype object');
-}
+assert(
+  Object.prototype.isPrototypeOf(Boolean.prototype),
+  'Object.prototype.isPrototypeOf(Boolean.prototype) must return true'
+);

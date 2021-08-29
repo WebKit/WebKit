@@ -24,14 +24,14 @@ info: |
 features: [Symbol.isConcatSpreadable]
 ---*/
 
-var spreadable = {
+var spreadableHasPoisonedIndex = {
   length: Number.MAX_SAFE_INTEGER,
   get 0() {
     throw new Test262Error();
   },
 };
-spreadable[Symbol.isConcatSpreadable] = true;
+spreadableHasPoisonedIndex[Symbol.isConcatSpreadable] = true;
 
 assert.throws(Test262Error, function() {
-  [].concat(spreadable);
-});
+  [].concat(spreadableHasPoisonedIndex);
+}, '[].concat(spreadableHasPoisonedIndex) throws a Test262Error exception');

@@ -67,10 +67,10 @@ var target = new Proxy([], allowProxyTraps({
 assert.throws(StopSplice, function() {
   // deleteCount argument exceeding 2^53-1.
   Array.prototype.splice.call(source, 0, 2 ** 53 + 4);
-});
+}, '// deleteCount argument exceeding 2^53-1. Array.prototype.splice.call(source, 0, 2 ** 53 + 4) throws a StopSplice exception');
 
 assert.sameValue(targetLength, 2 ** 53 - 1,
-  "length and deleteCount were correctly clamped to 2^53-1");
+  'The value of targetLength is expected to be 2 ** 53 - 1');
 
 assert.compareArray(traps, [
   "source.[[Get]]:length",
@@ -86,4 +86,4 @@ assert.compareArray(traps, [
   "source.[[Has]]:2",
   "source.[[Get]]:2",
   "target.[[DefineProperty]]:2",
-]);
+], 'The value of traps is expected to be [\n  "source.[[Get]]:length",\n\n  "source.[[Get]]:constructor",\n\n  "source.[[Has]]:0",\n  "source.[[Get]]:0",\n  "target.[[DefineProperty]]:0",\n\n  "source.[[Has]]:1",\n\n  "source.[[Has]]:2",\n  "source.[[Get]]:2",\n  "target.[[DefineProperty]]:2",\n]');

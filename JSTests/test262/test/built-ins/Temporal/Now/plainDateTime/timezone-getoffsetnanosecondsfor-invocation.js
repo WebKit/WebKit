@@ -19,7 +19,10 @@ var timeZone = {
 
 Temporal.Now.plainDateTime('iso8601', timeZone);
 
-assert.sameValue(calls.length, 1, 'call count');
-assert.sameValue(calls[0].args.length, 1, 'arguments');
-assert(calls[0].args[0] instanceof Temporal.Instant);
-assert.sameValue(calls[0].this, timeZone);
+assert.sameValue(calls.length, 1, 'The value of calls.length is expected to be 1');
+assert.sameValue(calls[0].args.length, 1, 'The value of calls[0].args.length is expected to be 1');
+assert(
+  calls[0].args[0] instanceof Temporal.Instant,
+  'The result of evaluating (calls[0].args[0] instanceof Temporal.Instant) is expected to be true'
+);
+assert.sameValue(calls[0].this, timeZone, 'The value of calls[0].this is expected to equal the value of timeZone');

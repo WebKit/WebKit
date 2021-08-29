@@ -8,35 +8,17 @@ info: |
 esid: sec-terms-and-definitions-boolean-value
 description: Used various number values as argument
 ---*/
+assert.sameValue(typeof Boolean(0), "boolean", 'The value of `typeof Boolean(0)` is expected to be "boolean"');
+assert.sameValue(Boolean(0), false, 'Boolean(0) must return false');
+assert.sameValue(typeof Boolean(-1), "boolean", 'The value of `typeof Boolean(-1)` is expected to be "boolean"');
+assert.sameValue(Boolean(-1), true, 'Boolean(-1) must return true');
 
-//CHECK#1
-if (typeof Boolean(0) !== "boolean") {
-  throw new Test262Error('#1.1: typeof Boolean(0) should be "boolean", actual is "' + typeof Boolean(0) + '"');
-}
-if (Boolean(0) !== false) {
-  throw new Test262Error('#1.2: Boolean(0) should be false, actual is ' + Boolean(0));
-}
+assert.sameValue(
+  typeof Boolean(-Infinity),
+  "boolean",
+  'The value of `typeof Boolean(-Infinity)` is expected to be "boolean"'
+);
 
-//CHECK#2
-if (typeof Boolean(-1) !== "boolean") {
-  throw new Test262Error('#2.1: typeof Boolean(-1) should be "boolean", actual is "' + typeof Boolean(-1) + '"');
-}
-if (Boolean(-1) !== true) {
-  throw new Test262Error('#2.2: Boolean(-1) should be true, actual is ' + Boolean(-1));
-}
-
-//CHECK#3
-if (typeof Boolean(-Infinity) !== "boolean") {
-  throw new Test262Error('#3.1: typeof Boolean(-Infinity) should be "boolean", actual is "' + typeof Boolean(-Infinity) + '"');
-}
-if (Boolean(-Infinity) !== true) {
-  throw new Test262Error('#3.2: Boolean(-Infinity) should be true, actual is ' + Boolean(-Infinity));
-}
-
-//CHECK#4
-if (typeof Boolean(NaN) !== "boolean") {
-  throw new Test262Error('#4.1: typeof Boolean(NaN) should be "boolean", actual is "' + typeof Boolean(NaN) + '"');
-}
-if (Boolean(NaN) !== false) {
-  throw new Test262Error('#4.2: Boolean(NaN) should be false, actual is ' + Boolean(NaN));
-}
+assert.sameValue(Boolean(-Infinity), true, 'Boolean(-Infinity) must return true');
+assert.sameValue(typeof Boolean(NaN), "boolean", 'The value of `typeof Boolean(NaN)` is expected to be "boolean"');
+assert.sameValue(Boolean(NaN), false, 'Boolean(NaN) must return false');

@@ -768,10 +768,10 @@ test/built-ins/Function/prototype/toString/setter-object.js:
 test/built-ins/Function/prototype/toString/unicode.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
-test/built-ins/Object/entries/order-after-define-property.js:
+test/built-ins/Object/entries/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, name] and [name, a] to have the same contents. '
-test/built-ins/Object/keys/order-after-define-property.js:
+test/built-ins/Object/keys/order-after-define-property-with-function.js:
   default: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
   strict mode: 'Test262Error: Expected [a, length] and [length, a] to have the same contents. '
 test/built-ins/Proxy/apply/arguments-realm.js:
@@ -1577,6 +1577,9 @@ test/language/expressions/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
+test/language/expressions/in/private-field-in-nested.js:
+  default: 'Test262: This statement should not be evaluated.'
+  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"
@@ -1669,6 +1672,14 @@ test/language/identifier-resolution/assign-to-global-undefined.js:
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
+test/language/module-code/early-dup-top-function-async-generator.js:
+  module: 'Test262: This statement should not be evaluated.'
+test/language/module-code/early-dup-top-function-async.js:
+  module: 'Test262: This statement should not be evaluated.'
+test/language/module-code/early-dup-top-function-generator.js:
+  module: 'Test262: This statement should not be evaluated.'
+test/language/module-code/early-dup-top-function.js:
+  module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
@@ -1681,10 +1692,10 @@ test/language/statements/async-generator/generator-created-after-decl-inst.js:
 test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
-test/language/statements/class/definition/fn-length-static-precedence.js:
+test/language/statements/class/definition/fn-length-static-precedence-order.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
-test/language/statements/class/definition/fn-name-static-precedence.js:
+test/language/statements/class/definition/fn-name-static-precedence-order.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
 test/language/statements/class/elements/arrow-body-direct-eval-err-contains-arguments.js:
@@ -1699,9 +1710,51 @@ test/language/statements/class/elements/nested-direct-eval-err-contains-argument
 test/language/statements/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
+test/language/statements/class/elements/privatefieldset-evaluation-order-1.js:
+  default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
+test/language/statements/class/elements/privatefieldset-evaluation-order-3.js:
+  default: 'Test262Error: Expected SameValue(«undefined», «pass») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«undefined», «pass») to be true'
+test/language/statements/class/elements/privatefieldset-typeerror-10.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/elements/privatefieldset-typeerror-11.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/elements/privatefieldset-typeerror-6.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/elements/privatefieldset-typeerror-7.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/elements/privatefieldset-typeerror-8.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/elements/privatefieldset-typeerror-9.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/statements/class/subclass/default-constructor-spread-override.js:
   default: 'Test262Error: @@iterator invoked'
   strict mode: 'Test262Error: @@iterator invoked'
+test/language/statements/class/subclass/derived-class-return-override-catch-finally-arrow.js:
+  default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
+  strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
+test/language/statements/class/subclass/derived-class-return-override-catch-super-arrow.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/subclass/derived-class-return-override-catch-super.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/subclass/derived-class-return-override-catch.js:
+  default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
+test/language/statements/class/subclass/derived-class-return-override-finally-super-arrow.js:
+  default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
+  strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
+test/language/statements/class/subclass/derived-class-return-override-for-of-arrow.js:
+  default: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
+  strict mode: "ReferenceError: 'super()' must be called in derived constructor before accessing |this| or returning non-object."
 test/language/statements/const/dstr/ary-init-iter-get-err-array-prototype.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'

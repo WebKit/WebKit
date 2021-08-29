@@ -40,12 +40,12 @@ var spreadable = {};
 spreadable[Symbol.isConcatSpreadable] = true;
 var spreadableProxy = new Proxy(spreadable, {});
 
-assert.sameValue([].concat(arrayProxy).length, 0, 'Proxy for an array');
+assert.sameValue([].concat(arrayProxy).length, 0, 'The value of [].concat(arrayProxy).length is expected to be 0');
 assert.sameValue(
-  [].concat(arrayProxyProxy).length, 0, 'Proxy for a proxy for an array'
+  [].concat(arrayProxyProxy).length, 0, 'The value of [].concat(arrayProxyProxy).length is expected to be 0'
 );
 assert.sameValue(
   [].concat(spreadableProxy).length,
   0,
-  'Proxy for an ordinary object with a truthy @@isConcatSpreadable property'
+  'The value of [].concat(spreadableProxy).length is expected to be 0'
 );

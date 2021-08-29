@@ -14,28 +14,9 @@ description: Checking this algorithm, items are [], [,]
 var x = [, 1];
 var arr = x.concat([], [, ]);
 
-//CHECK#0
 arr.getClass = Object.prototype.toString;
-if (arr.getClass() !== "[object " + "Array" + "]") {
-  throw new Test262Error('#0: var x = [,1]; var arr = x.concat([], [,]); arr is Array object. Actual: ' + (arr.getClass()));
-}
-
-//CHECK#1
-if (arr[0] !== undefined) {
-  throw new Test262Error('#1: var x = [,1]; var arr = x.concat([], [,]); arr[0] === undefined. Actual: ' + (arr[0]));
-}
-
-//CHECK#2
-if (arr[1] !== 1) {
-  throw new Test262Error('#2: var x = [,1]; var arr = x.concat([], [,]); arr[1] === 1. Actual: ' + (arr[1]));
-}
-
-//CHECK#2
-if (arr[2] !== undefined) {
-  throw new Test262Error('#2: var x = [,1]; var arr = x.concat([], [,]); arr[2] === undefined. Actual: ' + (arr[2]));
-}
-
-//CHECK#4
-if (arr.length !== 3) {
-  throw new Test262Error('#4: var x = [,1]; var arr = x.concat([], [,]); arr.length === 3. Actual: ' + (arr.length));
-}
+assert.sameValue(arr.getClass(), "[object Array]", 'arr.getClass() must return "[object Array]"');
+assert.sameValue(arr[0], undefined, 'The value of arr[0] is expected to equal undefined');
+assert.sameValue(arr[1], 1, 'The value of arr[1] is expected to be 1');
+assert.sameValue(arr[2], undefined, 'The value of arr[2] is expected to equal undefined');
+assert.sameValue(arr.length, 3, 'The value of arr.length is expected to be 3');

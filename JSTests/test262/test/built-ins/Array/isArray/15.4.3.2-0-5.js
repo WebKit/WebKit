@@ -9,6 +9,4 @@ description: >
     (Array.prototype)
 ---*/
 
-var b = Array.isArray(Array.prototype);
-
-assert.sameValue(b, true, 'b');
+assert.sameValue(Array.isArray(Array.prototype), true, 'Array.isArray(Array.prototype) must return true');

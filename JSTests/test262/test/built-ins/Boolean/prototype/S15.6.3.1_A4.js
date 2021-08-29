@@ -7,13 +7,11 @@ esid: sec-boolean.prototype
 description: Checking if enumerating the Boolean.prototype property fails
 ---*/
 
-//CHECK#1
 for (x in Boolean) {
-  if (x === "prototype") {
-    throw new Test262Error('#1: Boolean.prototype has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "prototype", 'The value of x is not "prototype"');
 }
 
-if (Boolean.propertyIsEnumerable('prototype')) {
-  throw new Test262Error('#2: Boolean.prototype has the attribute DontEnum');
-}
+assert(
+  !Boolean.propertyIsEnumerable('prototype'),
+  'The value of !Boolean.propertyIsEnumerable(\'prototype\') is expected to be true'
+);

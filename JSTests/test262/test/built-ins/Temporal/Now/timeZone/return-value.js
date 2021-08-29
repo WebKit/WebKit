@@ -11,5 +11,6 @@ features: [Temporal]
 
 assert.sameValue(
   Object.getPrototypeOf(Temporal.Now.timeZone()),
-  Temporal.TimeZone.prototype
+  Temporal.TimeZone.prototype,
+  'Object.getPrototypeOf(Temporal.Now.timeZone()) returns Temporal.TimeZone.prototype'
 );

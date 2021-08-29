@@ -5,7 +5,7 @@
 esid: sec-temporal.now.plaindatetime
 description: Observable interactions with the provided calendar-like object
 includes: [compareArray.js]
-features: [Temporal]
+features: [Proxy, Temporal]
 ---*/
 
 const actual = [];
@@ -58,4 +58,4 @@ Object.defineProperty(Temporal.Calendar, 'from', {
 
 Temporal.Now.plainDateTime(calendar);
 
-assert.compareArray(actual, expected);
+assert.compareArray(actual, expected, 'The value of actual is expected to equal the value of expected');

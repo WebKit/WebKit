@@ -32,7 +32,11 @@ features: [Array.prototype.flatMap, Symbol]
 includes: [compareArray.js]
 ---*/
 
-assert.sameValue(typeof Array.prototype.flatMap, 'function');
+assert.sameValue(
+  typeof Array.prototype.flatMap,
+  'function',
+  'The value of `typeof Array.prototype.flatMap` is expected to be "function"'
+);
 
 var a = [];
 var mapperFn = function() {};
@@ -40,35 +44,39 @@ var mapperFn = function() {};
 a.constructor = null;
 assert.throws(TypeError, function() {
   a.flatMap(mapperFn);
-}, 'null value');
+}, 'a.flatMap(mapperFn) throws a TypeError exception');
 
 a = [];
 a.constructor = 1;
 assert.throws(TypeError, function() {
   a.flatMap(mapperFn);
-}, 'number value');
+}, 'a.flatMap(mapperFn) throws a TypeError exception');
 
 a = [];
 a.constructor = 'string';
 assert.throws(TypeError, function() {
   a.flatMap(mapperFn);
-}, 'string value');
+}, 'a.flatMap(mapperFn) throws a TypeError exception');
 
 a = [];
 a.constructor = true;
 assert.throws(TypeError, function() {
   a.flatMap(mapperFn);
-}, 'boolean value');
+}, 'a.flatMap(mapperFn) throws a TypeError exception');
 
 a = [];
 a.constructor = Symbol();
 assert.throws(TypeError, function() {
   a.flatMap(mapperFn);
-}, 'symbol value');
+}, 'a.flatMap(mapperFn) throws a TypeError exception');
 
 a = [];
 a.constructor = undefined;
 var actual = a.flatMap(mapperFn);
-assert.compareArray(actual, [], 'undefined value does not throw');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype);
-assert.notSameValue(actual, a, 'returns a new array');
+assert.compareArray(actual, [], 'The value of actual is expected to be []');
+assert.sameValue(
+  Object.getPrototypeOf(actual),
+  Array.prototype,
+  'Object.getPrototypeOf(a.flatMap(mapperFn)) returns Array.prototype'
+);
+assert.notSameValue(actual, a, 'The value of actual is expected to not equal the value of `a`');

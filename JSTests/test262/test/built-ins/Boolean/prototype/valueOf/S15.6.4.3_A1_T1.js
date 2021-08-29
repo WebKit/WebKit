@@ -6,33 +6,14 @@ info: Boolean.prototype.valueOf() returns this boolean value
 esid: sec-boolean.prototype.valueof
 description: no arguments
 ---*/
+assert.sameValue(Boolean.prototype.valueOf(), false, 'Boolean.prototype.valueOf() must return false');
+assert.sameValue((new Boolean()).valueOf(), false, '(new Boolean()).valueOf() must return false');
+assert.sameValue((new Boolean(0)).valueOf(), false, '(new Boolean(0)).valueOf() must return false');
+assert.sameValue((new Boolean(-1)).valueOf(), true, '(new Boolean(-1)).valueOf() must return true');
+assert.sameValue((new Boolean(1)).valueOf(), true, '(new Boolean(1)).valueOf() must return true');
 
-//CHECK#1
-if (Boolean.prototype.valueOf() !== false) {
-  throw new Test262Error('#1: Boolean.prototype.valueOf() === false');
-}
-
-//CHECK#2
-if ((new Boolean()).valueOf() !== false) {
-  throw new Test262Error('#2: (new Boolean()).valueOf() === false');
-}
-
-//CHECK#3
-if ((new Boolean(0)).valueOf() !== false) {
-  throw new Test262Error('#3: (new Boolean(0)).valueOf() === false');
-}
-
-//CHECK#4
-if ((new Boolean(-1)).valueOf() !== true) {
-  throw new Test262Error('#4: (new Boolean(-1)).valueOf() === true');
-}
-
-//CHECK#5
-if ((new Boolean(1)).valueOf() !== true) {
-  throw new Test262Error('#5: (new Boolean(1)).valueOf() === true');
-}
-
-//CHECK#6
-if ((new Boolean(new Object())).valueOf() !== true) {
-  throw new Test262Error('#6: (new Boolean(new Object())).valueOf() === true');
-}
+assert.sameValue(
+  (new Boolean(new Object())).valueOf(),
+  true,
+  '(new Boolean(new Object())).valueOf() must return true'
+);

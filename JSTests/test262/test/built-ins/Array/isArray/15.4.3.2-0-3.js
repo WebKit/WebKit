@@ -7,7 +7,4 @@ es5id: 15.4.3.2-0-3
 description: Array.isArray return true if its argument is an Array
 ---*/
 
-var a = [];
-var b = Array.isArray(a);
-
-assert.sameValue(b, true, 'b');
+assert.sameValue(Array.isArray([]), true, 'Array.isArray([]) must return true');

@@ -70,7 +70,3 @@ assert.compareArray(
   Object.keys(C),
   []
 );
-assert.compareArray(
-  Object.getOwnPropertyNames(C),
-  ['length', 'name', 'prototype', 'a', 'b', 'c', 'd']
-);

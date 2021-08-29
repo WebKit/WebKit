@@ -12,15 +12,15 @@ description: Checking for number primitive
 var x = [];
 
 x[NaN] = 1;
-assert.sameValue(x[0], undefined, "x[NaN] does not cast to x[0]");
-assert.sameValue(x["NaN"], 1, "x[NaN] casts to x['NaN']");
+assert.sameValue(x[0], undefined, 'The value of x[0] is expected to equal undefined');
+assert.sameValue(x["NaN"], 1, 'The value of x["NaN"] is expected to be 1');
 
 var y = [];
 y[Number.POSITIVE_INFINITY] = 1;
-assert.sameValue(y[0], undefined, "y[Number.POSITIVE_INFINITY] !== y[0]");
-assert.sameValue(y["Infinity"], 1, "y[Number.POSITIVE_INFINITY] === y['Infinity']");
+assert.sameValue(y[0], undefined, 'The value of y[0] is expected to equal undefined');
+assert.sameValue(y["Infinity"], 1, 'The value of y["Infinity"] is expected to be 1');
 
 var z = [];
 z[Number.NEGATIVE_INFINITY] = 1;
-assert.sameValue(z[0], undefined, "z[Number.NEGATIVE_INFINITY] !== z[0]");
-assert.sameValue(z["-Infinity"], 1, "z[Number.NEGATIVE_INFINITY] === z['-Infinity']");
+assert.sameValue(z[0], undefined, 'The value of z[0] is expected to equal undefined');
+assert.sameValue(z["-Infinity"], 1, 'The value of z["-Infinity"] is expected to be 1');

@@ -14,16 +14,12 @@ info: |
 includes: [compareArray.js]
 ---*/
 
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(0, 1, undefined), [1, 2, 3, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(0, 1, undefined) -> [1, 2, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(0, 1, undefined), [1, 2, 3, 3],
+  '[0, 1, 2, 3].copyWithin(0, 1, undefined) must return [1, 2, 3, 3]'
 );
 
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(0, 1), [1, 2, 3, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(0, 1) -> [1, 2, 3, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(0, 1), [1, 2, 3, 3],
+  '[0, 1, 2, 3].copyWithin(0, 1) must return [1, 2, 3, 3]'
 );

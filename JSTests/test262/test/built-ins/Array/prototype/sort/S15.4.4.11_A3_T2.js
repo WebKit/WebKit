@@ -43,13 +43,11 @@ var myComparefn = function(x, y) {
 
 alphabetR.sort(myComparefn);
 
-//CHECK#0
 alphabetR.getClass = Object.prototype.toString;
 if (alphabetR.getClass() !== "[object " + "Object" + "]") {
   throw new Test262Error('#0: alphabetR.sort() is Object object, not Array object');
 }
 
-//CHECK#1
 var result = true;
 for (var i = 0; i < 10; i++) {
   if (!(isNaN(alphabetR[i]) && isNaN(alphabet[i]))) {

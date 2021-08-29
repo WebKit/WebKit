@@ -29,5 +29,5 @@ assert.sameValue(
 
 assert.throws(TypeError, () => {
   new Array.prototype.concat([]);
-}, '`new Array.prototype.concat([])` throws TypeError');
+}, 'new Array.prototype.concat([]) throws a TypeError exception');
 

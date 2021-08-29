@@ -17,4 +17,4 @@ features:
 
 assert.throws(TypeError, function() {
   Array.from([], Symbol('1'));
-});
+}, 'Array.from([], Symbol("1")) throws a TypeError exception');

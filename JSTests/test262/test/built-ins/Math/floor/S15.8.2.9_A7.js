@@ -13,8 +13,10 @@ description: >
 for (var i = -1000; i < 1000; i++)
 {
   var x = i / 10.0;
-  if (-Math.ceil(-x) !== Math.floor(x))
-  {
-    throw new Test262Error("#1: 'x = " + x + "; Math.floor(x) !== -Math.ceil(-x)'");
-  }
+
+  assert.sameValue(
+    -Math.ceil(-x),
+    Math.floor(x),
+    'The value of `-Math.ceil(-x)` must return the same value returned by Math.floor(x)'
+  );
 }

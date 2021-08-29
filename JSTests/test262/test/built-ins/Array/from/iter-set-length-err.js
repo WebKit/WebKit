@@ -15,9 +15,9 @@ info: |
 features: [Symbol.iterator]
 ---*/
 
-var C = function() {};
+var poisonedPrototypeLength = function() {};
 var items = {};
-Object.defineProperty(C.prototype, 'length', {
+Object.defineProperty(poisonedPrototypeLength.prototype, 'length', {
   set: function(_) {
     throw new Test262Error();
   }
@@ -33,5 +33,5 @@ items[Symbol.iterator] = function() {
 };
 
 assert.throws(Test262Error, function() {
-  Array.from.call(C, items);
-});
+  Array.from.call(poisonedPrototypeLength, items);
+}, 'Array.from.call(poisonedPrototypeLength, items) throws a Test262Error exception');

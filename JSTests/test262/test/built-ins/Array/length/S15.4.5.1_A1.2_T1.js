@@ -12,20 +12,10 @@ es5id: 15.4.5.1_A1.2_T1
 description: Change length of array
 ---*/
 
-//CHECK#1
 var x = [0, , 2, , 4];
 x.length = 4;
-if (x[4] !== undefined) {
-  throw new Test262Error('#1: x = [0,,2,,4]; x.length = 4; x[4] === undefined. Actual: ' + (x[4]));
-}
+assert.sameValue(x[4], undefined, 'The value of x[4] is expected to equal undefined');
 
-//CHECK#2
 x.length = 3;
-if (x[3] !== undefined) {
-  throw new Test262Error('#2: x = [0,,2,,4]; x.length = 4; x.length = 3; x[3] === undefined. Actual: ' + (x[3]));
-}
-
-//CHECK#3
-if (x[2] !== 2) {
-  throw new Test262Error('#3: x = [0,,2,,4]; x.length = 4; x.length = 3; x[2] === 2. Actual: ' + (x[2]));
-}
+assert.sameValue(x[3], undefined, 'The value of x[3] is expected to equal undefined');
+assert.sameValue(x[2], 2, 'The value of x[2] is expected to be 2');

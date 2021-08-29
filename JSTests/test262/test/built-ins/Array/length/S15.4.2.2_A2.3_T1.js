@@ -13,24 +13,10 @@ description: Checking for null and undefined
 
 var x = new Array(null);
 
-//CHECK#1
-if (x.length !== 1) {
-  throw new Test262Error('#1: var x = new Array(null); x.length === 1. Actual: ' + (x.length));
-}
-
-//CHECK#2
-if (x[0] !== null) {
-  throw new Test262Error('#2: var x = new Array(null); x[0] === null. Actual: ' + (x[0]));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
+assert.sameValue(x[0], null, 'The value of x[0] is expected to be null');
 
 var x = new Array(undefined);
 
-//CHECK#3
-if (x.length !== 1) {
-  throw new Test262Error('#3: var x = new Array(undefined); x.length === 1. Actual: ' + (x.length));
-}
-
-//CHECK#4
-if (x[0] !== undefined) {
-  throw new Test262Error('#4: var x = new Array(undefined); x[0] === undefined. Actual: ' + (x[0]));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
+assert.sameValue(x[0], undefined, 'The value of x[0] is expected to equal undefined');

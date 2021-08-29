@@ -11,54 +11,25 @@ description: >
 
 var a = [0];
 
-if (a.length !== 1) {
-  throw new Test262Error("expected a.length === 1, actually " + a.length);
-}
+assert.sameValue(a.length, 1, 'The value of a.length is expected to be 1');
 
 a.length = 3;
 
-if (a[1] !== undefined) {
-  throw new Test262Error("expected a[1] === undefined, actually " + a[1]);
-}
-if (a[2] !== undefined) {
-  throw new Test262Error("expected a[2] === undefined, actually " + a[2]);
-}
+assert.sameValue(a[1], undefined, 'The value of a[1] is expected to equal undefined');
+assert.sameValue(a[2], undefined, 'The value of a[2] is expected to equal undefined');
 
 Array.prototype[2] = 2;
 
-if (a[1] !== undefined) {
-  throw new Test262Error("expected a[1] === undefined, actually " + a[1]);
-}
-if (a[2] !== 2) {
-  throw new Test262Error("expected a[2] === 2, actually " + a[2]);
-}
-
-if (a.hasOwnProperty('1') !== false) {
-  throw new Test262Error("a.hasOwnProperty('1') === false, actually " + a.hasOwnProperty('1'));
-}
-if (a.hasOwnProperty('2') !== false) {
-  throw new Test262Error("a.hasOwnProperty('2') === false, actually " + a.hasOwnProperty('2'));
-}
+assert.sameValue(a[1], undefined, 'The value of a[1] is expected to equal undefined');
+assert.sameValue(a[2], 2, 'The value of a[2] is expected to be 2');
+assert.sameValue(a.hasOwnProperty('1'), false, 'a.hasOwnProperty("1") must return false');
+assert.sameValue(a.hasOwnProperty('2'), false, 'a.hasOwnProperty("2") must return false');
 
 var b = a.concat();
 
-if (b.length !== 3) {
-  throw new Test262Error("expected b.length === 3, actually " + b.length);
-}
-
-if (b[0] !== 0) {
-  throw new Test262Error("expected b[0] === 0, actually " + b[0]);
-}
-if (b[1] !== undefined) {
-  throw new Test262Error("expected b[1] === undefined, actually " + b[1]);
-}
-if (b[2] !== 2) {
-  throw new Test262Error("expected b[2] === 2, actually " + b[2]);
-}
-
-if (b.hasOwnProperty('1') !== false) {
-  throw new Test262Error("expected b.hasOwnProperty('1') === false, actually " + b.hasOwnProperty('1'));
-}
-if (b.hasOwnProperty('2') !== true) {
-  throw new Test262Error("expected b.hasOwnProperty('2') === true, actually " + b.hasOwnProperty('2'));
-}
+assert.sameValue(b.length, 3, 'The value of b.length is expected to be 3');
+assert.sameValue(b[0], 0, 'The value of b[0] is expected to be 0');
+assert.sameValue(b[1], undefined, 'The value of b[1] is expected to equal undefined');
+assert.sameValue(b[2], 2, 'The value of b[2] is expected to be 2');
+assert.sameValue(b.hasOwnProperty('1'), false, 'b.hasOwnProperty("1") must return false');
+assert.sameValue(b.hasOwnProperty('2'), true, 'b.hasOwnProperty("2") must return true');

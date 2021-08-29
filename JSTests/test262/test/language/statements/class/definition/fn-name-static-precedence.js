@@ -17,7 +17,6 @@ info: |
       b. Else,
         i. Let field be ClassElementEvaluation of e with arguments F and false.
            [ This overwrites the name property on F. ]
-includes: [compareArray.js]
 features: [generators]
 ---*/
 
@@ -31,7 +30,6 @@ class A {
 }
 
 assert.sameValue(typeof A.name, 'function');
-assert(compareArray(Object.getOwnPropertyNames(A), ['length', 'name', 'prototype', 'method']))
 
 var attr = 'name';
 class B {
@@ -44,7 +42,6 @@ class B {
 }
 
 assert.sameValue(typeof B.name, 'function');
-assert(compareArray(Object.getOwnPropertyNames(B), ['length', 'name', 'prototype']))
 
 var isDefined = false;
 class C {
@@ -58,7 +55,6 @@ class C {
 
 isDefined = true;
 assert.sameValue(C.name, 'pass');
-assert(compareArray(Object.getOwnPropertyNames(C), ['length', 'name', 'prototype']))
 
 class D {
   static set name(_) {
@@ -67,7 +63,6 @@ class D {
 }
 
 assert.sameValue(D.name, undefined);
-assert(compareArray(Object.getOwnPropertyNames(D), ['length', 'name', 'prototype']))
 
 class E {
   static *name() {
@@ -76,4 +71,3 @@ class E {
 }
 
 assert.sameValue(typeof E.name, 'function');
-assert(compareArray(Object.getOwnPropertyNames(E), ['length', 'name', 'prototype']))

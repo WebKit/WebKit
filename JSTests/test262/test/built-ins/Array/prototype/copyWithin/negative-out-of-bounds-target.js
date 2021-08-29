@@ -14,30 +14,22 @@ info: |
 includes: [compareArray.js]
 ---*/
 
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(-10, 0), [0, 1, 2, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(-10, 0) -> [0, 1, 2, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(-10, 0), [0, 1, 2, 3],
+  '[0, 1, 2, 3].copyWithin(-10, 0) must return [0, 1, 2, 3]'
 );
 
-assert(
-  compareArray(
-    [1, 2, 3, 4, 5].copyWithin(-Infinity, 0), [1, 2, 3, 4, 5]
-  ),
-  '[1, 2, 3, 4, 5].copyWithin(-Infinity, 0) -> [1, 2, 3, 4, 5]'
+assert.compareArray(
+  [1, 2, 3, 4, 5].copyWithin(-Infinity, 0), [1, 2, 3, 4, 5],
+  '[1, 2, 3, 4, 5].copyWithin(-Infinity, 0) must return [1, 2, 3, 4, 5]'
 );
 
-assert(
-  compareArray(
-    [0, 1, 2, 3, 4].copyWithin(-10, 2), [2, 3, 4, 3, 4]
-  ),
-  '[0, 1, 2, 3, 4].copyWithin(-10, 2) -> [2, 3, 4, 3, 4]'
+assert.compareArray(
+  [0, 1, 2, 3, 4].copyWithin(-10, 2), [2, 3, 4, 3, 4],
+  '[0, 1, 2, 3, 4].copyWithin(-10, 2) must return [2, 3, 4, 3, 4]'
 );
 
-assert(
-  compareArray(
-    [1, 2, 3, 4, 5].copyWithin(-Infinity, 2), [3, 4, 5, 4, 5]
-  ),
-  '[1, 2, 3, 4, 5].copyWithin(-Infinity, 2) -> [3, 4, 5, 4, 5]'
+assert.compareArray(
+  [1, 2, 3, 4, 5].copyWithin(-Infinity, 2), [3, 4, 5, 4, 5],
+  '[1, 2, 3, 4, 5].copyWithin(-Infinity, 2) must return [3, 4, 5, 4, 5]'
 );

@@ -11,4 +11,4 @@ description: >
 var a = [0, 1, 2];
 a[4294967295] = "not an array element";
 
-assert.sameValue(a.length, 3, 'a.length');
+assert.sameValue(a.length, 3, 'The value of a.length is expected to be 3');

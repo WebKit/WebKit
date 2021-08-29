@@ -8,7 +8,4 @@ es5id: 15.4.4_A1.3_T1
 description: Array.prototype.length === 0
 ---*/
 
-//CHECK#1
-if (Array.prototype.length !== 0) {
-  throw new Test262Error('#1.1: Array.prototype.length === 0. Actual: ' + (Array.prototype.length));
-}
+assert.sameValue(Array.prototype.length, 0, 'The value of Array.prototype.length is expected to be 0');

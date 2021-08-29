@@ -25,7 +25,7 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.prototype.concat.length, 1);
+assert.sameValue(Array.prototype.concat.length, 1, 'The value of Array.prototype.concat.length is expected to be 1');
 
 verifyNotEnumerable(Array.prototype.concat, 'length');
 verifyNotWritable(Array.prototype.concat, 'length');

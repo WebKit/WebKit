@@ -34,15 +34,23 @@ features: [Array.prototype.flatMap, Symbol, Symbol.species]
 includes: [compareArray.js]
 ---*/
 
-assert.sameValue(typeof Array.prototype.flatMap, 'function');
+assert.sameValue(
+  typeof Array.prototype.flatMap,
+  'function',
+  'The value of `typeof Array.prototype.flatMap` is expected to be "function"'
+);
 
 var arr = [[42, 1], [42, 2]];
 var mapperFn = function(e) { return e; };
 
 arr.constructor = {};
 var actual = arr.flatMap(mapperFn);
-assert.compareArray(actual, [42, 1, 42, 2], 'undefined species does not throw');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype);
+assert.compareArray(actual, [42, 1, 42, 2], 'The value of actual is expected to be [42, 1, 42, 2]');
+assert.sameValue(
+  Object.getPrototypeOf(actual),
+  Array.prototype,
+  'Object.getPrototypeOf(arr.flatMap(mapperFn)) returns Array.prototype'
+);
 
 var called = 0;
 arr.constructor = {
@@ -53,8 +61,8 @@ arr.constructor = {
 };
 assert.throws(TypeError, function() {
   arr.flatMap(mapperFn);
-}, 'throw TypeError if @@species is a number');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a TypeError exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');
 
 called = 0;
 arr.constructor = {
@@ -65,8 +73,8 @@ arr.constructor = {
 };
 assert.throws(TypeError, function() {
   arr.flatMap(mapperFn);
-}, 'throw TypeError if @@species is a string');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a TypeError exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');
 
 called = 0;
 arr.constructor = {
@@ -77,8 +85,8 @@ arr.constructor = {
 };
 assert.throws(TypeError, function() {
   arr.flatMap(mapperFn);
-}, 'throw TypeError if @@species is a boolean');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a TypeError exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');
 
 called = 0;
 arr.constructor = {
@@ -89,8 +97,8 @@ arr.constructor = {
 };
 assert.throws(TypeError, function() {
   arr.flatMap(mapperFn);
-}, 'throw TypeError if @@species is an object');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a TypeError exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');
 
 called = 0;
 arr.constructor = {
@@ -101,8 +109,8 @@ arr.constructor = {
 };
 assert.throws(TypeError, function() {
   arr.flatMap(mapperFn);
-}, 'throw TypeError if @@species is an array');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a TypeError exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');
 
 called = 0;
 arr.constructor = {
@@ -113,8 +121,8 @@ arr.constructor = {
 };
 assert.throws(TypeError, function() {
   arr.flatMap(mapperFn);
-}, 'throw TypeError if @@species is a symbol');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a TypeError exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');
 
 called = 0;
 arr.constructor = {
@@ -125,5 +133,5 @@ arr.constructor = {
 };
 assert.throws(Test262Error, function() {
   arr.flatMap(mapperFn);
-}, 'Return abrupt completion from getting the @@species');
-assert.sameValue(called, 1, 'got species once');
+}, 'arr.flatMap(mapperFn) throws a Test262Error exception');
+assert.sameValue(called, 1, 'The value of called is expected to be 1');

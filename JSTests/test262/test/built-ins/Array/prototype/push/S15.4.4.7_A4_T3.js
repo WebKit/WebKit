@@ -11,43 +11,35 @@ var obj = {};
 obj.push = Array.prototype.push;
 obj.length = -1;
 
-//CHECK#1
 var push = obj.push("x", "y", "z");
 if (push !== 3) {
   throw new Test262Error('#1: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z") === 3. Actual: ' + (push));
 }
 
-//CHECK#2
 if (obj.length !== 3) {
   throw new Test262Error('#2: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj.length === 3. Actual: ' + (obj.length));
 }
 
-//CHECK#3
 if (obj[4294967295] !== undefined) {
   throw new Test262Error('#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967295] === undefined. Actual: ' + (obj[4294967295]));
 }
 
-//CHECK#4
 if (obj[4294967296] !== undefined) {
   throw new Test262Error('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967296] === undefined. Actual: ' + (obj[4294967296]));
 }
 
-//CHECK#5
 if (obj[4294967297] !== undefined) {
   throw new Test262Error('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967297] === undefined. Actual: ' + (obj[4294967297]));
 }
 
-//CHECK#6
 if (obj[0] !== "x") {
   throw new Test262Error('#3: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[0] === "x". Actual: ' + (obj[0]));
 }
 
-//CHECK#7
 if (obj[1] !== "y") {
   throw new Test262Error('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[1] === "y". Actual: ' + (obj[1]));
 }
 
-//CHECK#8
 if (obj[2] !== "z") {
   throw new Test262Error('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[2] === "z". Actual: ' + (obj[2]));
 }

@@ -27,8 +27,12 @@ Object.defineProperty(obj, 'constructor', {
 
 result = Array.prototype.concat.call(obj);
 
-assert.sameValue(callCount, 0, '`constructor` property not accessed');
-assert.sameValue(Object.getPrototypeOf(result), Array.prototype);
-assert(Array.isArray(result), 'result is an Array exotic object');
-assert.sameValue(result.length, 1, 'array created with appropriate length');
-assert.sameValue(result[0], obj);
+assert.sameValue(callCount, 0, 'The value of callCount is expected to be 0');
+assert.sameValue(
+  Object.getPrototypeOf(result),
+  Array.prototype,
+  'Object.getPrototypeOf(Array.prototype.concat.call(obj)) returns Array.prototype'
+);
+assert(Array.isArray(result), 'Array.isArray(result) must return true');
+assert.sameValue(result.length, 1, 'The value of result.length is expected to be 1');
+assert.sameValue(result[0], obj, 'The value of result[0] is expected to equal the value of obj');

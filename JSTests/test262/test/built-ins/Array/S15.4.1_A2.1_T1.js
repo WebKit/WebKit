@@ -8,18 +8,11 @@ info: |
 es5id: 15.4.1_A2.1_T1
 description: Array constructor is given no arguments or at least two arguments
 ---*/
+assert.sameValue(Array().length, 0, 'The value of Array().length is expected to be 0');
+assert.sameValue(Array(0, 1, 0, 1).length, 4, 'The value of Array(0, 1, 0, 1).length is expected to be 4');
 
-//CHECK#1
-if (Array().length !== 0) {
-  throw new Test262Error('#1: (Array().length === 0. Actual: ' + (Array().length));
-}
-
-//CHECK#2
-if (Array(0, 1, 0, 1).length !== 4) {
-  throw new Test262Error('#2: (Array(0,1,0,1).length === 4. Actual: ' + (Array(0, 1, 0, 1).length));
-}
-
-//CHECK#3
-if (Array(undefined, undefined).length !== 2) {
-  throw new Test262Error('#3: (Array(undefined, undefined).length === 2. Actual: ' + (Array(undefined, undefined).length));
-}
+assert.sameValue(
+  Array(undefined, undefined).length,
+  2,
+  'The value of Array(undefined, undefined).length is expected to be 2'
+);

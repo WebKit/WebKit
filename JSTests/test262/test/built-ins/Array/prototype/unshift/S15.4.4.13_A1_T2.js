@@ -10,50 +10,41 @@ esid: sec-array.prototype.unshift
 description: Checking case when unsift is given many arguments
 ---*/
 
-//CHECK#1
 var x = [];
 if (x.length !== 0) {
   throw new Test262Error('#1: x = []; x.length === 0. Actual: ' + (x.length));
 }
 
-//CHECK#2
 x[0] = 0;
 var unshift = x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1);
 if (unshift !== 6) {
   throw new Test262Error('#2: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1) === 6. Actual: ' + (unshift));
 }
 
-//CHECK#3
 if (x[5] !== 0) {
   throw new Test262Error('#3: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[5] === 0. Actual: ' + (x[5]));
 }
 
-//CHECK#4
 if (x[0] !== true) {
   throw new Test262Error('#4: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[0] === true. Actual: ' + (x[0]));
 }
 
-//CHECK#5
 if (x[1] !== Number.POSITIVE_INFINITY) {
   throw new Test262Error('#5: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[1] === Number.POSITIVE_INFINITY. Actual: ' + (x[1]));
 }
 
-//CHECK#6
 if (x[2] !== "NaN") {
   throw new Test262Error('#6: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[2] === "NaN". Actual: ' + (x[2]));
 }
 
-//CHECK#7
 if (x[3] !== "1") {
   throw new Test262Error('#7: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[3] === "1". Actual: ' + (x[3]));
 }
 
-//CHECK#8
 if (x[4] !== -1) {
   throw new Test262Error('#8: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[4] === -1. Actual: ' + (x[4]));
 }
 
-//CHECK#9
 if (x.length !== 6) {
   throw new Test262Error('#9: x = []; x[0] = 0; x.unshift(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x.length === 6. Actual: ' + (x.length));
 }

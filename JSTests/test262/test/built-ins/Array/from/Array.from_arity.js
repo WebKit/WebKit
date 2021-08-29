@@ -14,7 +14,7 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Array.from.length, 1);
+assert.sameValue(Array.from.length, 1, 'The value of Array.from.length is expected to be 1');
 
 verifyNotEnumerable(Array.from, 'length');
 verifyNotWritable(Array.from, 'length');

@@ -10,23 +10,17 @@ description: >
     Used values 1, new String("1"), new Object(1) and called without
     argument
 ---*/
+assert.sameValue(typeof Boolean(), "boolean", 'The value of `typeof Boolean()` is expected to be "boolean"');
+assert.sameValue(typeof Boolean(1), "boolean", 'The value of `typeof Boolean(1)` is expected to be "boolean"');
 
-//CHECK#1
-if (typeof Boolean() !== "boolean") {
-  throw new Test262Error('#1: typeof Boolean() should be "boolean", actual is "' + typeof Boolean() + '"');
-}
+assert.sameValue(
+  typeof Boolean(new String("1")),
+  "boolean",
+  'The value of `typeof Boolean(new String("1"))` is expected to be "boolean"'
+);
 
-//CHECK#2
-if (typeof Boolean(1) !== "boolean") {
-  throw new Test262Error('#2: typeof Boolean(1) should be "boolean", actual is "' + typeof Boolean(1) + '"');
-}
-
-//CHECK#3
-if (typeof Boolean(new String("1")) !== "boolean") {
-  throw new Test262Error('#3: typeof Boolean(new String("1")) should be "boolean", actual is "' + typeof Boolean(new String("1")) + '"');
-}
-
-//CHECK#4
-if (typeof Boolean(new Object(1)) !== "boolean") {
-  throw new Test262Error('#4: typeof Boolean(new Object(1)) should be "boolean", actual is "' + typeof Boolean(new Object(1)) + '"');
-}
+assert.sameValue(
+  typeof Boolean(new Object(1)),
+  "boolean",
+  'The value of `typeof Boolean(new Object(1))` is expected to be "boolean"'
+);

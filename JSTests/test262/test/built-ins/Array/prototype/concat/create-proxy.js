@@ -36,4 +36,8 @@ array.constructor[Symbol.species] = Ctor;
 
 result = Array.prototype.concat.call(proxy);
 
-assert.sameValue(Object.getPrototypeOf(result), Ctor.prototype);
+assert.sameValue(
+  Object.getPrototypeOf(result),
+  Ctor.prototype,
+  'Object.getPrototypeOf(Array.prototype.concat.call(proxy)) returns Ctor.prototype'
+);

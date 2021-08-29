@@ -12,11 +12,15 @@ info: |
 includes: [propertyHelper.js]
 features: [Array.prototype.at]
 ---*/
-assert.sameValue(typeof Array.prototype.at, 'function');
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
 assert.sameValue(
   Array.prototype.at.length, 1,
-  'The value of Array.prototype.at.length is 1'
+  'The value of Array.prototype.at.length is expected to be 1'
 );
 
 verifyNotEnumerable(Array.prototype.at, 'length');

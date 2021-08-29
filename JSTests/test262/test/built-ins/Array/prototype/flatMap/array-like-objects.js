@@ -47,16 +47,16 @@ a = {
   get 3() { throw 'it should not get this property'; }
 };
 actual = [].flatMap.call(a, fn);
-assert.compareArray(actual, [39, 2, 39, 42], 'array-like flattened object, number length');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'returned object is an array #1');
+assert.compareArray(actual, [39, 2, 39, 42], 'The value of actual is expected to be [39, 2, 39, 42]');
+assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'Object.getPrototypeOf([].flatMap.call(a, fn)") returns Array.prototype');
 
 a = {
   length: undefined,
   get 0() { throw 'it should not get this property'; },
 };
 actual = [].flatMap.call(a, fn);
-assert.compareArray(actual, [], 'array-like objects; undefined length');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'returned object is an array #2');
+assert.compareArray(actual, [], 'The value of actual is expected to be []');
+assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'Object.getPrototypeOf([].flatMap.call(a, fn)") returns Array.prototype');
 
 var called = false;
 a = {
@@ -73,13 +73,13 @@ a = {
   get 2() { throw 'it should not get this property'; },
 };
 actual = [].flatMap.call(a, fn);
-assert.compareArray(actual, [39, 42, 39, 39], 'array-like flattened objects; custom get length');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'returned object is an array #3');
+assert.compareArray(actual, [39, 42, 39, 39], 'The value of actual is expected to be [39, 42, 39, 39]');
+assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'Object.getPrototypeOf([].flatMap.call(a, fn)") returns Array.prototype');
 
 a = {
   length: 10001,
   [10000]: 7,
 };
 actual = [].flatMap.call(a, fn);
-assert.compareArray(actual, [39, 14], 'array-like flattened object, long length simulating shallow array');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'returned object is an array #4');
+assert.compareArray(actual, [39, 14], 'The value of actual is expected to be [39, 14]');
+assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'Object.getPrototypeOf([].flatMap.call(a, fn)") returns Array.prototype');

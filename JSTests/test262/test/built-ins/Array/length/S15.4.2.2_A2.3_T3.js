@@ -13,25 +13,11 @@ description: Checking for boolean primitive and Boolean object
 
 var x = new Array("1");
 
-//CHECK#1
-if (x.length !== 1) {
-  throw new Test262Error('#1: var x = new Array("1"); x.length === 1. Actual: ' + (x.length));
-}
-
-//CHECK#2
-if (x[0] !== "1") {
-  throw new Test262Error('#2: var x = new Array("1"); x[0] === "1". Actual: ' + (x[0]));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
+assert.sameValue(x[0], "1", 'The value of x[0] is expected to be "1"');
 
 var obj = new String("0");
 var x = new Array(obj);
 
-//CHECK#3
-if (x.length !== 1) {
-  throw new Test262Error('#3: var obj = new String("0"); var x = new Array(obj); x.length === 1. Actual: ' + (x.length));
-}
-
-//CHECK#4
-if (x[0] !== obj) {
-  throw new Test262Error('#4: var obj = new String("0"); var x = new Array(obj); x[0] === obj. Actual: ' + (x[0]));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
+assert.sameValue(x[0], obj, 'The value of x[0] is expected to equal the value of obj');

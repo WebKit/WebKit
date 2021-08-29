@@ -14,7 +14,7 @@ includes: [propertyHelper.js]
 
 assert.sameValue(
   Array.of.name, 'of',
-  'The value of `Array.of.name` is `"of"`'
+  'The value of Array.of.name is expected to be "of"'
 );
 
 verifyNotEnumerable(Array.of, 'name');

@@ -23,8 +23,8 @@ var objectProxy = new Proxy({}, {});
 var arrayProxy = new Proxy([], {});
 var arrayProxyProxy = new Proxy(arrayProxy, {});
 
-assert.sameValue(Array.isArray(objectProxy), false);
-assert.sameValue(Array.isArray(arrayProxy), true, 'proxy for array');
+assert.sameValue(Array.isArray(objectProxy), false, 'Array.isArray(new Proxy({}, {})) must return false');
+assert.sameValue(Array.isArray(arrayProxy), true, 'Array.isArray(new Proxy([], {})) must return true');
 assert.sameValue(
-  Array.isArray(arrayProxyProxy), true, 'proxy for proxy for array'
+  Array.isArray(arrayProxyProxy), true, 'Array.isArray(new Proxy(arrayProxy, {})) must return true'
 );

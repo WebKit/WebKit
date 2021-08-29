@@ -15,10 +15,13 @@ Object.defineProperty(Array.prototype, "0", {
   configurable: true
 });
 
-var newArr = Array.prototype.concat.call(101);
+var newArrayFromConcat = Array.prototype.concat.call(101);
 
-assert(newArr[0] instanceof Number);
-verifyProperty(newArr, "0", {
+assert(
+  newArrayFromConcat[0] instanceof Number,
+  'The result of evaluating (newArrayFromConcat[0] instanceof Number) is expected to be true'
+);
+verifyProperty(newArrayFromConcat, "0", {
   writable: true,
   enumerable: true,
   configurable: true,

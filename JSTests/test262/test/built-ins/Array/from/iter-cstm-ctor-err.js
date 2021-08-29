@@ -23,4 +23,4 @@ items[Symbol.iterator] = function() {};
 
 assert.throws(Test262Error, function() {
   Array.from.call(C, items);
-});
+}, 'Array.from.call(C, items) throws a Test262Error exception');

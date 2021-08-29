@@ -17,7 +17,4 @@ info: |
 
 $DONOTEVALUATE();
 
-function _() {
-  (async (x) => x) = 1;
-}
-
+(async (x) => x) = 1;

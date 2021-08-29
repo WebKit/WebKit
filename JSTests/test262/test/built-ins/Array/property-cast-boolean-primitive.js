@@ -12,9 +12,9 @@ description: Checking for boolean primitive
 var x = [];
 
 x[true] = 1;
-assert.sameValue(x[1], undefined, "x[1]");
-assert.sameValue(x["true"], 1, "x['true']");
+assert.sameValue(x[1], undefined, 'The value of x[1] is expected to equal undefined');
+assert.sameValue(x["true"], 1, 'The value of x["true"] is expected to be 1');
 
 x[false] = 0;
-assert.sameValue(x[0], undefined, "x[0]");
-assert.sameValue(x["false"], 0, "x['false']")
+assert.sameValue(x[0], undefined, 'The value of x[0] is expected to equal undefined');
+assert.sameValue(x["false"], 0, 'The value of x["false"] is expected to be 0')

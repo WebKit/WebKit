@@ -35,9 +35,12 @@ features: [Reflect]
 
 assert.throws(TypeError, function() {
   Object.defineProperty([], "length", {configurable: true});
-});
+}, 'Object.defineProperty([], "length", {configurable: true}) throws a TypeError exception');
 
-assert(!Reflect.defineProperty([], "length", {enumerable: true}));
+assert(
+  !Reflect.defineProperty([], "length", {enumerable: true}),
+  'The value of !Reflect.defineProperty([], "length", {enumerable: true}) is expected to be true'
+);
 
 assert.throws(TypeError, function() {
   Object.defineProperty([], "length", {
@@ -45,12 +48,15 @@ assert.throws(TypeError, function() {
       throw new Test262Error("[[Get]] shouldn't be called");
     },
   });
-});
+}, 'Object.defineProperty([], "length", {get: function() {throw new Test262Error("[[Get]] shouldn"t be called");},}) throws a TypeError exception');
 
-assert(!Reflect.defineProperty([], "length", {set: function(_value) {}}));
+assert(
+  !Reflect.defineProperty([], "length", {set: function(_value) {}}),
+  'The value of !Reflect.defineProperty([], "length", {set: function(_value) {}}) is expected to be true'
+);
 
 var array = [];
 Object.defineProperty(array, "length", {writable: false});
 assert.throws(TypeError, function() {
   Object.defineProperty(array, "length", {writable: true});
-});
+}, 'Object.defineProperty(array, "length", {writable: true}) throws a TypeError exception');

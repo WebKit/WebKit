@@ -8,19 +8,18 @@ esid: sec-array.prototype.concat
 description: Array.prototype.concat length throws
 features: [Symbol.isConcatSpreadable]
 ---*/
-function MyError() {}
-var obj = {};
-obj[Symbol.isConcatSpreadable] = true;
-Object.defineProperty(obj, "length", {
+var spreadablePoisonedLengthGetter = {};
+spreadablePoisonedLengthGetter[Symbol.isConcatSpreadable] = true;
+Object.defineProperty(spreadablePoisonedLengthGetter, "length", {
   get: function() {
-    throw new MyError();
+    throw new Test262Error();
   }
 });
 
-assert.throws(MyError, function() {
-  [].concat(obj);
-});
+assert.throws(Test262Error, function() {
+  [].concat(spreadablePoisonedLengthGetter);
+}, '[].concat(spreadablePoisonedLengthGetter) throws a Test262Error exception');
 
-assert.throws(MyError, function() {
-  Array.prototype.concat.call(obj, 1, 2, 3);
-});
+assert.throws(Test262Error, function() {
+  Array.prototype.concat.call(spreadablePoisonedLengthGetter, 1, 2, 3);
+}, 'Array.prototype.concat.call(spreadablePoisonedLengthGetter, 1, 2, 3) throws a Test262Error exception');

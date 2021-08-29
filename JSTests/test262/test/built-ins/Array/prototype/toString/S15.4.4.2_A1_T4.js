@@ -10,153 +10,89 @@ es5id: 15.4.4.2_A1_T4
 description: If Type(value) is Object, evaluate ToPrimitive(value, String)
 ---*/
 
-//CHECK#1
 var object = {
-  valueOf: function() {
+  valueOf() {
     return "+"
   }
 };
 var x = new Array(object);
-if (x.toString() !== x.join()) {
-  throw new Test262Error('#1.1: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.toString() === x.join(). Actual: ' + (x.toString()));
-} else {
-  if (x.toString() !== "[object Object]") {
-    throw new Test262Error('#1.2: var object = {valueOf: function() {return "+"}} var x = new Array(object); x.toString() === "[object Object]". Actual: ' + (x.toString()));
-  }
-}
+assert.sameValue(x.toString(), x.join(), 'x.toString() must return the same value returned by x.join()');
 
-//CHECK#2
 var object = {
-  valueOf: function() {
+  valueOf() {
     return "+"
   },
-  toString: function() {
+  toString() {
     return "*"
   }
 };
 var x = new Array(object);
-if (x.toString() !== x.join()) {
-  throw new Test262Error('#2.1: var object = {valueOf: function() {return "+"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-} else {
-  if (x.toString() !== "*") {
-    throw new Test262Error('#2.2: var object = {valueOf: function() {return "+"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-  }
-}
+assert.sameValue(x.toString(), x.join(), 'x.toString() must return the same value returned by x.join()');
 
-//CHECK#3
 var object = {
-  valueOf: function() {
+  valueOf() {
     return "+"
   },
-  toString: function() {
+  toString() {
     return {}
   }
 };
 var x = new Array(object);
-if (x.toString() !== x.join()) {
-  throw new Test262Error('#3.1: var object = {valueOf: function() {return x.join()}, toString: function() {return {}}} var x = new Array(object); x.toString() === "+". Actual: ' + (x.toString()));
-} else {
-  if (x.toString() !== "+") {
-    throw new Test262Error('#3.2: var object = {valueOf: function() {return "+"}, toString: function() {return {}}} var x = new Array(object); x.toString() === "+". Actual: ' + (x.toString()));
-  }
-}
+assert.sameValue(x.toString(), x.join(), 'x.toString() must return the same value returned by x.join()');
 
-//CHECK#4
-try {
-  var object = {
-    valueOf: function() {
-      throw "error"
-    },
-    toString: function() {
-      return "*"
-    }
-  };
-  var x = new Array(object);
-  if (x.toString() !== x.join()) {
-    throw new Test262Error('#4.1: var object = {valueOf: function() {throw "error"}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-  } else {
-    if (x.toString() !== "*") {
-      throw new Test262Error('#4.2: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-    }
-  }
-}
-catch (e) {
-  if (e === "error") {
-    throw new Test262Error('#4.3: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() not throw "error"');
-  } else {
-    throw new Test262Error('#4.4: var object = {valueOf: function() {throw "error"}, toString: function() {return "*"}} var x = new Array(object); x.toString() not throw Error. Actual: ' + (e));
-  }
-}
-
-//CHECK#5
 var object = {
-  toString: function() {
+  valueOf() {
+    throw "error"
+  },
+  toString() {
     return "*"
   }
 };
 var x = new Array(object);
-if (x.toString() !== x.join()) {
-  throw new Test262Error('#5.1: var object = {toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-} else {
-  if (x.toString() !== "*") {
-    throw new Test262Error('#5.2: var object = {toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-  }
-}
+assert.sameValue(x.toString(), x.join(), 'x.toString() must return the same value returned by x.join()');
 
-//CHECK#6
+
 var object = {
-  valueOf: function() {
+  toString() {
+    return "*"
+  }
+};
+var x = new Array(object);
+assert.sameValue(x.toString(), x.join(), 'x.toString() must return the same value returned by x.join()');
+
+var object = {
+  valueOf() {
     return {}
   },
-  toString: function() {
+  toString() {
     return "*"
   }
 }
 var x = new Array(object);
-if (x.toString() !== x.join()) {
-  throw new Test262Error('#6.1: var object = {valueOf: function() {return {}}, toString: function() {return x.join()}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-} else {
-  if (x.toString() !== "*") {
-    throw new Test262Error('#6.2: var object = {valueOf: function() {return {}}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-  }
-}
+assert.sameValue(x.toString(), x.join(), 'x.toString() must return the same value returned by x.join()');
 
-//CHECK#7
-try {
+assert.throws(Test262Error, () => {
   var object = {
-    valueOf: function() {
+    valueOf() {
       return "+"
     },
-    toString: function() {
-      throw "error"
+    toString() {
+      throw new Test262Error();
     }
   };
   var x = new Array(object);
   x.toString();
-  throw new Test262Error('#7.1: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (x.toString()));
-}
-catch (e) {
-  if (e !== "error") {
-    throw new Test262Error('#7.2: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (e));
-  }
-}
+});
 
-//CHECK#8
-try {
+assert.throws(TypeError, () => {
   var object = {
-    valueOf: function() {
+    valueOf() {
       return {}
     },
-    toString: function() {
+    toString() {
       return {}
     }
   };
   var x = new Array(object);
   x.toString();
-  throw new Test262Error('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (x.toString()));
-}
-catch (e) {
-  if ((e instanceof TypeError) !== true) {
-    throw new Test262Error('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (e));
-  }
-}
+});

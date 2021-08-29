@@ -9,43 +9,31 @@ esid: sec-terms-and-definitions-boolean-value
 description: Used various undefined values and null as argument
 ---*/
 
-//CHECK#1
-if (typeof Boolean(undefined) !== "boolean") {
-  throw new Test262Error('#1.1: typeof Boolean(undefined) should be "boolean", actual is "' + typeof Boolean(undefined) + '"');
-}
-if (Boolean(undefined) !== false) {
-  throw new Test262Error('#1.2: Boolean(undefined) should be false');
-}
+assert.sameValue(
+  typeof Boolean(undefined),
+  "boolean",
+  'The value of `typeof Boolean(undefined)` is expected to be "boolean"'
+);
 
-//CHECK#2
-if (typeof Boolean(void 0) !== "boolean") {
-  throw new Test262Error('#2.1: typeof Boolean(void 0) should be "boolean", actual is "' + typeof Boolean(void 0) + '"');
-}
-if (Boolean(void 0) !== false) {
-  throw new Test262Error('#2.2: Boolean(void 0) should be false');
-}
+assert.sameValue(Boolean(undefined), false, 'Boolean(undefined) must return false');
 
-//CHECK#3
-if (typeof Boolean(function() {}()) !== "boolean") {
-  throw new Test262Error('#3.1: typeof Boolean(function(){}()) should be "boolean", actual is "' + typeof Boolean(function() {}()) + '"');
-}
-if (Boolean(function() {}()) !== false) {
-  throw new Test262Error('#3.2: Boolean(function(){}()) should be false');
-}
+assert.sameValue(
+  typeof Boolean(void 0),
+  "boolean",
+  'The value of `typeof Boolean(void 0)` is expected to be "boolean"'
+);
 
-//CHECK#4
-if (typeof Boolean(null) !== "boolean") {
-  throw new Test262Error('#4.1: typeof Boolean(null) should be "boolean", actual is "' + typeof Boolean(null) + '"');
-}
-if (Boolean(null) !== false) {
-  throw new Test262Error('#4.2: Boolean(null) should be false');
-}
+assert.sameValue(Boolean(void 0), false, 'Boolean(void 0) must return false');
 
-//CHECK#5
-if (typeof Boolean(x) !== "boolean") {
-  throw new Test262Error('#5.1: var x; typeof Boolean(x) should be "boolean", actual is "' + typeof Boolean(x) + '"');
-}
-if (Boolean(x) !== false) {
-  throw new Test262Error('#5.2: var x; Boolean(x) should be false');
-}
+assert.sameValue(
+  typeof Boolean(function() {}()),
+  "boolean",
+  'The value of `typeof Boolean(function() {}())` is expected to be "boolean"'
+);
+
+assert.sameValue(Boolean(function() {}()), false, 'Boolean(function() {}()) must return false');
+assert.sameValue(typeof Boolean(null), "boolean", 'The value of `typeof Boolean(null)` is expected to be "boolean"');
+assert.sameValue(Boolean(null), false, 'Boolean(null) must return false');
+assert.sameValue(typeof Boolean(x), "boolean", 'The value of `typeof Boolean(x)` is expected to be "boolean"');
+assert.sameValue(Boolean(x), false, 'Boolean() must return false');
 var x;

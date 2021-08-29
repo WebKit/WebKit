@@ -14,28 +14,9 @@ description: Checking this algorithm with no items
 var x = [0, 1];
 var arr = x.concat();
 
-//CHECK#0
 arr.getClass = Object.prototype.toString;
-if (arr.getClass() !== "[object " + "Array" + "]") {
-  throw new Test262Error('#0: var x = [0,1]; var arr = x.concat(); arr is Array object. Actual: ' + (arr.getClass()));
-}
-
-//CHECK#1
-if (arr[0] !== 0) {
-  throw new Test262Error('#1: var x = [0,1]; var arr = x.concat(); arr[0] === 0. Actual: ' + (arr[0]));
-}
-
-//CHECK#2
-if (arr[1] !== 1) {
-  throw new Test262Error('#2: var x = [0,1]; var arr = x.concat(); arr[1] === 1. Actual: ' + (arr[1]));
-}
-
-//CHECK#3
-if (arr.length !== 2) {
-  throw new Test262Error('#3: var x = [0,1]; var arr = x.concat(); arr.length === 2. Actual: ' + (arr.length));
-}
-
-//CHECK#4
-if (arr === x) {
-  throw new Test262Error('#4: var x = [0,1]; var arr = x.concat(); arr !== x');
-}
+assert.sameValue(arr.getClass(), "[object Array]", 'arr.getClass() must return "[object Array]"');
+assert.sameValue(arr[0], 0, 'The value of arr[0] is expected to be 0');
+assert.sameValue(arr[1], 1, 'The value of arr[1] is expected to be 1');
+assert.sameValue(arr.length, 2, 'The value of arr.length is expected to be 2');
+assert.notSameValue(arr, x, 'The value of arr is expected to not equal the value of `x`');

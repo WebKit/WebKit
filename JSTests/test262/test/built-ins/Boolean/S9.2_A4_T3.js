@@ -11,43 +11,11 @@ description: >
     Number.MAX_VALUE, Number.MIN_VALUE and some numbers convert to
     Boolean by explicit transformation
 ---*/
-
-// CHECK#1
-if (Boolean(Number.POSITIVE_INFINITY) !== true) {
-  throw new Test262Error('#1: Boolean(+Infinity) === true. Actual: ' + (Boolean(+Infinity)));
-}
-
-// CHECK#2;
-if (Boolean(Number.NEGATIVE_INFINITY) !== true) {
-  throw new Test262Error('#2: Boolean(-Infinity) === true. Actual: ' + (Boolean(-Infinity)));
-}
-
-// CHECK#3
-if (Boolean(Number.MAX_VALUE) !== true) {
-  throw new Test262Error('#3: Boolean(Number.MAX_VALUE) === true. Actual: ' + (Boolean(Number.MAX_VALUE)));
-}
-
-// CHECK#4
-if (Boolean(Number.MIN_VALUE) !== true) {
-  throw new Test262Error('#4: Boolean(Number.MIN_VALUE) === true. Actual: ' + (Boolean(Number.MIN_VALUE)));
-}
-
-// CHECK#5
-if (Boolean(13) !== true) {
-  throw new Test262Error('#5: Boolean(13) === true. Actual: ' + (Boolean(13)));
-}
-
-// CHECK#6
-if (Boolean(-13) !== true) {
-  throw new Test262Error('#6: Boolean(-13) === true. Actual: ' + (Boolean(-13)));
-}
-
-// CHECK#7
-if (Boolean(1.3) !== true) {
-  throw new Test262Error('#7: Boolean(1.3) === true. Actual: ' + (Boolean(1.3)));
-}
-
-// CHECK#8
-if (Boolean(-1.3) !== true) {
-  throw new Test262Error('#8: Boolean(-1.3) === true. Actual: ' + (Boolean(-1.3)));
-}
+assert.sameValue(Boolean(Number.POSITIVE_INFINITY), true, 'Boolean(Number.POSITIVE_INFINITY) must return true');
+assert.sameValue(Boolean(Number.NEGATIVE_INFINITY), true, 'Boolean(Number.NEGATIVE_INFINITY) must return true');
+assert.sameValue(Boolean(Number.MAX_VALUE), true, 'Boolean(Number.MAX_VALUE) must return true');
+assert.sameValue(Boolean(Number.MIN_VALUE), true, 'Boolean(Number.MIN_VALUE) must return true');
+assert.sameValue(Boolean(13), true, 'Boolean(13) must return true');
+assert.sameValue(Boolean(-13), true, 'Boolean(-13) must return true');
+assert.sameValue(Boolean(1.3), true, 'Boolean(1.3) must return true');
+assert.sameValue(Boolean(-1.3), true, 'Boolean(-1.3) must return true');

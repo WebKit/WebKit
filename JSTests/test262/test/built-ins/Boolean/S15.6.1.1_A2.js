@@ -6,13 +6,5 @@ info: Boolean() returns false
 esid: sec-terms-and-definitions-boolean-value
 description: Call Boolean() and check result
 ---*/
-
-//CHECK#1
-if (typeof Boolean() !== "boolean") {
-  throw new Test262Error('#1: typeof Boolean() should be "boolean", actual is "' + typeof Boolean() + '"');
-}
-
-//CHECK#2
-if (Boolean() !== false) {
-  throw new Test262Error('#2: Boolean() should be false');
-}
+assert.sameValue(typeof Boolean(), "boolean", 'The value of `typeof Boolean()` is expected to be "boolean"');
+assert.sameValue(Boolean(), false, 'Boolean() must return false');

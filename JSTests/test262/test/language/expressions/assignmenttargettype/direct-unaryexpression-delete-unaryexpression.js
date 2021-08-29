@@ -17,7 +17,4 @@ info: |
 
 $DONOTEVALUATE();
 
-function _() {
-  delete x.y = 1;
-}
-
+delete x.y = 1;

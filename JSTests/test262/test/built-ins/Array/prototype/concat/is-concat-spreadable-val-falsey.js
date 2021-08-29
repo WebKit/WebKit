@@ -36,20 +36,20 @@ var result;
 
 item[Symbol.isConcatSpreadable] = null;
 result = [].concat(item);
-assert.sameValue(result.length, 1);
-assert.sameValue(result[0], item);
+assert.sameValue(result.length, 1, 'The value of result.length is expected to be 1');
+assert.sameValue(result[0], item, 'The value of result[0] is expected to equal the value of item');
 
 item[Symbol.isConcatSpreadable] = false;
 result = [].concat(item);
-assert.sameValue(result.length, 1);
-assert.sameValue(result[0], item);
+assert.sameValue(result.length, 1, 'The value of result.length is expected to be 1');
+assert.sameValue(result[0], item, 'The value of result[0] is expected to equal the value of item');
 
 item[Symbol.isConcatSpreadable] = 0;
 result = [].concat(item);
-assert.sameValue(result.length, 1);
-assert.sameValue(result[0], item);
+assert.sameValue(result.length, 1, 'The value of result.length is expected to be 1');
+assert.sameValue(result[0], item, 'The value of result[0] is expected to equal the value of item');
 
 item[Symbol.isConcatSpreadable] = NaN;
 result = [].concat(item);
-assert.sameValue(result.length, 1);
-assert.sameValue(result[0], item);
+assert.sameValue(result.length, 1, 'The value of result.length is expected to be 1');
+assert.sameValue(result[0], item, 'The value of result[0] is expected to equal the value of item');

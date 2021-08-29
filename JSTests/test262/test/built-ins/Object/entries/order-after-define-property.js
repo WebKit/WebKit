@@ -27,7 +27,6 @@ info: |
     a. Add P as the last element of keys.
   [...]
   5. Return keys.
-features: [arrow-function]
 includes: [compareArray.js]
 ---*/
 
@@ -37,9 +36,3 @@ obj.b = 2;
 Object.defineProperty(obj, "a", {writable: false});
 var objKeys = Object.entries(obj).map(e => e[0]);
 assert.compareArray(objKeys, ["a", "b"]);
-
-var fn = () => {};
-fn.a = 1;
-Object.defineProperty(fn, "name", {enumerable: true});
-var fnKeys = Object.entries(fn).map(e => e[0]);
-assert.compareArray(fnKeys, ["name", "a"]);

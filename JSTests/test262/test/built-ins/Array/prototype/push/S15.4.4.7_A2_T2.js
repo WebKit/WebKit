@@ -15,103 +15,85 @@ description: >
 var obj = {};
 obj.push = Array.prototype.push;
 
-//CHECK#1
 obj.length = NaN;
 var push = obj.push(-1);
 if (push !== 1) {
   throw new Test262Error('#1: var obj = {}; obj.length = NaN; obj.push = Array.prototype.push; obj.push(-1) === 1. Actual: ' + (push));
 }
 
-//CHECK#2
 if (obj.length !== 1) {
   throw new Test262Error('#2: var obj = {}; obj.length = NaN; obj.push = Array.prototype.push; obj.push(-1); obj.length === 1. Actual: ' + (obj.length));
 }
 
-//CHECK#3
 if (obj["0"] !== -1) {
   throw new Test262Error('#3: var obj = {}; obj.length = NaN; obj.push = Array.prototype.push; obj.push(-1); obj["0"] === -1. Actual: ' + (obj["0"]));
 }
 
-//CHECK#4
 obj.length = Number.POSITIVE_INFINITY;
 assert.throws(TypeError, function() {
   obj.push(-4);
 });
 
-//CHECK#5
 if (obj.length !== Number.POSITIVE_INFINITY) {
   throw new Test262Error('#6: var obj = {}; obj.length = Number.POSITIVE_INFINITY; obj.push = Array.prototype.push; obj.push(-4); obj.length === Number.POSITIVE_INFINITY. Actual: ' + (obj.length));
 }
 
-//CHECK#6
 if (obj[9007199254740991] !== undefined) {
   throw new Test262Error('#6: var obj = {}; obj.length = Number.POSITIVE_INFINITY; obj.push = Array.prototype.push; obj.push(-4); obj[9007199254740991] === undefined. Actual: ' + (obj["9007199254740991"]));
 }
 
-//CHECK#7
 obj.length = Number.NEGATIVE_INFINITY;
 var push = obj.push(-7);
 if (push !== 1) {
   throw new Test262Error('#7: var obj = {}; obj.length = Number.NEGATIVE_INFINITY; obj.push = Array.prototype.push; obj.push(-7) === 1. Actual: ' + (push));
 }
 
-//CHECK#8
 if (obj.length !== 1) {
   throw new Test262Error('#8: var obj = {}; obj.length = Number.NEGATIVE_INFINITY; obj.push = Array.prototype.push; obj.push(-7); obj.length === 1. Actual: ' + (obj.length));
 }
 
-//CHECK#9
 if (obj["0"] !== -7) {
   throw new Test262Error('#9: var obj = {}; obj.length = Number.NEGATIVE_INFINITY; obj.push = Array.prototype.push; obj.push(-7); obj["0"] === -7. Actual: ' + (obj["0"]));
 }
 
-//CHECK#10
 obj.length = 0.5;
 var push = obj.push(-10);
 if (push !== 1) {
   throw new Test262Error('#10: var obj = {}; obj.length = 0.5; obj.push = Array.prototype.push; obj.push(-10) === 1. Actual: ' + (push));
 }
 
-//CHECK#11
 if (obj.length !== 1) {
   throw new Test262Error('#11: var obj = {}; obj.length = 0.5; obj.push = Array.prototype.push; obj.push(-10); obj.length === 1. Actual: ' + (obj.length));
 }
 
-//CHECK#12
 if (obj["0"] !== -10) {
   throw new Test262Error('#12: var obj = {}; obj.length = 0.5; obj.push = Array.prototype.push; obj.push(-10); obj["0"] === -10. Actual: ' + (obj["0"]));
 }
 
-//CHECK#13
 obj.length = 1.5;
 var push = obj.push(-13);
 if (push !== 2) {
   throw new Test262Error('#13: var obj = {}; obj.length = 1.5; obj.push = Array.prototype.push; obj.push(-13) === 2. Actual: ' + (push));
 }
 
-//CHECK#14
 if (obj.length !== 2) {
   throw new Test262Error('#14: var obj = {}; obj.length = 1.5; obj.push = Array.prototype.push; obj.push(-13); obj.length === 2. Actual: ' + (obj.length));
 }
 
-//CHECK#15
 if (obj["1"] !== -13) {
   throw new Test262Error('#15: var obj = {}; obj.length = 1.5; obj.push = Array.prototype.push; obj.push(-13); obj["1"] === -13. Actual: ' + (obj["1"]));
 }
 
-//CHECK#16
 obj.length = new Number(0);
 var push = obj.push(-16);
 if (push !== 1) {
   throw new Test262Error('#16: var obj = {}; obj.length = new Number(0); obj.push = Array.prototype.push; obj.push(-16) === 1. Actual: ' + (push));
 }
 
-//CHECK#17
 if (obj.length !== 1) {
   throw new Test262Error('#17: var obj = {}; obj.length = new Number(0); obj.push = Array.prototype.push; obj.push(-16); obj.length === 1. Actual: ' + (obj.length));
 }
 
-//CHECK#18
 if (obj["0"] !== -16) {
   throw new Test262Error('#18: var obj = {}; obj.length = new Number(0); obj.push = Array.prototype.push; obj.push(-16); obj["0"] === -16. Actual: ' + (obj["0"]));
 }

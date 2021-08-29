@@ -27,7 +27,6 @@ info: |
     a. Add P as the last element of keys.
   [...]
   5. Return keys.
-features: [Proxy]
 includes: [compareArray.js]
 ---*/
 
@@ -41,8 +40,3 @@ Object.defineProperty(obj, "a", {
 obj.b = 2;
 Object.defineProperty(obj, "a", {value: 1});
 assert.compareArray(Object.keys(obj), ["a", "b"]);
-
-var fn = () => {};
-fn.a = 1;
-Object.defineProperty(fn, "length", {enumerable: true});
-assert.compareArray(Object.keys(fn), ["length", "a"]);

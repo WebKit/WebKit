@@ -7,7 +7,7 @@ esid: sec-array.prototype.concat
 description: Array.prototype.concat array like to length throws
 features: [Symbol.isConcatSpreadable]
 ---*/
-var obj = {
+var spreadableWithBrokenLength = {
   "length": {
     valueOf: null,
     toString: null
@@ -16,7 +16,7 @@ var obj = {
   "3": "B",
   "5": "C"
 };
-obj[Symbol.isConcatSpreadable] = true;
+spreadableWithBrokenLength[Symbol.isConcatSpreadable] = true;
 var obj2 = {
   length: 3,
   "0": "0",
@@ -25,5 +25,5 @@ var obj2 = {
 };
 var arr = ["X", "Y", "Z"];
 assert.throws(TypeError, function() {
-  Array.prototype.concat.call(obj, obj2, arr);
-});
+  Array.prototype.concat.call(spreadableWithBrokenLength, obj2, arr);
+}, 'Array.prototype.concat.call(spreadableWithBrokenLength, obj2, arr) throws a TypeError exception');

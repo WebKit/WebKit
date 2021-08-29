@@ -9,9 +9,6 @@ es5id: 7.4_A6
 description: "\"var\"+ yy+ \"xx = 1\", insert instead of yy all Unicode characters"
 ---*/
 
-//CHECK
-var errorCount = 0;
-var count = 0;
 for (var indexI = 0; indexI <= 65535; indexI++) {
   try {
     var xx = 0;
@@ -19,17 +16,10 @@ for (var indexI = 0; indexI <= 65535; indexI++) {
     var hex = decimalToHexString(indexI);
     if (xx !== 0) {
       throw new Test262Error('#' + hex + ' ');
-      errorCount++;
     }
   } catch (e){
     throw new Test262Error('#' + hex + ' ');
-    errorCount++;
   }
-  count++;
-}
-
-if (errorCount > 0) {
-  throw new Test262Error('Total error: ' + errorCount + ' bad Unicode character in ' + count);
 }
 
 function decimalToHexString(n) {

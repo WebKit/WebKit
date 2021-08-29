@@ -24,13 +24,10 @@ info: |
 includes: [compareArray.js]
 ---*/
 
-assert(compareArray([].fill(8), []));
+assert.compareArray([].fill(8), [], '[].fill(8) must return []');
 
-assert(compareArray(
-  [0, 0].fill(), [undefined, undefined]
-));
+assert.compareArray([0, 0].fill(), [undefined, undefined], '[0, 0].fill() must return [undefined, undefined]');
 
-assert(
-  compareArray([0, 0, 0].fill(8), [8, 8, 8]),
-  'Default start and end indexes are 0 and this.length'
+assert.compareArray([0, 0, 0].fill(8), [8, 8, 8],
+  '[0, 0, 0].fill(8) must return [8, 8, 8]'
 );

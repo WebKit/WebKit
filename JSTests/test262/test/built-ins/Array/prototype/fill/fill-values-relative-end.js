@@ -17,17 +17,14 @@ info: |
 includes: [compareArray.js]
 ---*/
 
-assert(
-  compareArray([0, 0, 0].fill(8, 0, 1), [8, 0, 0]),
-  'Fill elements from custom end position'
+assert.compareArray([0, 0, 0].fill(8, 0, 1), [8, 0, 0],
+  '[0, 0, 0].fill(8, 0, 1) must return [8, 0, 0]'
 );
 
-assert(
-  compareArray([0, 0, 0].fill(8, 0, -1), [8, 8, 0]),
-  'negative end sets final position to max((this.length + relativeEnd), 0)'
+assert.compareArray([0, 0, 0].fill(8, 0, -1), [8, 8, 0],
+  '[0, 0, 0].fill(8, 0, -1) must return [8, 8, 0]'
 );
 
-assert(
-  compareArray([0, 0, 0].fill(8, 0, 5), [8, 8, 8]),
-  'end position is never higher than of this.length'
+assert.compareArray([0, 0, 0].fill(8, 0, 5), [8, 8, 8],
+  '[0, 0, 0].fill(8, 0, 5) must return [8, 8, 8]'
 );

@@ -12,11 +12,11 @@ info: |
 features: [Symbol.iterator]
 ---*/
 
-var items = {};
-items[Symbol.iterator] = function() {
+var itemsPoisonedSymbolIterator = {};
+itemsPoisonedSymbolIterator[Symbol.iterator] = function() {
   throw new Test262Error();
 };
 
 assert.throws(Test262Error, function() {
-  Array.from(items);
-});
+  Array.from(itemsPoisonedSymbolIterator);
+}, 'Array.from(itemsPoisonedSymbolIterator) throws a Test262Error exception');

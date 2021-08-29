@@ -32,12 +32,15 @@ length[Symbol.toPrimitive] = function(hint) {
 assert.throws(TypeError, function() {
   "use strict";
   array.length = length;
-});
-assert.compareArray(hints, ["number", "number"]);
+}, '`"use strict"; array.length = length` throws a TypeError exception');
+assert.compareArray(hints, ["number", "number"], 'The value of hints is expected to be ["number", "number"]');
 
 
 array = [1, 2, 3];
 hints = [];
 
-assert(!Reflect.set(array, "length", length));
-assert.compareArray(hints, ["number", "number"]);
+assert(
+  !Reflect.set(array, "length", length),
+  'The value of !Reflect.set(array, "length", length) is expected to be true'
+);
+assert.compareArray(hints, ["number", "number"], 'The value of hints is expected to be ["number", "number"]');

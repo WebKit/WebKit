@@ -20,7 +20,4 @@ info: |
 
 $DONOTEVALUATE();
 
-function _() {
-  ((x, y = true)) = 1;
-}
-
+((x, y = true)) = 1;

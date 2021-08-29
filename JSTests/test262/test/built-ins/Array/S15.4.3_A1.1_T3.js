@@ -8,8 +8,8 @@ info: |
 es5id: 15.4.3_A1.1_T3
 description: Checking use isPrototypeOf
 ---*/
-
-//CHECK#1
-if (Function.prototype.isPrototypeOf(Array) !== true) {
-  throw new Test262Error('#1: Function.prototype.isPrototypeOf(Array) === true. Actual: ' + (Function.prototype.isPrototypeOf(Array)));
-}
+assert.sameValue(
+  Function.prototype.isPrototypeOf(Array),
+  true,
+  'Function.prototype.isPrototypeOf(Array) must return true'
+);

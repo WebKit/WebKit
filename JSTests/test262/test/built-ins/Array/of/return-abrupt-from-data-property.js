@@ -31,7 +31,7 @@ function T1() {
 
 assert.throws(TypeError, function() {
   Array.of.call(T1, 'Bob');
-});
+}, 'Array.of.call(T1, "Bob") throws a TypeError exception');
 
 function T2() {
   Object.defineProperty(this, 0, {
@@ -43,4 +43,4 @@ function T2() {
 
 assert.throws(TypeError, function() {
   Array.of.call(T2, 'Bob');
-})
+}, 'Array.of.call(T2, "Bob") throws a TypeError exception')

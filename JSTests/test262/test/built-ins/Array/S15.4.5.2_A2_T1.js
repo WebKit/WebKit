@@ -9,26 +9,14 @@ es5id: 15.4.5.2_A2_T1
 description: Checking length property
 ---*/
 
-//CHECK#1
 var x = [];
-if (x.length !== 0) {
-  throw new Test262Error('#1: x = []; x.length === 0. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 0, 'The value of x.length is expected to be 0');
 
-//CHECK#2
 x[0] = 1;
-if (x.length !== 1) {
-  throw new Test262Error('#2: x = []; x[1] = 1; x.length === 1. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
 
-//CHECK#3
 x[1] = 1;
-if (x.length !== 2) {
-  throw new Test262Error('#3: x = []; x[0] = 1; x[1] = 1; x.length === 2. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 2, 'The value of x.length is expected to be 2');
 
-//CHECK#4
 x[9] = 1;
-if (x.length !== 10) {
-  throw new Test262Error('#4: x = []; x[0] = 1; x[1] = 1; x[9] = 1; x.length === 10. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 10, 'The value of x.length is expected to be 10');

@@ -16,7 +16,7 @@ Object.defineProperty(Array.prototype, "0", {
 });
 
 var arr = Array.of(true);
-assert.sameValue(arr[0], true);
+assert.sameValue(arr[0], true, 'The value of arr[0] is expected to be true');
 
 function Custom() {}
 
@@ -27,4 +27,4 @@ Object.defineProperty(Custom.prototype, "0", {
 });
 
 var custom = Array.of.call(Custom, true);
-assert.sameValue(custom[0], true);
+assert.sameValue(custom[0], true, 'The value of custom[0] is expected to be true');

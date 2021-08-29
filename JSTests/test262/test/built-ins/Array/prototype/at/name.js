@@ -12,11 +12,15 @@ info: |
 includes: [propertyHelper.js]
 features: [Array.prototype.at]
 ---*/
-assert.sameValue(typeof Array.prototype.at, 'function');
+assert.sameValue(
+  typeof Array.prototype.at,
+  'function',
+  'The value of `typeof Array.prototype.at` is expected to be "function"'
+);
 
 assert.sameValue(
   Array.prototype.at.name, 'at',
-  'The value of Array.prototype.at.name is "at"'
+  'The value of Array.prototype.at.name is expected to be "at"'
 );
 
 verifyProperty(Array.prototype.at, 'name', {

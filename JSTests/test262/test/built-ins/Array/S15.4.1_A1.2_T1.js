@@ -7,16 +7,10 @@ es5id: 15.4.1_A1.2_T1
 description: Checking use Object.prototype.toString
 ---*/
 
-//CHECK#1
 var x = Array();
 x.getClass = Object.prototype.toString;
-if (x.getClass() !== "[object " + "Array" + "]") {
-  throw new Test262Error('#1: var x = Array(); x.getClass = Object.prototype.toString; x is Array object. Actual: ' + (x.getClass()));
-}
+assert.sameValue(x.getClass(), "[object Array]", 'x.getClass() must return "[object Array]"');
 
-//CHECK#2
 var x = Array(0, 1, 2);
 x.getClass = Object.prototype.toString;
-if (x.getClass() !== "[object " + "Array" + "]") {
-  throw new Test262Error('#2: var x = Array(0,1,2); x.getClass = Object.prototype.toString; x is Array object. Actual: ' + (x.getClass()));
-}
+assert.sameValue(x.getClass(), "[object Array]", 'x.getClass() must return "[object Array]"');

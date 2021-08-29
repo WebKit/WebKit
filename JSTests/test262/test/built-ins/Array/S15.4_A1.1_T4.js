@@ -9,16 +9,10 @@ es5id: 15.4_A1.1_T4
 description: Checking for string primitive
 ---*/
 
-//CHECK#1
 var x = [];
 x["0"] = 0;
-if (x[0] !== 0) {
-  throw new Test262Error('#1: x = []; x["0"] = 0; x[0] === 0. Actual: ' + (x[0]));
-}
+assert.sameValue(x[0], 0, 'The value of x[0] is expected to be 0');
 
-//CHECK#2
 var y = [];
 y["1"] = 1;
-if (y[1] !== 1) {
-  throw new Test262Error('#2: y = []; y["1"] = 1; y[1] === 1. Actual: ' + (y[1]));
-}
+assert.sameValue(y[1], 1, 'The value of y[1] is expected to be 1');

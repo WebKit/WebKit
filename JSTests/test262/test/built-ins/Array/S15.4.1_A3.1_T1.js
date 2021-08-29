@@ -9,12 +9,10 @@ es5id: 15.4.1_A3.1_T1
 description: Checking use typeof, instanceof
 ---*/
 
-//CHECK#1
-if (typeof Array() !== "object") {
-  throw new Test262Error('#1: typeof Array() === "object". Actual: ' + (typeof Array()));
-}
+assert.sameValue(typeof Array(), "object", 'The value of `typeof Array()` is expected to be "object"');
 
-//CHECK#2
-if ((Array() instanceof Array) !== true) {
-  throw new Test262Error('#2: (Array() instanceof Array) === true. Actual: ' + (Array() instanceof Array));
-}
+assert.sameValue(
+  Array() instanceof Array,
+  true,
+  'The result of evaluating (Array() instanceof Array) is expected to be true'
+);

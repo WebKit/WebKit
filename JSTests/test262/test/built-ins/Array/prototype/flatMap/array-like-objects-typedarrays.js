@@ -35,9 +35,9 @@ Object.defineProperty(ta, 'constructor', {
   get() { throw "it should not object the typedarray ctor"; }
 });
 actual = [].flatMap.call(ta, same);
-assert.compareArray(actual, [1, 0, 42], 'compare returned array');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'returned object is an array #1');
-assert.sameValue(actual instanceof Int32Array, false, 'returned object is not an instance of Int32Array #1');
+assert.compareArray(actual, [1, 0, 42], 'The value of actual is expected to be [1, 0, 42]');
+assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'Object.getPrototypeOf([].flatMap.call(ta, same)") returns Array.prototype');
+assert.sameValue(actual instanceof Int32Array, false, 'The result of evaluating (actual instanceof Int32Array) is expected to be false');
 
 ta = new Int32Array(0);
 
@@ -45,6 +45,6 @@ Object.defineProperty(ta, 'constructor', {
   get() { throw "it should not object the typedarray ctor"; }
 });
 actual = [].flatMap.call(ta, same);
-assert.compareArray(actual, [], 'compare returned empty array');
-assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'returned object is an array #2');
-assert.sameValue(actual instanceof Int32Array, false, 'returned object is not an instance of Int32Array #2');
+assert.compareArray(actual, [], 'The value of actual is expected to be []');
+assert.sameValue(Object.getPrototypeOf(actual), Array.prototype, 'Object.getPrototypeOf([].flatMap.call(ta, same)") returns Array.prototype');
+assert.sameValue(actual instanceof Int32Array, false, 'The result of evaluating (actual instanceof Int32Array) is expected to be false');

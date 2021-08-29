@@ -12,14 +12,7 @@ description: >
     this property
 ---*/
 
-//CHECK#1
 Array.prototype.myproperty = 1;
 var x = new Array();
-if (x.myproperty !== 1) {
-  throw new Test262Error('#1: Array.prototype.myproperty = 1; var x = new Array(); x.myproperty === 1. Actual: ' + (x.myproperty));
-}
-
-//CHECK#2
-if (x.hasOwnProperty('myproperty') !== false) {
-  throw new Test262Error('#2: Array.prototype.myproperty = 1; var x = new Array(); x.hasOwnProperty(\'myproperty\') === false. Actual: ' + (x.hasOwnProperty('myproperty')));
-}
+assert.sameValue(x.myproperty, 1, 'The value of x.myproperty is expected to be 1');
+assert.sameValue(x.hasOwnProperty('myproperty'), false, 'x.hasOwnProperty("myproperty") must return false');

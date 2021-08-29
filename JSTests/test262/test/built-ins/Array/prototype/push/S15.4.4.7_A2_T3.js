@@ -14,130 +14,105 @@ description: >
 var obj = {};
 obj.push = Array.prototype.push;
 
-//CHECK#1
 obj.length = {
-  valueOf: function() {
+  valueOf() {
     return 3
   }
 };
 var push = obj.push();
-if (push !== 3) {
-  throw new Test262Error('#1:  obj.length = {valueOf: function() {return 3}}  obj.push() === 3. Actual: ' + (push));
-}
+assert.sameValue(push, 3, 'The value of push is expected to be 3');
 
-//CHECK#2
 obj.length = {
-  valueOf: function() {
+  valueOf() {
     return 3
   },
-  toString: function() {
+  toString() {
     return 1
   }
 };
 var push = obj.push();
-if (push !== 3) {
-  throw new Test262Error('#0:  obj.length = {valueOf: function() {return 3}, toString: function() {return 1}}  obj.push() === 3. Actual: ' + (push));
-}
+assert.sameValue(push, 3, 'The value of push is expected to be 3');
 
-//CHECK#3
 obj.length = {
-  valueOf: function() {
+  valueOf() {
     return 3
   },
-  toString: function() {
+  toString() {
     return {}
   }
 };
 var push = obj.push();
-if (push !== 3) {
-  throw new Test262Error('#1:  obj.length = {valueOf: function() {return 3}, toString: function() {return {}}}  obj.push() === 3. Actual: ' + (push));
-}
+assert.sameValue(push, 3, 'The value of push is expected to be 3');
 
-//CHECK#4
 try {
-
   obj.length = {
-    valueOf: function() {
+    valueOf() {
       return 3
     },
-    toString: function() {
+    toString() {
       throw "error"
     }
   };
   var push = obj.push();
-  if (push !== 3) {
-    throw new Test262Error('#4.1:  obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.push() === ",". Actual: ' + (push));
-  }
+  assert.sameValue(push, 3, 'The value of push is expected to be 3');
 }
 catch (e) {
-  if (e === "error") {
-    throw new Test262Error('#4.2:  obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.push() not throw "error"');
-  } else {
-    throw new Test262Error('#4.3:  obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.push() not throw Error. Actual: ' + (e));
-  }
+  assert.notSameValue(e, "error", 'The value of e is not "error"');
 }
 
-//CHECK#5
 obj.length = {
-  toString: function() {
+  toString() {
     return 1
   }
 };
 var push = obj.push();
-if (push !== 1) {
-  throw new Test262Error('#5:  obj.length = {toString: function() {return 1}}  obj.push() === 1. Actual: ' + (push));
-}
+assert.sameValue(push, 1, 'The value of push is expected to be 1');
 
-//CHECK#6
 obj.length = {
-  valueOf: function() {
+  valueOf() {
     return {}
   },
-  toString: function() {
+  toString() {
     return 1
   }
 }
 var push = obj.push();
-if (push !== 1) {
-  throw new Test262Error('#6:  obj.length = {valueOf: function() {return {}}, toString: function() {return 1}}  obj.push() === 1. Actual: ' + (push));
-}
+assert.sameValue(push, 1, 'The value of push is expected to be 1');
 
-//CHECK#7
 try {
 
   obj.length = {
-    valueOf: function() {
+    valueOf() {
       throw "error"
     },
-    toString: function() {
+    toString() {
       return 1
     }
   };
   var push = obj.push();
-  throw new Test262Error('#7.1:  obj.length = {valueOf: function() {throw "error"}, toString: function() {return 1}}; obj.push() throw "error". Actual: ' + (push));
+  throw new Test262Error('#7.1:  obj.length = {valueOf() {throw "error"}, toString() {return 1}}; obj.push() throw "error". Actual: ' + (push));
 }
 catch (e) {
-  if (e !== "error") {
-    throw new Test262Error('#7.2:  obj.length = {valueOf: function() {throw "error"}, toString: function() {return 1}}; obj.push() throw "error". Actual: ' + (e));
-  }
+  assert.sameValue(e, "error", 'The value of e is expected to be "error"');
 }
 
-//CHECK#8
 try {
 
   obj.length = {
-    valueOf: function() {
+    valueOf() {
       return {}
     },
-    toString: function() {
+    toString() {
       return {}
     }
   };
   var push = obj.push();
-  throw new Test262Error('#8.1:  obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.push() throw TypeError. Actual: ' + (push));
+  throw new Test262Error('#8.1:  obj.length = {valueOf() {return {}}, toString() {return {}}}  obj.push() throw TypeError. Actual: ' + (push));
 }
 catch (e) {
-  if ((e instanceof TypeError) !== true) {
-    throw new Test262Error('#8.2:  obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.push() throw TypeError. Actual: ' + (e));
-  }
+  assert.sameValue(
+    e instanceof TypeError,
+    true,
+    'The result of evaluating (e instanceof TypeError) is expected to be true'
+  );
 }

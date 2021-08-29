@@ -14,7 +14,7 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(typeof Array.prototype.concat, 'function', 'typeof');
+assert.sameValue(typeof Array.prototype.concat, 'function', 'The value of `typeof Array.prototype.concat` is expected to be "function"');
 
 verifyNotEnumerable(Array.prototype, "concat");
 verifyWritable(Array.prototype, "concat");

@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.now.plaindatetime
 description: Forwards error thrown by checking presence of "calendar" property
-features: [Temporal]
+features: [Proxy, Temporal]
 ---*/
 
 var calendar = new Proxy({}, {
@@ -17,4 +17,4 @@ var calendar = new Proxy({}, {
 
 assert.throws(Test262Error, function() {
   Temporal.Now.plainDateTime(calendar);
-});
+}, 'Temporal.Now.plainDateTime(calendar) throws a Test262Error exception');

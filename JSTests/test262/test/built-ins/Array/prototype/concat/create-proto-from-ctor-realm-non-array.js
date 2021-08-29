@@ -39,5 +39,9 @@ Object.defineProperty(Array, Symbol.species, speciesDesc);
 
 result = array.concat();
 
-assert.sameValue(Object.getPrototypeOf(result), CustomCtor.prototype);
-assert.sameValue(callCount, 0, 'Array species constructor is not referenced');
+assert.sameValue(
+  Object.getPrototypeOf(result),
+  CustomCtor.prototype,
+  'Object.getPrototypeOf(array.concat()) returns CustomCtor.prototype'
+);
+assert.sameValue(callCount, 0, 'The value of callCount is expected to be 0');

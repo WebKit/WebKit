@@ -14,14 +14,14 @@ function mapFn(value, index) {
   if (index + 1 < array.length) {
     array[index + 1] = 127;
   }
-  assert.sameValue(value, 127, "Value mismatch in mapFn at index " + index + ".");
-  assert.sameValue(index, arrayIndex, "Index mismatch in mapFn.");
+  assert.sameValue(value, 127, 'The value of value is expected to be 127');
+  assert.sameValue(index, arrayIndex, 'The value of index is expected to equal the value of arrayIndex');
 
   return value;
 }
 
 var a = Array.from(array, mapFn);
-assert.sameValue(a.length, array.length, "Length mismatch.");
+assert.sameValue(a.length, array.length, 'The value of a.length is expected to equal the value of array.length');
 for (var j = 0; j < a.length; j++) {
-  assert.sameValue(a[j], 127, "Element mismatch for mapped array.");
+  assert.sameValue(a[j], 127, 'The value of a[j] is expected to be 127');
 }

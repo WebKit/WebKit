@@ -29,24 +29,24 @@ var arr;
 
 newTarget.prototype = undefined;
 arr = Reflect.construct(Array, [], newTarget);
-assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'newTarget.prototype is undefined');
+assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'Object.getPrototypeOf(Reflect.construct(Array, [], newTarget)) returns other.Array.prototype');
 
 newTarget.prototype = null;
 arr = Reflect.construct(Array, [], newTarget);
-assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'newTarget.prototype is null');
+assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'Object.getPrototypeOf(Reflect.construct(Array, [], newTarget)) returns other.Array.prototype');
 
 newTarget.prototype = true;
 arr = Reflect.construct(Array, [], newTarget);
-assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'newTarget.prototype is a Boolean');
+assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'Object.getPrototypeOf(Reflect.construct(Array, [], newTarget)) returns other.Array.prototype');
 
 newTarget.prototype = 'str';
 arr = Reflect.construct(Array, [], newTarget);
-assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'newTarget.prototype is a String');
+assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'Object.getPrototypeOf(Reflect.construct(Array, [], newTarget)) returns other.Array.prototype');
 
 newTarget.prototype = Symbol();
 arr = Reflect.construct(Array, [], newTarget);
-assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'newTarget.prototype is a Symbol');
+assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'Object.getPrototypeOf(Reflect.construct(Array, [], newTarget)) returns other.Array.prototype');
 
 newTarget.prototype = 1;
 arr = Reflect.construct(Array, [], newTarget);
-assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'newTarget.prototype is a Number');
+assert.sameValue(Object.getPrototypeOf(arr), other.Array.prototype, 'Object.getPrototypeOf(Reflect.construct(Array, [], newTarget)) returns other.Array.prototype');

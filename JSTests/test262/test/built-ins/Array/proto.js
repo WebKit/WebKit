@@ -12,4 +12,8 @@ info: |
   intrinsic object %FunctionPrototype%.
 ---*/
 
-assert.sameValue(Object.getPrototypeOf(Array), Function.prototype);
+assert.sameValue(
+  Object.getPrototypeOf(Array),
+  Function.prototype,
+  'Object.getPrototypeOf(Array) returns Function.prototype'
+);

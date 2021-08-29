@@ -14,18 +14,18 @@ function getArgumentsObject() {
 
 var a = getArgumentsObject([1], [2]);
 var actual = [].flat.call(a);
-assert.compareArray(actual, [1, 2], 'arguments objects');
+assert.compareArray(actual, [1, 2], 'The value of actual is expected to be [1, 2]');
 
 a = {
   length: 1,
   0: [1],
 };
 actual = [].flat.call(a);
-assert.compareArray(actual, [1], 'array-like objects');
+assert.compareArray(actual, [1], 'The value of actual is expected to be [1]');
 
 a = {
   length: undefined,
   0: [1],
 };
 actual = [].flat.call(a);
-assert.compareArray(actual, [], 'array-like objects; undefined length');
+assert.compareArray(actual, [], 'The value of actual is expected to be []');

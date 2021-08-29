@@ -10,20 +10,11 @@ es5id: 15.4.2.2_A2.1_T1
 description: Array constructor is given one argument
 ---*/
 
-//CHECK#1
 var x = new Array(0);
-if (x.length !== 0) {
-  throw new Test262Error('#1: var x = new Array(0); x.length === 0. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 0, 'The value of x.length is expected to be 0');
 
-//CHECK#2
 var x = new Array(1);
-if (x.length !== 1) {
-  throw new Test262Error('#2: var x = new Array(1); x.length === 1. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 1, 'The value of x.length is expected to be 1');
 
-//CHECK#3
 var x = new Array(4294967295);
-if (x.length !== 4294967295) {
-  throw new Test262Error('#3: var x = new Array(4294967295); x.length === 4294967295. Actual: ' + (x.length));
-}
+assert.sameValue(x.length, 4294967295, 'The value of x.length is expected to be 4294967295');

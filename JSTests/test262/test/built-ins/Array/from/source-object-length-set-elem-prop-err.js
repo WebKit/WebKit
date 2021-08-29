@@ -38,7 +38,7 @@ var A1 = function(_length) {
 
 assert.throws(TypeError, function() {
   Array.from.call(A1, items);
-});
+}, 'Array.from.call(A1, items) throws a TypeError exception');
 
 var A2 = function(_length) {
   Object.defineProperty(this, "0", {
@@ -49,4 +49,4 @@ var A2 = function(_length) {
 
 assert.throws(TypeError, function() {
   Array.from.call(A2, items);
-});
+}, 'Array.from.call(A2, items) throws a TypeError exception');

@@ -14,9 +14,13 @@ var args = (function(a, a, a) {
   return arguments;
 })(1, 2, 3);
 args[Symbol.isConcatSpreadable] = true;
-assert(compareArray([].concat(args, args), [1, 2, 3, 1, 2, 3]));
+assert.compareArray([].concat(args, args), [1, 2, 3, 1, 2, 3],
+  '[].concat((function(a, a, a) {return arguments;})(1, 2, 3), (function(a, a, a) {return arguments;})(1, 2, 3)) must return [1, 2, 3, 1, 2, 3]'
+);
 
 Object.defineProperty(args, "length", {
   value: 6
 });
-assert(compareArray([].concat(args), [1, 2, 3, void 0, void 0, void 0]));
+assert.compareArray([].concat(args), [1, 2, 3, void 0, void 0, void 0],
+  '[].concat((function(a, a, a) {return arguments;})(1, 2, 3)) must return [1, 2, 3, void 0, void 0, void 0]'
+);

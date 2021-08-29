@@ -33,25 +33,19 @@ info: |
 includes: [compareArray.js]
 ---*/
 
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(0, 0, 0), [0, 1, 2, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(0, 0, 0) -> [0, 1, 2, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(0, 0, 0), [0, 1, 2, 3],
+  '[0, 1, 2, 3].copyWithin(0, 0, 0) must return [0, 1, 2, 3]'
 );
 
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(0, 0, 2), [0, 1, 2, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(0, 0, 2) -> [0, 1, 2, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(0, 0, 2), [0, 1, 2, 3],
+  '[0, 1, 2, 3].copyWithin(0, 0, 2) must return [0, 1, 2, 3]'
 );
 
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(0, 1, 2), [1, 1, 2, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(0, 1, 2) -> [1, 1, 2, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(0, 1, 2), [1, 1, 2, 3],
+  '[0, 1, 2, 3].copyWithin(0, 1, 2) must return [1, 1, 2, 3]'
 );
 
 /*
@@ -65,16 +59,12 @@ assert(
  *  from = 0 + 2 - 1
  *  to = 1 + 2 - 1
  */
-assert(
-  compareArray(
-    [0, 1, 2, 3].copyWithin(1, 0, 2), [0, 0, 1, 3]
-  ),
-  '[0, 1, 2, 3].copyWithin(1, 0, 2) -> [0, 0, 1, 3]'
+assert.compareArray(
+  [0, 1, 2, 3].copyWithin(1, 0, 2), [0, 0, 1, 3],
+  '[0, 1, 2, 3].copyWithin(1, 0, 2) must return [0, 0, 1, 3]'
 );
 
-assert(
-  compareArray(
-    [0, 1, 2, 3, 4, 5].copyWithin(1, 3, 5), [0, 3, 4, 3, 4, 5]
-  ),
-  '[0, 1, 2, 3, 4, 5].copyWithin(1, 3, 5) -> [0, 3, 4, 3, 4, 5]'
+assert.compareArray(
+  [0, 1, 2, 3, 4, 5].copyWithin(1, 3, 5), [0, 3, 4, 3, 4, 5],
+  '[0, 1, 2, 3, 4, 5].copyWithin(1, 3, 5) must return [0, 3, 4, 3, 4, 5]'
 );

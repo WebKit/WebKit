@@ -8,7 +8,6 @@ es5id: 15.4.4.3_A3_T1
 description: "[[Prototype]] of Array instance is Array.prototype"
 ---*/
 
-//CHECK#1
 var n = 0;
 var obj = {
   toLocaleString: function() {

@@ -51,8 +51,12 @@ var arr1 = [];
 Object.defineProperty(arr1, "constructor", descConstructor);
 Object.defineProperty(arr1, Symbol.isConcatSpreadable, descSpreadable);
 
-assert.compareArray(arr1.concat(1), [1]);
-assert.compareArray(calls, ["constructor", "isConcatSpreadable"]);
+assert.compareArray(arr1.concat(1), [1], 'arr1.concat(1) must return [1]');
+assert.compareArray(
+  calls,
+  ["constructor", "isConcatSpreadable"],
+  'The value of calls is expected to be ["constructor", "isConcatSpreadable"]'
+);
 
 calls = [];
 
@@ -61,5 +65,9 @@ var arg = {};
 Object.defineProperty(arr2, "constructor", descConstructor);
 Object.defineProperty(arg, Symbol.isConcatSpreadable, descSpreadable);
 
-assert.compareArray(arr2.concat(arg), [arg]);
-assert.compareArray(calls, ["constructor", "isConcatSpreadable"]);
+assert.compareArray(arr2.concat(arg), [arg], 'arr2.concat({}) must return [arg]');
+assert.compareArray(
+  calls,
+  ["constructor", "isConcatSpreadable"],
+  'The value of calls is expected to be ["constructor", "isConcatSpreadable"]'
+);

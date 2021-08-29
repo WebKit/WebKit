@@ -13,13 +13,11 @@ Array.prototype[1] = 1;
 var x = [0];
 x.length = 2;
 
-//CHECK#1
 var pop = x.pop();
 if (pop !== 1) {
   throw new Test262Error('#1: Array.prototype[1] = 1; x = [0]; x.length = 2; x.pop() === 1. Actual: ' + (pop));
 }
 
-//CHECK#2
 if (x[1] !== 1) {
   throw new Test262Error('#2: Array.prototype[1] = 1; x = [0]; x.length = 2; x.pop(); x[1] === 1. Actual: ' + (x[1]));
 }
@@ -31,23 +29,19 @@ x = {
   0: 0
 };
 
-//CHECK#3
 var pop = x.pop();
 if (pop !== 1) {
   throw new Test262Error('#3: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.pop = Array.prototype.pop; x = {0:0}; x.pop() === 1. Actual: ' + (pop));
 }
 
-//CHECK#4
 if (x[1] !== 1) {
   throw new Test262Error('#4: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.pop = Array.prototype.pop; x = {0:0}; x.pop(); x[1] === 1. Actual: ' + (x[1]));
 }
 
-//CHECK#6
 if (x.length !== 1) {
   throw new Test262Error('#6: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.pop = Array.prototype.pop; x = {0:0}; x.pop(); x.length === 1. Actual: ' + (x.length));
 }
 
-//CHECK#7
 delete x.length;
 if (x.length !== 2) {
   throw new Test262Error('#7: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.pop = Array.prototype.pop; x = {0:0}; x.pop(); delete x; x.length === 2. Actual: ' + (x.length));

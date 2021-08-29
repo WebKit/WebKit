@@ -13,7 +13,7 @@ info: |
   3. Assert: calendar.[[Identifier]] is "iso8601".
   4. Let fieldNames be ? IterableToListOfType(fields, « String »).
   5. Return ! CreateArrayFromList(fieldNames).
-features: [Temporal]
+features: [Symbol, Symbol.iterator, Temporal, computed-property-names, generators]
 includes: [compareArray.js]
 ---*/
 let cal = new Temporal.Calendar("iso8601")
@@ -25,4 +25,7 @@ const fields = {
       }
   }
 }
-assert(compareArray(cal.fields(fields), Array.from(fields)));
+assert(
+  compareArray(cal.fields(fields), Array.from(fields)),
+  'compareArray(cal.fields(fields), Array.from(fields)) must return true'
+);

@@ -8,18 +8,6 @@ info: |
 esid: sec-toboolean
 description: +0, -0 and NaN convert to Boolean by explicit transformation
 ---*/
-
-// CHECK#1
-if (Boolean(+0) !== false) {
-  throw new Test262Error('#1: Boolean(+0) === false. Actual: ' + (Boolean(+0)));
-}
-
-// CHECK#2
-if (Boolean(-0) !== false) {
-  throw new Test262Error('#2: Boolean(-0) === false. Actual: ' + (Boolean(-0)));
-}
-
-// CHECK#3
-if (Boolean(Number.NaN) !== false) {
-  throw new Test262Error('#3: Boolean(Number.NaN) === false. Actual: ' + (Boolean(Number.NaN)));
-}
+assert.sameValue(Boolean(+0), false, 'Boolean(+0) must return false');
+assert.sameValue(Boolean(-0), false, 'Boolean(-0) must return false');
+assert.sameValue(Boolean(Number.NaN), false, 'Boolean(Number.NaN) must return false');
