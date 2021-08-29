@@ -424,6 +424,8 @@ bool PutByStatus::makesCalls() const
         }
         return false;
     }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
