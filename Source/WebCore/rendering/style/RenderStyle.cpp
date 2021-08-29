@@ -724,7 +724,7 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
 
 #if ENABLE(CSS_COMPOSITING)
     if (first.isolation != second.isolation) {
-        // Ideally this would trigger a cheaper layout that just updates layer z-order trees (webit.org/b/190088).
+        // Ideally this would trigger a cheaper layout that just updates layer z-order trees (webkit.org/b/190088).
         return true;
     }
 #endif

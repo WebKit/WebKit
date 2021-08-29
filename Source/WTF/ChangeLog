@@ -1,3 +1,15 @@
+2021-08-28  Cameron McCormack  <heycam@apple.com>
+
+        Miscellaneous typo fixes
+        https://bugs.webkit.org/show_bug.cgi?id=229642
+
+        Reviewed by Fujii Hironori.
+
+        * wtf/CrossThreadTask.h:
+        (WTF::callMemberFunctionForCrossThreadTask):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createSubstringSharingImpl):
+
 2021-08-28  David Kilzer  <ddkilzer@apple.com>
 
         [WTF] Fix static analyzer warnings about nullptr derefs in StringImpl::copyCharacters() and tryMakeStringFromAdapters()

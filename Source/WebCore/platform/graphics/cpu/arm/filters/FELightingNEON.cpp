@@ -39,7 +39,7 @@ static alignas(16) short s_FELightingConstantsForNeon[] = {
     // Alpha coefficients.
     -2, 1, 0, -1, 2, 1, 0, -1,
     0, -1, -2, -1, 0, 1, 2, 1,
-    // Remapping indicies.
+    // Remapping indices.
     0x0f0e, 0x0302, 0x0504, 0x0706,
     0x0b0a, 0x1312, 0x1514, 0x1716,
 };

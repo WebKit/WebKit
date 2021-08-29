@@ -322,7 +322,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  If the value is not an object then a JavaScript TypeError will be thrown.
  The property <code>length</code> is read from the object, converted to an unsigned
  integer, and an NSArray of this size is allocated. Properties corresponding
- to indicies within the array bounds will be copied to the array, with
+ to indices within the array bounds will be copied to the array, with
  JSValues converted to equivalent Objective-C objects as specified.
 @result The NSArray containing the recursively converted contents of the 
  converted JavaScript array.

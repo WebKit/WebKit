@@ -409,7 +409,7 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
         return false;
     static constexpr SortedArraySet supportedImageMIMETypeSet { supportedImageMIMETypeArray };
 #if USE(CG) && ASSERT_ENABLED
-    // Esnure supportedImageMIMETypeArray matches defaultSupportedImageTypes().
+    // Ensure supportedImageMIMETypeArray matches defaultSupportedImageTypes().
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         for (auto& imageType : defaultSupportedImageTypes()) {

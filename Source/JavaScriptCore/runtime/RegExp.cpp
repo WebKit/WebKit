@@ -377,8 +377,8 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
     int differences = 0;
 
     // Initialize interpreterOffsetVector with the return value (index 0) and the 
-    // first subpattern start indicies (even index values) set to -1.
-    // No need to init the subpattern end indicies.
+    // first subpattern start indices (even index values) set to -1.
+    // No need to init the subpattern end indices.
     for (unsigned j = 0, i = 0; i < m_numSubpatterns + 1; j += 2, i++)
         interpreterOffsetVector[j] = -1;
 

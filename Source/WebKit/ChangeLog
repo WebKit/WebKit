@@ -1,3 +1,17 @@
+2021-08-28  Cameron McCormack  <heycam@apple.com>
+
+        Miscellaneous typo fixes
+        https://bugs.webkit.org/show_bug.cgi?id=229642
+
+        Reviewed by Fujii Hironori.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::callMemberFunction):
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::encodeArrayInternal):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::ArgumentCoder<CFArrayRef>::encode):
+
 2021-08-27  Cameron McCormack  <heycam@apple.com>
 
         Fix std::optional<> stripping in MessageArgumentDescriptions.cpp generator

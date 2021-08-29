@@ -236,20 +236,20 @@ static void encodeArrayInternal(Encoder& encoder, NSArray *array)
         return;
     }
 
-    HashSet<NSUInteger> invalidIndicies;
+    HashSet<NSUInteger> invalidIndices;
     for (NSUInteger i = 0; i < array.count; ++i) {
         id value = array[i];
 
         // Ignore values we don't support.
         ASSERT(isSerializableValue(value));
         if (!isSerializableValue(value))
-            invalidIndicies.add(i);
+            invalidIndices.add(i);
     }
 
-    encoder << static_cast<uint64_t>(array.count - invalidIndicies.size());
+    encoder << static_cast<uint64_t>(array.count - invalidIndices.size());
 
     for (NSUInteger i = 0; i < array.count; ++i) {
-        if (invalidIndicies.contains(i))
+        if (invalidIndices.contains(i))
             continue;
         encodeObject(encoder, array[i]);
     }

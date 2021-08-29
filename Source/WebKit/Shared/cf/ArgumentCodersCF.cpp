@@ -327,18 +327,18 @@ void ArgumentCoder<CFArrayRef>::encode(Encoder& encoder, CFArrayRef array)
 
     CFArrayGetValues(array, CFRangeMake(0, size), values.data());
 
-    HashSet<CFIndex> invalidIndicies;
+    HashSet<CFIndex> invalidIndices;
     for (CFIndex i = 0; i < size; ++i) {
         // Ignore values we don't support.
         ASSERT(typeFromCFTypeRef(values[i]) != CFType::Unknown);
         if (typeFromCFTypeRef(values[i]) == CFType::Unknown)
-            invalidIndicies.add(i);
+            invalidIndices.add(i);
     }
 
-    encoder << static_cast<uint64_t>(size - invalidIndicies.size());
+    encoder << static_cast<uint64_t>(size - invalidIndices.size());
 
     for (CFIndex i = 0; i < size; ++i) {
-        if (invalidIndicies.contains(i))
+        if (invalidIndices.contains(i))
             continue;
         encoder << values[i];
     }
