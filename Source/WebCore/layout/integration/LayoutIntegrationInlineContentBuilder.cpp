@@ -258,10 +258,13 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         // Inline boxes are relative to the line box while final runs need to be relative to the parent box
         // FIXME: Shouldn't we just leave them be relative to the line box?
         auto runRect = FloatRect { lineRun.logicalRect() };
+        auto inkOverflow = FloatRect { lineRun.inkOverflow() };
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
         runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
-        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
+        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
             runRect.setY(roundToInt(runRect.y()));
+            inkOverflow.setY(roundToInt(inkOverflow.y()));
+        }
         // FIXME: Add support for non-text ink overflow.
         // FIXME: Add support for cases when the run is after ellipsis.
         if (lineRun.isInlineBox()) {
@@ -273,10 +276,10 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, lineRunRect, hasScrollableContent() });
             if (!lineRun.isLineSpanning()) {
                 // FIXME: Run iterators with (text)runs spanning over multiple lines expect no "in-between" runs (e.g. line spanning or root inline boxes).
-                inlineContent.runs.append({ lineIndex, layoutBox, runRect, runRect, { }, { } });
+                inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
             }
         } else
-            inlineContent.runs.append({ lineIndex, layoutBox, runRect, runRect, { }, { } });
+            inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
     };
 
     auto createDisplayTextRunForRange = [&](auto& lineRun, auto startOffset, auto endOffset) {
@@ -285,8 +288,11 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         auto lineIndex = lineRun.lineIndex();
         auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
         auto runRect = FloatRect { lineRun.logicalRect() };
-        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
+        auto inkOverflow = FloatRect { lineRun.inkOverflow() };
+        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
             runRect.setY(roundToInt(runRect.y()));
+            inkOverflow.setY(roundToInt(inkOverflow.y()));
+        }
 
         auto& style = layoutBox.style();
         auto text = lineRun.text();
@@ -314,24 +320,11 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             return String();
         };
 
-        auto computedInkOverflow = [&] (auto runRect) {
-            auto inkOverflow = runRect;
-            auto initialContaingBlockSize = m_layoutState.viewportSize();
-            auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
-            inkOverflow.inflate(strokeOverflow);
-            auto letterSpacing = style.fontCascade().letterSpacing();
-            if (letterSpacing < 0) {
-                // Last letter's negative spacing shrinks logical rect. Push it to ink overflow.
-                inkOverflow.expand(-letterSpacing, { });
-            }
-            return inkOverflow;
-        };
         RELEASE_ASSERT(startOffset >= text->start() && startOffset < text->end());
         RELEASE_ASSERT(endOffset > text->start() && endOffset <= text->end());
         auto textContent = Run::TextContent { startOffset, endOffset - startOffset, text->content(), adjustedContentToRender(), text->needsHyphen() };
         auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
-        auto displayRun = Run { lineIndex, layoutBox, runRect, computedInkOverflow(runRect), expansion, textContent };
-        inlineContent.runs.append(displayRun);
+        inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, expansion, textContent });
     };
 
     inlineContent.runs.reserveInitialCapacity(lineRuns.size());

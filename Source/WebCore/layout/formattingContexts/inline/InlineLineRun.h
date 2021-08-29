@@ -69,7 +69,7 @@ struct LineRun {
         GenericInlineLevelBox
     };
     struct Expansion;
-    LineRun(size_t lineIndex, Type, const Box&, const InlineRect&, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
+    LineRun(size_t lineIndex, Type, const Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -88,6 +88,7 @@ struct LineRun {
     bool isLineSpanning() const { return m_isLineSpanning; }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
+    const InlineRect& inkOverflow() const { return m_inkOverflow; }
 
     InlineLayoutUnit logicalTop() const { return logicalRect().top(); }
     InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); }
@@ -115,6 +116,7 @@ private:
     const Type m_type;
     WeakPtr<const Layout::Box> m_layoutBox;
     InlineRect m_logicalRect;
+    InlineRect m_inkOverflow;
     bool m_hasContent { true };
     // FIXME: This is temporary until after iterators can skip over line spanning/root inline boxes.
     bool m_isLineSpanning { false };
@@ -122,11 +124,12 @@ private:
     std::optional<Text> m_text;
 };
 
-inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, Expansion expansion, std::optional<Text> text, bool hasContent, bool isLineSpanning)
+inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, bool isLineSpanning)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)
+    , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)
     , m_isLineSpanning(isLineSpanning)
     , m_expansion(expansion)
