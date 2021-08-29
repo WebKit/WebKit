@@ -3194,7 +3194,7 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
             auto offset = referenceBox.location();
             context.translate(offset);
             FloatRect svgReferenceBox { {}, referenceBox.size() };
-            downcast<RenderSVGResourceClipper>(*element->renderer()).applyClippingToContext(renderer(), svgReferenceBox, context);
+            downcast<RenderSVGResourceClipper>(*element->renderer()).applyClippingToContext(context, renderer(), svgReferenceBox, renderer().style().effectiveZoom());
             context.translate(-offset);
             return true;
         }

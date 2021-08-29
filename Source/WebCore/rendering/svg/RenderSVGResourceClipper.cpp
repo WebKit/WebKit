@@ -76,10 +76,10 @@ bool RenderSVGResourceClipper::applyResource(RenderElement& renderer, const Rend
     if (repaintRect.isEmpty())
         return true;
 
-    return applyClippingToContext(renderer, renderer.objectBoundingBox(), *context);
+    return applyClippingToContext(*context, renderer, renderer.objectBoundingBox());
 }
 
-bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox)
+bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float effectiveZoom)
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
     if (style().clipPath())
@@ -120,6 +120,10 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());
         clipPath.transform(transform);
+    } else if (effectiveZoom != 1) {
+        AffineTransform transform;
+        transform.scale(effectiveZoom);
+        clipPath.transform(transform);
     }
 
     // Transform path by animatedLocalTransform.
@@ -132,7 +136,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
     return true;
 }
 
-bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, const FloatRect& objectBoundingBox, GraphicsContext& context)
+bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, float effectiveZoom)
 {
     ClipperData& clipperData = addRendererToClipper(renderer);
     
@@ -140,7 +144,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
 
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
 
-    if (!clipperData.imageBuffer && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox))
+    if (!clipperData.imageBuffer && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom))
         return true;
 
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
@@ -162,13 +166,13 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
         if (resources && (clipper = resources->clipper())) {
             GraphicsContextStateSaver stateSaver(maskContext);
 
-            if (!clipper->applyClippingToContext(*this, objectBoundingBox, maskContext))
+            if (!clipper->applyClippingToContext(maskContext, *this, objectBoundingBox))
                 return false;
 
-            succeeded = drawContentIntoMaskImage(*clipperData.imageBuffer, objectBoundingBox);
+            succeeded = drawContentIntoMaskImage(*clipperData.imageBuffer, objectBoundingBox, effectiveZoom);
             // The context restore applies the clipping on non-CG platforms.
         } else
-            succeeded = drawContentIntoMaskImage(*clipperData.imageBuffer, objectBoundingBox);
+            succeeded = drawContentIntoMaskImage(*clipperData.imageBuffer, objectBoundingBox, effectiveZoom);
 
         if (!succeeded)
             clipperData = { };
@@ -181,7 +185,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
     return true;
 }
 
-bool RenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBuffer, const FloatRect& objectBoundingBox)
+bool RenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBuffer, const FloatRect& objectBoundingBox, float effectiveZoom)
 {
     GraphicsContext& maskContext = maskImageBuffer.context();
 
@@ -189,6 +193,9 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskImageBu
     if (clipPathElement().clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         maskContentTransformation.translate(objectBoundingBox.location());
         maskContentTransformation.scale(objectBoundingBox.size());
+        maskContext.concatCTM(maskContentTransformation);
+    } else if (effectiveZoom != 1) {
+        maskContentTransformation.scale(effectiveZoom);
         maskContext.concatCTM(maskContentTransformation);
     }
 
