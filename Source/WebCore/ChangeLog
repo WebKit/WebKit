@@ -1,3 +1,24 @@
+2021-08-29  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Factor RuleSet building into a Builder type
+        https://bugs.webkit.org/show_bug.cgi?id=229655
+
+        Reviewed by Alan Bujtas.
+
+        Factor build time state into a stack-allocate type.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+        (WebCore::Style::RuleSet::addRulesFromSheet):
+        (WebCore::Style::RuleSet::Builder::addChildRules):
+        (WebCore::Style::RuleSet::Builder::addRulesFromSheet):
+        (WebCore::Style::RuleSet::Builder::addStyleRule):
+        (WebCore::Style::RuleSet::Builder::pushCascadeLayer):
+        (WebCore::Style::RuleSet::Builder::popCascadeLayer):
+        (WebCore::Style::RuleSet::addChildRules): Deleted.
+        (WebCore::Style::RuleSet::addStyleRule): Deleted.
+        * style/RuleSet.h:
+
 2021-08-29  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Track handling refactoring

@@ -108,12 +108,12 @@ public:
         void addRuleIfNeeded(const RuleData&);
     };
 
-    void addRulesFromSheet(StyleSheetContents&, const MediaQueryEvaluator&);
-    void addRulesFromSheet(StyleSheetContents&, MediaQuerySet* sheetQuery, const MediaQueryEvaluator&, Style::Resolver&);
+    void addRulesFromSheet(const StyleSheetContents&, const MediaQueryEvaluator&);
+    void addRulesFromSheet(const StyleSheetContents&, const MediaQuerySet* sheetQuery, const MediaQueryEvaluator&, Style::Resolver&);
 
-    void addStyleRule(const StyleRule&, MediaQueryCollector&);
-    void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, MediaQueryCollector* = nullptr);
+    void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex, unsigned cascadeLayerOrder = 0, MediaQueryCollector* = nullptr);
     void addPageRule(StyleRulePage&);
+
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();
     void disableAutoShrinkToFit() { m_autoShrinkToFitEnabled = false; }
@@ -150,18 +150,32 @@ public:
 private:
     RuleSet();
 
-    enum class AddRulesMode { Normal, ResolverMutationScan };
-    void addRulesFromSheet(StyleSheetContents&, MediaQueryCollector&, Style::Resolver*, AddRulesMode);
-    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, MediaQueryCollector&, Style::Resolver*, AddRulesMode);
+    struct Builder {
+        enum class Mode { Normal, ResolverMutationScan };
+
+        Ref<RuleSet> ruleSet;
+        MediaQueryCollector mediaQueryCollector;
+        Style::Resolver* resolver { nullptr };
+        Mode mode { Mode::Normal };
+        CascadeLayerName resolvedCascadeLayerName { };
+        unsigned cascadeLayerOrder { 0 };
+
+        void addRulesFromSheet(const StyleSheetContents&);
+        
+    private:
+        void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
+        void addStyleRule(const StyleRule&);
+
+        void pushCascadeLayer(const CascadeLayerName&);
+        void popCascadeLayer(const CascadeLayerName&);
+    };
+
     struct CollectedMediaQueryChanges {
         bool requiredFullReset { false };
         Vector<size_t> changedQueryIndexes { };
         Vector<RuleFeatureVector*> ruleFeatures { };
     };
     CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&, size_t startIndex);
-
-    void pushCascadeLayer(const CascadeLayerName&);
-    void popCascadeLayer(const CascadeLayerName&);
 
     template<typename Function> void traverseRuleDatas(Function&&);
 
@@ -192,10 +206,6 @@ private:
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_autoShrinkToFitEnabled { true };
     bool m_hasViewportDependentMediaQueries { false };
-
-    // FIXME: These should be in stack.
-    CascadeLayerName m_resolvedCascadeLayerName;
-    unsigned m_cascadeLayerOrder { 0 };
 };
 
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const
