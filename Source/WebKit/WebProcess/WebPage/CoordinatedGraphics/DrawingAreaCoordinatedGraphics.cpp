@@ -212,7 +212,7 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
 #if USE(COORDINATED_GRAPHICS)
         layerHostDidFlushLayers();
 #endif
-        }
+    }
 }
 
 void DrawingAreaCoordinatedGraphics::forceRepaintAsync(WebPage& page, CompletionHandler<void()>&& completionHandler)
@@ -770,7 +770,11 @@ void DrawingAreaCoordinatedGraphics::display()
         return;
     }
 
-    send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
+    if (m_compositingAccordingToProxyMessages) {
+        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
+        m_compositingAccordingToProxyMessages = false;
+    } else
+        send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
     m_isWaitingForDidUpdate = true;
     m_scheduledWhileWaitingForDidUpdate = false;
 }

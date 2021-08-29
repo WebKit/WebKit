@@ -1,3 +1,35 @@
+2021-08-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r281102): ASSERTION FAILED: !isInAcceleratedCompositingMode() in DrawingAreaProxyCoordinatedGraphics::incorporateUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=229228
+
+        Reviewed by Carlos Garcia Campos.
+
+        WinCairo WK2 layout tests were observing an assertion failure for
+        some animations tests since r281102.
+
+        DrawingAreaProxyCoordinatedGraphics::incorporateUpdate has an
+        assertion ensuring a DrawingAreaProxy::Update message isn't sent
+        during the compositing mode. However,
+        DrawingAreaCoordinatedGraphics sent a Update message before
+        sending ExitAcceleratedCompositingMode message in the following
+        scenario.
+
+        1. DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode calls DrawingAreaCoordinatedGraphics::display(WebKit::UpdateInfo&)
+        2. It calls WebPage::updateRendering()
+        3. It executes JavaScript
+        4. It calls notifyDone
+        5. It calls WTR::TestRunner::notifyDone which calls WKBundlePageForceRepaint
+        6. It calls DrawingAreaCoordinatedGraphics::display() which dispatches the Update message
+
+        Send an ExitAcceleratedCompositingMode message instead of an
+        Update message if ExitAcceleratedCompositingMode isn't sent yet in
+        display().
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::forceRepaint):
+        (WebKit::DrawingAreaCoordinatedGraphics::display):
+
 2021-08-29  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r281096.
