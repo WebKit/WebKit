@@ -112,6 +112,8 @@ static RTCRtpSFrameTransformErrorEvent::Type errorTypeFromInformation(const RTCR
         return RTCRtpSFrameTransformErrorEvent::Type::Syntax;
     case RTCRtpSFrameTransformer::Error::Other:
         return RTCRtpSFrameTransformErrorEvent::Type::Other;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
