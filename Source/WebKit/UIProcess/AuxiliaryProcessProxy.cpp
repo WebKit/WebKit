@@ -150,6 +150,8 @@ String AuxiliaryProcessProxy::stateString() const
         return "Running"_s;
     case AuxiliaryProcessProxy::State::Terminated:
         return "Terminated"_s;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
