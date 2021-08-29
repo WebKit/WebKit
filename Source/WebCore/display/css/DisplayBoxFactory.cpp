@@ -150,7 +150,6 @@ std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::LineRun& run
     auto lineLayoutRect = LayoutRect { lineRect.left(), lineRect.top(), lineRect.width(), lineRect.height() };
 
     auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };
-    runRect.moveBy(lineLayoutRect.location());
     runRect.move(containingBlockContext.offsetFromRoot);
 
     auto style = Style { run.layoutBox().style() };

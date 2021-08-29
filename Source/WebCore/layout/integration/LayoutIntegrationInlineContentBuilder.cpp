@@ -255,12 +255,10 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         }
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
-        auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
         // Inline boxes are relative to the line box while final runs need to be relative to the parent box
         // FIXME: Shouldn't we just leave them be relative to the line box?
         auto runRect = FloatRect { lineRun.logicalRect() };
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
-        runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
         runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
@@ -268,7 +266,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         // FIXME: Add support for cases when the run is after ellipsis.
         if (lineRun.isInlineBox()) {
             auto lineRunRect = lineRun.logicalRect();
-            lineRunRect.moveBy(lineBoxLogicalRect.topLeft());
             auto hasScrollableContent = [&] {
                 // In standards mode, inline boxes always start with an imaginary strut.
                 return m_layoutState.inStandardsMode() || lineRun.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
@@ -288,7 +285,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         auto lineIndex = lineRun.lineIndex();
         auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
         auto runRect = FloatRect { lineRun.logicalRect() };
-        runRect.moveBy({ lineBoxLogicalRect.left(), lineBoxLogicalRect.top() });
         if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition)
             runRect.setY(roundToInt(runRect.y()));
 

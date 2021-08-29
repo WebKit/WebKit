@@ -1,3 +1,23 @@
+2021-08-29  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Make line runs relative to the formatting root border box.
+        https://bugs.webkit.org/show_bug.cgi?id=229652
+
+        Reviewed by Antti Koivisto.
+
+        Let's construct the line runs relative to the border box of the inline formatting context root
+        (as opposed to relative to the line box), so that the integration runs could just copy their positions.
+
+        This is in preparation for merging line runs with the integration runs.
+
+        * display/css/DisplayBoxFactory.cpp:
+        (WebCore::Display::BoxFactory::displayBoxForTextRun const):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+
 2021-08-29  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Factor RuleSet building into a Builder type
