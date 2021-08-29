@@ -1,3 +1,18 @@
+2021-08-29  Rob Buis  <rbuis@igalia.com>
+
+        Nullptr crash in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
+        https://bugs.webkit.org/show_bug.cgi?id=229280
+
+        Reviewed by Ryosuke Niwa.
+
+        Null check context in removeRedundantStylesAndKeepStyleSpanInline
+        since the parent node can be null.
+
+        Test: editing/selection/replace-selection-crash-02.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+
 2021-08-29  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Make line runs relative to the formatting root border box.
