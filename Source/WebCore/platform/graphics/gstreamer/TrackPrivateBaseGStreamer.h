@@ -48,6 +48,8 @@ public:
         Unknown
     };
 
+    WEBCORE_EXPORT static AtomString generateUniquePlaybin2StreamID(TrackType, unsigned index);
+
     GstPad* pad() const { return m_pad.get(); }
     void setPad(GRefPtr<GstPad>&&);
 
@@ -55,12 +57,9 @@ public:
 
     virtual void setActive(bool) { }
 
-    void setIndex(int index) { m_index =  index; }
+    void setIndex(unsigned index) { m_index =  index; }
 
-    GstStream* stream()
-    {
-        return m_stream.get();
-    }
+    GstStream* stream() { return m_stream.get(); }
 
     // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
     // playback pipeline.
@@ -68,10 +67,11 @@ public:
     const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
 
 protected:
-    TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
-    TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstStream>);
+    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
+    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstStream>&&);
 
     void notifyTrackOfTagsChanged();
+    void notifyTrackOfStreamChanged();
 
     enum MainThreadNotification {
         TagsChanged = 1 << 1,
@@ -80,13 +80,14 @@ protected:
     };
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
-    gint m_index;
+    unsigned m_index;
     AtomString m_label;
     AtomString m_language;
+    AtomString m_id;
     GRefPtr<GstPad> m_pad;
     GRefPtr<GstPad> m_bestUpstreamPad;
     GRefPtr<GstStream> m_stream;
-    gulong m_eventProbe;
+    unsigned long m_eventProbe { 0 };
     GRefPtr<GstCaps> m_initialCaps;
 
 private:
@@ -95,14 +96,18 @@ private:
     template<class StringType>
     bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);
 
+    void streamChanged();
+
     static void activeChangedCallback(TrackPrivateBaseGStreamer*);
     static void tagsChangedCallback(TrackPrivateBaseGStreamer*);
 
     void tagsChanged();
 
+    TrackType m_type;
     TrackPrivateBase* m_owner;
     Lock m_tagMutex;
     GRefPtr<GstTagList> m_tags;
+    bool m_shouldHandleStreamStartEvent { true };
 };
 
 } // namespace WebCore

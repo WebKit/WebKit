@@ -29,56 +29,31 @@
 
 #include "InbandTextTrackPrivateGStreamer.h"
 
-#include "GStreamerCommon.h"
-#include "Logging.h"
-#include <glib-object.h>
-#include <gst/gst.h>
+#include <wtf/Lock.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
 namespace WebCore {
 
-InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstPad> pad)
+InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(this, index, pad)
+    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
     , m_kind(Kind::Subtitles)
 {
-    m_id = "T" + String::number(index);
-    m_eventProbe = gst_pad_add_probe(m_pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [] (GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
-        auto* track = static_cast<InbandTextTrackPrivateGStreamer*>(userData);
-        switch (GST_EVENT_TYPE(gst_pad_probe_info_get_event(info))) {
-        case GST_EVENT_STREAM_START:
-            track->streamChanged();
-            break;
-        default:
-            break;
-        }
-        return GST_PAD_PROBE_OK;
-    }, this, nullptr);
-
-    notifyTrackOfStreamChanged();
 }
 
-InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstStream> stream)
+InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstStream>&& stream)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(this, index, stream)
+    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(stream))
 {
-    m_streamId = gst_stream_get_stream_id(stream.get());
-    GST_INFO("Track %d got stream start for stream %s.", m_index, m_streamId.utf8().data());
+    m_id = gst_stream_get_stream_id(m_stream.get());
+    GST_INFO("Track %d got stream start for stream %s.", m_index, m_id.string().utf8().data());
 
-    GST_DEBUG("Stream %" GST_PTR_FORMAT, stream.get());
-    auto caps = adoptGRef(gst_stream_get_caps(stream.get()));
+    GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
     const char* mediaType = capsMediaType(caps.get());
     m_kind = g_str_has_prefix(mediaType, "closedcaption/") ? Kind::Captions : Kind::Subtitles;
-}
-
-void InbandTextTrackPrivateGStreamer::disconnect()
-{
-    if (m_pad)
-        gst_pad_remove_probe(m_pad.get(), m_eventProbe);
-
-    TrackPrivateBaseGStreamer::disconnect();
 }
 
 void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
@@ -91,14 +66,6 @@ void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
     RefPtr<InbandTextTrackPrivateGStreamer> protectedThis(this);
     m_notifier->notify(MainThreadNotification::NewSample, [protectedThis] {
         protectedThis->notifyTrackOfSample();
-    });
-}
-
-void InbandTextTrackPrivateGStreamer::streamChanged()
-{
-    RefPtr<InbandTextTrackPrivateGStreamer> protectedThis(this);
-    m_notifier->notify(MainThreadNotification::StreamChanged, [protectedThis] {
-        protectedThis->notifyTrackOfStreamChanged();
     });
 }
 
@@ -128,19 +95,6 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
             reinterpret_cast<char*>(mappedBuffer.data()));
         client()->parseWebVTTCueData(mappedBuffer.data(), mappedBuffer.size());
     }
-}
-
-void InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged()
-{
-    GRefPtr<GstEvent> event = adoptGRef(gst_pad_get_sticky_event(m_pad.get(),
-        GST_EVENT_STREAM_START, 0));
-    if (!event)
-        return;
-
-    const gchar* streamId;
-    gst_event_parse_stream_start(event.get(), &streamId);
-    GST_INFO("Track %d got stream start for stream %s.", m_index, streamId);
-    m_streamId = streamId;
 }
 
 } // namespace WebCore

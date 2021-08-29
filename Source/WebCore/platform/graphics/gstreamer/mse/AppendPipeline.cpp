@@ -753,21 +753,22 @@ Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(int trackIndex)
     RefPtr<WebCore::TrackPrivateBase> track;
     TrackPrivateBaseGStreamer* gstreamerTrack = nullptr;
     // FIXME: AudioTrackPrivateGStreamer etc. should probably use pads of the playback pipeline rather than the append pipeline.
+    GRefPtr<GstPad> pad(appendPipelineTrack.appsinkPad);
     switch (appendPipelineTrack.streamType) {
     case StreamType::Audio: {
-        auto specificTrack = AudioTrackPrivateGStreamer::create(makeWeakPtr(m_playerPrivate), trackIndex, appendPipelineTrack.appsinkPad);
+        auto specificTrack = AudioTrackPrivateGStreamer::create(makeWeakPtr(m_playerPrivate), trackIndex, WTFMove(pad), false);
         gstreamerTrack = specificTrack.ptr();
         track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
         break;
     }
     case StreamType::Video: {
-        auto specificTrack = VideoTrackPrivateGStreamer::create(makeWeakPtr(m_playerPrivate), trackIndex, appendPipelineTrack.appsinkPad);
+        auto specificTrack = VideoTrackPrivateGStreamer::create(makeWeakPtr(m_playerPrivate), trackIndex, WTFMove(pad), false);
         gstreamerTrack = specificTrack.ptr();
         track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
         break;
     }
     case StreamType::Text: {
-        auto specificTrack = InbandTextTrackPrivateGStreamer::create(trackIndex, appendPipelineTrack.appsinkPad);
+        auto specificTrack = InbandTextTrackPrivateGStreamer::create(trackIndex, WTFMove(pad), false);
         gstreamerTrack = specificTrack.ptr();
         track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
         break;

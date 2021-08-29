@@ -31,7 +31,6 @@
 #include "TrackPrivateBaseGStreamer.h"
 #include "VideoTrackPrivate.h"
 
-#include <gst/gst.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -39,34 +38,33 @@ class MediaPlayerPrivateGStreamer;
 
 class VideoTrackPrivateGStreamer final : public VideoTrackPrivate, public TrackPrivateBaseGStreamer {
 public:
-    static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstPad> pad)
+    static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent = true)
     {
-        return adoptRef(*new VideoTrackPrivateGStreamer(player, index, pad));
+        return adoptRef(*new VideoTrackPrivateGStreamer(player, index, WTFMove(pad), shouldHandleStreamStartEvent));
     }
 
-    static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
+    static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new VideoTrackPrivateGStreamer(player, index, stream));
+        return adoptRef(*new VideoTrackPrivateGStreamer(player, index, WTFMove(stream)));
     }
 
     Kind kind() const final;
 
-    void disconnect() override;
+    void disconnect() final;
 
-    void setSelected(bool) override;
-    void setActive(bool enabled) override { setSelected(enabled); }
+    void setSelected(bool) final;
+    void setActive(bool enabled) final { setSelected(enabled); }
 
-    int trackIndex() const override { return m_index; }
+    int trackIndex() const final { return m_index; }
 
-    AtomString id() const override { return m_id; }
-    AtomString label() const override { return m_label; }
-    AtomString language() const override { return m_language; }
+    AtomString id() const final { return m_id; }
+    AtomString label() const final { return m_label; }
+    AtomString language() const final { return m_language; }
 
 private:
-    VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstPad>);
-    VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, gint index, GRefPtr<GstStream>);
+    VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
+    VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstStream>&&);
 
-    AtomString m_id;
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
 };
 

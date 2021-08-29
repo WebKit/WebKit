@@ -30,31 +30,26 @@
 #include "AudioTrackPrivateGStreamer.h"
 
 #include "MediaPlayerPrivateGStreamer.h"
-#include <glib-object.h>
 
 namespace WebCore {
 
-AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstPad> pad)
-    : TrackPrivateBaseGStreamer(this, index, pad)
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
     , m_player(player)
 {
-    // FIXME: Get a real ID from the tkhd atom.
-    m_id = "A" + String::number(index);
 }
 
-AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, gint index, GRefPtr<GstStream> stream)
-    : TrackPrivateBaseGStreamer(this, index, stream)
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstStream>&& stream)
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(stream))
     , m_player(player)
 {
-    gint kind;
+    int kind;
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
 
-    if (tags && gst_tag_list_get_int(tags.get(), "webkit-media-stream-kind", &kind) && kind == static_cast<int>(VideoTrackPrivate::Kind::Main)) {
-        GstStreamFlags streamFlags = gst_stream_get_stream_flags(stream.get());
-        gst_stream_set_stream_flags(stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
+    if (tags && gst_tag_list_get_int(tags.get(), "webkit-media-stream-kind", &kind) && kind == static_cast<int>(AudioTrackPrivate::Kind::Main)) {
+        auto streamFlags = gst_stream_get_stream_flags(m_stream.get());
+        gst_stream_set_stream_flags(m_stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
     }
-
-    m_id = gst_stream_get_stream_id(stream.get());
 }
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const

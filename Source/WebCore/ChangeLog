@@ -1,3 +1,47 @@
+2021-08-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Track handling refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=229497
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The TrackPrivateBaseGStreamer class now factors most of the common code used by its
+        sub-classes. The code style was modernised, some MSE-related dead code was removed from the
+        player. More could be done in the MSE AppendPipeline by making it rely on parsebin, but
+        that's another quest. The tracks created by the AppendPipeline were triggering track ID
+        mismatches between the player and those tracks, so a new flag was added in the constructor
+        of those to prevent stream-start event handling. Ideally that code should rely on GstStream,
+        that would remove the need of that flag.
+
+        No new tests, existing media tests cover this change.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::handleTextSample):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID):
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer):
+        (WebCore::TrackPrivateBaseGStreamer::setPad):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged):
+        (WebCore::TrackPrivateBaseGStreamer::streamChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        (WebCore::TrackPrivateBaseGStreamer::setIndex):
+        (WebCore::TrackPrivateBaseGStreamer::stream):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::makeWebKitTrack):
+
 2021-08-29  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r280958.
