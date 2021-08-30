@@ -27,75 +27,74 @@ class TextStream;
 
 namespace WebCore {
 
-// FIXME: No need to hard-code the numbers here any more, so we should remove them.
 // FIXME: No need to use all capitals and a CSS prefix on all these names. Should fix that.
 enum class CSSUnitType : uint8_t {
-    CSS_UNKNOWN = 0,
-    CSS_NUMBER = 1,
-    CSS_PERCENTAGE = 2,
-    CSS_EMS = 3,
-    CSS_EXS = 4,
-    CSS_PX = 5,
-    CSS_CM = 6,
-    CSS_MM = 7,
-    CSS_IN = 8,
-    CSS_PT = 9,
-    CSS_PC = 10,
-    CSS_DEG = 11,
-    CSS_RAD = 12,
-    CSS_GRAD = 13,
-    CSS_MS = 14,
-    CSS_S = 15,
-    CSS_HZ = 16,
-    CSS_KHZ = 17,
-    CSS_DIMENSION = 18,
-    CSS_STRING = 19,
-    CSS_URI = 20,
-    CSS_IDENT = 21,
-    CSS_ATTR = 22,
-    CSS_COUNTER = 23,
-    CSS_RECT = 24,
-    CSS_RGBCOLOR = 25,
-    CSS_VW = 26,
-    CSS_VH = 27,
-    CSS_VMIN = 28,
-    CSS_VMAX = 29,
-    CSS_DPPX = 30,
-    CSS_DPI = 31,
-    CSS_DPCM = 32,
-    CSS_FR = 33,
-    CSS_Q = 34,
-    CSS_LHS = 35,
-    CSS_RLHS = 36,
+    CSS_UNKNOWN,
+    CSS_NUMBER,
+    CSS_PERCENTAGE,
+    CSS_EMS,
+    CSS_EXS,
+    CSS_PX,
+    CSS_CM,
+    CSS_MM,
+    CSS_IN,
+    CSS_PT,
+    CSS_PC,
+    CSS_DEG,
+    CSS_RAD,
+    CSS_GRAD,
+    CSS_MS,
+    CSS_S,
+    CSS_HZ,
+    CSS_KHZ,
+    CSS_DIMENSION,
+    CSS_STRING,
+    CSS_URI,
+    CSS_IDENT,
+    CSS_ATTR,
+    CSS_COUNTER,
+    CSS_RECT,
+    CSS_RGBCOLOR,
+    CSS_VW,
+    CSS_VH,
+    CSS_VMIN,
+    CSS_VMAX,
+    CSS_DPPX,
+    CSS_DPI,
+    CSS_DPCM,
+    CSS_FR,
+    CSS_Q,
+    CSS_LHS,
+    CSS_RLHS,
 
     CustomIdent,
 
-    CSS_PAIR = 100,
-    CSS_UNICODE_RANGE = 102,
-    CSS_TURN = 107,
-    CSS_REMS = 108,
-    CSS_CHS = 109,
+    CSS_PAIR,
+    CSS_UNICODE_RANGE,
+    CSS_TURN,
+    CSS_REMS,
+    CSS_CHS,
 
-    CSS_COUNTER_NAME = 110,
+    CSS_COUNTER_NAME,
 
-    CSS_SHAPE = 111,
+    CSS_SHAPE,
 
-    CSS_QUAD = 112,
+    CSS_QUAD,
 
-    CSS_CALC = 113,
-    CSS_CALC_PERCENTAGE_WITH_NUMBER = 114,
-    CSS_CALC_PERCENTAGE_WITH_LENGTH = 115,
+    CSS_CALC,
+    CSS_CALC_PERCENTAGE_WITH_NUMBER,
+    CSS_CALC_PERCENTAGE_WITH_LENGTH,
 
-    CSS_FONT_FAMILY = 116,
+    CSS_FONT_FAMILY,
 
-    CSS_PROPERTY_ID = 117,
-    CSS_VALUE_ID = 118,
+    CSS_PROPERTY_ID,
+    CSS_VALUE_ID,
     
     // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
     // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
     // When the quirky value is used, if you're in quirks mode, the margin will collapse away
     // inside a table cell. This quirk is specified in the HTML spec but our impl is different.
-    CSS_QUIRKY_EMS = 120
+    CSS_QUIRKY_EMS
 
     // Note that CSSValue allocates 7 bits for m_primitiveUnitType, so there can be no value here > 127.
 };
@@ -119,4 +118,3 @@ WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitCategory);
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitType);
 
 } // namespace WebCore
-

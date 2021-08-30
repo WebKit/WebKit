@@ -85,7 +85,7 @@ public:
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
     bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
     bool isCounter() const { return primitiveUnitType() == CSSUnitType::CSS_COUNTER; }
-    bool isFontIndependentLength() const { return primitiveUnitType() >= CSSUnitType::CSS_PX && primitiveUnitType() <= CSSUnitType::CSS_PC; }
+    bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isQuirkyEms() const { return primitiveType() == CSSUnitType::CSS_QUIRKY_EMS; }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
@@ -240,10 +240,10 @@ private:
 
     ALWAYS_INLINE String formatNumberForCustomCSSText() const;
     NEVER_INLINE String formatNumberValue(StringView) const;
-
+    static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isResolution(CSSUnitType);
-    static constexpr bool isViewportPercentageLength(CSSUnitType type) { return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_VMAX; }
+    static constexpr bool isViewportPercentageLength(CSSUnitType);
 
     union {
         CSSPropertyID propertyID;
@@ -261,6 +261,16 @@ private:
     } m_value;
 };
 
+constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
+{
+    return type == CSSUnitType::CSS_PX
+        || type == CSSUnitType::CSS_CM
+        || type == CSSUnitType::CSS_MM
+        || type == CSSUnitType::CSS_IN
+        || type == CSSUnitType::CSS_PT
+        || type == CSSUnitType::CSS_PC;
+}
+
 constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {
     return type == CSSUnitType::CSS_EMS
@@ -274,7 +284,14 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
-    return (type >= CSSUnitType::CSS_EMS && type <= CSSUnitType::CSS_PC)
+    return type == CSSUnitType::CSS_EMS
+        || type == CSSUnitType::CSS_EXS
+        || type == CSSUnitType::CSS_PX
+        || type == CSSUnitType::CSS_CM
+        || type == CSSUnitType::CSS_MM
+        || type == CSSUnitType::CSS_IN
+        || type == CSSUnitType::CSS_PT
+        || type == CSSUnitType::CSS_PC
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
         || type == CSSUnitType::CSS_Q
@@ -286,7 +303,17 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isResolution(CSSUnitType type)
 {
-    return type >= CSSUnitType::CSS_DPPX && type <= CSSUnitType::CSS_DPCM;
+    return type == CSSUnitType::CSS_DPPX
+        || type == CSSUnitType::CSS_DPI
+        || type == CSSUnitType::CSS_DPCM;
+}
+
+constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)
+{
+    return type == CSSUnitType::CSS_VW
+        || type == CSSUnitType::CSS_VH
+        || type == CSSUnitType::CSS_VMIN
+        || type == CSSUnitType::CSS_VMAX;
 }
 
 template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&& value)
