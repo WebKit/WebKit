@@ -3756,6 +3756,8 @@ webkit.org/b/176606 http/tests/preload/single_download_preload_headers.py [ Pass
 webkit.org/b/176609 http/tests/websocket/tests/hybi/close-code-and-reason.html [ Pass Crash ]
 webkit.org/b/176632 http/tests/websocket/tests/hybi/websocket-pending-activity.html [ Pass Crash ]
 
+webkit.org/b/229669 http/tests/websocket/tests/hybi/simple-wss.html [ Failure ]
+
 # Web platform tests are very slow on Windows.
 webkit.org/b/176657 imported/w3c/web-platform-tests/ [ Skip ]
 
