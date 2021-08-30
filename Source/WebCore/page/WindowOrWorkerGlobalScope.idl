@@ -48,7 +48,9 @@ interface mixin WindowOrWorkerGlobalScope {
     readonly attribute boolean isSecureContext;
 
     [EnabledBySetting=CrossOriginOpenerPolicy] readonly attribute boolean crossOriginIsolated;
- 
+
+    [CallWith=GlobalObject] undefined reportError(any error);
+
     // Base64 utility methods.
     DOMString atob(DOMString string);
     DOMString btoa(DOMString string);

@@ -1,0 +1,6 @@
+
+PASS self.reportError(1)
+PASS self.reportError(TypeError)
+PASS self.reportError(undefined)
+PASS self.reportError() (without arguments) throws
+

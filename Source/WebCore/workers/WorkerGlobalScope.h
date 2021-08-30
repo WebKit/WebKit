@@ -130,6 +130,8 @@ public:
     std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
+    void reportError(JSC::JSGlobalObject&, JSC::JSValue);
+
     ReferrerPolicy referrerPolicy() const final;
 
     const Settings::Values& settingsValues() const final { return m_settingsValues; }

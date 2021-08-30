@@ -1,3 +1,23 @@
+2021-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Implement self.reportError()
+        https://bugs.webkit.org/show_bug.cgi?id=228316
+        <rdar://problem/81446162>
+
+        Reviewed by Sam Weinig.
+
+        Import test coverage from:
+        - https://github.com/web-platform-tests/wpt/pull/29738
+
+        * web-platform-tests/html/webappapis/scripting/reporterror.any-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/reporterror.any.html: Added.
+        * web-platform-tests/html/webappapis/scripting/reporterror.any.js: Added.
+        (undefined.forEach.throwable.test.t.assert_equals):
+        (test):
+        * web-platform-tests/html/webappapis/scripting/reporterror.any.worker-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/reporterror.any.worker.html: Added.
+        * web-platform-tests/html/webappapis/scripting/w3c-import.log: Added.
+
 2021-08-27  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Initial support

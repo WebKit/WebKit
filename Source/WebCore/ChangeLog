@@ -1,3 +1,27 @@
+2021-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Implement self.reportError()
+        https://bugs.webkit.org/show_bug.cgi?id=228316
+        <rdar://problem/81446162>
+
+        Reviewed by Sam Weinig.
+
+        Implement self.reportError() as per:
+        - https://github.com/whatwg/html/pull/1196
+
+        Firefox already shipped this and Chrome will do so soon too.
+
+        Tests: imported/w3c/web-platform-tests/html/webappapis/scripting/reporterror.any.html
+               imported/w3c/web-platform-tests/html/webappapis/scripting/reporterror.any.worker.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::reportError):
+        * page/DOMWindow.h:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::reportError):
+        * workers/WorkerGlobalScope.h:
+
 2021-08-30  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Introduce Line::Run::Text to hold text content related properties

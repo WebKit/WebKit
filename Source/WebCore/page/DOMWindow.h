@@ -386,6 +386,8 @@ public:
     WebKitNamespace* webkitNamespace();
 #endif
 
+    void reportError(JSC::JSGlobalObject&, JSC::JSValue);
+
     // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
     // when its document is no longer the document that is displayed in its
     // frame), we would like to zero out m_frame to avoid being confused
