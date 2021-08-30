@@ -1,3 +1,19 @@
+2021-08-30  Chris Dumez  <cdumez@apple.com>
+
+        SubmitEvent.submitter property isn't set for <button type="submit">
+        https://bugs.webkit.org/show_bug.cgi?id=229660
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure HTMLButtonElement::defaultEventHandler() properly passes |this| as submitter
+        when calling HTMLFormElement::submitIfPossible(). This was causing the SubmitEvent.submitter
+        property to not be set when submitting a form by clicking a `<button type="submit">`.
+
+        Test: fast/forms/submit-button-submit-event.html
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+
 2021-08-30  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Remove unused bidi handling

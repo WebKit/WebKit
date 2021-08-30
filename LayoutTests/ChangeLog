@@ -1,3 +1,15 @@
+2021-08-30  Chris Dumez  <cdumez@apple.com>
+
+        SubmitEvent.submitter property isn't set for <button type="submit">
+        https://bugs.webkit.org/show_bug.cgi?id=229660
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fast/forms/submit-button-submit-event-expected.txt: Added.
+        * fast/forms/submit-button-submit-event.html: Added.
+
 2021-08-30  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur arm64 EWS ] ASSERTION FAILED: !needsLayout() ./rendering/RenderView.cpp(305) : virtual void WebCore::RenderView::paint(WebCore::PaintInfo &, const WebCore::LayoutPoint &).

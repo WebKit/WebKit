@@ -138,7 +138,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
             if (auto currentForm = form()) {
                 if (m_type == SUBMIT) {
                     SetForScope<bool> activatedSubmitState(m_isActivatedSubmit, true);
-                    currentForm->submitIfPossible(&event);
+                    currentForm->submitIfPossible(&event, this);
                 }
 
                 if (m_type == RESET)
