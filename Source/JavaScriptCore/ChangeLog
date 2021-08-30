@@ -1,3 +1,9 @@
+2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed, add missing include to pre-empt unified source shift.
+
+        * runtime/IntlObject.cpp:
+
 2021-08-30  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         resolve-asm-file-conflicts.rb build failure after upgrade to CMake 3.21.0; DWARF 5 incompatibility

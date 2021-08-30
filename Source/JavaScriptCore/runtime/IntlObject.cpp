@@ -60,6 +60,7 @@
 #include <unicode/ubrk.h>
 #include <unicode/ucal.h>
 #include <unicode/ucol.h>
+#include <unicode/ucurr.h>
 #include <unicode/ufieldpositer.h>
 #include <unicode/uloc.h>
 #include <unicode/unumsys.h>
