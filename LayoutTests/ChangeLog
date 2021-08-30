@@ -1,3 +1,25 @@
+2021-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Run tests in fast/forms/ios by default in EWS
+        https://bugs.webkit.org/show_bug.cgi?id=229656
+
+        Reviewed by Tim Horton.
+
+        Adjust test expectations so that tests added to fast/forms/ios run on (open source) iOS simulator test runners
+        in EWS.
+
+        * platform/ios-14/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
+        Mark "fast/forms/ios" as PASS by default in the WebKit2 port on iOS, but add a few more expectations for tests
+        that are currently failing or flaky in non-internal iOS 14 simulator builds.
+
+        * pointerevents/ios/inputmode-change-update-keyboard-after-pointerup-expected.txt: Renamed from LayoutTests/fast/forms/ios/inputmode-change-update-keyboard-after-pointerup-expected.txt.
+        * pointerevents/ios/inputmode-change-update-keyboard-after-pointerup.html: Renamed from LayoutTests/fast/forms/ios/inputmode-change-update-keyboard-after-pointerup.html.
+
+        Move a layout tests that depends on pointer events ("pointerup" and "pointerdown") into
+        LayoutTests/pointerevents/ios, so that we don't start attempting to run this in OpenSource.
+
 2021-08-29  Rob Buis  <rbuis@igalia.com>
 
         Nullptr crash in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
