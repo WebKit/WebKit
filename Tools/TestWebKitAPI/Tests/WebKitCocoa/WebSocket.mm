@@ -212,4 +212,29 @@ TEST(WebSocket, CloseCode)
 }
 #endif // HAVE(NSURLSESSION_WEBSOCKET)
 
+TEST(WebSocket, BlockedWithSubresources)
+{
+    HTTPServer server([](Connection connection) {
+        connection.webSocketHandshake();
+    });
+
+    NSString *html = [NSString stringWithFormat:@""
+    "<script>"
+    "    var ws = new WebSocket('ws://127.0.0.1:%d/');"
+    "    ws.onopen = function() { alert('opened successfully'); };"
+    "    ws.onerror = function(error) { alert('FAIL - error ' + error.message); }"
+    "</script>", server.port()];
+
+    {
+        auto configuration = adoptNS([WKWebViewConfiguration new]);
+        configuration.get()._loadsSubresources = NO;
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        [webView loadHTMLString:html baseURL:nil];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "FAIL - error undefined");
+    }
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadHTMLString:html baseURL:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "opened successfully");
+}
+
 }

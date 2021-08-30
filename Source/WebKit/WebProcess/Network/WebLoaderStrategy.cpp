@@ -775,7 +775,7 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
-    if (webPage.corePage() && !webPage.corePage()->allowsLoadFromURL(request.url())) {
+    if (webPage.corePage() && !webPage.corePage()->allowsLoadFromURL(request.url(), MainFrameMainResource::No)) {
         if (completionHandler)
             completionHandler({ });
         return;

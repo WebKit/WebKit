@@ -90,7 +90,7 @@ std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChann
 {
     ValidatedURL validatedURL { requestedURL, true };
     if (auto* page = document.page()) {
-        if (!page->allowsLoadFromURL(requestedURL))
+        if (!page->allowsLoadFromURL(requestedURL, MainFrameMainResource::No))
             return { };
 #if ENABLE(CONTENT_EXTENSIONS)
         if (auto* documentLoader = document.loader()) {

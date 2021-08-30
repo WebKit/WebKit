@@ -1,3 +1,19 @@
+2021-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViewConfiguration._loadsSubresources=NO should prevent preconnecting
+        https://bugs.webkit.org/show_bug.cgi?id=229684
+
+        Reviewed by Tim Horton.
+
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::validateURL):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * page/Page.cpp:
+        (WebCore::Page::allowsLoadFromURL const):
+        * page/Page.h:
+        (WebCore::Page::loadsSubresources const): Deleted.
+
 2021-08-30  Lauro Moura  <lmoura@igalia.com>
 
         [LFC][IFC] Remove unused variables after r281744

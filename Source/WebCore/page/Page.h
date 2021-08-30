@@ -174,6 +174,7 @@ enum class RouteSharingPolicy : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
 
 enum class EventThrottlingBehavior : bool { Responsive, Unresponsive };
+enum class MainFrameMainResource : bool { No, Yes };
 
 enum class CompositingPolicy : bool {
     Normal,
@@ -815,8 +816,7 @@ public:
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
-    bool loadsSubresources() const { return m_loadsSubresources; }
-    WEBCORE_EXPORT bool allowsLoadFromURL(const URL&) const;
+    WEBCORE_EXPORT bool allowsLoadFromURL(const URL&, MainFrameMainResource) const;
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
 
     bool isLowPowerModeEnabled() const { return m_throttlingReasons.contains(ThrottlingReason::LowPowerMode); }

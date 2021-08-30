@@ -3361,8 +3361,10 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #endif
 }
 
-bool Page::allowsLoadFromURL(const URL& url) const
+bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMainResource) const
 {
+    if (mainFrameMainResource == MainFrameMainResource::No && !m_loadsSubresources)
+        return false;
     if (!m_allowedNetworkHosts)
         return true;
     if (!url.protocolIsInHTTPFamily() && !url.protocolIs("ws") && !url.protocolIs("wss"))

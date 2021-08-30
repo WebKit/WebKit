@@ -1,3 +1,16 @@
+2021-08-30  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViewConfiguration._loadsSubresources=NO should prevent preconnecting
+        https://bugs.webkit.org/show_bug.cgi?id=229684
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Preconnect.mm:
+        (TestWebKitAPI::verifyPreconnectDisabled):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm:
+        (TestWebKitAPI::TEST):
+
 2021-08-30  Aakash Jain  <aakash_jain@apple.com>
 
         ews might mark build as successful if JSC tests fail to run

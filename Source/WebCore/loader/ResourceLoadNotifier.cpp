@@ -138,10 +138,8 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     m_frame.loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     if (auto* page = m_frame.page()) {
-        if (!page->loadsSubresources()) {
-            if (!m_frame.isMainFrame() || (m_initialRequestIdentifier && *m_initialRequestIdentifier != identifier))
-                request = { };
-        } else if (!page->allowsLoadFromURL(request.url()))
+        auto mainFrameMainResource = m_frame.isMainFrame() && m_initialRequestIdentifier == identifier ? MainFrameMainResource::Yes : MainFrameMainResource::No;
+        if (!page->allowsLoadFromURL(request.url(), mainFrameMainResource))
             request = { };
     }
 

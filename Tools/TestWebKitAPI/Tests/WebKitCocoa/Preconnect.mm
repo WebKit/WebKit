@@ -232,7 +232,7 @@ TEST(Preconnect, H2PingFromWebCoreNSURLSession)
 
 #endif // HAVE(PRECONNECT_PING)
 
-TEST(Preconnect, DisablePreconnect)
+static void verifyPreconnectDisabled(void(*disabler)(WKWebViewConfiguration *))
 {
     size_t connectionCount { 0 };
     HTTPServer server([&](Connection) {
@@ -242,7 +242,7 @@ TEST(Preconnect, DisablePreconnect)
 
     {
         auto configuration = adoptNS([WKWebViewConfiguration new]);
-        configuration.get()._allowedNetworkHosts = [NSSet set];
+        disabler(configuration.get());
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         [webView loadHTMLString:html baseURL:nil];
         [webView _test_waitForDidFinishNavigation];
@@ -259,6 +259,16 @@ TEST(Preconnect, DisablePreconnect)
         while (connectionCount != 1)
             Util::spinRunLoop();
     }
+}
+
+TEST(Preconnect, DisablePreconnect)
+{
+    verifyPreconnectDisabled([] (WKWebViewConfiguration *configuration) {
+        configuration._allowedNetworkHosts = [NSSet set];
+    });
+    verifyPreconnectDisabled([] (WKWebViewConfiguration *configuration) {
+        configuration._loadsSubresources = NO;
+    });
 }
 
 }
