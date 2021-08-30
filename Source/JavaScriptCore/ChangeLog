@@ -1,3 +1,19 @@
+2021-08-30  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        resolve-asm-file-conflicts.rb build failure after upgrade to CMake 3.21.0; DWARF 5 incompatibility
+        https://bugs.webkit.org/show_bug.cgi?id=228267
+
+        Reviewed by Adrian Perez de Castro.
+
+        Implement the fix suggested by Adrian Vovk: any .file 0 directive
+        should pass through unchanged.
+
+        While here
+        - if the file path is an absolute path, don't concat it with the working directory
+        - also accept 'md5 0xhash' in the .file directive.
+
+        * Scripts/resolve-asm-file-conflicts.rb:
+
 2021-08-30  Zan Dobersek  <zdobersek@igalia.com>
 
         RISCV64 support in LLInt

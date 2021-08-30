@@ -60,7 +60,7 @@ require 'strscan'
 ParseResultSuccess = Struct.new(:str)
 ParseResultError = Struct.new(:error)
 
-# Parses the single string literal following a .file assembler directive
+# Parses whatever follows a .file assembler directive
 class FileDirectiveArgScanner
   def initialize(s)
     @s = StringScanner.new(s)
@@ -83,10 +83,22 @@ class FileDirectiveArgScanner
     if ret2.respond_to?(:error)
       return ret2
     end
+    @s.skip(/\s*/)
     if not @s.eos?
-      return ParseResultError.new("Expected end of line after #{ret2.str}")
+      md5 = parse_md5
+      if md5.respond_to?(:error)
+        return ParseResultError.new("Expected end of line or md5, not `#{@s.rest}`")
+      end
     end
-    return ParseResultSuccess.new((Pathname.new(ret1.str) / ret2.str).cleanpath.to_s)
+    @s.skip(/\s*/)
+    if not @s.eos?
+       return ParseResultError.new("Expected end of line, not `#{@s.rest}`")
+    end
+    filepath = Pathname.new(ret2.str)
+    if not filepath.absolute?
+      filepath = Pathname.new(ret1.str) / ret2.str
+    end
+    return ParseResultSuccess.new(filepath.cleanpath.to_s)
   end
   def parse_string_literal
     if @s.scan(/"/).nil?
@@ -122,6 +134,14 @@ class FileDirectiveArgScanner
       end
       raise "Internal error (#{@s.inspect})"
     end
+  end
+  def parse_md5
+      md5 = @s.scan(/md5\s+(0x)?\h+/)
+      if md5.nil?
+          ParseResultError.new("Could not parse md5 at pos #{@s.pos} in #{@s.string}")
+      else
+          ParseResultSuccess.new(md5)
+      end
   end
 end
 
@@ -190,6 +210,9 @@ def selftest
     # Can parse two string literals
     ['"working_directory" "path"', ['working_directory/path']],
 
+    # Will not concatenate the working directory to an absolute path
+    ['"working_directory" "/path"', ['/path']],
+
     # Will only accept up to 2 string literals
     ['"first" "second" "third"', "Expected end of line"],
 
@@ -200,7 +223,13 @@ def selftest
     ['"foo" "bar"baz', "Expected end of line"],
 
     # Can detect unterminated 3rd string literal
-    ['"foo" "bar" "baz', "Expected end of line"]
+    ['"foo" "bar" "baz', "Expected end of line"],
+
+    # Can parse md5
+    ['"foo" "bar" md5 0xabcde0123456789', ['foo/bar']],
+
+    # Can parse md5 without 0x prefix
+    ['"foo" "bar" md5 abcde0123456789', ['foo/bar']]
 
   ]
   outf = StringIO.new("")
@@ -376,6 +405,7 @@ class FileConflictResolver
     @outf.puts("#{md[:white1]}.loc#{md[:white2]}#{slot}#{md[:rest]}")
   end
   def file_directive(md)
+    slot = md[:slot].to_i
     tracker = @trackers.last
 
     pr = FileDirectiveArgScanner.new(md[:rest]).parse
@@ -385,9 +415,11 @@ class FileConflictResolver
     end
 
     path = pr.str
-    tracker.register_path(path, md[:slot].to_i)
 
-    slot = tracker.slot_for_path(path)
+    if slot != 0
+      tracker.register_path(path, slot)
+      slot = tracker.slot_for_path(path)
+    end
     @outf.puts("\t.file\t#{slot} #{md[:rest]}")
   end
 end
