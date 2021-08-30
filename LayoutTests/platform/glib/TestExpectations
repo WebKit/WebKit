@@ -2418,6 +2418,15 @@ webkit.org/b/229346 webrtc/multi-audio.html [ Timeout Pass ]
 
 webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-cluster-002.html [ ImageOnlyFailure ]
 
+webkit.org/b/229665 [ Debug ] fast/mediastream/constraint-intrinsic-size.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] fast/mediastream/get-user-media-device-id.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] fast/mediastream/getDisplayMedia-frame-rate.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] fast/mediastream/screencapture-user-gesture.html [ Timeout ]
+webkit.org/b/229665 [ Debug ] webrtc/h264-high.html [ Timeout ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

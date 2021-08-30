@@ -1,3 +1,9 @@
+2021-08-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GLib mediastream gardening
+
+        * platform/glib/TestExpectations: A few tests timing out in Debug, since r277763.
+
 2021-08-29  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Update fast/border baselines after r281724
