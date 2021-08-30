@@ -1,0 +1,3 @@
+
+FAIL coop-navigate-same-origin-csp-sandbox assert_equals: expected "Success: no opener" but got "Error: have opener"
+

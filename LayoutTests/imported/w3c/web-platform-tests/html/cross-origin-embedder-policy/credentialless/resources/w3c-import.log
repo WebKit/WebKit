@@ -21,3 +21,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/executor.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/iframeTest.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/resources/sw_executor.js

@@ -1,6 +1,12 @@
 
-PASS sw_normal, popup_normal
-PASS sw_normal, popup_coop
-PASS sw_coop, popup_normal
-PASS sw_coop, popup_coop
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT opener:basic, openee:basic, sw:basic Test timed out
+NOTRUN opener:basic, openee:basic, sw:coi
+NOTRUN opener:basic, openee:coi, sw:basic
+NOTRUN opener:basic, openee:coi, sw:coi
+NOTRUN opener:coi, openee:basic, sw:basic
+NOTRUN opener:coi, openee:basic, sw:coi
+NOTRUN opener:coi, openee:coi, sw:basic
+NOTRUN opener:coi, openee:coi, sw:coi
 

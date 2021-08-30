@@ -30,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-coep-sandbox.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox-navigate.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html.headers
@@ -56,8 +57,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html.headers
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw-from-coop.https.html
-/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw-from-coop.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-meta-http-equiv.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-redirect-cache.https.html

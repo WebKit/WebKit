@@ -1,3 +1,13 @@
+2021-08-30  Chris Dumez  <cdumez@apple.com>
+
+        Resync COOP / COEP WPT tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=229678
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-08-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Mark more css-backgrounds tests as expected failures

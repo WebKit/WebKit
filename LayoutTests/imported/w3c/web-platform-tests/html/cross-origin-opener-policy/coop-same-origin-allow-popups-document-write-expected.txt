@@ -1,3 +1,3 @@
 
-PASS coop-same-origin-allow-popups-document-write
+FAIL coop-same-origin-allow-popups-document-write assert_equals: opener == null expected "true" but got "false"
 
