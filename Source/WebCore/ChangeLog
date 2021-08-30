@@ -1,3 +1,34 @@
+2021-08-30  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce Line::Run::Text to hold text content related properties
+        https://bugs.webkit.org/show_bug.cgi?id=229658
+
+        Reviewed by Antti Koivisto.
+
+        Let's use a dedicated (and more compact) structure here instead of relying on a display type of structure.
+        This is in preparation for merging the display and the integration runs.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineLine.cpp:
+        (WebCore::Layout::Line::applyRunExpansion):
+        (WebCore::Layout::Line::TrimmableTrailingContent::remove):
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::m_textContent):
+        (WebCore::Layout::Line::Run::expand):
+        (WebCore::Layout::Line::Run::removeTrailingWhitespace):
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::textContent const):
+        (WebCore::Layout::Line::Run::setNeedsHyphen):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::LineRun::Text::needsHyphen const):
+        (WebCore::Layout::LineRun::Text::Text):
+        (WebCore::Layout::LineRun::Text::setNeedsHyphen): Deleted.
+        (WebCore::Layout::LineRun::Text::expand): Deleted.
+        (WebCore::Layout::LineRun::Text::shrink): Deleted.
+
 2021-08-29  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move "line needs integral snapping" computing to IFC from the integration layer

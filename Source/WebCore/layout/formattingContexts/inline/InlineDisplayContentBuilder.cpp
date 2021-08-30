@@ -88,13 +88,18 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
                 }
                 return inkOverflow;
             };
-            formattingState.addLineRun({ lineIndex, LineRun::Type::Text, layoutBox, textRunRect, inkOverflow(), lineRun.expansion(), lineRun.textContent() });
+            ASSERT(lineRun.textContent() && is<InlineTextBox>(layoutBox));
+            auto& textContent = lineRun.textContent();
+            formattingState.addLineRun({ lineIndex, LineRun::Type::Text, layoutBox, textRunRect, inkOverflow(), lineRun.expansion(), LineRun::Text { textContent->start, textContent->length, downcast<InlineTextBox>(layoutBox).content(), textContent->needsHyphen } });
             break;
         }
         case InlineItem::Type::SoftLineBreak: {
             auto softLineBreakRunRect = lineBox.logicalRectForTextRun(lineRun);
             softLineBreakRunRect.moveBy(lineBoxLogicalTopLeft);
-            formattingState.addLineRun({ lineIndex, LineRun::Type::SoftLineBreak, layoutBox, softLineBreakRunRect, softLineBreakRunRect, lineRun.expansion(), lineRun.textContent() });
+
+            ASSERT(lineRun.textContent() && is<InlineTextBox>(layoutBox));
+            auto& textContent = lineRun.textContent();
+            formattingState.addLineRun({ lineIndex, LineRun::Type::SoftLineBreak, layoutBox, softLineBreakRunRect, softLineBreakRunRect, lineRun.expansion(), LineRun::Text { textContent->start, textContent->length, downcast<InlineTextBox>(layoutBox).content(), textContent->needsHyphen } });
             break;
         }
         case InlineItem::Type::HardLineBreak: {

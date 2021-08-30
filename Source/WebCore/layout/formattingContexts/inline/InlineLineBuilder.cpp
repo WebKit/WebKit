@@ -375,7 +375,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     auto lineEndsWithHyphen = false;
     if (!m_line.runs().isEmpty()) {
         auto& lastTextContent = m_line.runs().last().textContent();
-        lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen();
+        lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
     }
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
     return lineRange;

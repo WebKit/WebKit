@@ -96,7 +96,7 @@ void Line::applyRunExpansion(InlineLayoutUnit extraHorizontalSpace)
                 expansionBehavior = ForbidLeftExpansion | ForbidRightExpansion;
             else {
                 expansionBehavior = (runIsAfterExpansion ? ForbidLeftExpansion : AllowLeftExpansion) | AllowRightExpansion;
-                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(run.textContent()->content()).substring(run.textContent()->start(), run.textContent()->length()), run.style().direction(), expansionBehavior);
+                std::tie(expansionOpportunitiesInRun, runIsAfterExpansion) = FontCascade::expansionOpportunityCount(StringView(downcast<InlineTextBox>(run.layoutBox()).content()).substring(run.textContent()->start, run.textContent()->length), run.style().direction(), expansionBehavior);
             }
         } else if (run.isBox())
             runIsAfterExpansion = false;
@@ -428,7 +428,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
         ASSERT(run.isWordBreakOpportunity() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isLineBreak());
         run.moveHorizontally(-trimmableWidth);
     }
-    if (!trimmableRun.textContent()->length()) {
+    if (!trimmableRun.textContent()->length) {
         // This trimmable run is fully collapsed now (e.g. <div><img>    <span></span></div>).
         // We don't need to keep it around anymore.
         m_runs.remove(*m_firstTrimmableRunIndex);
@@ -457,7 +457,7 @@ Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, InlineLayoutUni
     : m_type(softLineBreakItem.type())
     , m_layoutBox(&softLineBreakItem.layoutBox())
     , m_logicalLeft(logicalLeft)
-    , m_textContent({ softLineBreakItem.position(), 1, softLineBreakItem.inlineTextBox().content() })
+    , m_textContent({ softLineBreakItem.position(), 1 })
 {
 }
 
@@ -468,7 +468,7 @@ Line::Run::Run(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalLef
     , m_logicalWidth(logicalWidth)
     , m_trailingWhitespaceType(trailingWhitespaceType(inlineTextItem))
     , m_trailingWhitespaceWidth(m_trailingWhitespaceType != TrailingWhitespace::None ? logicalWidth : InlineLayoutUnit { })
-    , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length(), inlineTextItem.inlineTextBox().content() })
+    , m_textContent({ inlineTextItem.start(), m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length() })
 {
 }
 
@@ -483,11 +483,11 @@ void Line::Run::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit lo
 
     if (m_trailingWhitespaceType == TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = { };
-        m_textContent->expand(inlineTextItem.length());
+        m_textContent->length += inlineTextItem.length();
         return;
     }
     m_trailingWhitespaceWidth += logicalWidth;
-    m_textContent->expand(m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length());
+    m_textContent->length += m_trailingWhitespaceType == TrailingWhitespace::Collapsed ? 1 : inlineTextItem.length();
 }
 
 bool Line::Run::hasTrailingLetterSpacing() const
@@ -513,9 +513,9 @@ void Line::Run::removeTrailingWhitespace()
 {
     // According to https://www.w3.org/TR/css-text-3/#white-space-property matrix
     // Trimmable whitespace is always collapsible so the length of the trailing trimmable whitespace is always 1 (or non-existent).
-    ASSERT(m_textContent->length());
+    ASSERT(m_textContent->length);
     constexpr size_t trailingTrimmableContentLength = 1;
-    m_textContent->shrink(trailingTrimmableContentLength);
+    m_textContent->length -= trailingTrimmableContentLength;
     visuallyCollapseTrailingWhitespace(m_trailingWhitespaceWidth);
 }
 

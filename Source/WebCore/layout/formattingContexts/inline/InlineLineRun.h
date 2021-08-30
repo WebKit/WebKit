@@ -39,7 +39,7 @@ struct LineRun {
     struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        Text(size_t position, size_t length, const String&);
+        Text(size_t position, size_t length, const String&, bool needsHyphen = false);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
@@ -47,10 +47,6 @@ struct LineRun {
         String content() const { return m_contentString; }
 
         bool needsHyphen() const { return m_needsHyphen; }
-        void setNeedsHyphen() { m_needsHyphen = true; }
-
-        void expand(size_t delta) { m_length += delta; }
-        void shrink(size_t delta) { m_length -= delta; }
 
     private:
         size_t m_start { 0 };
@@ -137,9 +133,10 @@ inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBo
 {
 }
 
-inline LineRun::Text::Text(size_t start, size_t length, const String& contentString)
+inline LineRun::Text::Text(size_t start, size_t length, const String& contentString, bool needsHyphen)
     : m_start(start)
     , m_length(length)
+    , m_needsHyphen(needsHyphen)
     , m_contentString(contentString)
 {
 }
