@@ -1,3 +1,15 @@
+2021-08-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Add new baselines after css-masking WPT update from r281580
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-003-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-004-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-text-005-expected.txt: Added.
+
 2021-08-30  Chris Dumez  <cdumez@apple.com>
 
         Resync COOP / COEP WPT tests from upstream
