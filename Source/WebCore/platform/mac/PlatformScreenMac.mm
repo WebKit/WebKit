@@ -44,7 +44,7 @@
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenMac.h>)
 #import <WebKitAdditions/PlatformScreenMac.h>
 #endif
 
@@ -419,7 +419,7 @@ NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
     return flippedPoint;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenMac.mm>)
 #import <WebKitAdditions/PlatformScreenMac.mm>
 #else
 FloatRect screenRectAvoidingMenuBar(NSScreen* screen)
