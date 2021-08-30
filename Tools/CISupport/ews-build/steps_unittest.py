@@ -1653,6 +1653,24 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
         return self.runStep()
 
+    def test_unexpected_infra_issue(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', [])
+        self.setProperty('jsc_rerun_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('clean_tree_run_status', FAILURE)
+        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
+        return self.runStep()
+
+    def test_patch_breaking_jsc_test_suite(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', [])
+        self.setProperty('jsc_rerun_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('clean_tree_run_status', SUCCESS)
+        self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with patch (failure)')
+        return self.runStep()
+
 
 class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
