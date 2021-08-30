@@ -44,12 +44,6 @@ namespace LayoutIntegration {
 
 #define PROCESS_BIDI_CONTENT 0
 
-struct LineLevelVisualAdjustmentsForRuns {
-    bool needsIntegralPosition { false };
-    // It's only 'text-overflow: ellipsis' for now.
-    bool needsTrailingContentReplacement { false };
-};
-
 inline Layout::LineGeometry::EnclosingTopAndBottom operator+(const Layout::LineGeometry::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
 {
     return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
@@ -164,75 +158,11 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 
 void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    auto lineLevelVisualAdjustmentsForRuns = computeLineLevelVisualAdjustmentsForRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns());
-    createDisplayLineRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns(), inlineContent, lineLevelVisualAdjustmentsForRuns);
-    createDisplayLines(inlineFormattingState.lines(), inlineContent, lineLevelVisualAdjustmentsForRuns);
+    createDisplayLineRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns(), inlineContent);
+    createDisplayLines(inlineFormattingState.lines(), inlineContent);
 }
 
-InlineContentBuilder::LineLevelVisualAdjustmentsForRunsList InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineLines& lines, const Layout::InlineLineRuns& lineRuns) const
-{
-    auto lineLevelVisualAdjustmentsForRuns = LineLevelVisualAdjustmentsForRunsList { lines.size() };
-    auto& rootStyle = m_layoutState.root().style();
-
-    auto inlineLevelBoxPreventsIntegralPosition = std::optional<bool> { };
-    size_t lineIndexToCheck = 0;
-    for (auto& lineRun : lineRuns) {
-        auto lineIndex = lineRun.lineIndex();
-        auto& layoutBox = lineRun.layoutBox();
-
-        if (lineIndexToCheck != lineIndex) {
-            auto lineNeedsIntegralPositioning = [&] {
-                if (!inlineLevelBoxPreventsIntegralPosition.has_value()) {
-                    // This line does not have any non-root inline boxes.
-                    // Lines like this with root inline box only force integral positioning.
-                    return true;
-                }
-                return !*inlineLevelBoxPreventsIntegralPosition;
-            };
-            lineLevelVisualAdjustmentsForRuns[lineIndexToCheck].needsIntegralPosition = lineNeedsIntegralPositioning();
-            lineIndexToCheck = lineIndex;
-            inlineLevelBoxPreventsIntegralPosition = { };
-        }
-
-        if (!lineRun.isNonRootInlineLevelBox() || (inlineLevelBoxPreventsIntegralPosition.has_value() && *inlineLevelBoxPreventsIntegralPosition))
-            continue;
-
-        auto inlineLevelBoxPreventsLegacyIntegralVerticalPosition = [&] {
-            ASSERT(lineRun.isNonRootInlineLevelBox());
-            // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
-            // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
-            auto contentPreventsIntegralSnapping = lineRun.isAtomicInlineLevelBox() || (lineRun.isLineBreakBox() && !m_layoutState.inStandardsMode());
-            if (contentPreventsIntegralSnapping)
-                return true;
-
-            auto& inlineLevelBoxStyle = layoutBox.style();
-            auto stylePreventsIntegralSnapping = rootStyle.lineHeight() != inlineLevelBoxStyle.lineHeight() || inlineLevelBoxStyle.verticalAlign() != VerticalAlign::Baseline;
-            if (stylePreventsIntegralSnapping)
-                return true;
-
-            auto& rootFontMetrics = rootStyle.fontCascade().fontMetrics();
-            auto& inlineLevelBoxFontMetrics = inlineLevelBoxStyle.fontCascade().fontMetrics();
-            auto fontPreventsIntegralSnapping = !rootFontMetrics.hasIdenticalAscentDescentAndLineGap(inlineLevelBoxFontMetrics);
-            return fontPreventsIntegralSnapping;
-        };
-        inlineLevelBoxPreventsIntegralPosition = inlineLevelBoxPreventsLegacyIntegralVerticalPosition();
-    }
-    lineLevelVisualAdjustmentsForRuns[lineIndexToCheck].needsIntegralPosition = !inlineLevelBoxPreventsIntegralPosition.has_value() || !*inlineLevelBoxPreventsIntegralPosition;
-
-    auto shouldCheckHorizontalOverflowForContentReplacement = rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() != TextOverflow::Clip;
-    if (!shouldCheckHorizontalOverflowForContentReplacement)
-        return lineLevelVisualAdjustmentsForRuns;
-
-    for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
-        auto& line = lines[lineIndex];
-        auto lineBoxLogicalWidth = line.lineBoxLogicalRect().width();
-        auto overflowWidth = lineOverflowWidth(m_blockFlow, lineBoxLogicalWidth, line.contentLogicalWidth());
-        lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement = overflowWidth > lineBoxLogicalWidth;
-    }
-    return lineLevelVisualAdjustmentsForRuns;
-}
-
-void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& lines, const Layout::InlineLineRuns& lineRuns, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
+void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& lines, const Layout::InlineLineRuns& lineRuns, InlineContent& inlineContent) const
 {
     if (lineRuns.isEmpty())
         return;
@@ -261,7 +191,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         auto inkOverflow = FloatRect { lineRun.inkOverflow() };
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
         runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
-        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
+        if (lines[lineIndex].needsIntegralPosition()) {
             runRect.setY(roundToInt(runRect.y()));
             inkOverflow.setY(roundToInt(inkOverflow.y()));
         }
@@ -286,10 +216,9 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         RELEASE_ASSERT(startOffset < endOffset);
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
-        auto& lineBoxLogicalRect = lines[lineIndex].lineBoxLogicalRect();
         auto runRect = FloatRect { lineRun.logicalRect() };
         auto inkOverflow = FloatRect { lineRun.inkOverflow() };
-        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
+        if (lines[lineIndex].needsIntegralPosition()) {
             runRect.setY(roundToInt(runRect.y()));
             inkOverflow.setY(roundToInt(inkOverflow.y()));
         }
@@ -300,23 +229,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             auto originalContent = text->content().substring(text->start(), text->length());
             if (text->needsHyphen())
                 return makeString(originalContent, style.hyphenString());
-            if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsTrailingContentReplacement) {
-                // Currently it's ellipsis replacement only, but adding support for "text-overflow: string" should be relatively simple.
-                if (hasAdjustedTrailingLineList[lineIndex]) {
-                    // This line already has adjusted trailing. Any runs after the ellipsis should render blank.
-                    return emptyString();
-                }
-                auto runLogicalRect = lineRun.logicalRect();
-                auto ellipsisWidth = style.fontCascade().width(WebCore::TextRun { &horizontalEllipsis });
-                if (runLogicalRect.right() + ellipsisWidth > lineBoxLogicalRect.right()) {
-                    // The next run with ellipsis would surely overflow. So let's just add it to this run even if
-                    // it makes the run wider than it originally was.
-                    hasAdjustedTrailingLineList[lineIndex] = true;
-                    float resultWidth = 0;
-                    auto maxWidth = lineBoxLogicalRect.width() - runLogicalRect.left();
-                    return StringTruncator::rightTruncate(originalContent, maxWidth, style.fontCascade(), resultWidth, true);
-                }
-            }
             return String();
         };
 
@@ -336,7 +248,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
     }
 }
 
-void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, InlineContent& inlineContent, const LineLevelVisualAdjustmentsForRunsList& lineLevelVisualAdjustmentsForRuns) const
+void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, InlineContent& inlineContent) const
 {
     auto& runs = inlineContent.runs;
     auto& nonRootInlineBoxes = inlineContent.nonRootInlineBoxes;
@@ -381,7 +293,7 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
         // Final enclosing top and bottom values are in the same coordinate space as the line itself.
         auto enclosingTopAndBottom = line.enclosingTopAndBottom() + lineBoxLogicalRect.top();
-        if (lineLevelVisualAdjustmentsForRuns[lineIndex].needsIntegralPosition) {
+        if (line.needsIntegralPosition()) {
             adjustedLineBoxRect.setY(roundToInt(adjustedLineBoxRect.y()));
             enclosingTopAndBottom.top = roundToInt(enclosingTopAndBottom.top);
             enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);

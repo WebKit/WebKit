@@ -38,7 +38,6 @@ namespace LayoutIntegration {
 
 class BoxTree;
 struct InlineContent;
-struct LineLevelVisualAdjustmentsForRuns;
 
 class InlineContentBuilder {
 public:
@@ -47,11 +46,8 @@ public:
     void build(const Layout::InlineFormattingState&, InlineContent&) const;
 
 private:
-    using LineLevelVisualAdjustmentsForRunsList = Vector<LineLevelVisualAdjustmentsForRuns>;
-
-    LineLevelVisualAdjustmentsForRunsList computeLineLevelVisualAdjustmentsForRuns(const Layout::InlineLines&, const Layout::InlineLineRuns&) const;
-    void createDisplayLineRuns(const Layout::InlineLines&, const Layout::InlineLineRuns&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
-    void createDisplayLines(const Layout::InlineLines&, InlineContent&, const LineLevelVisualAdjustmentsForRunsList&) const;
+    void createDisplayLineRuns(const Layout::InlineLines&, const Layout::InlineLineRuns&, InlineContent&) const;
+    void createDisplayLines(const Layout::InlineLines&, InlineContent&) const;
 
     const Layout::LayoutState& m_layoutState;
     const RenderBlockFlow& m_blockFlow;

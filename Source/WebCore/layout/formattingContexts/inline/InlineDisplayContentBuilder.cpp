@@ -61,6 +61,10 @@ void InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineCont
 void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex)
 {
     auto& formattingState = this->formattingState();
+    // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
+    // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
+    auto lineNeedIntegralPosition = true;
+    auto& rootStyle = root().style();
     // Create the inline runs on the current line. This is mostly text and atomic inline runs.
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
@@ -102,6 +106,8 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
             boxGeometry.setContentBoxHeight(toLayoutUnit(lineBreakBoxRect.height()));
+            if (!formattingState.layoutState().inStandardsMode())
+                lineNeedIntegralPosition = false;
             break;
         }
         case InlineItem::Type::Box: {
@@ -115,6 +121,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
             // Note that inline boxes are relative to the line and their top position can be negative.
             // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
             boxGeometry.setLogicalTopLeft(toLayoutPoint(borderBoxLogicalTopLeft));
+            lineNeedIntegralPosition = false;
             break;
         }
         case InlineItem::Type::InlineBoxStart: {
@@ -134,6 +141,14 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
             boxGeometry.setContentBoxHeight(contentBoxHeight);
             auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
             boxGeometry.setContentBoxWidth(contentBoxWidth);
+
+            if (lineNeedIntegralPosition) {
+                auto& inlineBoxStyle = layoutBox.style();
+                auto stylePreventsIntegralSnapping = rootStyle.lineHeight() != inlineBoxStyle.lineHeight() || inlineBoxStyle.verticalAlign() != VerticalAlign::Baseline;
+                auto fontPreventsIntegralSnapping = !rootStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(inlineBoxStyle.fontCascade().fontMetrics());
+                if (stylePreventsIntegralSnapping || fontPreventsIntegralSnapping)
+                    lineNeedIntegralPosition = false;
+            }
             break;
         }
         default:
@@ -141,6 +156,8 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
             break;
         }
     }
+    // FIXME: This is temporary. Remove when legacy line layout's integral snapping is removed.
+    formattingState.lines().last().setNeedsIntegralPosition(lineNeedIntegralPosition);
 }
 
 void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes(const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, size_t lineSpanningInlineBoxIndex)
@@ -152,7 +169,9 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInli
         return;
     }
 
+    auto& rootStyle = root().style();
     auto& formattingState = this->formattingState();
+    auto lineNeedIntegralPosition = formattingState.lines().last().needsIntegralPosition();
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (!inlineLevelBox.isLineSpanningInlineBox())
             continue;
@@ -173,7 +192,17 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInli
 
         boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu)));
         boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu)));
+
+        if (lineNeedIntegralPosition) {
+            auto& inlineBoxStyle = layoutBox.style();
+            auto stylePreventsIntegralSnapping = rootStyle.lineHeight() != inlineBoxStyle.lineHeight() || inlineBoxStyle.verticalAlign() != VerticalAlign::Baseline;
+            auto fontPreventsIntegralSnapping = !rootStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(inlineBoxStyle.fontCascade().fontMetrics());
+            if (stylePreventsIntegralSnapping || fontPreventsIntegralSnapping)
+                lineNeedIntegralPosition = false;
+        }
     }
+    // FIXME: This is temporary. Remove when legacy line layout's integral snapping is removed.
+    formattingState.lines().last().setNeedsIntegralPosition(lineNeedIntegralPosition);
 }
 
 }

@@ -1,5 +1,27 @@
 2021-08-29  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Move "line needs integral snapping" computing to IFC from the integration layer
+        https://bugs.webkit.org/show_bug.cgi?id=229654
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for merging the integration layer runs with IFC's display runs.
+        This also save a loop over the runs to compute the "line needs integration position" bit.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineLineGeometry.h:
+        (WebCore::Layout::LineGeometry::needsIntegralPosition const):
+        (WebCore::Layout::LineGeometry::setNeedsIntegralPosition):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+
+2021-08-29  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add ink overflow to the line runs
         https://bugs.webkit.org/show_bug.cgi?id=229653
 
