@@ -219,6 +219,7 @@
     "web-platform-tests/fetch/origin": "import", 
     "web-platform-tests/fetch/range": "import", 
     "web-platform-tests/fetch/stale-while-revalidate": "import", 
+    "web-platform-tests/file-system-access": "import", 
     "web-platform-tests/fullscreen": "skip", 
     "web-platform-tests/gamepad": "skip", 
     "web-platform-tests/generic-sensor": "skip", 

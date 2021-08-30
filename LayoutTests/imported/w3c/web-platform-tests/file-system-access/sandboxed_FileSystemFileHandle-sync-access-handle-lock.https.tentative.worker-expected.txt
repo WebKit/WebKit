@@ -1,0 +1,4 @@
+
+FAIL There can only be one open access handle at any given time promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL An access handle from one file does not interfere with the creation of an access handle on another file promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+

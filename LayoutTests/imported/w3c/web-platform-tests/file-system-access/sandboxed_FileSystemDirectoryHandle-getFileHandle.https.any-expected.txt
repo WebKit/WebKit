@@ -1,0 +1,13 @@
+
+FAIL getFileHandle(create=false) rejects for non-existing files promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=true) creates an empty file for non-existing files promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=false) returns existing files promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=true) returns existing files without erasing promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=false) when a directory already exists with the same name promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=true) when a directory already exists with the same name promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle() with empty name promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle() with "." name promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle() with ".." name promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=false) with a path separator when the file exists. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL getFileHandle(create=true) with a path separator promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+

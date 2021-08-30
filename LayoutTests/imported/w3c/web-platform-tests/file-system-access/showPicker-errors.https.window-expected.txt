@@ -1,0 +1,135 @@
+
+FAIL showOpenFilePicker: Showing a picker requires user activation. promise_test: Unhandled rejection with value: object "TypeError: self.showOpenFilePicker is not a function. (In 'self.showOpenFilePicker()', 'self.showOpenFilePicker' is undefined)"
+FAIL showSaveFilePicker: Showing a picker requires user activation. promise_test: Unhandled rejection with value: object "TypeError: self.showSaveFilePicker is not a function. (In 'self.showSaveFilePicker()', 'self.showSaveFilePicker' is undefined)"
+FAIL showDirectoryPicker: Showing a picker requires user activation. promise_test: Unhandled rejection with value: object "TypeError: self.showDirectoryPicker is not a function. (In 'self.showDirectoryPicker()', 'self.showDirectoryPicker' is undefined)"
+FAIL showOpenFilePicker: File picker requires at least one accepted type. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({excludeAcceptAllOption: true, types: []})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't be an empty string. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type must have subtype. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'image': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't have empty type. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'  /plain': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't have empty subtype. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'image/  ': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't have parameters. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+            {types: [{accept: {'text/plain;charset=utf8': ['.txt']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't have invalid characters in type. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+                               types: [{accept: {'text>foo/plain': ['.txt']}}]
+                             })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't have whitespace in the middle. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'text / plain': ['.txt']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: MIME type can't have invalid characters in subtype. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+                {types: [{accept: {'text/plain>foo': ['.txt']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: unknown well-known starting directory. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+      startIn: 'secrets',
+    })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: starting directory can	 be null. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+                               startIn: null,
+                             })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: starting directory ID contains invalid characters. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+      id: "inv*l:d\\ chara<ters",
+    })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: starting directory ID cannot exceed 32 characters. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+      id: "id-length-cannot-exceed-32-characters",
+    })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".extensiontoolong". extension length more than 16.. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".txt.". extenstion ends with ".". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension "txt". extenstion does not start with ".". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".$txt". illegal character "$". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".t<xt". illegal character "<". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".t/xt". illegal character "". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".	xt". illegal character "/". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".txt\". illegal characters "\". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".txt?". illegal character "?". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".txt*". illegal character "*". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".{txt". illegal character "{". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".}txt". illegal character "}". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension " .txt". illegal whitespace at front of extension. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ". txt". illegal whitespace in extension. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".txt ". illegal whitespace at end of extension. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".‮txt‮". illegal RTL character. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".tæxt". non-ASCII character "æ". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".קום". non-ASCII character "קום". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".txt🙂". non-ASCII character "🙂". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showOpenFilePicker: invalid extension ".{txt}". illegal characters "{" and "}". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: File picker requires at least one accepted type. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({excludeAcceptAllOption: true, types: []})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't be an empty string. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type must have subtype. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'image': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't have empty type. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'  /plain': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't have empty subtype. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'image/  ': ['.foo']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't have parameters. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+            {types: [{accept: {'text/plain;charset=utf8': ['.txt']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't have invalid characters in type. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+                               types: [{accept: {'text>foo/plain': ['.txt']}}]
+                             })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't have whitespace in the middle. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({types: [{accept: {'text / plain': ['.txt']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: MIME type can't have invalid characters in subtype. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+                {types: [{accept: {'text/plain>foo': ['.txt']}}]})', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: unknown well-known starting directory. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+      startIn: 'secrets',
+    })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: starting directory can	 be null. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+                               startIn: null,
+                             })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: starting directory ID contains invalid characters. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+      id: "inv*l:d\\ chara<ters",
+    })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: starting directory ID cannot exceed 32 characters. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod]({
+      id: "id-length-cannot-exceed-32-characters",
+    })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".extensiontoolong". extension length more than 16.. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".txt.". extenstion ends with ".". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension "txt". extenstion does not start with ".". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".$txt". illegal character "$". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".t<xt". illegal character "<". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".t/xt". illegal character "". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".	xt". illegal character "/". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".txt\". illegal characters "\". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".txt?". illegal character "?". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".txt*". illegal character "*". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".{txt". illegal character "{". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".}txt". illegal character "}". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension " .txt". illegal whitespace at front of extension. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ". txt". illegal whitespace in extension. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".txt ". illegal whitespace at end of extension. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".‮txt‮". illegal RTL character. promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".tæxt". non-ASCII character "æ". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".קום". non-ASCII character "קום". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".txt🙂". non-ASCII character "🙂". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+FAIL showSaveFilePicker: invalid extension ".{txt}". illegal characters "{" and "}". promise_test: Unhandled rejection with value: object "TypeError: self[showPickerMethod] is not a function. (In 'self[showPickerMethod](
+        { types: [{ accept: { 'text/plain': ['.txt', extension] } }] })', 'self[showPickerMethod]' is undefined)"
+

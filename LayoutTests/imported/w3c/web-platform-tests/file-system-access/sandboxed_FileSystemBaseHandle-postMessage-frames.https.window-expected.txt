@@ -1,0 +1,6 @@
+
+FAIL Send and receive messages using a same origin iframe. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Send and receive messages using a sandboxed same origin iframe. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Send and receive messages using a blob iframe. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Send and receive messages using an iframe srcdoc. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+

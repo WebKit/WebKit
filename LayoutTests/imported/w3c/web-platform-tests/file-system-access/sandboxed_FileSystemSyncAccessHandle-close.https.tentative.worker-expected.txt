@@ -1,0 +1,14 @@
+
+FAIL SyncAccessHandle.close is idempotent promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.close is idempotent when called immediately promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.read fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.read fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.write fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.write fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.flush fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.flush fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.getSize fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.getSize fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.truncate fails after SyncAccessHandle.close settles promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL SyncAccessHandle.truncate fails immediately after calling SyncAccessHandle.close promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+

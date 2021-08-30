@@ -1,0 +1,10 @@
+
+FAIL can be piped to with a string promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL can be piped to with an ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL can be piped to with a Blob promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL can be piped to with a param object with write command promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL can be piped to with a param object with multiple commands promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL multiple operations can be queued promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL plays well with fetch promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL abort() aborts write promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+
