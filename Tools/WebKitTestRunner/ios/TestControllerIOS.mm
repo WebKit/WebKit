@@ -168,6 +168,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     if (![preferencesActions oneTimeActionCompleted:hardwareKeyboardLastSeenPreferenceKey])
         [preferencesActions didTriggerOneTimeAction:hardwareKeyboardLastSeenPreferenceKey];
 
+    auto didShowContinuousPathIntroductionKey = @"DidShowContinuousPathIntroduction";
+    if (![preferencesActions oneTimeActionCompleted:didShowContinuousPathIntroductionKey])
+        [preferencesActions didTriggerOneTimeAction:didShowContinuousPathIntroductionKey];
+
     // Disables the dictation keyboard shortcut for testing.
     auto dictationKeyboardShortcutPreferenceKey = @"HWKeyboardDictationShortcut";
     auto dictationKeyboardShortcutValueForTesting = @(-1);

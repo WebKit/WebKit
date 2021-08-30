@@ -1,3 +1,19 @@
+2021-08-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix double-tap-on-editable-content-for-selection-then-drag-* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=229683
+        rdar://59571151
+
+        Reviewed by Wenson Hsieh.
+
+        Add delay to allow double-tap gesture to reset before the other gestures can be invoked.
+        Also update to use more functions from UIHelper, which is newer and more maintained.
+
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-left-to-change-selected-text.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-right-to-change-selected-text.html:
+        * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text.html:
+
 2021-08-30  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Add new baselines after css-masking WPT update from r281580

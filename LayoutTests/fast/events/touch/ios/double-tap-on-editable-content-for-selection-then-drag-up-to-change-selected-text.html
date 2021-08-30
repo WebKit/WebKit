@@ -3,6 +3,7 @@
 <html>
 <head>
     <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -31,7 +32,7 @@
             var dragY3 = thirdTargetRect.y - editableToNoneditableOffset;
             var dragY4 = firstTargetRect.y + firstTargetRect.height - editableToNoneditableOffset;
         
-            await tapAtPoint(tapPointX, tapPointY);
+            await UIHelper.tapAt(tapPointX, tapPointY);
             if (document.getSelection().type == "Caret")
                 output += 'PASS: Has Caret Selection';
             else
@@ -40,12 +41,14 @@
 
             await didShowKeyboard();
 
-            await doubleTapAtPoint(doubleTapPointX, doubleTapPointY);
+            await UIHelper.doubleTapAt(doubleTapPointX, doubleTapPointY);
             if (document.getSelection().toString() == "at")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
+
+            await UIHelper.waitForDoubleTapDelay();
 
             await touchAndDragFromPointToPoint(dragX, dragY, dragX, dragY2);
             if (document.getSelection().toString() == "o eiusmod tempor incididunt at")

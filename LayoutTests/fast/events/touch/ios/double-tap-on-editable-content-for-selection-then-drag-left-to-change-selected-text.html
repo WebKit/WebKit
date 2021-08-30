@@ -3,6 +3,7 @@
 <html>
 <head>
     <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -31,7 +32,7 @@
             var dragX3 = thirdTargetRect.x;
             var dragX4 = firstTargetRect.x + firstTargetRect.width;
         
-            await tapAtPoint(tapPointX, tapPointY);
+            await UIHelper.tapAt(tapPointX, tapPointY);
             if (document.getSelection().type == "Caret")
                 output += 'PASS: Has Caret Selection';
             else
@@ -40,12 +41,14 @@
 
             await didShowKeyboard();
 
-            await doubleTapAtPoint(doubleTapPointX, doubleTapPointY);
+            await UIHelper.doubleTapAt(doubleTapPointX, doubleTapPointY);
             if (document.getSelection().toString() == "magna")
                 output += 'PASS: Correct Selection';
             else
                 output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
             output += '<br>';
+
+            await UIHelper.waitForDoubleTapDelay();
 
             await touchAndDragFromPointToPoint(dragX, dragY, dragX2, dragY);
             if (document.getSelection().toString() == "aliqua magna")

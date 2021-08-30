@@ -1,3 +1,17 @@
+2021-08-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix double-tap-on-editable-content-for-selection-then-drag-* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=229683
+        rdar://59571151
+
+        Reviewed by Wenson Hsieh.
+
+        The swipe keyboard tutorial comes up on first launch. Set the defaults to prevent
+        that from happening and interfering with tests.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2021-08-30  Alex Christensen  <achristensen@webkit.org>
 
         Migrate PrivateClickMeasurements from ResourceLoadStatistics database to new database
