@@ -83,11 +83,12 @@ class WPEPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.browser_name(), "minibrowser")
 
     def test_browser_name_with_cog_built(self):
-        port = self.make_port()
-        port._filesystem = MockFileSystem({
-            "/mock-build/Tools/cog-prefix/src/cog-build/cog": "",
-        })
-        self.assertEqual(port.browser_name(), "cog")
+        with patch('os.environ', {'WPE_BROWSER': ''}):
+            port = self.make_port()
+            port._filesystem = MockFileSystem({
+                "/mock-build/Tools/cog-prefix/src/cog-build/cog": "",
+            })
+            self.assertEqual(port.browser_name(), "cog")
 
     def test_browser_name_override_minibrowser_with_cog_built(self):
         with patch('os.environ', {'WPE_BROWSER': 'MiniBrowser'}):
