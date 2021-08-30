@@ -1,5 +1,18 @@
 2021-08-30  Megan Gardner  <megan_gardner@apple.com>
 
+        Update fast/events/touch/ios/long-press-to-select-text.html 
+        https://bugs.webkit.org/show_bug.cgi?id=229689
+        rdar://29333567
+
+        Reviewed by Wenson Hsieh.
+
+        Test marked as failing on an old build. Seems to be fine now, but taking the opportunity to update
+        the test to use the latest helper functions.
+
+        * fast/events/touch/ios/long-press-to-select-text.html:
+
+2021-08-30  Megan Gardner  <megan_gardner@apple.com>
+
         Fix double-tap-on-editable-content-for-selection-then-drag-* tests.
         https://bugs.webkit.org/show_bug.cgi?id=229683
         rdar://59571151

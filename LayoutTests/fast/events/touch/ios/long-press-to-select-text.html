@@ -2,7 +2,7 @@
 
 <html>
 <head>
-    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -20,7 +20,7 @@
             var pressPointX = targetRect.x + targetRect.width / 2;
             var pressPointY = targetRect.y + targetRect.height / 2;
             
-            var result = await longPressAtPoint(pressPointX, pressPointY);
+            var result = await UIHelper.longPressAtPoint(pressPointX, pressPointY);
             if (document.getSelection().toString() == "PressMe")
                 output += 'PASS: Correct Selection';
             else
